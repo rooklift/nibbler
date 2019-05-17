@@ -41,7 +41,7 @@ function S(x, y) {
 	return xs + ys;
 }
 
-function NewPosition(state = null, active = "w", castling = "", enpassant = "-", halfmove = 0, fullmove = 1) {
+function NewPosition(state = null, active = "w", castling = "", enpassant = null, halfmove = 0, fullmove = 1) {
 
 	let p = Object.create(null);
 	p.state = [];					// top-left is 0,0
@@ -59,7 +59,17 @@ function NewPosition(state = null, active = "w", castling = "", enpassant = "-",
 
 	p.active = active;
 	p.castling = castling;
-	p.enpassant = enpassant;
+	
+	p.enpassant = [-1, -1];
+	if (enpassant) {
+		if (typeof enpassant === "string" {
+			p.enpassant = XY(enpassant);
+		} else {
+			p.enpassant[0] = enpassant[0];
+			p.enpassant[1] = enpassant[1];
+		}
+	}
+
 	p.halfmove = halfmove;
 	p.fullmove = fullmove;
 
@@ -151,6 +161,79 @@ function PositionFromFEN(fen) {
 	return ret;
 }
 
+function PositionFromMove(pos, s) {
+
+	// FIXME: many things to do...
+	//
+	//		-- handle castling itself
+	//		-- handle e.p. captures
+	//		-- handle promotions
+	//		-- set e.p. square
+
+	let ret = pos.copy();
+
+	let [x1, y1] = XY(s.slice(0, 2));
+	let [x2, y2] = XY(s.slice(2, 4));
+	let promotion = s.length > 4 ? s[4] : "";
+
+	let white_flag = pos.state[x1][y1] === pos.state[x1][y1].toUpperCase();
+	let pawn_flag = "Pp".includes(pos.state[x1][y1]);
+	let capture_flag = pos.state[x2][y2] !== "";
+
+	if (pawn_flag && x1 !== x2) {		// Make sure capture_flag is set even for e.p. captures
+		capture_flag = true;
+	}
+
+	// Update castling info...
+
+	if (ret.state[x1][y1] === "K") {
+		ret.castling = ret.castling.replace("K", "");
+		ret.castling = ret.castling.replace("Q", "");
+	}
+
+	if (ret.state[x1][y1] === "k") {
+		ret.castling = ret.castling.replace("k", "");
+		ret.castling = ret.castling.replace("q", "");
+	}
+
+	if ((x1 == 0 && y1 == 0) || (x2 == 0 && y2 == 0)) {
+		ret.castling = ret.castling.replace("q", "");
+	}
+
+	if ((x1 == 7 && y1 == 0) || (x2 == 7 && y2 == 0)) {
+		ret.castling = ret.castling.replace("k", "");
+	}
+
+	if ((x1 == 0 && y1 == 7) || (x2 == 0 && y2 == 7)) {
+		ret.castling = ret.castling.replace("Q", "");
+	}
+
+	if ((x1 == 7 && y1 == 7) || (x2 == 7 && y2 == 7)) {
+		ret.castling = ret.castling.replace("K", "");
+	}
+
+	// Update halfmove and fullmove...
+
+	if (white_flag === false) {
+		ret.fullmove++;
+	}
+
+	if (pawn_flag || capture_flag) {
+		ret.halfmove = 0;
+	} else {
+		ret.halfmove++;
+	}
+
+
+
+	// Actually make the move...
+
+	ret.state[x2][y2] = ret.state[x1][y1];
+	ret.state[x1][y1] = "";
+
+	return ret;
+}
+
 function make_renderer() {
 
 	let renderer = Object.create(null);
@@ -208,5 +291,6 @@ function make_renderer() {
 }
 
 let renderer = make_renderer();
+renderer.pos = PositionFromMove(renderer.pos, "e2e4");
 
 renderer.await_loads();
