@@ -19,26 +19,32 @@ for (let c of Array.from("KkQqRrBbNnPp")) {
 	images[c].onload = () => { loads++ };
 }
 
-function NewPosition() {
+function NewPosition(board = null, active = "w", castling = "", enpassant = "-", halfmove = 0, fullmove = 1) {
 
 	let p = Object.create(null);
-
 	p.board = Object.create(null);		// map of coord --> piece
 
 	for (let x = 1; x <= 8; x++) {
 		let letter = String.fromCharCode(x + 96);
 		for (let y = 1; y <= 8; y++) {
 			let coord = letter + y.toString();
-			p.board[coord] = "";
+			if (board !== null) {
+				p.board[coord] = board[coord];
+			} else {
+				p.board[coord] = "";
+			}
 		}
 	}
 
-	p.active = "w";
-	p.castling = "";
-	p.enpassant = "-";
+	p.active = active;
+	p.castling = castling;
+	p.enpassant = enpassant;
+	p.halfmove = halfmove;
+	p.fullmove = fullmove;
 
-	p.halfmove = 0;						// ply since pawn advance or capture
-	p.fullmove = 1;						// traditional move counter - incrememt after Black's turn
+	p.copy = () => {
+		return NewPosition(p.board, p.active, p.castling, p.enpassant, p.halfmove, p.fullmove);
+	}
 
 	return p;
 }
