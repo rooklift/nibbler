@@ -20,9 +20,15 @@ for (let c of Array.from("KkQqRrBbNnPp")) {
 }
 
 function XY(s) {
+	if (s.length !== 2) {
+		return [-1, -1];
+	}
 	s = s.toLowerCase();
 	let x = s.charCodeAt(0) - 97;
 	let y = 8 - parseInt(s[1], 10);
+	if (x < 0 || x > 7 || y < 0 || y > 7 || Number.isNaN(y)) {
+		return [-1, -1];
+	}
 	return [x, y];
 }
 
@@ -121,18 +127,7 @@ function PositionFromFEN(fen) {
 	}
 
 	tokens[3] = tokens[3].toLowerCase();
-
-	if (tokens[3] === "-") {
-		ret.enpassant = [-1, -1];
-	} else {
-		if ("abcdefgh".includes(tokens[3][0]) === false) {
-			throw "Invalid FEN - en passant square";
-		}
-		if ("12345678".includes(tokens[3][1]) === false) {
-			throw "Invalid FEN - en passant square";
-		}
-		ret.enpassant = XY(tokens[3]);
-	}
+	ret.enpassant = XY(tokens[3]);				// XY() sanitises bad stuff to [-1, -1]
 	
 	ret.halfmove = parseInt(tokens[4], 10);
 	if (Number.isNaN(ret.halfmove)) {
