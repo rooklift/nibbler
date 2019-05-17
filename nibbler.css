@@ -1,5 +1,5 @@
 body {
-	margin: 1em;
+	margin: 20px;
 	border: 0;
 	padding: 0;
 	background-color: black;
@@ -9,7 +9,10 @@ body {
 	overflow: hidden;
 }
 
-#canvas {
-	float: left;
-	margin-right: 1em;
+#fen {
+	clear: both;
+	margin-top: 1em;
+	color: #6cccee;
+	font-family: monospace, monospace;
+	text-align: center;
 }

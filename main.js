@@ -7,7 +7,7 @@ const path = require("path");
 const windows = require("./modules/windows");
 
 electron.app.on("ready", () => {
-	windows.new("main-window", {width: 1200, height: 800, page: "nibbler.html"});
+	windows.new("main-window", {width: 680, height: 720, page: "nibbler.html"});
 	menu_build();
 });
 
