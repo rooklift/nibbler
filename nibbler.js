@@ -62,7 +62,7 @@ function NewPosition(state = null, active = "w", castling = "", enpassant = null
 	
 	p.enpassant = [-1, -1];
 	if (enpassant) {
-		if (typeof enpassant === "string" {
+		if (typeof enpassant === "string") {
 			p.enpassant = XY(enpassant);
 		} else {
 			p.enpassant[0] = enpassant[0];
@@ -163,18 +163,11 @@ function PositionFromFEN(fen) {
 
 function PositionFromMove(pos, s) {
 
-	// FIXME: many things to do...
-	//
-	//		-- handle castling itself
-	//		-- handle e.p. captures
-	//		-- handle promotions
-	//		-- set e.p. square
-
 	let ret = pos.copy();
 
 	let [x1, y1] = XY(s.slice(0, 2));
 	let [x2, y2] = XY(s.slice(2, 4));
-	let promotion = s.length > 4 ? s[4] : "";
+	let promotion = s.length > 4 ? s[4] : "q";
 
 	let white_flag = pos.state[x1][y1] === pos.state[x1][y1].toUpperCase();
 	let pawn_flag = "Pp".includes(pos.state[x1][y1]);
@@ -224,12 +217,64 @@ function PositionFromMove(pos, s) {
 		ret.halfmove++;
 	}
 
+	// Handle the rook moves of castling...
 
+	if (ret.state[x1][y1] === "K" && x1 === 4 && x2 === 6) {
+		ret.state[5][7] = "R";
+		ret.state[7][7] = "";
+	}
+
+	if (ret.state[x1][y1] === "K" && x1 === 4 && x2 === 2) {
+		ret.state[3][7] = "R";
+		ret.state[0][7] = "";
+	}
+
+	if (ret.state[x1][y1] === "k" && x1 === 4 && x2 === 6) {
+		ret.state[5][0] = "r";
+		ret.state[7][0] = "";
+	}
+
+	if (ret.state[x1][y1] === "k" && x1 === 4 && x2 === 2) {
+		ret.state[3][0] = "r";
+		ret.state[0][0] = "";
+	}
+
+	// Handle e.p. captures...
+
+	if (pawn_flag && capture_flag && ret.state[x2][y2] === "") {
+		ret.state[x2][y1] = "";
+	}
+
+	// Set e.p. square...
+
+	ret.enpassant = [-1, -1];
+
+	if (pawn_flag && y1 === 6 && y2 === 4) {
+		ret.enpassant = [x1, 5];
+	}
+
+	if (pawn_flag && y1 === 1 && y2 === 3) {
+		ret.enpassant = [x1, 2];
+	}
 
 	// Actually make the move...
 
 	ret.state[x2][y2] = ret.state[x1][y1];
 	ret.state[x1][y1] = "";
+
+	// Handle promotions...
+
+	if (y2 === 0 && pawn_flag) {
+		ret.state[x2][y2] = promotion.toUpperCase();
+	}
+
+	if (y2 === 7 && pawn_flag) {
+		ret.state[x2][y2] = promotion.toLowerCase();
+	}
+
+	// Set active player...
+
+	ret.active = white_flag ? "b" : "w";
 
 	return ret;
 }
@@ -291,6 +336,5 @@ function make_renderer() {
 }
 
 let renderer = make_renderer();
-renderer.pos = PositionFromMove(renderer.pos, "e2e4");
 
 renderer.await_loads();
