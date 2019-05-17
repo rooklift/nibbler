@@ -19,19 +19,18 @@ for (let c of Array.from("KkQqRrBbNnPp")) {
 	images[c].onload = () => { loads++ };
 }
 
-function NewPosition(board = null, active = "w", castling = "", enpassant = "-", halfmove = 0, fullmove = 1) {
+function NewPosition(state = null, active = "w", castling = "", enpassant = "-", halfmove = 0, fullmove = 1) {
 
 	let p = Object.create(null);
-	p.board = Object.create(null);		// map of coord --> piece
+	p.state = [];					// top-left is 0,0
 
-	for (let x = 1; x <= 8; x++) {
-		let letter = String.fromCharCode(x + 96);
-		for (let y = 1; y <= 8; y++) {
-			let coord = letter + y.toString();
-			if (board !== null) {
-				p.board[coord] = board[coord];
+	for (let x = 0; x < 8; x++) {
+		p.state.push([]);
+		for (let y = 0; y < 8; y++) {
+			if (state) {
+				p.state[x].push(state[x][y]);
 			} else {
-				p.board[coord] = "";
+				p.state[x].push("");
 			}
 		}
 	}
@@ -43,7 +42,7 @@ function NewPosition(board = null, active = "w", castling = "", enpassant = "-",
 	p.fullmove = fullmove;
 
 	p.copy = () => {
-		return NewPosition(p.board, p.active, p.castling, p.enpassant, p.halfmove, p.fullmove);
+		return NewPosition(p.state, p.active, p.castling, p.enpassant, p.halfmove, p.fullmove);
 	}
 
 	return p;
@@ -71,12 +70,11 @@ function PositionFromFEN(fen) {
 		throw "Invalid FEN - board row count";
 	}
 
-	for (let y = 8; y >= 1; y--) {
+	for (let y = 0; y < 8; y++) {
 
-		let row = rows[8 - y];
-		let chars = Array.from(row);
+		let chars = Array.from(rows[y]);
 
-		let x = 1;
+		let x = 0;
 
 		for (let c of chars) {
 
@@ -86,18 +84,15 @@ function PositionFromFEN(fen) {
 			}
 
 			if ("KkQqRrBbNnPp".includes(c)) {
-				let letter = String.fromCharCode(x + 96);
-				let coord = letter + y;
-				ret.board[coord] = c;
+				ret.state[x][y] = c;
 				x++;
 				continue;
 			}
 
 			throw "Invalid FEN - unknown piece";
-
 		}
 
-		if (x !== 9) {
+		if (x !== 8) {
 			throw "Invalid FEN - row length";
 		}
 	}
@@ -121,14 +116,7 @@ function PositionFromFEN(fen) {
 	}
 
 	tokens[3] = tokens[3].toLowerCase();
-	if (tokens[3] === "-") {
-		ret.enpassant = tokens[3];
-	} else {
-		if (ret.board[tokens[3]] === undefined) {			// not a valid square
-			throw "Invalid FEN - en passant";
-		}
-		ret.enpassant = tokens[3];
-	}
+	ret.enpassant = tokens[3];					// FIXME - sanity check, maybe convert to x,y
 
 	ret.halfmove = parseInt(tokens[4], 10);
 	if (Number.isNaN(ret.halfmove)) {
@@ -172,14 +160,12 @@ function make_renderer() {
 			}
 		}
 
-		for (let x = 1; x <= 8; x++) {
-			let letter = String.fromCharCode(x + 96);
-			for (let y = 1; y <= 8; y++) {
-				let coord = letter + y.toString();
-				let piece = renderer.pos.board[coord];
+		for (let x = 0; x < 8; x++) {
+			for (let y = 0; y < 8; y++) {
+				let piece = renderer.pos.state[x][y];
 				if (piece !== "") {
-					let screen_x = (x - 1) * rss;
-					let screen_y = (8 - y) * rss;
+					let screen_x = x * rss;
+					let screen_y = y * rss;
 					context.drawImage(images[piece], screen_x, screen_y, rss, rss);
 				}
 			}
@@ -202,4 +188,5 @@ function make_renderer() {
 }
 
 let renderer = make_renderer();
+
 renderer.await_loads();
