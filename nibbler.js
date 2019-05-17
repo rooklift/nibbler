@@ -1,5 +1,6 @@
 "use strict";
 
+const fen = document.getElementById("fen");
 const canvas = document.getElementById("canvas");
 const context = canvas.getContext("2d");
 
@@ -65,7 +66,7 @@ function NewPosition(state = null, active = "w", castling = "", enpassant = null
 	p.enpassant = [-1, -1];
 	if (enpassant) {
 		if (typeof enpassant === "string") {
-			p.enpassant = XY(enpassant);
+			p.enpassant = XY(enpassant);			// XY() sanitises bad stuff to [-1, -1]
 		} else {
 			p.enpassant[0] = enpassant[0];
 			p.enpassant[1] = enpassant[1];
@@ -200,6 +201,47 @@ function NewPosition(state = null, active = "w", castling = "", enpassant = null
 		return ret;
 	};
 
+	p.fen = () => {
+
+		let s = "";
+
+		for (let y = 0; y < 8; y++) {
+
+			let x = 0;
+			let blanks = 0;
+
+			while (true) {
+
+				if (p.state[x][y] === "") {
+					blanks++
+				} else {
+					if (blanks > 0) {
+						s += blanks.toString();
+						blanks = 0;
+					}
+					s += p.state[x][y];
+				}
+
+				x++;
+
+				if (x >= 8) {
+					if (blanks > 0) {
+						s += blanks.toString();
+					}
+					if (y < 7) {
+						s += "/";
+					}
+					break;
+				}
+			}
+		}
+
+		let ep_string = p.enpassant[0] < 0 || p.enpassant[1] < 0 ? "-" : S(p.enpassant[0], p.enpassant[1]);
+		let castling_string = p.castling === "" ? "-" : p.castling;
+
+		return s + ` ${p.active} ${castling_string} ${ep_string} ${p.halfmove} ${p.fullmove}`;
+	};
+
 	return p;
 }
 
@@ -230,6 +272,10 @@ function LoadFEN(fen) {
 		let x = 0;
 
 		for (let c of chars) {
+
+			if (x > 7) {
+				throw "Invalid FEN - row length";
+			}
 
 			if ("12345678".includes(c)) {
 				x += parseInt(c, 10);
@@ -290,7 +336,7 @@ function make_renderer() {
 	renderer.pos = LoadFEN("rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1");
 
 	renderer.square_size = () => {
-		return 80;
+		return 80;						// FIXME
 	};
 
 	renderer.draw = () => {
@@ -323,18 +369,16 @@ function make_renderer() {
 				}
 			}
 		}
+
+		fen.innerHTML = renderer.pos.fen();
 	};
 
 	renderer.await_loads = () => {
 		if (loads < 12) {
 			setTimeout(renderer.await_loads, 100);
 		} else {
-			renderer.go();
+			renderer.draw();
 		}
-	};
-
-	renderer.go = () => {
-		renderer.draw();
 	};
 
 	renderer.move = (s) => {
@@ -356,4 +400,5 @@ let renderer = make_renderer();
 renderer.await_loads();
 
 renderer.move("e2e4");
-renderer.move("g8f6");
+renderer.move("c7c5");
+renderer.move("g1f3");
