@@ -11,7 +11,11 @@ let loads = 0;
 
 for (let c of Array.from("KkQqRrBbNnPp")) {
 	images[c] = new Image();
-	images[c].src = `./pieces/${c}.png`;				// FIXME - won't be possible on Windows due to case insensitivity
+	if (c === c.toUpperCase()) {
+		images[c].src = `./pieces/${c}.png`;
+	} else {
+		images[c].src = `./pieces/_${c.toUpperCase()}.png`;
+	}
 	images[c].onload = () => { loads++ };
 }
 
