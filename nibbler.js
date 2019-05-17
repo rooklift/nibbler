@@ -57,8 +57,6 @@ function NewPosition(state = null, active = "w", castling = "", enpassant = "-",
 
 function PositionFromFEN(fen) {
 
-	// rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1
-
 	let ret = NewPosition();
 
 	fen = fen.replace("\t", " ");
@@ -123,8 +121,19 @@ function PositionFromFEN(fen) {
 	}
 
 	tokens[3] = tokens[3].toLowerCase();
-	ret.enpassant = tokens[3];					// FIXME - sanity check, maybe convert to x,y
 
+	if (tokens[3] === "-") {
+		ret.enpassant = [-1, -1];
+	} else {
+		if ("abcdefgh".includes(tokens[3][0]) === false) {
+			throw "Invalid FEN - en passant square";
+		}
+		if ("12345678".includes(tokens[3][1]) === false) {
+			throw "Invalid FEN - en passant square";
+		}
+		ret.enpassant = XY(tokens[3]);
+	}
+	
 	ret.halfmove = parseInt(tokens[4], 10);
 	if (Number.isNaN(ret.halfmove)) {
 		throw "Invalid FEN - halfmoves";
