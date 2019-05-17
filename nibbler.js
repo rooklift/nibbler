@@ -41,7 +41,7 @@ function S(x, y) {
 	return xs + ys;
 }
 
-function NewPosition(state = null, active = "w", castling = "", enpassant = null, halfmove = 0, fullmove = 1) {
+function NewPosition(state = null, active = "w", castling = "", enpassant = null, halfmove = 0, fullmove = 1, parent = null) {
 
 	let p = Object.create(null);
 	p.state = [];					// top-left is 0,0
@@ -73,10 +73,10 @@ function NewPosition(state = null, active = "w", castling = "", enpassant = null
 	p.halfmove = halfmove;
 	p.fullmove = fullmove;
 
-	p.parent = null;
+	p.parent = parent;
 
 	p.copy = () => {
-		return NewPosition(p.state, p.active, p.castling, p.enpassant, p.halfmove, p.fullmove);
+		return NewPosition(p.state, p.active, p.castling, p.enpassant, p.halfmove, p.fullmove, p.parent);
 	};
 
 	p.move = (s) => {
