@@ -19,6 +19,13 @@ for (let c of Array.from("KkQqRrBbNnPp")) {
 	images[c].onload = () => { loads++ };
 }
 
+function XY(s) {
+	s = s.toLowerCase();
+	let x = s.charCodeAt(0) - 97;
+	let y = 8 - parseInt(s[1], 10);
+	return [x, y];
+}
+
 function NewPosition(state = null, active = "w", castling = "", enpassant = "-", halfmove = 0, fullmove = 1) {
 
 	let p = Object.create(null);
