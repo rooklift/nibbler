@@ -332,9 +332,13 @@ function make_renderer() {
 		renderer.draw();
 	}
 
+	renderer.move = (s) => {
+		renderer.pos = PositionFromMove(renderer.pos, s);
+		renderer.draw();
+	}
+
 	return renderer;
 }
 
 let renderer = make_renderer();
-
 renderer.await_loads();
