@@ -1,0 +1,15 @@
+body {
+	margin: 1em;
+	border: 0;
+	padding: 0;
+	background-color: black;
+	color: white;
+	user-select: none;
+	cursor: default;
+	overflow: hidden;
+}
+
+#canvas {
+	float: left;
+	margin-right: 1em;
+}
