@@ -73,14 +73,135 @@ function NewPosition(state = null, active = "w", castling = "", enpassant = null
 	p.halfmove = halfmove;
 	p.fullmove = fullmove;
 
+	p.parent = null;
+
 	p.copy = () => {
 		return NewPosition(p.state, p.active, p.castling, p.enpassant, p.halfmove, p.fullmove);
-	}
+	};
+
+	p.move = (s) => {
+
+		let ret = p.copy();
+		ret.parent = p;
+
+		let [x1, y1] = XY(s.slice(0, 2));
+		let [x2, y2] = XY(s.slice(2, 4));
+		let promotion = s.length > 4 ? s[4] : "q";
+
+		let white_flag = ret.state[x1][y1] === ret.state[x1][y1].toUpperCase();
+		let pawn_flag = "Pp".includes(ret.state[x1][y1]);
+		let capture_flag = ret.state[x2][y2] !== "";
+
+		if (pawn_flag && x1 !== x2) {		// Make sure capture_flag is set even for e.p. captures
+			capture_flag = true;
+		}
+
+		// Update castling info...
+
+		if (ret.state[x1][y1] === "K") {
+			ret.castling = ret.castling.replace("K", "");
+			ret.castling = ret.castling.replace("Q", "");
+		}
+
+		if (ret.state[x1][y1] === "k") {
+			ret.castling = ret.castling.replace("k", "");
+			ret.castling = ret.castling.replace("q", "");
+		}
+
+		if ((x1 == 0 && y1 == 0) || (x2 == 0 && y2 == 0)) {
+			ret.castling = ret.castling.replace("q", "");
+		}
+
+		if ((x1 == 7 && y1 == 0) || (x2 == 7 && y2 == 0)) {
+			ret.castling = ret.castling.replace("k", "");
+		}
+
+		if ((x1 == 0 && y1 == 7) || (x2 == 0 && y2 == 7)) {
+			ret.castling = ret.castling.replace("Q", "");
+		}
+
+		if ((x1 == 7 && y1 == 7) || (x2 == 7 && y2 == 7)) {
+			ret.castling = ret.castling.replace("K", "");
+		}
+
+		// Update halfmove and fullmove...
+
+		if (white_flag === false) {
+			ret.fullmove++;
+		}
+
+		if (pawn_flag || capture_flag) {
+			ret.halfmove = 0;
+		} else {
+			ret.halfmove++;
+		}
+
+		// Handle the rook moves of castling...
+
+		if (ret.state[x1][y1] === "K" && x1 === 4 && x2 === 6) {
+			ret.state[5][7] = "R";
+			ret.state[7][7] = "";
+		}
+
+		if (ret.state[x1][y1] === "K" && x1 === 4 && x2 === 2) {
+			ret.state[3][7] = "R";
+			ret.state[0][7] = "";
+		}
+
+		if (ret.state[x1][y1] === "k" && x1 === 4 && x2 === 6) {
+			ret.state[5][0] = "r";
+			ret.state[7][0] = "";
+		}
+
+		if (ret.state[x1][y1] === "k" && x1 === 4 && x2 === 2) {
+			ret.state[3][0] = "r";
+			ret.state[0][0] = "";
+		}
+
+		// Handle e.p. captures...
+
+		if (pawn_flag && capture_flag && ret.state[x2][y2] === "") {
+			ret.state[x2][y1] = "";
+		}
+
+		// Set e.p. square...
+
+		ret.enpassant = [-1, -1];
+
+		if (pawn_flag && y1 === 6 && y2 === 4) {
+			ret.enpassant = [x1, 5];
+		}
+
+		if (pawn_flag && y1 === 1 && y2 === 3) {
+			ret.enpassant = [x1, 2];
+		}
+
+		// Actually make the move...
+
+		ret.state[x2][y2] = ret.state[x1][y1];
+		ret.state[x1][y1] = "";
+
+		// Handle promotions...
+
+		if (y2 === 0 && pawn_flag) {
+			ret.state[x2][y2] = promotion.toUpperCase();
+		}
+
+		if (y2 === 7 && pawn_flag) {
+			ret.state[x2][y2] = promotion.toLowerCase();
+		}
+
+		// Set active player...
+
+		ret.active = white_flag ? "b" : "w";
+
+		return ret;
+	};
 
 	return p;
 }
 
-function PositionFromFEN(fen) {
+function LoadFEN(fen) {
 
 	let ret = NewPosition();
 
@@ -161,128 +282,10 @@ function PositionFromFEN(fen) {
 	return ret;
 }
 
-function PositionFromMove(pos, s) {
-
-	let ret = pos.copy();
-
-	let [x1, y1] = XY(s.slice(0, 2));
-	let [x2, y2] = XY(s.slice(2, 4));
-	let promotion = s.length > 4 ? s[4] : "q";
-
-	let white_flag = pos.state[x1][y1] === pos.state[x1][y1].toUpperCase();
-	let pawn_flag = "Pp".includes(pos.state[x1][y1]);
-	let capture_flag = pos.state[x2][y2] !== "";
-
-	if (pawn_flag && x1 !== x2) {		// Make sure capture_flag is set even for e.p. captures
-		capture_flag = true;
-	}
-
-	// Update castling info...
-
-	if (ret.state[x1][y1] === "K") {
-		ret.castling = ret.castling.replace("K", "");
-		ret.castling = ret.castling.replace("Q", "");
-	}
-
-	if (ret.state[x1][y1] === "k") {
-		ret.castling = ret.castling.replace("k", "");
-		ret.castling = ret.castling.replace("q", "");
-	}
-
-	if ((x1 == 0 && y1 == 0) || (x2 == 0 && y2 == 0)) {
-		ret.castling = ret.castling.replace("q", "");
-	}
-
-	if ((x1 == 7 && y1 == 0) || (x2 == 7 && y2 == 0)) {
-		ret.castling = ret.castling.replace("k", "");
-	}
-
-	if ((x1 == 0 && y1 == 7) || (x2 == 0 && y2 == 7)) {
-		ret.castling = ret.castling.replace("Q", "");
-	}
-
-	if ((x1 == 7 && y1 == 7) || (x2 == 7 && y2 == 7)) {
-		ret.castling = ret.castling.replace("K", "");
-	}
-
-	// Update halfmove and fullmove...
-
-	if (white_flag === false) {
-		ret.fullmove++;
-	}
-
-	if (pawn_flag || capture_flag) {
-		ret.halfmove = 0;
-	} else {
-		ret.halfmove++;
-	}
-
-	// Handle the rook moves of castling...
-
-	if (ret.state[x1][y1] === "K" && x1 === 4 && x2 === 6) {
-		ret.state[5][7] = "R";
-		ret.state[7][7] = "";
-	}
-
-	if (ret.state[x1][y1] === "K" && x1 === 4 && x2 === 2) {
-		ret.state[3][7] = "R";
-		ret.state[0][7] = "";
-	}
-
-	if (ret.state[x1][y1] === "k" && x1 === 4 && x2 === 6) {
-		ret.state[5][0] = "r";
-		ret.state[7][0] = "";
-	}
-
-	if (ret.state[x1][y1] === "k" && x1 === 4 && x2 === 2) {
-		ret.state[3][0] = "r";
-		ret.state[0][0] = "";
-	}
-
-	// Handle e.p. captures...
-
-	if (pawn_flag && capture_flag && ret.state[x2][y2] === "") {
-		ret.state[x2][y1] = "";
-	}
-
-	// Set e.p. square...
-
-	ret.enpassant = [-1, -1];
-
-	if (pawn_flag && y1 === 6 && y2 === 4) {
-		ret.enpassant = [x1, 5];
-	}
-
-	if (pawn_flag && y1 === 1 && y2 === 3) {
-		ret.enpassant = [x1, 2];
-	}
-
-	// Actually make the move...
-
-	ret.state[x2][y2] = ret.state[x1][y1];
-	ret.state[x1][y1] = "";
-
-	// Handle promotions...
-
-	if (y2 === 0 && pawn_flag) {
-		ret.state[x2][y2] = promotion.toUpperCase();
-	}
-
-	if (y2 === 7 && pawn_flag) {
-		ret.state[x2][y2] = promotion.toLowerCase();
-	}
-
-	// Set active player...
-
-	ret.active = white_flag ? "b" : "w";
-
-	return ret;
-}
-
 function make_renderer() {
 
 	let renderer = Object.create(null);
-	renderer.pos = PositionFromFEN("rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1");
+	renderer.pos = LoadFEN("rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1");
 
 	renderer.square_size = () => {
 		return 80;
@@ -318,7 +321,7 @@ function make_renderer() {
 				}
 			}
 		}
-	}
+	};
 
 	renderer.await_loads = () => {
 		if (loads < 12) {
@@ -326,19 +329,29 @@ function make_renderer() {
 		} else {
 			renderer.go();
 		}
-	}
+	};
 
 	renderer.go = () => {
 		renderer.draw();
-	}
+	};
 
 	renderer.move = (s) => {
-		renderer.pos = PositionFromMove(renderer.pos, s);
+		renderer.pos = renderer.pos.move(s);
 		renderer.draw();
-	}
+	};
+
+	renderer.undo = () => {
+		if (renderer.pos.parent) {
+			renderer.pos = renderer.pos.parent;
+			renderer.draw();
+		}
+	};
 
 	return renderer;
 }
 
 let renderer = make_renderer();
 renderer.await_loads();
+
+renderer.move("e2e4");
+renderer.move("g8f6");
