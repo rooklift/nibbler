@@ -31,16 +31,7 @@ function menu_build() {
 					}
 				},
 				{
-					type: "separator"
-				},
-				{
-					role: "reload"
-				},
-				{
 					role: "quit"
-				},
-				{
-					type: "separator"
 				},
 				{
 					role: "toggledevtools"
