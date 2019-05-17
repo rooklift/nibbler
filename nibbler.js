@@ -215,7 +215,7 @@ function NewPosition(state = null, active = "w", castling = "", enpassant = null
 			while (true) {
 
 				if (p.state[x][y] === "") {
-					blanks++
+					blanks++;
 				} else {
 					if (blanks > 0) {
 						s += blanks.toString();
