@@ -1,5 +1,7 @@
 "use strict";
 
+const ipcRenderer = require("electron").ipcRenderer;
+
 const fen = document.getElementById("fen");
 const canvas = document.getElementById("canvas");
 const context = canvas.getContext("2d");
@@ -398,6 +400,10 @@ function make_renderer() {
 
 let renderer = make_renderer();
 renderer.await_loads();
+
+ipcRenderer.on("undo", () => {
+	renderer.undo();
+});
 
 renderer.move("e2e4");
 renderer.move("c7c5");

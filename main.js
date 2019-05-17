@@ -46,6 +46,17 @@ function menu_build() {
 					role: "toggledevtools"
 				}
 			]
+		},
+		{
+			label: "Navigation",
+			submenu: [
+				{
+					label: "Undo",
+					click: () => {
+						windows.send("main-window", "undo", null);
+					}
+				}
+			]
 		}
 	];
 
