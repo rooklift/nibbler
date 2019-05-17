@@ -32,6 +32,15 @@ function XY(s) {
 	return [x, y];
 }
 
+function S(x, y) {
+	if (typeof x !== "number" || typeof y !== "number" || x < 0 || x > 7 || y < 0 || y > 7) {
+		return "??";
+	}
+	let xs = String.fromCharCode(x + 97);
+	let ys = String.fromCharCode((8 - y) + 48);
+	return xs + ys;
+}
+
 function NewPosition(state = null, active = "w", castling = "", enpassant = "-", halfmove = 0, fullmove = 1) {
 
 	let p = Object.create(null);
