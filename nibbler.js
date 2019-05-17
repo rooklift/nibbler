@@ -16,7 +16,9 @@ for (let c of Array.from("KkQqRrBbNnPp")) {
 	} else {
 		images[c].src = `./pieces/_${c.toUpperCase()}.png`;
 	}
-	images[c].onload = () => { loads++ };
+	images[c].onload = () => {
+		loads++;
+	};
 }
 
 function XY(s) {
