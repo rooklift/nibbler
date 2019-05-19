@@ -90,39 +90,6 @@ function Point(a, b) {
 
 // ------------------------------------------------------------------------------------------------
 
-function IsWhite(s) {
-	if (s === s.toUpperCase() && s !== "") {
-		return true;
-	}
-	return false;
-}
-
-function IsBlack(s) {
-	if (s !== s.toUpperCase() && s !== "") {
-		return true;
-	}
-	return false;
-}
-
-function SameColour(s1, s2) {
-
-	if (IsWhite(s1) && IsWhite(s2)) {
-		return true;
-	}
-
-	if (IsBlack(s1) && IsBlack(s2)) {
-		return true;
-	}
-
-	if (s1 === "" && s2 === "") {
-		return true;
-	}
-
-	return false;
-}
-
-// ------------------------------------------------------------------------------------------------
-
 function NewPosition(state = null, active = "w", castling = "", enpassant = null, halfmove = 0, fullmove = 1, parent = null) {
 
 	let p = Object.create(null);
@@ -169,7 +136,7 @@ function NewPosition(state = null, active = "w", castling = "", enpassant = null
 		let [x2, y2] = XY(s.slice(2, 4));
 		let promotion = s.length > 4 ? s[4] : "q";
 
-		let white_flag = IsWhite(ret.state[x1][y1]);
+		let white_flag = p.is_white(Point(x1, y1));
 		let pawn_flag = "Pp".includes(ret.state[x1][y1]);
 		let capture_flag = ret.state[x2][y2] !== "";
 
@@ -292,17 +259,17 @@ function NewPosition(state = null, active = "w", castling = "", enpassant = null
 
 		// Wrong colour source...
 
-		if (p.active === "w" && IsWhite(p.state[x1][y1]) === false) {
+		if (p.active === "w" && p.is_white(Point(x1, y1)) === false) {
 			return false;
 		}
 
-		if (p.active === "b" && IsBlack(p.state[x1][y1]) === false) {
+		if (p.active === "b" && p.is_black(Point(x1, y1)) === false) {
 			return false;
 		}
 
 		// Source and dest have same colour...
 
-		if (SameColour(p.state[x1][y1], p.state[x2][y2])) {
+		if (p.same_colour(Point(x1, y1), Point(x2, y2))) {
 			return false;
 		}
 
@@ -350,6 +317,38 @@ function NewPosition(state = null, active = "w", castling = "", enpassant = null
 		let castling_string = p.castling === "" ? "-" : p.castling;
 
 		return s + ` ${p.active} ${castling_string} ${ep_string} ${p.halfmove} ${p.fullmove}`;
+	};
+
+	p.piece = (point) => {
+		return p.state[point.x][point.y];
+	};
+
+	p.is_white = (point) => {
+		if (p.state[point.x][point.y] === p.state[point.x][point.y].toUpperCase() && p.state[point.x][point.y] !== "") {
+			return true;
+		}
+		return false;
+	};
+
+	p.is_black = (point) => {
+		if (p.state[point.x][point.y] !== p.state[point.x][point.y].toUpperCase() && p.state[point.x][point.y] !== "") {
+			return true;
+		}
+		return false;
+	};
+
+	p.is_empty = (point) => {
+		return p.state[point.x][point.y] === "";
+	};
+
+	p.colour = (point) => {
+		if (p.is_white(point)) return "w";
+		if (p.is_black(point)) return "b";
+		return "";
+	};
+
+	p.same_colour = (point1, point2) => {
+		return p.colour(point1) === p.colour(point2);
 	};
 
 	return p;
@@ -545,10 +544,10 @@ function make_renderer() {
 
 		} else {
 
-			if (renderer.pos.active === "w" && IsWhite(renderer.pos.state[point.x][point.y])) {
+			if (renderer.pos.active === "w" && renderer.pos.is_white(point)) {
 				renderer.active_square = point;
 			}
-			if (renderer.pos.active === "b" && IsBlack(renderer.pos.state[point.x][point.y])) {
+			if (renderer.pos.active === "b" && renderer.pos.is_black(point)) {
 				renderer.active_square = point;
 			}
 		}
