@@ -8,6 +8,9 @@ const context = canvas.getContext("2d");
 
 const light = "#dadada";
 const dark = "#b4b4b4";
+const act = "#cc9966";
+
+// ------------------------------------------------------------------------------------------------
 
 let images = Object.create(null);
 let loads = 0;
@@ -23,6 +26,8 @@ for (let c of Array.from("KkQqRrBbNnPp")) {
 		loads++;
 	};
 }
+
+// ------------------------------------------------------------------------------------------------
 
 function XY(s) {
 	if (s.length !== 2) {
@@ -45,6 +50,8 @@ function S(x, y) {
 	let ys = String.fromCharCode((8 - y) + 48);
 	return xs + ys;
 }
+
+// ------------------------------------------------------------------------------------------------
 
 function NewPosition(state = null, active = "w", castling = "", enpassant = null, halfmove = 0, fullmove = 1, parent = null) {
 
@@ -85,6 +92,8 @@ function NewPosition(state = null, active = "w", castling = "", enpassant = null
 	};
 
 	p.move = (s) => {
+
+		// Assumes move is legal.
 
 		let ret = p.copy();
 		ret.parent = p;
@@ -203,6 +212,30 @@ function NewPosition(state = null, active = "w", castling = "", enpassant = null
 		return ret;
 	};
 
+	p.legal = (x1, y1, x2, y2) => {
+
+		if (x1 === undefined || x2 === undefined || y1 === undefined || y2 === undefined) {
+			console.log("p.legal() - got undefined args");
+			return false;
+		}
+
+		if (x1 < 0 || y1 < 0 || x1 > 7 || y1 > 7 || x2 < 0 || y2 < 0 || x2 > 7 || y2 > 7) {
+			return false;
+		}
+
+		if (x1 == x2 && y1 == y2) {
+			return false;
+		}
+
+		if (p.state[x1][y1] === "") {
+			return false;
+		}
+
+		// MUCH TODO
+
+		return true;
+	};
+
 	p.fen = () => {
 
 		let s = "";
@@ -246,6 +279,8 @@ function NewPosition(state = null, active = "w", castling = "", enpassant = null
 
 	return p;
 }
+
+// ------------------------------------------------------------------------------------------------
 
 function LoadFEN(fen) {
 
@@ -332,10 +367,14 @@ function LoadFEN(fen) {
 	return ret;
 }
 
+// ------------------------------------------------------------------------------------------------
+
 function make_renderer() {
 
 	let renderer = Object.create(null);
 	renderer.pos = LoadFEN("rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1");
+	renderer.squares = [];
+	renderer.active_square = null;
 
 	renderer.square_size = () => {
 		return 80;						// FIXME
@@ -347,17 +386,30 @@ function make_renderer() {
 
 		canvas.width = rss * 8;
 		canvas.height = rss * 8;
-
-		context.fillStyle = light;
-		context.fillRect(0, 0, canvas.width, canvas.height);
-
-		context.fillStyle = dark;
+		
+		renderer.squares = [];
 
 		for (let x = 0; x < 8; x++) {
 			for (let y = 0; y < 8; y++) {
 				if (x % 2 !== y % 2) {
-					context.fillRect(x * rss, y * rss, rss, rss);
+					context.fillStyle = dark;
+				} else {
+					context.fillStyle = light;
 				}
+
+				let x1 = x * rss;
+				let y1 = y * rss;
+				let x2 = x1 + rss;
+				let y2 = y1 + rss;
+
+				let coords = S(x, y);
+
+				if (renderer.active_square === coords) {
+					context.fillStyle = act;
+				}
+
+				context.fillRect(x1, y1, rss, rss);
+				renderer.squares.push({x1, y1, x2, y2, coords});
 			}
 		}
 
@@ -385,7 +437,6 @@ function make_renderer() {
 
 	renderer.move = (s) => {
 		renderer.pos = renderer.pos.move(s);
-		renderer.draw();
 	};
 
 	renderer.undo = () => {
@@ -395,8 +446,49 @@ function make_renderer() {
 		}
 	};
 
+	renderer.click = (event) => {
+
+		let sq = null;
+
+		for (let n = 0; n < renderer.squares.length; n++) {
+			let foo = renderer.squares[n];
+			if (foo.x1 < event.offsetX && foo.y1 < event.offsetY && foo.x2 > event.offsetX && foo.y2 > event.offsetY) {
+				sq = foo;
+				break;
+			}
+		}
+
+		if (sq === null) {
+			return;
+		}
+
+		if (renderer.active_square) {
+
+			let coords1 = renderer.active_square;
+			let coords2 = sq.coords;
+
+			renderer.active_square = null;
+
+			let [x1, y1] = XY(coords1);
+			let [x2, y2] = XY(coords2);
+
+			if (renderer.pos.legal(x1, y1, x2, y2)) {
+				renderer.move(coords1 + coords2);
+			}
+
+		} else {
+
+			renderer.active_square = sq.coords;
+
+		}
+
+		renderer.draw();
+	};
+
 	return renderer;
 }
+
+// ------------------------------------------------------------------------------------------------
 
 let renderer = make_renderer();
 renderer.await_loads();
@@ -405,6 +497,4 @@ ipcRenderer.on("undo", () => {
 	renderer.undo();
 });
 
-renderer.move("e2e4");
-renderer.move("c7c5");
-renderer.move("g1f3");
+canvas.addEventListener("mousedown", (event) => renderer.click(event));
