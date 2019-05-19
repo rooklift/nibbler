@@ -514,6 +514,10 @@ function make_renderer() {
 		}
 	};
 
+	renderer.move = (s) => {
+		renderer.pos = renderer.pos.move(s);
+	};
+
 	renderer.undo = () => {
 		if (renderer.pos.parent) {
 			renderer.pos = renderer.pos.parent;
