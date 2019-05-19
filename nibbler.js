@@ -279,12 +279,10 @@ function NewPosition(state = null, active = "w", castling = "", enpassant = null
 		return ret;
 	};
 
-	p.legal = (point1, point2) => {
+	p.legal = (s) => {
 
-		let x1 = point1.x;
-		let y1 = point1.y;
-		let x2 = point2.x;
-		let y2 = point2.y;
+		let [x1, y1] = XY(s.slice(0, 2));
+		let [x2, y2] = XY(s.slice(2, 4));
 
 		// Off-board...
 
@@ -354,7 +352,7 @@ function NewPosition(state = null, active = "w", castling = "", enpassant = null
 			}
 		}
 
-		let ep_string = p.enpassant.x < 0 || p.enpassant.y < 0 ? "-" : p.enpassant.s;
+		let ep_string = p.enpassant === null_point ? "-" : p.enpassant.s;
 		let castling_string = p.castling === "" ? "-" : p.castling;
 
 		return s + ` ${p.active} ${castling_string} ${ep_string} ${p.halfmove} ${p.fullmove}`;
@@ -516,10 +514,6 @@ function make_renderer() {
 		}
 	};
 
-	renderer.move = (s) => {
-		renderer.pos = renderer.pos.move(s);
-	};
-
 	renderer.undo = () => {
 		if (renderer.pos.parent) {
 			renderer.pos = renderer.pos.parent;
@@ -545,8 +539,8 @@ function make_renderer() {
 
 		if (renderer.active_square) {
 
-			if (renderer.pos.legal(renderer.active_square, point)) {
-				renderer.move(renderer.active_square.s + point.s);		// e.g. "e2e4"
+			if (renderer.pos.legal(renderer.active_square.s + point.s)) {	// e.g. "e2e4"
+				renderer.move(renderer.active_square.s + point.s);			// e.g. "e2e4"
 			}
 
 			renderer.active_square = null;
