@@ -231,6 +231,14 @@ function NewPosition(state = null, active = "w", castling = "", enpassant = null
 			return false;
 		}
 
+		if (p.state[x1][y1] === p.state[x1][y1].toUpperCase() && p.active !== "w") {
+			return false;
+		}
+
+		if (p.state[x1][y1] !== p.state[x1][y1].toUpperCase() && p.active !== "b") {
+			return false;
+		}
+
 		// MUCH TODO
 
 		return true;
