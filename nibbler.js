@@ -324,21 +324,21 @@ function NewPosition(state = null, active = "w", castling = "", enpassant = null
 	};
 
 	p.is_white = (point) => {
-		if (p.state[point.x][point.y] === p.state[point.x][point.y].toUpperCase() && p.state[point.x][point.y] !== "") {
-			return true;
+		if (p.piece(point) === "") {
+			return false;
 		}
-		return false;
+		return "KQRBNP".includes(p.piece(point));
 	};
 
 	p.is_black = (point) => {
-		if (p.state[point.x][point.y] !== p.state[point.x][point.y].toUpperCase() && p.state[point.x][point.y] !== "") {
-			return true;
+		if (p.piece(point) === "") {
+			return false;
 		}
-		return false;
+		return "kqrbnp".includes(p.piece(point));
 	};
 
 	p.is_empty = (point) => {
-		return p.state[point.x][point.y] === "";
+		return p.piece(point) === "";
 	};
 
 	p.colour = (point) => {
