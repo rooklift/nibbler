@@ -290,19 +290,13 @@ function NewPosition(state = null, active = "w", castling = "", enpassant = null
 			return false;
 		}
 
-		// Empty source...
-
-		if (p.state[x1][y1] === "") {
-			return false;
-		}
-
 		// Wrong colour source...
 
-		if (IsWhite(p.state[x1][y1]) && p.active !== "w") {
+		if (p.active === "w" && IsWhite(p.state[x1][y1]) === false) {
 			return false;
 		}
 
-		if (IsBlack(p.state[x1][y1]) && p.active !== "b") {
+		if (p.active === "b" && IsBlack(p.state[x1][y1]) === false) {
 			return false;
 		}
 
