@@ -52,6 +52,76 @@ function S(x, y) {
 }
 
 // ------------------------------------------------------------------------------------------------
+// The point of most of this is to make each Point represented by a single object so that
+// naive equality checking works, i.e. Point(x, y) === Point(x, y) should be true. Since
+// object comparisons in JS will be false unless they are the same object, we do all this...
+
+let all_points = Object.create(null);
+
+for (let x = 0; x < 8; x++) {
+	for (let y = 0; y < 8; y++) {
+		let s = S(x, y);
+		all_points[s] = {x, y, s};
+	}
+}
+
+let null_point = {x: -1, y: -1, s: "??"};
+
+function Point(a, b) {
+
+	// Point("a8") or Point(0, 0) are both valid.
+
+	let s;
+
+	if (typeof a === "string") {
+		s = a;
+	} else {
+		s = S(a, b);
+	}
+
+	let p = all_points[s];
+
+	if (p === undefined) {
+		return null_point;
+	}
+
+	return p;
+}
+
+// ------------------------------------------------------------------------------------------------
+
+function IsWhite(s) {
+	if (s === s.toUpperCase() && s !== "") {
+		return true;
+	}
+	return false;
+}
+
+function IsBlack(s) {
+	if (s !== s.toUpperCase() && s !== "") {
+		return true;
+	}
+	return false;
+}
+
+function SameColour(s1, s2) {
+
+	if (IsWhite(s1) && IsWhite(s2)) {
+		return true;
+	}
+
+	if (IsBlack(s1) && IsBlack(s2)) {
+		return true;
+	}
+
+	if (s1 === "" && s2 === "") {
+		return true;
+	}
+
+	return false;
+}
+
+// ------------------------------------------------------------------------------------------------
 
 function NewPosition(state = null, active = "w", castling = "", enpassant = null, halfmove = 0, fullmove = 1, parent = null) {
 
@@ -72,14 +142,10 @@ function NewPosition(state = null, active = "w", castling = "", enpassant = null
 	p.active = active;
 	p.castling = castling;
 	
-	p.enpassant = [-1, -1];
 	if (enpassant) {
-		if (typeof enpassant === "string") {
-			p.enpassant = XY(enpassant);			// XY() sanitises bad stuff to [-1, -1]
-		} else {
-			p.enpassant[0] = enpassant[0];
-			p.enpassant[1] = enpassant[1];
-		}
+		p.enpassant = enpassant;
+	} else {
+		p.enpassant = Point("??");
 	}
 
 	p.halfmove = halfmove;
@@ -93,6 +159,7 @@ function NewPosition(state = null, active = "w", castling = "", enpassant = null
 
 	p.move = (s) => {
 
+		// s is something like "e2e4".
 		// Assumes move is legal.
 
 		let ret = p.copy();
@@ -102,7 +169,7 @@ function NewPosition(state = null, active = "w", castling = "", enpassant = null
 		let [x2, y2] = XY(s.slice(2, 4));
 		let promotion = s.length > 4 ? s[4] : "q";
 
-		let white_flag = ret.state[x1][y1] === ret.state[x1][y1].toUpperCase();
+		let white_flag = IsWhite(ret.state[x1][y1]);
 		let pawn_flag = "Pp".includes(ret.state[x1][y1]);
 		let capture_flag = ret.state[x2][y2] !== "";
 
@@ -180,14 +247,14 @@ function NewPosition(state = null, active = "w", castling = "", enpassant = null
 
 		// Set e.p. square...
 
-		ret.enpassant = [-1, -1];
+		ret.enpassant = Point("??");
 
 		if (pawn_flag && y1 === 6 && y2 === 4) {
-			ret.enpassant = [x1, 5];
+			ret.enpassant = Point(x1, 5);
 		}
 
 		if (pawn_flag && y1 === 1 && y2 === 3) {
-			ret.enpassant = [x1, 2];
+			ret.enpassant = Point(x1, 2);
 		}
 
 		// Actually make the move...
@@ -212,30 +279,38 @@ function NewPosition(state = null, active = "w", castling = "", enpassant = null
 		return ret;
 	};
 
-	p.legal = (x1, y1, x2, y2) => {
+	p.legal = (point1, point2) => {
 
-		if (x1 === undefined || x2 === undefined || y1 === undefined || y2 === undefined) {
-			console.log("p.legal() - got undefined args");
-			return false;
-		}
+		let x1 = point1.x;
+		let y1 = point1.y;
+		let x2 = point2.x;
+		let y2 = point2.y;
+
+		// Off-board...
 
 		if (x1 < 0 || y1 < 0 || x1 > 7 || y1 > 7 || x2 < 0 || y2 < 0 || x2 > 7 || y2 > 7) {
 			return false;
 		}
 
-		if (x1 == x2 && y1 == y2) {
-			return false;
-		}
+		// Empty source...
 
 		if (p.state[x1][y1] === "") {
 			return false;
 		}
 
-		if (p.state[x1][y1] === p.state[x1][y1].toUpperCase() && p.active !== "w") {
+		// Wrong colour source...
+
+		if (IsWhite(p.state[x1][y1]) && p.active !== "w") {
 			return false;
 		}
 
-		if (p.state[x1][y1] !== p.state[x1][y1].toUpperCase() && p.active !== "b") {
+		if (IsBlack(p.state[x1][y1]) && p.active !== "b") {
+			return false;
+		}
+
+		// Source and dest have same colour...
+
+		if (SameColour(p.state[x1][y1], p.state[x2][y2])) {
 			return false;
 		}
 
@@ -279,7 +354,7 @@ function NewPosition(state = null, active = "w", castling = "", enpassant = null
 			}
 		}
 
-		let ep_string = p.enpassant[0] < 0 || p.enpassant[1] < 0 ? "-" : S(p.enpassant[0], p.enpassant[1]);
+		let ep_string = p.enpassant.x < 0 || p.enpassant.y < 0 ? "-" : p.enpassant.s;
 		let castling_string = p.castling === "" ? "-" : p.castling;
 
 		return s + ` ${p.active} ${castling_string} ${ep_string} ${p.halfmove} ${p.fullmove}`;
@@ -360,7 +435,7 @@ function LoadFEN(fen) {
 	}
 
 	tokens[3] = tokens[3].toLowerCase();
-	ret.enpassant = XY(tokens[3]);				// XY() sanitises bad stuff to [-1, -1]
+	ret.enpassant = Point(tokens[3]);
 	
 	ret.halfmove = parseInt(tokens[4], 10);
 	if (Number.isNaN(ret.halfmove)) {
@@ -410,14 +485,12 @@ function make_renderer() {
 				let x2 = x1 + rss;
 				let y2 = y1 + rss;
 
-				let coords = S(x, y);
-
-				if (renderer.active_square === coords) {
+				if (renderer.active_square === Point(x, y)) {
 					context.fillStyle = act;
 				}
 
 				context.fillRect(x1, y1, rss, rss);
-				renderer.squares.push({x1, y1, x2, y2, coords});
+				renderer.squares.push({x1, y1, x2, y2, point: Point(x, y)});
 			}
 		}
 
@@ -456,38 +529,36 @@ function make_renderer() {
 
 	renderer.click = (event) => {
 
-		let sq = null;
+		let point = null;
 
 		for (let n = 0; n < renderer.squares.length; n++) {
 			let foo = renderer.squares[n];
 			if (foo.x1 < event.offsetX && foo.y1 < event.offsetY && foo.x2 > event.offsetX && foo.y2 > event.offsetY) {
-				sq = foo;
+				point = foo.point;
 				break;
 			}
 		}
 
-		if (sq === null) {
+		if (point === null) {
 			return;
 		}
 
 		if (renderer.active_square) {
 
-			let coords1 = renderer.active_square;
-			let coords2 = sq.coords;
+			if (renderer.pos.legal(renderer.active_square, point)) {
+				renderer.move(renderer.active_square.s + point.s);		// e.g. "e2e4"
+			}
 
 			renderer.active_square = null;
 
-			let [x1, y1] = XY(coords1);
-			let [x2, y2] = XY(coords2);
-
-			if (renderer.pos.legal(x1, y1, x2, y2)) {
-				renderer.move(coords1 + coords2);
-			}
-
 		} else {
 
-			renderer.active_square = sq.coords;
-
+			if (renderer.pos.active === "w" && IsWhite(renderer.pos.state[point.x][point.y])) {
+				renderer.active_square = point;
+			}
+			if (renderer.pos.active === "b" && IsBlack(renderer.pos.state[point.x][point.y])) {
+				renderer.active_square = point;
+			}
 		}
 
 		renderer.draw();
