@@ -273,6 +273,43 @@ function NewPosition(state = null, active = "w", castling = "", enpassant = null
 			return false;
 		}
 
+		// Knights...
+
+		if ("Nn".includes(p.piece(Point(x1, y1)))) {
+			if (Math.abs(x2 - x1) + Math.abs(y2 - y1) !== 3) {
+				return false;
+			}
+			if (Math.abs(x2 - x1) === 0 || Math.abs(y2 - y1) === 0) {
+				return false;
+			}
+		}
+
+		// Bishops...
+
+		if ("Bb".includes(p.piece(Point(x1, y1)))) {
+			if (Math.abs(x2 - x1) !== Math.abs(y2 - y1)) {
+				return false;
+			}
+		}
+
+		// Rooks...
+
+		if ("Rr".includes(p.piece(Point(x1, y1)))) {
+			if (Math.abs(x2 - x1) > 0 && Math.abs(y2 - y1) > 0) {
+				return false;
+			}
+		}
+
+		// Queens...
+
+		if ("Qq".includes(p.piece(Point(x1, y1)))) {
+			if (Math.abs(x2 - x1) !== Math.abs(y2 - y1)) {
+				if (Math.abs(x2 - x1) > 0 && Math.abs(y2 - y1) > 0) {
+					return false;
+				}
+			}
+		}
+
 		// MUCH TODO
 
 		return true;
