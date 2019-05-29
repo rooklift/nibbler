@@ -1,6 +1,10 @@
 "use strict";
 
+const alert = require("./modules/alert");
+const child_process = require("child_process");
+const fs = require('fs');
 const ipcRenderer = require("electron").ipcRenderer;
+const readline = require("readline");
 
 const fen = document.getElementById("fen");
 const canvas = document.getElementById("canvas");
@@ -9,6 +13,63 @@ const context = canvas.getContext("2d");
 const light = "#dadada";
 const dark = "#b4b4b4";
 const act = "#cc9966";
+
+const verbose_log = true;
+
+// ------------------------------------------------------------------------------------------------
+
+let config = null;
+
+try {
+	config = JSON.parse(fs.readFileSync("config.json", "utf8"));
+} catch (err) {
+	alert("Couldn't load config.json");
+}
+
+let exe = null;
+
+try {
+	exe = child_process.spawn(config.path);
+} catch (err) {
+	alert(err);
+}
+
+let scanner = readline.createInterface({
+    input: exe.stdout,
+    output: undefined,
+    terminal: false			// What's this for? I forget.
+});
+
+let err_scanner = readline.createInterface({
+	input: exe.stderr,
+    output: undefined,
+    terminal: false
+});
+
+err_scanner.on("line", (line) => {
+	console.log("!", line);
+});
+
+scanner.on("line", (line) => {
+	console.log("<", line);
+});
+
+function send(msg) {
+	msg = msg.trim();
+	exe.stdin.write(msg);
+	exe.stdin.write("\n");
+	if (verbose_log) {
+		console.log(">", msg);
+	}
+}
+
+for (let key of Object.keys(config.options)) {
+	send(`setoption name ${key} value ${config.options[key]}`);
+}
+
+send("setoption name VerboseMoveStats value true")
+send("setoption name LogLiveStats value true")
+send("setoption name MultiPV value 5")
 
 // ------------------------------------------------------------------------------------------------
 
@@ -358,7 +419,7 @@ function NewPosition(state = null, active = "w", castling = "", enpassant = null
 		}
 
 		// Check for blockers...
-		// Kk is included for castling blockers.
+		// K and k are included to spot castling blockers.
 
 		if ("KQRBPkqrbp".includes(p.state[x1][y1])) {
 			if (p.los(x1, y1, x2, y2) === false) {

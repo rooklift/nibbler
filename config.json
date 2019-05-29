@@ -1,0 +1,7 @@
+{
+	"path": "C:\\Programs (self-installed)\\Lc0\\lc0.exe",
+	"options": {
+		"Backend": "cudnn-fp16",
+		"WeightsFile": "C:\\Programs (self-installed)\\Lc0\\networks\\T40.T8.610"
+	}
+}
