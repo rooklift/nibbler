@@ -357,10 +357,58 @@ function NewPosition(state = null, active = "w", castling = "", enpassant = null
 			}
 		}
 
+		// Check for blockers...
+		// Kk is included for castling blockers.
+
+		if ("KQRBPkqrbp".includes(p.state[x1][y1])) {
+			if (p.los(x1, y1, x2, y2) === false) {
+				return false;
+			}
+		}
+
 		// MUCH TODO
 
 		return true;
 	};
+
+	p.los = (x1, y1, x2, y2) => {		// Returns false if there is no "line of sight" between the 2 points.
+
+		// Check the line is straight....
+
+		if (Math.abs(x2 - x1) > 0 && Math.abs(y2 - y1) > 0) {
+			if (Math.abs(x2 - x1) !== Math.abs(y2 - y1)) {
+				return false;
+			}
+		}
+
+		let x_step;
+		let y_step;
+
+		if (x1 === x2) x_step = 0;
+		if (x1 < x2) x_step = 1;
+		if (x1 > x2) x_step = -1;
+
+		if (y1 === y2) y_step = 0;
+		if (y1 < y2) y_step = 1;
+		if (y1 > y2) y_step = -1;
+
+		let x = x1;
+		let y = y1;
+
+		while (true) {
+
+			x += x_step;
+			y += y_step;
+
+			if (x === x2 && y === y2) {
+				return true;
+			}
+
+			if (p.state[x][y] !== "") {
+				return false;
+			}
+		}
+	}
 
 	p.fen = () => {
 
