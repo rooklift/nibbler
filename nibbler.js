@@ -275,7 +275,7 @@ function NewPosition(state = null, active = "w", castling = "", enpassant = null
 
 		// Knights...
 
-		if ("Nn".includes(p.piece(Point(x1, y1)))) {
+		if ("Nn".includes(p.state[x1][y1])) {
 			if (Math.abs(x2 - x1) + Math.abs(y2 - y1) !== 3) {
 				return false;
 			}
@@ -286,7 +286,7 @@ function NewPosition(state = null, active = "w", castling = "", enpassant = null
 
 		// Bishops...
 
-		if ("Bb".includes(p.piece(Point(x1, y1)))) {
+		if ("Bb".includes(p.state[x1][y1])) {
 			if (Math.abs(x2 - x1) !== Math.abs(y2 - y1)) {
 				return false;
 			}
@@ -294,7 +294,7 @@ function NewPosition(state = null, active = "w", castling = "", enpassant = null
 
 		// Rooks...
 
-		if ("Rr".includes(p.piece(Point(x1, y1)))) {
+		if ("Rr".includes(p.state[x1][y1])) {
 			if (Math.abs(x2 - x1) > 0 && Math.abs(y2 - y1) > 0) {
 				return false;
 			}
@@ -302,10 +302,57 @@ function NewPosition(state = null, active = "w", castling = "", enpassant = null
 
 		// Queens...
 
-		if ("Qq".includes(p.piece(Point(x1, y1)))) {
+		if ("Qq".includes(p.state[x1][y1])) {
 			if (Math.abs(x2 - x1) !== Math.abs(y2 - y1)) {
 				if (Math.abs(x2 - x1) > 0 && Math.abs(y2 - y1) > 0) {
 					return false;
+				}
+			}
+		}
+
+		// Pawns...
+
+		if ("Pp".includes(p.state[x1][y1])) {
+
+			if (Math.abs(x2 - x1) === 0) {
+				if (p.state[x2][y2] !== "") {
+					return false;
+				}
+			}
+
+			if (Math.abs(x2 - x1) > 2) {
+				return false;
+			}
+
+			if (Math.abs(x2 - x1) === 1) {
+				if (p.state[x2][y2] === "") {
+					if (p.enpassant !== Point(x2, y2)) {
+						return false;
+					}
+				}
+			}
+
+			if (p.state[x1][y1] === "P") {
+				if (y1 !== 6) {
+					if (y2 - y1 !== -1) {
+						return false;
+					}
+				} else {
+					if (y2 - y1 !== -1 && y2 - y1 !== -2) {
+						return false;
+					}
+				}
+			}
+
+			if (p.state[x1][y1] === "p") {
+				if (y1 !== 1) {
+					if (y2 - y1 !== 1) {
+						return false
+					}
+				} else {
+					if (y2 - y1 !== 1 && y2 - y1 !== 2) {
+						return false;
+					}
 				}
 			}
 		}
