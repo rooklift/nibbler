@@ -1021,12 +1021,46 @@ function make_renderer() {
 		return info_list;
 	};
 
+	renderer.nice_string = (s) => {
+
+		let [x1, y1] = XY(s.slice(0, 2));
+		let [x2, y2] = XY(s.slice(2, 4));
+
+		let piece = renderer.pos.piece(Point(x1, y1));
+
+		if ("KkQqRrBbNn".includes(piece)) {
+
+			if ("Kk".includes(piece)) {
+				if (x2 - x1 === 2) {
+					return "O-O";
+				}
+				if (x2 - x1 === -2) {
+					return "O-O-O";
+				}
+			}
+
+			if (renderer.pos.piece(Point(x2, y2)) === "") {
+				return piece.toUpperCase() + s.slice(2, 4);
+			} else {
+				return piece.toUpperCase() + "x" + s.slice(2, 4);
+			}
+		}
+
+		// So it's a pawn...
+
+		if (x1 === x2) {
+			return s.slice(2, 5);			// Will include promotion char, if any
+		}
+
+		return s[0] + "x" + s.slice(2, 5);	// Will include promotion char, if any
+	};
+
 	renderer.play_best = () => {
 		let info_list = renderer.info_sorted();
 		if (info_list.length > 0) {
 			renderer.move(info_list[0].move);
 		}
-	}
+	};
 
 	renderer.draw_info = () => {
 
@@ -1043,7 +1077,18 @@ function make_renderer() {
 		let s = "";
 
 		for (let n = 0; n < info_list.length && n < max_moves; n++) {
-			s += `${info_list[n].move} ${info_list[n].cp} (N: ${info_list[n].n})<br>`;
+
+			let nice_string = renderer.nice_string(info_list[n].move);
+			while (nice_string.length < 6) {
+				nice_string += " ";
+			}
+
+			let cp_string = info_list[n].cp.toString();
+			while (cp_string.length < 6) {
+				cp_string += " ";
+			}
+
+			s += `${nice_string} ${cp_string} N: ${info_list[n].n}<br>`;
 		}
 
 		infobox.innerHTML = s;
