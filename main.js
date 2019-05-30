@@ -22,7 +22,7 @@ ipcMain.on("relay", (event, msg) => {
 function menu_build() {
 	const template = [
 		{
-			label: "Menu",
+			label: "App",
 			submenu: [
 				{
 					label: "About",
@@ -51,6 +51,7 @@ function menu_build() {
 				},
 				{
 					label: "Undo",
+					accelerator: "CommandOrControl+Z",
 					click: () => {
 						windows.send("main-window", "undo", null);
 					}
