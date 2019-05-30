@@ -17,7 +17,7 @@ body {
 #infobox {
 	color: #cccccc;
 	font-family: monospace, monospace;
-	white-space: pre;
+	white-space: pre-wrap;
 	overflow: hidden;
 }
 
@@ -33,4 +33,8 @@ body {
 
 .white {
 	color: #ffffff
+}
+
+.tech {
+	color: #6cccee;
 }

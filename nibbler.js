@@ -18,7 +18,7 @@ const act = "#cc9966";
 const log_to_engine = true;
 const log_engine_stderr = true;
 const log_engine_stdout = false;
-const max_moves = 16;
+const max_moves = 8;
 
 // ------------------------------------------------------------------------------------------------
 
@@ -797,10 +797,10 @@ function NewPosition(state = null, active = "w", castling = "", enpassant = null
 
 			if ("Kk".includes(piece)) {
 				if (x2 - x1 === 2) {
-					return "O-O";
+					return "O&#8209;O";				// Non breaking hyphen character used.
 				}
 				if (x2 - x1 === -2) {
-					return "O-O-O";
+					return "O&#8209;O&#8209;O";		// Non breaking hyphen character used.
 				}
 			}
 
@@ -1107,19 +1107,11 @@ function make_renderer() {
 		for (let n = 0; n < info_list.length && n < max_moves; n++) {
 
 			let nice_string = renderer.pos.nice_string(info_list[n].move);
-			while (nice_string.length < 7) {
-				nice_string += " ";
-			}
-
 			let cp_string = info_list[n].cp.toString();
-			while (cp_string.length < 6) {
-				cp_string += " ";
+			if (cp_string.startsWith("-") === false) {
+				cp_string = "+" + cp_string;
 			}
-
 			let n_string = info_list[n].n.toString();
-			while (n_string.length < 7) {
-				n_string += " ";
-			}
 
 			let pv_string = "";
 			let tmp_board = renderer.pos.copy();
@@ -1137,7 +1129,7 @@ function make_renderer() {
 				tmp_board = tmp_board.move(move);
 			}
 
-			s += `${nice_string} ${cp_string} N: ${n_string} ${pv_string}<br>`;
+			s += `<span class="tech">cp: ${cp_string} N: ${n_string}</span><br>${pv_string}<br><br>`;
 		}
 
 		infobox.innerHTML = s;
