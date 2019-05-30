@@ -31,7 +31,8 @@ function menu_build() {
 					}
 				},
 				{
-					role: "quit"
+					role: "quit",
+					accelerator: "CommandOrControl+Q"
 				},
 				{
 					role: "toggledevtools"
