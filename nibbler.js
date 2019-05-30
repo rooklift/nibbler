@@ -622,7 +622,7 @@ function NewPosition(state = null, active = "w", castling = "", enpassant = null
 
 			if (iteration === 1) {
 
-				if "Kk".includes(p.state[x][y])) {
+				if ("Kk".includes(p.state[x][y])) {
 					return true;
 				}
 
