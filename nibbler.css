@@ -17,7 +17,7 @@ body {
 #infobox {
 	color: #cccccc;
 	font-family: monospace, monospace;
-	white-space: nowrap;
+	white-space: pre;
 	overflow: hidden;
 }
 
