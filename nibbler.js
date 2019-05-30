@@ -19,6 +19,10 @@ const verbose_log = true;
 // ------------------------------------------------------------------------------------------------
 
 let config = null;
+let exe = null;
+let scanner = null;
+let err_scanner = null;
+let send = () => {};
 
 try {
 	config = JSON.parse(fs.readFileSync("config.json", "utf8"));
@@ -26,50 +30,57 @@ try {
 	alert("Couldn't load config.json");
 }
 
-let exe = null;
-
-try {
-	exe = child_process.spawn(config.path);
-} catch (err) {
-	alert(err);
-}
-
-let scanner = readline.createInterface({
-    input: exe.stdout,
-    output: undefined,
-    terminal: false			// What's this for? I forget.
-});
-
-let err_scanner = readline.createInterface({
-	input: exe.stderr,
-    output: undefined,
-    terminal: false
-});
-
-err_scanner.on("line", (line) => {
-	console.log("!", line);
-});
-
-scanner.on("line", (line) => {
-	console.log("<", line);
-});
-
-function send(msg) {
-	msg = msg.trim();
-	exe.stdin.write(msg);
-	exe.stdin.write("\n");
-	if (verbose_log) {
-		console.log(">", msg);
+if (config) {
+	try {
+		exe = child_process.spawn(config.path);
+	} catch (err) {
+		alert("Couldn't spawn process");
 	}
 }
 
-for (let key of Object.keys(config.options)) {
-	send(`setoption name ${key} value ${config.options[key]}`);
-}
+if (config && exe) {
 
-send("setoption name VerboseMoveStats value true");
-send("setoption name LogLiveStats value true");
-send("setoption name MultiPV value 5");
+	scanner = readline.createInterface({
+	    input: exe.stdout,
+	    output: undefined,
+	    terminal: false
+	});
+
+	err_scanner = readline.createInterface({
+		input: exe.stderr,
+	    output: undefined,
+	    terminal: false
+	});
+
+	err_scanner.on("line", (line) => {
+		if (verbose_log) {
+			console.log("!", line);
+		}
+	});
+
+	scanner.on("line", (line) => {
+		if (verbose_log) {
+			console.log("<", line);
+		}
+	});
+
+	send = (msg) => {
+		msg = msg.trim();
+		exe.stdin.write(msg);
+		exe.stdin.write("\n");
+		if (verbose_log) {
+			console.log(">", msg);
+		}
+	}
+
+	for (let key of Object.keys(config.options)) {
+		send(`setoption name ${key} value ${config.options[key]}`);
+	}
+
+	send("setoption name VerboseMoveStats value true");
+	send("setoption name LogLiveStats value true");
+	send("setoption name MultiPV value 5");
+}
 
 // ------------------------------------------------------------------------------------------------
 
@@ -249,22 +260,22 @@ function NewPosition(state = null, active = "w", castling = "", enpassant = null
 
 		// Handle the rook moves of castling...
 
-		if (ret.state[x1][y1] === "K" && x1 === 4 && x2 === 6) {
+		if (s === "e1g1") {
 			ret.state[5][7] = "R";
 			ret.state[7][7] = "";
 		}
 
-		if (ret.state[x1][y1] === "K" && x1 === 4 && x2 === 2) {
+		if (s === "e1c1") {
 			ret.state[3][7] = "R";
 			ret.state[0][7] = "";
 		}
 
-		if (ret.state[x1][y1] === "k" && x1 === 4 && x2 === 6) {
+		if (s === "e8g8") {
 			ret.state[5][0] = "r";
 			ret.state[7][0] = "";
 		}
 
-		if (ret.state[x1][y1] === "k" && x1 === 4 && x2 === 2) {
+		if (s === "e8c8") {
 			ret.state[3][0] = "r";
 			ret.state[0][0] = "";
 		}
