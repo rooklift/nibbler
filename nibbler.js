@@ -307,66 +307,54 @@ function NewPosition(state = null, active = "w", castling = "", enpassant = null
 		return ret;
 	};
 
-	p.legal = (s) => {
+	p.illegal = (s) => {
+
+		// Returns "" if the move is legal, otherwise returns the reason it isn't.
 
 		let [x1, y1] = XY(s.slice(0, 2));
 		let [x2, y2] = XY(s.slice(2, 4));
 
-		// Off-board...
-
 		if (x1 < 0 || y1 < 0 || x1 > 7 || y1 > 7 || x2 < 0 || y2 < 0 || x2 > 7 || y2 > 7) {
-			return false;
+			return "off board";
 		}
 
-		// Wrong colour source...
-
 		if (p.active === "w" && p.is_white(Point(x1, y1)) === false) {
-			return false;
+			return "wrong colour source";
 		}
 
 		if (p.active === "b" && p.is_black(Point(x1, y1)) === false) {
-			return false;
+			return "wrong colour source";
 		}
-
-		// Source and dest have same colour...
 
 		if (p.same_colour(Point(x1, y1), Point(x2, y2))) {
-			return false;
+			return "source and dest have same colour";
 		}
-
-		// Knights...
 
 		if ("Nn".includes(p.state[x1][y1])) {
 			if (Math.abs(x2 - x1) + Math.abs(y2 - y1) !== 3) {
-				return false;
+				return "illegal knight movement";
 			}
 			if (Math.abs(x2 - x1) === 0 || Math.abs(y2 - y1) === 0) {
-				return false;
+				return "illegal knight movement";
 			}
 		}
-
-		// Bishops...
 
 		if ("Bb".includes(p.state[x1][y1])) {
 			if (Math.abs(x2 - x1) !== Math.abs(y2 - y1)) {
-				return false;
+				return "illegal bishop movement";
 			}
 		}
-
-		// Rooks...
 
 		if ("Rr".includes(p.state[x1][y1])) {
 			if (Math.abs(x2 - x1) > 0 && Math.abs(y2 - y1) > 0) {
-				return false;
+				return "illegal rook movement";
 			}
 		}
-
-		// Queens...
 
 		if ("Qq".includes(p.state[x1][y1])) {
 			if (Math.abs(x2 - x1) !== Math.abs(y2 - y1)) {
 				if (Math.abs(x2 - x1) > 0 && Math.abs(y2 - y1) > 0) {
-					return false;
+					return "illegal queen movement";
 				}
 			}
 		}
@@ -377,30 +365,35 @@ function NewPosition(state = null, active = "w", castling = "", enpassant = null
 
 			if (Math.abs(x2 - x1) === 0) {
 				if (p.state[x2][y2] !== "") {
-					return false;
+					return "pawn cannot capture forwards";
 				}
 			}
 
 			if (Math.abs(x2 - x1) > 2) {
-				return false;
+				return "pawn cannot move that far sideways";
 			}
 
 			if (Math.abs(x2 - x1) === 1) {
+
 				if (p.state[x2][y2] === "") {
 					if (p.enpassant !== Point(x2, y2)) {
-						return false;
+						return "pawn cannot capture thin air";
 					}
+				}
+
+				if (Math.abs(y2 - y1) !== 1) {
+					return "pawn must move 1 forward when capturing";
 				}
 			}
 
 			if (p.state[x1][y1] === "P") {
 				if (y1 !== 6) {
 					if (y2 - y1 !== -1) {
-						return false;
+						return "pawn must move forwards 1";
 					}
 				} else {
 					if (y2 - y1 !== -1 && y2 - y1 !== -2) {
-						return false;
+						return "pawn must move forwards 1 or 2";
 					}
 				}
 			}
@@ -408,11 +401,11 @@ function NewPosition(state = null, active = "w", castling = "", enpassant = null
 			if (p.state[x1][y1] === "p") {
 				if (y1 !== 1) {
 					if (y2 - y1 !== 1) {
-						return false
+						return "pawn must move forwards 1";
 					}
 				} else {
 					if (y2 - y1 !== 1 && y2 - y1 !== 2) {
-						return false;
+						return "pawn must move forwards 1 or 2";
 					}
 				}
 			}
@@ -427,42 +420,42 @@ function NewPosition(state = null, active = "w", castling = "", enpassant = null
 				// This should be an attempt to castle...
 
 				if (s !== "e1g1" && s !== "e1c1" && s !== "e8g8" && s !== "e8c8") {
-					return false;
+					return "illegal king movement";
 				}
 
 				// So it is an attempt to castle. But is it allowed?
 
 				if (s === "e1g1" && p.castling.includes("K") === false) {
-					return false;
+					return "lost the right to castle that way";
 				}
 
 				if (s === "e1c1" && p.castling.includes("Q") === false) {
-					return false;
+					return "lost the right to castle that way";
 				}
 
 				if (s === "e8g8" && p.castling.includes("k") === false) {
-					return false;
+					return "lost the right to castle that way";
 				}
 
 				if (s === "e8c8" && p.castling.includes("q") === false) {
-					return false;
+					return "lost the right to castle that way";
 				}
 
 				// For queenside castling, check that the rook isn't blocked by a piece on the B file...
 
 				if (x2 === 2 && p.piece(Point(1, y2)) !== "") {
-					return false;
+					return "queenside castling blocked on B-file";
 				}
 
 				// Check that king source square and the pass-through square aren't under attack.
 				// Destination will be handled by the general in-check test later.
 				
 				if (p.attacked(Point(x1, y1), p.active)) {
-					return false;
+					return "cannot castle under check";
 				}
 
 				if (p.attacked(Point((x1 + x2) / 2, y1), p.active)) {
-					return false;
+					return "cannot castle through check";
 				}
 			}
 		}
@@ -472,7 +465,7 @@ function NewPosition(state = null, active = "w", castling = "", enpassant = null
 
 		if ("KQRBPkqrbp".includes(p.state[x1][y1])) {
 			if (p.los(x1, y1, x2, y2) === false) {
-				return false;
+				return "movement blocked";
 			}
 		}
 
@@ -482,8 +475,8 @@ function NewPosition(state = null, active = "w", castling = "", enpassant = null
 
 			// The king is moving, so, check its destination square for checks...
 
-			if p.attacked(Point(x2, y2), p.active) {
-				return false;
+			if (p.attacked(Point(x2, y2), p.active)) {
+				return "king destination under attack";
 			}
 
 		} else {
@@ -494,19 +487,19 @@ function NewPosition(state = null, active = "w", castling = "", enpassant = null
 				for (let y = 0; y <= 7; y++) {
 					if (p.state[x][y] === "K" && p.active === "w") {
 						if (p.attacked(Point(x, y), p.active)) {
-							return false;
+							return "king remains in check";
 						}
 					}
 					if (p.state[x][y] === "k" && p.active === "b") {
 						if (p.attacked(Point(x, y), p.active)) {
-							return false;
+							return "king remains in check";
 						}
 					}
 				}
 			}
 		}
 
-		return true;
+		return "";
 	};
 
 	p.los = (x1, y1, x2, y2) => {		// Returns false if there is no "line of sight" between the 2 points.
@@ -920,8 +913,14 @@ function make_renderer() {
 
 		if (renderer.active_square) {
 
-			if (renderer.pos.legal(renderer.active_square.s + point.s)) {	// e.g. "e2e4"
-				renderer.move(renderer.active_square.s + point.s);			// e.g. "e2e4"
+			let move_string = renderer.active_square.s + point.s;		// e.g. "e2e4"
+
+			let illegal_reason = renderer.pos.illegal(move_string);	
+
+			if (illegal_reason === "") {			
+				renderer.move(move_string);
+			} else {
+				console.log(illegal_reason);
 			}
 
 			renderer.active_square = null;
