@@ -1023,6 +1023,8 @@ function make_renderer() {
 
 	renderer.nice_string = (s) => {
 
+		// FIXME: disambiguate
+
 		let [x1, y1] = XY(s.slice(0, 2));
 		let [x2, y2] = XY(s.slice(2, 4));
 
@@ -1048,11 +1050,20 @@ function make_renderer() {
 
 		// So it's a pawn...
 
+		let ret;
+
 		if (x1 === x2) {
-			return s.slice(2, 5);			// Will include promotion char, if any
+			ret = s.slice(2, 4);
+		} else {
+			ret = s[0] + "x" + s.slice(2, 4);
 		}
 
-		return s[0] + "x" + s.slice(2, 5);	// Will include promotion char, if any
+		if (s.length > 4) {
+			ret += "=";
+			ret += s[4].toUpperCase();
+		}
+
+		return ret;
 	};
 
 	renderer.play_best = () => {
@@ -1079,7 +1090,7 @@ function make_renderer() {
 		for (let n = 0; n < info_list.length && n < max_moves; n++) {
 
 			let nice_string = renderer.nice_string(info_list[n].move);
-			while (nice_string.length < 6) {
+			while (nice_string.length < 7) {
 				nice_string += " ";
 			}
 
