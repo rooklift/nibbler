@@ -484,29 +484,18 @@ function NewPosition(state = null, active = "w", castling = "", enpassant = null
 
 		// Check for check...
 
-		if ("Kk".includes(p.state[x1][y1])) {
+		let tmp = p.move(s);
 
-			// The king is moving, so, check its destination square for checks...
-
-			if (p.attacked(Point(x2, y2), p.active)) {
-				return "king destination under attack";
-			}
-
-		} else {
-
-			// The king is not moving. Find it, and check its position for checks...
-
-			for (let x = 0; x <= 7; x++) {
-				for (let y = 0; y <= 7; y++) {
-					if (p.state[x][y] === "K" && p.active === "w") {
-						if (p.attacked(Point(x, y), p.active)) {
-							return "king remains in check";
-						}
+		for (let x = 0; x <= 7; x++) {
+			for (let y = 0; y <= 7; y++) {
+				if (tmp.state[x][y] === "K" && p.active === "w") {
+					if (tmp.attacked(Point(x, y), p.active)) {
+						return "king in check";
 					}
-					if (p.state[x][y] === "k" && p.active === "b") {
-						if (p.attacked(Point(x, y), p.active)) {
-							return "king remains in check";
-						}
+				}
+				if (tmp.state[x][y] === "k" && p.active === "b") {
+					if (tmp.attacked(Point(x, y), p.active)) {
+						return "king in check";
 					}
 				}
 			}
