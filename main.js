@@ -7,7 +7,7 @@ const path = require("path");
 const windows = require("./modules/windows");
 
 electron.app.on("ready", () => {
-	windows.new("main-window", {width: 680, height: 720, page: "nibbler.html"});
+	windows.new("main-window", {width: 1200, height: 720, page: "nibbler.html"});
 	menu_build();
 });
 
@@ -41,6 +41,13 @@ function menu_build() {
 		{
 			label: "Navigation",
 			submenu: [
+				{
+					label: "Play Best",
+					accelerator: "CommandOrControl+G",
+					click: () => {
+						windows.send("main-window", "play_best", null);
+					}
+				},
 				{
 					label: "Undo",
 					click: () => {

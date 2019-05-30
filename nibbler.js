@@ -8,6 +8,7 @@ const readline = require("readline");
 
 const fen = document.getElementById("fen");
 const canvas = document.getElementById("canvas");
+const infobox = document.getElementById("infobox");
 const context = canvas.getContext("2d");
 
 const light = "#dadada";
@@ -15,6 +16,7 @@ const dark = "#b4b4b4";
 const act = "#cc9966";
 
 const verbose_log = true;
+const max_moves = 16;
 
 // ------------------------------------------------------------------------------------------------
 
@@ -857,7 +859,7 @@ function make_renderer() {
 	renderer.running = false;
 	renderer.info = Object.create(null);
 
-	renderer.full_draw_time = window.performance.now();		// Dubious Chrome-specific thing
+	renderer.info_draw_time = window.performance.now();		// Dubious Chrome-specific thing
 
 	renderer.square_size = () => {
 		return 80;						// FIXME
@@ -898,6 +900,12 @@ function make_renderer() {
 		if (s.startsWith("info depth")) {
 
 			let move = InfoVal(s, "pv");
+
+			if (renderer.pos.colour(Point(move.slice(0, 2))) !== renderer.pos.active) {
+				// This is info for an old position. The engine hasn't caught up with us yet.
+				return;
+			}
+
 			let cp = parseInt(InfoVal(s, "cp"), 10);				// Score in centipawns
 			let multipv = parseInt(InfoVal(s, "multipv"), 10);		// Leela's ranking of the move, starting at 1
 
@@ -909,6 +917,7 @@ function make_renderer() {
 				move_info = Object.create(null);
 			}
 
+			move_info.move = move;
 			move_info.cp = cp;
 			move_info.multipv = multipv;
 
@@ -957,6 +966,64 @@ function make_renderer() {
 		}
 	};
 
+	renderer.play_best = () => {
+
+		let all_info = [];
+
+		for (let key of Object.keys(renderer.info)) {
+			all_info.push(renderer.info[key]);
+		}
+
+		all_info.sort((a, b) => {
+			if (a.cp < b.cp) {
+				return 1;
+			}
+			if (a.cp > b.cp) {
+				return -1;
+			}
+			return 0;
+		});
+
+		if (all_info.length > 0) {
+			renderer.move(all_info[0].move);
+		}
+	}
+
+	renderer.draw_info = () => {
+
+		let wpn = window.performance.now();
+
+		if (wpn - renderer.info_draw_time < 1000) {
+			return;
+		}
+
+		renderer.info_draw_time = wpn;
+
+		let all_info = [];
+
+		for (let key of Object.keys(renderer.info)) {
+			all_info.push(renderer.info[key]);
+		}
+
+		all_info.sort((a, b) => {
+			if (a.cp < b.cp) {
+				return 1;
+			}
+			if (a.cp > b.cp) {
+				return -1;
+			}
+			return 0;
+		});
+
+		let s = "";
+
+		for (let n = 0; n < all_info.length && n < max_moves; n++) {
+			s += `${all_info[n].move} ${all_info[n].cp}<br>`;
+		}
+
+		infobox.innerHTML = s;
+	};
+
 	renderer.draw_loop = () => {
 
 		let rss = renderer.square_size();
@@ -999,7 +1066,13 @@ function make_renderer() {
 			}
 		}
 
-		fen.innerHTML = renderer.pos.fen();
+		let new_fen = renderer.pos.fen();
+
+		if (new_fen !== fen.innerHTML) {			// Only update when needed, so user can select and copy.
+			fen.innerHTML = new_fen;
+		}
+
+		renderer.draw_info();
 
 		setTimeout(renderer.draw_loop, 50);
 	};
@@ -1021,6 +1094,10 @@ ipcRenderer.on("go", () => {
 
 ipcRenderer.on("stop", () => {
 	renderer.stop();
+});
+
+ipcRenderer.on("play_best", () => {
+	renderer.play_best();
 });
 
 canvas.addEventListener("mousedown", (event) => {

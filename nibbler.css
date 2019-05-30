@@ -4,15 +4,25 @@ body {
 	padding: 0;
 	background-color: black;
 	color: white;
-	user-select: none;
 	cursor: default;
+	overflow: hidden;
+}
+
+#canvas {
+	float: left;
+	margin-right: 1em;
+	margin-bottom: 1em;
+}
+
+#infobox {
+	color: #cccccc;
+	font-family: monospace, monospace;
+	white-space: nowrap;
 	overflow: hidden;
 }
 
 #fen {
 	clear: both;
-	margin-top: 1em;
 	color: #6cccee;
 	font-family: monospace, monospace;
-	text-align: center;
 }
