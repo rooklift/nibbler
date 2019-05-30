@@ -151,7 +151,7 @@ function Point(a, b) {
 
 // ------------------------------------------------------------------------------------------------
 
-function NewPosition(state = null, active = "w", castling = "", enpassant = null, halfmove = 0, fullmove = 1, parent = null) {
+function NewPosition(state = null, active = "w", castling = "", enpassant = null, halfmove = 0, fullmove = 1, parent = null, lastmove = null) {
 
 	let p = Object.create(null);
 	p.state = [];					// top-left is 0,0
@@ -180,18 +180,20 @@ function NewPosition(state = null, active = "w", castling = "", enpassant = null
 	p.fullmove = fullmove;
 
 	p.parent = parent;
+	p.lastmove = lastmove;
 
 	p.copy = () => {
-		return NewPosition(p.state, p.active, p.castling, p.enpassant, p.halfmove, p.fullmove, p.parent);
+		return NewPosition(p.state, p.active, p.castling, p.enpassant, p.halfmove, p.fullmove, p.parent, p.lastmove);
 	};
 
 	p.move = (s) => {
 
 		// s is something like "e2e4".
-		// Assumes move is legal.
+		// Assumes move is legal - all sorts of weird things can happen if this isn't so.
 
 		let ret = p.copy();
 		ret.parent = p;
+		ret.lastmove = s;
 
 		let [x1, y1] = XY(s.slice(0, 2));
 		let [x2, y2] = XY(s.slice(2, 4));
@@ -307,6 +309,17 @@ function NewPosition(state = null, active = "w", castling = "", enpassant = null
 		return ret;
 	};
 
+	p.moves = () => {
+		let list = [];
+		let node = p;
+		while (node.parent !== null) {
+			list.push(node.lastmove);
+			node = node.parent;
+		}
+		list.reverse();
+		return list.join(" ");
+	};
+
 	p.illegal = (s) => {
 
 		// Returns "" if the move is legal, otherwise returns the reason it isn't.
@@ -327,7 +340,7 @@ function NewPosition(state = null, active = "w", castling = "", enpassant = null
 		}
 
 		if (p.same_colour(Point(x1, y1), Point(x2, y2))) {
-			return "source and dest have same colour";
+			return "source and destination have same colour";
 		}
 
 		if ("Nn".includes(p.state[x1][y1])) {
