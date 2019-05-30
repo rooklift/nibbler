@@ -67,9 +67,9 @@ for (let key of Object.keys(config.options)) {
 	send(`setoption name ${key} value ${config.options[key]}`);
 }
 
-send("setoption name VerboseMoveStats value true")
-send("setoption name LogLiveStats value true")
-send("setoption name MultiPV value 5")
+send("setoption name VerboseMoveStats value true");
+send("setoption name LogLiveStats value true");
+send("setoption name MultiPV value 5");
 
 // ------------------------------------------------------------------------------------------------
 
@@ -418,6 +418,48 @@ function NewPosition(state = null, active = "w", castling = "", enpassant = null
 			}
 		}
 
+		// Kings...
+
+		if ("Kk".includes(p.state[x1][y1])) {
+
+			if (Math.abs(x2 - x1) > 1 || Math.abs(y2 - y1) > 1) {
+
+				// This should be an attempt to castle...
+
+				if (s !== "e1g1" && s !== "e1c1" && s !== "e8g8" && s !== "e8c8") {
+					return false;
+				}
+
+				// So it is an attempt to castle. But is it allowed?
+
+				if (s === "e1g1" && p.castling.includes("K") === false) {
+					return false;
+				}
+
+				if (s === "e1c1" && p.castling.includes("Q") === false) {
+					return false;
+				}
+
+				if (s === "e8g8" && p.castling.includes("k") === false) {
+					return false;
+				}
+
+				if (s === "e8c8" && p.castling.includes("q") === false) {
+					return false;
+				}
+
+				// For queenside castling, check that the rook isn't blocked by a piece on the B file...
+
+				if (x2 === 2 && p.piece(Point(1, y2)) !== "") {
+					return false;
+				}
+
+				// Check that king source, dest, and in-between squares aren't under attack...
+				// TODO
+
+			}
+		}
+
 		// Check for blockers...
 		// K and k are included to spot castling blockers.
 
@@ -442,24 +484,24 @@ function NewPosition(state = null, active = "w", castling = "", enpassant = null
 			}
 		}
 
-		let x_step;
-		let y_step;
+		let step_x;
+		let step_y;
 
-		if (x1 === x2) x_step = 0;
-		if (x1 < x2) x_step = 1;
-		if (x1 > x2) x_step = -1;
+		if (x1 === x2) step_x = 0;
+		if (x1 < x2) step_x = 1;
+		if (x1 > x2) step_x = -1;
 
-		if (y1 === y2) y_step = 0;
-		if (y1 < y2) y_step = 1;
-		if (y1 > y2) y_step = -1;
+		if (y1 === y2) step_y = 0;
+		if (y1 < y2) step_y = 1;
+		if (y1 > y2) step_y = -1;
 
 		let x = x1;
 		let y = y1;
 
 		while (true) {
 
-			x += x_step;
-			y += y_step;
+			x += step_x;
+			y += step_y;
 
 			if (x === x2 && y === y2) {
 				return true;
@@ -469,7 +511,104 @@ function NewPosition(state = null, active = "w", castling = "", enpassant = null
 				return false;
 			}
 		}
-	}
+	};
+
+	p.attacked = (target, my_colour) => {
+
+		if (target === null_point) {
+			return false;
+		}
+
+		// Lines...
+
+		for (let step_x = -1; step_x <= 1; step_x++) {
+
+			for (let step_y = -1; step_y <= 1; step_y++) {
+
+				if (step_x === 0 && step_y === 0) continue;
+
+				if (p.line_attack(target, step_x, step_y, my_colour)) {
+					return true;
+				}
+			}
+		}
+
+		// Knights... this must be the stupidest way possible...
+
+		for (let dx = -2; dx <= 2; dx++) {
+			for (let dy = -2; dy <= 2; dy++) {
+
+				if (Math.abs(dx) + Math.abs(dy) !== 3) continue;
+
+				let x = target.x + dx;
+				let y = target.y + dy;
+
+				if (x < 0 || x > 7 || y < 0 || y > 7) continue;
+
+				if (p.state[x][y] === "") continue;		// Necessary, to allow "Nn".includes()
+				if ("Nn".includes(p.state[x][y])) {
+					if (p.colour(Point(x, y)) === my_colour) continue;
+					return true;
+				}
+			}
+		}
+
+		return false;
+	};
+
+	p.line_attack = (target, step_x, step_y, my_colour) => {
+
+		let opponent = my_colour === "w" ? "b" : "w";
+
+		let x = target.x;
+		let y = target.y;
+
+		let attackers = "QqRr";					// Attackers that can go in a cardinal direction.
+		if (step_x !== 0 && step_y !== 0) {
+			attackers = "QqBb";					// Attackers that can go in a diagonal direction.
+		}
+
+		// Check for enemy king as a special case...
+
+		let foo_x = x + step_x;
+		let foo_y = y + step_y;
+
+		if (foo_x >= 0 && foo_x <= 7 && foo_y >= 0 && foo_y <= 7) {
+			if (p.state[foo_x][foo_y] === "K" || p.state[foo_x][foo_y] === "k") {		// Don't use "Kk".includes() since p.state could be ""
+				if (p.colour(Point(foo_x, foo_y)) === opponent) {
+					return true;
+				}
+			}
+		}
+
+		while (true) {
+
+			x += step_x;
+			y += step_y;
+
+			if (x < 0 || x > 7 || y < 0 || y > 7) {
+				return false;
+			}
+
+			if (p.state[x][y] === "") {
+				continue;
+			}
+
+			// So there's something here. Must return now.
+
+			if (p.colour(Point(x, y)) === my_colour) {
+				return false;
+			}
+
+			// The piece is hostile.
+
+			if (attackers.includes(p.state[x][y])) {
+				return true;
+			}
+
+			return false;
+		}
+	};
 
 	p.fen = () => {
 
@@ -513,6 +652,7 @@ function NewPosition(state = null, active = "w", castling = "", enpassant = null
 	};
 
 	p.piece = (point) => {
+		if (point === null_point) return "";
 		return p.state[point.x][point.y];
 	};
 
