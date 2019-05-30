@@ -994,10 +994,10 @@ function make_renderer() {
 		}
 
 		all_info.sort((a, b) => {
-			if (a.cp < b.cp) {
+			if (a.n < b.n) {
 				return 1;
 			}
-			if (a.cp > b.cp) {
+			if (a.n > b.n) {
 				return -1;
 			}
 			return 0;
