@@ -906,6 +906,14 @@ function make_renderer() {
 		}
 	};
 
+	renderer.go = () => {
+		send("go");
+	};
+
+	renderer.stop = () => {
+		send("stop");
+	};
+
 	renderer.click = (event) => {
 
 		let point = null;
@@ -959,6 +967,14 @@ renderer.await_loads();
 
 ipcRenderer.on("undo", () => {
 	renderer.undo();
+});
+
+ipcRenderer.on("go", () => {
+	renderer.go();
+});
+
+ipcRenderer.on("stop", () => {
+	renderer.stop();
 });
 
 canvas.addEventListener("mousedown", (event) => renderer.click(event));

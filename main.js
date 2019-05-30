@@ -48,6 +48,23 @@ function menu_build() {
 					}
 				}
 			]
+		},
+		{
+			label: "Analysis",
+			submenu: [
+				{
+					label: "Go",
+					click: () => {
+						windows.send("main-window", "go", null);
+					}
+				},
+				{
+					label: "Stop",
+					click: () => {
+						windows.send("main-window", "stop", null);
+					}
+				}
+			]
 		}
 	];
 
