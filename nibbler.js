@@ -526,7 +526,7 @@ function NewPosition(state = null, active = "w", castling = "", enpassant = null
 			return false;
 		}
 
-		// Lines...
+		// Attacks along the lines (excludes pawns)...
 
 		for (let step_x = -1; step_x <= 1; step_x++) {
 
@@ -586,25 +586,11 @@ function NewPosition(state = null, active = "w", castling = "", enpassant = null
 			}
 		}
 
-		// Check for enemy pawns as a special case...
-
-		if (my_colour === "w") {
-			if (p.piece(Point(x - 1, y - 1)) === "p") {
-				return true;
-			}
-			if (p.piece(Point(x + 1, y - 1)) === "p") {
-				return true;
-			}
-		} else {
-			if (p.piece(Point(x - 1, y + 1)) === "P") {
-				return true;
-			}
-			if (p.piece(Point(x + 1, y + 1)) === "P") {
-				return true;
-			}
-		}
+		let iteration = 0;
 
 		while (true) {
+
+			iteration++;
 
 			x += step_x;
 			y += step_y;
@@ -623,10 +609,33 @@ function NewPosition(state = null, active = "w", castling = "", enpassant = null
 				return false;
 			}
 
-			// The piece is hostile.
+			// We now know the piece is hostile. This allows us to mostly not care
+			// about distinctions between "Q" and "q", "R" and "r", etc.
+
+			// Is it one of the attacker types?
 
 			if (attackers.includes(p.state[x][y])) {
 				return true;
+			}
+
+			// Pawns and kings are special cases (attacking iff it's the first iteration)
+
+			if (iteration === 1) {
+
+				if "Kk".includes(p.state[x][y])) {
+					return true;
+				}
+
+				if (Math.abs(step_x) === 1) {
+
+					if (p.state[x][y] === "p" && step_y === -1) {		// Black pawn above
+						return true;
+					}
+
+					if (p.state[x][y] === "P" && step_y === 1) {		// White pawn below
+						return true;
+					}
+				}
 			}
 
 			return false;
