@@ -476,7 +476,35 @@ function NewPosition(state = null, active = "w", castling = "", enpassant = null
 			}
 		}
 
-		// MUCH TODO
+		// Check for check...
+
+		if ("Kk".includes(p.state[x1][y1])) {
+
+			// The king is moving, so, check its destination square for checks...
+
+			if p.attacked(Point(x2, y2), p.active) {
+				return false;
+			}
+
+		} else {
+
+			// The king is not moving. Find it, and check its position for checks...
+
+			for (let x = 0; x <= 7; x++) {
+				for (let y = 0; y <= 7; y++) {
+					if (p.state[x][y] === "K" && p.active === "w") {
+						if (p.attacked(Point(x, y), p.active)) {
+							return false;
+						}
+					}
+					if (p.state[x][y] === "k" && p.active === "b") {
+						if (p.attacked(Point(x, y), p.active)) {
+							return false;
+						}
+					}
+				}
+			}
+		}
 
 		return true;
 	};
@@ -552,7 +580,7 @@ function NewPosition(state = null, active = "w", castling = "", enpassant = null
 
 				if (x < 0 || x > 7 || y < 0 || y > 7) continue;
 
-				if (p.state[x][y] === "") continue;		// Necessary, to allow "Nn".includes()
+				if (p.state[x][y] === "") continue;		// Necessary, to prevent "Nn".includes() having false positives
 				if ("Nn".includes(p.state[x][y])) {
 					if (p.colour(Point(x, y)) === my_colour) continue;
 					return true;
