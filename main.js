@@ -44,7 +44,7 @@ function menu_build() {
 			submenu: [
 				{
 					label: "Play Best",
-					accelerator: "CommandOrControl+G",
+					accelerator: "CommandOrControl+D",
 					click: () => {
 						windows.send("main-window", "play_best", null);
 					}
@@ -63,6 +63,7 @@ function menu_build() {
 			submenu: [
 				{
 					label: "Go",
+					accelerator: "CommandOrControl+G",
 					click: () => {
 						windows.send("main-window", "go", null);
 					}
