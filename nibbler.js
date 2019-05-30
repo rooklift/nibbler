@@ -565,25 +565,16 @@ function NewPosition(state = null, active = "w", castling = "", enpassant = null
 
 	p.line_attack = (target, step_x, step_y, my_colour) => {
 
+		// Is the target square under attack via the line specified by step_x and step_y (which are both -1, 0, or 1) ?
+
 		let opponent = my_colour === "w" ? "b" : "w";
 
 		let x = target.x;
 		let y = target.y;
 
-		let attackers = "QqRr";					// Attackers that can go in a cardinal direction.
+		let ranged_attackers = "QqRr";					// Ranged attackers that can go in a cardinal direction.
 		if (step_x !== 0 && step_y !== 0) {
-			attackers = "QqBb";					// Attackers that can go in a diagonal direction.
-		}
-
-		// Check for enemy king as a special case...
-
-		let foo_x = x + step_x;
-		let foo_y = y + step_y;
-
-		if (p.piece(Point(foo_x, foo_y)) === "K" || p.piece(Point(foo_x, foo_y)) === "k") {		// Don't use "Kk".includes() since the piece could be ""
-			if (p.colour(Point(foo_x, foo_y)) === opponent) {
-				return true;
-			}
+			ranged_attackers = "QqBb";					// Ranged attackers that can go in a diagonal direction.
 		}
 
 		let iteration = 0;
@@ -612,9 +603,9 @@ function NewPosition(state = null, active = "w", castling = "", enpassant = null
 			// We now know the piece is hostile. This allows us to mostly not care
 			// about distinctions between "Q" and "q", "R" and "r", etc.
 
-			// Is it one of the attacker types?
+			// Is it one of the ranged attacker types?
 
-			if (attackers.includes(p.state[x][y])) {
+			if (ranged_attackers.includes(p.state[x][y])) {
 				return true;
 			}
 
@@ -628,11 +619,11 @@ function NewPosition(state = null, active = "w", castling = "", enpassant = null
 
 				if (Math.abs(step_x) === 1) {
 
-					if (p.state[x][y] === "p" && step_y === -1) {		// Black pawn above
+					if (p.state[x][y] === "p" && step_y === -1) {		// Black pawn in attacking position
 						return true;
 					}
 
-					if (p.state[x][y] === "P" && step_y === 1) {		// White pawn below
+					if (p.state[x][y] === "P" && step_y === 1) {		// White pawn in attacking position
 						return true;
 					}
 				}
