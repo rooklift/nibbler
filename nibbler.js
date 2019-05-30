@@ -62,6 +62,7 @@ if (config && exe) {
 		if (verbose_log) {
 			console.log("<", line);
 		}
+		renderer.receive(line);
 	});
 
 	send = (msg) => {
@@ -79,7 +80,7 @@ if (config && exe) {
 
 	send("setoption name VerboseMoveStats value true");
 	send("setoption name LogLiveStats value true");
-	send("setoption name MultiPV value 5");
+	send("setoption name MultiPV value 500");
 }
 
 // ------------------------------------------------------------------------------------------------
@@ -121,6 +122,21 @@ function S(x, y) {
 	let xs = String.fromCharCode(x + 97);
 	let ys = String.fromCharCode((8 - y) + 48);
 	return xs + ys;
+}
+
+function InfoVal(s, key) {
+
+	// Given some string like "info depth 8 seldepth 22 time 469 nodes 3918 score cp 46 hashfull 13 nps 8353 tbhits 0 multipv 1 pv d2d4 g8f6"
+	// pull the value for the key out, e.g. in this example, key "nps" returns "8353" (as a string).
+
+	let tokens = s.split(" ").filter((s) => s !== "");
+
+	for (let i = 0; i < tokens.length - 1; i++) {
+		if (tokens[i] === key) {
+			return tokens[i + 1];
+		}
+	}
+	return "";
 }
 
 // ------------------------------------------------------------------------------------------------
@@ -834,15 +850,114 @@ function LoadFEN(fen) {
 function make_renderer() {
 
 	let renderer = Object.create(null);
+
 	renderer.pos = LoadFEN("rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1");
 	renderer.squares = [];
 	renderer.active_square = null;
+	renderer.running = false;
+	renderer.info = Object.create(null);
+
+	renderer.full_draw_time = window.performance.now();		// Dubious Chrome-specific thing
 
 	renderer.square_size = () => {
 		return 80;						// FIXME
 	};
 
-	renderer.draw = () => {
+	renderer.move = (s) => {
+		renderer.pos = renderer.pos.move(s);
+		renderer.info = Object.create(null);
+		if (renderer.running) {
+			renderer.go();
+		}
+	};
+
+	renderer.undo = () => {
+		if (renderer.pos.parent) {
+			renderer.pos = renderer.pos.parent;
+			renderer.info = Object.create(null);
+		}
+		if (renderer.running) {
+			renderer.go();
+		}
+	};
+
+	renderer.go = () => {
+		renderer.running = true;
+		send("stop");
+		send(`position startpos moves ${renderer.pos.moves()}`);
+		send("go");
+	};
+
+	renderer.stop = () => {
+		send("stop");
+		renderer.running = false;
+	};
+
+	renderer.receive = (s) => {
+
+		if (s.startsWith("info depth")) {
+
+			let move = InfoVal(s, "pv");
+			let cp = parseInt(InfoVal(s, "cp"), 10);				// Score in centipawns
+			let multipv = parseInt(InfoVal(s, "multipv"), 10);		// Leela's ranking of the move, starting at 1
+
+			let move_info;
+
+			if (renderer.info[move]) {
+				move_info = renderer.info[move];
+			} else {
+				move_info = Object.create(null);
+			}
+
+			move_info.cp = cp;
+			move_info.multipv = multipv;
+
+			renderer.info[move] = move_info;
+		}
+	};
+
+	renderer.click = (event) => {
+
+		let point = null;
+
+		for (let n = 0; n < renderer.squares.length; n++) {
+			let foo = renderer.squares[n];
+			if (foo.x1 < event.offsetX && foo.y1 < event.offsetY && foo.x2 > event.offsetX && foo.y2 > event.offsetY) {
+				point = foo.point;
+				break;
+			}
+		}
+
+		if (point === null) {
+			return;
+		}
+
+		if (renderer.active_square) {
+
+			let move_string = renderer.active_square.s + point.s;		// e.g. "e2e4"
+
+			let illegal_reason = renderer.pos.illegal(move_string);	
+
+			if (illegal_reason === "") {			
+				renderer.move(move_string);
+			} else {
+				console.log(illegal_reason);
+			}
+
+			renderer.active_square = null;
+
+		} else {
+
+			if (renderer.pos.active === "w" && renderer.pos.is_white(point)) {
+				renderer.active_square = point;
+			}
+			if (renderer.pos.active === "b" && renderer.pos.is_black(point)) {
+				renderer.active_square = point;
+			}
+		}
+	};
+
+	renderer.draw_loop = () => {
 
 		let rss = renderer.square_size();
 
@@ -885,76 +1000,8 @@ function make_renderer() {
 		}
 
 		fen.innerHTML = renderer.pos.fen();
-	};
 
-	renderer.await_loads = () => {
-		if (loads < 12) {
-			setTimeout(renderer.await_loads, 100);
-		} else {
-			renderer.draw();
-		}
-	};
-
-	renderer.move = (s) => {
-		renderer.pos = renderer.pos.move(s);
-	};
-
-	renderer.undo = () => {
-		if (renderer.pos.parent) {
-			renderer.pos = renderer.pos.parent;
-			renderer.draw();
-		}
-	};
-
-	renderer.go = () => {
-		send("go");
-	};
-
-	renderer.stop = () => {
-		send("stop");
-	};
-
-	renderer.click = (event) => {
-
-		let point = null;
-
-		for (let n = 0; n < renderer.squares.length; n++) {
-			let foo = renderer.squares[n];
-			if (foo.x1 < event.offsetX && foo.y1 < event.offsetY && foo.x2 > event.offsetX && foo.y2 > event.offsetY) {
-				point = foo.point;
-				break;
-			}
-		}
-
-		if (point === null) {
-			return;
-		}
-
-		if (renderer.active_square) {
-
-			let move_string = renderer.active_square.s + point.s;		// e.g. "e2e4"
-
-			let illegal_reason = renderer.pos.illegal(move_string);	
-
-			if (illegal_reason === "") {			
-				renderer.move(move_string);
-			} else {
-				console.log(illegal_reason);
-			}
-
-			renderer.active_square = null;
-
-		} else {
-
-			if (renderer.pos.active === "w" && renderer.pos.is_white(point)) {
-				renderer.active_square = point;
-			}
-			if (renderer.pos.active === "b" && renderer.pos.is_black(point)) {
-				renderer.active_square = point;
-			}
-		}
-
-		renderer.draw();
+		setTimeout(renderer.draw_loop, 50);
 	};
 
 	return renderer;
@@ -963,7 +1010,6 @@ function make_renderer() {
 // ------------------------------------------------------------------------------------------------
 
 let renderer = make_renderer();
-renderer.await_loads();
 
 ipcRenderer.on("undo", () => {
 	renderer.undo();
@@ -977,4 +1023,8 @@ ipcRenderer.on("stop", () => {
 	renderer.stop();
 });
 
-canvas.addEventListener("mousedown", (event) => renderer.click(event));
+canvas.addEventListener("mousedown", (event) => {
+	renderer.click(event)
+});
+
+renderer.draw_loop();
