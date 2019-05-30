@@ -143,6 +143,20 @@ function InfoVal(s, key) {
 	return "";
 }
 
+function InfoPV(s) {
+
+	// Pull the PV out, assuming it's at the end of the string.
+
+	let tokens = s.split(" ").filter((s) => s !== "");
+
+	for (let i = 0; i < tokens.length - 1; i++) {
+		if (tokens[i] === "pv") {
+			return tokens.slice(i + 1);
+		}
+	}
+	return "";
+}
+
 // ------------------------------------------------------------------------------------------------
 // The point of most of this is to make each Point represented by a single object so that
 // naive equality checking works, i.e. Point(x, y) === Point(x, y) should be true. Since
@@ -187,7 +201,8 @@ function NewInfo() {
 		cp: -999999,
 		move: "??",
 		multipv: 999,
-		n: 1
+		n: 1,
+		pv: ""
 	};
 }
 
@@ -768,6 +783,52 @@ function NewPosition(state = null, active = "w", castling = "", enpassant = null
 		return p.colour(point1) === p.colour(point2);
 	};
 
+	p.nice_string = (s) => {
+
+		// Given some raw UCI move string, return a nice human-readable string.
+		// FIXME: disambiguate
+
+		let [x1, y1] = XY(s.slice(0, 2));
+		let [x2, y2] = XY(s.slice(2, 4));
+
+		let piece = p.piece(Point(x1, y1));
+
+		if ("KkQqRrBbNn".includes(piece)) {
+
+			if ("Kk".includes(piece)) {
+				if (x2 - x1 === 2) {
+					return "O-O";
+				}
+				if (x2 - x1 === -2) {
+					return "O-O-O";
+				}
+			}
+
+			if (p.piece(Point(x2, y2)) === "") {
+				return piece.toUpperCase() + s.slice(2, 4);
+			} else {
+				return piece.toUpperCase() + "x" + s.slice(2, 4);
+			}
+		}
+
+		// So it's a pawn...
+
+		let ret;
+
+		if (x1 === x2) {
+			ret = s.slice(2, 4);
+		} else {
+			ret = s[0] + "x" + s.slice(2, 4);
+		}
+
+		if (s.length > 4) {
+			ret += "=";
+			ret += s[4].toUpperCase();
+		}
+
+		return ret;
+	};
+
 	return p;
 }
 
@@ -932,6 +993,7 @@ function make_renderer() {
 			move_info.move = move;
 			move_info.cp = parseInt(InfoVal(s, "cp"), 10);				// Score in centipawns
 			move_info.multipv = parseInt(InfoVal(s, "multipv"), 10);	// Leela's ranking of the move, starting at 1
+			move_info.pv = InfoPV(s);
 		}
 
 		if (s.startsWith("info string")) {
@@ -1021,51 +1083,6 @@ function make_renderer() {
 		return info_list;
 	};
 
-	renderer.nice_string = (s) => {
-
-		// FIXME: disambiguate
-
-		let [x1, y1] = XY(s.slice(0, 2));
-		let [x2, y2] = XY(s.slice(2, 4));
-
-		let piece = renderer.pos.piece(Point(x1, y1));
-
-		if ("KkQqRrBbNn".includes(piece)) {
-
-			if ("Kk".includes(piece)) {
-				if (x2 - x1 === 2) {
-					return "O-O";
-				}
-				if (x2 - x1 === -2) {
-					return "O-O-O";
-				}
-			}
-
-			if (renderer.pos.piece(Point(x2, y2)) === "") {
-				return piece.toUpperCase() + s.slice(2, 4);
-			} else {
-				return piece.toUpperCase() + "x" + s.slice(2, 4);
-			}
-		}
-
-		// So it's a pawn...
-
-		let ret;
-
-		if (x1 === x2) {
-			ret = s.slice(2, 4);
-		} else {
-			ret = s[0] + "x" + s.slice(2, 4);
-		}
-
-		if (s.length > 4) {
-			ret += "=";
-			ret += s[4].toUpperCase();
-		}
-
-		return ret;
-	};
-
 	renderer.play_best = () => {
 		let info_list = renderer.info_sorted();
 		if (info_list.length > 0) {
@@ -1089,7 +1106,7 @@ function make_renderer() {
 
 		for (let n = 0; n < info_list.length && n < max_moves; n++) {
 
-			let nice_string = renderer.nice_string(info_list[n].move);
+			let nice_string = renderer.pos.nice_string(info_list[n].move);
 			while (nice_string.length < 7) {
 				nice_string += " ";
 			}
@@ -1099,7 +1116,28 @@ function make_renderer() {
 				cp_string += " ";
 			}
 
-			s += `${nice_string} ${cp_string} N: ${info_list[n].n}<br>`;
+			let n_string = info_list[n].n.toString();
+			while (n_string.length < 7) {
+				n_string += " ";
+			}
+
+			let pv_string = "";
+			let tmp_board = renderer.pos.copy();
+
+			for (let move of info_list[n].pv) {
+
+				if (tmp_board.active === "w") {
+					pv_string += `<span class="white">`;
+				} else {
+					pv_string += `<span class="black">`;
+				}
+				pv_string += tmp_board.nice_string(move);
+				pv_string += "</span> ";
+
+				tmp_board = tmp_board.move(move);
+			}
+
+			s += `${nice_string} ${cp_string} N: ${n_string} ${pv_string}<br>`;
 		}
 
 		infobox.innerHTML = s;

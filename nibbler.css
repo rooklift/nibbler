@@ -26,3 +26,11 @@ body {
 	color: #6cccee;
 	font-family: monospace, monospace;
 }
+
+.black {
+	color: #ff0000
+}
+
+.white {
+	color: #ffffff
+}
