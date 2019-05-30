@@ -454,9 +454,16 @@ function NewPosition(state = null, active = "w", castling = "", enpassant = null
 					return false;
 				}
 
-				// Check that king source, dest, and in-between squares aren't under attack...
-				// TODO
+				// Check that king source square and the pass-through square aren't under attack.
+				// Destination will be handled by the general in-check test later.
+				
+				if (p.attacked(Point(x1, y1), p.active)) {
+					return false;
+				}
 
+				if (p.attacked(Point((x1 + x2) / 2, y1), p.active)) {
+					return false;
+				}
 			}
 		}
 
@@ -573,11 +580,27 @@ function NewPosition(state = null, active = "w", castling = "", enpassant = null
 		let foo_x = x + step_x;
 		let foo_y = y + step_y;
 
-		if (foo_x >= 0 && foo_x <= 7 && foo_y >= 0 && foo_y <= 7) {
-			if (p.state[foo_x][foo_y] === "K" || p.state[foo_x][foo_y] === "k") {		// Don't use "Kk".includes() since p.state could be ""
-				if (p.colour(Point(foo_x, foo_y)) === opponent) {
-					return true;
-				}
+		if (p.piece(Point(foo_x, foo_y)) === "K" || p.piece(Point(foo_x, foo_y)) === "k") {		// Don't use "Kk".includes() since the piece could be ""
+			if (p.colour(Point(foo_x, foo_y)) === opponent) {
+				return true;
+			}
+		}
+
+		// Check for enemy pawns as a special case...
+
+		if (my_colour === "w") {
+			if (p.piece(Point(x - 1, y - 1)) === "p") {
+				return true;
+			}
+			if (p.piece(Point(x + 1, y - 1)) === "p") {
+				return true;
+			}
+		} else {
+			if (p.piece(Point(x - 1, y + 1)) === "P") {
+				return true;
+			}
+			if (p.piece(Point(x + 1, y + 1)) === "P") {
+				return true;
 			}
 		}
 
