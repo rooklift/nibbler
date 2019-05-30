@@ -15,7 +15,9 @@ const light = "#dadada";
 const dark = "#b4b4b4";
 const act = "#cc9966";
 
-const verbose_log = true;
+const log_to_engine = true;
+const log_engine_stderr = true;
+const log_engine_stdout = false;
 const max_moves = 16;
 
 // ------------------------------------------------------------------------------------------------
@@ -55,13 +57,13 @@ if (config && exe) {
 	});
 
 	err_scanner.on("line", (line) => {
-		if (verbose_log) {
+		if (log_engine_stderr) {
 			console.log("!", line);
 		}
 	});
 
 	scanner.on("line", (line) => {
-		if (verbose_log) {
+		if (log_engine_stdout) {
 			console.log("<", line);
 		}
 		renderer.receive(line);
@@ -71,7 +73,7 @@ if (config && exe) {
 		msg = msg.trim();
 		exe.stdin.write(msg);
 		exe.stdin.write("\n");
-		if (verbose_log) {
+		if (log_to_engine) {
 			console.log(">", msg);
 		}
 	}
@@ -859,7 +861,6 @@ function make_renderer() {
 	renderer.running = false;
 
 	renderer.info = Object.create(null);
-	renderer.info_list = [];								// Kept sorted
 	renderer.info_draw_time = window.performance.now();		// Dubious Chrome-specific thing
 
 	renderer.square_size = () => {
@@ -985,15 +986,15 @@ function make_renderer() {
 		}
 	};
 
-	renderer.play_best = () => {
+	renderer.info_sorted = () => {
 
-		let all_info = [];
+		let info_list = [];
 
 		for (let key of Object.keys(renderer.info)) {
-			all_info.push(renderer.info[key]);
+			info_list.push(renderer.info[key]);
 		}
 
-		all_info.sort((a, b) => {
+		info_list.sort((a, b) => {
 			if (a.n < b.n) {
 				return 1;
 			}
@@ -1003,8 +1004,13 @@ function make_renderer() {
 			return 0;
 		});
 
-		if (all_info.length > 0) {
-			renderer.move(all_info[0].move);
+		return info_list;
+	};
+
+	renderer.play_best = () => {
+		let info_list = renderer.info_sorted();
+		if (info_list.length > 0) {
+			renderer.move(info_list[0].move);
 		}
 	}
 
@@ -1018,26 +1024,12 @@ function make_renderer() {
 
 		renderer.info_draw_time = wpn;
 
-		renderer.info_list = [];
-
-		for (let key of Object.keys(renderer.info)) {
-			renderer.info_list.push(renderer.info[key]);
-		}
-
-		renderer.info_list.sort((a, b) => {
-			if (a.n < b.n) {
-				return 1;
-			}
-			if (a.n > b.n) {
-				return -1;
-			}
-			return 0;
-		});
-
+		let info_list = renderer.info_sorted();
+		
 		let s = "";
 
-		for (let n = 0; n < renderer.info_list.length && n < max_moves; n++) {
-			s += `${renderer.info_list[n].move} ${renderer.info_list[n].cp} (N: ${renderer.info_list[n].n})<br>`;
+		for (let n = 0; n < info_list.length && n < max_moves; n++) {
+			s += `${info_list[n].move} ${info_list[n].cp} (N: ${info_list[n].n})<br>`;
 		}
 
 		infobox.innerHTML = s;
