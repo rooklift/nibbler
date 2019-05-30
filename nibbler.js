@@ -857,8 +857,9 @@ function make_renderer() {
 	renderer.squares = [];
 	renderer.active_square = null;
 	renderer.running = false;
-	renderer.info = Object.create(null);
 
+	renderer.info = Object.create(null);
+	renderer.info_list = [];								// Kept sorted
 	renderer.info_draw_time = window.performance.now();		// Dubious Chrome-specific thing
 
 	renderer.square_size = () => {
@@ -906,22 +907,40 @@ function make_renderer() {
 				return;
 			}
 
-			let cp = parseInt(InfoVal(s, "cp"), 10);				// Score in centipawns
-			let multipv = parseInt(InfoVal(s, "multipv"), 10);		// Leela's ranking of the move, starting at 1
+			let move_info;
+
+			if (renderer.info[move]) {
+				move_info = renderer.info[move];
+			} else {
+				move_info = Object.create(null);						// FIXME: have a function with default values.
+				renderer.info[move] = move_info;
+			}
+
+			move_info.move = move;
+			move_info.cp = parseInt(InfoVal(s, "cp"), 10);				// Score in centipawns
+			move_info.multipv = parseInt(InfoVal(s, "multipv"), 10);	// Leela's ranking of the move, starting at 1
+		}
+
+		if (s.startsWith("info string")) {
+
+			let move = InfoVal(s, "string");
+
+			if (renderer.pos.colour(Point(move.slice(0, 2))) !== renderer.pos.active) {
+				// This is info for an old position. The engine hasn't caught up with us yet.
+				return;
+			}
 
 			let move_info;
 
 			if (renderer.info[move]) {
 				move_info = renderer.info[move];
 			} else {
-				move_info = Object.create(null);
+				move_info = Object.create(null);						// FIXME: have a function with default values.
+				renderer.info[move] = move_info;
 			}
 
 			move_info.move = move;
-			move_info.cp = cp;
-			move_info.multipv = multipv;
-
-			renderer.info[move] = move_info;
+			move_info.n = parseInt(InfoVal(s, "N:"), 10);
 		}
 	};
 
@@ -999,17 +1018,17 @@ function make_renderer() {
 
 		renderer.info_draw_time = wpn;
 
-		let all_info = [];
+		renderer.info_list = [];
 
 		for (let key of Object.keys(renderer.info)) {
-			all_info.push(renderer.info[key]);
+			renderer.info_list.push(renderer.info[key]);
 		}
 
-		all_info.sort((a, b) => {
-			if (a.cp < b.cp) {
+		renderer.info_list.sort((a, b) => {
+			if (a.n < b.n) {
 				return 1;
 			}
-			if (a.cp > b.cp) {
+			if (a.n > b.n) {
 				return -1;
 			}
 			return 0;
@@ -1017,8 +1036,8 @@ function make_renderer() {
 
 		let s = "";
 
-		for (let n = 0; n < all_info.length && n < max_moves; n++) {
-			s += `${all_info[n].move} ${all_info[n].cp}<br>`;
+		for (let n = 0; n < renderer.info_list.length && n < max_moves; n++) {
+			s += `${renderer.info_list[n].move} ${renderer.info_list[n].cp} (N: ${renderer.info_list[n].n})<br>`;
 		}
 
 		infobox.innerHTML = s;
