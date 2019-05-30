@@ -182,6 +182,15 @@ function Point(a, b) {
 
 // ------------------------------------------------------------------------------------------------
 
+function NewInfo() {
+	return {
+		cp: -999999,
+		move: "??",
+		multipv: 999,
+		n: 1
+	};
+}
+
 function NewPosition(state = null, active = "w", castling = "", enpassant = null, halfmove = 0, fullmove = 1, parent = null, lastmove = null) {
 
 	let p = Object.create(null);
@@ -913,7 +922,7 @@ function make_renderer() {
 			if (renderer.info[move]) {
 				move_info = renderer.info[move];
 			} else {
-				move_info = Object.create(null);						// FIXME: have a function with default values.
+				move_info = NewInfo();
 				renderer.info[move] = move_info;
 			}
 
@@ -936,7 +945,7 @@ function make_renderer() {
 			if (renderer.info[move]) {
 				move_info = renderer.info[move];
 			} else {
-				move_info = Object.create(null);						// FIXME: have a function with default values.
+				move_info = NewInfo();
 				renderer.info[move] = move_info;
 			}
 
@@ -1025,7 +1034,7 @@ function make_renderer() {
 		renderer.info_draw_time = wpn;
 
 		let info_list = renderer.info_sorted();
-		
+
 		let s = "";
 
 		for (let n = 0; n < info_list.length && n < max_moves; n++) {
