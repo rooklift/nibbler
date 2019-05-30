@@ -588,8 +588,6 @@ function NewPosition(state = null, active = "w", castling = "", enpassant = null
 
 		// Is the target square under attack via the line specified by step_x and step_y (which are both -1, 0, or 1) ?
 
-		let opponent = my_colour === "w" ? "b" : "w";
-
 		let x = target.x;
 		let y = target.y;
 
