@@ -80,6 +80,11 @@ if (config) {
 		"bad_cp_threshold": 20,
 		"max_info_lines": 8,
 		"node_display_threshold": 0.1,
+
+		"show_cp": true,
+		"show_n": true,
+		"show_p": false,
+		"show_pv": true,
 	});
 
 	exe = child_process.spawn(config.path);
@@ -1132,6 +1137,11 @@ function make_renderer() {
 			move_info.move = move;
 			move_info.n = parseInt(InfoVal(s, "N:"), 10);
 
+			move_info.p = InfoVal(s, "(P:");
+			if (move_info.p.endsWith(")")) {
+				move_info.p = move_info.p.slice(0, move_info.p.length - 1);
+			};
+
 		} else if (s.startsWith("error")) {
 			renderer.err_receive(s);
 		}
@@ -1249,10 +1259,35 @@ function make_renderer() {
 				pv_string += tmp_board.nice_string(move);
 				pv_string += "</span> ";
 
+				if (config.show_pv === false) {
+					break;
+				}
+
 				tmp_board = tmp_board.move(move);
 			}
 
-			s += `${pv_string} <span class="tech">(N: ${n_string} cp: ${cp_string})</span><br><br>`;
+			s += pv_string.trim();
+
+			if (config.show_n || config.show_cp || config.show_p) {
+				
+				let tech_elements = []
+
+				if (config.show_n) {
+					tech_elements.push(`N: ${n_string}`);
+				}
+
+				if (config.show_cp) {
+					tech_elements.push(`cp: ${cp_string}`);
+				}
+
+				if (config.show_p) {
+					tech_elements.push(`P: ${info_list[i].p}`);
+				}
+
+				s += ` <span class="tech">(${tech_elements.join(" ")})</span>`;
+			}
+
+			s += "<br><br>";
 		}
 
 		infobox.innerHTML = s;

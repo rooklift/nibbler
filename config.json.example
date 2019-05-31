@@ -8,5 +8,10 @@
 
 	"bad_cp_threshold": 10,
 	"max_info_lines": 8,
-	"node_display_threshold": 0.05
+	"node_display_threshold": 0.05,
+
+	"show_cp": true,
+	"show_n": true,
+	"show_p": true,
+	"show_pv": true
 }
