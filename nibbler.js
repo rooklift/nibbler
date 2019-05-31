@@ -1,6 +1,7 @@
 "use strict";
 
 const alert = require("./modules/alert");
+const assign_without_overwrite = require("./modules/utils").assign_without_overwrite;
 const child_process = require("child_process");
 const fs = require('fs');
 const ipcRenderer = require("electron").ipcRenderer;
@@ -37,11 +38,19 @@ try {
 }
 
 if (config) {
+
 	try {
 		exe = child_process.spawn(config.path);
 	} catch (err) {
 		alert("Couldn't spawn process");
 	}
+
+	// Some default values for config...
+
+	assign_without_overwrite(config, {
+		bad_cp_threshold: 50,
+		options: {}
+	});
 }
 
 if (config && exe) {
@@ -83,10 +92,8 @@ if (config && exe) {
 
 	send("uci");
 
-	if (config.options) {
-		for (let key of Object.keys(config.options)) {
-			send(`setoption name ${key} value ${config.options[key]}`);
-		}
+	for (let key of Object.keys(config.options)) {
+		send(`setoption name ${key} value ${config.options[key]}`);
 	}
 
 	send("setoption name VerboseMoveStats value true");
