@@ -11,3 +11,4 @@ Currently, basic functionality does work.
 * PV display as a board.
 * PGN loading.
 * UI improvements.
+* Winrate graph.
