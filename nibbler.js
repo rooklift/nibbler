@@ -978,16 +978,10 @@ function LoadFEN(fen) {
 	ret.active = tokens[1];
 
 	ret.castling = "";
-	let chars = Array.from(tokens[2]);
-	for (let c of chars) {
-		if ("KQkq".includes(c)) {
-			if (ret.castling.includes(c) === false) {
-				ret.castling += c;
-			}
-		} else {
-			throw "Invalid FEN - castling rights";
-		}
-	}
+	if (tokens[2].includes("K")) ret.castling += "K";
+	if (tokens[2].includes("Q")) ret.castling += "Q";
+	if (tokens[2].includes("k")) ret.castling += "k";
+	if (tokens[2].includes("q")) ret.castling += "q";
 
 	tokens[3] = tokens[3].toLowerCase();
 	ret.enpassant = Point(tokens[3]);
