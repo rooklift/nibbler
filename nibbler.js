@@ -1291,8 +1291,8 @@ function make_renderer() {
 			s += "<br><br>";
 		}
 
-		if (renderer.infobox_string !== s) {		// Only update when needed, so user can select and copy.
-													// A direct comparison with innerHTML seems to fail (something must get converted).
+		if (renderer.infobox_string !== s) {		// Only update when needed, so user can select and copy. A direct
+													// comparison of s with innerHTML seems to fail (something must get changed).
 			renderer.infobox_string = s;
 			infobox.innerHTML = s;
 		}
