@@ -4,7 +4,7 @@
 
 ![Screenshot](https://user-images.githubusercontent.com/16438795/58711394-613a2d80-83b6-11e9-9fcd-7d2f2a45159c.png)
 
-Currently, basic functionality does work.
+Currently, basic functionality does work. You can now load FEN positions via the FEN box.
 
 # Usage
 
