@@ -83,8 +83,10 @@ if (config && exe) {
 
 	send("uci");
 
-	for (let key of Object.keys(config.options)) {
-		send(`setoption name ${key} value ${config.options[key]}`);
+	if (config.options) {
+		for (let key of Object.keys(config.options)) {
+			send(`setoption name ${key} value ${config.options[key]}`);
+		}
 	}
 
 	send("setoption name VerboseMoveStats value true");
