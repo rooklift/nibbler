@@ -786,6 +786,7 @@ function NewPosition(state = null, active = "w", castling = "", enpassant = null
 
 		// Given some raw UCI move string, return a nice human-readable string.
 		// FIXME: disambiguate
+		// FIXME: indicate checks
 
 		let [x1, y1] = XY(s.slice(0, 2));
 		let [x2, y2] = XY(s.slice(2, 4));
