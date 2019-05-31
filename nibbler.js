@@ -1247,7 +1247,7 @@ function make_renderer() {
 				tmp_board = tmp_board.move(move);
 			}
 
-			s += `${pv_string} <span class="tech">(cp: ${cp_string} N: ${n_string})</span><br><br>`;
+			s += `${pv_string} <span class="tech">(N: ${n_string} cp: ${cp_string})</span><br><br>`;
 		}
 
 		infobox.innerHTML = s;
