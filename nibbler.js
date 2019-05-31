@@ -1019,6 +1019,8 @@ function make_renderer() {
 	renderer.ever_received_info = false;
 	renderer.stderr_log = "";
 
+	renderer.infobox_string = "";					// Just to help not redraw the infobox when not needed.
+
 	renderer.info = Object.create(null);			// Map of move (e.g. "e2e4") --> info object, see NewInfo()
 
 	renderer.square_size = () => {
@@ -1226,7 +1228,9 @@ function make_renderer() {
 	renderer.draw_info = () => {
 
 		if (renderer.ever_received_info === false) {
-			infobox.innerHTML = renderer.stderr_log;
+			if (infobox.innerHTML !== renderer.stderr_log) {	// Only update when needed, so user can select and copy.
+				infobox.innerHTML = renderer.stderr_log;
+			}
 			return;
 		}
 
@@ -1290,7 +1294,11 @@ function make_renderer() {
 			s += "<br><br>";
 		}
 
-		infobox.innerHTML = s;
+		if (renderer.infobox_string !== s) {		// Only update when needed, so user can select and copy.
+													// A direct comparison with innerHTML seems to fail (something must get converted).
+			renderer.infobox_string = s;
+			infobox.innerHTML = s;
+		}
 
 		// ------------------------------------------
 
