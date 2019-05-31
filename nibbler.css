@@ -22,10 +22,13 @@ body {
 	overflow: hidden;
 }
 
-#fen {
+#fenbox {
 	clear: both;
+	background-color: black;
 	color: #6cccee;
 	font-family: monospace, monospace;
+	display: block;
+	width: 640px;
 }
 
 .black {

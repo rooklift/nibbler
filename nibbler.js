@@ -1012,19 +1012,31 @@ function make_renderer() {
 	renderer.stderr_log = "";						// All output received from the engine's stderr.
 	renderer.infobox_string = "";					// Just to help not redraw the infobox when not needed.
 
+	fenbox.value = renderer.pos.fen();
+
 	renderer.square_size = () => {
 		return 80;									// FIXME
 	};
 
 	renderer.load_fen = (s) => {
-		renderer.pos = LoadFEN(s);
+
+		try {
+			renderer.pos = LoadFEN(s);
+		} catch (err) {
+			alert(err);
+			return;
+		}
+
 		renderer.active_square = null;
 		renderer.info = Object.create(null);
+		fenbox.value = renderer.pos.fen();
+
 		if (renderer.running) {
 			renderer.go(true);
 		} else {
 			send("ucinewgame");
 		}
+
 		renderer.draw();
 	};
 
@@ -1033,21 +1045,28 @@ function make_renderer() {
 	};
 
 	renderer.move = (s) => {						// Does not call draw() but the caller should
+
 		renderer.pos = renderer.pos.move(s);
 		renderer.info = Object.create(null);
+		fenbox.value = renderer.pos.fen();
+
 		if (renderer.running) {
 			renderer.go();
 		}
 	};
 
 	renderer.undo = () => {
+
 		if (renderer.pos.parent) {
 			renderer.pos = renderer.pos.parent;
 			renderer.info = Object.create(null);
+			fenbox.value = renderer.pos.fen();
 		}
+
 		if (renderer.running) {
 			renderer.go();
 		}
+		
 		renderer.draw();
 	};
 
@@ -1402,12 +1421,6 @@ function make_renderer() {
 				}
 			}
 		}
-
-		let new_fen = renderer.pos.fen();
-
-		if (new_fen !== fen.innerHTML) {			// Only update when needed, so user can select and copy.
-			fen.innerHTML = new_fen;
-		}
 	};
 
 	renderer.draw_loop = () => {
@@ -1445,6 +1458,13 @@ ipcRenderer.on("new", () => {
 canvas.addEventListener("mousedown", (event) => {
 	renderer.click(event);
 });
+
+// Setup return key on FEN box...
+document.getElementById("fenbox").onkeydown = function(event) {
+	if (event.keyCode == 13) {
+		renderer.load_fen(document.getElementById("fenbox").value);
+	}
+};
 
 function draw_after_images_load() {
 	if (loads === 12) {
