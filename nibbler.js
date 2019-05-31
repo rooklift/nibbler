@@ -20,7 +20,7 @@ const act = "#cc9966";
 const log_to_engine = true;
 const log_engine_stderr = true;
 const log_engine_stdout = false;
-const max_moves = 8;
+const max_info_lines = 8;
 
 // ------------------------------------------------------------------------------------------------
 
@@ -968,7 +968,6 @@ function make_renderer() {
 	renderer.stderr_log = "";
 
 	renderer.info = Object.create(null);	// Map of move (e.g. "e2e4") --> info object, see NewInfo()
-	renderer.info_draw_time = -99999;
 
 	renderer.square_size = () => {
 		return 80;							// FIXME
@@ -1149,36 +1148,33 @@ function make_renderer() {
 
 	renderer.draw_info = () => {
 
-		let wpn = window.performance.now();
-
-		if (wpn - renderer.info_draw_time < 500) {
-			return;
-		}
-
-		renderer.info_draw_time = wpn;
-
 		if (renderer.ever_received_info === false) {
 			infobox.innerHTML = renderer.stderr_log;
 			return;
 		}
 
 		let info_list = renderer.info_sorted();
+		let total_nodes = 0;
+
+		// ------------------------------------------
 
 		let s = "";
 
-		for (let n = 0; n < info_list.length && n < max_moves; n++) {
+		for (let i = 0; i < info_list.length && i < max_info_lines; i++) {
 
-			let nice_string = renderer.pos.nice_string(info_list[n].move);
-			let cp_string = info_list[n].cp.toString();
+			total_nodes += info_list[i].n;
+
+			let nice_string = renderer.pos.nice_string(info_list[i].move);
+			let cp_string = info_list[i].cp.toString();
 			if (cp_string.startsWith("-") === false) {
 				cp_string = "+" + cp_string;
 			}
-			let n_string = info_list[n].n.toString();
+			let n_string = info_list[i].n.toString();
 
 			let pv_string = "";
 			let tmp_board = renderer.pos.copy();
 
-			for (let move of info_list[n].pv) {
+			for (let move of info_list[i].pv) {
 
 				if (tmp_board.active === "w") {
 					pv_string += `<span class="white">`;
@@ -1195,6 +1191,51 @@ function make_renderer() {
 		}
 
 		infobox.innerHTML = s;
+
+		// ------------------------------------------
+
+		if (total_nodes === 0) {
+			return;
+		}
+
+		let best_nodes = info_list[0].n;
+
+		context.lineWidth = 8;
+		
+		for (let i = 0; i < info_list.length && i < max_info_lines; i++) {
+
+			if (info_list[i].n > best_nodes / 10) {
+
+				let loss = info_list[0].cp - info_list[i].cp;
+
+				if (loss < Math.abs(info_list[0].cp) * 0.1) {
+					context.strokeStyle = "#66aa66";
+					context.fillStyle = "#66aa66";
+				} else {
+					context.strokeStyle = "#cccc66";
+					context.fillStyle = "#cccc66";
+				}
+
+				let [x1, y1] = XY(info_list[i].move.slice(0, 2));
+				let [x2, y2] = XY(info_list[i].move.slice(2, 4));
+
+				let rss = renderer.square_size();
+
+				let cx1 = x1 * rss + rss / 2;
+				let cy1 = y1 * rss + rss / 2;
+				let cx2 = x2 * rss + rss / 2;
+				let cy2 = y2 * rss + rss / 2;
+
+        		context.beginPath();
+        		context.moveTo(cx1, cy1);
+        		context.lineTo(cx2, cy2);
+				context.stroke();
+				
+				context.beginPath();
+				context.arc(cx2, cy2, 12, 0, 2 * Math.PI);
+				context.fill();
+			}
+		}
 	};
 
 	renderer.draw_loop = () => {
@@ -1228,13 +1269,32 @@ function make_renderer() {
 			}
 		}
 
+		// Draw enemy pieces...
+
+		let opponent_colour = renderer.pos.active === "w" ? "b": "w";
+
 		for (let x = 0; x < 8; x++) {
 			for (let y = 0; y < 8; y++) {
-				let piece = renderer.pos.state[x][y];
-				if (piece !== "") {
-					let screen_x = x * rss;
-					let screen_y = y * rss;
-					context.drawImage(images[piece], screen_x, screen_y, rss, rss);
+				if (renderer.pos.colour(Point(x, y)) === opponent_colour) {
+					let piece = renderer.pos.state[x][y];
+					let cx = x * rss;
+					let cy = y * rss;
+					context.drawImage(images[piece], cx, cy, rss, rss);
+				}
+			}
+		}
+
+		renderer.draw_info();		// Do this here so the arrows are below the friendly pieces
+
+		// Draw friendly pieces...
+
+		for (let x = 0; x < 8; x++) {
+			for (let y = 0; y < 8; y++) {
+				if (renderer.pos.colour(Point(x, y)) === renderer.pos.active) {
+					let piece = renderer.pos.state[x][y];
+					let cx = x * rss;
+					let cy = y * rss;
+					context.drawImage(images[piece], cx, cy, rss, rss);
 				}
 			}
 		}
@@ -1244,8 +1304,6 @@ function make_renderer() {
 		if (new_fen !== fen.innerHTML) {			// Only update when needed, so user can select and copy.
 			fen.innerHTML = new_fen;
 		}
-
-		renderer.draw_info();
 
 		setTimeout(renderer.draw_loop, 50);
 	};
