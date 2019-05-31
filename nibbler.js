@@ -1011,17 +1011,14 @@ function make_renderer() {
 
 	let renderer = Object.create(null);
 
-	renderer.pos = LoadFEN(new_board_fen);
+	renderer.pos = LoadFEN(new_board_fen);			// Position.
+	renderer.info = Object.create(null);			// Map of move (e.g. "e2e4") --> info object, see NewInfo().
 	renderer.squares = [];							// Info about clickable squares.
-	renderer.active_square = null;
+	renderer.active_square = null;					// Square clicked by user.
 	renderer.running = false;						// Whether to send "go" to the engine after move, undo, etc.
-
-	renderer.ever_received_info = false;
-	renderer.stderr_log = "";
-
+	renderer.ever_received_info = false;			// When false, we write stderr log instead of move info.
+	renderer.stderr_log = "";						// All output received from the engine's stderr.
 	renderer.infobox_string = "";					// Just to help not redraw the infobox when not needed.
-
-	renderer.info = Object.create(null);			// Map of move (e.g. "e2e4") --> info object, see NewInfo()
 
 	renderer.square_size = () => {
 		return 80;									// FIXME
