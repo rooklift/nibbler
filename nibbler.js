@@ -44,6 +44,11 @@ function send(msg) {
 	}
 }
 
+// The sync function exists so that we can disregard all output until a certain point.
+// Basically we use it after sending a position, so that we can ignore all analysis
+// that comes until LZ sends "readyok" in response to our "isready". All output before
+// that moment would refer to the obsolete position.
+
 function sync() {
 	send("isready");
 	readyok_required = true;
@@ -1021,11 +1026,7 @@ function make_renderer() {
 		renderer.info = Object.create(null);
 		
 		if (renderer.running) {
-			send("stop");
-			send("ucinewgame");
-			send("position startpos moves");
-			sync();									// This doesn't block but does send "isready" (before we send "go") and causes us to ignore all output until "readyok" comes.
-			send("go");
+			renderer.go(true);
 		} else {
 			send("ucinewgame");
 		}
@@ -1049,7 +1050,7 @@ function make_renderer() {
 		}
 	};
 
-	renderer.go = () => {
+	renderer.go = (new_game_flag) => {
 
 		renderer.running = true;
 
@@ -1063,7 +1064,12 @@ function make_renderer() {
 		}
 
 		send("stop");
+		if (new_game_flag) {
+			send("ucinewgame");
+		}
+
 		send(`position ${setup} moves ${renderer.pos.history()}`);
+		sync();															// See comment on how sync() works
 		send("go");
 	};
 
@@ -1085,11 +1091,6 @@ function make_renderer() {
 
 			let move = InfoVal(s, "pv");
 
-			if (renderer.pos.colour(Point(move.slice(0, 2))) !== renderer.pos.active) {
-				// This is info for an old position. The engine hasn't caught up with us yet.
-				return;
-			}
-
 			let move_info;
 
 			if (renderer.info[move]) {
@@ -1109,11 +1110,6 @@ function make_renderer() {
 			// info string d2d4  (293 ) N:   12845 (+121) (P: 20.10%) (Q:  0.09001) (D:  0.000) (U: 0.02410) (Q+U:  0.11411) (V:  0.1006)
 
 			let move = InfoVal(s, "string");
-
-			if (renderer.pos.colour(Point(move.slice(0, 2))) !== renderer.pos.active) {
-				// This is info for an old position. The engine hasn't caught up with us yet.
-				return;
-			}
 
 			let move_info;
 
