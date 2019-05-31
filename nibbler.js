@@ -799,10 +799,10 @@ function NewPosition(state = null, active = "w", castling = "", enpassant = null
 		if ("KkQqRrBbNn".includes(piece)) {
 
 			if ("Kk".includes(piece)) {
-				if (x2 - x1 === 2) {
+				if (s === "e1g1" || s === "e8g8") {
 					return "O&#8209;O";				// Non breaking hyphen character used.
 				}
-				if (x2 - x1 === -2) {
+				if (s === "e1c1" || s === "e8c8") {
 					return "O&#8209;O&#8209;O";		// Non breaking hyphen character used.
 				}
 			}
