@@ -12,7 +12,7 @@ exports.assign_without_overwrite = (target, source) => {
 		return;
 	}
 	let keys = Object.keys(source)
-	for (let key in keys) {
+	for (let key of keys) {
 		if (target.hasOwnProperty(key) === false) {
 			target[key] = source[key];
 		}
