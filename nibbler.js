@@ -62,6 +62,7 @@ if (config && exe) {
 		if (log_engine_stderr) {
 			console.log("!", line);
 		}
+		renderer.err_receive(line);
 	});
 
 	scanner.on("line", (line) => {
@@ -963,8 +964,11 @@ function make_renderer() {
 	renderer.active_square = null;
 	renderer.running = false;
 
+	renderer.ever_received_info = false;
+	renderer.stderr_log = "";
+
 	renderer.info = Object.create(null);
-	renderer.info_draw_time = window.performance.now();		// Dubious Chrome-specific thing
+	renderer.info_draw_time = -99999;
 
 	renderer.square_size = () => {
 		return 80;						// FIXME
@@ -1012,6 +1016,10 @@ function make_renderer() {
 	};
 
 	renderer.receive = (s) => {
+
+		if (s.startsWith("info")) {
+			renderer.ever_received_info = true;
+		}
 
 		if (s.startsWith("info depth")) {
 
@@ -1064,6 +1072,11 @@ function make_renderer() {
 			move_info.n = parseInt(InfoVal(s, "N:"), 10);
 		}
 	};
+
+	renderer.err_receive = (s) => {
+		renderer.stderr_log += s;
+		renderer.stderr_log += "<br>";
+	}
 
 	renderer.click = (event) => {
 
@@ -1143,6 +1156,11 @@ function make_renderer() {
 		}
 
 		renderer.info_draw_time = wpn;
+
+		if (renderer.ever_received_info === false) {
+			infobox.innerHTML = renderer.stderr_log;
+			return;
+		}
 
 		let info_list = renderer.info_sorted();
 
