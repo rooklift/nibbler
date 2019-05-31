@@ -26,6 +26,7 @@ function menu_build() {
 				},
 				{
 					role: "quit",
+					label: "Quit",
 					accelerator: "CommandOrControl+Q"
 				},
 				{
@@ -70,9 +71,10 @@ function menu_build() {
 					}
 				},
 				{
-					label: "Stop",
+					label: "Halt",
+					accelerator: "CommandOrControl+H",
 					click: () => {
-						windows.send("main-window", "stop", null);
+						windows.send("main-window", "halt", null);
 					}
 				}
 			]

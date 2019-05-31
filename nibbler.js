@@ -1082,7 +1082,7 @@ function make_renderer() {
 		send("go");
 	};
 
-	renderer.stop = () => {
+	renderer.halt = () => {
 		send("stop");
 		renderer.running = false;
 	};
@@ -1222,6 +1222,10 @@ function make_renderer() {
 		}
 
 		let s = "";
+
+		if (renderer.running === false) {
+			s += "&lt;halted&gt;<br><br>";
+		}
 
 		for (let i = 0; i < info_list.length && i < max_info_lines; i++) {
 
@@ -1390,8 +1394,8 @@ ipcRenderer.on("go", () => {
 	renderer.go();
 });
 
-ipcRenderer.on("stop", () => {
-	renderer.stop();
+ipcRenderer.on("halt", () => {
+	renderer.halt();
 });
 
 ipcRenderer.on("play_best", () => {
