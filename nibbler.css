@@ -12,6 +12,7 @@ body {
 	float: left;
 	margin-right: 1em;
 	margin-bottom: 1em;
+	user-select: none;
 }
 
 #infobox {
@@ -19,6 +20,7 @@ body {
 	font-family: monospace, monospace;
 	white-space: pre-wrap;
 	overflow: hidden;
+	user-select: none;		/* hmm what about copying lines though? */
 }
 
 #fen {
