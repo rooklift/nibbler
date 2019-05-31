@@ -6,6 +6,10 @@
 
 Currently, basic functionality does work.
 
+# Usage
+
+*Nibbler* requires Electron, but has no other dependencies. If you have Electron installed (e.g. `npm install -g electron`) you can likely enter the nibbler directory, edit the `config.json` file, then do `electron .`
+
 # TODO
 
 * PV display as a board.
