@@ -1066,7 +1066,7 @@ function make_renderer() {
 		if (renderer.running) {
 			renderer.go();
 		}
-		
+
 		renderer.draw();
 	};
 
@@ -1461,7 +1461,7 @@ canvas.addEventListener("mousedown", (event) => {
 
 // Setup return key on FEN box...
 document.getElementById("fenbox").onkeydown = function(event) {
-	if (event.keyCode == 13) {
+	if (event.keyCode === 13) {
 		renderer.load_fen(document.getElementById("fenbox").value);
 	}
 };
