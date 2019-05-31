@@ -1031,13 +1031,12 @@ function make_renderer() {
 		renderer.draw();
 	};
 
-	renderer.move = (s) => {
+	renderer.move = (s) => {						// Does not call draw() but the caller should
 		renderer.pos = renderer.pos.move(s);
 		renderer.info = Object.create(null);
 		if (renderer.running) {
 			renderer.go();
 		}
-		renderer.draw();
 	};
 
 	renderer.undo = () => {
