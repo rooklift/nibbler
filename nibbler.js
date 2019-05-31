@@ -960,18 +960,18 @@ function make_renderer() {
 	let renderer = Object.create(null);
 
 	renderer.pos = LoadFEN(new_board_fen);
-	renderer.squares = [];
+	renderer.squares = [];					// Info about clickable squares.
 	renderer.active_square = null;
-	renderer.running = false;
+	renderer.running = false;				// Whether to send "go" to the engine after move, undo, etc.
 
 	renderer.ever_received_info = false;
 	renderer.stderr_log = "";
 
-	renderer.info = Object.create(null);
+	renderer.info = Object.create(null);	// Map of move (e.g. "e2e4") --> info object, see NewInfo()
 	renderer.info_draw_time = -99999;
 
 	renderer.square_size = () => {
-		return 80;						// FIXME
+		return 80;							// FIXME
 	};
 
 	renderer.move = (s) => {
