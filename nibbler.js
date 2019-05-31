@@ -1020,16 +1020,15 @@ function make_renderer() {
 	};
 
 	renderer.new = () => {
-
 		renderer.pos = LoadFEN(new_board_fen);
 		renderer.active_square = null;
 		renderer.info = Object.create(null);
-		
 		if (renderer.running) {
 			renderer.go(true);
 		} else {
 			send("ucinewgame");
 		}
+		renderer.draw();
 	};
 
 	renderer.move = (s) => {
@@ -1038,6 +1037,7 @@ function make_renderer() {
 		if (renderer.running) {
 			renderer.go();
 		}
+		renderer.draw();
 	};
 
 	renderer.undo = () => {
@@ -1048,6 +1048,15 @@ function make_renderer() {
 		if (renderer.running) {
 			renderer.go();
 		}
+		renderer.draw();
+	};
+
+	renderer.play_best = () => {
+		let info_list = renderer.info_sorted();
+		if (info_list.length > 0) {
+			renderer.move(info_list[0].move);
+		}
+		renderer.draw();
 	};
 
 	renderer.go = (new_game_flag) => {
@@ -1196,13 +1205,6 @@ function make_renderer() {
 		});
 
 		return info_list;
-	};
-
-	renderer.play_best = () => {
-		let info_list = renderer.info_sorted();
-		if (info_list.length > 0) {
-			renderer.move(info_list[0].move);
-		}
 	};
 
 	renderer.draw_info = () => {
