@@ -2,8 +2,6 @@
 
 const alert = require("./modules/alert");
 const electron = require("electron");
-const ipcMain = require("electron").ipcMain;
-const path = require("path");
 const windows = require("./modules/windows");
 
 electron.app.on("ready", () => {
@@ -13,10 +11,6 @@ electron.app.on("ready", () => {
 
 electron.app.on("window-all-closed", () => {
 	electron.app.quit();
-});
-
-ipcMain.on("relay", (event, msg) => {
-	windows.send(msg.receiver, msg.channel, msg.content);		// Facilitates messages between browser windows...
 });
 
 function menu_build() {
