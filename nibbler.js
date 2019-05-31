@@ -1020,6 +1020,10 @@ function make_renderer() {
 
 	renderer.load_fen = (s) => {
 
+		if (renderer.pos.fen() === s) {
+			return;
+		}
+
 		try {
 			renderer.pos = LoadFEN(s);
 		} catch (err) {
