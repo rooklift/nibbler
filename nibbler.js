@@ -29,21 +29,37 @@ let config = null;
 let exe = null;
 let scanner = null;
 let err_scanner = null;
-let send = () => {};
 
-try {
-	config = JSON.parse(fs.readFileSync("config.json", "utf8"));
-} catch (err) {
-	alert("Couldn't load config.json");
+function send(msg) {
+	try {
+		msg = msg.trim();
+		exe.stdin.write(msg);
+		exe.stdin.write("\n");
+		if (log_to_engine) {
+			console.log(">", msg);
+		}
+	} catch (err) {
+		// pass
+	}
+}
+
+if (fs.existsSync("config.json")) {
+	try {
+		config = JSON.parse(fs.readFileSync("config.json", "utf8"));
+	} catch (err) {
+		alert("Couldn't parse config.json");
+	}
+} else if (fs.existsSync("config.json.example")) {
+	try {
+		config = JSON.parse(fs.readFileSync("config.json.example", "utf8"));
+	} catch (err) {
+		alert("Couldn't parse config.json.example");
+	}
+} else {
+	alert("config.json not present");
 }
 
 if (config) {
-
-	try {
-		exe = child_process.spawn(config.path);
-	} catch (err) {
-		alert("Couldn't spawn process");
-	}
 
 	// Some tolerable default values for config...
 
@@ -52,9 +68,12 @@ if (config) {
 		"bad_cp_threshold": 20,
 		"node_display_threshold": 0.1,
 	});
-}
 
-if (config && exe) {
+	exe = child_process.spawn(config.path);
+
+	exe.on("error", (err) => {
+  		alert("Couldn't spawn process");			// Note that this alert will come some time in the future, not instantly.
+	});
 
 	scanner = readline.createInterface({
 	    input: exe.stdout,
@@ -81,15 +100,6 @@ if (config && exe) {
 		}
 		renderer.receive(line);
 	});
-
-	send = (msg) => {
-		msg = msg.trim();
-		exe.stdin.write(msg);
-		exe.stdin.write("\n");
-		if (log_to_engine) {
-			console.log(">", msg);
-		}
-	}
 
 	send("uci");
 
