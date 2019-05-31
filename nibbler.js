@@ -1047,9 +1047,8 @@ function make_renderer() {
 			move_info.cp = parseInt(InfoVal(s, "cp"), 10);				// Score in centipawns
 			move_info.multipv = parseInt(InfoVal(s, "multipv"), 10);	// Leela's ranking of the move, starting at 1
 			move_info.pv = InfoPV(s);
-		}
 
-		if (s.startsWith("info string")) {
+		} else if (s.startsWith("info string")) {
 
 			// info string d2d4  (293 ) N:   12845 (+121) (P: 20.10%) (Q:  0.09001) (D:  0.000) (U: 0.02410) (Q+U:  0.11411) (V:  0.1006)
 
@@ -1071,7 +1070,11 @@ function make_renderer() {
 
 			move_info.move = move;
 			move_info.n = parseInt(InfoVal(s, "N:"), 10);
+
+		} else if (s.startsWith("error")) {
+			renderer.err_receive(s);
 		}
+
 	};
 
 	renderer.err_receive = (s) => {
