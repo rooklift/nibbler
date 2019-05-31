@@ -29,6 +29,7 @@ let config = null;
 let exe = null;
 let scanner = null;
 let err_scanner = null;
+let readyok_required = false;
 
 function send(msg) {
 	try {
@@ -42,6 +43,13 @@ function send(msg) {
 		// pass
 	}
 }
+
+function sync() {
+	send("isready");
+	readyok_required = true;
+}
+
+// ------------------------------------------------------------------------------------------------
 
 if (fs.existsSync("config.json")) {
 	try {
@@ -95,10 +103,22 @@ if (config) {
 	});
 
 	scanner.on("line", (line) => {
+
 		if (log_engine_stdout) {
 			console.log("<", line);
 		}
+
+		// We want to ignore all output when waiting for readyok
+
+		if (readyok_required) {
+			if (line.includes("readyok") === false) {
+				return;
+			}
+			readyok_required = false;
+		}
+
 		renderer.receive(line);
+
 	});
 
 	send("uci");
@@ -998,12 +1018,13 @@ function make_renderer() {
 
 		renderer.pos = LoadFEN(new_board_fen);
 		renderer.active_square = null;
-		renderer.info = Object.create(null);		// Sadly some obsolete info will fill this up anyway.
+		renderer.info = Object.create(null);
 		
 		if (renderer.running) {
 			send("stop");
 			send("ucinewgame");
 			send("position startpos moves");
+			sync();									// This doesn't block but does send "isready" (before we send "go") and causes us to ignore all output until "readyok" comes.
 			send("go");
 		} else {
 			send("ucinewgame");
@@ -1278,21 +1299,6 @@ function make_renderer() {
 		}
 	};
 
-	renderer.purge_old_info_loop = () => {
-
-		// As a crude hack to prevent illegal moves from ever being in the
-		// info object, we have the following. Note that obsolete info
-		// for legal moves will eventually be replaced by up-to-date info.
-
-		for (let move of Object.keys(renderer.info)) {
-			if (renderer.pos.illegal(move) !== "") {
-				delete renderer.info[move];
-			}
-		}
-
-		setTimeout(renderer.purge_old_info_loop, 500);
-	};
-
 	renderer.draw_loop = () => {
 
 		let rss = renderer.square_size();
@@ -1395,4 +1401,3 @@ canvas.addEventListener("mousedown", (event) => {
 });
 
 renderer.draw_loop();
-renderer.purge_old_info_loop();
