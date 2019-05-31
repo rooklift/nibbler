@@ -12,7 +12,7 @@ const canvas = document.getElementById("canvas");
 const infobox = document.getElementById("infobox");
 const context = canvas.getContext("2d");
 
-const new_board_fen = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1"
+const new_board_fen = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1";
 
 const light = "#dadada";
 const dark = "#b4b4b4";
@@ -135,7 +135,7 @@ if (config) {
 	send("setoption name VerboseMoveStats value true");
 	send("setoption name LogLiveStats value true");
 	send("setoption name MultiPV value 500");
-	send("ucinewgame")
+	send("ucinewgame");
 }
 
 // ------------------------------------------------------------------------------------------------
@@ -1141,7 +1141,7 @@ function make_renderer() {
 	renderer.err_receive = (s) => {
 		renderer.stderr_log += s;
 		renderer.stderr_log += "<br>";
-	}
+	};
 
 	renderer.click = (event) => {
 
@@ -1403,7 +1403,7 @@ ipcRenderer.on("new", () => {
 });
 
 canvas.addEventListener("mousedown", (event) => {
-	renderer.click(event)
+	renderer.click(event);
 });
 
 function draw_after_images_load() {
