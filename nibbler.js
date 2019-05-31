@@ -11,6 +11,8 @@ const canvas = document.getElementById("canvas");
 const infobox = document.getElementById("infobox");
 const context = canvas.getContext("2d");
 
+const new_board_fen = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1"
+
 const light = "#dadada";
 const dark = "#b4b4b4";
 const act = "#cc9966";
@@ -77,6 +79,8 @@ if (config && exe) {
 			console.log(">", msg);
 		}
 	}
+
+	send("uci");
 
 	for (let key of Object.keys(config.options)) {
 		send(`setoption name ${key} value ${config.options[key]}`);
@@ -362,17 +366,6 @@ function NewPosition(state = null, active = "w", castling = "", enpassant = null
 		ret.active = white_flag ? "b" : "w";
 
 		return ret;
-	};
-
-	p.moves = () => {
-		let list = [];
-		let node = p;
-		while (node.parent !== null) {
-			list.push(node.lastmove);
-			node = node.parent;
-		}
-		list.reverse();
-		return list.join(" ");
 	};
 
 	p.illegal = (s) => {
@@ -709,47 +702,6 @@ function NewPosition(state = null, active = "w", castling = "", enpassant = null
 		}
 	};
 
-	p.fen = () => {
-
-		let s = "";
-
-		for (let y = 0; y < 8; y++) {
-
-			let x = 0;
-			let blanks = 0;
-
-			while (true) {
-
-				if (p.state[x][y] === "") {
-					blanks++;
-				} else {
-					if (blanks > 0) {
-						s += blanks.toString();
-						blanks = 0;
-					}
-					s += p.state[x][y];
-				}
-
-				x++;
-
-				if (x >= 8) {
-					if (blanks > 0) {
-						s += blanks.toString();
-					}
-					if (y < 7) {
-						s += "/";
-					}
-					break;
-				}
-			}
-		}
-
-		let ep_string = p.enpassant === null_point ? "-" : p.enpassant.s;
-		let castling_string = p.castling === "" ? "-" : p.castling;
-
-		return s + ` ${p.active} ${castling_string} ${ep_string} ${p.halfmove} ${p.fullmove}`;
-	};
-
 	p.piece = (point) => {
 		if (point === null_point) return "";
 		return p.state[point.x][point.y];
@@ -827,6 +779,87 @@ function NewPosition(state = null, active = "w", castling = "", enpassant = null
 		}
 
 		return ret;
+	};
+
+	p.fen = () => {
+
+		let s = "";
+
+		for (let y = 0; y < 8; y++) {
+
+			let x = 0;
+			let blanks = 0;
+
+			while (true) {
+
+				if (p.state[x][y] === "") {
+					blanks++;
+				} else {
+					if (blanks > 0) {
+						s += blanks.toString();
+						blanks = 0;
+					}
+					s += p.state[x][y];
+				}
+
+				x++;
+
+				if (x >= 8) {
+					if (blanks > 0) {
+						s += blanks.toString();
+					}
+					if (y < 7) {
+						s += "/";
+					}
+					break;
+				}
+			}
+		}
+
+		let ep_string = p.enpassant === null_point ? "-" : p.enpassant.s;
+		let castling_string = p.castling === "" ? "-" : p.castling;
+
+		return s + ` ${p.active} ${castling_string} ${ep_string} ${p.halfmove} ${p.fullmove}`;
+	};
+
+	p.simple_string = () => {
+
+		// Returns a simple representation of the board, which is convenient to
+		// use for the mouseover functions.
+
+		let chars = new Array(64);
+		for (let y = 0; y <= 7; y++) {
+			for (let x = 0; x <= 7; x++) {
+				let c = p.state[x][y];
+				chars[y * 8 + x] = c !== "" ? c : ".";
+			}
+		}
+		return chars.join("");
+	};
+
+	p.history = () => {
+		let list = [];
+		let node = p;
+		while (node.parent !== null) {
+			list.push(node.lastmove);
+			node = node.parent;
+		}
+		list.reverse();
+		return list.join(" ");
+	};
+
+	p.initial_fen = () => {
+
+		// When sending the engine the position, the UCI specs involve sending the initial FEN
+		// and then a list of moves. This method finds the initial FEN.
+
+		let node = p;
+
+		while (node.parent) {
+			node = node.parent;
+		}
+
+		return node.fen();
 	};
 
 	return p;
@@ -925,7 +958,7 @@ function make_renderer() {
 
 	let renderer = Object.create(null);
 
-	renderer.pos = LoadFEN("rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1");
+	renderer.pos = LoadFEN(new_board_fen);
 	renderer.squares = [];
 	renderer.active_square = null;
 	renderer.running = false;
@@ -956,9 +989,20 @@ function make_renderer() {
 	};
 
 	renderer.go = () => {
+
 		renderer.running = true;
+
+		let setup;
+
+		let initial_fen = renderer.pos.initial_fen();
+		if (initial_fen !== new_board_fen) {
+			setup = `fen ${initial_fen}`;
+		} else {
+			setup = "startpos";
+		}
+
 		send("stop");
-		send(`position startpos moves ${renderer.pos.moves()}`);
+		send(`position ${setup} moves ${renderer.pos.history()}`);
 		send("go");
 	};
 
