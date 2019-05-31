@@ -45,11 +45,12 @@ if (config) {
 		alert("Couldn't spawn process");
 	}
 
-	// Some default values for config...
+	// Some tolerable default values for config...
 
 	assign_without_overwrite(config, {
-		bad_cp_threshold: 50,
-		options: {}
+		"options": {},
+		"bad_cp_threshold": 20,
+		"node_display_threshold": 0.1,
 	});
 }
 
@@ -1216,11 +1217,11 @@ function make_renderer() {
 		
 		for (let i = 0; i < info_list.length && i < max_info_lines; i++) {
 
-			if (info_list[i].n > best_nodes / 10) {
+			if (info_list[i].n > best_nodes * config.node_display_threshold) {
 
 				let loss = info_list[0].cp - info_list[i].cp;
 
-				if (loss < Math.abs(info_list[0].cp) * 0.1) {
+				if (loss < config.bad_cp_threshold) {
 					context.strokeStyle = "#66aa66";
 					context.fillStyle = "#66aa66";
 				} else {

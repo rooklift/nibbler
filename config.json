@@ -3,5 +3,7 @@
 	"options": {
 		"Backend": "cudnn-fp16",
 		"WeightsFile": "C:\\Programs (self-installed)\\Lc0\\networks\\T40.T8.610"
-	}
+	},
+	"bad_cp_threshold": 10,
+	"node_display_threshold": 0.05
 }
