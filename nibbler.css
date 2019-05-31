@@ -1,34 +1,36 @@
 body {
-	margin: 20px;
-	border: 0;
-	padding: 0;
 	background-color: black;
+	border: 0;
 	color: white;
 	cursor: default;
+	margin: 20px;
 	overflow: hidden;
+	padding: 0;
 }
 
 #canvas {
 	float: left;
-	margin-right: 1em;
 	margin-bottom: 1em;
+	margin-right: 1em;
 	user-select: none;
 }
 
 #infobox {
 	color: #cccccc;
 	font-family: monospace, monospace;
-	white-space: pre-wrap;
 	overflow: hidden;
+	white-space: pre-wrap;
 }
 
 #fenbox {
-	clear: both;
 	background-color: black;
 	border: none;
+	caret-color: white;
+	clear: both;
 	color: #6cccee;
-	font-family: monospace, monospace;
 	display: block;
+	font-family: monospace, monospace;
+	font-size: 100%;
 	width: 640px;
 }
 
