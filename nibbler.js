@@ -132,8 +132,8 @@ if (config) {
 		send(`setoption name ${key} value ${config.options[key]}`);
 	}
 
-	send("setoption name VerboseMoveStats value true");
-	send("setoption name LogLiveStats value true");
+	send("setoption name VerboseMoveStats value true");		// Required for LogLiveStats to work.
+	send("setoption name LogLiveStats value true");			// "Secret" Lc0 command.
 	send("setoption name MultiPV value 500");
 	send("ucinewgame");
 }
@@ -1199,6 +1199,12 @@ function make_renderer() {
 				return 1;
 			}
 			if (a.n > b.n) {
+				return -1;
+			}
+			if (a.cp < b.cp) {
+				return 1;
+			}
+			if (a.cp > b.cp) {
 				return -1;
 			}
 			return 0;
