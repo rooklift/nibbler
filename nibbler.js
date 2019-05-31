@@ -21,7 +21,6 @@ const act = "#cc9966";
 const log_to_engine = true;
 const log_engine_stderr = true;
 const log_engine_stdout = false;
-const max_info_lines = 8;
 
 // ------------------------------------------------------------------------------------------------
 
@@ -79,6 +78,7 @@ if (config) {
 	assign_without_overwrite(config, {
 		"options": {},
 		"bad_cp_threshold": 20,
+		"max_info_lines": 8,
 		"node_display_threshold": 0.1,
 	});
 
@@ -1215,11 +1215,6 @@ function make_renderer() {
 		}
 
 		let info_list = renderer.info_sorted();
-		let total_nodes = 0;
-
-		for (let i = 0; i < info_list.length && i < max_info_lines; i++) {
-			total_nodes += info_list[i].n;
-		}
 
 		let s = "";
 
@@ -1227,7 +1222,7 @@ function make_renderer() {
 			s += "&lt;halted&gt;<br><br>";
 		}
 
-		for (let i = 0; i < info_list.length && i < max_info_lines; i++) {
+		for (let i = 0; i < info_list.length && i < config.max_info_lines; i++) {
 
 			let cp_string = info_list[i].cp.toString();
 			if (cp_string.startsWith("-") === false) {
@@ -1258,12 +1253,11 @@ function make_renderer() {
 
 		// ------------------------------------------
 
-		if (total_nodes === 0 || info_list.length === 0) {
+		if (info_list.length === 0) {
 			return;
 		}
 
 		let best_nodes = info_list[0].n;
-		info_list = info_list.slice(0, max_info_lines);
 
 		context.lineWidth = 8;
 		
