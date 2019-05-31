@@ -1253,15 +1253,16 @@ function make_renderer() {
 
 		// ------------------------------------------
 
-		if (total_nodes === 0) {
+		if (total_nodes === 0 || info_list.length === 0) {
 			return;
 		}
 
 		let best_nodes = info_list[0].n;
+		info_list = info_list.slice(0, max_info_lines);
 
 		context.lineWidth = 8;
 		
-		for (let i = 0; i < info_list.length && i < max_info_lines; i++) {
+		for (let i = info_list.length - 1; i >= 0; i--) {
 
 			if (info_list[i].n > best_nodes * config.node_display_threshold) {
 
