@@ -25,10 +25,16 @@ body {
 #fenbox {
 	clear: both;
 	background-color: black;
+	border: none;
 	color: #6cccee;
 	font-family: monospace, monospace;
 	display: block;
 	width: 640px;
+}
+
+input[type=text]:focus{
+	outline: 2px dashed gray;
+	outline-offset: 4px;
 }
 
 .black {
