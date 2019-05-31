@@ -1225,7 +1225,6 @@ function make_renderer() {
 
 		for (let i = 0; i < info_list.length && i < max_info_lines; i++) {
 
-			let nice_string = renderer.pos.nice_string(info_list[i].move);
 			let cp_string = info_list[i].cp.toString();
 			if (cp_string.startsWith("-") === false) {
 				cp_string = "+" + cp_string;
