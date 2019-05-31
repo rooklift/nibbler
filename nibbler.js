@@ -36,7 +36,7 @@ function send(msg) {
 		exe.stdin.write(msg);
 		exe.stdin.write("\n");
 		if (log_to_engine) {
-			console.log(">", msg);
+			console.log("-->", msg);
 		}
 	} catch (err) {
 		// pass
