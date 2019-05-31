@@ -110,6 +110,7 @@ if (config) {
 	send("setoption name VerboseMoveStats value true");
 	send("setoption name LogLiveStats value true");
 	send("setoption name MultiPV value 500");
+	send("ucinewgame")
 }
 
 // ------------------------------------------------------------------------------------------------
@@ -980,17 +981,33 @@ function make_renderer() {
 	let renderer = Object.create(null);
 
 	renderer.pos = LoadFEN(new_board_fen);
-	renderer.squares = [];					// Info about clickable squares.
+	renderer.squares = [];							// Info about clickable squares.
 	renderer.active_square = null;
-	renderer.running = false;				// Whether to send "go" to the engine after move, undo, etc.
+	renderer.running = false;						// Whether to send "go" to the engine after move, undo, etc.
 
 	renderer.ever_received_info = false;
 	renderer.stderr_log = "";
 
-	renderer.info = Object.create(null);	// Map of move (e.g. "e2e4") --> info object, see NewInfo()
+	renderer.info = Object.create(null);			// Map of move (e.g. "e2e4") --> info object, see NewInfo()
 
 	renderer.square_size = () => {
-		return 80;							// FIXME
+		return 80;									// FIXME
+	};
+
+	renderer.new = () => {
+
+		renderer.pos = LoadFEN(new_board_fen);
+		renderer.active_square = null;
+		renderer.info = Object.create(null);		// Sadly some obsolete info will fill this up anyway.
+		
+		if (renderer.running) {
+			send("stop");
+			send("ucinewgame");
+			send("position startpos moves");
+			send("go");
+		} else {
+			send("ucinewgame");
+		}
 	};
 
 	renderer.move = (s) => {
@@ -1261,6 +1278,21 @@ function make_renderer() {
 		}
 	};
 
+	renderer.purge_old_info_loop = () => {
+
+		// As a crude hack to prevent illegal moves from ever being in the
+		// info object, we have the following. Note that obsolete info
+		// for legal moves will eventually be replaced by up-to-date info.
+
+		for (let move of Object.keys(renderer.info)) {
+			if (renderer.pos.illegal(move) !== "") {
+				delete renderer.info[move];
+			}
+		}
+
+		setTimeout(renderer.purge_old_info_loop, 500);
+	};
+
 	renderer.draw_loop = () => {
 
 		let rss = renderer.square_size();
@@ -1354,8 +1386,13 @@ ipcRenderer.on("play_best", () => {
 	renderer.play_best();
 });
 
+ipcRenderer.on("new", () => {
+	renderer.new();
+});
+
 canvas.addEventListener("mousedown", (event) => {
 	renderer.click(event)
 });
 
 renderer.draw_loop();
+renderer.purge_old_info_loop();

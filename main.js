@@ -37,6 +37,13 @@ function menu_build() {
 			label: "Navigation",
 			submenu: [
 				{
+					label: "New Game",
+					accelerator: "CommandOrControl+N",
+					click: () => {
+						windows.send("main-window", "new", null);
+					}
+				},
+				{
 					label: "Play Best",
 					accelerator: "CommandOrControl+D",
 					click: () => {
