@@ -1265,7 +1265,10 @@ function make_renderer() {
 
 				let loss = info_list[0].cp - info_list[i].cp;
 
-				if (loss < config.bad_cp_threshold) {
+				if (i === 0) {
+					context.strokeStyle = "#66aaaa";
+					context.fillStyle = "#66aaaa";
+				} else if (loss < config.bad_cp_threshold) {
 					context.strokeStyle = "#66aa66";
 					context.fillStyle = "#66aa66";
 				} else {
