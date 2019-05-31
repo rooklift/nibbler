@@ -1173,6 +1173,8 @@ function make_renderer() {
 				renderer.active_square = point;
 			}
 		}
+
+		renderer.draw();
 	};
 
 	renderer.info_sorted = () => {
@@ -1213,13 +1215,13 @@ function make_renderer() {
 		let info_list = renderer.info_sorted();
 		let total_nodes = 0;
 
-		// ------------------------------------------
+		for (let i = 0; i < info_list.length && i < max_info_lines; i++) {
+			total_nodes += info_list[i].n;
+		}
 
 		let s = "";
 
 		for (let i = 0; i < info_list.length && i < max_info_lines; i++) {
-
-			total_nodes += info_list[i].n;
 
 			let nice_string = renderer.pos.nice_string(info_list[i].move);
 			let cp_string = info_list[i].cp.toString();
@@ -1298,7 +1300,7 @@ function make_renderer() {
 		}
 	};
 
-	renderer.draw_loop = () => {
+	renderer.draw = () => {
 
 		let rss = renderer.square_size();
 
@@ -1364,8 +1366,11 @@ function make_renderer() {
 		if (new_fen !== fen.innerHTML) {			// Only update when needed, so user can select and copy.
 			fen.innerHTML = new_fen;
 		}
+	};
 
-		setTimeout(renderer.draw_loop, 50);
+	renderer.draw_loop = () => {
+		renderer.draw();
+		setTimeout(renderer.draw_loop, 250);
 	};
 
 	return renderer;
@@ -1399,4 +1404,12 @@ canvas.addEventListener("mousedown", (event) => {
 	renderer.click(event)
 });
 
-renderer.draw_loop();
+function draw_after_images_load() {
+	if (loads === 12) {
+		renderer.draw_loop();
+	} else {
+		setTimeout(draw_after_images_load, 25);
+	}
+}
+
+draw_after_images_load();
