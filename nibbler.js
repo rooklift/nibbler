@@ -12,8 +12,6 @@ const canvas = document.getElementById("canvas");
 const infobox = document.getElementById("infobox");
 const context = canvas.getContext("2d");
 
-const new_board_fen = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1";
-
 const light = "#dadada";
 const dark = "#b4b4b4";
 const act = "#cc9966";
@@ -1005,7 +1003,7 @@ function make_renderer() {
 
 	let renderer = Object.create(null);
 
-	renderer.pos = LoadFEN(new_board_fen);			// Position.
+	renderer.pos = LoadFEN("rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1");
 	renderer.info = Object.create(null);			// Map of move (e.g. "e2e4") --> info object, see NewInfo().
 	renderer.squares = [];							// Info about clickable squares.
 	renderer.active_square = null;					// Square clicked by user.
@@ -1018,8 +1016,8 @@ function make_renderer() {
 		return 80;									// FIXME
 	};
 
-	renderer.new = () => {
-		renderer.pos = LoadFEN(new_board_fen);
+	renderer.load_fen = (s) => {
+		renderer.pos = LoadFEN(s);
 		renderer.active_square = null;
 		renderer.info = Object.create(null);
 		if (renderer.running) {
@@ -1028,6 +1026,10 @@ function make_renderer() {
 			send("ucinewgame");
 		}
 		renderer.draw();
+	};
+
+	renderer.new = () => {
+		renderer.load_fen("rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1");
 	};
 
 	renderer.move = (s) => {						// Does not call draw() but the caller should
@@ -1064,7 +1066,7 @@ function make_renderer() {
 		let setup;
 
 		let initial_fen = renderer.pos.initial_fen();
-		if (initial_fen !== new_board_fen) {
+		if (initial_fen !== "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1") {
 			setup = `fen ${initial_fen}`;
 		} else {
 			setup = "startpos";
