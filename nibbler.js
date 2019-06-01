@@ -1212,7 +1212,7 @@ function LoadPGN(pgn) {
 		let [move, error] = pos.parse_pgn(token);
 
 		if (error !== "") {
-			throw error;
+			throw `${token} -- ${error}`;
 		}
 
 		pos = pos.move(move);
