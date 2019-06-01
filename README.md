@@ -15,3 +15,4 @@
 * Some tree structure of user moves.
 * PV display as a board.
 * Winrate graph.
+* Fix inefficiencies - e.g. we should cache actual positions of MultiPVs.
