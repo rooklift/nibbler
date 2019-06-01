@@ -358,7 +358,7 @@ const position_prototype = {
 
 	attacked: function(target, my_colour) {
 
-		if (target === null_point) {
+		if (target === NullPoint()) {
 			return false;
 		}
 
@@ -620,7 +620,7 @@ const position_prototype = {
 	},
 
 	piece: function(point) {
-		if (point === null_point) return "";
+		if (point === NullPoint()) return "";
 		return this.state[point.x][point.y];
 	},
 
@@ -789,7 +789,7 @@ const position_prototype = {
 			}
 		}
 
-		let ep_string = this.enpassant === null_point ? "-" : this.enpassant.s;
+		let ep_string = this.enpassant === NullPoint() ? "-" : this.enpassant.s;
 		let castling_string = this.castling === "" ? "-" : this.castling;
 
 		return s + ` ${this.active} ${castling_string} ${ep_string} ${this.halfmove} ${this.fullmove}`;

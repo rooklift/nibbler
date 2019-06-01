@@ -20,5 +20,3 @@ const act = "#cc9966";
 const log_to_engine = true;
 const log_engine_stderr = true;
 const log_engine_stdout = false;
-
-const null_point = {x: -1, y: -1, s: "??"};

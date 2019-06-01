@@ -4,6 +4,8 @@
 // naive equality checking works, i.e. Point(x, y) === Point(x, y) should be true. Since
 // object comparisons in JS will be false unless they are the same object, we do all this...
 
+const null_point = {x: -1, y: -1, s: "??"};
+
 let all_points = Object.create(null);
 
 for (let x = 0; x < 8; x++) {
@@ -28,8 +30,12 @@ function Point(a, b) {
 	let p = all_points[s];
 
 	if (p === undefined) {
-		return null_point;		// Defined in constants.js
+		return null_point;
 	}
 
 	return p;
+}
+
+function NullPoint() {
+	return null_point;
 }
