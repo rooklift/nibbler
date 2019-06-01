@@ -943,13 +943,16 @@ function NewPosition(state = null, active = "w", castling = "", enpassant = null
 	p.nice_string = (s) => {
 
 		// Given some raw UCI move string, return a nice human-readable string.
-		// FIXME: disambiguate
 		// FIXME: indicate checks
 
-		let [x1, y1] = XY(s.slice(0, 2));
-		let [x2, y2] = XY(s.slice(2, 4));
+		let source = Point(s.slice(0, 2));
+		let dest = Point(s.slice(2, 4));
 
-		let piece = p.piece(Point(x1, y1));
+		let piece = p.piece(source);
+
+		if (piece === "") {
+			return "??";
+		}
 
 		if ("KkQqRrBbNn".includes(piece)) {
 
@@ -962,21 +965,73 @@ function NewPosition(state = null, active = "w", castling = "", enpassant = null
 				}
 			}
 
-			if (p.piece(Point(x2, y2)) === "") {
-				return piece.toUpperCase() + s.slice(2, 4);
+			// Would the move be ambiguous?
+			// IMPORTANT: note that the actual move will not necessarily be valid_moves[0].
+
+			let possible_sources = p.find(piece);
+			let possible_moves = [];
+			let valid_moves = [];
+
+			for (let foo of possible_sources) {
+				possible_moves.push(foo.s + s.slice(2, 4));
+			}
+
+			for (let move of possible_moves) {
+				if (p.illegal(move) === "") {
+					valid_moves.push(move);
+				}
+			}
+
+			if (valid_moves.length > 2) {
+
+				// Full disambiguation.
+
+				if (p.piece(dest) === "") {
+					return piece.toUpperCase() + source.s + dest.s;
+				} else {
+					return piece.toUpperCase() + source.s + "x" + dest.s;
+				}
+			}
+
+			if (valid_moves.length === 2) {
+
+				// Partial disambiguation.
+
+				let [sx1, sy1] = XY(valid_moves[0].slice(0, 2));
+				let [sx2, sy2] = XY(valid_moves[1].slice(0, 2));
+
+				let disambiguator;
+
+				if (sx1 === sx2) {
+					disambiguator = source.s[1];		// e.g. "3"
+				} else {
+					disambiguator = source.s[0];		// e.g. "f"
+				}
+
+				if (p.piece(dest) === "") {
+					return piece.toUpperCase() + disambiguator + dest.s;
+				} else {
+					return piece.toUpperCase() + disambiguator + "x" + dest.s;
+				}
+			}
+
+			// No disambiguation.
+
+			if (p.piece(dest) === "") {
+				return piece.toUpperCase() + dest.s;
 			} else {
-				return piece.toUpperCase() + "x" + s.slice(2, 4);
+				return piece.toUpperCase() + "x" + dest.s;
 			}
 		}
 
-		// So it's a pawn...
+		// So it's a pawn. Pawn moves are never ambiguous.
 
 		let ret;
 
-		if (x1 === x2) {
-			ret = s.slice(2, 4);
+		if (source.x === dest.x) {
+			ret = dest.s;
 		} else {
-			ret = s[0] + "x" + s.slice(2, 4);
+			ret = source.s[0] + "x" + dest.s;
 		}
 
 		if (s.length > 4) {
