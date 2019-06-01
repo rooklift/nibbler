@@ -28,7 +28,7 @@ function Point(a, b) {
 	let p = all_points[s];
 
 	if (p === undefined) {
-		return null_point;
+		return null_point;		// Defined in constants.js
 	}
 
 	return p;
