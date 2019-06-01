@@ -755,6 +755,150 @@ function NewPosition(state = null, active = "w", castling = "", enpassant = null
 		}
 	};
 
+	p.find = (piece, startx, starty, endx, endy) => {
+
+		// Find all pieces of the specified type (colour-specific).
+		// Returned as a list of points.
+
+		if (startx === undefined || starty === undefined || endx === undefined || endy === undefined) {
+			startx = 0;
+			starty = 0;
+			endx = 7;
+			endy = 7;
+		}
+
+		let ret = [];
+
+		for (let x = startx; x <= endx; x++) {
+			for (let y = starty; y <= endy; y++) {
+				if (p.state[x][y] === piece) {
+					ret.push(Point(x, y));
+				}
+			}
+		}
+
+		return ret;
+	};	
+
+	p.parse_pgn = (s) => {		// Returns a move and an error message.
+
+		// Delete things we don't need...
+
+		s = s.replace("x", "");
+		s = s.replace("+", "");
+		s = s.replace("#", "");
+
+		// Fix castling with zeroes...
+
+		s = s.replace("0-0", "O-O");
+		s = s.replace("0-0-0", "O-O-O");
+
+		// Castling...
+
+		if (s.toUpperCase() === "O-O") {
+			if (p.active === "w") {
+				return ["e1g1", ""];
+			} else {
+				return ["e8g8", ""];
+			}
+		}
+
+		if (s.toUpperCase() === "O-O-O") {
+			if (p.active === "w") {
+				return ["e1c1", ""];
+			} else {
+				return ["e8c8", ""];
+			}
+		}
+
+		// Just in case, delete any "-" characters (after handling castling, of course)...
+
+		s = s.replace("-", "");
+
+		// Piece moves...
+
+		if ("KkQqRrBbNn".includes(s[0])) {
+
+			let piece = s[0];
+
+			if (p.active === "b") {
+				piece = piece.toLowerCase();
+			}
+
+			// The last 2 characters specify the target point...
+
+			let dest = s.slice(s.length - 2, s.length);
+
+			// Any characters between the piece and target should be disambiguators...
+
+			let disambig = s.slice(1, s.length - 2);
+
+			let startx = 0;
+			let endx = 7;
+
+			let starty = 0;
+			let endy = 7;
+
+			for (let c of Array.from(disambig)) {
+				if (c >= "a" && c <= "h") {
+					startx = c.charCodeAt(0) - 97;
+					endx = startx;
+				}
+				if (c >= "1" && c <= "8") {
+					starty = 7 - (c.charCodeAt(0) - 49);
+					endy = starty;
+				}
+			}
+
+			let possibles = p.find(piece, startx, starty, endx, endy);
+
+			if (possibles.length === 0) {
+				return ["", "piece not found"];
+			}
+
+			let possible_moves = [];
+
+			for (let source of possibles) {
+				possible_moves.push(source.s + dest);
+			}
+
+			let valid_moves = [];
+
+			for (let move of possible_moves) {
+				if (p.illegal(move) === "") {
+					valid_moves.push(move);
+				}
+			}
+
+			if (valid_moves.length === 1) {
+				return [valid_moves[0], ""];
+			}
+
+			if (valid_moves.length === 0) {
+				return ["", "piece found but move illegal"];
+			}
+
+			if (valid_moves.length === 2) {
+				return ["", "ambiguous"];
+			}
+		}
+
+		// Pawn moves...
+
+		// Check for promotion e.g. =Q or =N etc
+
+		let promotion = "";
+
+		if (s[s.length - 2] === "=") {
+			promotion = s[s.length - 1].toLowerCase();
+			s = s.slice(0, s.length - 2);
+		}
+
+		return "";
+
+		// TODO
+	};
+
 	p.piece = (point) => {
 		if (point === null_point) return "";
 		return p.state[point.x][point.y];
