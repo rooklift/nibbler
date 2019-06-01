@@ -699,7 +699,7 @@ function make_renderer() {
 
 	renderer.draw_loop = () => {
 		renderer.draw();
-		setTimeout(renderer.draw_loop, 250);
+		setTimeout(renderer.draw_loop, 500);
 	};
 
 	return renderer;
