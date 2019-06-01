@@ -12,17 +12,17 @@ const position_prototype = {
 
 	move: function(s) {
 
-		// s is something like "e2e4".
+		// s is something like "d1f3" or "e7e8q".
 		// Assumes move is legal - all sorts of weird things can happen if this isn't so.
 
 		let ret = this.copy();
 		ret.parent = this;
-		ret.lastmove = s;
+
+		let promotion = s.length > 4 ? s[4] : "q";
 
 		let [x1, y1] = XY(s.slice(0, 2));
 		let [x2, y2] = XY(s.slice(2, 4));
-		let promotion = s.length > 4 ? s[4] : "q";
-
+		
 		let white_flag = this.is_white(Point(x1, y1));
 		let pawn_flag = "Pp".includes(ret.state[x1][y1]);
 		let capture_flag = ret.state[x2][y2] !== "";
@@ -118,17 +118,26 @@ const position_prototype = {
 
 		// Handle promotions...
 
+		let promotion_flag;
+
 		if (y2 === 0 && pawn_flag) {
 			ret.state[x2][y2] = promotion.toUpperCase();
+			promotion_flag = true;
 		}
 
 		if (y2 === 7 && pawn_flag) {
 			ret.state[x2][y2] = promotion.toLowerCase();
+			promotion_flag = true;
 		}
 
-		// Set active player...
+		// Set stuff...
 
 		ret.active = white_flag ? "b" : "w";
+		ret.lastmove = s;
+
+		if (ret.lastmove.length === 4 && promotion_flag) {
+			ret.lastmove += promotion.toLowerCase();
+		}
 
 		return ret;
 	},
@@ -653,6 +662,8 @@ const position_prototype = {
 	},
 
 	nice_string: function(s) {
+
+		return s;		// FIXME
 
 		// Given some raw UCI move string, return a nice human-readable string.
 		// FIXME: indicate checks
