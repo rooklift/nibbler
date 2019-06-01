@@ -250,14 +250,16 @@ function make_renderer() {
 
 		if (next_pos) {
 			renderer.pos = next_pos;
+			renderer.pos_changed();
 		}
-
-		renderer.pos_changed();
 	};
 
 	renderer.root = () => {
-		renderer.pos = renderer.pos.position_list()[0];
-		renderer.pos_changed();
+		let root = renderer.pos.position_list()[0];
+		if (renderer.pos !== root) {
+			renderer.pos = root;
+			renderer.pos_changed();
+		}
 	};
 
 	renderer.pgn_end = () => {
@@ -266,8 +268,11 @@ function make_renderer() {
 			return;
 		}
 
-		renderer.pos = renderer.pgn_line[renderer.pgn_line.length - 1];
-		renderer.pos_changed();
+		let end = renderer.pgn_line[renderer.pgn_line.length - 1];
+		if (renderer.pos !== end) {
+			renderer.pos = end;
+			renderer.pos_changed();
+		}
 	};
 
 	renderer.move = (s) => {
