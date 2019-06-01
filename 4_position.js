@@ -663,8 +663,6 @@ const position_prototype = {
 
 	nice_string: function(s) {
 
-		return s;		// FIXME
-
 		// Given some raw UCI move string, return a nice human-readable string.
 		// FIXME: indicate checks
 
