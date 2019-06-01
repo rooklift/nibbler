@@ -958,10 +958,10 @@ function NewPosition(state = null, active = "w", castling = "", enpassant = null
 
 			if ("Kk".includes(piece)) {
 				if (s === "e1g1" || s === "e8g8") {
-					return "O&#8209;O";				// Non breaking hyphen character used.
+					return "O&#8209;O";					// Non-breaking hyphen character used.
 				}
 				if (s === "e1c1" || s === "e8c8") {
-					return "O&#8209;O&#8209;O";		// Non breaking hyphen character used.
+					return "O&#8209;O&#8209;O";			// Non-breaking hyphen character used.
 				}
 			}
 
@@ -973,7 +973,7 @@ function NewPosition(state = null, active = "w", castling = "", enpassant = null
 			let valid_moves = [];
 
 			for (let foo of possible_sources) {
-				possible_moves.push(foo.s + s.slice(2, 4));
+				possible_moves.push(foo.s + dest.s);		// e.g. "e2e4"
 			}
 
 			for (let move of possible_moves) {
@@ -997,15 +997,15 @@ function NewPosition(state = null, active = "w", castling = "", enpassant = null
 
 				// Partial disambiguation.
 
-				let [sx1, sy1] = XY(valid_moves[0].slice(0, 2));
-				let [sx2, sy2] = XY(valid_moves[1].slice(0, 2));
+				let source1 = Point(valid_moves[0].slice(0, 2));
+				let source2 = Point(valid_moves[1].slice(0, 2));
 
 				let disambiguator;
 
-				if (sx1 === sx2) {
-					disambiguator = source.s[1];		// e.g. "3"
+				if (source1.x === source2.x) {
+					disambiguator = source.s[1];		// Note source (the true source), not source1
 				} else {
-					disambiguator = source.s[0];		// e.g. "f"
+					disambiguator = source.s[0];		// Note source (the true source), not source1
 				}
 
 				if (p.piece(dest) === "") {
@@ -1474,7 +1474,7 @@ function make_renderer() {
 			move_info.p = InfoVal(s, "(P:");
 			if (move_info.p.endsWith(")")) {
 				move_info.p = move_info.p.slice(0, move_info.p.length - 1);
-			};
+			}
 
 		} else if (s.startsWith("error")) {
 			renderer.err_receive(s);
@@ -1606,7 +1606,7 @@ function make_renderer() {
 
 			if (config.show_n || config.show_cp || config.show_p) {
 				
-				let tech_elements = []
+				let tech_elements = [];
 
 				if (config.show_n) {
 					tech_elements.push(`N: ${n_string}`);
