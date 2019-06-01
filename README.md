@@ -12,6 +12,8 @@ Currently, basic functionality does work. You can now load FEN positions via the
 
 # TODO
 
-* Store the main line when loading PGN so we can go forwards as well as backwards.
+* Handling of PGN comments, etc.
+* Support for multi-game PGN.
+* Some tree structure of user moves.
 * PV display as a board.
 * Winrate graph.
