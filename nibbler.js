@@ -10,6 +10,7 @@ const readline = require("readline");
 const fenbox = document.getElementById("fenbox");
 const canvas = document.getElementById("canvas");
 const infobox = document.getElementById("infobox");
+const mainline = document.getElementById("mainline");
 const context = canvas.getContext("2d");
 
 const light = "#dadada";
@@ -902,7 +903,7 @@ function NewPosition(state = null, active = "w", castling = "", enpassant = null
 			node = node.parent;
 		}
 		list.reverse();
-		return list.join(" ");
+		return list;
 	};
 
 	p.initial_fen = () => {
@@ -1028,6 +1029,7 @@ function make_renderer() {
 		renderer.active_square = null;
 		renderer.info = Object.create(null);
 		fenbox.value = renderer.pos.fen();
+		mainline.innerHTML = renderer.pos.history().join(" ");
 	}
 
 	renderer.load_fen = (s) => {
@@ -1108,8 +1110,8 @@ function make_renderer() {
 			send("ucinewgame");
 		}
 
-		send(`position ${setup} moves ${renderer.pos.history()}`);
-		sync();															// See comment on how sync() works
+		send(`position ${setup} moves ${renderer.pos.history().join(" ")}`);
+		sync();																	// See comment on how sync() works
 		send("go");
 	};
 

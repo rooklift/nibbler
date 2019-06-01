@@ -23,13 +23,6 @@ body {
 	user-select: none;
 }
 
-#infobox {
-	color: #cccccc;
-	font-family: monospace, monospace;
-	overflow: hidden;
-	white-space: pre-wrap;
-}
-
 #fenbox {
 	background-color: black;
 	border: none;
@@ -40,10 +33,21 @@ body {
 	font-family: monospace, monospace;
 	font-size: 100%;
 }
-
 input[type=text]:focus{
 	outline: 2px dashed gray;
 	outline-offset: 4px;
+}
+
+#infobox {
+	color: #cccccc;
+	font-family: monospace, monospace;
+	overflow: hidden;
+	white-space: pre-wrap;
+}
+
+#mainline {
+	font-family: monospace, monospace;
+	white-space: pre-wrap;
 }
 
 .black {
