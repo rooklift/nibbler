@@ -681,8 +681,7 @@ const position_prototype = {
 
 	nice_string: function(s) {
 
-		// Given some raw UCI move string, return a nice human-readable string.
-		// FIXME: indicate checks
+		// Given some raw (but valid) UCI move string, return a nice human-readable string.
 
 		let source = Point(s.slice(0, 2));
 		let dest = Point(s.slice(2, 4));
@@ -693,14 +692,22 @@ const position_prototype = {
 			return "??";
 		}
 
+		let check = "";
+		let next_board = this.move(s);
+		let opponent_king_char = this.active === "w" ? "k" : "K";
+		let opponent_king_square = this.find(opponent_king_char)[0];
+		if (next_board.attacked(opponent_king_square, next_board.colour(opponent_king_square))) {
+			check = "+";
+		}
+
 		if ("KkQqRrBbNn".includes(piece)) {
 
 			if ("Kk".includes(piece)) {
 				if (s === "e1g1" || s === "e8g8") {
-					return "O&#8209;O";					// Non-breaking hyphen character used.
+					return "O&#8209;O" + check;					// Non-breaking hyphen character used.
 				}
 				if (s === "e1c1" || s === "e8c8") {
-					return "O&#8209;O&#8209;O";			// Non-breaking hyphen character used.
+					return "O&#8209;O&#8209;O" + check;			// Non-breaking hyphen character used.
 				}
 			}
 
@@ -726,9 +733,9 @@ const position_prototype = {
 				// Full disambiguation.
 
 				if (this.piece(dest) === "") {
-					return piece.toUpperCase() + source.s + dest.s;
+					return piece.toUpperCase() + source.s + dest.s + check;
 				} else {
-					return piece.toUpperCase() + source.s + "x" + dest.s;
+					return piece.toUpperCase() + source.s + "x" + dest.s + check;
 				}
 			}
 
@@ -748,18 +755,18 @@ const position_prototype = {
 				}
 
 				if (this.piece(dest) === "") {
-					return piece.toUpperCase() + disambiguator + dest.s;
+					return piece.toUpperCase() + disambiguator + dest.s + check;
 				} else {
-					return piece.toUpperCase() + disambiguator + "x" + dest.s;
+					return piece.toUpperCase() + disambiguator + "x" + dest.s + check;
 				}
 			}
 
 			// No disambiguation.
 
 			if (this.piece(dest) === "") {
-				return piece.toUpperCase() + dest.s;
+				return piece.toUpperCase() + dest.s + check;
 			} else {
-				return piece.toUpperCase() + "x" + dest.s;
+				return piece.toUpperCase() + "x" + dest.s + check;
 			}
 		}
 
@@ -777,6 +784,8 @@ const position_prototype = {
 			ret += "=";
 			ret += s[4].toUpperCase();
 		}
+
+		ret += check;
 
 		return ret;
 	},
