@@ -88,7 +88,7 @@ if (config) {
 		"show_pv": true,
 	});
 
-	fenbox.style.width = config.board_size.toString() + "px";
+	infobox.style.height = config.board_size.toString() + "px";
 	canvas.width = config.board_size;
 	canvas.height = config.board_size;
 	

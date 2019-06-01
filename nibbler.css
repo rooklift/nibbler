@@ -32,6 +32,7 @@ body {
 	float: bottom;
 	font-family: monospace, monospace;
 	font-size: 100%;
+	width: 100%;
 }
 input[type=text]:focus{
 	outline: 2px dashed gray;
