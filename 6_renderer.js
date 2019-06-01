@@ -226,7 +226,6 @@ function make_renderer() {
 	renderer.pgn_next = () => {
 
 		if (renderer.pgn_line === null) {
-			alert("No PGN loaded");
 			return;
 		}
 
@@ -255,7 +254,7 @@ function make_renderer() {
 	renderer.pgn_prev = () => {
 
 		if (renderer.pgn_line === null) {
-			alert("No PGN loaded");
+			renderer.undo();
 			return;
 		}
 
