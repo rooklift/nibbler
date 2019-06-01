@@ -901,8 +901,8 @@ function NewPosition(state = null, active = "w", castling = "", enpassant = null
 			return ["", "piece found but move illegal"];
 		}
 
-		if (valid_moves.length === 2) {
-			return ["", "ambiguous move"];
+		if (valid_moves.length > 1) {
+			return ["", `ambiguous moves: [${valid_moves}]`];
 		}
 	};
 
