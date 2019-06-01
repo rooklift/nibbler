@@ -778,7 +778,7 @@ function NewPosition(state = null, active = "w", castling = "", enpassant = null
 		}
 
 		return ret;
-	};	
+	};
 
 	p.parse_pgn = (s) => {		// Returns a move and an error message.
 
@@ -793,7 +793,7 @@ function NewPosition(state = null, active = "w", castling = "", enpassant = null
 		s = s.replace("0-0", "O-O");
 		s = s.replace("0-0-0", "O-O-O");
 
-		// Castling...
+		// Castling...	FIXME: should legality check
 
 		if (s.toUpperCase() === "O-O") {
 			if (p.active === "w") {
@@ -815,77 +815,7 @@ function NewPosition(state = null, active = "w", castling = "", enpassant = null
 
 		s = s.replace("-", "");
 
-		// Piece moves...
-
-		if ("KkQqRrBbNn".includes(s[0])) {
-
-			let piece = s[0];
-
-			if (p.active === "b") {
-				piece = piece.toLowerCase();
-			}
-
-			// The last 2 characters specify the target point...
-
-			let dest = s.slice(s.length - 2, s.length);
-
-			// Any characters between the piece and target should be disambiguators...
-
-			let disambig = s.slice(1, s.length - 2);
-
-			let startx = 0;
-			let endx = 7;
-
-			let starty = 0;
-			let endy = 7;
-
-			for (let c of Array.from(disambig)) {
-				if (c >= "a" && c <= "h") {
-					startx = c.charCodeAt(0) - 97;
-					endx = startx;
-				}
-				if (c >= "1" && c <= "8") {
-					starty = 7 - (c.charCodeAt(0) - 49);
-					endy = starty;
-				}
-			}
-
-			let possibles = p.find(piece, startx, starty, endx, endy);
-
-			if (possibles.length === 0) {
-				return ["", "piece not found"];
-			}
-
-			let possible_moves = [];
-
-			for (let source of possibles) {
-				possible_moves.push(source.s + dest);
-			}
-
-			let valid_moves = [];
-
-			for (let move of possible_moves) {
-				if (p.illegal(move) === "") {
-					valid_moves.push(move);
-				}
-			}
-
-			if (valid_moves.length === 1) {
-				return [valid_moves[0], ""];
-			}
-
-			if (valid_moves.length === 0) {
-				return ["", "piece found but move illegal"];
-			}
-
-			if (valid_moves.length === 2) {
-				return ["", "ambiguous"];
-			}
-		}
-
-		// Pawn moves...
-
-		// Check for promotion e.g. =Q or =N etc
+		// Save promotion string, if any, then delete it from s...
 
 		let promotion = "";
 
@@ -894,9 +824,86 @@ function NewPosition(state = null, active = "w", castling = "", enpassant = null
 			s = s.slice(0, s.length - 2);
 		}
 
-		return "";
+		let piece;
 
-		// TODO
+		// If the piece isn't specified (with an uppercase letter) then it's a pawn move.
+		// Let's add P to the start of the string to keep the string format consistent.
+
+		if ("KQRBNP".includes(s[0]) === false) {
+			s = "P" + s;
+		}
+
+		piece = s[0];
+
+		if (p.active === "b") {
+			piece = piece.toLowerCase();
+		}
+
+		// The last 2 characters specify the target point...
+
+		let dest_string = s.slice(s.length - 2, s.length);
+
+		// Any characters between the piece and target should be disambiguators...
+
+		let disambig = s.slice(1, s.length - 2);
+
+		let startx = 0;
+		let endx = 7;
+
+		let starty = 0;
+		let endy = 7;
+
+		for (let c of Array.from(disambig)) {
+			if (c >= "a" && c <= "h") {
+				startx = c.charCodeAt(0) - 97;
+				endx = startx;
+			}
+			if (c >= "1" && c <= "8") {
+				starty = 7 - (c.charCodeAt(0) - 49);
+				endy = starty;
+			}
+		}
+
+		// If it's a pawn and hasn't been disambiguated then it is moving forwards...
+
+		if (piece === "P" || piece === "p") {
+			if (disambig.length === 0) {
+				startx = Point(dest_string).x;
+				endx = Point(dest_string).x;
+			}
+		}
+
+		let sources = p.find(piece, startx, starty, endx, endy);
+
+		if (sources.length === 0) {
+			return ["", "piece not found"];
+		}
+
+		let possible_moves = [];
+
+		for (let source of sources) {
+			possible_moves.push(source.s + dest_string);
+		}
+
+		let valid_moves = [];
+
+		for (let move of possible_moves) {
+			if (p.illegal(move) === "") {
+				valid_moves.push(move);
+			}
+		}
+
+		if (valid_moves.length === 1) {
+			return [valid_moves[0] + promotion, ""];
+		}
+
+		if (valid_moves.length === 0) {
+			return ["", "piece found but move illegal"];
+		}
+
+		if (valid_moves.length === 2) {
+			return ["", "ambiguous move"];
+		}
 	};
 
 	p.piece = (point) => {
@@ -1582,7 +1589,7 @@ function make_renderer() {
 
 		// Draw enemy pieces...
 
-		let opponent_colour = renderer.pos.active === "w" ? "b": "w";
+		let opponent_colour = renderer.pos.active === "w" ? "b" : "w";
 
 		for (let x = 0; x < 8; x++) {
 			for (let y = 0; y < 8; y++) {
