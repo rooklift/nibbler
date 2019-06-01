@@ -1,10 +1,8 @@
 # Nibbler
 
-*Nibbler* is a work in progress, but is intended to be like [Lizzie](https://github.com/featurecat/lizzie), but for [Leela Chess Zero](https://github.com/LeelaChessZero/lc0).
+*Nibbler* is a work in progress, but is intended to be like [Lizzie](https://github.com/featurecat/lizzie), but for [Leela Chess Zero](https://github.com/LeelaChessZero/lc0). Basic functionality does work. You can now load FEN positions via the FEN box, and very basic PGN files via the Open command.
 
 ![Screenshot](https://user-images.githubusercontent.com/16438795/58752417-637bb500-84a6-11e9-8cae-5acb51b1a98c.png)
-
-Currently, basic functionality does work. You can now load FEN positions via the FEN box, and very basic PGN files via the Open command.
 
 # Usage
 
