@@ -166,61 +166,9 @@ function make_renderer() {
 
 		renderer.active_square = null;
 		renderer.info = Object.create(null);
+
 		fenbox.value = renderer.pos.fen();
-
-		let elements = [];
-
-		if (renderer.pgn_line !== null) {
-
-			for (let n = 0; n < renderer.pgn_index && n < renderer.pgn_line.length - 1; n++) {
-
-				if (renderer.pgn_line[n].active === "w") {
-					elements.push(`${renderer.pgn_line[n].fullmove}.`);
-				} else if (n === 0) {
-					elements.push(`${renderer.pgn_line[n].fullmove}...`);
-				}
-				let nice_string = renderer.pgn_line[n].nice_string(renderer.pgn_line[n + 1].lastmove);
-				elements.push(nice_string);
-			}
-
-			if (renderer.pos !== renderer.pgn_line[renderer.pgn_index]) {
-				elements.push(`<span class="gray">(deviated)</span>`);
-				mainline.innerHTML = elements.join(" ");
-				return;
-			}
-
-			for (let n = renderer.pgn_index; n < renderer.pgn_line.length - 1; n++) {
-
-				let span_open = n === renderer.pgn_index ? `<span class="gray">` : "";
-				let span_close = n === renderer.pgn_line.length - 2 ? "</span>" : "";
-
-				if (renderer.pgn_line[n].active === "w") {
-					elements.push(`${span_open}${renderer.pgn_line[n].fullmove}.`);
-					span_open = "";
-				} else if (n === 0) {
-					elements.push(`${span_open}${renderer.pgn_line[n].fullmove}...`);
-					span_open = "";
-				}
-				let nice_string = renderer.pgn_line[n].nice_string(renderer.pgn_line[n + 1].lastmove);
-				elements.push(span_open + nice_string + span_close);
-			}
-
-		} else {
-
-			let poslist = renderer.pos.position_list();
-			
-			for (let n = 0; n < poslist.length - 1; n++) {
-				if (poslist[n].active === "w") {
-					elements.push(`${poslist[n].fullmove}.`);
-				} else if (n === 0) {
-					elements.push(`${poslist[n].fullmove}...`);
-				}
-				let nice_string = poslist[n].nice_string(poslist[n + 1].lastmove);
-				elements.push(nice_string);
-			}
-		}
-
-		mainline.innerHTML = elements.join(" ");
+		renderer.draw_main_line();
 	};
 
 	renderer.load_fen = (s) => {
@@ -527,6 +475,63 @@ function make_renderer() {
 		});
 
 		return info_list;
+	};
+
+	renderer.draw_main_line = () => {
+
+		let elements = [];
+
+		if (renderer.pgn_line !== null) {
+
+			for (let n = 0; n < renderer.pgn_index && n < renderer.pgn_line.length - 1; n++) {
+
+				if (renderer.pgn_line[n].active === "w") {
+					elements.push(`${renderer.pgn_line[n].fullmove}.`);
+				} else if (n === 0) {
+					elements.push(`${renderer.pgn_line[n].fullmove}...`);
+				}
+				let nice_string = renderer.pgn_line[n].nice_string(renderer.pgn_line[n + 1].lastmove);
+				elements.push(nice_string);
+			}
+
+			if (renderer.pos !== renderer.pgn_line[renderer.pgn_index]) {
+				elements.push(`<span class="gray">(deviated)</span>`);
+				mainline.innerHTML = elements.join(" ");
+				return;
+			}
+
+			for (let n = renderer.pgn_index; n < renderer.pgn_line.length - 1; n++) {
+
+				let span_open = n === renderer.pgn_index ? `<span class="gray">` : "";
+				let span_close = n === renderer.pgn_line.length - 2 ? "</span>" : "";
+
+				if (renderer.pgn_line[n].active === "w") {
+					elements.push(`${span_open}${renderer.pgn_line[n].fullmove}.`);
+					span_open = "";
+				} else if (n === 0) {
+					elements.push(`${span_open}${renderer.pgn_line[n].fullmove}...`);
+					span_open = "";
+				}
+				let nice_string = renderer.pgn_line[n].nice_string(renderer.pgn_line[n + 1].lastmove);
+				elements.push(span_open + nice_string + span_close);
+			}
+
+		} else {
+
+			let poslist = renderer.pos.position_list();
+			
+			for (let n = 0; n < poslist.length - 1; n++) {
+				if (poslist[n].active === "w") {
+					elements.push(`${poslist[n].fullmove}.`);
+				} else if (n === 0) {
+					elements.push(`${poslist[n].fullmove}...`);
+				}
+				let nice_string = poslist[n].nice_string(poslist[n + 1].lastmove);
+				elements.push(nice_string);
+			}
+		}
+
+		mainline.innerHTML = elements.join(" ");
 	};
 
 	renderer.draw_info = () => {
