@@ -223,7 +223,7 @@ function make_renderer() {
 		renderer.draw();
 	};
 
-	renderer.pgn_next = () => {
+	renderer.next = () => {
 
 		// Currently, next only makes sense if we're on the PGN line.
 		// Ideally we would also remember at least 1 other line.
@@ -252,10 +252,6 @@ function make_renderer() {
 		renderer.draw();
 	};
 
-	renderer.pgn_prev = () => {
-		renderer.undo();
-	};
-
 	renderer.move = (s) => {						// Does not call draw() but the caller should
 
 		let advanced_pgn_flag = false;
@@ -280,7 +276,7 @@ function make_renderer() {
 		}
 	};
 
-	renderer.undo = () => {
+	renderer.prev = () => {
 
 		if (renderer.pos.parent) {
 			renderer.pos = renderer.pos.parent;
@@ -713,10 +709,6 @@ function make_renderer() {
 
 let renderer = make_renderer();
 
-ipcRenderer.on("undo", () => {
-	renderer.undo();
-});
-
 ipcRenderer.on("go", () => {
 	renderer.go();
 });
@@ -737,12 +729,12 @@ ipcRenderer.on("open", (event, filename) => {
 	renderer.open(filename);
 });
 
-ipcRenderer.on("pgn_next", (event) => {
-	renderer.pgn_next();
+ipcRenderer.on("next", (event) => {
+	renderer.next();
 });
 
-ipcRenderer.on("pgn_prev", (event) => {
-	renderer.pgn_prev();
+ipcRenderer.on("prev", (event) => {
+	renderer.prev();
 });
 
 canvas.addEventListener("mousedown", (event) => {

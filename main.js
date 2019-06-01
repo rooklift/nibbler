@@ -85,10 +85,20 @@ function menu_build() {
 					}
 				},
 				{
-					label: "Undo",
-					accelerator: "CommandOrControl+Z",
+					type: "separator"
+				},
+				{
+					label: "Forward in PGN",
+					accelerator: "Right",
 					click: () => {
-						windows.send("main-window", "undo", null);
+						windows.send("main-window", "next", null);
+					}
+				},
+				{
+					label: "Backward",
+					accelerator: "Left",
+					click: () => {
+						windows.send("main-window", "prev", null);
 					}
 				}
 			]
@@ -111,26 +121,7 @@ function menu_build() {
 					}
 				}
 			]
-		},
-		{
-			label: "PGN",
-			submenu: [
-				{
-					label: "Forward",
-					accelerator: "Right",
-					click: () => {
-						windows.send("main-window", "pgn_next", null);
-					}
-				},
-				{
-					label: "Backward",
-					accelerator: "Left",
-					click: () => {
-						windows.send("main-window", "pgn_prev", null);
-					}
-				}
-			]
-		},
+		}
 	];
 
 	const menu = electron.Menu.buildFromTemplate(template);
