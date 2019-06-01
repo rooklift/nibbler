@@ -7,7 +7,7 @@ const fs = require('fs');
 const ipcRenderer = require("electron").ipcRenderer;
 const readline = require("readline");
 
-const fen = document.getElementById("fen");
+const fenbox = document.getElementById("fenbox");
 const canvas = document.getElementById("canvas");
 const infobox = document.getElementById("infobox");
 const context = canvas.getContext("2d");
