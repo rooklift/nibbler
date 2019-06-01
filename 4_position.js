@@ -78,24 +78,27 @@ const position_prototype = {
 
 		// Handle the rook moves of castling...
 
-		if (s === "e1g1") {
-			ret.state[5][7] = "R";
-			ret.state[7][7] = "";
-		}
+		if (ret.state[x1][y1] === "K" || ret.state[x1][y1] === "k") {
 
-		if (s === "e1c1") {
-			ret.state[3][7] = "R";
-			ret.state[0][7] = "";
-		}
+			if (s === "e1g1") {
+				ret.state[5][7] = "R";
+				ret.state[7][7] = "";
+			}
 
-		if (s === "e8g8") {
-			ret.state[5][0] = "r";
-			ret.state[7][0] = "";
-		}
+			if (s === "e1c1") {
+				ret.state[3][7] = "R";
+				ret.state[0][7] = "";
+			}
 
-		if (s === "e8c8") {
-			ret.state[3][0] = "r";
-			ret.state[0][0] = "";
+			if (s === "e8g8") {
+				ret.state[5][0] = "r";
+				ret.state[7][0] = "";
+			}
+
+			if (s === "e8c8") {
+				ret.state[3][0] = "r";
+				ret.state[0][0] = "";
+			}
 		}
 
 		// Handle enpassant captures...
@@ -704,10 +707,10 @@ const position_prototype = {
 
 			if ("Kk".includes(piece)) {
 				if (s === "e1g1" || s === "e8g8") {
-					return "O&#8209;O" + check;					// Non-breaking hyphen character used.
+					return "O-O" + check;
 				}
 				if (s === "e1c1" || s === "e8c8") {
-					return "O&#8209;O&#8209;O" + check;			// Non-breaking hyphen character used.
+					return "O-O-O" + check;
 				}
 			}
 
