@@ -483,7 +483,7 @@ function NewPosition(state = null, active = "w", castling = "", enpassant = null
 				}
 			}
 
-			if (Math.abs(x2 - x1) > 2) {
+			if (Math.abs(x2 - x1) > 1) {
 				return "pawn cannot move that far sideways";
 			}
 
