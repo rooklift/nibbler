@@ -40,7 +40,7 @@ try {
 		alert("config.json not present");
 	}
 } catch (err) {
-	// pass
+	alert("Failed to parse config file");
 }
 
 if (config) {
