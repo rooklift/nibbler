@@ -38,6 +38,7 @@ try {
 		config = JSON.parse(fs.readFileSync("config.json", "utf8"));
 	} else if (fs.existsSync("config.json.example")) {
 		config = JSON.parse(fs.readFileSync("config.json.example", "utf8"));
+		config.warn_filename = true;
 	} else {
 		alert("config.json not present");
 	}
@@ -709,6 +710,11 @@ function make_renderer() {
 // ------------------------------------------------------------------------------------------------
 
 let renderer = make_renderer();
+
+if (config && config.warn_filename) {
+	renderer.err_receive(`<span class="tech">Nibbler says: You should rename config.json.example to config.json</span>`);
+	renderer.err_receive("");
+}
 
 ipcRenderer.on("go", () => {
 	renderer.go();
