@@ -111,7 +111,26 @@ function menu_build() {
 					}
 				}
 			]
-		}
+		},
+		{
+			label: "PGN",
+			submenu: [
+				{
+					label: "Forward",
+					accelerator: "Right",
+					click: () => {
+						windows.send("main-window", "pgn_next", null);
+					}
+				},
+				{
+					label: "Backward",
+					accelerator: "Left",
+					click: () => {
+						windows.send("main-window", "pgn_prev", null);
+					}
+				}
+			]
+		},
 	];
 
 	const menu = electron.Menu.buildFromTemplate(template);

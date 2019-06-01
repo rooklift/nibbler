@@ -149,13 +149,16 @@ function make_renderer() {
 	renderer.stderr_log = "";						// All output received from the engine's stderr.
 	renderer.infobox_string = "";					// Just to help not redraw the infobox when not needed.
 
+	renderer.pgn_line = null;
+	renderer.pgn_index = 0;
+
 	fenbox.value = renderer.pos.fen();
 
 	renderer.square_size = () => {
 		return config.board_size / 8;
 	};
 
-	renderer.changed = () => {
+	renderer.pos_changed = () => {
 		renderer.active_square = null;
 		renderer.info = Object.create(null);
 		fenbox.value = renderer.pos.fen();
@@ -187,7 +190,10 @@ function make_renderer() {
 			return;
 		}
 
-		renderer.changed();
+		renderer.pos_changed();
+
+		renderer.pgn_line = null;
+		renderer.pgn_index = 0;
 
 		if (renderer.running) {
 			renderer.go(true);
@@ -201,14 +207,20 @@ function make_renderer() {
 	renderer.open = (filename) => {
 		let s = fs.readFileSync(filename, "utf8");
 
+		let final_pos;
+
 		try {
-			renderer.pos = LoadPGN(s);
+			final_pos = LoadPGN(s);
 		} catch (err) {
 			alert(err);
 			return;
 		}
 
-		renderer.changed();
+		renderer.pgn_line = final_pos.position_list();
+		renderer.pgn_index = 0;
+
+		renderer.pos = renderer.pgn_line[0];
+		renderer.pos_changed();
 
 		if (renderer.running) {
 			renderer.go(true);
@@ -219,10 +231,52 @@ function make_renderer() {
 		renderer.draw();
 	};
 
+	renderer.pgn_next = () => {
+
+		if (renderer.pgn_line === null) {
+			alert("No PGN loaded");
+			return;
+		}
+
+		if (renderer.pgn_line.length > renderer.pgn_index + 1) {
+			renderer.pgn_index++;
+		}
+
+		renderer.pos = renderer.pgn_line[renderer.pgn_index];
+		renderer.pos_changed();
+
+		if (renderer.running) {
+			renderer.go();
+		}
+
+		renderer.draw();
+	};
+
+	renderer.pgn_prev = () => {
+
+		if (renderer.pgn_line === null) {
+			alert("No PGN loaded");
+			return;
+		}
+
+		if (renderer.pgn_index > 0) {
+			renderer.pgn_index--;
+		}
+
+		renderer.pos = renderer.pgn_line[renderer.pgn_index];
+		renderer.pos_changed();
+
+		if (renderer.running) {
+			renderer.go();
+		}
+
+		renderer.draw();
+	};
+
 	renderer.move = (s) => {						// Does not call draw() but the caller should
 
 		renderer.pos = renderer.pos.move(s);
-		renderer.changed();
+		renderer.pos_changed();
 
 		if (renderer.running) {
 			renderer.go();
@@ -233,7 +287,7 @@ function make_renderer() {
 
 		if (renderer.pos.parent) {
 			renderer.pos = renderer.pos.parent;
-			renderer.changed();
+			renderer.pos_changed();
 		}
 
 		if (renderer.running) {
@@ -631,6 +685,14 @@ ipcRenderer.on("new", () => {
 
 ipcRenderer.on("open", (event, filename) => {
 	renderer.open(filename);
+});
+
+ipcRenderer.on("pgn_next", (event) => {
+	renderer.pgn_next();
+});
+
+ipcRenderer.on("pgn_prev", (event) => {
+	renderer.pgn_prev();
 });
 
 canvas.addEventListener("mousedown", (event) => {
