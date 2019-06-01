@@ -6,6 +6,8 @@ let scanner = null;
 let err_scanner = null;
 let readyok_required = false;
 
+// ------------------------------------------------------------------------------------------------
+
 function send(msg) {
 	try {
 		msg = msg.trim();
@@ -125,6 +127,8 @@ if (config) {
 	send("ucinewgame");
 }
 
+// ------------------------------------------------------------------------------------------------
+
 let images = Object.create(null);
 let loads = 0;
 
@@ -139,6 +143,8 @@ for (let c of Array.from("KkQqRrBbNnPp")) {
 		loads++;
 	};
 }
+
+// ------------------------------------------------------------------------------------------------
 
 function make_renderer() {
 
