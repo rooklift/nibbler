@@ -275,7 +275,24 @@ function make_renderer() {
 
 	renderer.move = (s) => {						// Does not call draw() but the caller should
 
-		renderer.pos = renderer.pos.move(s);
+		let advanced_pgn_flag = false;
+
+		if (renderer.pgn_line !== null) {
+			if (renderer.pos === renderer.pgn_line[renderer.pgn_index]) {		// Identity (a is b) check.
+				if (renderer.pgn_line.length > renderer.pgn_index + 1) {
+					if (renderer.pgn_line[renderer.pgn_index + 1].lastmove === s) {
+						advanced_pgn_flag = true;
+						renderer.pgn_index++;
+						renderer.pos = renderer.pgn_line[renderer.pgn_index];
+					}
+				}
+			}
+		}
+
+		if (advanced_pgn_flag === false) {
+			renderer.pos = renderer.pos.move(s);
+		}
+
 		renderer.pos_changed();
 
 		if (renderer.running) {
