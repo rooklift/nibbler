@@ -88,6 +88,13 @@ function menu_build() {
 					type: "separator"
 				},
 				{
+					label: "Backward",
+					accelerator: "Left",
+					click: () => {
+						windows.send("main-window", "prev", null);
+					}
+				},
+				{
 					label: "Forward in PGN",
 					accelerator: "Right",
 					click: () => {
@@ -95,12 +102,22 @@ function menu_build() {
 					}
 				},
 				{
-					label: "Backward",
-					accelerator: "Left",
+					type: "separator"
+				},
+				{
+					label: "Root",
+					accelerator: "Home",
 					click: () => {
-						windows.send("main-window", "prev", null);
+						windows.send("main-window", "root", null);
 					}
-				}
+				},
+				{
+					label: "End of PGN",
+					accelerator: "End",
+					click: () => {
+						windows.send("main-window", "pgn_end", null);
+					}
+				},
 			]
 		},
 		{

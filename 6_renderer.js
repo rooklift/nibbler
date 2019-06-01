@@ -197,6 +197,10 @@ function make_renderer() {
 		renderer.pos_changed(true);
 	};
 
+	renderer.new = () => {
+		renderer.load_fen("rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1");
+	};
+
 	renderer.open = (filename) => {
 		let s = fs.readFileSync(filename, "utf8");
 
@@ -219,6 +223,13 @@ function make_renderer() {
 		}
 
 		renderer.pos_changed(true);		// Do this after the above since it uses the info.
+	};
+
+	renderer.prev = () => {
+		if (renderer.pos.parent) {
+			renderer.pos = renderer.pos.parent;
+			renderer.pos_changed();
+		}
 	};
 
 	renderer.next = () => {
@@ -244,7 +255,22 @@ function make_renderer() {
 		renderer.pos_changed();
 	};
 
-	renderer.move = (s) => {						// Does not call draw() but the caller should
+	renderer.root = () => {
+		renderer.pos = renderer.pos.position_list()[0];
+		renderer.pos_changed();
+	};
+
+	renderer.pgn_end = () => {
+
+		if (renderer.pgn_line === null) {
+			return;
+		}
+
+		renderer.pos = renderer.pgn_line[renderer.pgn_line.length - 1];
+		renderer.pos_changed();
+	};
+
+	renderer.move = (s) => {
 
 		let advanced_pgn_flag = false;
 
@@ -262,17 +288,6 @@ function make_renderer() {
 		}
 
 		renderer.pos_changed();
-	};
-
-	renderer.prev = () => {
-		if (renderer.pos.parent) {
-			renderer.pos = renderer.pos.parent;
-			renderer.pos_changed();
-		}
-	};
-
-	renderer.new = () => {
-		renderer.load_fen("rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1");
 	};
 
 	renderer.play_best = () => {
@@ -716,6 +731,14 @@ ipcRenderer.on("next", (event) => {
 
 ipcRenderer.on("prev", (event) => {
 	renderer.prev();
+});
+
+ipcRenderer.on("root", (event) => {
+	renderer.root();
+});
+
+ipcRenderer.on("pgn_end", (event) => {
+	renderer.pgn_end();
 });
 
 canvas.addEventListener("mousedown", (event) => {
