@@ -485,8 +485,7 @@ function make_renderer() {
 				elements1.push(`${p.parent.fullmove}.`);
 			}
 
-			let nice_string = p.parent.nice_string(p.lastmove);
-			elements1.push(nice_string);
+			elements1.push(p.nice_lastmove());
 		}
 
 		if (on_pgn) {
@@ -497,8 +496,7 @@ function make_renderer() {
 					elements2.push(`${p.parent.fullmove}.`);
 				}
 
-				let nice_string = p.parent.nice_string(p.lastmove);
-				elements2.push(nice_string);
+				elements2.push(p.nice_lastmove());
 			}
 		}
 

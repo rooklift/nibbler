@@ -661,6 +661,19 @@ const position_prototype = {
 		return this.colour(point1) === this.colour(point2);
 	},
 
+	nice_lastmove: function() {
+
+		if (this.lastmove === null || this.parent === null) {
+			return "??";
+		}
+
+		if (this.nice_lastmove_cache === undefined) {
+			this.nice_lastmove_cache = this.parent.nice_string(this.lastmove);
+		}
+
+		return this.nice_lastmove_cache;
+	},
+
 	nice_string: function(s) {
 
 		// Given some raw UCI move string, return a nice human-readable string.
