@@ -839,9 +839,10 @@ function NewPosition(state = null, active = "w", castling = "", enpassant = null
 			piece = piece.toLowerCase();
 		}
 
-		// The last 2 characters specify the target point...
+		// The last 2 characters specify the target point. We've removed all trailing
+		// garbage that could interfere with this fact.
 
-		let dest_string = s.slice(s.length - 2, s.length);
+		let dest = Point(s.slice(s.length - 2, s.length));
 
 		// Any characters between the piece and target should be disambiguators...
 
@@ -868,8 +869,8 @@ function NewPosition(state = null, active = "w", castling = "", enpassant = null
 
 		if (piece === "P" || piece === "p") {
 			if (disambig.length === 0) {
-				startx = Point(dest_string).x;
-				endx = Point(dest_string).x;
+				startx = dest.x;
+				endx = dest.x;
 			}
 		}
 
@@ -882,7 +883,7 @@ function NewPosition(state = null, active = "w", castling = "", enpassant = null
 		let possible_moves = [];
 
 		for (let source of sources) {
-			possible_moves.push(source.s + dest_string);
+			possible_moves.push(source.s + dest.s);
 		}
 
 		let valid_moves = [];
