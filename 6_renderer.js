@@ -172,10 +172,6 @@ function make_renderer() {
 
 	renderer.load_fen = (s) => {
 
-		if (renderer.pos.fen() === s) {
-			return;
-		}
-
 		try {
 			renderer.pos = LoadFEN(s);
 		} catch (err) {
@@ -216,7 +212,7 @@ function make_renderer() {
 			renderer.pgn_line[n].pgn_index = n;
 		}
 
-		renderer.pos_changed();		// Do this after tge above since it uses the info.
+		renderer.pos_changed();		// Do this after the above since it uses the info.
 
 		if (renderer.running) {
 			renderer.go(true);
