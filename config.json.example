@@ -17,6 +17,7 @@
 
 	"bad_cp_threshold": 10,
 	"terrible_cp_threshold": 100,
+	
 	"max_info_lines": 8,
 	"node_display_threshold": 0.05
 }
