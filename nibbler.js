@@ -898,8 +898,19 @@ function NewPosition(state = null, active = "w", castling = "", enpassant = null
 	p.history = () => {
 		let list = [];
 		let node = p;
-		while (node.parent !== null) {
+		while (node.parent !== null) {		// no parent implies no lastmove
 			list.push(node.lastmove);
+			node = node.parent;
+		}
+		list.reverse();
+		return list;
+	};
+
+	p.position_list = () => {
+		let list = [];
+		let node = p;
+		while (node !== null) {
+			list.push(node);
 			node = node.parent;
 		}
 		list.reverse();
@@ -1029,7 +1040,19 @@ function make_renderer() {
 		renderer.active_square = null;
 		renderer.info = Object.create(null);
 		fenbox.value = renderer.pos.fen();
-		mainline.innerHTML = renderer.pos.history().join(" ");
+
+		let poslist = renderer.pos.position_list();
+		let elements = [];
+		for (let n = 0; n < poslist.length - 1; n++) {
+			if (poslist[n].active === "w") {
+				elements.push(`${poslist[n].fullmove}.`);
+			} else if (n === 0) {
+				elements.push(`${poslist[n].fullmove}...`);
+			}
+			let nice_string = poslist[n].nice_string(poslist[n + 1].lastmove);
+			elements.push(nice_string);
+		}
+		mainline.innerHTML = elements.join(" ");
 	}
 
 	renderer.load_fen = (s) => {
