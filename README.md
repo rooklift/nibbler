@@ -4,7 +4,7 @@
 
 ![Screenshot](https://user-images.githubusercontent.com/16438795/58711394-613a2d80-83b6-11e9-9fcd-7d2f2a45159c.png)
 
-Currently, basic functionality does work. You can now load FEN positions via the FEN box.
+Currently, basic functionality does work. You can now load FEN positions via the FEN box. Very basic PGN files can be loaded, but not conveniently stepped through yet.
 
 # Usage
 
@@ -12,7 +12,6 @@ Currently, basic functionality does work. You can now load FEN positions via the
 
 # TODO
 
+* Store the main line when loading PGN so we can go forwards as well as backwards.
 * PV display as a board.
-* PGN loading.
-* UI improvements.
 * Winrate graph.
