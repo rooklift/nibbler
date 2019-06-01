@@ -154,7 +154,6 @@ function make_renderer() {
 	renderer.infobox_string = "";					// Just to help not redraw the infobox when not needed.
 
 	renderer.pgn_line = null;
-	renderer.pgn_index = 0;
 
 	fenbox.value = renderer.pos.fen();
 
@@ -185,7 +184,6 @@ function make_renderer() {
 		}
 
 		renderer.pgn_line = null;
-		renderer.pgn_index = 0;
 		renderer.pos_changed();
 
 		if (renderer.running) {
@@ -210,9 +208,15 @@ function make_renderer() {
 		}
 
 		renderer.pgn_line = final_pos.position_list();
-		renderer.pgn_index = 0;
 		renderer.pos = renderer.pgn_line[0];
-		renderer.pos_changed();
+
+		// Cheap hack to let us see if and where we are on the PGN line...
+
+		for (let n = 0; n < renderer.pgn_line.length; n++) {
+			renderer.pgn_line[n].pgn_index = n;
+		}
+
+		renderer.pos_changed();		// Do this after tge above since it uses the info.
 
 		if (renderer.running) {
 			renderer.go(true);
@@ -230,11 +234,19 @@ function make_renderer() {
 			return;
 		}
 
-		if (renderer.pgn_line.length > renderer.pgn_index + 1) {
-			renderer.pgn_index++;
+		// Return to the PGN line, if needed...
+
+		while (renderer.pos.pgn_index === undefined) {
+			renderer.pos = renderer.pos.parent;
 		}
 
-		renderer.pos = renderer.pgn_line[renderer.pgn_index];
+		let index = renderer.pos.pgn_index;
+		let next_pos = renderer.pgn_line[index + 1];
+
+		if (next_pos) {
+			renderer.pos = next_pos;
+		}
+
 		renderer.pos_changed();
 
 		if (renderer.running) {
@@ -251,11 +263,18 @@ function make_renderer() {
 			return;
 		}
 
-		if (renderer.pgn_index > 0) {
-			renderer.pgn_index--;
+		// Return to the PGN line, if needed...
+
+		while (renderer.pos.pgn_index === undefined) {
+			renderer.pos = renderer.pos.parent;
 		}
 
-		renderer.pos = renderer.pgn_line[renderer.pgn_index];
+		let index = renderer.pos.pgn_index;
+
+		if (index > 0) {
+			renderer.pos = renderer.pgn_line[index - 1];
+		}
+
 		renderer.pos_changed();
 
 		if (renderer.running) {
@@ -269,14 +288,11 @@ function make_renderer() {
 
 		let advanced_pgn_flag = false;
 
-		if (renderer.pgn_line !== null) {
-			if (renderer.pos === renderer.pgn_line[renderer.pgn_index]) {		// Identity (a is b) check.
-				if (renderer.pgn_line.length > renderer.pgn_index + 1) {
-					if (renderer.pgn_line[renderer.pgn_index + 1].lastmove === s) {
-						advanced_pgn_flag = true;
-						renderer.pgn_index++;
-						renderer.pos = renderer.pgn_line[renderer.pgn_index];
-					}
+		if (renderer.pos.pgn_index !== undefined) {
+			if (renderer.pgn_line.length > renderer.pos.pgn_index + 1) {
+				if (renderer.pgn_line[renderer.pos.pgn_index + 1].lastmove === s) {
+					advanced_pgn_flag = true;
+					renderer.pos = renderer.pgn_line[renderer.pos.pgn_index + 1];
 				}
 			}
 		}
@@ -479,59 +495,51 @@ function make_renderer() {
 
 	renderer.draw_main_line = () => {
 
-		let elements = [];
+		let elements1 = [];
+		let elements2 = [];
 
-		if (renderer.pgn_line !== null) {
-
-			for (let n = 0; n < renderer.pgn_index && n < renderer.pgn_line.length - 1; n++) {
-
-				if (renderer.pgn_line[n].active === "w") {
-					elements.push(`${renderer.pgn_line[n].fullmove}.`);
-				} else if (n === 0) {
-					elements.push(`${renderer.pgn_line[n].fullmove}...`);
-				}
-				let nice_string = renderer.pgn_line[n].nice_string(renderer.pgn_line[n + 1].lastmove);
-				elements.push(nice_string);
-			}
-
-			if (renderer.pos !== renderer.pgn_line[renderer.pgn_index]) {
-				elements.push(`<span class="gray">(deviated)</span>`);
-				mainline.innerHTML = elements.join(" ");
-				return;
-			}
-
-			for (let n = renderer.pgn_index; n < renderer.pgn_line.length - 1; n++) {
-
-				let span_open = n === renderer.pgn_index ? `<span class="gray">` : "";
-				let span_close = n === renderer.pgn_line.length - 2 ? "</span>" : "";
-
-				if (renderer.pgn_line[n].active === "w") {
-					elements.push(`${span_open}${renderer.pgn_line[n].fullmove}.`);
-					span_open = "";
-				} else if (n === 0) {
-					elements.push(`${span_open}${renderer.pgn_line[n].fullmove}...`);
-					span_open = "";
-				}
-				let nice_string = renderer.pgn_line[n].nice_string(renderer.pgn_line[n + 1].lastmove);
-				elements.push(span_open + nice_string + span_close);
-			}
-
-		} else {
-
-			let poslist = renderer.pos.position_list();
+		let poslist = renderer.pos.position_list();
+		let on_pgn = renderer.pgn_line !== null;
 			
-			for (let n = 0; n < poslist.length - 1; n++) {
-				if (poslist[n].active === "w") {
-					elements.push(`${poslist[n].fullmove}.`);
-				} else if (n === 0) {
-					elements.push(`${poslist[n].fullmove}...`);
+		for (let p of poslist.slice(1)) {		// Start on the first position that has a lastmove
+
+			if (p.pgn_index === undefined && on_pgn) {
+
+				// This is the first step off the main line.
+
+				elements1.push(`<span class="red">(deviated)</span>`);
+				on_pgn = false;
+			}
+
+			if (p.parent.active === "w") {
+				elements1.push(`${p.parent.fullmove}.`);
+			}
+
+			let nice_string = p.parent.nice_string(p.lastmove);
+			elements1.push(nice_string);
+		}
+
+		if (on_pgn) {
+
+			for (let p of renderer.pgn_line.slice(renderer.pos.pgn_index + 1)) {
+
+				if (p.parent.active === "w") {
+					elements2.push(`${p.parent.fullmove}.`);
 				}
-				let nice_string = poslist[n].nice_string(poslist[n + 1].lastmove);
-				elements.push(nice_string);
+
+				let nice_string = p.parent.nice_string(p.lastmove);
+				elements2.push(nice_string);
 			}
 		}
 
-		mainline.innerHTML = elements.join(" ");
+		let s1 = elements1.join(" ");		// Possibly empty string
+		let s2 = elements2.join(" ");		// Possibly empty string
+
+		if (s2.length > 0) {
+			s2 = `<span class="gray">` + s2 + "</span>";
+		}
+
+		mainline.innerHTML = [s1, s2].filter(s => s !== "").join(" ");
 	};
 
 	renderer.draw_info = () => {

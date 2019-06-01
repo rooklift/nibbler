@@ -63,6 +63,10 @@ input[type=text]:focus{
 	color: #999999;
 }
 
+.red {
+	color: #cc6666;
+}
+
 .tech {
 	color: #6cccee;
 }
