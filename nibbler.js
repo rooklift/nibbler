@@ -587,8 +587,8 @@ function NewPosition(state = null, active = "w", castling = "", enpassant = null
 
 		let tmp = p.move(s);
 
-		for (let x = 0; x <= 7; x++) {
-			for (let y = 0; y <= 7; y++) {
+		for (let x = 0; x < 8; x++) {
+			for (let y = 0; y < 8; y++) {
 				if (tmp.state[x][y] === "K" && p.active === "w") {
 					if (tmp.attacked(Point(x, y), p.active)) {
 						return "king in check";
@@ -882,8 +882,8 @@ function NewPosition(state = null, active = "w", castling = "", enpassant = null
 		// use for the mouseover functions.
 
 		let chars = new Array(64);
-		for (let y = 0; y <= 7; y++) {
-			for (let x = 0; x <= 7; x++) {
+		for (let y = 0; y < 8; y++) {
+			for (let x = 0; x < 8; x++) {
 				let c = p.state[x][y];
 				chars[y * 8 + x] = c !== "" ? c : ".";
 			}
@@ -1006,6 +1006,20 @@ function LoadFEN(fen) {
 	ret.fullmove = parseInt(tokens[5], 10);
 	if (Number.isNaN(ret.fullmove)) {
 		throw "Invalid FEN - fullmoves";
+	}
+
+	let white_kings = 0;
+	let black_kings = 0;
+
+	for (let x = 0; x < 8; x++) {
+		for (let y = 0; y < 8; y++) {
+			if (ret.state[x][y] === "K") white_kings++;
+			if (ret.state[x][y] === "k") black_kings++;
+		}
+	}
+
+	if (white_kings !== 1 || black_kings !== 1) {
+		throw "Invalid FEN - number of kings";
 	}
 
 	return ret;
