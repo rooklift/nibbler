@@ -4,7 +4,7 @@
 
 ![Screenshot](https://user-images.githubusercontent.com/16438795/58752417-637bb500-84a6-11e9-8cae-5acb51b1a98c.png)
 
-Currently, basic functionality does work. You can now load FEN positions via the FEN box, and very basic PGN files.
+Currently, basic functionality does work. You can now load FEN positions via the FEN box, and very basic PGN files via the Open command.
 
 # Usage
 
