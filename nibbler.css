@@ -8,6 +8,14 @@ body {
 	padding: 0;
 }
 
+.row {
+	display: flex;
+}
+
+.column {
+	flex: 50%;
+}
+
 #canvas {
 	float: left;
 	margin-bottom: 1em;
@@ -26,9 +34,9 @@ body {
 	background-color: black;
 	border: none;
 	caret-color: white;
-	clear: both;
 	color: #6cccee;
 	display: block;
+	float: bottom;
 	font-family: monospace, monospace;
 	font-size: 100%;
 	width: 640px;
