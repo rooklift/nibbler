@@ -66,6 +66,18 @@ function menu_build() {
 					}
 				},
 				{
+					label: "Open...",
+					accelerator: "CommandOrControl+O",
+					click: () => {
+						let files = electron.dialog.showOpenDialog({
+							properties: ["openFile"]
+						});
+						if (files && files.length > 0) {
+							windows.send("main-window", "open", files[0]);
+						}
+					}
+				},
+				{
 					label: "Play Best",
 					accelerator: "CommandOrControl+D",
 					click: () => {

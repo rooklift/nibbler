@@ -190,7 +190,7 @@ function InfoVal(s, key) {
 	// Given some string like "info depth 8 seldepth 22 time 469 nodes 3918 score cp 46 hashfull 13 nps 8353 tbhits 0 multipv 1 pv d2d4 g8f6"
 	// pull the value for the key out, e.g. in this example, key "nps" returns "8353" (as a string).
 
-	let tokens = s.split(" ").filter((s) => s !== "");
+	let tokens = s.split(" ").filter(s => s !== "");
 
 	for (let i = 0; i < tokens.length - 1; i++) {
 		if (tokens[i] === key) {
@@ -204,7 +204,7 @@ function InfoPV(s) {
 
 	// Pull the PV out, assuming it's at the end of the string.
 
-	let tokens = s.split(" ").filter((s) => s !== "");
+	let tokens = s.split(" ").filter(s => s !== "");
 
 	for (let i = 0; i < tokens.length - 1; i++) {
 		if (tokens[i] === "pv") {
@@ -1177,6 +1177,51 @@ function LoadFEN(fen) {
 	return ret;
 }
 
+function LoadPGN(pgn) {
+
+	let pos = LoadFEN("rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1");
+
+	let lines = pgn.split("\n");
+	lines = lines.map(s => s.trim());
+
+	let all_tokens = [];
+
+	for (let line of lines) {
+
+		if (line.startsWith("[")) {
+			continue;
+		}
+
+		let tokens = line.split(" ");
+		tokens = tokens.filter(s => s !== "");
+		tokens = tokens.map(s => s.trim());
+
+		all_tokens = all_tokens.concat(tokens);
+	}
+
+	for (let token of all_tokens) {
+
+		if (token === "1/2-1/2" || token === "1-0" || token === "0-1" || token === "*") {
+			break;
+		}
+
+		if (token.endsWith(".")) {
+			continue;
+		}
+
+		let [move, error] = pos.parse_pgn(token);
+
+		if (error !== "") {
+			throw error;
+		}
+
+		pos = pos.move(move);
+
+	}
+
+	return pos;
+}
+
 // ------------------------------------------------------------------------------------------------
 
 function make_renderer() {
@@ -1215,7 +1260,7 @@ function make_renderer() {
 			elements.push(nice_string);
 		}
 		mainline.innerHTML = elements.join(" ");
-	}
+	};
 
 	renderer.load_fen = (s) => {
 
@@ -1225,6 +1270,27 @@ function make_renderer() {
 
 		try {
 			renderer.pos = LoadFEN(s);
+		} catch (err) {
+			alert(err);
+			return;
+		}
+
+		renderer.changed();
+
+		if (renderer.running) {
+			renderer.go(true);
+		} else {
+			send("ucinewgame");
+		}
+
+		renderer.draw();
+	};
+
+	renderer.open = (filename) => {
+		let s = fs.readFileSync(filename, "utf8");
+
+		try {
+			renderer.pos = LoadPGN(s);
 		} catch (err) {
 			alert(err);
 			return;
@@ -1649,6 +1715,10 @@ ipcRenderer.on("play_best", () => {
 
 ipcRenderer.on("new", () => {
 	renderer.new();
+});
+
+ipcRenderer.on("open", (event, filename) => {
+	renderer.open(filename);
 });
 
 canvas.addEventListener("mousedown", (event) => {
