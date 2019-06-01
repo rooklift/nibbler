@@ -46,18 +46,11 @@ function menu_build() {
 					}
 				},
 				{
-					role: "quit",
-					label: "Quit",
-					accelerator: "CommandOrControl+Q"
+					role: "toggledevtools"
 				},
 				{
-					role: "toggledevtools"
-				}
-			]
-		},
-		{
-			label: "Navigation",
-			submenu: [
+					type: "separator"
+				},
 				{
 					label: "New Game",
 					accelerator: "CommandOrControl+N",
@@ -77,6 +70,19 @@ function menu_build() {
 						}
 					}
 				},
+				{
+					type: "separator"
+				},
+				{
+					role: "quit",
+					label: "Quit",
+					accelerator: "CommandOrControl+Q"
+				},
+			]
+		},
+		{
+			label: "Navigation",
+			submenu: [
 				{
 					label: "Play Best",
 					accelerator: "CommandOrControl+D",
@@ -136,7 +142,7 @@ function menu_build() {
 					click: () => {
 						windows.send("main-window", "halt", null);
 					}
-				}
+				},
 			]
 		}
 	];
