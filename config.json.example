@@ -2,7 +2,7 @@
 	"path": "C:\\Programs (self-installed)\\Lc0\\lc0.exe",
 	
 	"options": {
-		"Backend": "cudnn-fp16",
+		"Backend": "cudnn",
 		"WeightsFile": "C:\\Programs (self-installed)\\Lc0\\networks\\T40.T8.610"
 	},
 
@@ -15,9 +15,9 @@
 	"show_p": true,
 	"show_pv": true,
 
-	"bad_cp_threshold": 10,
+	"bad_cp_threshold": 20,
 	"terrible_cp_threshold": 100,
 	
-	"max_info_lines": 8,
+	"max_info_lines": 10,
 	"node_display_threshold": 0.05
 }

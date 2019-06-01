@@ -56,8 +56,8 @@ if (config) {
 		"bad_cp_threshold": 20,
 		"terrible_cp_threshold": 100,
 
-		"max_info_lines": 8,
-		"node_display_threshold": 0.1,
+		"max_info_lines": 10,
+		"node_display_threshold": 0.05,
 
 		"board_size": 640,
 
