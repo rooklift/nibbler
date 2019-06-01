@@ -356,7 +356,13 @@ function make_renderer() {
 			move_info.move = move;
 			move_info.cp = parseInt(InfoVal(s, "cp"), 10);				// Score in centipawns
 			move_info.multipv = parseInt(InfoVal(s, "multipv"), 10);	// Leela's ranking of the move, starting at 1
-			move_info.pv = InfoPV(s);
+
+			let new_pv = InfoPV(s);
+
+			if (CompareArrays(new_pv, move_info.pv) === false) {
+				move_info.pv_string_cache = null;
+				move_info.pv = new_pv;
+			}
 
 		} else if (s.startsWith("info string")) {
 
@@ -529,33 +535,48 @@ function make_renderer() {
 
 		for (let i = 0; i < info_list.length && i < config.max_info_lines; i++) {
 
+			// It's important to cache the PV string for efficiency.
+			// Note that receive() sets it to null when the PV changes.
+
+			if (info_list[i].pv_string_cache) {
+
+				s += info_list[i].pv_string_cache;
+
+			} else {
+
+				let pv_string = "";
+
+				let tmp_board = renderer.pos.copy();
+
+				for (let move of info_list[i].pv) {
+
+					if (tmp_board.active === "w") {
+						pv_string += `<span class="white">`;
+					} else {
+						pv_string += `<span class="black">`;
+					}
+
+					pv_string += tmp_board.nice_string(move);
+					pv_string += "</span> ";
+
+					if (config.show_pv === false) {
+						break;
+					}
+
+					tmp_board = tmp_board.move(move);
+				}
+
+				info_list[i].pv_string_cache = pv_string;
+				s += pv_string.trim();
+			}
+
+			// -----------------------
+
 			let cp_string = info_list[i].cp.toString();
 			if (cp_string.startsWith("-") === false) {
 				cp_string = "+" + cp_string;
 			}
 			let n_string = info_list[i].n.toString();
-
-			let pv_string = "";
-			let tmp_board = renderer.pos.copy();
-
-			for (let move of info_list[i].pv) {
-
-				if (tmp_board.active === "w") {
-					pv_string += `<span class="white">`;
-				} else {
-					pv_string += `<span class="black">`;
-				}
-				pv_string += tmp_board.nice_string(move);
-				pv_string += "</span> ";
-
-				if (config.show_pv === false) {
-					break;
-				}
-
-				tmp_board = tmp_board.move(move);
-			}
-
-			s += pv_string.trim();
 
 			if (config.show_n || config.show_cp || config.show_p) {
 				

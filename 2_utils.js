@@ -48,7 +48,7 @@ function InfoPV(s) {
 			return tokens.slice(i + 1);
 		}
 	}
-	return "";
+	return [];
 }
 
 function NewInfo() {
@@ -57,6 +57,28 @@ function NewInfo() {
 		move: "??",
 		multipv: 999,
 		n: 1,
-		pv: ""
+		pv: [],
+		pv_string_cache: null
 	};
+}
+
+function CompareArrays(a, b) {
+
+	if (a.length !== b.length) {
+		return false;
+	}
+
+	for (let n = 0; n < a.length; n++) {
+		if (a[n] !== b[n]) {
+			return false;
+		}
+	}
+
+	return true;
+}
+
+function OppositeColour(s) {
+	if (s === "w" || s === "W") return "b";
+	if (s === "b" || s === "B") return "w";
+	return "";
 }
