@@ -2,9 +2,9 @@
 
 *Nibbler* is a work in progress, but is intended to be like [Lizzie](https://github.com/featurecat/lizzie), but for [Leela Chess Zero](https://github.com/LeelaChessZero/lc0).
 
-![Screenshot](https://user-images.githubusercontent.com/16438795/58711394-613a2d80-83b6-11e9-9fcd-7d2f2a45159c.png)
+![Screenshot](https://user-images.githubusercontent.com/16438795/58752417-637bb500-84a6-11e9-8cae-5acb51b1a98c.png)
 
-Currently, basic functionality does work. You can now load FEN positions via the FEN box. Very basic PGN files can be loaded, but not conveniently stepped through yet.
+Currently, basic functionality does work. You can now load FEN positions via the FEN box, and very basic PGN files.
 
 # Usage
 
