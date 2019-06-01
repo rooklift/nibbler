@@ -161,13 +161,21 @@ function make_renderer() {
 		return config.board_size / 8;
 	};
 
-	renderer.pos_changed = () => {
+	renderer.pos_changed = (new_game_flag) => {
 
 		renderer.active_square = null;
 		renderer.info = Object.create(null);
 
 		fenbox.value = renderer.pos.fen();
 		renderer.draw_main_line();
+
+		if (renderer.running) {
+			renderer.go(new_game_flag);
+		} else if (new_game_flag) {
+			send("ucinewgame");
+		}
+
+		renderer.draw();
 	};
 
 	renderer.load_fen = (s) => {
@@ -180,15 +188,7 @@ function make_renderer() {
 		}
 
 		renderer.pgn_line = null;
-		renderer.pos_changed();
-
-		if (renderer.running) {
-			renderer.go(true);
-		} else {
-			send("ucinewgame");
-		}
-
-		renderer.draw();
+		renderer.pos_changed(true);
 	};
 
 	renderer.open = (filename) => {
@@ -212,15 +212,7 @@ function make_renderer() {
 			renderer.pgn_line[n].pgn_index = n;
 		}
 
-		renderer.pos_changed();		// Do this after the above since it uses the info.
-
-		if (renderer.running) {
-			renderer.go(true);
-		} else {
-			send("ucinewgame");
-		}
-
-		renderer.draw();
+		renderer.pos_changed(true);		// Do this after the above since it uses the info.
 	};
 
 	renderer.next = () => {
@@ -244,12 +236,6 @@ function make_renderer() {
 		}
 
 		renderer.pos_changed();
-
-		if (renderer.running) {
-			renderer.go();
-		}
-
-		renderer.draw();
 	};
 
 	renderer.move = (s) => {						// Does not call draw() but the caller should
@@ -270,24 +256,13 @@ function make_renderer() {
 		}
 
 		renderer.pos_changed();
-
-		if (renderer.running) {
-			renderer.go();
-		}
 	};
 
 	renderer.prev = () => {
-
 		if (renderer.pos.parent) {
 			renderer.pos = renderer.pos.parent;
 			renderer.pos_changed();
 		}
-
-		if (renderer.running) {
-			renderer.go();
-		}
-
-		renderer.draw();
 	};
 
 	renderer.new = () => {
@@ -299,7 +274,6 @@ function make_renderer() {
 		if (info_list.length > 0) {
 			renderer.move(info_list[0].move);
 		}
-		renderer.draw();
 	};
 
 	renderer.go = (new_game_flag) => {
@@ -413,13 +387,14 @@ function make_renderer() {
 
 			let illegal_reason = renderer.pos.illegal(move_string);	
 
+			renderer.active_square = null;
+
 			if (illegal_reason === "") {			
 				renderer.move(move_string);
+				return;							// Skip the draw, below, since move() will do that.
 			} else {
 				console.log(illegal_reason);
 			}
-
-			renderer.active_square = null;
 
 		} else {
 
