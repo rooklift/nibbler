@@ -59,6 +59,10 @@ input[type=text]:focus{
 	color: #ffffff;
 }
 
+.gray {
+	color: #999999;
+}
+
 .tech {
 	color: #6cccee;
 }

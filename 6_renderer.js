@@ -48,8 +48,12 @@ if (config) {
 	// Some tolerable default values for config...
 
 	assign_without_overwrite(config, {
+
 		"options": {},
+
 		"bad_cp_threshold": 20,
+		"terrible_cp_threshold": 100,
+
 		"max_info_lines": 8,
 		"node_display_threshold": 0.1,
 
@@ -159,21 +163,63 @@ function make_renderer() {
 	};
 
 	renderer.pos_changed = () => {
+
 		renderer.active_square = null;
 		renderer.info = Object.create(null);
 		fenbox.value = renderer.pos.fen();
 
-		let poslist = renderer.pos.position_list();
 		let elements = [];
-		for (let n = 0; n < poslist.length - 1; n++) {
-			if (poslist[n].active === "w") {
-				elements.push(`${poslist[n].fullmove}.`);
-			} else if (n === 0) {
-				elements.push(`${poslist[n].fullmove}...`);
+
+		if (renderer.pgn_line !== null) {
+
+			for (let n = 0; n < renderer.pgn_index && n < renderer.pgn_line.length - 1; n++) {
+
+				if (renderer.pgn_line[n].active === "w") {
+					elements.push(`${renderer.pgn_line[n].fullmove}.`);
+				} else if (n === 0) {
+					elements.push(`${renderer.pgn_line[n].fullmove}...`);
+				}
+				let nice_string = renderer.pgn_line[n].nice_string(renderer.pgn_line[n + 1].lastmove);
+				elements.push(nice_string);
 			}
-			let nice_string = poslist[n].nice_string(poslist[n + 1].lastmove);
-			elements.push(nice_string);
+
+			if (renderer.pos !== renderer.pgn_line[renderer.pgn_index]) {
+				elements.push(`<span class="gray">(deviated)</span>`);
+				mainline.innerHTML = elements.join(" ");
+				return;
+			}
+
+			for (let n = renderer.pgn_index; n < renderer.pgn_line.length - 1; n++) {
+
+				let span_open = n === renderer.pgn_index ? `<span class="gray">` : "";
+				let span_close = n === renderer.pgn_line.length - 2 ? "</span>" : "";
+
+				if (renderer.pgn_line[n].active === "w") {
+					elements.push(`${span_open}${renderer.pgn_line[n].fullmove}.`);
+					span_open = "";
+				} else if (n === 0) {
+					elements.push(`${span_open}${renderer.pgn_line[n].fullmove}...`);
+					span_open = "";
+				}
+				let nice_string = renderer.pgn_line[n].nice_string(renderer.pgn_line[n + 1].lastmove);
+				elements.push(span_open + nice_string + span_close);
+			}
+
+		} else {
+
+			let poslist = renderer.pos.position_list();
+			
+			for (let n = 0; n < poslist.length - 1; n++) {
+				if (poslist[n].active === "w") {
+					elements.push(`${poslist[n].fullmove}.`);
+				} else if (n === 0) {
+					elements.push(`${poslist[n].fullmove}...`);
+				}
+				let nice_string = poslist[n].nice_string(poslist[n + 1].lastmove);
+				elements.push(nice_string);
+			}
 		}
+
 		mainline.innerHTML = elements.join(" ");
 	};
 
@@ -190,10 +236,9 @@ function make_renderer() {
 			return;
 		}
 
-		renderer.pos_changed();
-
 		renderer.pgn_line = null;
 		renderer.pgn_index = 0;
+		renderer.pos_changed();
 
 		if (renderer.running) {
 			renderer.go(true);
@@ -218,7 +263,6 @@ function make_renderer() {
 
 		renderer.pgn_line = final_pos.position_list();
 		renderer.pgn_index = 0;
-
 		renderer.pos = renderer.pgn_line[0];
 		renderer.pos_changed();
 
@@ -576,15 +620,19 @@ function make_renderer() {
 
 				let loss = info_list[0].cp - info_list[i].cp;
 
+				if (loss > config.terrible_cp_threshold) {
+					continue;
+				}
+
 				if (i === 0) {
 					context.strokeStyle = "#66aaaa";
 					context.fillStyle = "#66aaaa";
-				} else if (loss < config.bad_cp_threshold) {
-					context.strokeStyle = "#66aa66";
-					context.fillStyle = "#66aa66";
-				} else {
+				} else if (loss > config.bad_cp_threshold) {
 					context.strokeStyle = "#cccc66";
 					context.fillStyle = "#cccc66";
+				} else {
+					context.strokeStyle = "#66aa66";
+					context.fillStyle = "#66aa66";
 				}
 
 				let [x1, y1] = XY(info_list[i].move.slice(0, 2));
