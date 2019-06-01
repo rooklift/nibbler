@@ -39,7 +39,6 @@ body {
 	float: bottom;
 	font-family: monospace, monospace;
 	font-size: 100%;
-	width: 640px;
 }
 
 input[type=text]:focus{

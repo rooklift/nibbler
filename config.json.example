@@ -10,6 +10,8 @@
 	"max_info_lines": 8,
 	"node_display_threshold": 0.05,
 
+	"board_size": 640,
+
 	"show_cp": true,
 	"show_n": true,
 	"show_p": true,

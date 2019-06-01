@@ -79,12 +79,18 @@ if (config) {
 		"max_info_lines": 8,
 		"node_display_threshold": 0.1,
 
+		"board_size": 640,
+
 		"show_cp": true,
 		"show_n": true,
 		"show_p": false,
 		"show_pv": true,
 	});
 
+	fenbox.style.width = config.board_size.toString() + "px";
+	canvas.width = config.board_size;
+	canvas.height = config.board_size;
+	
 	exe = child_process.spawn(config.path);
 
 	exe.on("error", (err) => {
@@ -1015,8 +1021,14 @@ function make_renderer() {
 	fenbox.value = renderer.pos.fen();
 
 	renderer.square_size = () => {
-		return 80;									// FIXME
+		return config.board_size / 8;
 	};
+
+	renderer.changed = () => {
+		renderer.active_square = null;
+		renderer.info = Object.create(null);
+		fenbox.value = renderer.pos.fen();
+	}
 
 	renderer.load_fen = (s) => {
 
@@ -1031,9 +1043,7 @@ function make_renderer() {
 			return;
 		}
 
-		renderer.active_square = null;
-		renderer.info = Object.create(null);
-		fenbox.value = renderer.pos.fen();
+		renderer.changed();
 
 		if (renderer.running) {
 			renderer.go(true);
@@ -1044,15 +1054,10 @@ function make_renderer() {
 		renderer.draw();
 	};
 
-	renderer.new = () => {
-		renderer.load_fen("rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1");
-	};
-
 	renderer.move = (s) => {						// Does not call draw() but the caller should
 
 		renderer.pos = renderer.pos.move(s);
-		renderer.info = Object.create(null);
-		fenbox.value = renderer.pos.fen();
+		renderer.changed();
 
 		if (renderer.running) {
 			renderer.go();
@@ -1063,8 +1068,7 @@ function make_renderer() {
 
 		if (renderer.pos.parent) {
 			renderer.pos = renderer.pos.parent;
-			renderer.info = Object.create(null);
-			fenbox.value = renderer.pos.fen();
+			renderer.changed();
 		}
 
 		if (renderer.running) {
@@ -1072,6 +1076,10 @@ function make_renderer() {
 		}
 
 		renderer.draw();
+	};
+
+	renderer.new = () => {
+		renderer.load_fen("rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1");
 	};
 
 	renderer.play_best = () => {
@@ -1368,9 +1376,6 @@ function make_renderer() {
 	renderer.draw = () => {
 
 		let rss = renderer.square_size();
-
-		canvas.width = rss * 8;
-		canvas.height = rss * 8;
 		
 		renderer.squares = [];
 
