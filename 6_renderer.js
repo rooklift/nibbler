@@ -225,14 +225,15 @@ function make_renderer() {
 
 	renderer.pgn_next = () => {
 
+		// Currently, next only makes sense if we're on the PGN line.
+		// Ideally we would also remember at least 1 other line.
+
 		if (renderer.pgn_line === null) {
 			return;
 		}
 
-		// Return to the PGN line, if needed...
-
-		while (renderer.pos.pgn_index === undefined) {
-			renderer.pos = renderer.pos.parent;
+		if (renderer.pos.pgn_index === undefined) {
+			return;
 		}
 
 		let index = renderer.pos.pgn_index;
@@ -252,31 +253,7 @@ function make_renderer() {
 	};
 
 	renderer.pgn_prev = () => {
-
-		if (renderer.pgn_line === null) {
-			renderer.undo();
-			return;
-		}
-
-		// Return to the PGN line, if needed...
-
-		while (renderer.pos.pgn_index === undefined) {
-			renderer.pos = renderer.pos.parent;
-		}
-
-		let index = renderer.pos.pgn_index;
-
-		if (index > 0) {
-			renderer.pos = renderer.pgn_line[index - 1];
-		}
-
-		renderer.pos_changed();
-
-		if (renderer.running) {
-			renderer.go();
-		}
-
-		renderer.draw();
+		renderer.undo();
 	};
 
 	renderer.move = (s) => {						// Does not call draw() but the caller should
