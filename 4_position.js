@@ -4,6 +4,9 @@
 // creating each position with methods embedded in itself. Downside is, we have to use the "this"
 // keyword. Also note that => functions break "this" in such an object.
 
+let total_moves_made = 0;		// For debugging / info
+let total_positions_made = 0;	// For debugging / info
+
 const position_prototype = {
 
 	copy: function() {
@@ -11,6 +14,8 @@ const position_prototype = {
 	},
 
 	move: function(s) {
+
+		total_moves_made++;
 
 		// s is something like "d1f3" or "e7e8q".
 		// Assumes move is legal - all sorts of weird things can happen if this isn't so.
@@ -870,6 +875,8 @@ const position_prototype = {
 };
 
 function NewPosition(state = null, active = "w", castling = "", enpassant = null, halfmove = 0, fullmove = 1, parent = null, lastmove = null) {
+
+	total_positions_made++;
 
 	let p = Object.create(position_prototype);
 
