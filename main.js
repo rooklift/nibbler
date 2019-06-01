@@ -2,10 +2,31 @@
 
 const alert = require("./modules/alert");
 const electron = require("electron");
+const fs = require("fs");
 const windows = require("./modules/windows");
 
+let config = {};
+
+try {
+	if (fs.existsSync("config.json")) {
+		config = JSON.parse(fs.readFileSync("config.json", "utf8"));
+	} else if (fs.existsSync("config.json.example")) {
+		config = JSON.parse(fs.readFileSync("config.json.example", "utf8"));
+	}
+} catch (err) {
+	// pass
+}
+
+if (config.width === undefined || config.width <= 0) {
+	config.width = 1280;
+}
+
+if (config.height === undefined || config.height <= 0) {
+	config.height = 800;
+}
+
 electron.app.on("ready", () => {
-	windows.new("main-window", {width: 1280, height: 800, page: "nibbler.html"});
+	windows.new("main-window", {width: config.width, height: config.height, page: "nibbler.html"});
 	menu_build();
 });
 

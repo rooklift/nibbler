@@ -54,20 +54,16 @@ function sync() {
 
 // ------------------------------------------------------------------------------------------------
 
-if (fs.existsSync("config.json")) {
-	try {
+try {
+	if (fs.existsSync("config.json")) {
 		config = JSON.parse(fs.readFileSync("config.json", "utf8"));
-	} catch (err) {
-		alert("Couldn't parse config.json");
-	}
-} else if (fs.existsSync("config.json.example")) {
-	try {
+	} else if (fs.existsSync("config.json.example")) {
 		config = JSON.parse(fs.readFileSync("config.json.example", "utf8"));
-	} catch (err) {
-		alert("Couldn't parse config.json.example");
+	} else {
+		alert("config.json not present");
 	}
-} else {
-	alert("config.json not present");
+} catch (err) {
+	// pass
 }
 
 if (config) {

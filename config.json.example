@@ -6,14 +6,16 @@
 		"WeightsFile": "C:\\Programs (self-installed)\\Lc0\\networks\\T40.T8.610"
 	},
 
-	"bad_cp_threshold": 10,
-	"max_info_lines": 8,
-	"node_display_threshold": 0.05,
-
+	"width": 1280,
+	"height": 800,
 	"board_size": 640,
 
 	"show_cp": true,
 	"show_n": true,
 	"show_p": true,
-	"show_pv": true
+	"show_pv": true,
+
+	"bad_cp_threshold": 10,
+	"max_info_lines": 8,
+	"node_display_threshold": 0.05
 }
