@@ -482,8 +482,13 @@ function make_renderer() {
 			if (p.pgn_index === undefined && on_pgn) {
 
 				// This is the first step off the main line.
+				// Either we continued after the PGN ended, or we deviated beforehand.
 
-				elements1.push(`<span class="red">(deviated)</span>`);
+				if (p.parent && p.parent.pgn_index === renderer.pgn_line.length - 1) {
+					elements1.push(`<span class="red">(PGN ends)</span>`);
+				} else {
+					elements1.push(`<span class="red">(deviated)</span>`);
+				}
 				on_pgn = false;
 			}
 
