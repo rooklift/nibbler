@@ -7,10 +7,12 @@ const fs = require('fs');
 const ipcRenderer = require("electron").ipcRenderer;
 const readline = require("readline");
 
-const fenbox = document.getElementById("fenbox");
 const canvas = document.getElementById("canvas");
+const fenbox = document.getElementById("fenbox");
 const infobox = document.getElementById("infobox");
 const mainline = document.getElementById("mainline");
+const pgnchooser = document.getElementById("pgnchooser");
+
 const context = canvas.getContext("2d");
 
 const light = "#dadada";

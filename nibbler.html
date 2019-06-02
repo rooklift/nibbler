@@ -2,24 +2,28 @@
 <html>
 <head>
 	<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
-	<meta http-equiv="Content-Security-Policy" content="default-src 'self'; child-src 'none';">
+	<meta http-equiv="Content-Security-Policy" content="default-src 'self' 'unsafe-inline'; child-src 'none';">
 	<title>Nibbler</title>
 	<link rel="stylesheet" type="text/css" href="nibbler.css">
 </head>
 
 <body>
 
+	<div id="pgnchooser">If you see this, something is quite wrong. Tell the author.</div>
+
 	<div class="row">
-		<div class="column">
+		<div class="leftcolumn">
 			<canvas id="canvas"></canvas>
 		</div>
-  		<div class="column">
+  		<div class="rightcolumn">
   			<div id="infobox"></div>
   		</div>
 	</div>
+	
 	<input type="text" id="fenbox" value="">
 	<p id="mainline"></p>
-	
+
+	<script src="0_shims.js"></script>
 	<script src="1_constants.js"></script>
 	<script src="2_utils.js"></script>
 	<script src="3_point.js"></script>

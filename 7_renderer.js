@@ -161,6 +161,7 @@ function make_renderer() {
 	renderer.ever_received_info = false;			// When false, we write stderr log instead of move info.
 	renderer.stderr_log = "";						// All output received from the engine's stderr.
 	renderer.infobox_string = "";					// Just to help not redraw the infobox when not needed.
+	renderer.pgn_choices = null;
 
 	renderer.pgn_line = null;
 
@@ -187,6 +188,10 @@ function make_renderer() {
 		renderer.draw();
 	};
 
+	renderer.game_changed = () => {
+		renderer.pos_changed(true);
+	};
+
 	renderer.load_fen = (s) => {
 
 		try {
@@ -197,25 +202,21 @@ function make_renderer() {
 		}
 
 		renderer.pgn_line = null;
-		renderer.pos_changed(true);
+		renderer.game_changed();
 	};
 
 	renderer.new = () => {
 		renderer.load_fen("rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1");
 	};
 
-	renderer.open = (filename) => {
+	renderer.load_pgn_object = (o) => {
 
-		let buf = fs.readFileSync(filename);		// i.e. binary buffer object
-		let pgn_list = pre_parse_pgn(buf);
-
-		console.log("pgn_list length is", pgn_list.length);
+		renderer.pgn_choices = null;
 
 		let final_pos;
 
 		try {
-			console.log(pgn_list[0].tags);
-			final_pos = LoadPGN(pgn_list[0].movetext);
+			final_pos = LoadPGN(o.movetext);
 		} catch (err) {
 			alert(err);
 			return;
@@ -230,7 +231,39 @@ function make_renderer() {
 			renderer.pgn_line[n].pgn_index = n;
 		}
 
-		renderer.pos_changed(true);		// Do this after the above since it uses the info.
+		renderer.game_changed();		// Do this after the above since it uses the info.
+	};
+
+	renderer.choose_pgn = (n) => {
+		pgnchooser.style.visibility = "hidden";
+		if (renderer.pgn_choices && n >= 0 && n < renderer.pgn_choices.length) {
+			renderer.load_pgn_object(renderer.pgn_choices[n]);
+		}
+	};
+
+	renderer.open = (filename) => {
+
+		let buf = fs.readFileSync(filename);		// i.e. binary buffer object
+		let pgn_list = pre_parse_pgn(buf);
+
+		if (pgn_list.length === 1) {
+			renderer.load_pgn_object(pgn_list[0]);
+			return;
+		}
+		
+		renderer.pgn_choices = pgn_list;
+
+		let lines = [];
+
+		for (let n = 0; n < pgn_list.length; n++) {
+			let p = pgn_list[n];
+			// The SafeString() calls are super-important.
+			let s = `${SafeString(p.tags.White)}  <span class="tech">${SafeString(p.tags.Result)}</span>  <span class="red">${SafeString(p.tags.Black)}</span>`;
+			lines.push(`<span onclick="renderer.choose_pgn(${n})">${s}</span>`);
+		}
+
+		pgnchooser.innerHTML = lines.join("<br>");
+		pgnchooser.style.visibility = "visible";
 	};
 
 	renderer.prev = () => {

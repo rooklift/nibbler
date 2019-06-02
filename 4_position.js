@@ -39,29 +39,29 @@ const position_prototype = {
 		// Update castling info...
 
 		if (ret.state[x1][y1] === "K") {
-			ret.castling = ret.castling.replace("K", "");
-			ret.castling = ret.castling.replace("Q", "");
+			ret.castling = ret.castling.replaceAll("K", "");
+			ret.castling = ret.castling.replaceAll("Q", "");
 		}
 
 		if (ret.state[x1][y1] === "k") {
-			ret.castling = ret.castling.replace("k", "");
-			ret.castling = ret.castling.replace("q", "");
+			ret.castling = ret.castling.replaceAll("k", "");
+			ret.castling = ret.castling.replaceAll("q", "");
 		}
 
 		if ((x1 == 0 && y1 == 0) || (x2 == 0 && y2 == 0)) {
-			ret.castling = ret.castling.replace("q", "");
+			ret.castling = ret.castling.replaceAll("q", "");
 		}
 
 		if ((x1 == 7 && y1 == 0) || (x2 == 7 && y2 == 0)) {
-			ret.castling = ret.castling.replace("k", "");
+			ret.castling = ret.castling.replaceAll("k", "");
 		}
 
 		if ((x1 == 0 && y1 == 7) || (x2 == 0 && y2 == 7)) {
-			ret.castling = ret.castling.replace("Q", "");
+			ret.castling = ret.castling.replaceAll("Q", "");
 		}
 
 		if ((x1 == 7 && y1 == 7) || (x2 == 7 && y2 == 7)) {
-			ret.castling = ret.castling.replace("K", "");
+			ret.castling = ret.castling.replaceAll("K", "");
 		}
 
 		// Update halfmove and fullmove...
@@ -513,14 +513,14 @@ const position_prototype = {
 
 		// Delete things we don't need...
 
-		s = s.replace("x", "");
-		s = s.replace("+", "");
-		s = s.replace("#", "");
+		s = s.replaceAll("x", "");
+		s = s.replaceAll("+", "");
+		s = s.replaceAll("#", "");
 
 		// Fix castling with zeroes...
 
-		s = s.replace("0-0", "O-O");
-		s = s.replace("0-0-0", "O-O-O");
+		s = s.replaceAll("0-0", "O-O");
+		s = s.replaceAll("0-0-0", "O-O-O");
 
 		// Castling...	FIXME: should legality check
 
@@ -542,7 +542,7 @@ const position_prototype = {
 
 		// Just in case, delete any "-" characters (after handling castling, of course)...
 
-		s = s.replace("-", "");
+		s = s.replaceAll("-", "");
 
 		// Save promotion string, if any, then delete it from s...
 

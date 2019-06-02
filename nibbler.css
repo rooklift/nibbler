@@ -3,16 +3,23 @@ body {
 	border: 0;
 	color: white;
 	cursor: default;
-	margin: 20px;
+	margin: 0;
 	overflow: hidden;
 	padding: 0;
 }
 
 .row {
 	display: flex;
+	margin-left: 1em;
+	margin-right: 1em;
+	margin-top: 1em;
 }
 
-.column {
+.leftcolumn {
+	flex: 50%;
+}
+
+.rightcolumn {
 	flex: 50%;
 }
 
@@ -21,6 +28,17 @@ body {
 	margin-bottom: 1em;
 	margin-right: 1em;
 	user-select: none;
+}
+
+#pgnchooser {
+	background-color: black;
+	font-family: monospace, monospace;
+	font-size: 100%;
+	height: 100%;
+	overflow-y: auto;
+	position: fixed;
+	visibility: hidden;
+	width: 100%;
 }
 
 #fenbox {
@@ -32,6 +50,8 @@ body {
 	float: bottom;
 	font-family: monospace, monospace;
 	font-size: 100%;
+	margin-bottom: 1em;
+	margin-left: 1em;
 	width: 100%;
 }
 input[type=text]:focus{
@@ -48,6 +68,7 @@ input[type=text]:focus{
 
 #mainline {
 	font-family: monospace, monospace;
+	margin: 1em;
 	white-space: pre-wrap;
 	overflow-x: hidden;
 	overflow-y: auto;

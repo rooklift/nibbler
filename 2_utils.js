@@ -82,3 +82,12 @@ function OppositeColour(s) {
 	if (s === "b" || s === "B") return "w";
 	return "";
 }
+
+function SafeString(s) {			// Is this good enough?
+	s = s.replaceAll("<", "&lt;");
+	s = s.replaceAll(">", "&gt;");
+	s = s.replaceAll("&", "&amp;");
+	s = s.replaceAll("'", "&apos;");
+	s = s.replaceAll("\"", "&quot;");
+	return s;
+}
