@@ -51,17 +51,6 @@ function InfoPV(s) {
 	return [];
 }
 
-function NewInfo() {
-	return {
-		cp: -999999,
-		move: "??",
-		multipv: 999,
-		n: 1,
-		pv: [],
-		pv_string_cache: null
-	};
-}
-
 function CompareArrays(a, b) {
 
 	if (a.length !== b.length) {

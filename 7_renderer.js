@@ -149,12 +149,25 @@ for (let c of Array.from("KkQqRrBbNnPp")) {
 
 // ------------------------------------------------------------------------------------------------
 
+function new_info() {
+	return {
+		cp: -999999,
+		move: "??",
+		multipv: 999,
+		n: 1,
+		pv: [],
+		pv_string_cache: null
+	};
+}
+
+// ------------------------------------------------------------------------------------------------
+
 function make_renderer() {
 
 	let renderer = Object.create(null);
 
 	renderer.pos = LoadFEN("rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1");
-	renderer.info = Object.create(null);			// Map of move (e.g. "e2e4") --> info object, see NewInfo().
+	renderer.info = Object.create(null);			// Map of move (e.g. "e2e4") --> info object, see new_info().
 	renderer.squares = [];							// Info about clickable squares.
 	renderer.active_square = null;					// Square clicked by user.
 	renderer.running = false;						// Whether to send "go" to the engine after move, undo, etc.
@@ -398,7 +411,7 @@ function make_renderer() {
 			if (renderer.info[move]) {
 				move_info = renderer.info[move];
 			} else {
-				move_info = NewInfo();
+				move_info = new_info();
 				renderer.info[move] = move_info;
 			}
 
@@ -424,7 +437,7 @@ function make_renderer() {
 			if (renderer.info[move]) {
 				move_info = renderer.info[move];
 			} else {
-				move_info = NewInfo();
+				move_info = new_info();
 				renderer.info[move] = move_info;
 			}
 
@@ -589,6 +602,16 @@ function make_renderer() {
 
 		for (let i = 0; i < info_list.length && i < config.max_info_lines; i++) {
 
+			if (config.show_cp) {
+
+				let cp_string = info_list[i].cp.toString();
+				if (cp_string.startsWith("-") === false) {
+					cp_string = "+" + cp_string;
+				}
+
+				s += `<span class="tech">${cp_string}</span> `;
+			}
+
 			// It's important to cache the PV string for efficiency.
 			// Note that receive() sets it to null when the PV changes.
 
@@ -624,24 +647,12 @@ function make_renderer() {
 				s += pv_string.trim();
 			}
 
-			// -----------------------
-
-			let cp_string = info_list[i].cp.toString();
-			if (cp_string.startsWith("-") === false) {
-				cp_string = "+" + cp_string;
-			}
-			let n_string = info_list[i].n.toString();
-
-			if (config.show_n || config.show_cp || config.show_p) {
+			if (config.show_n || config.show_p) {
 				
 				let tech_elements = [];
 
 				if (config.show_n) {
-					tech_elements.push(`N: ${n_string}`);
-				}
-
-				if (config.show_cp) {
-					tech_elements.push(`cp: ${cp_string}`);
+					tech_elements.push(`N: ${info_list[i].n.toString()}`);
 				}
 
 				if (config.show_p) {
