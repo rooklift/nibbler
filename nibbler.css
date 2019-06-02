@@ -70,3 +70,7 @@ input[type=text]:focus{
 .tech {
 	color: #6cccee;
 }
+
+.nobr {
+	white-space: nowrap;		/* Used for O-O and O-O-O tags */
+}
