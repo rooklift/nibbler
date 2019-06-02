@@ -502,6 +502,8 @@ function make_renderer() {
 			return;
 		}
 
+		// First, draw the info box on the side...
+
 		let s = "";
 
 		if (renderer.running === false) {
@@ -549,6 +551,7 @@ function make_renderer() {
 		}
 
 		// ------------------------------------------
+		// Now draw the arrows on the board...
 
 		if (info_list.length === 0) {
 			return;
