@@ -61,6 +61,7 @@ if (config) {
 		"node_display_threshold": 0.05,
 
 		"board_size": 640,
+		"mainline_height": 108,
 
 		"show_cp": true,
 		"show_n": true,
@@ -69,6 +70,7 @@ if (config) {
 	});
 
 	infobox.style.height = config.board_size.toString() + "px";
+	mainline.style.height = config.mainline_height.toString() + "px";
 	canvas.width = config.board_size;
 	canvas.height = config.board_size;
 	

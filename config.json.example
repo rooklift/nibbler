@@ -7,8 +7,9 @@
 	},
 
 	"width": 1280,
-	"height": 800,
+	"height": 840,
 	"board_size": 640,
+	"mainline_height": 108,
 
 	"show_cp": true,
 	"show_n": true,

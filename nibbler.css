@@ -49,6 +49,8 @@ input[type=text]:focus{
 #mainline {
 	font-family: monospace, monospace;
 	white-space: pre-wrap;
+	overflow-x: hidden;
+	overflow-y: auto;
 }
 
 .black {

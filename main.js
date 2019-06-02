@@ -22,7 +22,7 @@ if (config.width === undefined || config.width <= 0) {
 }
 
 if (config.height === undefined || config.height <= 0) {
-	config.height = 800;
+	config.height = 840;
 }
 
 electron.app.on("ready", () => {
