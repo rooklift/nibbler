@@ -6,9 +6,9 @@
 
 # Usage
 
-*Nibbler* requires Electron, but has no other dependencies. If you have Electron installed (e.g. `npm install -g electron`) you can likely enter the nibbler directory, edit the `config.json` file, then do `electron .`
+Running *Nibbler* from source requires Electron, but has no other dependencies. If you have Electron installed (e.g. `npm install -g electron`) you can likely enter the nibbler directory, edit the `config.json` file, then do `electron .`
 
-I may well upload some Windows builds to the [Releases](https://github.com/fohristiwhirl/nibbler/releases) section from time to time, if I remember.
+I may well upload some premade Windows builds to the [Releases](https://github.com/fohristiwhirl/nibbler/releases) section from time to time, if I remember. These won't require anything.
 
 # TODO
 
