@@ -12,6 +12,10 @@ function new_info() {
 
 		pv_string: function(board) {
 
+			// Given the board for which this info is valid, generate a human-readable
+			// PV string for display. This should never be examined by the caller,
+			// merely displayed.
+
 			if (this.pv_string_cache) {
 				return this.pv_string_cache;
 			}
