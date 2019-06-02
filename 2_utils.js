@@ -73,6 +73,9 @@ function OppositeColour(s) {
 }
 
 function SafeString(s) {
+	if (typeof s !== "string") {
+		return undefined;
+	}
 	s = s.replaceAll("&", "&amp;");		// This needs to be first of course.
 	s = s.replaceAll("<", "&lt;");
 	s = s.replaceAll(">", "&gt;");
