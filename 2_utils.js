@@ -83,10 +83,10 @@ function OppositeColour(s) {
 	return "";
 }
 
-function SafeString(s) {			// Is this good enough?
+function SafeString(s) {
+	s = s.replaceAll("&", "&amp;");		// This needs to be first of course.
 	s = s.replaceAll("<", "&lt;");
 	s = s.replaceAll(">", "&gt;");
-	s = s.replaceAll("&", "&amp;");
 	s = s.replaceAll("'", "&apos;");
 	s = s.replaceAll("\"", "&quot;");
 	return s;
