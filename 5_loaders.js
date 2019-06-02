@@ -100,9 +100,15 @@ function LoadPGN(pgn) {
 	let lines = pgn.split("\n");
 	lines = lines.map(s => s.trim());
 
+	let inside_brace = false;		// "Brace comments do not nest"
+
 	let all_tokens = [];
 
 	for (let line of lines) {
+
+		if (line.startsWith("%")) {
+			continue;
+		}
 
 		if (line.startsWith("[")) {
 			continue;
@@ -112,7 +118,22 @@ function LoadPGN(pgn) {
 		tokens = tokens.filter(s => s !== "");
 		tokens = tokens.map(s => s.trim());
 
-		all_tokens = all_tokens.concat(tokens);
+		for (let token of tokens) {
+
+			if (inside_brace) {
+				if (token.endsWith("}")) {
+					inside_brace = false;
+				}
+				continue;
+			}
+
+			if (token.startsWith("{")) {
+				inside_brace = true;
+				continue;
+			}
+
+			all_tokens.push(token);
+		}
 	}
 
 	for (let token of all_tokens) {
