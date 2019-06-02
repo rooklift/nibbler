@@ -214,6 +214,7 @@ function make_renderer() {
 		let final_pos;
 
 		try {
+			console.log(pgn_list[0].tags);
 			final_pos = LoadPGN(pgn_list[0].movetext);
 		} catch (err) {
 			alert(err);

@@ -1,5 +1,7 @@
 "use strict";
 
+let decoder = new TextDecoder("utf-8");
+
 function LoadPGN(movetext) {
 
 	let pos = LoadFEN("rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1");
@@ -106,7 +108,7 @@ function new_byte_pusher() {
 		},
 
 		string: function() {
-			return new TextDecoder("utf-8").decode(this.bytes());
+			return decoder.decode(this.bytes());
 		}
 	};
 }
@@ -114,7 +116,6 @@ function new_byte_pusher() {
 function pre_parse_pgn(buf) {
 
 	// Returns an array of the pgn_record objects, of at least length 1.
-	// FIXME: parse tags.
 
 	let lines = split_buffer(buf);
 	let current_movetext = new_byte_pusher();
@@ -148,7 +149,31 @@ function pre_parse_pgn(buf) {
 				current_movetext = new_byte_pusher();
 			}
 
-		} else {								// This is a moves line.
+			// Parse the tag line...
+
+			let line = decoder.decode(rawline).trim();
+
+			if (line.endsWith("]")) {
+
+				line = line.slice(1, line.length - 1);		// So now it's like:		Foo "bar etc"
+
+				let quote_i = line.indexOf(`"`);
+
+				if (quote_i === -1) {
+					continue;
+				}
+
+				let key = line.slice(0, quote_i).trim();
+				let value = line.slice(quote_i + 1).trim();
+
+				if (value.endsWith(`"`)) {
+					value = value.slice(0, value.length - 1);
+				}
+
+				games[games.length - 1].tags[key] = value;
+			}
+
+		} else {								// This is a MOVETEXT line.
 
 			if (current_movetext.length > 0) {
 				current_movetext.push(32);		// Add a space to what we have.
