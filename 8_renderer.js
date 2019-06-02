@@ -77,7 +77,7 @@ if (config) {
 	exe = child_process.spawn(config.path);
 
 	exe.on("error", (err) => {
-  		alert("Couldn't spawn process");			// Note that this alert will come some time in the future, not instantly.
+  		alert("Couldn't spawn process - check the path in the config file");			// Note that this alert will come some time in the future, not instantly.
 	});
 
 	scanner = readline.createInterface({
