@@ -38,6 +38,8 @@ body {
 	height: 100%;
 	overflow-y: auto;
 	position: fixed;
+	left: 0;
+	top: 0;
 	visibility: hidden;
 	width: 100%;
 }
