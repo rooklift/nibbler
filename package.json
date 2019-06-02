@@ -9,8 +9,5 @@
 	},
 	"scripts": {
 		"pack": "electron-builder --dir"
-	},
-	"build": {
-		"asar": false
 	}
 }
