@@ -260,12 +260,16 @@ function make_renderer() {
 
 		let lines = [];
 
+		lines.push("&nbsp;");
+
 		for (let n = 0; n < pgn_list.length; n++) {
 			let p = pgn_list[n];
 			// The SafeString() calls are super-important.
 			let s = `${SafeString(p.tags.White)}  <span class="tech">${SafeString(p.tags.Result)}</span>  ${SafeString(p.tags.Black)}`;
-			lines.push(`<span onclick="renderer.choose_pgn(${n})">&nbsp;${s}</span>`);
+			lines.push(`<span onclick="renderer.choose_pgn(${n})">&nbsp;&nbsp;${s}</span>`);
 		}
+
+		lines.push("&nbsp;");
 
 		pgnchooser.innerHTML = lines.join("<br>");
 		pgnchooser.style.visibility = "visible";
