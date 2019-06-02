@@ -136,6 +136,9 @@ function LoadPGN(pgn) {
 				parenthesis_depth++;
 			}
 
+			// FIXME: if a token starts with "((" or ends with "))" etc we need to consider it to be
+			// a change in depth of 2 or more. We really need to do byte level pre-parsing of the file.
+
 			if (parenthesis_depth > 0) {
 				if (token.endsWith(")")) {
 					parenthesis_depth--;
