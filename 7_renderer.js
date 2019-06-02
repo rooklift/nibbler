@@ -149,25 +149,12 @@ for (let c of Array.from("KkQqRrBbNnPp")) {
 
 // ------------------------------------------------------------------------------------------------
 
-function new_info() {
-	return {
-		cp: -999999,
-		move: "??",
-		multipv: 999,
-		n: 1,
-		pv: [],
-		pv_string_cache: null
-	};
-}
-
-// ------------------------------------------------------------------------------------------------
-
 function make_renderer() {
 
 	let renderer = Object.create(null);
 
 	renderer.pos = LoadFEN("rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1");
-	renderer.info = Object.create(null);			// Map of move (e.g. "e2e4") --> info object, see new_info().
+	renderer.info_table = NewInfoTable();
 	renderer.squares = [];							// Info about clickable squares.
 	renderer.active_square = null;					// Square clicked by user.
 	renderer.running = false;						// Whether to send "go" to the engine after move, undo, etc.
@@ -187,7 +174,7 @@ function make_renderer() {
 	renderer.pos_changed = (new_game_flag) => {
 
 		renderer.active_square = null;
-		renderer.info = Object.create(null);
+		renderer.info_table.clear();
 
 		fenbox.value = renderer.pos.fen();
 		renderer.draw_main_line();
@@ -359,7 +346,7 @@ function make_renderer() {
 	};
 
 	renderer.play_best = () => {
-		let info_list = renderer.info_sorted();
+		let info_list = renderer.info_table.sorted();
 		if (info_list.length > 0) {
 			renderer.move(info_list[0].move);
 		}
@@ -395,64 +382,14 @@ function make_renderer() {
 
 	renderer.receive = (s) => {
 
-		if (s.startsWith("info")) {
+		if (s.startsWith("info depth") || s.startsWith("info string")) {
 			renderer.ever_received_info = true;
+			renderer.info_table.receive(s);
 		}
 
-		if (s.startsWith("info depth")) {
-
-			// info depth 13 seldepth 48 time 5603 nodes 67686 score cp 40 hashfull 204 nps 12080 tbhits 0 multipv 2
-			// pv d2d4 g8f6 c2c4 e7e6 g2g3 f8b4 c1d2 b4e7 g1f3 e8g8 d1c2 a7a6 f1g2 b7b5 e1g1 c8b7 f1c1 b7e4 c2d1 b5c4 c1c4 a6a5 d2e1 h7h6 c4c1 d7d6
-
-			let move = InfoVal(s, "pv");
-
-			let move_info;
-
-			if (renderer.info[move]) {
-				move_info = renderer.info[move];
-			} else {
-				move_info = new_info();
-				renderer.info[move] = move_info;
-			}
-
-			move_info.move = move;
-			move_info.cp = parseInt(InfoVal(s, "cp"), 10);				// Score in centipawns
-			move_info.multipv = parseInt(InfoVal(s, "multipv"), 10);	// Leela's ranking of the move, starting at 1
-
-			let new_pv = InfoPV(s);
-
-			if (CompareArrays(new_pv, move_info.pv) === false) {
-				move_info.pv_string_cache = null;
-				move_info.pv = new_pv;
-			}
-
-		} else if (s.startsWith("info string")) {
-
-			// info string d2d4  (293 ) N:   12845 (+121) (P: 20.10%) (Q:  0.09001) (D:  0.000) (U: 0.02410) (Q+U:  0.11411) (V:  0.1006)
-
-			let move = InfoVal(s, "string");
-
-			let move_info;
-
-			if (renderer.info[move]) {
-				move_info = renderer.info[move];
-			} else {
-				move_info = new_info();
-				renderer.info[move] = move_info;
-			}
-
-			move_info.move = move;
-			move_info.n = parseInt(InfoVal(s, "N:"), 10);
-
-			move_info.p = InfoVal(s, "(P:");
-			if (move_info.p.endsWith(")")) {
-				move_info.p = move_info.p.slice(0, move_info.p.length - 1);
-			}
-
-		} else if (s.startsWith("error")) {
+		if (s.startsWith("error")) {
 			renderer.err_receive(s);
 		}
-
 	};
 
 	renderer.err_receive = (s) => {
@@ -502,33 +439,6 @@ function make_renderer() {
 		}
 
 		renderer.draw();
-	};
-
-	renderer.info_sorted = () => {
-
-		let info_list = [];
-
-		for (let key of Object.keys(renderer.info)) {
-			info_list.push(renderer.info[key]);
-		}
-
-		info_list.sort((a, b) => {
-			if (a.n < b.n) {
-				return 1;
-			}
-			if (a.n > b.n) {
-				return -1;
-			}
-			if (a.cp < b.cp) {
-				return 1;
-			}
-			if (a.cp > b.cp) {
-				return -1;
-			}
-			return 0;
-		});
-
-		return info_list;
 	};
 
 	renderer.draw_main_line = () => {
@@ -592,13 +502,13 @@ function make_renderer() {
 			return;
 		}
 
-		let info_list = renderer.info_sorted();
-
 		let s = "";
 
 		if (renderer.running === false) {
 			s += "&lt;halted&gt;<br><br>";
 		}
+
+		let info_list = renderer.info_table.sorted();
 
 		for (let i = 0; i < info_list.length && i < config.max_info_lines; i++) {
 
@@ -612,40 +522,7 @@ function make_renderer() {
 				s += `<span class="tech">${cp_string}</span> `;
 			}
 
-			// It's important to cache the PV string for efficiency.
-			// Note that receive() sets it to null when the PV changes.
-
-			if (info_list[i].pv_string_cache) {
-
-				s += info_list[i].pv_string_cache;
-
-			} else {
-
-				let pv_string = "";
-
-				let tmp_board = renderer.pos.copy();
-
-				for (let move of info_list[i].pv) {
-
-					if (tmp_board.active === "w") {
-						pv_string += `<span class="white">`;
-					} else {
-						pv_string += `<span class="black">`;
-					}
-
-					pv_string += tmp_board.nice_string(move);
-					pv_string += "</span> ";
-
-					if (config.show_pv === false) {
-						break;
-					}
-
-					tmp_board = tmp_board.move(move);
-				}
-
-				info_list[i].pv_string_cache = pv_string;
-				s += pv_string.trim();
-			}
+			s += info_list[i].pv_string(renderer.pos);			// The actual thing.
 
 			if (config.show_n || config.show_p) {
 				
