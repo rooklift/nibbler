@@ -235,7 +235,7 @@ function make_renderer() {
 	};
 
 	renderer.choose_pgn = (n) => {
-		pgnchooser.style.visibility = "hidden";
+		pgnchooser.style.display = "none";
 		if (renderer.pgn_choices && n >= 0 && n < renderer.pgn_choices.length) {
 			renderer.load_pgn_object(renderer.pgn_choices[n]);
 		}
@@ -272,7 +272,7 @@ function make_renderer() {
 		lines.push("&nbsp;");
 
 		pgnchooser.innerHTML = lines.join("<br>");
-		pgnchooser.style.visibility = "visible";
+		pgnchooser.style.display = "block";
 	};
 
 	renderer.prev = () => {
