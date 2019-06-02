@@ -243,6 +243,8 @@ function make_renderer() {
 
 	renderer.open = (filename) => {
 
+		renderer.halt();
+
 		let buf = fs.readFileSync(filename);		// i.e. binary buffer object
 		let pgn_list = pre_parse_pgn(buf);
 
@@ -250,6 +252,9 @@ function make_renderer() {
 			renderer.load_pgn_object(pgn_list[0]);
 			return;
 		}
+
+		// There are multiple games in the file, so we write a list to our hidden
+		// pgnchooser div, and unhide it so the user can click one.
 		
 		renderer.pgn_choices = pgn_list;
 
@@ -259,7 +264,7 @@ function make_renderer() {
 			let p = pgn_list[n];
 			// The SafeString() calls are super-important.
 			let s = `${SafeString(p.tags.White)}  <span class="tech">${SafeString(p.tags.Result)}</span>  ${SafeString(p.tags.Black)}`;
-			lines.push(`<span onclick="renderer.choose_pgn(${n})">${s}</span>`);
+			lines.push(`<span onclick="renderer.choose_pgn(${n})">&nbsp;${s}</span>`);
 		}
 
 		pgnchooser.innerHTML = lines.join("<br>");
