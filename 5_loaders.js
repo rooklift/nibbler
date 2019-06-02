@@ -100,7 +100,8 @@ function LoadPGN(pgn) {
 	let lines = pgn.split("\n");
 	lines = lines.map(s => s.trim());
 
-	let inside_brace = false;		// "Brace comments do not nest"
+	let parenthesis_depth = 0;
+	let inside_brace = false;				// "Brace comments do not nest"
 
 	let all_tokens = [];
 
@@ -120,16 +121,26 @@ function LoadPGN(pgn) {
 
 		for (let token of tokens) {
 
+			if (token.startsWith("{")) {
+				inside_brace = true;		// "Brace comments do not nest"
+			}
+
 			if (inside_brace) {
 				if (token.endsWith("}")) {
 					inside_brace = false;
 				}
-				continue;
+				continue;		// note this - always continuing regardless of whether status changed
 			}
 
-			if (token.startsWith("{")) {
-				inside_brace = true;
-				continue;
+			if (token.startsWith("(")) {
+				parenthesis_depth++;
+			}
+
+			if (parenthesis_depth > 0) {
+				if (token.endsWith(")")) {
+					parenthesis_depth--;
+				}
+				continue;		// as above
 			}
 
 			all_tokens.push(token);
