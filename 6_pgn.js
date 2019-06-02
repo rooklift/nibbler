@@ -88,32 +88,31 @@ function new_byte_pusher() {
 
 	// I bet Node has something like this, but I didn't read the docs.
 
-	let ret = {
+	return {
+
 		storage: new Uint8Array(128),
 		length: 0,							// Both the length and also the next index to write to.
-	};
 
-	ret.push = (c) => {
-		if (ret.length >= ret.storage.length) {
-			let new_storage = new Uint8Array(ret.storage.length * 2);
-			for (let n = 0; n < ret.storage.length; n++) {
-				new_storage[n] = ret.storage[n];
+		push: function(c) {
+			if (this.length >= this.storage.length) {
+				let new_storage = new Uint8Array(this.storage.length * 2);
+				for (let n = 0; n < this.storage.length; n++) {
+					new_storage[n] = this.storage[n];
+				}
+				this.storage = new_storage;
 			}
-			ret.storage = new_storage;
+			this.storage[this.length] = c;
+			this.length++;
+		},
+
+		bytes: function() {
+			return this.storage.slice(0, this.length);
+		},
+
+		string: function() {
+			return new TextDecoder("utf-8").decode(this.bytes());
 		}
-		ret.storage[ret.length] = c;
-		ret.length++;
-	}
-
-	ret.bytes = () => {
-		return ret.storage.slice(0, ret.length);
-	}
-
-	ret.string = () => {
-		return new TextDecoder("utf-8").decode(ret.bytes());
-	}
-
-	return ret;
+	};
 }
 
 function pre_parse_pgn(buf) {
