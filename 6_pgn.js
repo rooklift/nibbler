@@ -28,6 +28,10 @@ function LoadPGN(movetext) {
 			continue;
 		}
 
+		if (token.startsWith("$")) {
+			continue;
+		}
+
 		let [move, error] = pos.parse_pgn(token);
 
 		if (error !== "") {
