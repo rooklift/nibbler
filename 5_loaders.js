@@ -93,8 +93,9 @@ function LoadFEN(fen) {
 	return ret;
 }
 
-function LoadPGN(pgn) {
+function LoadPGN(buf) {
 
+	let pgn = new TextDecoder("utf-8").decode(buf);
 	let pos = LoadFEN("rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1");
 
 	let lines = pgn.split("\n");
@@ -129,7 +130,7 @@ function LoadPGN(pgn) {
 				if (token.endsWith("}")) {
 					inside_brace = false;
 				}
-				continue;		// note this - always continuing regardless of whether status changed
+				continue;
 			}
 
 			if (token.startsWith("(")) {
@@ -143,7 +144,7 @@ function LoadPGN(pgn) {
 				if (token.endsWith(")")) {
 					parenthesis_depth--;
 				}
-				continue;		// as above
+				continue;
 			}
 
 			all_tokens.push(token);
@@ -172,3 +173,4 @@ function LoadPGN(pgn) {
 
 	return pos;
 }
+

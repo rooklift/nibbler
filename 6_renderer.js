@@ -205,12 +205,13 @@ function make_renderer() {
 	};
 
 	renderer.open = (filename) => {
-		let s = fs.readFileSync(filename, "utf8");
+
+		let buf = fs.readFileSync(filename);		// i.e. binary buffer object
 
 		let final_pos;
 
 		try {
-			final_pos = LoadPGN(s);
+			final_pos = LoadPGN(buf);
 		} catch (err) {
 			alert(err);
 			return;
