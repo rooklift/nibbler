@@ -70,7 +70,7 @@ if (config) {
 	});
 
 	infobox.style.height = config.board_size.toString() + "px";
-	mainline.style.height = config.mainline_height.toString() + "px";
+	mainline.style.height = config.mainline_height.toString() + "px";		// Is there a way to avoid needing this, to get the scroll bar?
 	canvas.width = config.board_size;
 	canvas.height = config.board_size;
 	
