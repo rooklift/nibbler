@@ -1,8 +1,9 @@
 {
-	"main": "main.js",
 	"name": "Nibbler",
 	"version": "0.2.0",
 	"author": "Fohristiwhirl",
+	"description": "Leela Chess Zero (Lc0) interface",
+	"main": "main.js",
 	"repository": {
 		"type": "git",
 		"url": "https://github.com/fohristiwhirl/nibbler"
