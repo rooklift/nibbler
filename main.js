@@ -3,6 +3,7 @@
 const alert = require("./modules/alert");
 const electron = require("electron");
 const fs = require("fs");
+const path = require("path");
 const windows = require("./modules/windows");
 
 let config = {};
@@ -26,7 +27,7 @@ if (config.height === undefined || config.height <= 0) {
 }
 
 electron.app.on("ready", () => {
-	windows.new("main-window", {width: config.width, height: config.height, page: "nibbler.html"});
+	windows.new("main-window", {width: config.width, height: config.height, page: path.join(__dirname, "nibbler.html")});
 	menu_build();
 });
 

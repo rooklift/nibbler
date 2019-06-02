@@ -22,8 +22,7 @@ exports.new = (token, params = {}) => {		// token is an internal name for us to 
 		width: 600,
 		height: 400,
 		throttle: true,
-		resizable: true,
-		page: path.join(process.cwd(), "index.html")
+		resizable: true
 	};
 
 	assign_without_overwrite(params, defaults);
@@ -47,7 +46,7 @@ exports.new = (token, params = {}) => {		// token is an internal name for us to 
 		}
 	});
 
-	let f = path.join(process.cwd(), params.page);
+	let f = params.page;
 
 	if (fs.existsSync(f) === false) {
 		alert(`New window wanted page "${f}" which didn't exist.`)
