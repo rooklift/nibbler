@@ -1,14 +1,10 @@
 "use strict";
 
-function LoadPGN(buf) {
-
-	let pgn_list = pre_parse_pgn(buf)
-	console.log("pgn_list length is", pgn_list.length);
-	let pgn = pgn_list[0].movetext;
+function LoadPGN(movetext) {
 
 	let pos = LoadFEN("rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1");
 
-	let lines = pgn.split("\n");
+	let lines = movetext.split("\n");
 	lines = lines.map(s => s.trim());
 
 	let all_tokens = [];

@@ -207,11 +207,14 @@ function make_renderer() {
 	renderer.open = (filename) => {
 
 		let buf = fs.readFileSync(filename);		// i.e. binary buffer object
+		let pgn_list = pre_parse_pgn(buf);
+
+		console.log("pgn_list length is", pgn_list.length);
 
 		let final_pos;
 
 		try {
-			final_pos = LoadPGN(buf);	// FIXME
+			final_pos = LoadPGN(pgn_list[0].movetext);
 		} catch (err) {
 			alert(err);
 			return;
