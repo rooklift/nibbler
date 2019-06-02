@@ -8,11 +8,12 @@ body {
 	padding: 0;
 }
 
+.main {
+	margin: 1em;
+}
+
 .row {
 	display: flex;
-	margin-left: 1em;
-	margin-right: 1em;
-	margin-top: 1em;
 }
 
 .leftcolumn {
@@ -25,9 +26,9 @@ body {
 
 #canvas {
 	float: left;
-	margin-bottom: 1em;
-	margin-right: 1em;
 	user-select: none;
+	margin-right: 1em;
+	margin-bottom: 1em;
 }
 
 #pgnchooser {
@@ -50,8 +51,6 @@ body {
 	float: bottom;
 	font-family: monospace, monospace;
 	font-size: 100%;
-	margin-bottom: 1em;
-	margin-left: 1em;
 	width: 100%;
 }
 input[type=text]:focus{
@@ -68,7 +67,6 @@ input[type=text]:focus{
 
 #mainline {
 	font-family: monospace, monospace;
-	margin: 1em;
 	white-space: pre-wrap;
 	overflow-x: hidden;
 	overflow-y: auto;
