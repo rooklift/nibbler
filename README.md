@@ -10,7 +10,6 @@
 
 # TODO
 
-* Handling of PGN comments, etc.
 * Support for multi-game PGN.
 * Some tree structure of user moves.
 * PV display as a board.
