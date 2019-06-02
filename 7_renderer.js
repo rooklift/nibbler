@@ -211,7 +211,7 @@ function make_renderer() {
 		let final_pos;
 
 		try {
-			final_pos = LoadPGN(buf);
+			final_pos = LoadPGN(buf);	// FIXME
 		} catch (err) {
 			alert(err);
 			return;

@@ -1,0 +1,202 @@
+"use strict";
+
+function LoadPGN(buf) {
+
+	let pgn_list = pre_parse_pgn(buf)
+	console.log("pgn_list length is", pgn_list.length);
+	let pgn = pgn_list[0].movetext;
+
+	let pos = LoadFEN("rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1");
+
+	let lines = pgn.split("\n");
+	lines = lines.map(s => s.trim());
+
+	let all_tokens = [];
+
+	for (let line of lines) {
+		let tokens = line.split(" ");
+		tokens = tokens.filter(s => s !== "");
+		tokens = tokens.map(s => s.trim());
+		all_tokens = all_tokens.concat(tokens);
+	}
+
+	for (let token of all_tokens) {
+
+		if (token === "1/2-1/2" || token === "1-0" || token === "0-1" || token === "*") {
+			break;
+		}
+
+		if (token.endsWith(".")) {
+			continue;
+		}
+
+		let [move, error] = pos.parse_pgn(token);
+
+		if (error !== "") {
+			throw `${token} -- ${error}`;
+		}
+
+		pos = pos.move(move);
+
+	}
+
+	return pos;
+}
+
+function new_pgn_record() {
+	return {
+		tags: Object.create(null),
+		movetext: ""
+	}
+}
+
+function split_buffer(buf) {
+
+	// Split a binary buffer into an array of binary buffers corresponding to lines.
+
+	let lines = [];
+
+	let push = (arr) => {
+		if (arr.length > 0 && arr[arr.length - 1] === 13) {		// Discard \r
+			lines.push(arr.slice(0, arr.length - 1));
+		} else {
+			lines.push(arr);
+		}
+	}
+
+	let a = 0;
+	let b = 0;
+
+	for (b = 0; b < buf.length; b++) {
+		let ch = buf[b];
+		if (ch === 10) {					// Split on \n
+			let line = buf.slice(a, b);
+			push(line);
+			a = b + 1;
+		}
+	}
+
+	if (a !== b) {		// We haven't added the last line before EOF.
+		let line = buf.slice(a, b);
+		push(line);
+	}
+
+	return lines;
+}
+
+function new_byte_pusher() {
+
+	// I bet Node has something like this, but I didn't read the docs.
+
+	let ret = {
+		storage: new Uint8Array(128),
+		length: 0,							// Both the length and also the next index to write to.
+	};
+
+	ret.push = (c) => {
+		if (ret.length >= ret.storage.length) {
+			let new_storage = new Uint8Array(ret.storage.length * 2);
+			for (let n = 0; n < ret.storage.length; n++) {
+				new_storage[n] = ret.storage[n];
+			}
+			ret.storage = new_storage;
+		}
+		ret.storage[ret.length] = c;
+		ret.length++;
+	}
+
+	ret.bytes = () => {
+		return ret.storage.slice(0, ret.length);
+	}
+
+	ret.string = () => {
+		return new TextDecoder("utf-8").decode(ret.bytes());
+	}
+
+	return ret;
+}
+
+function pre_parse_pgn(buf) {
+
+	// Returns an array of the pgn_record objects, of at least length 1.
+	// FIXME: parse tags.
+
+	let lines = split_buffer(buf);
+	let current_movetext = new_byte_pusher();
+	let games = [new_pgn_record()];
+
+	let inside_brace = false;
+	let parentheses_depth = 0;
+	
+	for (let rawline of lines) {
+
+		if (rawline.length === 0) {
+			continue;
+		}
+
+		if (rawline[0] === 37) {			// Percent % sign is a special comment type.
+			continue;
+		}
+
+		if (inside_brace === false && rawline[0] === 91) {			// Opening square bracket [ means this is a TAG line.
+
+			if (current_movetext.length > 0) {
+
+				// We have movetext already, so this must be a new game.
+				// Write the found movetext to the object...
+
+				games[games.length - 1].movetext = current_movetext.string();
+
+				// And start a new one.
+
+				games.push(new_pgn_record());
+				current_movetext = new_byte_pusher();
+			}
+
+		} else {								// This is a moves line.
+
+			if (current_movetext.length > 0) {
+				current_movetext.push(32);		// Add a space to what we have.
+			}
+
+			for (let i = 0; i < rawline.length; i++) {
+
+				let c = rawline[i];
+
+				if (c === 123) {				// The opening brace {
+					inside_brace = true;
+					continue;
+				}
+
+				if (inside_brace) {
+					if (c === 125) {			// The closing brace }
+						inside_brace = false;
+					}
+					continue;
+				}
+
+				if (c === 40) {					// The opening parenthesis (
+					parentheses_depth++;
+					continue;
+				}
+
+				if (parentheses_depth > 0) {
+					if (c === 41) {				// The closing parenthesis )
+						parentheses_depth--;
+					}
+					continue;
+				}
+
+				// So, we are not in a brace nor a parenthesis...
+
+				current_movetext.push(c);
+			}
+		}
+	}
+
+	if (current_movetext.length > 0 && games[games.length - 1].movetext === "") {
+		games[games.length - 1].movetext = current_movetext.string();
+	}
+
+	return games;
+}
