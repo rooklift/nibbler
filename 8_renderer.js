@@ -33,7 +33,7 @@ try {
 		alert("config.json not present");
 	}
 } catch (err) {
-	alert("Failed to parse config file");
+	alert("Failed to parse config file - make sure it is valid JSON, and in particular, if on Windows, use \\\\ instead of \\ as a path separator.");
 }
 
 // Some tolerable default values for config...
