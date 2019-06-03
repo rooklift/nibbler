@@ -280,7 +280,7 @@ function make_renderer() {
 			} else {
 				s = `${padding}${n + 1}. ${safe_white_name} - ${safe_black_name}`;
 			}
-			lines.push(`<span onclick="renderer.choose_pgn(${n})">&nbsp;&nbsp;${s}</span>`);
+			lines.push(`<a href="javascript:renderer.choose_pgn(${n})">&nbsp;&nbsp;${s}</a>`);
 		}
 
 		lines.push("&nbsp;");

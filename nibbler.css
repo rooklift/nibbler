@@ -74,6 +74,11 @@ input[type=text]:focus{
 	white-space: pre-wrap;
 }
 
+a {
+	color: inherit;
+	text-decoration: inherit;
+}
+
 .pink {
 	color: #ffaaaa;
 }
