@@ -558,6 +558,8 @@ function make_renderer() {
 		let best_nodes = info_list[0].n;
 
 		context.lineWidth = 8;
+		context.textAlign = "center";
+		context.textBaseline = "middle"; 
 		
 		for (let i = info_list.length - 1; i >= 0; i--) {
 
@@ -598,6 +600,32 @@ function make_renderer() {
 				context.beginPath();
 				context.arc(cx2, cy2, 12, 0, 2 * Math.PI);
 				context.fill();
+			}
+		}
+
+		let text_spots = Object.create(null)		// What target squares we have drawn text on.
+
+		for (let i = info_list.length - 1; i >= 0; i--) {
+
+			if (info_list[i].n >= best_nodes * config.node_display_threshold) {
+
+				let loss = info_list[0].cp - info_list[i].cp;
+
+				if (loss > config.terrible_cp_threshold) {
+					continue;
+				}
+
+				let [x2, y2] = XY(info_list[i].move.slice(2, 4));
+				let rss = renderer.square_size();
+				let cx2 = x2 * rss + rss / 2;
+				let cy2 = y2 * rss + rss / 2;
+
+				if (text_spots[info_list[i].move.slice(2, 4)] === undefined) {
+					context.font = "24px Arial";
+					context.fillStyle = "black";
+					context.fillText(`${i + 1}`, cx2, cy2 + 1);
+					text_spots[info_list[i].move.slice(2, 4)] = true;
+				}
 			}
 		}
 	};
