@@ -31,7 +31,7 @@ let scanner = null;
 let err_scanner = null;
 let readyok_required = false;
 
-let __decoder = new TextDecoder("utf-8");
+let __decoder = new TextDecoder("utf8");
 
 let total_moves_made = 0;		// For debugging / info
 let total_positions_made = 0;	// For debugging / info
