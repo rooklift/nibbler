@@ -254,7 +254,7 @@ function make_renderer() {
 		for (let n = 0; n < pgn_list.length; n++) {
 			let p = pgn_list[n];
 			// The SafeString() calls are super-important.
-			let s = `${SafeString(p.tags.White)}  <span class="blue">${SafeString(p.tags.Result)}</span>  ${SafeString(p.tags.Black)}`;
+			let s = `${n + 1}. ${SafeString(p.tags.White)}  <span class="blue">${SafeString(p.tags.Result)}</span>  ${SafeString(p.tags.Black)}`;
 			lines.push(`<span onclick="renderer.choose_pgn(${n})">&nbsp;&nbsp;${s}</span>`);
 		}
 
