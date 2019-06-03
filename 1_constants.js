@@ -5,7 +5,6 @@ const assign_without_overwrite = require("./modules/utils").assign_without_overw
 const child_process = require("child_process");
 const fs = require('fs');
 const ipcRenderer = require("electron").ipcRenderer;
-const path = require("path");
 const readline = require("readline");
 
 const canvas = document.getElementById("canvas");
