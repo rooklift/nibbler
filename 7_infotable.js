@@ -6,7 +6,7 @@ function new_info() {
 		cp: -999999,
 		move: "??",
 		multipv: 999,
-		n: 0,				// The draw logic will only ever draw things with non-negative n, so make this 1
+		n: 0,				// The draw logic will only ever draw things with non-negative n, so make this 0
 		p: "?",
 		pv: [],
 		pv_string_cache: null,
