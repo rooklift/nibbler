@@ -4,7 +4,7 @@
 
 It should work - you can now load FEN positions via the FEN box, and most valid PGN files via the Open command.
 
-![Screenshot](https://user-images.githubusercontent.com/16438795/58802783-e9624200-8605-11e9-824c-ca736dde67cc.png)
+![Screenshot](https://user-images.githubusercontent.com/16438795/58832441-d4f26980-8646-11e9-8126-0c9b5e53166f.png)
 
 # Usage
 
