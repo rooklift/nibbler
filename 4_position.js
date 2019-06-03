@@ -255,7 +255,11 @@ const position_prototype = {
 
 		if ("Kk".includes(this.state[x1][y1])) {
 
-			if (Math.abs(x2 - x1) > 1 || Math.abs(y2 - y1) > 1) {
+			if (Math.abs(y2 - y1) > 1) {
+				return "illegal king movement";
+			}
+
+			if (Math.abs(x2 - x1) > 1) {
 
 				// This should be an attempt to castle...
 
@@ -266,19 +270,19 @@ const position_prototype = {
 				// So it is an attempt to castle. But is it allowed?
 
 				if (s === "e1g1" && this.castling.includes("K") === false) {
-					return "lost the right to castle that way";
+					return "White lost the right to castle kingside";
 				}
 
 				if (s === "e1c1" && this.castling.includes("Q") === false) {
-					return "lost the right to castle that way";
+					return "White lost the right to castle queenside";
 				}
 
 				if (s === "e8g8" && this.castling.includes("k") === false) {
-					return "lost the right to castle that way";
+					return "Black lost the right to castle kingside";
 				}
 
 				if (s === "e8c8" && this.castling.includes("q") === false) {
-					return "lost the right to castle that way";
+					return "White lost the right to castle queenside";
 				}
 
 				// For queenside castling, check that the rook isn't blocked by a piece on the B file...
@@ -300,7 +304,7 @@ const position_prototype = {
 			}
 		}
 
-		// Check for blockers...
+		// Check for blockers (pieces between source and dest).
 		// K and k are included to spot castling blockers.
 
 		if ("KQRBPkqrbp".includes(this.state[x1][y1])) {
@@ -467,7 +471,7 @@ const position_prototype = {
 
 				if (Math.abs(step_x) === 1) {
 
-					if (this.state[x][y] === "p" && step_y === -1) {		// Black pawn in attacking position
+					if (this.state[x][y] === "p" && step_y === -1) {	// Black pawn in attacking position
 						return true;
 					}
 
@@ -523,17 +527,33 @@ const position_prototype = {
 
 		if (s.toUpperCase() === "O-O") {
 			if (this.active === "w") {
-				return ["e1g1", ""];
+				if (this.illegal("e1g1") === "") {
+					return ["e1g1", ""];
+				} else {
+					return ["", "illegal castling"];
+				}
 			} else {
-				return ["e8g8", ""];
+				if (this.illegal("e8g8") === "") {
+					return ["e8g8", ""];
+				} else {
+					return ["", "illegal castling"];
+				}
 			}
 		}
 
 		if (s.toUpperCase() === "O-O-O") {
 			if (this.active === "w") {
-				return ["e1c1", ""];
+				if (this.illegal("e1c1") === "") {
+					return ["e1c1", ""];
+				} else {
+					return ["", "illegal castling"];
+				}
 			} else {
-				return ["e8c8", ""];
+				if (this.illegal("e8c8") === "") {
+					return ["e8c8", ""];
+				} else {
+					return ["", "illegal castling"];
+				}
 			}
 		}
 
