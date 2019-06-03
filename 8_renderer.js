@@ -372,7 +372,7 @@ function make_renderer() {
 
 		send(`position ${setup} moves ${renderer.pos.history().join(" ")}`);
 		sync();																	// See comment on how sync() works
-		send("go");
+		send("go infinite");
 	};
 
 	renderer.halt = () => {
