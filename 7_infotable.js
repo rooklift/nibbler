@@ -10,7 +10,7 @@ function new_info() {
 		p: "?",
 		pv: [],
 		pv_string_cache: null,
-		v: null,
+		q: null,
 
 		pv_string: function(board, options) {
 
@@ -24,12 +24,29 @@ function new_info() {
 
 			let s = "";
 
-			if (options.show_cp) {
+			if (options.show_q) {
+
+				// Q is a winrate between -1 and 1.
+
+				let q_string = "?";
+				if (typeof this.q === "number") {
+					q_string = ((this.q + 1) / 2).toString().slice(0, 5);
+					if (q_string[1] === ".") {
+						q_string = q_string.slice(1);
+					}
+					if (q_string !== "1" && q_string !== "0") {
+						while (q_string.length < 4) {
+							q_string += "0";
+						}
+					}
+				}
+/*
 				let cp_string = this.cp.toString();
 				if (cp_string.startsWith("-") === false) {
 				 	cp_string = "+" + cp_string;
 				}
-				s += `<span class="blue">${cp_string}</span>`;
+*/
+				s += `<span class="blue">${q_string}</span>`;
 			}
 
 			for (let move of this.pv) {
@@ -167,10 +184,10 @@ function NewInfoTable() {			// There's only ever going to be one of these made.
 
 				move_info.p = InfoVal(s, "(P:");		// Worse case here is just empty string, which is OK.
 
-				tmp = InfoVal(s, "(V:");
+				tmp = InfoVal(s, "(Q:");
 				tmp = parseFloat(tmp);
 				if (Number.isNaN(tmp) === false) {
-					move_info.v = tmp;
+					move_info.q = tmp;
 				}
 			}
 		},

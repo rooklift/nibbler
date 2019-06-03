@@ -44,10 +44,10 @@ assign_without_overwrite(config, {
 	"board_size": 640,
 	"mainline_height": 108,
 
-	"show_cp": true,
 	"show_n": true,
 	"show_p": true,
 	"show_pv": true,
+	"show_q": true,
 
 	"bad_cp_threshold": 20,
 	"terrible_cp_threshold": 200,
