@@ -1,6 +1,8 @@
 # Nibbler
 
-*Nibbler* is a work in progress, but is intended to be somewhat like [Lizzie](https://github.com/featurecat/lizzie), but for [Leela Chess Zero](https://github.com/LeelaChessZero/lc0). It should work - you can now load FEN positions via the FEN box, and most valid PGN files via the Open command.
+*Nibbler* is a work in progress, but is intended to be somewhat like [Lizzie](https://github.com/featurecat/lizzie), but for [Leela Chess Zero](https://github.com/LeelaChessZero/lc0). In other words, it is a GUI that runs a single engine (in our case, Lc0) constantly, displaying opinions about the current position.
+
+It should work - you can now load FEN positions via the FEN box, and most valid PGN files via the Open command.
 
 ![Screenshot](https://user-images.githubusercontent.com/16438795/58802783-e9624200-8605-11e9-824c-ca736dde67cc.png)
 
