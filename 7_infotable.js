@@ -29,7 +29,7 @@ function new_info() {
 				if (cp_string.startsWith("-") === false) {
 				 	cp_string = "+" + cp_string;
 				}
-				s += `<span class="tech">${cp_string}</span>`;
+				s += `<span class="blue">${cp_string}</span>`;
 			}
 
 			for (let move of this.pv) {
@@ -39,7 +39,7 @@ function new_info() {
 				if (board.active === "w") {
 					s += `<span class="white">`;
 				} else {
-					s += `<span class="black">`;
+					s += `<span class="pink">`;
 				}
 
 				s += board.nice_string(move);
@@ -64,7 +64,7 @@ function new_info() {
 					tech_elements.push(`P: ${this.p}`);
 				}
 
-				s += ` <span class="tech">(${tech_elements.join(" ")})</span>`;
+				s += ` <span class="blue">(${tech_elements.join(" ")})</span>`;
 			}
 
 			s += "<br><br>";

@@ -254,7 +254,7 @@ function make_renderer() {
 		for (let n = 0; n < pgn_list.length; n++) {
 			let p = pgn_list[n];
 			// The SafeString() calls are super-important.
-			let s = `${SafeString(p.tags.White)}  <span class="tech">${SafeString(p.tags.Result)}</span>  ${SafeString(p.tags.Black)}`;
+			let s = `${SafeString(p.tags.White)}  <span class="blue">${SafeString(p.tags.Result)}</span>  ${SafeString(p.tags.Black)}`;
 			lines.push(`<span onclick="renderer.choose_pgn(${n})">&nbsp;&nbsp;${s}</span>`);
 		}
 
@@ -691,7 +691,7 @@ function make_renderer() {
 let renderer = make_renderer();
 
 if (config && config.warn_filename) {
-	renderer.err_receive(`<span class="tech">Nibbler says: You should rename config.json.example to config.json</span>`);
+	renderer.err_receive(`<span class="blue">Nibbler says: You should rename config.json.example to config.json</span>`);
 	renderer.err_receive("");
 }
 
