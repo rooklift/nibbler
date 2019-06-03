@@ -15,6 +15,10 @@ function send(msg) {
 // Basically we use it after sending a position, so that we can ignore all analysis
 // that comes until LZ sends "readyok" in response to our "isready". All output before
 // that moment would refer to the obsolete position.
+//
+// While this seems to work correctly with Lc0, tests with Stockfish show that it
+// definitely violates our assumptions and sends things out of order, hence the need
+// for validity checking on incoming messages anyway.
 
 function sync() {
 	send("isready");
