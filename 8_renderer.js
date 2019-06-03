@@ -251,10 +251,35 @@ function make_renderer() {
 
 		lines.push("&nbsp;");
 
+		let max_ordinal_length = pgn_list.length.toString().length;
+		let padding = "";
+		for (let n = 0; n < max_ordinal_length - 1; n++) {
+			padding += "&nbsp;";
+		}
+
 		for (let n = 0; n < pgn_list.length; n++) {
+
+			if (n === 9 || n === 99 || n === 999 || n === 9999 || n === 99999 || n === 999999) {
+				padding = padding.slice(0, padding.length - 6);
+			}
+
 			let p = pgn_list[n];
+
 			// The SafeString() calls are super-important.
-			let s = `${n + 1}. ${SafeString(p.tags.White)}  <span class="blue">${SafeString(p.tags.Result)}</span>  ${SafeString(p.tags.Black)}`;
+
+			let safe_white_name = SafeString(p.tags.White);
+			let safe_black_name = SafeString(p.tags.Black);
+			let safe_result = SafeString(p.tags.Result);
+
+			let s;
+
+			if (safe_result === "1-0") {
+				s = `${padding}${n + 1}. <span class="blue">${safe_white_name}</span> - ${safe_black_name}`;
+			} else if (safe_result === "0-1") {
+				s = `${padding}${n + 1}. ${safe_white_name} - <span class="blue">${safe_black_name}</span>`;
+			} else {
+				s = `${padding}${n + 1}. ${safe_white_name} - ${safe_black_name}`;
+			}
 			lines.push(`<span onclick="renderer.choose_pgn(${n})">&nbsp;&nbsp;${s}</span>`);
 		}
 
