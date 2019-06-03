@@ -506,7 +506,7 @@ function make_renderer() {
 		mainline.innerHTML = [s1, s2].filter(s => s !== "").join(" ");
 	};
 
-	renderer.draw_infobox = () => {
+	renderer.draw_infobox = (info_list) => {
 
 		if (renderer.ever_received_info === false) {
 			if (infobox.innerHTML !== renderer.stderr_log) {	// Only update when needed, so user can select and copy.
@@ -520,8 +520,6 @@ function make_renderer() {
 		if (renderer.running === false) {
 			s += "&lt;halted&gt;<br><br>";
 		}
-
-		let info_list = renderer.info_table.sorted();
 
 		for (let i = 0; i < info_list.length && i < config.max_info_lines; i++) {
 			s += info_list[i].pv_string(renderer.pos, config);
@@ -586,9 +584,8 @@ function make_renderer() {
 		}
 	};
 
-	renderer.draw_arrows = (pieces) => {
+	renderer.draw_arrows = (info_list, pieces) => {
 
-		let info_list = renderer.info_table.sorted();
 		if (info_list.length === 0) {
 			return;
 		}
@@ -646,9 +643,8 @@ function make_renderer() {
 		}
 	};
 
-	renderer.draw_rankings = () => {
+	renderer.draw_rankings = (info_list) => {
 
-		let info_list = renderer.info_table.sorted();
 		if (info_list.length === 0) {
 			return;
 		}
@@ -683,17 +679,19 @@ function make_renderer() {
 	};
 
 	renderer.draw = () => {
+
+		let info_list = renderer.info_table.sorted();
 		
 		// We draw stuff in a very specific order to show knights "leaping over" pieces.
 
 		renderer.draw_board();
 		renderer.draw_pieces(renderer.pos.active === "w" ? "kqrbnp" : "KQRBNP");	// Enemy pieces
-		renderer.draw_arrows("KkQqRrBbPp");											// Arrows of non-knights
+		renderer.draw_arrows(info_list, "KkQqRrBbPp");								// Arrows of non-knights
 		renderer.draw_pieces(renderer.pos.active === "w" ? "KQRBP" : "kqrbp");		// Friendly non-knights
-		renderer.draw_arrows("Nn");													// Arrows of knights
+		renderer.draw_arrows(info_list, "Nn");										// Arrows of knights
 		renderer.draw_pieces(renderer.pos.active === "w" ? "N" : "n");				// Friendly knights
-		renderer.draw_rankings();
-		renderer.draw_infobox();
+		renderer.draw_rankings(info_list);
+		renderer.draw_infobox(info_list);
 	};
 
 	renderer.draw_loop = () => {
