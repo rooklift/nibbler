@@ -561,7 +561,7 @@ function make_renderer() {
 		context.textAlign = "center";
 		context.textBaseline = "middle"; 
 		
-		for (let i = info_list.length - 1; i >= 0; i--) {
+		for (let i = info_list.length - 1; i >= 0; i--) {		// Reverse order for aesthetics.
 
 			if (info_list[i].n >= best_nodes * config.node_display_threshold) {
 
@@ -605,7 +605,7 @@ function make_renderer() {
 
 		let text_spots = Object.create(null)		// What target squares we have drawn text on.
 
-		for (let i = info_list.length - 1; i >= 0; i--) {
+		for (let i = 0; i < info_list.length; i++) {
 
 			if (info_list[i].n >= best_nodes * config.node_display_threshold) {
 
