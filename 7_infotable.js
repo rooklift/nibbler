@@ -66,17 +66,13 @@ function NewInfoTable() {			// There's only ever going to be one of these made.
 			// syncing with "isready" "readyok" an engine like Stockfish doesn't
 			// behave properly, IMO.
 
-			if (s.startsWith("info depth")) {
+			if (s.startsWith("info") && s.indexOf(" pv ") !== -1) {
 
 				// info depth 13 seldepth 48 time 5603 nodes 67686 score cp 40 hashfull 204 nps 12080 tbhits 0 multipv 2
 				// pv d2d4 g8f6 c2c4 e7e6 g2g3 f8b4 c1d2 b4e7 g1f3 e8g8 d1c2 a7a6 f1g2 b7b5 e1g1 c8b7 f1c1 b7e4 c2d1 b5c4 c1c4 a6a5 d2e1 h7h6 c4c1 d7d6
 
 				let move = InfoVal(s, "pv");
 
-				if (move === "") {
-					Log("... Nibbler: couldn't find move in info");
-					return;
-				}
 				if (board.colour(Point(move.slice(0,2))) !== board.active) {
 					Log(`... Nibbler: invalid move received!: ${move}`);
 					return;
@@ -120,10 +116,6 @@ function NewInfoTable() {			// There's only ever going to be one of these made.
 
 				let move = InfoVal(s, "string");
 
-				if (move === "") {
-					Log("... Nibbler: couldn't find move in info");
-					return;
-				}
 				if (board.colour(Point(move.slice(0,2))) !== board.active) {
 					Log(`... Nibbler: invalid move received!: ${move}`);
 					return;
