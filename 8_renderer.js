@@ -1,6 +1,6 @@
 "use strict";
 
-let config = null;
+let config = {};
 let exe = null;
 let scanner = null;
 let err_scanner = null;
@@ -44,43 +44,42 @@ try {
 	alert("Failed to parse config file");
 }
 
+// Some tolerable default values for config...
+
+assign_without_overwrite(config, {
+	"options": {},
+
+	"bad_cp_threshold": 20,
+	"terrible_cp_threshold": 100,
+
+	"max_info_lines": 10,
+	"node_display_threshold": 0.05,
+
+	"board_size": 640,
+	"mainline_height": 108,
+
+	"show_cp": true,
+	"show_n": true,
+	"show_p": false,
+	"show_pv": true,
+
+	"logfile": null
+});
+
+infobox.style.height = config.board_size.toString() + "px";
+mainline.style.height = config.mainline_height.toString() + "px";		// Is there a way to avoid needing this, to get the scroll bar?
+canvas.width = config.board_size;
+canvas.height = config.board_size;
+
 Log("");
 Log("***********************************************************************************************");
 Log(`Startup at ${new Date().toUTCString()}`);
 Log("");
 
-if (config) {
-
-	// Some tolerable default values for config...
-
-	assign_without_overwrite(config, {
-
-		"options": {},
-
-		"bad_cp_threshold": 20,
-		"terrible_cp_threshold": 100,
-
-		"max_info_lines": 10,
-		"node_display_threshold": 0.05,
-
-		"board_size": 640,
-		"mainline_height": 108,
-
-		"show_cp": true,
-		"show_n": true,
-		"show_p": false,
-		"show_pv": true,
-	});
-
-	infobox.style.height = config.board_size.toString() + "px";
-	mainline.style.height = config.mainline_height.toString() + "px";		// Is there a way to avoid needing this, to get the scroll bar?
-	canvas.width = config.board_size;
-	canvas.height = config.board_size;
-	
+if (config.path) {
 	exe = child_process.spawn(config.path);
-
 	exe.on("error", (err) => {
-  		alert("Couldn't spawn process - check the path in the config file");			// Note that this alert will come some time in the future, not instantly.
+			alert("Couldn't spawn process - check the path in the config file");			// Note that this alert will come some time in the future, not instantly.
 	});
 
 	scanner = readline.createInterface({
@@ -115,18 +114,18 @@ if (config) {
 		Log("< " + line);
 		renderer.receive(line);
 	});
-
-	send("uci");
-
-	for (let key of Object.keys(config.options)) {
-		send(`setoption name ${key} value ${config.options[key]}`);
-	}
-
-	send("setoption name VerboseMoveStats value true");		// Required for LogLiveStats to work.
-	send("setoption name LogLiveStats value true");			// "Secret" Lc0 command.
-	send("setoption name MultiPV value 500");
-	send("ucinewgame");
 }
+
+send("uci");
+
+for (let key of Object.keys(config.options)) {
+	send(`setoption name ${key} value ${config.options[key]}`);
+}
+
+send("setoption name VerboseMoveStats value true");		// Required for LogLiveStats to work.
+send("setoption name LogLiveStats value true");			// "Secret" Lc0 command.
+send("setoption name MultiPV value 500");
+send("ucinewgame");
 
 // ------------------------------------------------------------------------------------------------
 

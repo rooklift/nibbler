@@ -89,6 +89,10 @@ function Log(s) {
 	// Using a property embedded into the function object
 	// as if it's a static variable.
 
+	if (!config) {
+		return;
+	}
+
 	if (Log.logfile === undefined) {
 		if (typeof config.logfile !== "string" || config.logfile === "" || Log.tried_to_open) {
 			return;
