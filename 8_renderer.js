@@ -106,7 +106,7 @@ if (config) {
 
 		if (readyok_required) {
 			if (line.includes("readyok") === false) {
-				Log("< (ignored) " + line);
+				Log("(ignored) < " + line);
 				return;
 			}
 			readyok_required = false;
