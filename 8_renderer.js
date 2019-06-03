@@ -563,7 +563,7 @@ function make_renderer() {
 		
 		for (let i = info_list.length - 1; i >= 0; i--) {
 
-			if (info_list[i].n > best_nodes * config.node_display_threshold) {
+			if (info_list[i].n >= best_nodes * config.node_display_threshold) {
 
 				let loss = info_list[0].cp - info_list[i].cp;
 

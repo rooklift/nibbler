@@ -6,7 +6,8 @@ function new_info() {
 		cp: -999999,
 		move: "??",
 		multipv: 999,
-		n: 1,
+		n: 0,				// The draw logic will only ever draw things with non-negative n, so make this 1
+		p: "?",
 		pv: [],
 		pv_string_cache: null,
 
@@ -119,18 +120,34 @@ function NewInfoTable() {			// There's only ever going to be one of these made.
 			}
 
 			info_list.sort((a, b) => {
+
+				// multipv ranking - lower is better...
+
+				if (a.multipv < b.multipv) {
+					return -1;
+				}
+				if (a.multipv > b.multipv) {
+					return 1
+				}
+
+				// node count - higher is better...
+
 				if (a.n < b.n) {
 					return 1;
 				}
 				if (a.n > b.n) {
 					return -1;
 				}
+
+				// centipawn score - higher is better...
+
 				if (a.cp < b.cp) {
 					return 1;
 				}
 				if (a.cp > b.cp) {
 					return -1;
 				}
+
 				return 0;
 			});
 
