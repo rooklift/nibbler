@@ -211,14 +211,10 @@ function make_renderer() {
 
 		renderer.pgn_choices = null;
 
-		let final_pos;
-
-		//try {
-			final_pos = LoadPGN(o.movetext);
-		//} catch (err) {
-		//	alert(err);
-		//	return;
-		//}
+		// If this fails, it will just dump an error in the console, which is OK by me.
+		// So no try / catch here...
+		
+		let final_pos = LoadPGN(o.movetext);
 
 		renderer.pgn_line = final_pos.position_list();
 		renderer.pos = renderer.pgn_line[0];
