@@ -10,7 +10,7 @@ Running *Nibbler* from source requires Electron, but has no other dependencies. 
 
 I may well upload some premade Windows builds to the [Releases](https://github.com/fohristiwhirl/nibbler/releases) section from time to time, if I remember. These won't require anything.
 
-The required Lc0 version is (I believe) v0.21.0 or later, as we use Leela's `LogLiveStats` option, which was introduced in that version.
+The required Lc0 version is (I believe) v0.21.0 or later, as we use Leela's `LogLiveStats` option, which was introduced in that version. While it is also *possible* to use a different engine (e.g. Stockfish) we do send the `MultiPV 500` command, which seems to drastically reduce traditional engine strength.
 
 # TODO
 
