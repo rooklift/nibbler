@@ -300,7 +300,7 @@ function make_renderer() {
 			}
 		}
 
-		alert(`This file seems OK. ${pgn_list.length} games checked.`)
+		alert(`This file seems OK. ${pgn_list.length} games checked.`);
 		return true;
 	};
 
@@ -425,8 +425,8 @@ function make_renderer() {
 		if (s.indexOf("WARNING") !== -1) {
 			renderer.stderr_log += `<span class="red">${s}</span><br>`;
 		} else {
-			renderer.stderr_log += `${s}<br>`
-		};
+			renderer.stderr_log += `${s}<br>`;
+		}
 	};
 
 	renderer.click = (event) => {
@@ -670,7 +670,7 @@ function make_renderer() {
 
 		let best_nodes = info_list[0].n;
 
-		let text_spots = Object.create(null)		// What target squares we have drawn text on.
+		let text_spots = Object.create(null);		// What target squares we have drawn text on.
 
 		for (let i = 0; i < info_list.length; i++) {
 

@@ -208,7 +208,7 @@ function NewInfoTable() {			// There's only ever going to be one of these made.
 					return -1;
 				}
 				if (a.multipv > b.multipv) {
-					return 1
+					return 1;
 				}
 
 				// node count - higher is better...

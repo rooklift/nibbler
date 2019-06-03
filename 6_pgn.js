@@ -47,7 +47,7 @@ function new_pgn_record() {
 	return {
 		tags: Object.create(null),
 		movetext: ""
-	}
+	};
 }
 
 function split_buffer(buf) {
@@ -62,7 +62,7 @@ function split_buffer(buf) {
 		} else {
 			lines.push(arr);
 		}
-	}
+	};
 
 	let a = 0;
 	let b = 0;
