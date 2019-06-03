@@ -265,20 +265,14 @@ function make_renderer() {
 
 			let p = pgn_list[n];
 
-			// The SafeString() calls are super-important.
-
-			let safe_white_name = SafeString(p.tags.White);
-			let safe_black_name = SafeString(p.tags.Black);
-			let safe_result = SafeString(p.tags.Result);
-
 			let s;
 
-			if (safe_result === "1-0") {
-				s = `${padding}${n + 1}. <span class="blue">${safe_white_name}</span> - ${safe_black_name}`;
-			} else if (safe_result === "0-1") {
-				s = `${padding}${n + 1}. ${safe_white_name} - <span class="blue">${safe_black_name}</span>`;
+			if (p.tags.Result === "1-0") {
+				s = `${padding}${n + 1}. <span class="blue">${p.tags.White}</span> - ${p.tags.Black}`;
+			} else if (p.tags.Result === "0-1") {
+				s = `${padding}${n + 1}. ${p.tags.White} - <span class="blue">${p.tags.Black}</span>`;
 			} else {
-				s = `${padding}${n + 1}. ${safe_white_name} - ${safe_black_name}`;
+				s = `${padding}${n + 1}. ${p.tags.White} - ${p.tags.Black}`;
 			}
 			lines.push(`<a href="javascript:renderer.choose_pgn(${n})">&nbsp;&nbsp;${s}</a>`);
 		}

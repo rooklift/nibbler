@@ -172,7 +172,7 @@ function pre_parse_pgn(buf) {
 					value = value.slice(0, value.length - 1);
 				}
 
-				games[games.length - 1].tags[key] = value;
+				games[games.length - 1].tags[key] = SafeString(value);		// Escape evil characters. IMPORTANT!
 			}
 
 		} else {								// This is a MOVETEXT line.
