@@ -10,6 +10,7 @@ function new_info() {
 		p: "?",
 		pv: [],
 		pv_string_cache: null,
+		v: null,
 
 		pv_string: function(board) {
 
@@ -138,8 +139,11 @@ function NewInfoTable() {			// There's only ever going to be one of these made.
 				}
 
 				move_info.p = InfoVal(s, "(P:");		// Worse case here is just empty string, which is OK.
-				if (move_info.p.endsWith(")")) {
-					move_info.p = move_info.p.slice(0, move_info.p.length - 1);
+
+				tmp = InfoVal(s, "(V:");
+				tmp = parseFloat(tmp);
+				if (Number.isNaN(tmp) === false) {
+					move_info.v = tmp;
 				}
 			}
 		},

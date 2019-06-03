@@ -26,12 +26,18 @@ function InfoVal(s, key) {
 
 	// Given some string like "info depth 8 seldepth 22 time 469 nodes 3918 score cp 46 hashfull 13 nps 8353 tbhits 0 multipv 1 pv d2d4 g8f6"
 	// pull the value for the key out, e.g. in this example, key "nps" returns "8353" (as a string).
+	//
+	// Since Lc0's info strings often have the value ending in ")", we strip that out.
 
 	let tokens = s.split(" ").filter(s => s !== "");
 
 	for (let i = 0; i < tokens.length - 1; i++) {
 		if (tokens[i] === key) {
-			return tokens[i + 1];
+			if (tokens[i + 1].endsWith(")")) {
+				return tokens[i + 1].slice(0, tokens[i + 1].length - 1);
+			} else {
+				return tokens[i + 1];
+			}
 		}
 	}
 	return "";

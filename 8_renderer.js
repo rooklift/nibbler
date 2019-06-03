@@ -506,8 +506,26 @@ function make_renderer() {
 
 				let cp_string = info_list[i].cp.toString();
 				if (cp_string.startsWith("-") === false) {
-					cp_string = "+" + cp_string;
+				 	cp_string = "+" + cp_string;
 				}
+/*
+				let cp_string = "?";
+
+				if (typeof info_list[i].v === "number") {
+
+					cp_string = ((info_list[i].v + 1) / 2).toString().slice(0, 5);
+
+					if (cp_string[1] === ".") {
+						cp_string = cp_string.slice(1);
+					}
+
+					if (cp_string !== "1" && cp_string !== "0") {
+						while (cp_string.length < 4) {
+							cp_string += "0";
+						}
+					}
+				}
+*/
 
 				s += `<span class="tech">${cp_string}</span> `;
 			}
