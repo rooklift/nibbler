@@ -4,9 +4,6 @@
 // creating each position with methods embedded in itself. Downside is, we have to use the "this"
 // keyword. Also note that => functions break "this" in such an object.
 
-let total_moves_made = 0;		// For debugging / info
-let total_positions_made = 0;	// For debugging / info
-
 const position_prototype = {
 
 	copy: function() {

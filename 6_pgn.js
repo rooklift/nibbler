@@ -1,7 +1,5 @@
 "use strict";
 
-let __decoder = new TextDecoder("utf-8");
-
 function LoadPGN(movetext) {
 
 	let pos = LoadFEN("rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1");

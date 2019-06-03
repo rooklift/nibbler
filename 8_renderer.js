@@ -1,13 +1,5 @@
 "use strict";
 
-let config = {};
-let exe = null;
-let scanner = null;
-let err_scanner = null;
-let readyok_required = false;
-
-// ------------------------------------------------------------------------------------------------
-
 function send(msg) {
 	try {
 		msg = msg.trim();
