@@ -13,9 +13,7 @@ function send(msg) {
 		msg = msg.trim();
 		exe.stdin.write(msg);
 		exe.stdin.write("\n");
-		if (log_to_engine) {
-			console.log("-->", msg);
-		}
+		Log("--> " + msg);
 	} catch (err) {
 		// pass
 	}
@@ -45,6 +43,11 @@ try {
 } catch (err) {
 	alert("Failed to parse config file");
 }
+
+Log("");
+Log("***********************************************************************************************");
+Log(`Startup at ${new Date().toUTCString()}`);
+Log("");
 
 if (config) {
 
@@ -93,17 +96,13 @@ if (config) {
 	});
 
 	err_scanner.on("line", (line) => {
-		if (log_engine_stderr) {
-			console.log("!", line);
-		}
+		Log("! " + line);
 		renderer.err_receive(line);
 	});
 
 	scanner.on("line", (line) => {
 
-		if (log_engine_stdout) {
-			console.log("<", line);
-		}
+		Log("< " + line);
 
 		// We want to ignore all output when waiting for readyok
 
@@ -384,7 +383,7 @@ function make_renderer() {
 
 		if (s.startsWith("info depth") || s.startsWith("info string")) {
 			renderer.ever_received_info = true;
-			renderer.info_table.receive(s);
+			renderer.info_table.receive(s, renderer.pos);
 		}
 
 		if (s.startsWith("error")) {

@@ -51,13 +51,20 @@ function NewInfoTable() {			// There's only ever going to be one of these made.
 
 	return {
 
+		clears: 0,
 		table: Object.create(null),
 	
 		clear: function() {
 			this.table = Object.create(null);
+			Log(`------------------------- info cleared (${++this.clears}) -------------------------`);
 		},
 
-		receive: function(s) {
+		receive: function(s, board) {
+
+			// The current board is sent just so we can check the move is valid.
+			// Although the renderer tries to avoid sending invalid moves by
+			// syncing with "isready" "readyok" an engine like Stockfish doesn't
+			// behave properly, IMO.
 
 			if (s.startsWith("info depth")) {
 
@@ -65,6 +72,11 @@ function NewInfoTable() {			// There's only ever going to be one of these made.
 				// pv d2d4 g8f6 c2c4 e7e6 g2g3 f8b4 c1d2 b4e7 g1f3 e8g8 d1c2 a7a6 f1g2 b7b5 e1g1 c8b7 f1c1 b7e4 c2d1 b5c4 c1c4 a6a5 d2e1 h7h6 c4c1 d7d6
 
 				let move = InfoVal(s, "pv");
+
+				if (board.colour(Point(move.slice(0,2))) !== board.active) {
+					Log(`Nibbler notes: invalid move received!: ${move}`);
+					return;
+				}
 
 				let move_info;
 
@@ -91,6 +103,11 @@ function NewInfoTable() {			// There's only ever going to be one of these made.
 				// info string d2d4  (293 ) N:   12845 (+121) (P: 20.10%) (Q:  0.09001) (D:  0.000) (U: 0.02410) (Q+U:  0.11411) (V:  0.1006)
 
 				let move = InfoVal(s, "string");
+
+				if (board.colour(Point(move.slice(0,2))) !== board.active) {
+					Log(`Nibbler notes: invalid move received!: ${move}`);
+					return;
+				}
 
 				let move_info;
 

@@ -83,3 +83,20 @@ function SafeString(s) {
 	s = s.replaceAll("\"", "&quot;");
 	return s;
 }
+
+function Log(s) {
+
+	// Using a property embedded into the function object
+	// as if it's a static variable.
+
+	if (Log.logfile === undefined) {
+		if (typeof config.logfile !== "string" || config.logfile === "" || Log.tried_to_open) {
+			return;
+		}
+
+		Log.logfile = fs.createWriteStream(config.logfile, {flags:'a'});
+		Log.tried_to_open = true;
+	}
+
+	Log.logfile.write(s + "\n");
+}

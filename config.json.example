@@ -20,5 +20,7 @@
 	"terrible_cp_threshold": 100,
 	
 	"max_info_lines": 10,
-	"node_display_threshold": 0.05
+	"node_display_threshold": 0.05,
+
+	"logfile": null
 }
