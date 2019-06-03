@@ -264,6 +264,27 @@ function make_renderer() {
 		pgnchooser.style.display = "block";
 	};
 
+	renderer.validate_pgn = (filename) => {
+
+		let buf = fs.readFileSync(filename);		// i.e. binary buffer object
+		let pgn_list = pre_parse_pgn(buf);
+
+		for (let n = 0; n < pgn_list.length; n++) {
+
+			let o = pgn_list[n];
+
+			try {
+				LoadPGN(o.movetext);
+			} catch (err) {
+				alert(`Game ${n + 1} - ${err.toString()}`);
+				return;
+			}
+		}
+
+		alert(`This file seems OK. ${pgn_list.length} games checked.`)
+		return true;
+	};
+
 	renderer.prev = () => {
 		if (renderer.pos.parent) {
 			renderer.pos = renderer.pos.parent;
@@ -692,6 +713,10 @@ ipcRenderer.on("new", () => {
 
 ipcRenderer.on("open", (event, filename) => {
 	renderer.open(filename);
+});
+
+ipcRenderer.on("validate_pgn", (event, filename) => {
+	renderer.validate_pgn(filename);
 });
 
 ipcRenderer.on("next", (event) => {

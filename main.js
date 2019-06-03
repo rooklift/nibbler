@@ -72,6 +72,17 @@ function menu_build() {
 					}
 				},
 				{
+					label: "Validate PGN...",
+					click: () => {
+						let files = electron.dialog.showOpenDialog({
+							properties: ["openFile"]
+						});
+						if (files && files.length > 0) {
+							windows.send("main-window", "validate_pgn", files[0]);
+						}
+					}
+				},
+				{
 					type: "separator"
 				},
 				{
