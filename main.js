@@ -9,10 +9,14 @@ const windows = require("./modules/windows");
 let config = {};
 
 try {
-	if (fs.existsSync("config.json")) {
-		config = JSON.parse(fs.readFileSync("config.json", "utf8"));
-	} else if (fs.existsSync("config.json.example")) {
-		config = JSON.parse(fs.readFileSync("config.json.example", "utf8"));
+	let cj  = path.join(__dirname, "config.json");
+	let cje = path.join(__dirname, "config.json.example");
+
+	if (fs.existsSync(cj)) {
+		config = JSON.parse(fs.readFileSync(cj, "utf8"));
+	} else if (fs.existsSync(cje)) {
+		config = JSON.parse(fs.readFileSync(cje, "utf8"));
+		config.warn_filename = true;
 	}
 } catch (err) {
 	// pass

@@ -32,10 +32,13 @@ function sync() {
 // ------------------------------------------------------------------------------------------------
 
 try {
-	if (fs.existsSync("config.json")) {
-		config = JSON.parse(fs.readFileSync("config.json", "utf8"));
-	} else if (fs.existsSync("config.json.example")) {
-		config = JSON.parse(fs.readFileSync("config.json.example", "utf8"));
+	let cj  = path.join(__dirname, "config.json");
+	let cje = path.join(__dirname, "config.json.example");
+
+	if (fs.existsSync(cj)) {
+		config = JSON.parse(fs.readFileSync(cj, "utf8"));
+	} else if (fs.existsSync(cje)) {
+		config = JSON.parse(fs.readFileSync(cje, "utf8"));
 		config.warn_filename = true;
 	} else {
 		alert("config.json not present");
@@ -135,9 +138,9 @@ let loads = 0;
 for (let c of Array.from("KkQqRrBbNnPp")) {
 	images[c] = new Image();
 	if (c === c.toUpperCase()) {
-		images[c].src = `./pieces/${c}.png`;
+		images[c].src = path.join(__dirname, `pieces/${c}.png`);
 	} else {
-		images[c].src = `./pieces/_${c.toUpperCase()}.png`;
+		images[c].src = path.join(__dirname, `./pieces/_${c.toUpperCase()}.png`);
 	}
 	images[c].onload = () => {
 		loads++;
