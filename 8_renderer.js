@@ -41,19 +41,19 @@ try {
 assign_without_overwrite(config, {
 	"options": {},
 
-	"bad_cp_threshold": 20,
-	"terrible_cp_threshold": 100,
-
-	"max_info_lines": 10,
-	"node_display_threshold": 0.05,
-
 	"board_size": 640,
 	"mainline_height": 108,
 
 	"show_cp": true,
 	"show_n": true,
-	"show_p": false,
+	"show_p": true,
 	"show_pv": true,
+
+	"bad_cp_threshold": 20,
+	"terrible_cp_threshold": 200,
+	
+	"max_info_lines": 10,
+	"node_display_threshold": 0.02,
 
 	"logfile": null
 });

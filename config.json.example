@@ -17,10 +17,10 @@
 	"show_pv": true,
 
 	"bad_cp_threshold": 20,
-	"terrible_cp_threshold": 100,
+	"terrible_cp_threshold": 200,
 	
 	"max_info_lines": 10,
-	"node_display_threshold": 0.05,
+	"node_display_threshold": 0.02,
 
 	"logfile": null
 }
