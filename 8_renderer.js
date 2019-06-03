@@ -213,12 +213,12 @@ function make_renderer() {
 
 		let final_pos;
 
-		try {
+		//try {
 			final_pos = LoadPGN(o.movetext);
-		} catch (err) {
-			alert(err);
-			return;
-		}
+		//} catch (err) {
+		//	alert(err);
+		//	return;
+		//}
 
 		renderer.pgn_line = final_pos.position_list();
 		renderer.pos = renderer.pgn_line[0];

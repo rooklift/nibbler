@@ -1,6 +1,6 @@
 "use strict";
 
-let decoder = new TextDecoder("utf-8");
+let __decoder = new TextDecoder("utf-8");
 
 function LoadPGN(movetext) {
 
@@ -112,7 +112,7 @@ function new_byte_pusher() {
 		},
 
 		string: function() {
-			return decoder.decode(this.bytes());
+			return __decoder.decode(this.bytes());
 		}
 	};
 }
@@ -155,7 +155,7 @@ function pre_parse_pgn(buf) {
 
 			// Parse the tag line...
 
-			let line = decoder.decode(rawline).trim();
+			let line = __decoder.decode(rawline).trim();
 
 			if (line.endsWith("]")) {
 

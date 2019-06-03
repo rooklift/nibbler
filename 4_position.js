@@ -109,7 +109,7 @@ const position_prototype = {
 
 		// Set enpassant square...
 
-		ret.enpassant = Point("??");
+		ret.enpassant = Point(null);
 
 		if (pawn_flag && y1 === 6 && y2 === 4) {
 			ret.enpassant = Point(x1, 5);
@@ -375,7 +375,7 @@ const position_prototype = {
 
 	attacked: function(target, my_colour) {
 
-		if (target === NullPoint()) {
+		if (target === Point(null)) {
 			return false;
 		}
 
@@ -637,7 +637,7 @@ const position_prototype = {
 	},
 
 	piece: function(point) {
-		if (point === NullPoint()) return "";
+		if (point === Point(null)) return "";
 		return this.state[point.x][point.y];
 	},
 
@@ -830,7 +830,7 @@ const position_prototype = {
 			}
 		}
 
-		let ep_string = this.enpassant === NullPoint() ? "-" : this.enpassant.s;
+		let ep_string = this.enpassant === Point(null) ? "-" : this.enpassant.s;
 		let castling_string = this.castling === "" ? "-" : this.castling;
 
 		return s + ` ${this.active} ${castling_string} ${ep_string} ${this.halfmove} ${this.fullmove}`;
@@ -913,7 +913,7 @@ function NewPosition(state = null, active = "w", castling = "", enpassant = null
 	if (enpassant) {
 		p.enpassant = enpassant;
 	} else {
-		p.enpassant = Point("??");
+		p.enpassant = Point(null);
 	}
 
 	p.halfmove = halfmove;
