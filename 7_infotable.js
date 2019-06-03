@@ -74,7 +74,7 @@ function NewInfoTable() {			// There's only ever going to be one of these made.
 				let move = InfoVal(s, "pv");
 
 				if (move === "") {
-					Log("... Nibbler: couldn't find move in info string");
+					Log("... Nibbler: couldn't find move in info");
 					return;
 				}
 				if (board.colour(Point(move.slice(0,2))) !== board.active) {
@@ -121,7 +121,7 @@ function NewInfoTable() {			// There's only ever going to be one of these made.
 				let move = InfoVal(s, "string");
 
 				if (move === "") {
-					Log("... Nibbler: couldn't find move in info string");
+					Log("... Nibbler: couldn't find move in info");
 					return;
 				}
 				if (board.colour(Point(move.slice(0,2))) !== board.active) {

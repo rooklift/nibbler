@@ -102,19 +102,18 @@ if (config) {
 
 	scanner.on("line", (line) => {
 
-		Log("< " + line);
-
 		// We want to ignore all output when waiting for readyok
 
 		if (readyok_required) {
 			if (line.includes("readyok") === false) {
+				Log("< (ignored) " + line);
 				return;
 			}
 			readyok_required = false;
 		}
 
+		Log("< " + line);
 		renderer.receive(line);
-
 	});
 
 	send("uci");
