@@ -12,37 +12,64 @@ function new_info() {
 		pv_string_cache: null,
 		v: null,
 
-		pv_string: function(board) {
+		pv_string: function(board, options) {
 
 			// Given the board for which this info is valid, generate a human-readable
 			// PV string for display. This should never be examined by the caller,
 			// merely displayed.
 
 			if (this.pv_string_cache) {
-				return this.pv_string_cache;
+				return this.pv_string_cache;		// Note: the cache needs cleared when receiving.
 			}
 
-			let pv_string = "";
+			let s = "";
+
+			if (options.show_cp) {
+				let cp_string = this.cp.toString();
+				if (cp_string.startsWith("-") === false) {
+				 	cp_string = "+" + cp_string;
+				}
+				s += `<span class="tech">${cp_string}</span>`;
+			}
 
 			for (let move of this.pv) {
 
+				s += " ";
+
 				if (board.active === "w") {
-					pv_string += `<span class="white">`;
+					s += `<span class="white">`;
 				} else {
-					pv_string += `<span class="black">`;
+					s += `<span class="black">`;
 				}
 
-				pv_string += board.nice_string(move);
-				pv_string += "</span> ";
+				s += board.nice_string(move);
+				s += "</span>";
 
-				if (config.show_pv === false) {
+				if (options.show_pv === false) {
 					break;
 				}
 
 				board = board.move(move);
 			}
 
-			this.pv_string_cache = pv_string.trim();
+			if (options.show_n || options.show_p) {
+				
+				let tech_elements = [];
+
+				if (options.show_n) {
+					tech_elements.push(`N: ${this.n.toString()}`);
+				}
+
+				if (options.show_p) {
+					tech_elements.push(`P: ${this.p}`);
+				}
+
+				s += ` <span class="tech">(${tech_elements.join(" ")})</span>`;
+			}
+
+			s += "<br><br>";
+
+			this.pv_string_cache = s.trim();
 			return this.pv_string_cache;
 		}
 	};

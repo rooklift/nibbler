@@ -501,57 +501,13 @@ function make_renderer() {
 		let info_list = renderer.info_table.sorted();
 
 		for (let i = 0; i < info_list.length && i < config.max_info_lines; i++) {
-
-			if (config.show_cp) {
-
-				let cp_string = info_list[i].cp.toString();
-				if (cp_string.startsWith("-") === false) {
-				 	cp_string = "+" + cp_string;
-				}
-/*
-				let cp_string = "?";
-
-				if (typeof info_list[i].v === "number") {
-
-					cp_string = ((info_list[i].v + 1) / 2).toString().slice(0, 5);
-
-					if (cp_string[1] === ".") {
-						cp_string = cp_string.slice(1);
-					}
-
-					if (cp_string !== "1" && cp_string !== "0") {
-						while (cp_string.length < 4) {
-							cp_string += "0";
-						}
-					}
-				}
-*/
-
-				s += `<span class="tech">${cp_string}</span> `;
-			}
-
-			s += info_list[i].pv_string(renderer.pos);			// The actual thing.
-
-			if (config.show_n || config.show_p) {
-				
-				let tech_elements = [];
-
-				if (config.show_n) {
-					tech_elements.push(`N: ${info_list[i].n.toString()}`);
-				}
-
-				if (config.show_p) {
-					tech_elements.push(`P: ${info_list[i].p}`);
-				}
-
-				s += ` <span class="tech">(${tech_elements.join(" ")})</span>`;
-			}
-
-			s += "<br><br>";
+			s += info_list[i].pv_string(renderer.pos, config);
 		}
 
-		if (renderer.infobox_string !== s) {		// Only update when needed, so user can select and copy. A direct
-													// comparison of s with innerHTML seems to fail (something must get changed).
+		// Only update when needed, so user can select and copy. A direct comparison
+		// of s with innerHTML seems to fail (something must get changed).
+
+		if (renderer.infobox_string !== s) {
 			renderer.infobox_string = s;
 			infobox.innerHTML = s;
 		}
