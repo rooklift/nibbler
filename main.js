@@ -60,7 +60,7 @@ function menu_build() {
 					}
 				},
 				{
-					label: "Open...",
+					label: "Open PGN...",
 					accelerator: "CommandOrControl+O",
 					click: () => {
 						let files = electron.dialog.showOpenDialog({
