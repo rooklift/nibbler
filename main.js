@@ -43,7 +43,7 @@ function menu_build() {
 				{
 					label: "About",
 					click: () => {
-						alert("Nibbler, running under Electron " + process.versions.electron);
+						alert(`Nibbler ${electron.app.getVersion()}, running under Electron ${process.versions.electron}`);
 					}
 				},
 				{
