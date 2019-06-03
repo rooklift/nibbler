@@ -213,7 +213,7 @@ function make_renderer() {
 
 		// If this fails, it will just dump an error in the console, which is OK by me.
 		// So no try / catch here...
-		
+
 		let final_pos = LoadPGN(o.movetext);
 
 		renderer.pgn_line = final_pos.position_list();
@@ -387,8 +387,11 @@ function make_renderer() {
 	};
 
 	renderer.err_receive = (s) => {
-		renderer.stderr_log += s;
-		renderer.stderr_log += "<br>";
+		if (s.indexOf("WARNING") !== -1) {
+			renderer.stderr_log += `<span class="red">${s}</span><br>`;
+		} else {
+			renderer.stderr_log += `${s}<br>`
+		};
 	};
 
 	renderer.click = (event) => {
