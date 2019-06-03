@@ -73,8 +73,12 @@ function NewInfoTable() {			// There's only ever going to be one of these made.
 
 				let move = InfoVal(s, "pv");
 
+				if (move === "") {
+					Log("... Nibbler: couldn't find move in info string");
+					return;
+				}
 				if (board.colour(Point(move.slice(0,2))) !== board.active) {
-					Log(`Nibbler notes: invalid move received!: ${move}`);
+					Log(`... Nibbler: invalid move received!: ${move}`);
 					return;
 				}
 
@@ -88,14 +92,26 @@ function NewInfoTable() {			// There's only ever going to be one of these made.
 				}
 
 				move_info.move = move;
-				move_info.cp = parseInt(InfoVal(s, "cp"), 10);				// Score in centipawns
-				move_info.multipv = parseInt(InfoVal(s, "multipv"), 10);	// Leela's ranking of the move, starting at 1
+
+				let tmp;
+
+				tmp = parseInt(InfoVal(s, "cp"), 10);						// Score in centipawns
+				if (Number.isNaN(tmp) === false) {
+					move_info.cp = tmp;				
+				}
+
+				tmp = parseInt(InfoVal(s, "multipv"), 10);					// Leela's ranking of the move, starting at 1
+				if (Number.isNaN(tmp) === false) {
+					move_info.multipv = tmp;
+				}
 
 				let new_pv = InfoPV(s);
 
-				if (CompareArrays(new_pv, move_info.pv) === false) {
-					move_info.pv_string_cache = null;
-					move_info.pv = new_pv;
+				if (new_pv.length > 0) {
+					if (CompareArrays(new_pv, move_info.pv) === false) {
+						move_info.pv_string_cache = null;
+						move_info.pv = new_pv;
+					}
 				}
 
 			} else if (s.startsWith("info string")) {
@@ -104,8 +120,12 @@ function NewInfoTable() {			// There's only ever going to be one of these made.
 
 				let move = InfoVal(s, "string");
 
+				if (move === "") {
+					Log("... Nibbler: couldn't find move in info string");
+					return;
+				}
 				if (board.colour(Point(move.slice(0,2))) !== board.active) {
-					Log(`Nibbler notes: invalid move received!: ${move}`);
+					Log(`... Nibbler: invalid move received!: ${move}`);
 					return;
 				}
 
@@ -119,9 +139,13 @@ function NewInfoTable() {			// There's only ever going to be one of these made.
 				}
 
 				move_info.move = move;
-				move_info.n = parseInt(InfoVal(s, "N:"), 10);
 
-				move_info.p = InfoVal(s, "(P:");
+				let tmp = parseInt(InfoVal(s, "N:"), 10);
+				if (Number.isNaN(tmp) === false) {
+					move_info.n = tmp;
+				}
+
+				move_info.p = InfoVal(s, "(P:");		// Worse case here is just empty string, which is OK.
 				if (move_info.p.endsWith(")")) {
 					move_info.p = move_info.p.slice(0, move_info.p.length - 1);
 				}
