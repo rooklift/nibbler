@@ -2,3 +2,4 @@
 config.json
 dist/*
 nibbler.log
+releases/*
