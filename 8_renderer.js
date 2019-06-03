@@ -506,7 +506,7 @@ function make_renderer() {
 		mainline.innerHTML = [s1, s2].filter(s => s !== "").join(" ");
 	};
 
-	renderer.draw_info = () => {
+	renderer.draw_infobox = () => {
 
 		if (renderer.ever_received_info === false) {
 			if (infobox.innerHTML !== renderer.stderr_log) {	// Only update when needed, so user can select and copy.
@@ -514,8 +514,6 @@ function make_renderer() {
 			}
 			return;
 		}
-
-		// First, draw the info box on the side...
 
 		let s = "";
 
@@ -536,10 +534,61 @@ function make_renderer() {
 			renderer.infobox_string = s;
 			infobox.innerHTML = s;
 		}
+	};
 
-		// ------------------------------------------
-		// Now draw the arrows on the board...
+	renderer.draw_board = () => {
 
+		let rss = renderer.square_size();
+		
+		renderer.squares = [];
+
+		for (let x = 0; x < 8; x++) {
+			for (let y = 0; y < 8; y++) {
+				if (x % 2 !== y % 2) {
+					context.fillStyle = dark;
+				} else {
+					context.fillStyle = light;
+				}
+
+				let x1 = x * rss;
+				let y1 = y * rss;
+				let x2 = x1 + rss;
+				let y2 = y1 + rss;
+
+				if (renderer.active_square === Point(x, y)) {
+					context.fillStyle = act;
+				}
+
+				context.fillRect(x1, y1, rss, rss);
+
+				// We update renderer.squares each draw on the assumption that
+				// one day the board will be resizeable in real time.
+
+				renderer.squares.push({x1, y1, x2, y2, point: Point(x, y)});
+			}
+		}
+	};
+
+	renderer.draw_pieces = (pieces) => {
+
+		let rss = renderer.square_size();
+
+		for (let x = 0; x < 8; x++) {
+			for (let y = 0; y < 8; y++) {
+				if (renderer.pos.state[x][y] === "") continue;
+				if (pieces.includes(renderer.pos.state[x][y])) {
+					let piece = renderer.pos.state[x][y];
+					let cx = x * rss;
+					let cy = y * rss;
+					context.drawImage(images[piece], cx, cy, rss, rss);
+				}
+			}
+		}
+	};
+
+	renderer.draw_arrows = (pieces) => {
+
+		let info_list = renderer.info_table.sorted();
 		if (info_list.length === 0) {
 			return;
 		}
@@ -551,6 +600,13 @@ function make_renderer() {
 		context.textBaseline = "middle"; 
 		
 		for (let i = info_list.length - 1; i >= 0; i--) {		// Reverse order for aesthetics.
+
+			let [x1, y1] = XY(info_list[i].move.slice(0, 2));
+			let [x2, y2] = XY(info_list[i].move.slice(2, 4));
+
+			if (pieces.includes(renderer.pos.state[x1][y1]) === false) {
+				continue;
+			}
 
 			if (info_list[i].n >= best_nodes * config.node_display_threshold) {
 
@@ -571,9 +627,6 @@ function make_renderer() {
 					context.fillStyle = "#66aa66";
 				}
 
-				let [x1, y1] = XY(info_list[i].move.slice(0, 2));
-				let [x2, y2] = XY(info_list[i].move.slice(2, 4));
-
 				let rss = renderer.square_size();
 
 				let cx1 = x1 * rss + rss / 2;
@@ -591,6 +644,16 @@ function make_renderer() {
 				context.fill();
 			}
 		}
+	};
+
+	renderer.draw_rankings = () => {
+
+		let info_list = renderer.info_table.sorted();
+		if (info_list.length === 0) {
+			return;
+		}
+
+		let best_nodes = info_list[0].n;
 
 		let text_spots = Object.create(null)		// What target squares we have drawn text on.
 
@@ -620,62 +683,17 @@ function make_renderer() {
 	};
 
 	renderer.draw = () => {
-
-		let rss = renderer.square_size();
 		
-		renderer.squares = [];
+		// We draw stuff in a very specific order to show knights "leaping over" pieces.
 
-		for (let x = 0; x < 8; x++) {
-			for (let y = 0; y < 8; y++) {
-				if (x % 2 !== y % 2) {
-					context.fillStyle = dark;
-				} else {
-					context.fillStyle = light;
-				}
-
-				let x1 = x * rss;
-				let y1 = y * rss;
-				let x2 = x1 + rss;
-				let y2 = y1 + rss;
-
-				if (renderer.active_square === Point(x, y)) {
-					context.fillStyle = act;
-				}
-
-				context.fillRect(x1, y1, rss, rss);
-				renderer.squares.push({x1, y1, x2, y2, point: Point(x, y)});
-			}
-		}
-
-		// Draw enemy pieces...
-
-		let opponent_colour = renderer.pos.active === "w" ? "b" : "w";
-
-		for (let x = 0; x < 8; x++) {
-			for (let y = 0; y < 8; y++) {
-				if (renderer.pos.colour(Point(x, y)) === opponent_colour) {
-					let piece = renderer.pos.state[x][y];
-					let cx = x * rss;
-					let cy = y * rss;
-					context.drawImage(images[piece], cx, cy, rss, rss);
-				}
-			}
-		}
-
-		renderer.draw_info();		// Do this here so the arrows are below the friendly pieces
-
-		// Draw friendly pieces...
-
-		for (let x = 0; x < 8; x++) {
-			for (let y = 0; y < 8; y++) {
-				if (renderer.pos.colour(Point(x, y)) === renderer.pos.active) {
-					let piece = renderer.pos.state[x][y];
-					let cx = x * rss;
-					let cy = y * rss;
-					context.drawImage(images[piece], cx, cy, rss, rss);
-				}
-			}
-		}
+		renderer.draw_board();
+		renderer.draw_pieces(renderer.pos.active === "w" ? "kqrbnp" : "KQRBNP");	// Enemy pieces
+		renderer.draw_arrows("KkQqRrBbPp");											// Arrows of non-knights
+		renderer.draw_pieces(renderer.pos.active === "w" ? "KQRBP" : "kqrbp");		// Friendly non-knights
+		renderer.draw_arrows("Nn");													// Arrows of knights
+		renderer.draw_pieces(renderer.pos.active === "w" ? "N" : "n");				// Friendly knights
+		renderer.draw_rankings();
+		renderer.draw_infobox();
 	};
 
 	renderer.draw_loop = () => {
