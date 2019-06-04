@@ -325,7 +325,7 @@ function make_renderer() {
 		// Currently, next only makes sense if we're on the PGN line.
 		// Ideally we would also remember at least 1 other line.
 
-		if (renderer.pgn_line === null) {
+		if (!renderer.pgn_line) {
 			return;
 		}
 
@@ -342,7 +342,12 @@ function make_renderer() {
 		}
 	};
 
-	renderer.root = () => {
+	renderer.pgn_root = () => {
+
+		if (!renderer.pgn_line) {
+			return;
+		}
+
 		let root = renderer.pos.position_list()[0];
 		if (renderer.pos !== root) {
 			renderer.pos = root;
@@ -352,7 +357,7 @@ function make_renderer() {
 
 	renderer.pgn_end = () => {
 
-		if (renderer.pgn_line === null) {
+		if (!renderer.pgn_line) {
 			return;
 		}
 
@@ -791,8 +796,8 @@ ipcRenderer.on("prev", (event) => {
 	renderer.prev();
 });
 
-ipcRenderer.on("root", (event) => {
-	renderer.root();
+ipcRenderer.on("pgn_root", (event) => {
+	renderer.pgn_root();
 });
 
 ipcRenderer.on("pgn_end", (event) => {

@@ -124,14 +124,14 @@ function menu_build() {
 					type: "separator"
 				},
 				{
-					label: "Root",
+					label: "PGN root",
 					accelerator: "Home",
 					click: () => {
-						windows.send("main-window", "root", null);
+						windows.send("main-window", "pgn_root", null);
 					}
 				},
 				{
-					label: "End of PGN",
+					label: "PGN end",
 					accelerator: "End",
 					click: () => {
 						windows.send("main-window", "pgn_end", null);
