@@ -606,8 +606,7 @@ function make_renderer() {
 
 				context.fillRect(cc.x1, cc.y1, cc.rss, cc.rss);
 
-				// We update renderer.squares each draw on the assumption that
-				// one day the board will be resizeable in real time.
+				// Update renderer.squares each draw - our list of clickable coordinates.
 
 				renderer.squares.push({x1: cc.x1, y1: cc.y1, x2: cc.x2, y2: cc.y2, point: Point(x, y)});
 			}
