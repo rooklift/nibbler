@@ -90,11 +90,10 @@ function LoadFEN(fen) {
 		throw "Invalid FEN - number of kings";
 	}
 
-	let opponent_colour = ret.active === "w" ? "b" : "w";
 	let opponent_king_char = ret.active === "w" ? "k" : "K";
 	let opponent_king_square = ret.find(opponent_king_char)[0];
 
-	if (ret.attacked(opponent_king_square, opponent_colour)) {
+	if (ret.attacked(opponent_king_square, ret.colour(opponent_king_square))) {
 		throw "Invalid FEN - non-mover's king in check";
 	}
 
