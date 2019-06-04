@@ -16,14 +16,6 @@ body {
 	display: flex;
 }
 
-.leftcolumn {
-	flex: 50%;
-}
-
-.rightcolumn {
-	flex: 50%;
-}
-
 #canvas {
 	float: left;
 	user-select: none;
