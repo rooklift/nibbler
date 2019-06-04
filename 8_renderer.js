@@ -531,7 +531,7 @@ function make_renderer() {
 
 	renderer.draw_infobox = (info_list) => {
 
-		if (renderer.ever_received_info === false) {
+		if (!renderer.ever_received_info) {
 			if (infobox.innerHTML !== renderer.stderr_log) {	// Only update when needed, so user can select and copy.
 				infobox.innerHTML = renderer.stderr_log;
 			}
@@ -540,7 +540,7 @@ function make_renderer() {
 
 		let s = "";
 
-		if (renderer.running === false) {
+		if (!renderer.running) {
 			s += "&lt;halted&gt;<br><br>";
 		}
 

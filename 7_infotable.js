@@ -62,7 +62,7 @@ function new_info() {
 				s += board.nice_string(move);
 				s += "</span>";
 
-				if (options.show_pv === false) {
+				if (!options.show_pv) {
 					break;
 				}
 
