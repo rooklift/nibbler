@@ -136,6 +136,16 @@ function menu_build() {
 						windows.send("main-window", "pgn_end", null);
 					}
 				},
+				{
+					type: "separator"
+				},
+				{
+					label: "Flip Board",
+					accelerator: "CommandOrControl+F",
+					click: () => {
+						windows.send("main-window", "toggle", "flip");
+					}
+				},
 			]
 		},
 		{

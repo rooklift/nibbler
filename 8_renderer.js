@@ -557,9 +557,36 @@ function make_renderer() {
 		}
 	};
 
-	renderer.draw_board = () => {
+	renderer.canvas_coords = (x, y) => {
+
+		// Given the x, y coordinates on the board (a8 is 0, 0)
+		// return an object with the canvas coordinates for
+		// the square, and also the centre. Also has rss.
+		//
+		//      x1,y1--------
+		//        |         |
+		//        |  cx,cy  |
+		//        |         |
+		//        --------x2,y2
 
 		let rss = renderer.square_size();
+		let x1 = x * rss;
+		let y1 = y * rss;
+		let x2 = x1 + rss;
+		let y2 = y1 + rss;
+
+		if (config.flip) {
+			[x1, x2] = [(rss * 8) - x2, (rss * 8) - x1];
+			[y1, y2] = [(rss * 8) - y2, (rss * 8) - y1];
+		}
+
+		let cx = x1 + rss / 2;
+		let cy = y1 + rss / 2;
+
+		return {x1, y1, x2, y2, cx, cy, rss};
+	};
+
+	renderer.draw_board = () => {
 		
 		renderer.squares = [];
 
@@ -571,37 +598,31 @@ function make_renderer() {
 					context.fillStyle = light;
 				}
 
-				let x1 = x * rss;
-				let y1 = y * rss;
-				let x2 = x1 + rss;
-				let y2 = y1 + rss;
+				let cc = renderer.canvas_coords(x, y);
 
 				if (renderer.active_square === Point(x, y)) {
 					context.fillStyle = act;
 				}
 
-				context.fillRect(x1, y1, rss, rss);
+				context.fillRect(cc.x1, cc.y1, cc.rss, cc.rss);
 
 				// We update renderer.squares each draw on the assumption that
 				// one day the board will be resizeable in real time.
 
-				renderer.squares.push({x1, y1, x2, y2, point: Point(x, y)});
+				renderer.squares.push({x1: cc.x1, y1: cc.y1, x2: cc.x2, y2: cc.y2, point: Point(x, y)});
 			}
 		}
 	};
 
 	renderer.draw_pieces = (pieces) => {
 
-		let rss = renderer.square_size();
-
 		for (let x = 0; x < 8; x++) {
 			for (let y = 0; y < 8; y++) {
 				if (renderer.pos.state[x][y] === "") continue;
 				if (pieces.includes(renderer.pos.state[x][y])) {
 					let piece = renderer.pos.state[x][y];
-					let cx = x * rss;
-					let cy = y * rss;
-					context.drawImage(images[piece], cx, cy, rss, rss);
+					let cc = renderer.canvas_coords(x, y);
+					context.drawImage(images[piece], cc.x1, cc.y1, cc.rss, cc.rss);
 				}
 			}
 		}
@@ -647,20 +668,16 @@ function make_renderer() {
 					context.fillStyle = "#66aa66";
 				}
 
-				let rss = renderer.square_size();
-
-				let cx1 = x1 * rss + rss / 2;
-				let cy1 = y1 * rss + rss / 2;
-				let cx2 = x2 * rss + rss / 2;
-				let cy2 = y2 * rss + rss / 2;
+				let cc1 = renderer.canvas_coords(x1, y1);
+				let cc2 = renderer.canvas_coords(x2, y2);
 
         		context.beginPath();
-        		context.moveTo(cx1, cy1);
-        		context.lineTo(cx2, cy2);
+        		context.moveTo(cc1.cx, cc1.cy);
+        		context.lineTo(cc2.cx, cc2.cy);
 				context.stroke();
 				
 				context.beginPath();
-				context.arc(cx2, cy2, 12, 0, 2 * Math.PI);
+				context.arc(cc2.cx, cc2.cy, 12, 0, 2 * Math.PI);
 				context.fill();
 			}
 		}
@@ -687,14 +704,12 @@ function make_renderer() {
 				}
 
 				let [x2, y2] = XY(info_list[i].move.slice(2, 4));
-				let rss = renderer.square_size();
-				let cx2 = x2 * rss + rss / 2;
-				let cy2 = y2 * rss + rss / 2;
+				let cc2 = renderer.canvas_coords(x2, y2);
 
 				if (text_spots[info_list[i].move.slice(2, 4)] === undefined) {
 					context.font = "24px Arial";
 					context.fillStyle = "black";
-					context.fillText(`${i + 1}`, cx2, cy2 + 1);
+					context.fillText(`${i + 1}`, cc2.cx, cc2.cy + 1);
 					text_spots[info_list[i].move.slice(2, 4)] = true;
 				}
 			}
@@ -772,6 +787,11 @@ ipcRenderer.on("root", (event) => {
 
 ipcRenderer.on("pgn_end", (event) => {
 	renderer.pgn_end();
+});
+
+ipcRenderer.on("toggle", (event, cfgvar) => {
+	config[cfgvar] = !config[cfgvar];
+	renderer.draw();
 });
 
 canvas.addEventListener("mousedown", (event) => {
