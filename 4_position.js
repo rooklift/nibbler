@@ -376,6 +376,10 @@ const position_prototype = {
 
 	attacked: function(target, my_colour) {
 
+		if (my_colour === undefined) {
+			throw "attacked(): no colour given";
+		}
+
 		if (target === Point(null)) {
 			return false;
 		}
