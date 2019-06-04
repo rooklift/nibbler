@@ -33,9 +33,9 @@ function sync() {
 
 try {
 	if (fs.existsSync("config.json")) {
-		config = JSON.parse(fs.readFileSync("config.json", "utf8"));
+		config = JSON.parse(DeborkJSON(fs.readFileSync("config.json", "utf8")));
 	} else if (fs.existsSync("config.json.example")) {
-		config = JSON.parse(fs.readFileSync("config.json.example", "utf8"));
+		config = JSON.parse(DeborkJSON(fs.readFileSync("config.json.example", "utf8")));
 		config.warn_filename = true;
 	} else {
 		alert("config.json not present");

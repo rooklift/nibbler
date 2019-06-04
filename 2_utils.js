@@ -110,3 +110,23 @@ function Log(s) {
 
 	Log.logfile.write(s + "\n");
 }
+
+function DeborkJSON(s) {
+
+	// Enough people are going to use single backslashes in their paths that we should just fix it.
+
+	let lines = s.split("\n");
+	lines = lines.map(s => s.trim());		// removing \r for no particular reason.
+
+	for (let n = 0; n < lines.length; n++) {
+		let line = lines[n];
+		if (line.indexOf(`"path"`) !== -1 || line.indexOf(`"WeightsFile"`) !== -1) {
+			line = line.replaceAll("\\\\", "__nibbler__blackslash__replacement__in__progress__");
+			line = line.replaceAll("\\", "\\\\");
+			line = line.replaceAll("__nibbler__blackslash__replacement__in__progress__", "\\\\");
+		}
+		lines[n] = line;
+	}
+
+	return lines.join("\n");
+}
