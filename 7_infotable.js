@@ -10,7 +10,7 @@ function new_info() {
 		p: "?",
 		pv: [],
 		pv_string_cache: null,
-		q: null,
+		winrate: null,
 
 		pv_string: function(board, options) {
 
@@ -24,29 +24,22 @@ function new_info() {
 
 			let s = "";
 
-			if (options.show_q) {
+			if (options.show_winrate) {
 
-				// Q is a winrate between -1 and 1.
-
-				let q_string = "?";
-				if (typeof this.q === "number") {
-					q_string = ((this.q + 1) / 2).toString().slice(0, 5);
-					if (q_string[1] === ".") {
-						q_string = q_string.slice(1);
+				let winrate_string = "?";
+				if (typeof this.winrate === "number") {
+					winrate_string = this.winrate.toString().slice(0, 5);
+					if (winrate_string[1] === ".") {
+						winrate_string = winrate_string.slice(1);
 					}
-					if (q_string !== "1" && q_string !== "0") {
-						while (q_string.length < 4) {
-							q_string += "0";
+					if (winrate_string !== "1" && winrate_string !== "0") {
+						while (winrate_string.length < 4) {
+							winrate_string += "0";
 						}
 					}
 				}
-/*
-				let cp_string = this.cp.toString();
-				if (cp_string.startsWith("-") === false) {
-				 	cp_string = "+" + cp_string;
-				}
-*/
-				s += `<span class="blue">${q_string}</span>`;
+
+				s += `<span class="blue">${winrate_string}</span>`;
 			}
 
 			for (let move of this.pv) {
@@ -187,7 +180,7 @@ function NewInfoTable() {			// There's only ever going to be one of these made.
 				tmp = InfoVal(s, "(Q:");
 				tmp = parseFloat(tmp);
 				if (Number.isNaN(tmp) === false) {
-					move_info.q = tmp;
+					move_info.winrate = (tmp + 1) / 2;
 				}
 			}
 		},

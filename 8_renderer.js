@@ -11,6 +11,10 @@ function send(msg) {
 	}
 }
 
+function setoption(name, value) {
+	send(`setoption name ${name} value ${value}`);
+}
+
 // The sync function exists so that we can disregard all output until a certain point.
 // Basically we use it after sending a position, so that we can ignore all analysis
 // that comes until LZ sends "readyok" in response to our "isready". All output before
@@ -51,10 +55,10 @@ assign_without_overwrite(config, {
 	"show_n": true,
 	"show_p": true,
 	"show_pv": true,
-	"show_q": true,
+	"show_winrate": true,
 
-	"bad_cp_threshold": 20,
-	"terrible_cp_threshold": 200,
+	"bad_move_threshold": 0.02,
+	"terrible_move_threshold": 0.04,
 	
 	"max_info_lines": 10,
 	"node_display_threshold": 0.02,
@@ -68,8 +72,8 @@ canvas.width = config.board_size;
 canvas.height = config.board_size;
 
 Log("");
-Log("***********************************************************************************************");
-Log(`Startup at ${new Date().toUTCString()}`);
+Log("======================================================================================================================================");
+Log(`Nibbler startup at ${new Date().toUTCString()}`);
 Log("");
 
 if (config.path) {
@@ -115,12 +119,13 @@ if (config.path) {
 send("uci");
 
 for (let key of Object.keys(config.options)) {
-	send(`setoption name ${key} value ${config.options[key]}`);
+	setoption(key, config.options[key]);
 }
 
-send("setoption name VerboseMoveStats value true");		// Required for LogLiveStats to work.
-send("setoption name LogLiveStats value true");			// "Secret" Lc0 command.
-send("setoption name MultiPV value 500");
+setoption("VerboseMoveStats", true);		// Required for LogLiveStats to work.
+setoption("LogLiveStats", true);			// "Secret" Lc0 command.
+setoption("MultiPV", 500);
+
 send("ucinewgame");
 
 // ------------------------------------------------------------------------------------------------
@@ -650,16 +655,19 @@ function make_renderer() {
 
 			if (info_list[i].n >= best_nodes * config.node_display_threshold) {
 
-				let loss = info_list[0].cp - info_list[i].cp;
+				let loss = 0;
 
-				if (loss > config.terrible_cp_threshold) {
-					continue;
+				if (typeof info_list[0].winrate === "number" && typeof info_list[i].winrate === "number") {
+					loss = info_list[0].winrate - info_list[i].winrate;
+					if (loss > config.terrible_move_threshold) {
+						continue;
+					}
 				}
 
 				if (i === 0) {
 					context.strokeStyle = "#66aaaa";
 					context.fillStyle = "#66aaaa";
-				} else if (loss > config.bad_cp_threshold) {
+				} else if (loss > config.bad_move_threshold) {
 					context.strokeStyle = "#cccc66";
 					context.fillStyle = "#cccc66";
 				} else {
@@ -696,10 +704,13 @@ function make_renderer() {
 
 			if (info_list[i].n >= best_nodes * config.node_display_threshold) {
 
-				let loss = info_list[0].cp - info_list[i].cp;
+				let loss = 0;
 
-				if (loss > config.terrible_cp_threshold) {
-					continue;
+				if (typeof info_list[0].winrate === "number" && typeof info_list[i].winrate === "number") {
+					loss = info_list[0].winrate - info_list[i].winrate;
+					if (loss > config.terrible_move_threshold) {
+						continue;
+					}
 				}
 
 				let [x2, y2] = XY(info_list[i].move.slice(2, 4));

@@ -14,10 +14,10 @@
 	"show_n": true,
 	"show_p": true,
 	"show_pv": true,
-	"show_q": true,
+	"show_winrate": true,
 
-	"bad_cp_threshold": 20,
-	"terrible_cp_threshold": 200,
+	"bad_move_threshold": 0.02,
+	"terrible_move_threshold": 0.04,
 	
 	"max_info_lines": 10,
 	"node_display_threshold": 0.02,
