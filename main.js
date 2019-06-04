@@ -1,6 +1,7 @@
 "use strict";
 
 const alert = require("./modules/alert");
+const debork_json = require("./modules/debork_json");
 const electron = require("electron");
 const fs = require("fs");
 const path = require("path");
@@ -10,9 +11,9 @@ let config = {};
 
 try {
 	if (fs.existsSync("config.json")) {
-		config = JSON.parse(DeborkJSON(fs.readFileSync("config.json", "utf8")));
+		config = JSON.parse(debork_json(fs.readFileSync("config.json", "utf8")));
 	} else if (fs.existsSync("config.json.example")) {
-		config = JSON.parse(DeborkJSON(fs.readFileSync("config.json.example", "utf8")));
+		config = JSON.parse(debork_json(fs.readFileSync("config.json.example", "utf8")));
 	}
 } catch (err) {
 	// pass
