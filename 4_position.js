@@ -527,8 +527,6 @@ const position_prototype = {
 		s = s.replaceAll("0-0", "O-O");
 		s = s.replaceAll("0-0-0", "O-O-O");
 
-		// Castling...	FIXME: should legality check
-
 		if (s.toUpperCase() === "O-O") {
 			if (this.active === "w") {
 				if (this.illegal("e1g1") === "") {
