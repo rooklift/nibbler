@@ -114,27 +114,10 @@ function menu_build() {
 					}
 				},
 				{
-					label: "Forward in PGN",
+					label: "Forward",
 					accelerator: "Right",
 					click: () => {
 						windows.send("main-window", "next", null);
-					}
-				},
-				{
-					type: "separator"
-				},
-				{
-					label: "PGN root",
-					accelerator: "Home",
-					click: () => {
-						windows.send("main-window", "pgn_root", null);
-					}
-				},
-				{
-					label: "PGN end",
-					accelerator: "End",
-					click: () => {
-						windows.send("main-window", "pgn_end", null);
 					}
 				},
 				{

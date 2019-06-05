@@ -161,7 +161,7 @@ function make_renderer() {
 	renderer.infobox_string = "";					// Just to help not redraw the infobox when not needed.
 	renderer.pgn_choices = null;
 
-	renderer.pgn_line = null;
+	renderer.user_line_end = renderer.pos;
 
 	fenbox.value = renderer.pos.fen();
 
@@ -199,7 +199,6 @@ function make_renderer() {
 			return;
 		}
 
-		renderer.pgn_line = null;
 		renderer.game_changed();
 	};
 
@@ -220,16 +219,9 @@ function make_renderer() {
 			return;
 		}
 
-		renderer.pgn_line = final_pos.position_list();
-		renderer.pos = renderer.pgn_line[0];
-
-		// Cheap hack to let us see if and where we are on the PGN line...
-
-		for (let n = 0; n < renderer.pgn_line.length; n++) {
-			renderer.pgn_line[n].pgn_index = n;
-		}
-
-		renderer.game_changed();		// Do this after the above since it uses the info.
+		renderer.user_line_end = final_pos;
+		renderer.pos = final_pos.root();
+		renderer.game_changed();
 	};
 
 	renderer.choose_pgn = (n) => {
@@ -322,69 +314,60 @@ function make_renderer() {
 
 	renderer.next = () => {
 
-		// Currently, next only makes sense if we're on the PGN line.
-		// Ideally we would also remember at least 1 other line.
+		// FIXME: if renderer.pos is in the PGN, go to next pos in PGN line
 
-		if (!renderer.pgn_line) {
-			return;
-		}
-
-		if (renderer.pos.pgn_index === undefined) {
-			return;
-		}
-
-		let index = renderer.pos.pgn_index;
-		let next_pos = renderer.pgn_line[index + 1];
-
-		if (next_pos) {
-			renderer.pos = next_pos;
-			renderer.pos_changed();
+		if (renderer.pos !== renderer.user_line_end) {
+			for (let p of renderer.user_line_end.position_list()) {
+				if (p.parent === renderer.pos) {
+					renderer.pos = p;
+					renderer.pos_changed();
+					return;
+				}
+			}
 		}
 	};
 
-	renderer.pgn_root = () => {
+	renderer.move_stays_on_user_line = (s) => {
 
-		if (!renderer.pgn_line) {
-			return;
+		if (renderer.pos === renderer.user_line_end) {
+			return false;
 		}
 
-		let root = renderer.pos.position_list()[0];
-		if (renderer.pos !== root) {
-			renderer.pos = root;
-			renderer.pos_changed();
-		}
-	};
-
-	renderer.pgn_end = () => {
-
-		if (!renderer.pgn_line) {
-			return;
-		}
-
-		let end = renderer.pgn_line[renderer.pgn_line.length - 1];
-		if (renderer.pos !== end) {
-			renderer.pos = end;
-			renderer.pos_changed();
-		}
-	};
-
-	renderer.move = (s) => {
-
-		let advanced_pgn_flag = false;
-
-		if (renderer.pos.pgn_index !== undefined) {
-			if (renderer.pgn_line.length > renderer.pos.pgn_index + 1) {
-				if (renderer.pgn_line[renderer.pos.pgn_index + 1].lastmove === s) {
-					advanced_pgn_flag = true;
-					renderer.pos = renderer.pgn_line[renderer.pos.pgn_index + 1];
+		for (let p of renderer.user_line_end.position_list()) {
+			if (p.parent === renderer.pos) {
+				if (p.lastmove === s) {
+					return true;
+				} else {
+					return false
 				}
 			}
 		}
 
-		if (advanced_pgn_flag === false) {
-			renderer.pos = renderer.pos.move(s);
+		return false;
+	};
+
+	renderer.pgn_end = () => {		// FIXME
+		renderer.pos = renderer.user_line_end;
+		renderer.pos_changed();
+	};
+
+	renderer.move = (s) => {
+
+		// FIXME: if current position is in PGN, and move stays in PGN, go to the next PGN position
+
+		if (renderer.move_stays_on_user_line(s)) {
+			for (let p of renderer.user_line_end.position_list()) {
+				if (p.parent === renderer.pos) {
+					renderer.pos = p;
+					renderer.pos_changed();
+					return;
+				}
+			}
+			console.log("Shouldn't get here.");
 		}
 
+		renderer.pos = renderer.pos.move(s);
+		renderer.user_line_end = renderer.pos;
 		renderer.pos_changed();
 	};
 
@@ -493,22 +476,8 @@ function make_renderer() {
 		let elements2 = [];
 
 		let poslist = renderer.pos.position_list();
-		let on_pgn = renderer.pgn_line !== null;
 			
 		for (let p of poslist.slice(1)) {		// Start on the first position that has a lastmove
-
-			if (p.pgn_index === undefined && on_pgn) {
-
-				// This is the first step off the main line.
-				// Either we continued after the PGN ended, or we deviated beforehand.
-
-				if (p.parent && p.parent.pgn_index === renderer.pgn_line.length - 1) {
-					elements1.push(`<span class="red">(PGN ends)</span>`);
-				} else {
-					elements1.push(`<span class="red">(deviated)</span>`);
-				}
-				on_pgn = false;
-			}
 
 			if (p.parent.active === "w") {
 				elements1.push(`${p.parent.fullmove}.`);
@@ -517,16 +486,23 @@ function make_renderer() {
 			elements1.push(p.nice_lastmove());
 		}
 
-		if (on_pgn) {
+		let start_flag = false;
+		for (let p of renderer.user_line_end.position_list()) {
 
-			for (let p of renderer.pgn_line.slice(renderer.pos.pgn_index + 1)) {
-
-				if (p.parent.active === "w") {
-					elements2.push(`${p.parent.fullmove}.`);
-				}
-
-				elements2.push(p.nice_lastmove());
+			if (p === renderer.pos) {
+				start_flag = true;
+				continue;
 			}
+
+			if (start_flag === false) {
+				continue;
+			}
+
+			if (p.parent.active === "w") {
+				elements2.push(`${p.parent.fullmove}.`);
+			}
+
+			elements2.push(p.nice_lastmove());
 		}
 
 		let s1 = elements1.join(" ");		// Possibly empty string
@@ -794,14 +770,6 @@ ipcRenderer.on("next", (event) => {
 
 ipcRenderer.on("prev", (event) => {
 	renderer.prev();
-});
-
-ipcRenderer.on("pgn_root", (event) => {
-	renderer.pgn_root();
-});
-
-ipcRenderer.on("pgn_end", (event) => {
-	renderer.pgn_end();
 });
 
 ipcRenderer.on("toggle", (event, cfgvar) => {
