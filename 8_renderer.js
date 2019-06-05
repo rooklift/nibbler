@@ -457,7 +457,7 @@ function make_renderer() {
 
 	renderer.receive = (s) => {
 
-		if (s.startsWith("info depth") || s.startsWith("info string")) {
+		if (s.startsWith("info")) {
 			renderer.ever_received_info = true;
 			renderer.info_table.receive(s, renderer.pos);
 		}
