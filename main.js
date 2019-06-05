@@ -182,6 +182,15 @@ function menu_build() {
 						windows.send("main-window", "halt", null);
 					}
 				},
+				{
+					type: "separator"
+				},
+				{
+					label: "Reset Lc0 cache",
+					click: () => {
+						windows.send("main-window", "reset_leela_cache", null);
+					}
+				},
 			]
 		}
 	];

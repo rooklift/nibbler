@@ -467,6 +467,14 @@ function make_renderer() {
 		renderer.running = false;
 	};
 
+	renderer.reset_leela_cache = () => {
+		if (renderer.running) {
+			renderer.go(true);
+		} else {
+			send("ucinewgame");
+		}
+	};
+
 	renderer.receive = (s) => {
 
 		if (s.startsWith("info")) {
@@ -845,6 +853,10 @@ ipcRenderer.on("go", () => {
 ipcRenderer.on("halt", () => {
 	pgnchooser.style.display = "none";
 	renderer.halt();
+});
+
+ipcRenderer.on("reset_leela_cache", () => {
+	renderer.reset_leela_cache();
 });
 
 ipcRenderer.on("play_best", () => {
