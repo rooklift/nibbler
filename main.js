@@ -64,12 +64,6 @@ function menu_build() {
 					type: "separator"
 				},
 				{
-					label: "Show all games in current PGN",
-					click: () => {
-						windows.send("main-window", "display_pgn_chooser", null);
-					}
-				},
-				{
 					label: "Open PGN...",
 					accelerator: "CommandOrControl+O",
 					click: () => {
@@ -147,10 +141,16 @@ function menu_build() {
 					type: "separator"
 				},
 				{
-					label: "Return to PGN",
+					label: "Return to PGN main line",
 					accelerator: "CommandOrControl+R",
 					click: () => {
 						windows.send("main-window", "return_to_pgn", null);
+					}
+				},
+				{
+					label: "Show PGN games list",
+					click: () => {
+						windows.send("main-window", "display_pgn_chooser", null);
 					}
 				},
 				{
