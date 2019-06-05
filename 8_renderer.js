@@ -660,127 +660,152 @@ function make_renderer() {
 		}
 	};
 
-	renderer.draw_pieces = (pieces) => {
-
-		for (let x = 0; x < 8; x++) {
-			for (let y = 0; y < 8; y++) {
-				if (renderer.pos.state[x][y] === "") continue;
-				if (pieces.includes(renderer.pos.state[x][y])) {
-					let piece = renderer.pos.state[x][y];
-					let cc = renderer.canvas_coords(x, y);
-					context.drawImage(images[piece], cc.x1, cc.y1, cc.rss, cc.rss);
-				}
-			}
-		}
+	renderer.draw_piece = (o) => {
+		let cc = renderer.canvas_coords(o.x, o.y);
+		context.drawImage(images[o.piece], cc.x1, cc.y1, cc.rss, cc.rss);
 	};
 
-	renderer.draw_arrows = (info_list, pieces) => {
-
-		if (info_list.length === 0) {
-			return;
-		}
-
-		let best_nodes = info_list[0].n;
-
-		context.lineWidth = 8;
-		context.textAlign = "center";
-		context.textBaseline = "middle"; 
-		
-		for (let i = info_list.length - 1; i >= 0; i--) {		// Reverse order for aesthetics.
-
-			let [x1, y1] = XY(info_list[i].move.slice(0, 2));
-			let [x2, y2] = XY(info_list[i].move.slice(2, 4));
-
-			if (pieces.includes(renderer.pos.state[x1][y1]) === false) {
-				continue;
-			}
-
-			if (info_list[i].n >= best_nodes * config.node_display_threshold) {
-
-				let loss = 0;
-
-				if (typeof info_list[0].winrate === "number" && typeof info_list[i].winrate === "number") {
-					loss = info_list[0].winrate - info_list[i].winrate;
-					if (loss > config.terrible_move_threshold) {
-						continue;
-					}
-				}
-
-				if (i === 0) {
-					context.strokeStyle = "#66aaaa";
-					context.fillStyle = "#66aaaa";
-				} else if (loss > config.bad_move_threshold) {
-					context.strokeStyle = "#cccc66";
-					context.fillStyle = "#cccc66";
-				} else {
-					context.strokeStyle = "#66aa66";
-					context.fillStyle = "#66aa66";
-				}
-
-				let cc1 = renderer.canvas_coords(x1, y1);
-				let cc2 = renderer.canvas_coords(x2, y2);
-
-        		context.beginPath();
-        		context.moveTo(cc1.cx, cc1.cy);
-        		context.lineTo(cc2.cx, cc2.cy);
-				context.stroke();
-				
-				context.beginPath();
-				context.arc(cc2.cx, cc2.cy, 12, 0, 2 * Math.PI);
-				context.fill();
-			}
-		}
+	renderer.draw_arrow_line = (o) => {		// Doesn't draw the arrowhead
+		let cc1 = renderer.canvas_coords(o.x1, o.y1);
+		let cc2 = renderer.canvas_coords(o.x2, o.y2);
+		context.strokeStyle = o.colour;
+		context.fillStyle = o.colour;
+		context.beginPath();
+		context.moveTo(cc1.cx, cc1.cy);
+		context.lineTo(cc2.cx, cc2.cy);
+		context.stroke();
 	};
 
-	renderer.draw_rankings = (info_list) => {
-
-		if (info_list.length === 0) {
-			return;
-		}
-
-		let best_nodes = info_list[0].n;
-
-		let text_spots = Object.create(null);		// What target squares we have drawn text on.
-
-		for (let i = 0; i < info_list.length; i++) {
-
-			if (info_list[i].n >= best_nodes * config.node_display_threshold) {
-
-				let loss = 0;
-
-				if (typeof info_list[0].winrate === "number" && typeof info_list[i].winrate === "number") {
-					loss = info_list[0].winrate - info_list[i].winrate;
-					if (loss > config.terrible_move_threshold) {
-						continue;
-					}
-				}
-
-				let [x2, y2] = XY(info_list[i].move.slice(2, 4));
-				let cc2 = renderer.canvas_coords(x2, y2);
-
-				if (text_spots[info_list[i].move.slice(2, 4)] === undefined) {
-					context.font = "24px Arial";
-					context.fillStyle = "black";
-					context.fillText(`${i + 1}`, cc2.cx, cc2.cy + 1);
-					text_spots[info_list[i].move.slice(2, 4)] = true;
-				}
-			}
-		}
+	renderer.draw_ranking = (o) => {
+		let cc = renderer.canvas_coords(o.x, o.y);
+		context.fillStyle = o.colour;
+		context.beginPath();
+		context.arc(cc.cx, cc.cy, 12, 0, 2 * Math.PI);
+		context.fill();
+		context.fillStyle = "black";
+		context.fillText(`${o.rank}`, cc.cx, cc.cy + 1);
 	};
 
 	renderer.draw = () => {
 
+		context.lineWidth = 8;
+		context.textAlign = "center";
+		context.textBaseline = "middle";
+		context.font = "24px Arial";
+
+		let pieces = [];
+
+		for (let x = 0; x < 8; x++) {
+			for (let y = 0; y < 8; y++) {
+				if (renderer.pos.state[x][y] === "") {
+					continue;
+				}
+				pieces.push({
+					fn: renderer.draw_piece,
+					piece: renderer.pos.state[x][y],
+					colour: renderer.pos.colour(Point(x, y)),
+					x: x,
+					y: y
+				});
+			}
+		}
+
 		let info_list = renderer.info_table.sorted();
-		
-		// We draw stuff in a very specific order to show knights "leaping over" pieces.
+
+		let arrows = [];
+		let rankings = Object.create(null);
+
+		if (info_list.length > 0) {
+
+			let best_nodes = info_list[0].n;
+			
+			for (let i = 0; i < info_list.length; i++) {
+
+				let [x1, y1] = XY(info_list[i].move.slice(0, 2));
+				let [x2, y2] = XY(info_list[i].move.slice(2, 4));
+
+				if (info_list[i].n >= best_nodes * config.node_display_threshold) {
+
+					let loss = 0;
+
+					if (typeof info_list[0].winrate === "number" && typeof info_list[i].winrate === "number") {
+						loss = info_list[0].winrate - info_list[i].winrate;
+						if (loss > config.terrible_move_threshold) {
+							continue;
+						}
+					}
+
+					let colour;
+
+					if (i === 0) {
+						colour = "#66aaaa";
+					} else if (loss > config.bad_move_threshold) {
+						colour = "#cccc66";
+					} else {
+						colour = "#66aa66";
+					}
+
+					arrows.push({
+						fn: renderer.draw_arrow_line,
+						colour: colour,
+						x1: x1,
+						y1: y1,
+						x2: x2,
+						y2: y2
+					});
+
+					// We only draw the best ranking for each particular target square...
+
+					if (rankings[info_list[i].move.slice(2, 4)] === undefined) {
+						rankings[info_list[i].move.slice(2, 4)] = {
+							fn: renderer.draw_ranking,
+							colour: colour,
+							rank: i + 1,
+							x: x2,
+							y: y2
+						};
+					}
+				}
+			}
+		};
+
+		arrows.sort((a, b) => {
+			if (Math.abs(a.x2 - a.x1) + Math.abs(a.y2 - a.y1) < Math.abs(b.x2 - b.x1) + Math.abs(b.y2 - b.y1)) {
+				return 1;
+			}
+			if (Math.abs(a.x2 - a.x1) + Math.abs(a.y2 - a.y1) > Math.abs(b.x2 - b.x1) + Math.abs(b.y2 - b.y1)) {
+				return -1;
+			}
+			return 0;
+		});
 
 		renderer.draw_board();
-		renderer.draw_pieces(renderer.pos.active === "w" ? "kqrbnp" : "KQRBNP");	// Enemy pieces
-		renderer.draw_arrows(info_list, "KkQqRrBbPp");								// Arrows of non-knights
-		renderer.draw_pieces(renderer.pos.active === "w" ? "KQRBP" : "kqrbp");		// Friendly non-knights
-		renderer.draw_arrows(info_list, "Nn");										// Arrows of knights
-		renderer.draw_pieces(renderer.pos.active === "w" ? "N" : "n");				// Friendly knights
-		renderer.draw_rankings(info_list);
+
+		// Now it's a case of making the final drawables array have
+		// an aesthetically pleasing order...
+
+		let drawables = [];
+
+		for (let o of pieces) {
+			if (o.colour !== renderer.pos.active) {
+				drawables.push(o);
+			}
+		}
+
+		drawables = drawables.concat(arrows);
+
+		for (let o of pieces) {
+			if (o.colour === renderer.pos.active) {
+				drawables.push(o);
+			}
+		}
+
+		drawables = drawables.concat(Object.values(rankings));
+
+		for (let o of drawables) {
+			o.fn(o);
+		}
+
 		renderer.draw_infobox(info_list);
 	};
 
