@@ -922,9 +922,9 @@ canvas.addEventListener("mousedown", (event) => {
 });
 
 // Setup return key on FEN box...
-document.getElementById("fenbox").onkeydown = function(event) {
+fenbox.onkeydown = function(event) {
 	if (event.keyCode === 13) {
-		renderer.load_fen(document.getElementById("fenbox").value);
+		renderer.load_fen(fenbox.value);
 	}
 };
 
