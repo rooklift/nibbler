@@ -874,6 +874,11 @@ ipcRenderer.on("toggle", (event, cfgvar) => {
 	renderer.draw();
 });
 
+ipcRenderer.on("set", (event, msg) => {
+	config[msg.key] = msg.value;
+	renderer.draw();
+});
+
 canvas.addEventListener("mousedown", (event) => {
 	renderer.click(event);
 });

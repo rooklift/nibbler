@@ -207,6 +207,59 @@ function menu_build() {
 						windows.send("main-window", "call", "reset_leela_cache");
 					}
 				},
+				{
+					type: "separator"
+				},
+				{
+					label: "Move display",
+					submenu: [
+						{
+							label: "Very many",
+							click: () => {
+								windows.send("main-window", "set", {
+									key: "node_display_threshold",
+									value: 0.005
+								});
+							}
+						},
+						{
+							label: "Many",
+							click: () => {
+								windows.send("main-window", "set", {
+									key: "node_display_threshold",
+									value: 0.01
+								});
+							}
+						},
+						{
+							label: "Some",
+							click: () => {
+								windows.send("main-window", "set", {
+									key: "node_display_threshold",
+									value: 0.02
+								});
+							}
+						},
+						{
+							label: "Few",
+							click: () => {
+								windows.send("main-window", "set", {
+									key: "node_display_threshold",
+									value: 0.05
+								});
+							}
+						},
+						{
+							label: "Very few",
+							click: () => {
+								windows.send("main-window", "set", {
+									key: "node_display_threshold",
+									value: 0.1
+								});
+							}
+						}
+					]
+				}		
 			]
 		}
 	];
