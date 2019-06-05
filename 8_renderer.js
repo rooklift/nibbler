@@ -744,15 +744,14 @@ function make_renderer() {
 
 					if (typeof info_list[0].winrate === "number" && typeof info_list[i].winrate === "number") {
 						loss = info_list[0].winrate - info_list[i].winrate;
-						if (loss > config.terrible_move_threshold) {
-							continue;
-						}
 					}
 
 					let colour;
 
 					if (i === 0) {
 						colour = "#66aaaa";
+					} else if (loss > config.terrible_move_threshold) {
+						colour = "#cc6666";
 					} else if (loss > config.bad_move_threshold) {
 						colour = "#cccc66";
 					} else {
