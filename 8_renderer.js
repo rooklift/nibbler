@@ -676,7 +676,7 @@ function make_renderer() {
 		context.stroke();
 	};
 
-	renderer.draw_ranking = (o) => {
+	renderer.draw_ranking = (o) => {		// Does draw the arrowhead
 		let cc = renderer.canvas_coords(o.x, o.y);
 		context.fillStyle = o.colour;
 		context.beginPath();
@@ -692,6 +692,8 @@ function make_renderer() {
 		context.textAlign = "center";
 		context.textBaseline = "middle";
 		context.font = "24px Arial";
+
+		renderer.draw_board();
 
 		let pieces = [];
 
@@ -769,6 +771,8 @@ function make_renderer() {
 			}
 		};
 
+		// It looks best if the longest arrows are drawn underneath. Manhattan distance is good enough.
+
 		arrows.sort((a, b) => {
 			if (Math.abs(a.x2 - a.x1) + Math.abs(a.y2 - a.y1) < Math.abs(b.x2 - b.x1) + Math.abs(b.y2 - b.y1)) {
 				return 1;
@@ -778,11 +782,6 @@ function make_renderer() {
 			}
 			return 0;
 		});
-
-		renderer.draw_board();
-
-		// Now it's a case of making the final drawables array have
-		// an aesthetically pleasing order...
 
 		let drawables = [];
 
