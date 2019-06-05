@@ -4,7 +4,7 @@
 
 It should work - you can now load FEN positions via the FEN box, and most valid PGN files via the Open command.
 
-![Screenshot](https://user-images.githubusercontent.com/16438795/58832441-d4f26980-8646-11e9-8126-0c9b5e53166f.png)
+![Screenshot](https://user-images.githubusercontent.com/16438795/58984287-9a1c3d00-87d0-11e9-9616-9b1e410447e7.png)
 
 # Usage
 
@@ -16,11 +16,11 @@ For full functionality, the required Lc0 version is (I believe) v0.21.0 or later
 
 # About the visualiser
 
-*Nibbler* considers two values when deciding whether to draw a move onto the board: Leela's node count for that move, and the centipawn score. The top move is always drawn, but others are only drawn if they have some fraction of the top move's node count, and if their centipawn score isn't too bad by comparison. Both values can be set in the `config.json` file.
+*Nibbler* draws moves based on how many nodes (visits) they have, compared to the top move; the threshold can be set as `node_display_threshold` in the `config.json` file. Colours are based on estimated winrate, and can be customised.
 
 # Thanks
 
-Thanks for helpful discussions and advice from brinan, coolchess123, Faroe22, jjosh, KillerDucky, mooskagh, Occyroexanthub, Tilps, WCP.
+Thanks for helpful discussions and advice from borg, brinan, coolchess123, crem, Faroe22, jhorthos, jjosh, KillerDucky, mooskagh, Occyroexanthub, Tilps, and WCP.
 
 # TODO
 
