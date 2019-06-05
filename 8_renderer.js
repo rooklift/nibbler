@@ -314,6 +314,10 @@ function make_renderer() {
 
 	renderer.next = () => {
 
+		if (renderer.pos === renderer.user_line_end) {
+			return;
+		}
+
 		// FIXME: if renderer.pos is in the PGN, go to next position in PGN
 		// i.e. do that here before what follows.
 
@@ -352,9 +356,11 @@ function make_renderer() {
 		if (s.length === 4) {
 			let source = Point(s.slice(0, 2));
 			if (renderer.pos.piece(source) === "P" && source.y === 1) {
+				console.log(`Move ${s} was promotion but had no promotion piece set; adjusting to ${s + "q"}`);
 				s += "q";
 			}
 			if (renderer.pos.piece(source) === "p" && source.y === 6) {
+				console.log(`Move ${s} was promotion but had no promotion piece set; adjusting to ${s + "q"}`);
 				s += "q";
 			}
 		}
