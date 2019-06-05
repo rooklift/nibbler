@@ -524,9 +524,15 @@ function make_renderer() {
 		let elements1 = [];
 		let elements2 = [];
 
+		// First, have the moves actually made on the visible board.
+
 		let poslist = renderer.pos.position_list();
 			
 		for (let p of poslist.slice(1)) {		// Start on the first position that has a lastmove
+
+			if (!p.pgn_flag && p.parent.pgn_flag) {
+				elements1.push(`<span class="red">(deviated)</span>`);
+			}
 
 			if (p.parent.active === "w") {
 				elements1.push(`${p.parent.fullmove}.`);
@@ -534,6 +540,8 @@ function make_renderer() {
 
 			elements1.push(p.nice_lastmove());
 		}
+
+		// Next, have the moves to the end of the user line.
 
 		let start_flag = false;
 		for (let p of renderer.user_line_end.position_list()) {
@@ -545,6 +553,10 @@ function make_renderer() {
 
 			if (start_flag === false) {
 				continue;
+			}
+
+			if (!p.pgn_flag && p.parent.pgn_flag) {
+				elements2.push(`<span class="red">(deviated)</span>`);
 			}
 
 			if (p.parent.active === "w") {
