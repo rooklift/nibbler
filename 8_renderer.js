@@ -88,15 +88,15 @@ if (config.path) {
 	});
 
 	scanner = readline.createInterface({
-	    input: exe.stdout,
-	    output: undefined,
-	    terminal: false
+		input: exe.stdout,
+		output: undefined,
+		terminal: false
 	});
 
 	err_scanner = readline.createInterface({
 		input: exe.stderr,
-	    output: undefined,
-	    terminal: false
+		output: undefined,
+		terminal: false
 	});
 
 	err_scanner.on("line", (line) => {
@@ -922,9 +922,16 @@ canvas.addEventListener("mousedown", (event) => {
 });
 
 // Setup return key on FEN box...
-fenbox.onkeydown = function(event) {
-	if (event.keyCode === 13) {
+fenbox.onkeydown = (event) => {
+	if (event.key === "Enter") {
 		renderer.load_fen(fenbox.value);
+	}
+};
+
+// Make escape clear the PGN chooser...
+document.onkeydown = (event) => {
+	if (event.key === "Escape") {
+		pgnchooser.style.display = "none";
 	}
 };
 
