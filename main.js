@@ -57,7 +57,7 @@ function menu_build() {
 					label: "New Game",
 					accelerator: "CommandOrControl+N",
 					click: () => {
-						windows.send("main-window", "new", null);
+						windows.send("main-window", "call", "new");
 					}
 				},
 				{
@@ -71,7 +71,10 @@ function menu_build() {
 							properties: ["openFile"]
 						});
 						if (files && files.length > 0) {
-							windows.send("main-window", "open", files[0]);
+							windows.send("main-window", "call", {
+								fn: "open",
+								args: [files[0]]
+							});
 						}
 					}
 				},
@@ -82,7 +85,10 @@ function menu_build() {
 							properties: ["openFile"]
 						});
 						if (files && files.length > 0) {
-							windows.send("main-window", "validate_pgn", files[0]);
+							windows.send("main-window", "call", {
+								fn: "validate_pgn",
+								args: [files[0]]
+							});
 						}
 					}
 				},
@@ -103,7 +109,7 @@ function menu_build() {
 					label: "Play Best",
 					accelerator: "CommandOrControl+D",
 					click: () => {
-						windows.send("main-window", "play_best", null);
+						windows.send("main-window", "call", "play_best");
 					}
 				},
 				{
@@ -113,28 +119,28 @@ function menu_build() {
 					label: "Root",
 					accelerator: "Home",
 					click: () => {
-						windows.send("main-window", "goto_root", null);
+						windows.send("main-window", "call", "goto_root");
 					}
 				},
 				{
 					label: "End",
 					accelerator: "End",
 					click: () => {
-						windows.send("main-window", "goto_end", null);
+						windows.send("main-window", "call", "goto_end");
 					}
 				},
 				{
 					label: "Backward",
 					accelerator: "Left",
 					click: () => {
-						windows.send("main-window", "prev", null);
+						windows.send("main-window", "call", "prev");
 					}
 				},
 				{
 					label: "Forward",
 					accelerator: "Right",
 					click: () => {
-						windows.send("main-window", "next", null);
+						windows.send("main-window", "call", "next");
 					}
 				},
 				{
@@ -144,13 +150,23 @@ function menu_build() {
 					label: "Return to PGN main line",
 					accelerator: "CommandOrControl+R",
 					click: () => {
-						windows.send("main-window", "return_to_pgn", null);
+						windows.send("main-window", "call", "return_to_pgn");
 					}
+				},
+				{
+					type: "separator"
 				},
 				{
 					label: "Show PGN games list",
 					click: () => {
-						windows.send("main-window", "display_pgn_chooser", null);
+						windows.send("main-window", "call", "show_pgn_chooser");
+					}
+				},
+				{
+					label: "Hide PGN games list",
+					accelerator: "Escape",
+					click: () => {
+						windows.send("main-window", "call", "hide_pgn_chooser");
 					}
 				},
 				{
@@ -172,14 +188,14 @@ function menu_build() {
 					label: "Go",
 					accelerator: "CommandOrControl+G",
 					click: () => {
-						windows.send("main-window", "go", null);
+						windows.send("main-window", "call", "go");
 					}
 				},
 				{
 					label: "Halt",
 					accelerator: "CommandOrControl+H",
 					click: () => {
-						windows.send("main-window", "halt", null);
+						windows.send("main-window", "call", "halt");
 					}
 				},
 				{
@@ -188,7 +204,7 @@ function menu_build() {
 				{
 					label: "Reset Lc0 cache",
 					click: () => {
-						windows.send("main-window", "reset_leela_cache", null);
+						windows.send("main-window", "call", "reset_leela_cache");
 					}
 				},
 			]

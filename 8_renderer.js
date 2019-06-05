@@ -239,7 +239,7 @@ function make_renderer() {
 	};
 
 	renderer.choose_pgn = (n) => {
-		pgnchooser.style.display = "none";
+		renderer.hide_pgn_chooser();
 		if (renderer.pgn_choices && n >= 0 && n < renderer.pgn_choices.length) {
 			renderer.load_pgn_object(renderer.pgn_choices[n]);
 		}
@@ -257,11 +257,11 @@ function make_renderer() {
 			}
 		} else {
 			renderer.pgn_choices = new_pgn_choices;			// Setting it to a multi-value array is "always" OK.
-			renderer.display_pgn_chooser();					// Now we need to have the user choose a game.
+			renderer.show_pgn_chooser();					// Now we need to have the user choose a game.
 		}
 	};
 
-	renderer.display_pgn_chooser = () => {
+	renderer.show_pgn_chooser = () => {
 
 		if (!renderer.pgn_choices) {
 			alert("No PGN loaded");
@@ -304,6 +304,10 @@ function make_renderer() {
 
 		pgnchooser.innerHTML = lines.join("<br>");
 		pgnchooser.style.display = "block";
+	};
+
+	renderer.hide_pgn_chooser = () => {
+		pgnchooser.style.display = "none";
 	};
 
 	renderer.validate_pgn = (filename) => {
@@ -832,6 +836,10 @@ function make_renderer() {
 		renderer.draw_infobox(info_list);
 	};
 
+	renderer.log = (a, b, c, d) => {
+		console.log(a, b, c, d);
+	};
+
 	renderer.draw_loop = () => {
 		renderer.draw();
 		setTimeout(renderer.draw_loop, 500);
@@ -850,66 +858,15 @@ if (config && config.warn_filename) {
 	renderer.err_receive("");
 }
 
-ipcRenderer.on("go", () => {
-	pgnchooser.style.display = "none";
-	renderer.go();
-});
-
-ipcRenderer.on("halt", () => {
-	pgnchooser.style.display = "none";
-	renderer.halt();
-});
-
-ipcRenderer.on("reset_leela_cache", () => {
-	renderer.reset_leela_cache();
-});
-
-ipcRenderer.on("play_best", () => {
-	pgnchooser.style.display = "none";
-	renderer.play_best();
-});
-
-ipcRenderer.on("new", () => {
-	pgnchooser.style.display = "none";
-	renderer.new();
-});
-
-ipcRenderer.on("display_pgn_chooser", () => {
-	renderer.display_pgn_chooser();
-});
-
-ipcRenderer.on("open", (event, filename) => {
-	pgnchooser.style.display = "none";
-	renderer.open(filename);
-});
-
-ipcRenderer.on("validate_pgn", (event, filename) => {
-	renderer.validate_pgn(filename);
-});
-
-ipcRenderer.on("prev", () => {
-	pgnchooser.style.display = "none";
-	renderer.prev();
-});
-
-ipcRenderer.on("next", () => {
-	pgnchooser.style.display = "none";
-	renderer.next();
-});
-
-ipcRenderer.on("goto_root", () => {
-	pgnchooser.style.display = "none";
-	renderer.goto_root();
-});
-
-ipcRenderer.on("goto_end", () => {
-	pgnchooser.style.display = "none";
-	renderer.goto_end();
-});
-
-ipcRenderer.on("return_to_pgn", () => {
-	pgnchooser.style.display = "none";
-	renderer.return_to_pgn();
+ipcRenderer.on("call", (event, msg) => {
+	if (typeof msg === "string") {
+		renderer[msg]();
+	} else if (typeof msg === "object" && msg.fn && msg.args) {
+		renderer[msg.fn](...msg.args);
+	} else {
+		console.log("Bad call, msg was...");
+		console.log(msg);
+	}
 });
 
 ipcRenderer.on("toggle", (event, cfgvar) => {
@@ -923,15 +880,9 @@ canvas.addEventListener("mousedown", (event) => {
 
 // Setup return key on FEN box...
 fenbox.onkeydown = (event) => {
+	console.log(event);
 	if (event.key === "Enter") {
 		renderer.load_fen(fenbox.value);
-	}
-};
-
-// Make escape clear the PGN chooser...
-document.onkeydown = (event) => {
-	if (event.key === "Escape") {
-		pgnchooser.style.display = "none";
 	}
 };
 
