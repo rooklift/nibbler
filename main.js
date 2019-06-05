@@ -293,8 +293,8 @@ function about_move_display() {
 Nibbler decides whether to display a move based on how many visits it \
 has, compared to the best move. Exactly how many moves will be \
 displayed depends on the position; positions with more viable moves \
-will display more. Sometimes different settings of this option will \
-still display the same number of moves.`;
+will display more. Sometimes different settings will display the same \
+number of moves.`;
 
 	alert(s);
 }
