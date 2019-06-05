@@ -242,8 +242,6 @@ function make_renderer() {
 
 	renderer.open = (filename) => {
 
-		renderer.halt();
-
 		let buf = fs.readFileSync(filename);				// i.e. binary buffer object
 		let new_pgn_choices = pre_parse_pgn(buf);
 
@@ -264,6 +262,8 @@ function make_renderer() {
 			alert("No PGN loaded");
 			return;
 		}
+
+		renderer.halt();			// It's lame to run the GPU when we're clearly switching games.
 
 		let lines = [];
 
@@ -839,18 +839,22 @@ if (config && config.warn_filename) {
 }
 
 ipcRenderer.on("go", () => {
+	pgnchooser.style.display = "none";
 	renderer.go();
 });
 
 ipcRenderer.on("halt", () => {
+	pgnchooser.style.display = "none";
 	renderer.halt();
 });
 
 ipcRenderer.on("play_best", () => {
+	pgnchooser.style.display = "none";
 	renderer.play_best();
 });
 
 ipcRenderer.on("new", () => {
+	pgnchooser.style.display = "none";
 	renderer.new();
 });
 
@@ -859,6 +863,7 @@ ipcRenderer.on("display_pgn_chooser", () => {
 });
 
 ipcRenderer.on("open", (event, filename) => {
+	pgnchooser.style.display = "none";
 	renderer.open(filename);
 });
 
@@ -867,22 +872,27 @@ ipcRenderer.on("validate_pgn", (event, filename) => {
 });
 
 ipcRenderer.on("prev", () => {
+	pgnchooser.style.display = "none";
 	renderer.prev();
 });
 
 ipcRenderer.on("next", () => {
+	pgnchooser.style.display = "none";
 	renderer.next();
 });
 
 ipcRenderer.on("goto_root", () => {
+	pgnchooser.style.display = "none";
 	renderer.goto_root();
 });
 
 ipcRenderer.on("goto_end", () => {
+	pgnchooser.style.display = "none";
 	renderer.goto_end();
 });
 
 ipcRenderer.on("return_to_pgn", () => {
+	pgnchooser.style.display = "none";
 	renderer.return_to_pgn();
 });
 
