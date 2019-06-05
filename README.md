@@ -18,6 +18,10 @@ For full functionality, the required Lc0 version is (I believe) v0.21.0 or later
 
 *Nibbler* considers two values when deciding whether to draw a move onto the board: Leela's node count for that move, and the centipawn score. The top move is always drawn, but others are only drawn if they have some fraction of the top move's node count, and if their centipawn score isn't too bad by comparison. Both values can be set in the `config.json` file.
 
+# Thanks
+
+Thanks for helpful discussions and advice from brinan, coolchess123, Faroe22, jjosh, KillerDucky, mooskagh, Occyroexanthub, Tilps, WCP.
+
 # TODO
 
 * Some tree structure of user moves.
