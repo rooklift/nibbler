@@ -20,10 +20,6 @@ const pgnchooser = document.getElementById("pgnchooser");
 
 const context = canvas.getContext("2d");
 
-const light = "#dadada";
-const dark = "#b4b4b4";
-const act = "#cc9966";
-
 // Global variables.................................................
 
 let config = {};

@@ -11,12 +11,16 @@
 	"board_size": 640,
 	"mainline_height": 108,
 
-	"rank_font": "24px Arial",
-
 	"show_n": true,
 	"show_p": true,
 	"show_pv": true,
 	"show_winrate": true,
+
+	"rank_font": "24px Arial",
+
+	"light_square": "#dadada",
+	"dark_square": "#b4b4b4",
+	"active_square": "#cc9966",
 
 	"best_colour": "#66aaaa",
 	"good_colour": "#66aa66",

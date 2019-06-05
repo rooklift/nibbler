@@ -49,15 +49,21 @@ try {
 assign_without_overwrite(config, {
 	"options": {},
 
+	"width": 1280,
+	"height": 840,
 	"board_size": 640,
 	"mainline_height": 108,
-
-	"rank_font": "24px Arial",
 
 	"show_n": true,
 	"show_p": true,
 	"show_pv": true,
 	"show_winrate": true,
+
+	"rank_font": "24px Arial",
+
+	"light_square": "#dadada",
+	"dark_square": "#b4b4b4",
+	"active_square": "#cc9966",
 
 	"best_colour": "#66aaaa",
 	"good_colour": "#66aa66",
@@ -671,15 +677,15 @@ function make_renderer() {
 		for (let x = 0; x < 8; x++) {
 			for (let y = 0; y < 8; y++) {
 				if (x % 2 !== y % 2) {
-					context.fillStyle = dark;
+					context.fillStyle = config.dark_square;
 				} else {
-					context.fillStyle = light;
+					context.fillStyle = config.light_square;
 				}
 
 				let cc = renderer.canvas_coords(x, y);
 
 				if (renderer.active_square === Point(x, y)) {
-					context.fillStyle = act;
+					context.fillStyle = config.active_square;
 				}
 
 				context.fillRect(cc.x1, cc.y1, cc.rss, cc.rss);
