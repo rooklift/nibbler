@@ -892,6 +892,14 @@ const position_prototype = {
 		return list;
 	},
 
+	root: function() {
+		let node = this;
+		while (node.parent) {
+			node = node.parent;
+		}
+		return node;
+	},
+
 	initial_fen: function() {
 
 		// When sending the engine the position, the UCI specs involve sending the initial FEN

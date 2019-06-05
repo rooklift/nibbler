@@ -155,13 +155,12 @@ function make_renderer() {
 	renderer.info_table = NewInfoTable();
 	renderer.squares = [];							// Info about clickable squares.
 	renderer.active_square = null;					// Square clicked by user.
-	renderer.running = false;						// Whether to send "go" to the engine after move, undo, etc.
+	renderer.running = false;						// Whether to resend "go" to the engine after move, undo, etc.
 	renderer.ever_received_info = false;			// When false, we write stderr log instead of move info.
 	renderer.stderr_log = "";						// All output received from the engine's stderr.
 	renderer.infobox_string = "";					// Just to help not redraw the infobox when not needed.
-	renderer.pgn_choices = null;
-
-	renderer.user_line_end = renderer.pos;
+	renderer.pgn_choices = null;					// Made into a temporary array when displaying the PGN choice.
+	renderer.user_line_end = renderer.pos;			// The terminal position of the user's variation.
 
 	fenbox.value = renderer.pos.fen();
 
@@ -199,6 +198,7 @@ function make_renderer() {
 			return;
 		}
 
+		renderer.user_line_end = renderer.pos;
 		renderer.game_changed();
 	};
 
@@ -314,24 +314,33 @@ function make_renderer() {
 
 	renderer.next = () => {
 
-		// FIXME: if renderer.pos is in the PGN, go to next pos in PGN line
+		// FIXME: if renderer.pos is in the PGN, go to next position in PGN
+		// i.e. do that here before what follows.
 
-		if (renderer.pos !== renderer.user_line_end) {
-			for (let p of renderer.user_line_end.position_list()) {
-				if (p.parent === renderer.pos) {
-					renderer.pos = p;
-					renderer.pos_changed();
-					return;
-				}
+		for (let p of renderer.user_line_end.position_list()) {
+			if (p.parent === renderer.pos) {
+				renderer.pos = p;
+				renderer.pos_changed();
+				return;
 			}
 		}
 	};
 
-	renderer.move_stays_on_user_line = (s) => {
+	renderer.position_is_on_user_line = (p) => {
 
-		if (renderer.pos === renderer.user_line_end) {
-			return false;
+		// Note that this uses an identity comparison, i.e. is the object p
+		// an actual ancestor of user_line_end? A different object with the
+		// same board position fails the test.
+
+		for (let foo of renderer.user_line_end.position_list()) {
+			if (foo === p) {
+				return true;
+			}
 		}
+		return false;
+	};
+
+	renderer.move_stays_on_user_line = (s) => {
 
 		for (let p of renderer.user_line_end.position_list()) {
 			if (p.parent === renderer.pos) {
@@ -346,12 +355,19 @@ function make_renderer() {
 		return false;
 	};
 
-	renderer.pgn_end = () => {		// FIXME
-		renderer.pos = renderer.user_line_end;
-		renderer.pos_changed();
-	};
-
 	renderer.move = (s) => {
+
+		// Add promotion if needed and not present...
+
+		if (s.length === 4) {
+			let source = Point(s.slice(0, 2));
+			if (renderer.pos.piece(source) === "P" && source.y === 1) {
+				s += "q";
+			}
+			if (renderer.pos.piece(source) === "p" && source.y === 6) {
+				s += "q";
+			}
+		}
 
 		// FIXME: if current position is in PGN, and move stays in PGN, go to the next PGN position
 
