@@ -157,9 +157,12 @@ function make_renderer() {
 	renderer.stderr_log = "";						// All output received from the engine's stderr.
 	renderer.infobox_string = "";					// Just to help not redraw the infobox when not needed.
 	renderer.pgn_choices = null;					// Made into a temporary array when displaying the PGN choice.
-
 	renderer.pgn_line_end = null;					// The terminal position of the loaded PGN, if any.
-	renderer.user_line_end = null;					// The terminal position of the user's variation. Never actually null (it's set soon).
+
+	// The following are never actually null (i.e. they're set immediately):
+
+	renderer.user_line_end = null;
+	renderer.pos = null;
 
 	renderer.square_size = () => {
 		return config.board_size / 8;
@@ -206,8 +209,6 @@ function make_renderer() {
 
 	renderer.load_pgn_object = (o) => {
 
-		renderer.pgn_choices = null;
-
 		let final_pos;
 
 		try {
@@ -241,35 +242,42 @@ function make_renderer() {
 		renderer.halt();
 
 		let buf = fs.readFileSync(filename);		// i.e. binary buffer object
-		let pgn_list = pre_parse_pgn(buf);
+		renderer.pgn_choices = pre_parse_pgn(buf);
 
-		if (pgn_list.length === 1) {
-			renderer.load_pgn_object(pgn_list[0]);
+		if (renderer.pgn_choices.length === 1) {
+			renderer.load_pgn_object(renderer.pgn_choices[0]);
 			return;
 		}
 
-		// There are multiple games in the file, so we write a list to our hidden
-		// pgnchooser div, and unhide it so the user can click one.
+		// There are multiple games in the file...
 		
-		renderer.pgn_choices = pgn_list;
+		renderer.display_pgn_chooser();
+	};
+
+	renderer.display_pgn_chooser = () => {
+
+		if (!renderer.pgn_choices) {
+			alert("No PGN loaded");
+			return;
+		}
 
 		let lines = [];
 
 		lines.push("&nbsp;");
 
-		let max_ordinal_length = pgn_list.length.toString().length;
+		let max_ordinal_length = renderer.pgn_choices.length.toString().length;
 		let padding = "";
 		for (let n = 0; n < max_ordinal_length - 1; n++) {
 			padding += "&nbsp;";
 		}
 
-		for (let n = 0; n < pgn_list.length; n++) {
+		for (let n = 0; n < renderer.pgn_choices.length; n++) {
 
 			if (n === 9 || n === 99 || n === 999 || n === 9999 || n === 99999 || n === 999999) {
 				padding = padding.slice(0, padding.length - 6);
 			}
 
-			let p = pgn_list[n];
+			let p = renderer.pgn_choices[n];
 
 			let s;
 
@@ -840,6 +848,10 @@ ipcRenderer.on("play_best", () => {
 
 ipcRenderer.on("new", () => {
 	renderer.new();
+});
+
+ipcRenderer.on("display_pgn_chooser", () => {
+	renderer.display_pgn_chooser();
 });
 
 ipcRenderer.on("open", (event, filename) => {

@@ -61,6 +61,15 @@ function menu_build() {
 					}
 				},
 				{
+					type: "separator"
+				},
+				{
+					label: "Show all games in current PGN",
+					click: () => {
+						windows.send("main-window", "display_pgn_chooser", null);
+					}
+				},
+				{
 					label: "Open PGN...",
 					accelerator: "CommandOrControl+O",
 					click: () => {
