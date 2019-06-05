@@ -126,8 +126,6 @@ setoption("VerboseMoveStats", true);		// Required for LogLiveStats to work.
 setoption("LogLiveStats", true);			// "Secret" Lc0 command.
 setoption("MultiPV", 500);
 
-send("ucinewgame");
-
 // ------------------------------------------------------------------------------------------------
 
 let images = Object.create(null);
@@ -150,20 +148,18 @@ for (let c of Array.from("KkQqRrBbNnPp")) {
 function make_renderer() {
 
 	let renderer = Object.create(null);
-
-	renderer.pos = LoadFEN("rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1");
 	renderer.info_table = NewInfoTable();
+
 	renderer.squares = [];							// Info about clickable squares.
 	renderer.active_square = null;					// Square clicked by user.
-	renderer.running = false;						// Whether to send "go" to the engine after move, undo, etc.
+	renderer.running = false;						// Whether to resend "go" to the engine after move, undo, etc.
 	renderer.ever_received_info = false;			// When false, we write stderr log instead of move info.
 	renderer.stderr_log = "";						// All output received from the engine's stderr.
 	renderer.infobox_string = "";					// Just to help not redraw the infobox when not needed.
-	renderer.pgn_choices = null;
+	renderer.pgn_choices = null;					// Made into a temporary array when displaying the PGN choice.
 
-	renderer.pgn_line = null;
-
-	fenbox.value = renderer.pos.fen();
+	renderer.pgn_line_end = null;					// The terminal position of the loaded PGN, if any.
+	renderer.user_line_end = null;					// The terminal position of the user's variation. Never actually null (it's set soon).
 
 	renderer.square_size = () => {
 		return config.board_size / 8;
@@ -199,7 +195,8 @@ function make_renderer() {
 			return;
 		}
 
-		renderer.pgn_line = null;
+		renderer.pgn_line_end = null;
+		renderer.user_line_end = renderer.pos;
 		renderer.game_changed();
 	};
 
@@ -220,16 +217,16 @@ function make_renderer() {
 			return;
 		}
 
-		renderer.pgn_line = final_pos.position_list();
-		renderer.pos = renderer.pgn_line[0];
+		// Icky way of storing the fact that a position is on the PGN...
 
-		// Cheap hack to let us see if and where we are on the PGN line...
-
-		for (let n = 0; n < renderer.pgn_line.length; n++) {
-			renderer.pgn_line[n].pgn_index = n;
+		for (let p of final_pos.position_list()) {
+			p.pgn_flag = true;
 		}
 
-		renderer.game_changed();		// Do this after the above since it uses the info.
+		renderer.pgn_line_end = final_pos;
+		renderer.user_line_end = final_pos;
+		renderer.pos = final_pos.root();
+		renderer.game_changed();
 	};
 
 	renderer.choose_pgn = (n) => {
@@ -322,69 +319,104 @@ function make_renderer() {
 
 	renderer.next = () => {
 
-		// Currently, next only makes sense if we're on the PGN line.
-		// Ideally we would also remember at least 1 other line.
-
-		if (!renderer.pgn_line) {
+		if (renderer.pos === renderer.user_line_end) {
 			return;
 		}
 
-		if (renderer.pos.pgn_index === undefined) {
-			return;
-		}
+		// FIXME: if renderer.pos is in the PGN, go to next position in PGN
+		// i.e. do that here before what follows.
 
-		let index = renderer.pos.pgn_index;
-		let next_pos = renderer.pgn_line[index + 1];
-
-		if (next_pos) {
-			renderer.pos = next_pos;
-			renderer.pos_changed();
+		for (let p of renderer.user_line_end.position_list()) {
+			if (p.parent === renderer.pos) {
+				renderer.pos = p;
+				renderer.pos_changed();
+				return;
+			}
 		}
 	};
 
-	renderer.pgn_root = () => {
+	renderer.goto_root = () => {
+		renderer.pos = renderer.pos.root();
+		renderer.pos_changed();
+	};
 
-		if (!renderer.pgn_line) {
+	renderer.goto_end = () => {
+		renderer.pos = renderer.user_line_end;
+		renderer.pos_changed();
+	};
+
+	renderer.return_to_pgn = () => {
+
+		if (!renderer.pgn_line_end) {
+			alert("No PGN loaded");
 			return;
 		}
 
-		let root = renderer.pos.position_list()[0];
-		if (renderer.pos !== root) {
-			renderer.pos = root;
-			renderer.pos_changed();
+		let node = renderer.pos;
+
+		while (!node.pgn_flag) {
+			if (node.parent === null) {
+				break;
+			}
+			node = node.parent;
 		}
-	};
 
-	renderer.pgn_end = () => {
-
-		if (!renderer.pgn_line) {
+		if (node.pgn_flag) {
+			renderer.user_line_end = renderer.pgn_line_end;
+			renderer.pos = node;
+			renderer.pos_changed();
 			return;
 		}
 
-		let end = renderer.pgn_line[renderer.pgn_line.length - 1];
-		if (renderer.pos !== end) {
-			renderer.pos = end;
-			renderer.pos_changed();
-		}
+		alert("Couldn't rejoin the PGN. This is a bug, tell the author how you achieved it.");
 	};
 
-	renderer.move = (s) => {
+	renderer.move_stays_on_user_line = (s) => {
 
-		let advanced_pgn_flag = false;
-
-		if (renderer.pos.pgn_index !== undefined) {
-			if (renderer.pgn_line.length > renderer.pos.pgn_index + 1) {
-				if (renderer.pgn_line[renderer.pos.pgn_index + 1].lastmove === s) {
-					advanced_pgn_flag = true;
-					renderer.pos = renderer.pgn_line[renderer.pos.pgn_index + 1];
+		for (let p of renderer.user_line_end.position_list()) {
+			if (p.parent === renderer.pos) {
+				if (p.lastmove === s) {
+					return true;
+				} else {
+					return false
 				}
 			}
 		}
 
-		if (advanced_pgn_flag === false) {
-			renderer.pos = renderer.pos.move(s);
+		return false;
+	};
+
+	renderer.move = (s) => {
+
+		// Add promotion if needed and not present...
+
+		if (s.length === 4) {
+			let source = Point(s.slice(0, 2));
+			if (renderer.pos.piece(source) === "P" && source.y === 1) {
+				console.log(`Move ${s} was promotion but had no promotion piece set; adjusting to ${s + "q"}`);
+				s += "q";
+			}
+			if (renderer.pos.piece(source) === "p" && source.y === 6) {
+				console.log(`Move ${s} was promotion but had no promotion piece set; adjusting to ${s + "q"}`);
+				s += "q";
+			}
 		}
 
+		// FIXME: if current position is in PGN, and move stays in PGN, go to the next PGN position
+
+		if (renderer.move_stays_on_user_line(s)) {
+			for (let p of renderer.user_line_end.position_list()) {
+				if (p.parent === renderer.pos) {
+					renderer.pos = p;
+					renderer.pos_changed();
+					return;
+				}
+			}
+			console.log("Shouldn't get here.");
+		}
+
+		renderer.pos = renderer.pos.move(s);
+		renderer.user_line_end = renderer.pos;
 		renderer.pos_changed();
 	};
 
@@ -493,22 +525,8 @@ function make_renderer() {
 		let elements2 = [];
 
 		let poslist = renderer.pos.position_list();
-		let on_pgn = renderer.pgn_line !== null;
 			
 		for (let p of poslist.slice(1)) {		// Start on the first position that has a lastmove
-
-			if (p.pgn_index === undefined && on_pgn) {
-
-				// This is the first step off the main line.
-				// Either we continued after the PGN ended, or we deviated beforehand.
-
-				if (p.parent && p.parent.pgn_index === renderer.pgn_line.length - 1) {
-					elements1.push(`<span class="red">(PGN ends)</span>`);
-				} else {
-					elements1.push(`<span class="red">(deviated)</span>`);
-				}
-				on_pgn = false;
-			}
 
 			if (p.parent.active === "w") {
 				elements1.push(`${p.parent.fullmove}.`);
@@ -517,16 +535,23 @@ function make_renderer() {
 			elements1.push(p.nice_lastmove());
 		}
 
-		if (on_pgn) {
+		let start_flag = false;
+		for (let p of renderer.user_line_end.position_list()) {
 
-			for (let p of renderer.pgn_line.slice(renderer.pos.pgn_index + 1)) {
-
-				if (p.parent.active === "w") {
-					elements2.push(`${p.parent.fullmove}.`);
-				}
-
-				elements2.push(p.nice_lastmove());
+			if (p === renderer.pos) {
+				start_flag = true;
+				continue;
 			}
+
+			if (start_flag === false) {
+				continue;
+			}
+
+			if (p.parent.active === "w") {
+				elements2.push(`${p.parent.fullmove}.`);
+			}
+
+			elements2.push(p.nice_lastmove());
 		}
 
 		let s1 = elements1.join(" ");		// Possibly empty string
@@ -752,6 +777,7 @@ function make_renderer() {
 		setTimeout(renderer.draw_loop, 500);
 	};
 
+	renderer.load_fen("rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1");
 	return renderer;
 }
 
@@ -788,20 +814,24 @@ ipcRenderer.on("validate_pgn", (event, filename) => {
 	renderer.validate_pgn(filename);
 });
 
-ipcRenderer.on("next", (event) => {
-	renderer.next();
-});
-
-ipcRenderer.on("prev", (event) => {
+ipcRenderer.on("prev", () => {
 	renderer.prev();
 });
 
-ipcRenderer.on("pgn_root", (event) => {
-	renderer.pgn_root();
+ipcRenderer.on("next", () => {
+	renderer.next();
 });
 
-ipcRenderer.on("pgn_end", (event) => {
-	renderer.pgn_end();
+ipcRenderer.on("goto_root", () => {
+	renderer.goto_root();
+});
+
+ipcRenderer.on("goto_end", () => {
+	renderer.goto_end();
+});
+
+ipcRenderer.on("return_to_pgn", () => {
+	renderer.return_to_pgn();
 });
 
 ipcRenderer.on("toggle", (event, cfgvar) => {

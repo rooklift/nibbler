@@ -873,7 +873,7 @@ const position_prototype = {
 	history: function() {
 		let list = [];
 		let node = this;
-		while (node.parent !== null) {		// no parent implies no lastmove
+		while (node.parent) {			// no parent implies no lastmove
 			list.push(node.lastmove);
 			node = node.parent;
 		}
@@ -884,12 +884,29 @@ const position_prototype = {
 	position_list: function() {
 		let list = [];
 		let node = this;
-		while (node !== null) {
+		while (node) {
 			list.push(node);
 			node = node.parent;
 		}
 		list.reverse();
 		return list;
+	},
+
+	root: function() {
+		let node = this;
+		while (node.parent) {
+			node = node.parent;
+		}
+		return node;
+	},
+
+	has_ancestor: function(other) {
+		let node = this;
+		while (node.parent) {
+			if (node.parent === other) return true;
+			node = node.parent;
+		}
+		return false;
 	},
 
 	initial_fen: function() {

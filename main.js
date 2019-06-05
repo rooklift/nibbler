@@ -107,6 +107,20 @@ function menu_build() {
 					type: "separator"
 				},
 				{
+					label: "Root",
+					accelerator: "Home",
+					click: () => {
+						windows.send("main-window", "goto_root", null);
+					}
+				},
+				{
+					label: "End",
+					accelerator: "End",
+					click: () => {
+						windows.send("main-window", "goto_end", null);
+					}
+				},
+				{
 					label: "Backward",
 					accelerator: "Left",
 					click: () => {
@@ -114,7 +128,7 @@ function menu_build() {
 					}
 				},
 				{
-					label: "Forward in PGN",
+					label: "Forward",
 					accelerator: "Right",
 					click: () => {
 						windows.send("main-window", "next", null);
@@ -124,17 +138,10 @@ function menu_build() {
 					type: "separator"
 				},
 				{
-					label: "PGN root",
-					accelerator: "Home",
+					label: "Return to PGN",
+					accelerator: "CommandOrControl+R",
 					click: () => {
-						windows.send("main-window", "pgn_root", null);
-					}
-				},
-				{
-					label: "PGN end",
-					accelerator: "End",
-					click: () => {
-						windows.send("main-window", "pgn_end", null);
+						windows.send("main-window", "return_to_pgn", null);
 					}
 				},
 				{
