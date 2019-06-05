@@ -214,6 +214,15 @@ function menu_build() {
 					label: "Move display",
 					submenu: [
 						{
+							label: "All",
+							click: () => {
+								windows.send("main-window", "set", {
+									key: "node_display_threshold",
+									value: 0
+								});
+							}
+						},
+						{
 							label: "Very many",
 							click: () => {
 								windows.send("main-window", "set", {
@@ -257,6 +266,15 @@ function menu_build() {
 									value: 0.1
 								});
 							}
+						},
+						{
+							type: "separator"
+						},
+						{
+							label: "About this option",
+							click: () => {
+								about_move_display();
+							}
 						}
 					]
 				}		
@@ -266,4 +284,17 @@ function menu_build() {
 
 	const menu = electron.Menu.buildFromTemplate(template);
 	electron.Menu.setApplicationMenu(menu);
+}
+
+function about_move_display() {
+
+	let s = `
+
+Nibbler decides whether to display a move based on how many visits it \
+has, compared to the best move. Exactly how many moves will be \
+displayed depends on the position; positions with more viable moves \
+will display more. Sometimes different settings of this option will \
+still display the same number of moves.`;
+
+	alert(s);
 }
