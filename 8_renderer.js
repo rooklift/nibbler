@@ -407,7 +407,7 @@ function make_renderer() {
 				if (p.lastmove === s) {
 					return true;
 				} else {
-					return false
+					return false;
 				}
 			}
 		}
@@ -805,7 +805,7 @@ function make_renderer() {
 					}
 				}
 			}
-		};
+		}
 
 		// It looks best if the longest arrows are drawn underneath. Manhattan distance is good enough.
 
