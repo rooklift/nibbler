@@ -209,13 +209,15 @@ function make_renderer() {
 
 	renderer.load_pgn_object = (o) => {
 
+		// Returns true or false - whether this actually succeeded.
+
 		let final_pos;
 
 		try {
 			final_pos = LoadPGN(o.movetext);
 		} catch (err) {
 			alert(err);
-			return;
+			return false;
 		}
 
 		// Icky way of storing the fact that a position is on the PGN...
@@ -228,6 +230,7 @@ function make_renderer() {
 		renderer.user_line_end = final_pos;
 		renderer.pos = final_pos.root();
 		renderer.game_changed();
+		return true;
 	};
 
 	renderer.choose_pgn = (n) => {
@@ -241,17 +244,18 @@ function make_renderer() {
 
 		renderer.halt();
 
-		let buf = fs.readFileSync(filename);		// i.e. binary buffer object
-		renderer.pgn_choices = pre_parse_pgn(buf);
+		let buf = fs.readFileSync(filename);				// i.e. binary buffer object
+		let new_pgn_choices = pre_parse_pgn(buf);
 
-		if (renderer.pgn_choices.length === 1) {
-			renderer.load_pgn_object(renderer.pgn_choices[0]);
-			return;
+		if (new_pgn_choices.length === 1) {
+			let success = renderer.load_pgn_object(new_pgn_choices[0]);
+			if (success) {
+				renderer.pgn_choices = new_pgn_choices;		// We only want to set this to a 1 value array if it actually worked.
+			}
+		} else {
+			renderer.pgn_choices = new_pgn_choices;			// Setting it to a multi-value array is "always" OK.
+			renderer.display_pgn_chooser();					// Now we need to have the user choose a game.
 		}
-
-		// There are multiple games in the file...
-		
-		renderer.display_pgn_chooser();
 	};
 
 	renderer.display_pgn_chooser = () => {
