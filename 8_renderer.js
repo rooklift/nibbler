@@ -57,6 +57,11 @@ assign_without_overwrite(config, {
 	"show_pv": true,
 	"show_winrate": true,
 
+	"best_colour": "#66aaaa",
+	"good_colour": "#66aa66",
+	"bad_colour": "#cccc66",
+	"terrible_colour": "#cc6666",
+
 	"bad_move_threshold": 0.02,
 	"terrible_move_threshold": 0.04,
 	
@@ -757,13 +762,13 @@ function make_renderer() {
 					let colour;
 
 					if (i === 0) {
-						colour = "#66aaaa";
+						colour = config.best_colour;
 					} else if (loss > config.terrible_move_threshold) {
-						colour = "#cc6666";
+						colour = config.terrible_colour;
 					} else if (loss > config.bad_move_threshold) {
-						colour = "#cccc66";
+						colour = config.bad_colour;
 					} else {
-						colour = "#66aa66";
+						colour = config.good_colour;
 					}
 
 					arrows.push({
