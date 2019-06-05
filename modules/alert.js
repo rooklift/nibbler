@@ -24,6 +24,9 @@ function alert_renderer(msg) {
 }
 
 module.exports = (msg) => {
+	if (msg instanceof Error) {
+		msg = msg.toString();
+	}
 	if (typeof(msg) === "object") {
 		msg = object_to_string(msg);
 	}
