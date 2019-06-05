@@ -900,6 +900,15 @@ const position_prototype = {
 		return node;
 	},
 
+	has_ancestor: function(other) {
+		let node = this;
+		while (node.parent) {
+			if (node.parent === other) return true;
+			node = node.parent;
+		}
+		return false;
+	},
+
 	initial_fen: function() {
 
 		// When sending the engine the position, the UCI specs involve sending the initial FEN

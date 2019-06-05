@@ -327,17 +327,7 @@ function make_renderer() {
 	};
 
 	renderer.position_is_on_user_line = (p) => {
-
-		// Note that this uses an identity comparison, i.e. is the object p
-		// an actual ancestor of user_line_end? A different object with the
-		// same board position fails the test.
-
-		for (let foo of renderer.user_line_end.position_list()) {
-			if (foo === p) {
-				return true;
-			}
-		}
-		return false;
+		return renderer.user_line_end === p || renderer.user_line_end.has_ancestor(p);
 	};
 
 	renderer.move_stays_on_user_line = (s) => {
