@@ -52,6 +52,8 @@ assign_without_overwrite(config, {
 	"board_size": 640,
 	"mainline_height": 108,
 
+	"rank_font": "24px Arial",
+
 	"show_n": true,
 	"show_p": true,
 	"show_pv": true,
@@ -720,7 +722,7 @@ function make_renderer() {
 		context.lineWidth = 8;
 		context.textAlign = "center";
 		context.textBaseline = "middle";
-		context.font = "24px Arial";
+		context.font = config.rank_font;
 
 		renderer.draw_board();
 

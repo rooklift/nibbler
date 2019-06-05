@@ -11,6 +11,8 @@
 	"board_size": 640,
 	"mainline_height": 108,
 
+	"rank_font": "24px Arial",
+
 	"show_n": true,
 	"show_p": true,
 	"show_pv": true,
