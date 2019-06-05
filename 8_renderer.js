@@ -126,8 +126,6 @@ setoption("VerboseMoveStats", true);		// Required for LogLiveStats to work.
 setoption("LogLiveStats", true);			// "Secret" Lc0 command.
 setoption("MultiPV", 500);
 
-send("ucinewgame");
-
 // ------------------------------------------------------------------------------------------------
 
 let images = Object.create(null);
@@ -150,9 +148,8 @@ for (let c of Array.from("KkQqRrBbNnPp")) {
 function make_renderer() {
 
 	let renderer = Object.create(null);
-
-	renderer.pos = LoadFEN("rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1");
 	renderer.info_table = NewInfoTable();
+
 	renderer.squares = [];							// Info about clickable squares.
 	renderer.active_square = null;					// Square clicked by user.
 	renderer.running = false;						// Whether to resend "go" to the engine after move, undo, etc.
@@ -160,9 +157,9 @@ function make_renderer() {
 	renderer.stderr_log = "";						// All output received from the engine's stderr.
 	renderer.infobox_string = "";					// Just to help not redraw the infobox when not needed.
 	renderer.pgn_choices = null;					// Made into a temporary array when displaying the PGN choice.
-	renderer.user_line_end = renderer.pos;			// The terminal position of the user's variation.
 
-	fenbox.value = renderer.pos.fen();
+	renderer.pgn_line_end = null;					// The terminal position of the loaded PGN, if any.
+	renderer.user_line_end = null;					// The terminal position of the user's variation. Never actually null (it's set soon).
 
 	renderer.square_size = () => {
 		return config.board_size / 8;
@@ -198,6 +195,7 @@ function make_renderer() {
 			return;
 		}
 
+		renderer.pgn_line_end = null;
 		renderer.user_line_end = renderer.pos;
 		renderer.game_changed();
 	};
@@ -219,6 +217,13 @@ function make_renderer() {
 			return;
 		}
 
+		// Icky way of storing the fact that a position is on the PGN...
+
+		for (let p of final_pos.position_list()) {
+			p.pgn_flag = true;
+		}
+
+		renderer.pgn_line_end = final_pos;
 		renderer.user_line_end = final_pos;
 		renderer.pos = final_pos.root();
 		renderer.game_changed();
@@ -330,8 +335,40 @@ function make_renderer() {
 		}
 	};
 
-	renderer.position_is_on_user_line = (p) => {
-		return renderer.user_line_end === p || renderer.user_line_end.has_ancestor(p);
+	renderer.goto_root = () => {
+		renderer.pos = renderer.pos.root();
+		renderer.pos_changed();
+	};
+
+	renderer.goto_end = () => {
+		renderer.pos = renderer.user_line_end;
+		renderer.pos_changed();
+	};
+
+	renderer.return_to_pgn = () => {
+
+		if (!renderer.pgn_line_end) {
+			alert("No PGN loaded");
+			return;
+		}
+
+		let node = renderer.pos;
+
+		while (!node.pgn_flag) {
+			if (node.parent === null) {
+				break;
+			}
+			node = node.parent;
+		}
+
+		if (node.pgn_flag) {
+			renderer.user_line_end = renderer.pgn_line_end;
+			renderer.pos = node;
+			renderer.pos_changed();
+			return;
+		}
+
+		alert("Couldn't rejoin the PGN. This is a bug, tell the author how you achieved it.");
 	};
 
 	renderer.move_stays_on_user_line = (s) => {
@@ -740,6 +777,7 @@ function make_renderer() {
 		setTimeout(renderer.draw_loop, 500);
 	};
 
+	renderer.load_fen("rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1");
 	return renderer;
 }
 
@@ -776,12 +814,24 @@ ipcRenderer.on("validate_pgn", (event, filename) => {
 	renderer.validate_pgn(filename);
 });
 
-ipcRenderer.on("next", (event) => {
+ipcRenderer.on("prev", () => {
+	renderer.prev();
+});
+
+ipcRenderer.on("next", () => {
 	renderer.next();
 });
 
-ipcRenderer.on("prev", (event) => {
-	renderer.prev();
+ipcRenderer.on("goto_root", () => {
+	renderer.goto_root();
+});
+
+ipcRenderer.on("goto_end", () => {
+	renderer.goto_end();
+});
+
+ipcRenderer.on("return_to_pgn", () => {
+	renderer.return_to_pgn();
 });
 
 ipcRenderer.on("toggle", (event, cfgvar) => {
