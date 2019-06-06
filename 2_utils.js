@@ -1,7 +1,7 @@
 "use strict";
 
 function XY(s) {				// e.g. "b7" --> [1, 1]
-	if (s.length !== 2) {
+	if (typeof s !== "string" || s.length !== 2) {
 		return [-1, -1];
 	}
 	s = s.toLowerCase();
