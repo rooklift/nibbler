@@ -37,7 +37,11 @@ function new_info() {
 			return this.nice_pv_cache;
 		},
 
-		nice_pv_string: function(board, options) {
+		nice_pv_string: function(board, options, i) {
+
+			// The caller should ensure that i is unique for each move in the moves list,
+			// then we can use i to ensure that each move has a unique way of calling
+			// renderer.pv_click()
 
 			if (this.nice_pv_string_cache) {
 				return this.nice_pv_string_cache;
@@ -71,12 +75,13 @@ function new_info() {
 
 			let colour = board.active;
 
+			let n = 0;
 			for (let move of nice_pv_list) {
 
 				if (colour === "w") {
-					blobs.push(`<span class="white">${move}</span>`);
+					blobs.push(`<span class="white" onclick="javascript:renderer.pv_click(${i}, ${n++});">${move}</span>`);
 				} else {
-					blobs.push(`<span class="pink">${move}</span>`);
+					blobs.push(`<span class="pink" onclick="javascript:renderer.pv_click(${i}, ${n++});">${move}</span>`);
 				}
 
 				colour = OppositeColour(colour);
@@ -109,10 +114,13 @@ function NewInfoTable() {			// There's only ever going to be one of these made.
 
 	return {
 
+		debug_board: null,
+
 		clears: 0,
 		table: Object.create(null),
 	
-		clear: function() {
+		clear: function(debug_board) {
+			this.debug_board = debug_board;
 			this.table = Object.create(null);
 			Log(`------------------------- info cleared (${++this.clears}) -------------------------`);
 		},

@@ -26,7 +26,7 @@ function setoption(name, value) {
 
 function sync() {
 	send("isready");
-	readyok_required = true;
+	readyok_required++;
 }
 
 // ------------------------------------------------------------------------------------------------
@@ -116,12 +116,13 @@ if (config.path) {
 
 		// We want to ignore all output when waiting for readyok
 
-		if (readyok_required) {
-			if (line.includes("readyok") === false) {
-				Log("(ignored) < " + line);
-				return;
-			}
-			readyok_required = false;
+		if (line.includes("readyok") && readyok_required > 0) {
+			readyok_required--;
+		}
+
+		if (readyok_required > 0) {
+			Log("(ignored) < " + line);
+			return;
 		}
 
 		Log("< " + line);
@@ -171,6 +172,7 @@ function make_renderer() {
 	renderer.infobox_string = "";					// Just to help not redraw the infobox when not needed.
 	renderer.pgn_choices = null;					// Made into a temporary array when displaying the PGN choice.
 	renderer.pgn_line_end = null;					// The terminal position of the loaded PGN, if any.
+	renderer.clickable_pv_lines = [];				// List of PV objects we use to tell what the user clicked on.
 
 	// The following are never actually null (i.e. they're set immediately):
 
@@ -185,7 +187,7 @@ function make_renderer() {
 
 	renderer.pos_changed = (new_game_flag) => {
 
-		renderer.info_table.clear();
+		renderer.info_table.clear(renderer.pos);
 
 		fenbox.value = renderer.pos.fen();
 		renderer.draw_main_line();
@@ -359,9 +361,6 @@ function make_renderer() {
 			return;
 		}
 
-		// FIXME: if renderer.pos is in the PGN, go to next position in PGN
-		// i.e. do that here before what follows.
-
 		for (let p of renderer.user_line_end.position_list()) {
 			if (p.parent === renderer.pos) {
 				renderer.pos = p;
@@ -422,7 +421,7 @@ function make_renderer() {
 		return false;
 	};
 
-	renderer.move = (s) => {
+	renderer.move = (s, skip_pos_changed) => {
 
 		// Add promotion if needed and not present...
 
@@ -438,13 +437,13 @@ function make_renderer() {
 			}
 		}
 
-		// FIXME: if current position is in PGN, and move stays in PGN, go to the next PGN position
-
 		if (renderer.move_stays_on_user_line(s)) {
 			for (let p of renderer.user_line_end.position_list()) {
 				if (p.parent === renderer.pos) {
 					renderer.pos = p;
-					renderer.pos_changed();
+					if (!skip_pos_changed) {
+						renderer.pos_changed();
+					}
 					return;
 				}
 			}
@@ -453,7 +452,10 @@ function make_renderer() {
 
 		renderer.pos = renderer.pos.move(s);
 		renderer.user_line_end = renderer.pos;
-		renderer.pos_changed();
+
+		if (!skip_pos_changed) {
+			renderer.pos_changed();
+		}
 	};
 
 	renderer.play_best = () => {
@@ -564,6 +566,32 @@ function make_renderer() {
 		renderer.draw();
 	};
 
+	renderer.pv_click = (i, n) => {
+
+		if (i < 0 || i >= renderer.clickable_pv_lines.length) {
+			return;
+		}
+
+		let o = renderer.clickable_pv_lines[i];
+
+		if (o.board !== renderer.pos) {
+			return;
+		}
+
+		let moves = o.pv.slice(0, n + 1);
+
+		// It's best that pos_changed() not be called until we've finished moving.
+		// That way, all analysis coming from Lc0 will still refer to the original
+		// position until we send a single message with the new position, and clear
+		// our info_table a single time.
+
+		for (let move of moves) {
+			renderer.move(move, true);
+		}
+
+		renderer.pos_changed();
+	};
+
 	renderer.draw_main_line = () => {
 
 		let elements1 = [];
@@ -623,6 +651,8 @@ function make_renderer() {
 
 	renderer.draw_infobox = () => {
 
+		renderer.clickable_pv_lines = [];
+
 		if (!renderer.ever_received_info) {
 			if (infobox.innerHTML !== renderer.stderr_log) {	// Only update when needed, so user can select and copy.
 				infobox.innerHTML = renderer.stderr_log;
@@ -639,7 +669,13 @@ function make_renderer() {
 		}
 
 		for (let i = 0; i < info_list.length && i < config.max_info_lines; i++) {
-			s += `<p>${info_list[i].nice_pv_string(renderer.pos, config)}</p>`;
+
+			s += `<p>${info_list[i].nice_pv_string(renderer.pos, config, i)}</p>`;
+
+			renderer.clickable_pv_lines.push({
+				board: renderer.pos,
+				pv: info_list[i].pv
+			})
 		}
 
 		// Only update when needed, so user can select and copy. A direct comparison

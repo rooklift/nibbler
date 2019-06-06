@@ -26,7 +26,7 @@ let config = {};
 let exe = null;
 let scanner = null;
 let err_scanner = null;
-let readyok_required = false;
+let readyok_required = 0;
 
 let __decoder = new TextDecoder("utf8");
 
