@@ -41,8 +41,6 @@ const position_prototype = {
 		ret.parent = this;
 
 		let promotion = s.length > 4 ? s[4] : "q";
-
-		
 		
 		let white_flag = this.is_white(Point(x1, y1));
 		let pawn_flag = "Pp".includes(ret.state[x1][y1]);
