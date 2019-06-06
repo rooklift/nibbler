@@ -12,18 +12,37 @@ const position_prototype = {
 
 	move: function(s) {
 
-		total_moves_made++;
-
 		// s is something like "d1f3" or "e7e8q".
 		// Assumes move is legal - all sorts of weird things can happen if this isn't so.
+
+		// Basic sanity checks only:
+
+		if (typeof s !== "string" || s.length < 4) {
+			console.log("position_prototype.move called with arg", s);
+			return this;
+		}
+
+		let [x1, y1] = XY(s.slice(0, 2));
+		let [x2, y2] = XY(s.slice(2, 4));
+
+		if (x1 < 0 || x1 > 7 || y1 < 0 || y1 > 7 || x2 < 0 || x2 > 7 || y2 < 0 || y2 > 7) {
+			console.log("position_prototype.move called with arg", s);
+			return this;
+		}
+
+		if (this.state[x1][y1] === "") {
+			console.log("position_prototype.move called with empty source, arg was", s);
+			return this;
+		}
+
+		total_moves_made++;
 
 		let ret = this.copy();
 		ret.parent = this;
 
 		let promotion = s.length > 4 ? s[4] : "q";
 
-		let [x1, y1] = XY(s.slice(0, 2));
-		let [x2, y2] = XY(s.slice(2, 4));
+		
 		
 		let white_flag = this.is_white(Point(x1, y1));
 		let pawn_flag = "Pp".includes(ret.state[x1][y1]);
