@@ -16,19 +16,24 @@ function new_info() {
 		nice_pv: function(board) {
 
 			// Given the board for which this info is valid, generate a list of
-			// human readable moves.
+			// human readable moves. Since there's no real guarantee that our
+			// moves list is legal, we legality check them. We at least know
+			// the initial move is legal, since it's checked on receipt.
 
 			if (this.nice_pv_cache) {
 				return this.nice_pv_cache;
 			}
 
 			if (!this.pv || this.pv.length === 0) {
-				return [];
-			} 
+				return [board.nice_string(this.move)];
+			}
 
 			let ret = [];
 
 			for (let move of this.pv) {
+				if (board.illegal(move) !== "") {
+					break;
+				}
 				ret.push(board.nice_string(move));
 				board = board.move(move);
 			}
@@ -136,10 +141,13 @@ function NewInfoTable() {			// There's only ever going to be one of these made.
 
 				let move = InfoVal(s, "pv");
 
-				if (board.colour(Point(move.slice(0,2))) !== board.active) {
+				if (board.illegal(move) !== "") {
 					Log(`... Nibbler: invalid move received!: ${move}`);
 					return;
 				}
+
+				// So the initial move in the PV is legal. There's no guarantee later moves are,
+				// but we will store them regardless and check them when needed.
 
 				let move_info;
 
@@ -180,7 +188,7 @@ function NewInfoTable() {			// There's only ever going to be one of these made.
 
 				let move = InfoVal(s, "string");
 
-				if (board.colour(Point(move.slice(0,2))) !== board.active) {
+				if (board.illegal(move) !== "") {
 					Log(`... Nibbler: invalid move received!: ${move}`);
 					return;
 				}

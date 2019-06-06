@@ -437,6 +437,12 @@ function make_renderer() {
 			}
 		}
 
+		let illegal_reason = renderer.pos.illegal(s)
+		if (illegal_reason !== "") {
+			alert(`Illegal move requested (${s}, ${illegal_reason}). This should be impossible, please tell the author how you managed it.`);
+			return;
+		}
+
 		if (renderer.move_stays_on_user_line(s)) {
 			for (let p of renderer.user_line_end.position_list()) {
 				if (p.parent === renderer.pos) {
