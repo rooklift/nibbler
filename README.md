@@ -20,7 +20,7 @@ For full functionality, the required Lc0 version is (I believe) v0.21.0 or later
 
 # Thanks
 
-Thanks for helpful discussions and advice from borg, brinan, coolchess123, crem, Faroe22, jhorthos, jjosh, KillerDucky, mooskagh, Occyroexanthub, Tilps, and WCP.
+Thanks for helpful discussions and advice from borg, brinan, Chad, coolchess123, crem, Faroe22, jhorthos, jjosh, KillerDucky, mooskagh, Occyroexanthub, Tilps, and WCP.
 
 # TODO
 
