@@ -140,20 +140,15 @@ function NewInfoTable() {			// There's only ever going to be one of these made.
 				// pv d2d4 g8f6 c2c4 e7e6 g2g3 f8b4 c1d2 b4e7 g1f3 e8g8 d1c2 a7a6 f1g2 b7b5 e1g1 c8b7 f1c1 b7e4 c2d1 b5c4 c1c4 a6a5 d2e1 h7h6 c4c1 d7d6
 
 				let move = InfoVal(s, "pv");
-
-				if (board.illegal(move) !== "") {
-					Log(`... Nibbler: invalid move received!: ${move}`);
-					return;
-				}
-
-				// So the initial move in the PV is legal. There's no guarantee later moves are,
-				// but we will store them regardless and check them when needed.
-
 				let move_info;
 
-				if (this.table[move]) {
+				if (this.table[move]) {					// We already have move info for this move.
 					move_info = this.table[move];
-				} else {
+				} else {								// We don't.
+					if (board.illegal(move) !== "") {
+						Log(`... Nibbler: invalid move received!: ${move}`);
+						return;
+					}
 					move_info = new_info();
 					this.table[move] = move_info;
 				}
