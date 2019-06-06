@@ -177,13 +177,14 @@ function make_renderer() {
 	renderer.user_line_end = null;
 	renderer.pos = null;
 
+	// ---------------------------------------------
+
 	renderer.square_size = () => {
 		return config.board_size / 8;
 	};
 
 	renderer.pos_changed = (new_game_flag) => {
 
-		renderer.active_square = null;
 		renderer.info_table.clear();
 
 		fenbox.value = renderer.pos.fen();
@@ -195,7 +196,7 @@ function make_renderer() {
 			send("ucinewgame");
 		}
 
-		renderer.draw();
+		renderer.escape();		// Among other things, this draws.
 	};
 
 	renderer.game_changed = () => {
@@ -316,6 +317,12 @@ function make_renderer() {
 
 	renderer.hide_pgn_chooser = () => {
 		pgnchooser.style.display = "none";
+	};
+
+	renderer.escape = () => {						// Set things into a clean state.
+		renderer.hide_pgn_chooser();
+		renderer.active_square = null;
+		renderer.draw();
 	};
 
 	renderer.validate_pgn = (filename) => {
@@ -458,6 +465,7 @@ function make_renderer() {
 
 	renderer.go = (new_game_flag) => {
 
+		renderer.escape();
 		renderer.running = true;
 
 		let setup;
@@ -512,7 +520,7 @@ function make_renderer() {
 		}
 	};
 
-	renderer.click = (event) => {
+	renderer.canvas_click = (event) => {
 
 		let point = null;
 
@@ -613,7 +621,7 @@ function make_renderer() {
 		mainline.innerHTML = [s1, s2].filter(s => s !== "").join(" ");
 	};
 
-	renderer.draw_infobox = (info_list) => {
+	renderer.draw_infobox = () => {
 
 		if (!renderer.ever_received_info) {
 			if (infobox.innerHTML !== renderer.stderr_log) {	// Only update when needed, so user can select and copy.
@@ -622,14 +630,16 @@ function make_renderer() {
 			return;
 		}
 
+		let info_list = renderer.info_table.sorted();
+
 		let s = "";
 
 		if (!renderer.running) {
-			s += "&lt;halted&gt;<br><br>";
+			s += "<p>&lt;halted&gt;</p>";
 		}
 
 		for (let i = 0; i < info_list.length && i < config.max_info_lines; i++) {
-			s += info_list[i].pv_string(renderer.pos, config);
+			s += `<p>${info_list[i].nice_pv_string(renderer.pos, config)}</p>`;
 		}
 
 		// Only update when needed, so user can select and copy. A direct comparison
@@ -670,16 +680,16 @@ function make_renderer() {
 		return {x1, y1, x2, y2, cx, cy, rss};
 	};
 
-	renderer.draw_board = () => {
+	renderer.draw_board = (light, dark) => {
 		
 		renderer.squares = [];
 
 		for (let x = 0; x < 8; x++) {
 			for (let y = 0; y < 8; y++) {
-				if (x % 2 !== y % 2) {
-					context.fillStyle = config.dark_square;
+				if (x % 2 === y % 2) {
+					context.fillStyle = light;
 				} else {
-					context.fillStyle = config.light_square;
+					context.fillStyle = dark;
 				}
 
 				let cc = renderer.canvas_coords(x, y);
@@ -723,14 +733,14 @@ function make_renderer() {
 		context.fillText(`${o.rank}`, cc.cx, cc.cy + 1);
 	};
 
-	renderer.draw = () => {
+	renderer.draw_normal = () => {
 
 		context.lineWidth = 8;
 		context.textAlign = "center";
 		context.textBaseline = "middle";
 		context.font = config.rank_font;
 
-		renderer.draw_board();
+		renderer.draw_board(config.light_square, config.dark_square);
 
 		let pieces = [];
 
@@ -742,7 +752,7 @@ function make_renderer() {
 				pieces.push({
 					fn: renderer.draw_piece,
 					piece: renderer.pos.state[x][y],
-					colour: renderer.pos.colour(Point(x, y)),
+					colour: renderer.pos.state[x][y].toUpperCase() === renderer.pos.state[x][y] ? "w" : "b",
 					x: x,
 					y: y
 				});
@@ -840,12 +850,11 @@ function make_renderer() {
 		for (let o of drawables) {
 			o.fn(o);
 		}
-
-		renderer.draw_infobox(info_list);
 	};
 
-	renderer.log = (a, b, c, d) => {
-		console.log(a, b, c, d);
+	renderer.draw = () => {
+		renderer.draw_infobox();
+		renderer.draw_normal();
 	};
 
 	renderer.draw_loop = () => {
@@ -888,7 +897,7 @@ ipcRenderer.on("set", (event, msg) => {
 });
 
 canvas.addEventListener("mousedown", (event) => {
-	renderer.click(event);
+	renderer.canvas_click(event);
 });
 
 // Setup return key on FEN box...

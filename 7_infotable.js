@@ -9,20 +9,45 @@ function new_info() {
 		n: 0,				// The draw logic will only ever draw things with non-negative n, so make this 0
 		p: "?",
 		pv: [],
-		pv_string_cache: null,
+		nice_pv_cache: null,
+		nice_pv_string_cache: null,
 		winrate: null,
 
-		pv_string: function(board, options) {
+		nice_pv: function(board) {
 
-			// Given the board for which this info is valid, generate a human-readable
-			// PV string for display. This should never be examined by the caller,
-			// merely displayed.
+			// Given the board for which this info is valid, generate a list of
+			// human readable moves.
 
-			if (this.pv_string_cache) {
-				return this.pv_string_cache;		// Note: the cache needs cleared when receiving.
+			if (this.nice_pv_cache) {
+				return this.nice_pv_cache;
 			}
 
-			let s = "";
+			if (!this.pv || this.pv.length === 0) {
+				return [];
+			} 
+
+			let ret = [];
+
+			for (let move of this.pv) {
+				ret.push(board.nice_string(move));
+				board = board.move(move);
+			}
+
+			this.nice_pv_cache = ret;
+			return this.nice_pv_cache;
+		},
+
+		nice_pv_string: function(board, options) {
+
+			if (this.nice_pv_string_cache) {
+				return this.nice_pv_string_cache;
+			}
+
+			let nice_pv_list = this.nice_pv(board);
+
+			let blobs = [];
+
+			// -------------------------------------------------
 
 			if (options.show_winrate) {
 
@@ -39,28 +64,25 @@ function new_info() {
 					}
 				}
 
-				s += `<span class="blue">${winrate_string}</span>`;
+				blobs.push(`<span class="blue">${winrate_string}</span>`);
 			}
 
-			for (let move of this.pv) {
+			// -------------------------------------------------
 
-				s += " ";
+			let colour = board.active;
 
-				if (board.active === "w") {
-					s += `<span class="white">`;
+			for (let move of nice_pv_list) {
+
+				if (colour === "w") {
+					blobs.push(`<span class="white">${move}</span>`);
 				} else {
-					s += `<span class="pink">`;
+					blobs.push(`<span class="pink">${move}</span>`);
 				}
 
-				s += board.nice_string(move);
-				s += "</span>";
-
-				if (!options.show_pv) {
-					break;
-				}
-
-				board = board.move(move);
+				colour = OppositeColour(colour);
 			}
+
+			// -------------------------------------------------
 
 			if (options.show_n || options.show_p) {
 				
@@ -74,13 +96,11 @@ function new_info() {
 					tech_elements.push(`P: ${this.p}`);
 				}
 
-				s += ` <span class="blue">(${tech_elements.join(" ")})</span>`;
+				blobs.push(`<span class="blue">(${tech_elements.join(" ")})</span>`);
 			}
 
-			s += "<br><br>";
-
-			this.pv_string_cache = s.trim();
-			return this.pv_string_cache;
+			this.nice_pv_string_cache = blobs.join(" ");
+			return this.nice_pv_string_cache;
 		}
 	};
 }
@@ -143,7 +163,8 @@ function NewInfoTable() {			// There's only ever going to be one of these made.
 
 				if (new_pv.length > 0) {
 					if (CompareArrays(new_pv, move_info.pv) === false) {
-						move_info.pv_string_cache = null;
+						move_info.nice_pv_string_cache = null;
+						move_info.nice_pv_cache = null;
 						move_info.pv = new_pv;
 					}
 				}

@@ -61,6 +61,7 @@ input[type=text]:focus{
 
 #mainline {
 	font-family: monospace, monospace;
+	margin-top: 1em;
 	overflow-x: hidden;
 	overflow-y: auto;
 	white-space: pre-wrap;
@@ -69,6 +70,11 @@ input[type=text]:focus{
 a {
 	color: inherit;
 	text-decoration: inherit;
+}
+
+p {
+	margin-top: 0;
+	margin-bottom: 1em;
 }
 
 .pink {

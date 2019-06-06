@@ -163,10 +163,10 @@ function menu_build() {
 					}
 				},
 				{
-					label: "Hide PGN games list",
+					label: "Escape",
 					accelerator: "Escape",
 					click: () => {
-						windows.send("main-window", "call", "hide_pgn_chooser");
+						windows.send("main-window", "call", "escape");
 					}
 				},
 				{
