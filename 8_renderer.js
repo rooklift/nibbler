@@ -187,7 +187,7 @@ function make_renderer() {
 
 	renderer.pos_changed = (new_game_flag) => {
 
-		renderer.info_table.clear(renderer.pos);
+		renderer.info_table.clear();
 
 		fenbox.value = renderer.pos.fen();
 		renderer.draw_main_line();

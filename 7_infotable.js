@@ -114,13 +114,10 @@ function NewInfoTable() {			// There's only ever going to be one of these made.
 
 	return {
 
-		debug_board: null,
-
 		clears: 0,
 		table: Object.create(null),
 	
-		clear: function(debug_board) {
-			this.debug_board = debug_board;
+		clear: function() {
 			this.table = Object.create(null);
 			Log(`------------------------- info cleared (${++this.clears}) -------------------------`);
 		},
