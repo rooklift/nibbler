@@ -511,11 +511,14 @@ const position_prototype = {
 		// Find all pieces of the specified type (colour-specific).
 		// Returned as a list of points.
 
-		if (startx === undefined || starty === undefined || endx === undefined || endy === undefined) {
-			startx = 0;
-			starty = 0;
-			endx = 7;
-			endy = 7;
+		for (let val of [startx, starty, endx, endy]) {
+			if (typeof val !== "number" || val < 0 || val > 7) {
+				startx = 0;
+				starty = 0;
+				endx = 7;
+				endy = 7;
+				break;
+			}
 		}
 
 		let ret = [];
@@ -727,6 +730,10 @@ const position_prototype = {
 		let source = Point(s.slice(0, 2));
 		let dest = Point(s.slice(2, 4));
 
+		if (source === Point(null) || dest === Point(null)) {
+			return "??";
+		}
+
 		let piece = this.piece(source);
 
 		if (piece === "") {
@@ -736,8 +743,9 @@ const position_prototype = {
 		let check = "";
 		let next_board = this.move(s);
 		let opponent_king_char = this.active === "w" ? "k" : "K";
-		let opponent_king_square = this.find(opponent_king_char)[0];
-		if (next_board.attacked(opponent_king_square, next_board.colour(opponent_king_square))) {
+		let opponent_king_square = this.find(opponent_king_char)[0];	// Might be undefined on corrupt board...
+
+		if (opponent_king_square && next_board.attacked(opponent_king_square, next_board.colour(opponent_king_square))) {
 			check = "+";
 		}
 
