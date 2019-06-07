@@ -718,7 +718,7 @@ function make_renderer() {
 		// This is a bit icky, it relies on the fact that our clickable_elements list
 		// has some objects that lack a move property (the blue info bits).
 
-		if (!renderer.clickable_elements) {
+		if (!renderer.clickable_elements || n >= renderer.clickable_elements.length) {
 			return;
 		}
 
@@ -726,9 +726,9 @@ function make_renderer() {
 
 		// Work backwards until we get to the start of the line...
 
-		for (; n >= 0 && n < renderer.clickable_elements.length; n--) {
+		for (; n >= 0; n--) {
 			let element = renderer.clickable_elements[n];
-			if (!element.move) {
+			if (!element || !element.move) {
 				break;
 			}
 			move_list.push(element.move);
