@@ -174,7 +174,7 @@ function make_renderer() {
 	renderer.clickable_pv_lines = [];				// List of PV objects we use to tell what the user clicked on.
 
 	renderer.start_pos = LoadFEN("rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1");
-	renderer.info_table = NewInfoTable(renderer.start_pos);
+	renderer.info_table = NewInfoTable();
 	renderer.board_cache = null;
 
 	// IMPORTANT! The following arrays must NEVER be the same object. Use Array.from() a lot to avoid this.
@@ -280,7 +280,7 @@ function make_renderer() {
 		renderer.start_pos = LoadFEN("rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1");
 		renderer.user_line = Array.from(final_pos.history());
 		renderer.moves = [];
-		
+
 		renderer.board_cache = null;
 		renderer.info_table.clear();
 

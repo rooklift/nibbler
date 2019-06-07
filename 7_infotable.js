@@ -117,7 +117,7 @@ function new_info(board, move) {
 	};
 }
 
-function NewInfoTable(board) {			// There's only ever going to be one of these made I guess.
+function NewInfoTable() {			// There's only ever going to be one of these made I guess.
 
 	return {
 
