@@ -615,10 +615,18 @@ function make_renderer() {
 		let elements2 = [];
 
 		let board = renderer.start_pos;
+		let deviated_from_pgn = false;
 
 		// First, have the moves actually made on the visible board.
-			
+		
+		let i = 0;
+
 		for (let m of renderer.moves) {
+
+			if (renderer.pgn_line && deviated_from_pgn === false && renderer.pgn_line[i] !== m) {
+				elements1.push(`<span class="red">(deviated)</span>`);
+				deviated_from_pgn = true;
+			}
 
 			if (board.active === "w") {
 				elements1.push(`${board.fullmove}.`);
@@ -626,11 +634,18 @@ function make_renderer() {
 
 			elements1.push(board.nice_string(m));
 			board = board.move(m);
+
+			i++;
 		}
 
 		// Next, have the moves to the end of the user line.
 
 		for (let m of renderer.user_line.slice(renderer.moves.length)) {
+
+			if (renderer.pgn_line && deviated_from_pgn === false && renderer.pgn_line[i] !== m) {
+				elements2.push(`<span class="red">(deviated)</span>`);
+				deviated_from_pgn = true;
+			}
 
 			if (board.active === "w") {
 				elements2.push(`${board.fullmove}.`);
@@ -638,6 +653,8 @@ function make_renderer() {
 
 			elements2.push(board.nice_string(m));
 			board = board.move(m);
+
+			i++;
 		}
 
 		let s1 = elements1.join(" ");		// Possibly empty string
