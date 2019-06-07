@@ -645,6 +645,10 @@ function make_renderer() {
 		mainline.innerHTML = [s1, s2].filter(s => s !== "").join(" ");
 	};
 
+	// We had some problems with the clicker: we used to destroy and create clickable objects a lot. This
+	// seemed to lead to moments where clicks wouldn't register. Now we only ever create them, i.e. the
+	// actual <a href="javascript"> elements are never destroyed, but have their contents changed as needed.
+
 	renderer.draw_infobox = () => {
 
 		if (!renderer.ever_received_info) {
@@ -661,7 +665,7 @@ function make_renderer() {
 
 			elements.push({
 				class: "blue",
-				text: `${info.winrate} `,
+				text: `${info.winrate_string()} `,
 			});
 
 			let colour = renderer.getboard().active;
@@ -730,6 +734,14 @@ function make_renderer() {
 		}
 
 		move_list.reverse();
+
+		let tmp_board = renderer.getboard();
+		for (let move of move_list) {
+			if (tmp_board.illegal(move) !== "") {
+				return;
+			}
+			tmp_board = tmp_board.move(move);
+		}
 
 		renderer.moves = renderer.moves.concat(move_list);
 		renderer.position_changed();

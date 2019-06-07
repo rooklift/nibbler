@@ -41,6 +41,29 @@ function new_info(board, move) {
 
 			this.nice_pv_cache = ret;
 			return this.nice_pv_cache;
+		},
+
+		winrate_string: function() {
+
+			if (typeof this.winrate !== "number") {
+				return "?";
+			}
+
+			let s = this.winrate.toString();
+
+			if (s === "0" || s === "1") {
+				return s;
+			}
+
+			if (s[1] === ".") {
+				s = s.slice(1);
+			}
+
+			while (s.length < 4) {
+				s += "0";
+			}
+
+			return s.slice(0, 4);
 		}
 	};
 }
