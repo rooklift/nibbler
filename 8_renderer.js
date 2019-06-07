@@ -761,7 +761,9 @@ function make_renderer() {
 		// event is an event on the containing infobox, however it will hopefully have
 		// a target property that we can use.
 
-		if (!event || !event.target || !event.target.id || typeof event.target.id !== "string") return;
+		if (!event || !event.target || !event.target.id || typeof event.target.id !== "string") {
+			return;
+		}
 
 		if (event.target.id.startsWith("clicker_") === false) {
 			return;
