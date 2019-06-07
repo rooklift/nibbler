@@ -425,6 +425,7 @@ function make_renderer() {
 		for (let item of event.path) {
 			if (typeof item.id === "string" && item.id.startsWith("chooser_")) {
 				n = parseInt(item.id.slice(8), 10);
+				break;
 			}
 		}
 
@@ -638,7 +639,7 @@ function make_renderer() {
 		for (let m of renderer.moves) {
 
 			if (renderer.pgn_line && renderer.pgn_line.length > 0 && deviated_from_pgn === false && renderer.pgn_line[i] !== m) {
-				elements.push(`<span class="red">(deviated)</span> `);
+				elements.push(`<span class="red" id="mainline_deviated">(deviated)</span> `);
 				deviated_from_pgn = true;
 			}
 
@@ -660,7 +661,7 @@ function make_renderer() {
 		for (let m of renderer.user_line.slice(renderer.moves.length)) {
 
 			if (renderer.pgn_line && renderer.pgn_line.length > 0 && deviated_from_pgn === false && renderer.pgn_line[i] !== m) {
-				elements.push(`<span class="red">(deviated)</span> `);
+				elements.push(`<span class="red" id="mainline_deviated">(deviated)</span> `);
 				deviated_from_pgn = true;
 			}
 
@@ -685,8 +686,15 @@ function make_renderer() {
 		let n = undefined;
 
 		for (let item of event.path) {
-			if (typeof item.id === "string" && item.id.startsWith("mainline_")) {
-				n = parseInt(item.id.slice(9), 10);
+			if (typeof item.id === "string") {
+				if (item.id === "mainline_deviated") {
+					renderer.return_to_pgn();
+					return;
+				}
+				if (item.id.startsWith("mainline_")) {
+					n = parseInt(item.id.slice(9), 10);
+					break;
+				}
 			}
 		}
 
@@ -790,6 +798,7 @@ function make_renderer() {
 		for (let item of event.path) {
 			if (typeof item.id === "string" && item.id.startsWith("clicker_")) {
 				n = parseInt(item.id.slice(8), 10);
+				break;
 			}
 		}
 
