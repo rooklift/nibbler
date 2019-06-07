@@ -175,23 +175,59 @@ function make_renderer() {
 
 	renderer.start_pos = LoadFEN("rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1");
 	renderer.user_line = [];						// Entire history of the user variation, as a list of moves.
-	renderer.pos = renderer.start_pos				// Currently shown position.
+	renderer.moves = [];							// History of the currently shown position.
+
+	renderer.board_cache = null;
 
 	// --------------------------------------------------------------------------------------------
 
+	renderer.getboard = () => {
+
+		if (renderer.board_cache && CompareArrays(renderer.board_cache.moves, renderer.moves)) {
+			return renderer.board_cache.board;
+		}
+
+		let board = renderer.start_pos;
+		for (let move of renderer.moves) {
+			console.log(move);
+			board = board.move(move);
+		}
+
+		renderer.board_cache = {
+			moves: Array.from(renderer.moves),			// Copy, not reference!
+			board: board
+		};
+
+		return renderer.board_cache.board;
+	}
+
 	renderer.move = (s) => {
 
-		let illegal_reason = renderer.pos.illegal(s)
+		let board = renderer.getboard();
+
+		// Add promotion if needed and not present...
+
+		if (s.length === 4) {
+			let source = Point(s.slice(0, 2));
+			if (board.piece(source) === "P" && source.y === 1) {
+				console.log(`Move ${s} was promotion but had no promotion piece set; adjusting to ${s + "q"}`);
+				s += "q";
+			}
+			if (board.piece(source) === "p" && source.y === 6) {
+				console.log(`Move ${s} was promotion but had no promotion piece set; adjusting to ${s + "q"}`);
+				s += "q";
+			}
+		}
+
+		let illegal_reason = board.illegal(s)
 		if (illegal_reason !== "") {
 			alert(`Illegal move requested (${s}, ${illegal_reason}). This should be impossible, please tell the author how you managed it.`);
 			return;
 		}
 
-		renderer.pos = renderer.pos.move(s);
+		renderer.moves.push(s);
 		renderer.draw();
 	};
-
-
 
 	// --------------------------------------------------------------------------------------------
 	// Things below this point are not related to the difficult task of keeping track of positions.
@@ -200,7 +236,7 @@ function make_renderer() {
 
 		if (s.startsWith("info")) {
 			renderer.ever_received_info = true;
-			renderer.info_table.receive(s, renderer.pos);
+			renderer.info_table.receive(s, renderer.getboard());
 		}
 
 		if (s.startsWith("error")) {
@@ -236,13 +272,14 @@ function make_renderer() {
 			return;
 		}
 
+		let board = renderer.getboard();
+
 		if (renderer.active_square) {
 
 			let move_string = renderer.active_square.s + point.s;		// e.g. "e2e4"
-
-			let illegal_reason = renderer.pos.illegal(move_string);	
-
 			renderer.active_square = null;
+
+			let illegal_reason = board.illegal(move_string);	
 
 			if (illegal_reason === "") {			
 				renderer.move(move_string);
@@ -253,10 +290,10 @@ function make_renderer() {
 
 		} else {
 
-			if (renderer.pos.active === "w" && renderer.pos.is_white(point)) {
+			if (board.active === "w" && board.is_white(point)) {
 				renderer.active_square = point;
 			}
-			if (renderer.pos.active === "b" && renderer.pos.is_black(point)) {
+			if (board.active === "b" && board.is_black(point)) {
 				renderer.active_square = point;
 			}
 		}
@@ -269,67 +306,11 @@ function make_renderer() {
 	};
 
 	renderer.pv_click = (i, n) => {
-
-		if (i < 0 || i >= renderer.clickable_pv_lines.length) {
-			return;
-		}
-
-		let o = renderer.clickable_pv_lines[i];
-
-		if (o.board !== renderer.pos) {
-			return;
-		}
-
-		let moves = o.pv.slice(0, n + 1);
-
-		// It's best that pos_changed() not be called until we've finished moving.
-		// That way, all analysis coming from Lc0 will still refer to the original
-		// position until we send a single message with the new position, and clear
-		// our info_table a single time.
-
-		for (let move of moves) {
-			renderer.move(move, true);
-		}
-
-		renderer.pos_changed();
+		// TODO
 	};
 
 	renderer.draw_infobox = () => {
-
-		renderer.clickable_pv_lines = [];
-
-		if (!renderer.ever_received_info) {
-			if (infobox.innerHTML !== renderer.stderr_log) {	// Only update when needed, so user can select and copy.
-				infobox.innerHTML = renderer.stderr_log;
-			}
-			return;
-		}
-
-		let info_list = renderer.info_table.sorted();
-
-		let s = "";
-
-		if (!renderer.running) {
-			s += "<p>&lt;halted&gt;</p>";
-		}
-
-		for (let i = 0; i < info_list.length && i < config.max_info_lines; i++) {
-
-			s += `<p>${info_list[i].nice_pv_string(renderer.pos, config, i)}</p>`;
-
-			renderer.clickable_pv_lines.push({
-				board: renderer.pos,
-				pv: info_list[i].pv
-			})
-		}
-
-		// Only update when needed, so user can select and copy. A direct comparison
-		// of s with innerHTML seems to fail (something must get changed).
-
-		if (renderer.infobox_string !== s) {
-			renderer.infobox_string = s;
-			infobox.innerHTML = s;
-		}
+		// TODO
 	};
 
 	renderer.canvas_coords = (x, y) => {
@@ -424,16 +405,17 @@ function make_renderer() {
 		renderer.draw_board(config.light_square, config.dark_square);
 
 		let pieces = [];
+		let board = renderer.getboard();
 
 		for (let x = 0; x < 8; x++) {
 			for (let y = 0; y < 8; y++) {
-				if (renderer.pos.state[x][y] === "") {
+				if (board.state[x][y] === "") {
 					continue;
 				}
 				pieces.push({
 					fn: renderer.draw_piece,
-					piece: renderer.pos.state[x][y],
-					colour: renderer.pos.state[x][y].toUpperCase() === renderer.pos.state[x][y] ? "w" : "b",
+					piece: board.state[x][y],
+					colour: board.state[x][y].toUpperCase() === board.state[x][y] ? "w" : "b",
 					x: x,
 					y: y
 				});
@@ -513,7 +495,7 @@ function make_renderer() {
 		let drawables = [];
 
 		for (let o of pieces) {
-			if (o.colour !== renderer.pos.active) {
+			if (o.colour !== board.active) {
 				drawables.push(o);
 			}
 		}
@@ -521,7 +503,7 @@ function make_renderer() {
 		drawables = drawables.concat(arrows);
 
 		for (let o of pieces) {
-			if (o.colour === renderer.pos.active) {
+			if (o.colour === board.active) {
 				drawables.push(o);
 			}
 		}

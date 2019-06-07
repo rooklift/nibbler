@@ -59,6 +59,10 @@ function InfoPV(s) {
 
 function CompareArrays(a, b) {
 
+	if (!a || !b) {			// i.e. undefined or null
+		return false;
+	}
+
 	if (a.length !== b.length) {
 		return false;
 	}
