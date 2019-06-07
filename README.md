@@ -20,7 +20,7 @@ The `config.json` file can be edited. Most of the options are self-explanatory, 
 
 * `bad_move_threshold` is the winrate loss (compared to best move) required to draw a move in the "bad" colour.
 * `terrible_move_threshold` is the same, except moves will be drawn in the "terrible" colour.
-* `node_display_threshold` controls how many visits a move must have to be shown at all.
+* `node_display_threshold` controls how many visits a move must have (compared to best) to be shown at all.
 * `update_delay` controls how often Nibbler draws to the screen; lower is faster but more CPU intensive.
 
 # Thanks
