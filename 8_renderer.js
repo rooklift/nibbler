@@ -217,9 +217,9 @@ function make_renderer() {
 
 	// There are 3 ways the position can change...
 	//
-	// Moving inside a game.
-	// New game.
-	// Loaded game.
+	//		Moving inside a game.
+	//		New game.
+	//		Loaded game.
 	//
 	// Although it seems like we do a lot of book-keeping,
 	// we only need to do it in these 3 functions...
@@ -227,7 +227,7 @@ function make_renderer() {
 	renderer.position_changed = () => {
 
 		if (ArrayStartsWith(renderer.user_line, renderer.moves) === false) {
-			// The new position (from moves) is not inside the current user_line
+			// The new position is not inside the current user_line
 			renderer.user_line = Array.from(renderer.moves);
 		}
 
