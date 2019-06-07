@@ -606,6 +606,7 @@ function make_renderer() {
 	};
 
 	renderer.draw_main_line = () => {
+
 		let elements1 = [];
 		let elements2 = [];
 
@@ -645,9 +646,11 @@ function make_renderer() {
 		mainline.innerHTML = [s1, s2].filter(s => s !== "").join(" ");
 	};
 
-	// We had some problems with the clicker: we used to destroy and create clickable objects a lot. This
-	// seemed to lead to moments where clicks wouldn't register. Now we only ever create them, i.e. the
-	// actual <a href="javascript"> elements are never destroyed, but have their contents changed as needed.
+	// --------------------------------------------------------------------------------------------
+	// We had some problems with the clicker: we used to destroy and create
+	// clickable objects a lot. This seemed to lead to moments where clicks wouldn't
+	// register. Now we only ever create them, i.e. the actual <a href="javascript">
+	// elements are never destroyed, but have their contents changed as needed.
 
 	renderer.draw_infobox = () => {
 
@@ -721,6 +724,8 @@ function make_renderer() {
 
 		let move_list = [];
 
+		// Work backwards until we get to the start of the line...
+
 		for (; n >= 0 && n < renderer.clickable_elements.length; n--) {
 			let element = renderer.clickable_elements[n];
 			if (!element.move) {
@@ -735,6 +740,8 @@ function make_renderer() {
 
 		move_list.reverse();
 
+		// Legality checks...
+
 		let tmp_board = renderer.getboard();
 		for (let move of move_list) {
 			if (tmp_board.illegal(move) !== "") {
@@ -747,6 +754,8 @@ function make_renderer() {
 		renderer.position_changed();
 
 	};
+
+	// --------------------------------------------------------------------------------------------
 
 	renderer.canvas_coords = (x, y) => {
 
