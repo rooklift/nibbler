@@ -82,9 +82,9 @@ function new_info(board, move) {
 			for (let move of nice_pv_list) {
 
 				if (colour === "w") {
-					blobs.push(`<span class="white" onclick="javascript:renderer.pv_click(${i}, ${n++});">${move}</span>`);
+					blobs.push(`<a class="white" href="javascript:renderer.pv_click(${i}, ${n++});">${move}</a>`);
 				} else {
-					blobs.push(`<span class="pink" onclick="javascript:renderer.pv_click(${i}, ${n++});">${move}</span>`);
+					blobs.push(`<a class="pink" href="javascript:renderer.pv_click(${i}, ${n++});">${move}</a>`);
 				}
 
 				colour = OppositeColour(colour);
