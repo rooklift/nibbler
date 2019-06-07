@@ -487,6 +487,7 @@ function make_renderer() {
 
 	renderer.go = (new_game_flag) => {
 
+		renderer.hide_pgn_chooser();
 		renderer.running = true;
 
 		let setup;
