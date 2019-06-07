@@ -59,15 +59,26 @@ function InfoPV(s) {
 
 function CompareArrays(a, b) {
 
-	if (!a || !b) {			// i.e. undefined or null
-		return false;
-	}
-
 	if (a.length !== b.length) {
 		return false;
 	}
 
 	for (let n = 0; n < a.length; n++) {
+		if (a[n] !== b[n]) {
+			return false;
+		}
+	}
+
+	return true;
+}
+
+function ArrayStartsWith(a, b) {
+
+	if (b.length > a.length) {
+		return false;
+	}
+
+	for (let n = 0; n < b.length; n++) {
 		if (a[n] !== b[n]) {
 			return false;
 		}

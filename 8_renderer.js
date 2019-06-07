@@ -189,12 +189,11 @@ function make_renderer() {
 
 		let board = renderer.start_pos;
 		for (let move of renderer.moves) {
-			console.log(move);
 			board = board.move(move);
 		}
 
 		renderer.board_cache = {
-			moves: Array.from(renderer.moves),			// Copy, not reference!
+			moves: Array.from(renderer.moves),		// Copy, not reference!
 			board: board
 		};
 
@@ -226,7 +225,20 @@ function make_renderer() {
 		}
 
 		renderer.moves.push(s);
+		renderer.position_changed();
+	};
+
+	renderer.position_changed = () => {
+		renderer.user_line = Array.from(renderer.moves);		// FIXME
 		renderer.draw();
+		renderer.draw_main_line();
+	};
+
+	renderer.prev = () => {
+		if (renderer.moves.length > 0) {
+			renderer.moves = renderer.moves.slice(0, renderer.moves.length - 1);
+			renderer.position_changed();
+		}
 	};
 
 	// --------------------------------------------------------------------------------------------
@@ -302,7 +314,29 @@ function make_renderer() {
 	};
 
 	renderer.draw_main_line = () => {
-		// TODO
+		let elements1 = [];
+		let elements2 = [];
+
+		// First, have the moves actually made on the visible board.
+			
+		for (let m of renderer.moves) {
+			elements1.push(m);
+		}
+
+		// Next, have the moves to the end of the user line.
+
+		for (let m of renderer.user_line.slice(renderer.moves.length)) {
+			elements2.push(m);
+		}
+
+		let s1 = elements1.join(" ");		// Possibly empty string
+		let s2 = elements2.join(" ");		// Possibly empty string
+
+		if (s2.length > 0) {
+			s2 = `<span class="gray">` + s2 + "</span>";
+		}
+
+		mainline.innerHTML = [s1, s2].filter(s => s !== "").join(" ");
 	};
 
 	renderer.pv_click = (i, n) => {
