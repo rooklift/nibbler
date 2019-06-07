@@ -177,10 +177,11 @@ function make_renderer() {
 	renderer.info_table = NewInfoTable(renderer.start_pos);
 	renderer.board_cache = null;
 
-	// IMPORTANT! These next two arrays must NEVER be the same object. Use Array.from() a lot to avoid this.
+	// IMPORTANT! The following arrays must NEVER be the same object. Use Array.from() a lot to avoid this.
 	// Note also that user_line is always supposed to contain moves. While in some ways it would be simpler
 	// to simply store an index of where we are in the user_line, this way has some advantages too...
 
+	renderer.pgn_line = [];							// The loaded PGN object, as a list of moves.
 	renderer.user_line = [];						// Entire history of the user variation, as a list of moves.
 	renderer.moves = [];							// History of the currently shown position.
 
@@ -189,34 +190,29 @@ function make_renderer() {
 	// --------------------------------------------------------------------------------------------
 
 	renderer.programmer_mistake_check = () => {
+		if (renderer.programmer_mistake_check.warned) {
+			return;
+		}
 		if (renderer.moves === renderer.user_line) {
+			renderer.programmer_mistake_check.warned = true;
 			alert("renderer.moves is the same object as renderer.user_line");
 		}
 		if (ArrayStartsWith(renderer.user_line, renderer.moves) === false) {
+			renderer.programmer_mistake_check.warned = true;
 			alert("renderer.user_line does not start with renderer.moves");
-		}
-		if (renderer.info_table.board !== renderer.getboard()) {
-			alert("renderer.info_table.board !== renderer.getboard()");
 		}
 	};
 
 	renderer.getboard = () => {
-
-		if (renderer.board_cache && CompareArrays(renderer.board_cache.moves, renderer.moves)) {
-			return renderer.board_cache.board;
+		if (renderer.board_cache) {
+			return renderer.board_cache;
 		}
-
 		let board = renderer.start_pos;
 		for (let move of renderer.moves) {
 			board = board.move(move);
 		}
-
-		renderer.board_cache = {
-			moves: Array.from(renderer.moves),		// Copy, not reference!
-			board: board
-		};
-
-		return renderer.board_cache.board;
+		renderer.board_cache = board;
+		return renderer.board_cache;
 	}
 
 	// There are 3 ways the position can change...
@@ -224,6 +220,9 @@ function make_renderer() {
 	// Moving inside a game.
 	// New game.
 	// Loaded game.
+	//
+	// Although it seems like we do a lot of book-keeping,
+	// we only need to do it in these 3 functions...
 
 	renderer.position_changed = () => {
 
@@ -232,8 +231,8 @@ function make_renderer() {
 			renderer.user_line = Array.from(renderer.moves);
 		}
 
-		let board = renderer.getboard();
-		renderer.info_table.change(board);
+		renderer.board_cache = null;
+		renderer.info_table.clear();
 
 		renderer.escape();
 		renderer.draw_main_line();
@@ -253,7 +252,9 @@ function make_renderer() {
 		renderer.start_pos = start_pos;
 		renderer.user_line = [];
 		renderer.moves = [];
-		renderer.info_table.change(renderer.start_pos);
+
+		renderer.board_cache = null;
+		renderer.info_table.clear();
 
 		renderer.escape();
 		renderer.draw_main_line();
@@ -279,7 +280,9 @@ function make_renderer() {
 		renderer.start_pos = LoadFEN("rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1");
 		renderer.user_line = Array.from(final_pos.history());
 		renderer.moves = [];
-		renderer.info_table.change(renderer.start_pos);
+		
+		renderer.board_cache = null;
+		renderer.info_table.clear();
 
 		renderer.escape();
 		renderer.draw_main_line();
@@ -321,9 +324,6 @@ function make_renderer() {
 	};
 
 	renderer.play_best = () => {
-		if (renderer.info_table.board !== renderer.getboard()) {
-			return;
-		}
 		let info_list = renderer.info_table.sorted();
 		if (info_list.length > 0) {
 			renderer.move(info_list[0].move);
@@ -355,6 +355,13 @@ function make_renderer() {
 		if (renderer.moves.length !== renderer.user_line.length) {
 			renderer.moves = Array.from(renderer.user_line);
 			renderer.position_changed();
+		}
+	};
+
+	renderer.return_to_pgn = () => {
+		if (renderer.pgn_line.length === 0) {
+			alert("No PGN loaded.");
+			return;
 		}
 	};
 
@@ -590,10 +597,6 @@ function make_renderer() {
 			if (infobox.innerHTML !== renderer.stderr_log) {	// Only update when needed, so user can select and copy.
 				infobox.innerHTML = renderer.stderr_log;
 			}
-			return;
-		}
-
-		if (renderer.info_table.board !== renderer.getboard()) {
 			return;
 		}
 
@@ -876,7 +879,6 @@ canvas.addEventListener("mousedown", (event) => {
 
 // Setup return key on FEN box...
 fenbox.onkeydown = (event) => {
-	console.log(event);
 	if (event.key === "Enter") {
 		renderer.load_fen(fenbox.value);
 	}

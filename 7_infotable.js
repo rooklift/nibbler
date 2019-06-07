@@ -121,19 +121,17 @@ function NewInfoTable(board) {			// There's only ever going to be one of these m
 
 	return {
 
-		board: board,
 		table: Object.create(null),
 	
-		change: function(board) {
-			this.board = board;
+		clear: function() {
 			this.table = Object.create(null);
 		},
 
-		receive: function(s) {
+		receive: function(s, board) {
 
 			// Although the renderer tries to avoid sending invalid moves by
 			// syncing with "isready" "readyok" an engine like Stockfish doesn't
-			// behave properly, IMO.
+			// behave properly, IMO. So we use the board to check legality.
 
 			if (s.startsWith("info") && s.indexOf(" pv ") !== -1) {
 
@@ -146,11 +144,11 @@ function NewInfoTable(board) {			// There's only ever going to be one of these m
 				if (this.table[move]) {					// We already have move info for this move.
 					move_info = this.table[move];
 				} else {								// We don't.
-					if (this.board.illegal(move) !== "") {
+					if (board.illegal(move) !== "") {
 						Log(`... Nibbler: invalid move received!: ${move}`);
 						return;
 					}
-					move_info = new_info(this.board, move);
+					move_info = new_info(board, move);
 					this.table[move] = move_info;
 				}
 
@@ -184,7 +182,7 @@ function NewInfoTable(board) {			// There's only ever going to be one of these m
 
 				let move = InfoVal(s, "string");
 
-				if (this.board.illegal(move) !== "") {
+				if (board.illegal(move) !== "") {
 					Log(`... Nibbler: invalid move received!: ${move}`);
 					return;
 				}
