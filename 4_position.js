@@ -936,18 +936,22 @@ const position_prototype = {
 		return false;
 	},
 
-	initial_fen: function() {
-
-		// When sending the engine the position, the UCI specs involve sending the initial FEN
-		// and then a list of moves. This method finds the initial FEN.
-
-		let node = this;
-
-		while (node.parent) {
-			node = node.parent;
+	compare: function(other) {
+		if (this.active !== other.active) return false;
+		if (this.enpassant !== other.enpassant) return false;
+		if (this.castling !== other.castling) return false;
+		if (this.halfmove !== other.halfmove) return false;
+		if (this.fullmove !== other.fullmove) return false;
+		if (this.lastmove !== other.lastmove) return false;
+		for (let x = 0; x < 8; x++) {
+			for (let y = 0; y < 8; y++) {
+				if (this.state[x][y] !== other.state[x][y]) {
+					return false;
+				}
+			}
 		}
 
-		return node.fen();
+		return true;
 	}
 };
 
