@@ -414,7 +414,7 @@ function make_renderer() {
 		}
 	};
 
-	renderer.choose_pgn = (event) => {
+	renderer.pgnchooser_click = (event) => {
 
 		// The thing that's clickable has a bunch of spans, meaning the exact
 		// target might not be what we want, but we can examine the event.path
@@ -783,9 +783,7 @@ function make_renderer() {
 		renderer.clickable_elements = elements;
 	};
 
-	renderer.info_click = (event) => {
-
-		// Look at the path to find our element with the unique id.
+	renderer.infobox_click = (event) => {
 
 		let n = undefined;
 
@@ -1107,7 +1105,7 @@ ipcRenderer.on("set", (event, msg) => {
 // the event.path to see what was actually clicked on.
 
 pgnchooser.addEventListener("mousedown", (event) => {
-	renderer.choose_pgn(event);
+	renderer.pgnchooser_click(event);
 });
 
 canvas.addEventListener("mousedown", (event) => {
@@ -1115,7 +1113,7 @@ canvas.addEventListener("mousedown", (event) => {
 });
 
 infobox.addEventListener("mousedown", (event) => {
-	renderer.info_click(event);
+	renderer.infobox_click(event);
 });
 
 mainline.addEventListener("mousedown", (event) => {
