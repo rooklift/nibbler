@@ -470,7 +470,6 @@ function make_renderer() {
 
 	renderer.go = (new_game_flag) => {
 
-		renderer.escape();
 		renderer.running = true;
 
 		let setup;
