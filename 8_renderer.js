@@ -423,6 +423,26 @@ function make_renderer() {
 		}
 	};
 
+	renderer.validate_pgn = (filename) => {
+		let buf = fs.readFileSync(filename);		// i.e. binary buffer object
+		let pgn_list = PreParsePGN(buf);
+
+		for (let n = 0; n < pgn_list.length; n++) {
+
+			let o = pgn_list[n];
+
+			try {
+				LoadPGN(o.movetext);
+			} catch (err) {
+				alert(`Game ${n + 1} - ${err.toString()}`);
+				return false;
+			}
+		}
+
+		alert(`This file seems OK. ${pgn_list.length} games checked.`);
+		return true;
+	};
+
 	// --------------------------------------------------------------------------------------------
 	// Engine stuff...
 
