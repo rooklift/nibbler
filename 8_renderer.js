@@ -908,8 +908,14 @@ function make_renderer() {
 	};
 
 	renderer.draw = () => {
-		renderer.draw_infobox();
-		renderer.draw_normal();
+
+		// Not using requestAnimationFrame the normal way. But it still
+		// may make the "animation" smoother, I think.
+
+		requestAnimationFrame(() => {
+			renderer.draw_infobox();
+			renderer.draw_normal();
+		});
 	};
 
 	renderer.draw_loop = () => {
