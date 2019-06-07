@@ -29,6 +29,7 @@ Thanks for helpful discussions and advice from borg, brinan, Chad, coolchess123,
 
 # TODO
 
+* Click on move targets to make the move.
 * Some tree structure of user moves.
 * PV display as a board.
 * Winrate graph.
