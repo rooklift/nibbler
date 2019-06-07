@@ -685,10 +685,8 @@ function make_renderer() {
 			return;
 		}
 
-		renderer.clickable_elements_version++;		// New "version" each call to draw_infobox()
-
 		let info_list = renderer.info_table.sorted();
-		let elements = [];
+		let elements = [];												// Not HTML elements, just our own objects
 
 		if (renderer.running === false) {
 			elements.push({
@@ -711,12 +709,16 @@ function make_renderer() {
 			let nice_pv = info.nice_pv();
 
 			for (let n = 0; n < nice_pv.length; n++) {
-				let move = nice_pv[n];
-				elements.push({
+				let nice_move = nice_pv[n];
+				let element = {
 					class: colour === "w" ? "white" : "pink",
-					text: move + " ",
+					text: nice_move + " ",
 					move: info.pv[n],
-				});
+				};
+				if (nice_move.includes("O-O")) {
+					element.class += " nobr";
+				}
+				elements.push(element);
 				colour = OppositeColour(colour);
 			}
 

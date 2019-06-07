@@ -740,10 +740,10 @@ const position_prototype = {
 
 			if ("Kk".includes(piece)) {
 				if (s === "e1g1" || s === "e8g8") {
-					return `<span class="nobr">O-O${check}</span>`;
+					return `O-O${check}`;
 				}
 				if (s === "e1c1" || s === "e8c8") {
-					return `<span class="nobr">O-O-O${check}</span>`;
+					return `O-O-O${check}`;
 				}
 			}
 
