@@ -24,9 +24,11 @@
 
 	"bad_move_threshold": 0.02,
 	"terrible_move_threshold": 0.04,
-	
-	"max_info_lines": 10,
+
 	"node_display_threshold": 0.02,
 
+	"max_info_lines": 10,
+	"update_delay": 500,
+	
 	"logfile": null
 }

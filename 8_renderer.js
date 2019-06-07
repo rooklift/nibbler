@@ -67,10 +67,12 @@ assign_without_overwrite(config, {
 
 	"bad_move_threshold": 0.02,
 	"terrible_move_threshold": 0.04,
-	
-	"max_info_lines": 10,
+
 	"node_display_threshold": 0.02,
 
+	"max_info_lines": 10,
+	"update_delay": 500,
+	
 	"logfile": null
 });
 
@@ -651,8 +653,10 @@ function make_renderer() {
 	// --------------------------------------------------------------------------------------------
 	// We had some problems with the clicker: we used to destroy and create
 	// clickable objects a lot. This seemed to lead to moments where clicks wouldn't
-	// register. Now we only ever create them, i.e. the actual <a href="javascript">
-	// elements are never destroyed, but have their contents changed as needed.
+	// register. Now we only ever create them, i.e. the actual <a> elements are never
+	// destroyed, but have their contents changed as needed. This seems better.
+	//
+	// Hmm, we now edit the href value, not sure if this can lead to the same issue.
 
 	renderer.draw_infobox = () => {
 
@@ -1002,7 +1006,7 @@ function make_renderer() {
 	renderer.draw_loop = () => {
 		renderer.programmer_mistake_check();			// Regularly check that we haven't violated some assumptions...
 		renderer.draw();
-		setTimeout(renderer.draw_loop, 500);
+		setTimeout(renderer.draw_loop, config.update_delay);
 	};
 
 	return renderer;
