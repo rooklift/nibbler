@@ -644,17 +644,23 @@ function make_renderer() {
 
 	renderer.pv_click = (i, n) => {
 
-		console.log(`pv_click(${i}, ${n})`);
+		if (renderer.pv_click.count === undefined) {
+			renderer.pv_click.count = 0;
+		}
+
+		renderer.pv_click.count++;
+
+		console.log(`${renderer.pv_click.count}: pv_click(${i}, ${n})`);
 
 		if (i < 0 || i >= renderer.clickable_pv_lines.length) {
-			console.log("pv_click() failed due to i ===", i);
+			console.log(`${renderer.pv_click.count}: pv_click() failed due to i === ${i}`);
 			return;
 		}
 
 		let o = renderer.clickable_pv_lines[i];
 
 		if (o.board.compare(renderer.getboard()) === false) {
-			console.log("pv_click() failed due to board mismatch.");
+			console.log(`${renderer.pv_click.count}: pv_click() failed due to board mismatch`);
 			return;
 		}
 
@@ -664,6 +670,7 @@ function make_renderer() {
 			renderer.moves.push(move);
 		}
 
+		console.log(`${renderer.pv_click.count}: succeeded`);
 		renderer.position_changed();
 	};
 
