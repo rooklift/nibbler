@@ -685,7 +685,12 @@ function make_renderer() {
 				colour = OppositeColour(colour);
 			}
 
-			if (elements.length > 0) {
+			elements.push({
+				class: "blue",
+				text: `(N: ${info.n.toString()}, P: ${info.p})`
+			});
+
+			if (elements.length > 0) {			// Always true.
 				elements[elements.length - 1].text += "<br><br>";
 			}
 		}
