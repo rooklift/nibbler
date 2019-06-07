@@ -654,7 +654,7 @@ function make_renderer() {
 		let o = renderer.clickable_pv_lines[i];
 
 		if (o.board.compare(renderer.getboard()) === false) {
-			alert("pv_click() failed due to board mismatch. This should be impossible, please tell the author how you managed it.");
+			console.log("pv_click() failed due to board mismatch.");
 			return;
 		}
 
