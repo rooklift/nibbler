@@ -30,6 +30,7 @@ Thanks for helpful discussions and advice from borg, brinan, Chad, coolchess123,
 # TODO
 
 * Click on move targets to make the move.
+* [Move the scroll bar](http://jsfiddle.net/p3kar5bb/322/) on the main line to show current position if needed.
 * Some tree structure of user moves.
 * PV display as a board.
 * Winrate graph.
