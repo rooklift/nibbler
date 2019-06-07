@@ -40,7 +40,7 @@ const position_prototype = {
 		let ret = this.copy();
 		ret.parent = this;
 
-		let promotion = s.length > 4 ? s[4] : "q";
+		let promotion_char = s.length > 4 ? s[4].toLowerCase() : "q";
 		
 		let white_flag = this.is_white(Point(x1, y1));
 		let pawn_flag = "Pp".includes(ret.state[x1][y1]);
@@ -143,12 +143,12 @@ const position_prototype = {
 		let promotion_flag;
 
 		if (y2 === 0 && pawn_flag) {
-			ret.state[x2][y2] = promotion.toUpperCase();
+			ret.state[x2][y2] = promotion_char.toUpperCase();
 			promotion_flag = true;
 		}
 
 		if (y2 === 7 && pawn_flag) {
-			ret.state[x2][y2] = promotion.toLowerCase();
+			ret.state[x2][y2] = promotion_char;		// Always lowercase.
 			promotion_flag = true;
 		}
 
@@ -158,7 +158,7 @@ const position_prototype = {
 		ret.lastmove = s;
 
 		if (ret.lastmove.length === 4 && promotion_flag) {
-			ret.lastmove += promotion.toLowerCase();
+			ret.lastmove += promotion_char;
 		}
 
 		return ret;
