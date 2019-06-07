@@ -166,7 +166,9 @@ function make_renderer() {
 	renderer.stderr_log = "";						// All output received from the engine's stderr.
 	renderer.infobox_string = "";					// Just to help not redraw the infobox when not needed.
 	renderer.pgn_choices = null;					// All games found when opening a PGN file.
+
 	renderer.clickable_elements = [];
+	renderer.clickable_elements_version = 0;		// Iterate this every time, so we can check the incoming click is current.
 
 	renderer.start_pos = LoadFEN("rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1");
 	renderer.info_table = NewInfoTable();
@@ -667,8 +669,9 @@ function make_renderer() {
 			return;
 		}
 
-		let info_list = renderer.info_table.sorted();
+		renderer.clickable_elements_version++;		// New "version" each call to draw_infobox()
 
+		let info_list = renderer.info_table.sorted();
 		let elements = [];
 
 		if (renderer.running === false) {
@@ -717,12 +720,13 @@ function make_renderer() {
 			if (n < infobox.children.length && n < elements.length) {
 				html_nodes[n].innerHTML = elements[n].text;
 				html_nodes[n].className = elements[n].class;
+				html_nodes[n].href = `javascript: renderer.info_click(${renderer.clickable_elements_version}, ${n});`;
 			} else if (n < html_nodes.length) {
 				html_nodes[n].innerHTML = "";
 				html_nodes[n].className = "";
 			} else if (n < elements.length) {
 				let node = document.createElement("a");
-				node.href = `javascript: renderer.info_click(${n});`;
+				node.href = `javascript: renderer.info_click(${renderer.clickable_elements_version}, ${n});`;
 				infobox.appendChild(node);
 				html_nodes[n].innerHTML = elements[n].text;
 				html_nodes[n].className = elements[n].class;
@@ -734,10 +738,14 @@ function make_renderer() {
 		renderer.clickable_elements = elements;
 	};
 
-	renderer.info_click = (n) => {
+	renderer.info_click = (version, n) => {
 
 		// This is a bit icky, it relies on the fact that our clickable_elements list
 		// has some objects that lack a move property (the blue info bits).
+
+		if (version !== renderer.clickable_elements_version) {
+			return;
+		}
 
 		if (!renderer.clickable_elements || n >= renderer.clickable_elements.length) {
 			return;
