@@ -169,7 +169,7 @@ function make_renderer() {
 	renderer.infobox_string = "";					// Just to help not redraw the infobox when not needed.
 	renderer.pgn_choices = null;					// All games found when opening a PGN file.
 
-	renderer.clickable_elements = [];
+	renderer.clickable_elements = [];				// Objects relating to our infobox.
 	renderer.clickable_elements_version = 0;		// Iterate this every time, so we can check the incoming click is current.
 
 	renderer.start_pos = LoadFEN("rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1");
