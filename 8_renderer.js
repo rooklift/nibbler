@@ -139,6 +139,7 @@ for (let key of Object.keys(config.options)) {
 setoption("VerboseMoveStats", true);		// Required for LogLiveStats to work.
 setoption("LogLiveStats", true);			// "Secret" Lc0 command.
 setoption("MultiPV", 500);
+send("ucinewgame");
 
 // ------------------------------------------------------------------------------------------------
 
@@ -194,6 +195,9 @@ function make_renderer() {
 		if (ArrayStartsWith(renderer.user_line, renderer.moves) === false) {
 			alert("renderer.user_line does not start with renderer.moves");
 		}
+		if (renderer.info_table.board !== renderer.getboard()) {
+			alert("renderer.info_table.board !== renderer.getboard()");
+		}
 	};
 
 	renderer.getboard = () => {
@@ -214,34 +218,6 @@ function make_renderer() {
 
 		return renderer.board_cache.board;
 	}
-
-	renderer.move = (s) => {
-
-		let board = renderer.getboard();
-
-		// Add promotion if needed and not present...
-
-		if (s.length === 4) {
-			let source = Point(s.slice(0, 2));
-			if (board.piece(source) === "P" && source.y === 1) {
-				console.log(`Move ${s} was promotion but had no promotion piece set; adjusting to ${s + "q"}`);
-				s += "q";
-			}
-			if (board.piece(source) === "p" && source.y === 6) {
-				console.log(`Move ${s} was promotion but had no promotion piece set; adjusting to ${s + "q"}`);
-				s += "q";
-			}
-		}
-
-		let illegal_reason = board.illegal(s)
-		if (illegal_reason !== "") {
-			alert(`Illegal move requested (${s}, ${illegal_reason}). This should be impossible, please tell the author how you managed it.`);
-			return;
-		}
-
-		renderer.moves.push(s);
-		renderer.position_changed();
-	};
 
 	// There are 3 ways the position can change...
 	//
@@ -314,6 +290,44 @@ function make_renderer() {
 		}
 
 		return true;
+	};
+
+	renderer.move = (s) => {
+
+		let board = renderer.getboard();
+
+		// Add promotion if needed and not present...
+
+		if (s.length === 4) {
+			let source = Point(s.slice(0, 2));
+			if (board.piece(source) === "P" && source.y === 1) {
+				console.log(`Move ${s} was promotion but had no promotion piece set; adjusting to ${s + "q"}`);
+				s += "q";
+			}
+			if (board.piece(source) === "p" && source.y === 6) {
+				console.log(`Move ${s} was promotion but had no promotion piece set; adjusting to ${s + "q"}`);
+				s += "q";
+			}
+		}
+
+		let illegal_reason = board.illegal(s)
+		if (illegal_reason !== "") {
+			alert(`Illegal move requested (${s}, ${illegal_reason}). This should be impossible, please tell the author how you managed it.`);
+			return;
+		}
+
+		renderer.moves.push(s);
+		renderer.position_changed();
+	};
+
+	renderer.play_best = () => {
+		if (renderer.info_table.board !== renderer.getboard()) {
+			return;
+		}
+		let info_list = renderer.info_table.sorted();
+		if (info_list.length > 0) {
+			renderer.move(info_list[0].move);
+		}
 	};
 
 	renderer.prev = () => {
@@ -565,11 +579,49 @@ function make_renderer() {
 	};
 
 	renderer.pv_click = (i, n) => {
-		// TODO
+		alert([i, n]);
 	};
 
 	renderer.draw_infobox = () => {
-		// TODO
+
+		renderer.clickable_pv_lines = [];
+
+		if (!renderer.ever_received_info) {
+			if (infobox.innerHTML !== renderer.stderr_log) {	// Only update when needed, so user can select and copy.
+				infobox.innerHTML = renderer.stderr_log;
+			}
+			return;
+		}
+
+		if (renderer.info_table.board !== renderer.getboard()) {
+			return;
+		}
+
+		let info_list = renderer.info_table.sorted();
+
+		let s = "";
+
+		if (!renderer.running) {
+			s += "<p>&lt;halted&gt;</p>";
+		}
+
+		for (let i = 0; i < info_list.length && i < config.max_info_lines; i++) {
+
+			s += `<p>${info_list[i].nice_pv_string(config, i)}</p>`;
+
+			renderer.clickable_pv_lines.push({
+				board: renderer.pos,
+				pv: info_list[i].pv
+			})
+		}
+
+		// Only update when needed, so user can select and copy. A direct comparison
+		// of s with innerHTML seems to fail (something must get changed).
+
+		if (renderer.infobox_string !== s) {
+			renderer.infobox_string = s;
+			infobox.innerHTML = s;
+		}
 	};
 
 	renderer.canvas_coords = (x, y) => {

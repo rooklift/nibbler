@@ -150,7 +150,7 @@ function NewInfoTable(board) {			// There's only ever going to be one of these m
 						Log(`... Nibbler: invalid move received!: ${move}`);
 						return;
 					}
-					move_info = new_info();
+					move_info = new_info(this.board, move);
 					this.table[move] = move_info;
 				}
 
