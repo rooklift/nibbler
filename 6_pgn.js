@@ -110,7 +110,7 @@ function new_byte_pusher() {
 		},
 
 		string: function() {
-			return __decoder.decode(this.bytes());
+			return decoder.decode(this.bytes());
 		}
 	};
 }
@@ -153,7 +153,7 @@ function PreParsePGN(buf) {
 
 			// Parse the tag line...
 
-			let line = __decoder.decode(rawline).trim();
+			let line = decoder.decode(rawline).trim();
 
 			if (line.endsWith("]")) {
 
