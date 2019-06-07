@@ -222,7 +222,12 @@ function make_renderer() {
 	//		Loaded game.
 	//
 	// Although it seems like we do a lot of book-keeping,
-	// we only need to do it in these 3 functions...
+	// we only need to do it in these 3 functions.
+	//
+	// In general, changing position is as simple as setting
+	// renderer.moves and calling renderer.position_changed().
+	//
+	// Thankfully position_changed() is the simplest function.
 
 	renderer.position_changed = () => {
 
@@ -236,7 +241,7 @@ function make_renderer() {
 
 		renderer.escape();
 		renderer.draw_main_line();
-		fenbox.value = board.fen();
+		fenbox.value = renderer.getboard().fen();		// Must be after the cache is cleared!
 
 		if (renderer.running) {
 			renderer.go();
@@ -250,6 +255,7 @@ function make_renderer() {
 		}
 
 		renderer.start_pos = start_pos;
+		renderer.pgn_line = [];
 		renderer.user_line = [];
 		renderer.moves = [];
 
@@ -278,6 +284,7 @@ function make_renderer() {
 
 		// FIXME: I think a PGN can actually specify a different starting position?
 		renderer.start_pos = LoadFEN("rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1");
+		renderer.pgn_line = Array.from(final_pos.history());
 		renderer.user_line = Array.from(final_pos.history());
 		renderer.moves = [];
 
@@ -359,10 +366,23 @@ function make_renderer() {
 	};
 
 	renderer.return_to_pgn = () => {
-		if (renderer.pgn_line.length === 0) {
+
+		if (!renderer.pgn_line || renderer.pgn_line.length === 0) {
 			alert("No PGN loaded.");
 			return;
 		}
+
+		let new_moves_list = [];
+		for (let i = 0; i < renderer.pgn_line.length; i++) {
+			if (renderer.pgn_line[i] !== renderer.moves[i]) {		// renderer.moves[i] may be undefined, that's OK
+				break;
+			}
+			new_moves_list.push(renderer.pgn_line[i]);
+		}
+
+		renderer.moves = new_moves_list;
+		renderer.user_line = Array.from(renderer.pgn_line);
+		renderer.position_changed();
 	};
 
 	renderer.load_fen = (s) => {
