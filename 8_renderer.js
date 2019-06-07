@@ -639,7 +639,7 @@ function make_renderer() {
 		for (let m of renderer.moves) {
 
 			if (renderer.pgn_line && renderer.pgn_line.length > 0 && deviated_from_pgn === false && renderer.pgn_line[i] !== m) {
-				elements.push(`<span class="red" id="mainline_deviated">(deviated)</span> `);
+				elements.push(`<span class="red" id="mainline_deviated">[return to PGN]</span> `);
 				deviated_from_pgn = true;
 			}
 
@@ -661,7 +661,7 @@ function make_renderer() {
 		for (let m of renderer.user_line.slice(renderer.moves.length)) {
 
 			if (renderer.pgn_line && renderer.pgn_line.length > 0 && deviated_from_pgn === false && renderer.pgn_line[i] !== m) {
-				elements.push(`<span class="red" id="mainline_deviated">(deviated)</span> `);
+				elements.push(`<span class="red" id="mainline_deviated">[return to PGN]</span> `);
 				deviated_from_pgn = true;
 			}
 
