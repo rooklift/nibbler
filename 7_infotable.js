@@ -1,22 +1,22 @@
 "use strict";
 
-function new_info() {
+function new_info(board, move) {
 
 	return {
+		board: board,
 		cp: -999999,
-		move: "??",
+		move: move,
 		multipv: 999,
 		n: 0,				// The draw logic will only ever draw things with non-negative n, so make this 0
 		p: "?",
 		pv: [],
 		nice_pv_cache: null,
-		nice_pv_string_cache: null,
+		// nice_pv_string_cache: null,		// Can't have this because the pv_string changes as the sort order does.
 		winrate: null,
 
-		nice_pv: function(board) {
+		nice_pv: function() {
 
-			// Given the board for which this info is valid, generate a list of
-			// human readable moves. Since there's no real guarantee that our
+			// Human readable moves. Since there's no real guarantee that our
 			// moves list is legal, we legality check them. We at least know
 			// the initial move is legal, since it's checked on receipt.
 
@@ -24,35 +24,33 @@ function new_info() {
 				return this.nice_pv_cache;
 			}
 
+			let tmp_board = this.board;
+
 			if (!this.pv || this.pv.length === 0) {
-				return [board.nice_string(this.move)];
+				return [tmp_board.nice_string(this.move)];
 			}
 
 			let ret = [];
 
 			for (let move of this.pv) {
-				if (board.illegal(move) !== "") {
+				if (tmp_board.illegal(move) !== "") {
 					break;
 				}
-				ret.push(board.nice_string(move));
-				board = board.move(move);
+				ret.push(tmp_board.nice_string(move));
+				tmp_board = tmp_board.move(move);
 			}
 
 			this.nice_pv_cache = ret;
 			return this.nice_pv_cache;
 		},
 
-		nice_pv_string: function(board, options, i) {
+		nice_pv_string: function(options, i) {
 
 			// The caller should ensure that i is unique for each move in the moves list,
 			// then we can use i to ensure that each move has a unique way of calling
-			// renderer.pv_click()
+			// renderer.pv_click().
 
-			if (this.nice_pv_string_cache) {
-				return this.nice_pv_string_cache;
-			}
-
-			let nice_pv_list = this.nice_pv(board);
+			let nice_pv_list = this.nice_pv();
 
 			let blobs = [];
 
@@ -78,7 +76,7 @@ function new_info() {
 
 			// -------------------------------------------------
 
-			let colour = board.active;
+			let colour = this.board.active;
 
 			let n = 0;
 			for (let move of nice_pv_list) {
@@ -109,30 +107,26 @@ function new_info() {
 				blobs.push(`<span class="blue">(${tech_elements.join(" ")})</span>`);
 			}
 
-			this.nice_pv_string_cache = blobs.join(" ");
-			return this.nice_pv_string_cache;
+			return blobs.join(" ");
 		}
 	};
 }
 
-function NewInfoTable() {			// There's only ever going to be one of these made.
+function NewInfoTable() {			// There's only ever going to be one of these made I guess.
 
 	return {
 
-		clears: 0,
 		table: Object.create(null),
 	
 		clear: function() {
 			this.table = Object.create(null);
-			Log(`------------------------- info cleared (${++this.clears}) -------------------------`);
 		},
 
 		receive: function(s, board) {
 
-			// The current board is sent just so we can check the move is valid.
 			// Although the renderer tries to avoid sending invalid moves by
 			// syncing with "isready" "readyok" an engine like Stockfish doesn't
-			// behave properly, IMO.
+			// behave properly, IMO. So we use the board to check legality.
 
 			if (s.startsWith("info") && s.indexOf(" pv ") !== -1) {
 
@@ -142,27 +136,25 @@ function NewInfoTable() {			// There's only ever going to be one of these made.
 				let move = InfoVal(s, "pv");
 				let move_info;
 
-				if (this.table[move]) {					// We already have move info for this move.
+				if (this.table[move]) {						// We already have move info for this move.
 					move_info = this.table[move];
-				} else {								// We don't.
+				} else {									// We don't.
 					if (board.illegal(move) !== "") {
 						Log(`... Nibbler: invalid move received!: ${move}`);
 						return;
 					}
-					move_info = new_info();
+					move_info = new_info(board, move);
 					this.table[move] = move_info;
 				}
 
-				move_info.move = move;
-
 				let tmp;
 
-				tmp = parseInt(InfoVal(s, "cp"), 10);						// Score in centipawns
+				tmp = parseInt(InfoVal(s, "cp"), 10);		// Score in centipawns
 				if (Number.isNaN(tmp) === false) {
 					move_info.cp = tmp;				
 				}
 
-				tmp = parseInt(InfoVal(s, "multipv"), 10);					// Leela's ranking of the move, starting at 1
+				tmp = parseInt(InfoVal(s, "multipv"), 10);	// Leela's ranking of the move, starting at 1
 				if (Number.isNaN(tmp) === false) {
 					move_info.multipv = tmp;
 				}
@@ -171,7 +163,6 @@ function NewInfoTable() {			// There's only ever going to be one of these made.
 
 				if (new_pv.length > 0) {
 					if (CompareArrays(new_pv, move_info.pv) === false) {
-						move_info.nice_pv_string_cache = null;
 						move_info.nice_pv_cache = null;
 						move_info.pv = new_pv;
 					}
@@ -183,28 +174,25 @@ function NewInfoTable() {			// There's only ever going to be one of these made.
 
 				let move = InfoVal(s, "string");
 
-				if (board.illegal(move) !== "") {
-					Log(`... Nibbler: invalid move received!: ${move}`);
-					return;
-				}
-
 				let move_info;
 
-				if (this.table[move]) {
+				if (this.table[move]) {						// We already have move info for this move.
 					move_info = this.table[move];
-				} else {
-					move_info = new_info();
+				} else {									// We don't.
+					if (board.illegal(move) !== "") {
+						Log(`... Nibbler: invalid move received!: ${move}`);
+						return;
+					}
+					move_info = new_info(board, move);
 					this.table[move] = move_info;
 				}
-
-				move_info.move = move;
 
 				let tmp = parseInt(InfoVal(s, "N:"), 10);
 				if (Number.isNaN(tmp) === false) {
 					move_info.n = tmp;
 				}
 
-				move_info.p = InfoVal(s, "(P:");		// Worse case here is just empty string, which is OK.
+				move_info.p = InfoVal(s, "(P:");			// Worst case here is just empty string, which is OK.
 
 				tmp = InfoVal(s, "(Q:");
 				tmp = parseFloat(tmp);

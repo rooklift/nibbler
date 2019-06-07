@@ -110,12 +110,12 @@ function new_byte_pusher() {
 		},
 
 		string: function() {
-			return __decoder.decode(this.bytes());
+			return decoder.decode(this.bytes());
 		}
 	};
 }
 
-function pre_parse_pgn(buf) {
+function PreParsePGN(buf) {
 
 	// Returns an array of the pgn_record objects, of at least length 1.
 
@@ -153,7 +153,7 @@ function pre_parse_pgn(buf) {
 
 			// Parse the tag line...
 
-			let line = __decoder.decode(rawline).trim();
+			let line = decoder.decode(rawline).trim();
 
 			if (line.endsWith("]")) {
 

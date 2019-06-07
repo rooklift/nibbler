@@ -40,7 +40,7 @@ const position_prototype = {
 		let ret = this.copy();
 		ret.parent = this;
 
-		let promotion = s.length > 4 ? s[4] : "q";
+		let promotion_char = s.length > 4 ? s[4].toLowerCase() : "q";
 		
 		let white_flag = this.is_white(Point(x1, y1));
 		let pawn_flag = "Pp".includes(ret.state[x1][y1]);
@@ -143,12 +143,12 @@ const position_prototype = {
 		let promotion_flag;
 
 		if (y2 === 0 && pawn_flag) {
-			ret.state[x2][y2] = promotion.toUpperCase();
+			ret.state[x2][y2] = promotion_char.toUpperCase();
 			promotion_flag = true;
 		}
 
 		if (y2 === 7 && pawn_flag) {
-			ret.state[x2][y2] = promotion.toLowerCase();
+			ret.state[x2][y2] = promotion_char;		// Always lowercase.
 			promotion_flag = true;
 		}
 
@@ -158,7 +158,7 @@ const position_prototype = {
 		ret.lastmove = s;
 
 		if (ret.lastmove.length === 4 && promotion_flag) {
-			ret.lastmove += promotion.toLowerCase();
+			ret.lastmove += promotion_char;
 		}
 
 		return ret;
@@ -714,7 +714,7 @@ const position_prototype = {
 			return "??";
 		}
 
-		if (this.nice_lastmove_cache === undefined) {
+		if (!this.nice_lastmove_cache) {
 			this.nice_lastmove_cache = this.parent.nice_string(this.lastmove);
 		}
 
@@ -896,6 +896,7 @@ const position_prototype = {
 	},
 
 	history: function() {
+		// Note, if this ever returns a cached list, it should return Array.from(cache) instead.
 		let list = [];
 		let node = this;
 		while (node.parent) {			// no parent implies no lastmove
@@ -907,6 +908,7 @@ const position_prototype = {
 	},
 
 	position_list: function() {
+		// Note, if this ever returns a cached list, it should return Array.from(cache) instead.
 		let list = [];
 		let node = this;
 		while (node) {
@@ -934,18 +936,22 @@ const position_prototype = {
 		return false;
 	},
 
-	initial_fen: function() {
-
-		// When sending the engine the position, the UCI specs involve sending the initial FEN
-		// and then a list of moves. This method finds the initial FEN.
-
-		let node = this;
-
-		while (node.parent) {
-			node = node.parent;
+	compare: function(other) {
+		if (this.active !== other.active) return false;
+		if (this.enpassant !== other.enpassant) return false;
+		if (this.castling !== other.castling) return false;
+		if (this.halfmove !== other.halfmove) return false;
+		if (this.fullmove !== other.fullmove) return false;
+		if (this.lastmove !== other.lastmove) return false;
+		for (let x = 0; x < 8; x++) {
+			for (let y = 0; y < 8; y++) {
+				if (this.state[x][y] !== other.state[x][y]) {
+					return false;
+				}
+			}
 		}
 
-		return node.fen();
+		return true;
 	}
 };
 

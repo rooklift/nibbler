@@ -57,7 +57,7 @@ function menu_build() {
 					label: "New Game",
 					accelerator: "CommandOrControl+N",
 					click: () => {
-						windows.send("main-window", "call", "new");
+						windows.send("main-window", "call", "new_game");
 					}
 				},
 				{
