@@ -11,7 +11,6 @@ function new_info(board, move) {
 		p: "?",
 		pv: [],
 		nice_pv_cache: null,
-		// nice_pv_string_cache: null,		// Can't have this because the pv_string changes as the sort order does.
 		winrate: null,
 
 		nice_pv: function() {
@@ -42,72 +41,6 @@ function new_info(board, move) {
 
 			this.nice_pv_cache = ret;
 			return this.nice_pv_cache;
-		},
-
-		nice_pv_string: function(options, i) {
-
-			// The caller should ensure that i is unique for each move in the moves list,
-			// then we can use i to ensure that each move has a unique way of calling
-			// renderer.pv_click().
-
-			let nice_pv_list = this.nice_pv();
-
-			let blobs = [];
-
-			// -------------------------------------------------
-
-			if (options.show_winrate) {
-
-				let winrate_string = "?";
-				if (typeof this.winrate === "number") {
-					winrate_string = this.winrate.toString().slice(0, 5);
-					if (winrate_string[1] === ".") {
-						winrate_string = winrate_string.slice(1);
-					}
-					if (winrate_string !== "1" && winrate_string !== "0") {
-						while (winrate_string.length < 4) {
-							winrate_string += "0";
-						}
-					}
-				}
-
-				blobs.push(`<span class="blue">${winrate_string}</span>`);
-			}
-
-			// -------------------------------------------------
-
-			let colour = this.board.active;
-
-			let n = 0;
-			for (let move of nice_pv_list) {
-
-				if (colour === "w") {
-					blobs.push(`<a class="white" href="javascript:renderer.pv_click(${i}, ${n++});">${move}</a>`);
-				} else {
-					blobs.push(`<a class="pink" href="javascript:renderer.pv_click(${i}, ${n++});">${move}</a>`);
-				}
-
-				colour = OppositeColour(colour);
-			}
-
-			// -------------------------------------------------
-
-			if (options.show_n || options.show_p) {
-				
-				let tech_elements = [];
-
-				if (options.show_n) {
-					tech_elements.push(`N: ${this.n.toString()}`);
-				}
-
-				if (options.show_p) {
-					tech_elements.push(`P: ${this.p}`);
-				}
-
-				blobs.push(`<span class="blue">(${tech_elements.join(" ")})</span>`);
-			}
-
-			return blobs.join(" ");
 		}
 	};
 }

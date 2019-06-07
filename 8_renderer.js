@@ -160,6 +160,14 @@ for (let c of Array.from("KkQqRrBbNnPp")) {
 
 // ------------------------------------------------------------------------------------------------
 
+for (let n = 0; n < 1000; n++) {
+	let node = document.createElement("a");
+	node.href = `javascript: renderer.info_click(${n});`;
+	infobox.appendChild(node);
+}
+
+// ------------------------------------------------------------------------------------------------
+
 function make_renderer() {
 
 	let renderer = Object.create(null);
@@ -171,7 +179,6 @@ function make_renderer() {
 	renderer.stderr_log = "";						// All output received from the engine's stderr.
 	renderer.infobox_string = "";					// Just to help not redraw the infobox when not needed.
 	renderer.pgn_choices = null;					// All games found when opening a PGN file.
-	renderer.clickable_pv_lines = [];				// List of PV objects we use to tell what the user clicked on.
 
 	renderer.start_pos = LoadFEN("rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1");
 	renderer.info_table = NewInfoTable();
@@ -642,74 +649,28 @@ function make_renderer() {
 		mainline.innerHTML = [s1, s2].filter(s => s !== "").join(" ");
 	};
 
-	renderer.pv_click = (i, n) => {
-
-		if (renderer.pv_click.count === undefined) {
-			renderer.pv_click.count = 0;
-		}
-
-		renderer.pv_click.count++;
-
-		console.log(`${renderer.pv_click.count}: pv_click(${i}, ${n})`);
-
-		if (i < 0 || i >= renderer.clickable_pv_lines.length) {
-			console.log(`${renderer.pv_click.count}: pv_click() failed due to i === ${i}`);
-			return;
-		}
-
-		let o = renderer.clickable_pv_lines[i];
-
-		if (o.board.compare(renderer.getboard()) === false) {
-			console.log(`${renderer.pv_click.count}: pv_click() failed due to board mismatch`);
-			return;
-		}
-
-		let moves = o.pv.slice(0, n + 1);
-
-		for (let move of moves) {
-			renderer.moves.push(move);
-		}
-
-		console.log(`${renderer.pv_click.count}: succeeded`);
-		renderer.position_changed();
-	};
-
 	renderer.draw_infobox = () => {
 
-		renderer.clickable_pv_lines = [];
-
 		if (!renderer.ever_received_info) {
-			if (infobox.innerHTML !== renderer.stderr_log) {	// Only update when needed, so user can select and copy.
-				infobox.innerHTML = renderer.stderr_log;
-			}
-			return;
+			return;			// FIXME
 		}
 
-		let board = renderer.getboard();
+		let elements = [];
+		let html_nodes = infobox.children;
+
 		let info_list = renderer.info_table.sorted();
-		let s = "";
-
-		if (!renderer.running) {
-			s += "<p>&lt;halted&gt;</p>";
-		}
 
 		for (let i = 0; i < info_list.length && i < config.max_info_lines; i++) {
-
-			s += `<p>${info_list[i].nice_pv_string(config, i)}</p>`;
-
-			renderer.clickable_pv_lines.push({
-				board: board,
-				pv: info_list[i].pv
-			})
+			let info = info_list[i];
+			elements = elements.concat(info.nice_pv());
+			elements[elements.length - 1] += "<br><br>";
 		}
 
-		// Only update when needed, so user can select and copy. A direct comparison
-		// of s with innerHTML seems to fail (something must get changed).
+		for (let n = 0; n < elements.length && n < html_nodes.length; n++) {
 
-		if (renderer.infobox_string !== s) {
-			renderer.infobox_string = s;
-			infobox.innerHTML = s;
+			html_nodes[n].innerHTML = elements[n] + " ";
 		}
+
 	};
 
 	renderer.canvas_coords = (x, y) => {
