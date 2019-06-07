@@ -115,7 +115,7 @@ function new_byte_pusher() {
 	};
 }
 
-function pre_parse_pgn(buf) {
+function PreParsePGN(buf) {
 
 	// Returns an array of the pgn_record objects, of at least length 1.
 

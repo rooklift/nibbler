@@ -342,9 +342,8 @@ function make_renderer() {
 	};
 
 	renderer.open = (filename) => {
-
 		let buf = fs.readFileSync(filename);				// i.e. binary buffer object
-		let new_pgn_choices = pre_parse_pgn(buf);
+		let new_pgn_choices = PreParsePGN(buf);
 
 		if (new_pgn_choices.length === 1) {
 			let success = renderer.load_pgn_object(new_pgn_choices[0]);
@@ -357,12 +356,15 @@ function make_renderer() {
 		}
 	};
 
-	renderer.show_pgn_chooser = () => {
-		// TODO
+	renderer.choose_pgn = (n) => {
+		renderer.hide_pgn_chooser();
+		if (renderer.pgn_choices && n >= 0 && n < renderer.pgn_choices.length) {
+			renderer.load_pgn_object(renderer.pgn_choices[n]);
+		}
 	};
 
 	// --------------------------------------------------------------------------------------------
-	// Things below this point are not related to the difficult task of keeping track of positions.
+	// Engine stuff...
 
 	renderer.receive = (s) => {
 
@@ -382,6 +384,68 @@ function make_renderer() {
 		} else {
 			renderer.stderr_log += `${s}<br>`;
 		}
+	};
+
+	renderer.halt = () => {
+		// TODO
+	};
+
+	// --------------------------------------------------------------------------------------------
+	// Visual stuff...
+
+	renderer.escape = () => {			// Set things into a clean state.
+		renderer.hide_pgn_chooser();
+		renderer.active_square = null;
+		renderer.draw();
+	};
+
+	renderer.show_pgn_chooser = () => {
+
+		if (!renderer.pgn_choices) {
+			alert("No PGN loaded");
+			return;
+		}
+
+		renderer.halt();				// It's lame to run the GPU when we're clearly switching games.
+
+		let lines = [];
+
+		lines.push("&nbsp;");
+
+		let max_ordinal_length = renderer.pgn_choices.length.toString().length;
+		let padding = "";
+		for (let n = 0; n < max_ordinal_length - 1; n++) {
+			padding += "&nbsp;";
+		}
+
+		for (let n = 0; n < renderer.pgn_choices.length; n++) {
+
+			if (n === 9 || n === 99 || n === 999 || n === 9999 || n === 99999 || n === 999999) {
+				padding = padding.slice(0, padding.length - 6);
+			}
+
+			let p = renderer.pgn_choices[n];
+
+			let s;
+
+			if (p.tags.Result === "1-0") {
+				s = `${padding}${n + 1}. <span class="blue">${p.tags.White}</span> - ${p.tags.Black}`;
+			} else if (p.tags.Result === "0-1") {
+				s = `${padding}${n + 1}. ${p.tags.White} - <span class="blue">${p.tags.Black}</span>`;
+			} else {
+				s = `${padding}${n + 1}. ${p.tags.White} - ${p.tags.Black}`;
+			}
+			lines.push(`<a href="javascript:renderer.choose_pgn(${n})">&nbsp;&nbsp;${s}</a>`);
+		}
+
+		lines.push("&nbsp;");
+
+		pgnchooser.innerHTML = lines.join("<br>");
+		pgnchooser.style.display = "block";
+	};
+
+	renderer.hide_pgn_chooser = () => {
+		pgnchooser.style.display = "none";
 	};
 
 	renderer.square_size = () => {
