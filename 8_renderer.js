@@ -162,7 +162,6 @@ for (let c of Array.from("KkQqRrBbNnPp")) {
 function make_renderer() {
 
 	let renderer = Object.create(null);
-	renderer.info_table = NewInfoTable();
 
 	renderer.squares = [];							// Info about clickable squares.
 	renderer.active_square = null;					// Square clicked by user.
@@ -174,6 +173,7 @@ function make_renderer() {
 	renderer.clickable_pv_lines = [];				// List of PV objects we use to tell what the user clicked on.
 
 	renderer.start_pos = LoadFEN("rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1");
+	renderer.info_table = NewInfoTable(renderer.start_pos);
 	renderer.board_cache = null;
 
 	// IMPORTANT! These next two arrays must NEVER be the same object. Use Array.from() a lot to avoid this.
@@ -256,9 +256,12 @@ function make_renderer() {
 			renderer.user_line = Array.from(renderer.moves);
 		}
 
+		let board = renderer.getboard();
+		renderer.info_table.change(board);
+
 		renderer.draw();
 		renderer.draw_main_line();
-		fenbox.value = renderer.getboard().fen();
+		fenbox.value = board.fen();
 	};
 
 	renderer.new_game = (start_pos) => {
@@ -270,6 +273,7 @@ function make_renderer() {
 		renderer.start_pos = start_pos;
 		renderer.user_line = [];
 		renderer.moves = [];
+		renderer.info_table.change(renderer.start_pos);
 
 		renderer.draw();
 		renderer.draw_main_line();
@@ -291,6 +295,7 @@ function make_renderer() {
 		renderer.start_pos = LoadFEN("rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1");
 		renderer.user_line = Array.from(final_pos.history());
 		renderer.moves = [];
+		renderer.info_table.change(renderer.start_pos);
 
 		renderer.draw();
 		renderer.draw_main_line();
