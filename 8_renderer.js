@@ -187,6 +187,15 @@ function make_renderer() {
 
 	// --------------------------------------------------------------------------------------------
 
+	renderer.programmer_mistake_check = () => {
+		if (renderer.moves === renderer.user_line) {
+			alert("renderer.moves is the same object as renderer.user_line");
+		}
+		if (ArrayStartsWith(renderer.user_line, renderer.moves) === false) {
+			alert("renderer.user_line does not start with renderer.moves");
+		}
+	};
+
 	renderer.getboard = () => {
 
 		if (renderer.board_cache && CompareArrays(renderer.board_cache.moves, renderer.moves)) {
@@ -663,15 +672,6 @@ function make_renderer() {
 	renderer.draw = () => {
 		renderer.draw_infobox();
 		renderer.draw_normal();
-	};
-
-	renderer.programmer_mistake_check = () => {
-		if (renderer.moves === renderer.user_line) {
-			alert("renderer.moves is the same object as renderer.user_line");
-		}
-		if (ArrayStartsWith(renderer.user_line, renderer.moves) === false) {
-			alert("renderer.user_line does not start with renderer.moves");
-		}
 	};
 
 	renderer.draw_loop = () => {
