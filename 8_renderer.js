@@ -667,21 +667,22 @@ function make_renderer() {
 	// --------------------------------------------------------------------------------------------
 	// We had some problems with the info clicker: we used to destroy and create
 	// clickable objects a lot. This seemed to lead to moments where clicks wouldn't
-	// register. Now we only ever create them, i.e. the actual <a> elements are never
-	// destroyed, but have their contents changed as needed. This seems better.
+	// register.
+	//
+	// A better approach is to use an event handler on the infobox element itself
+	// (which is set up at the bottom of this file) and examine the event for the
+	// target property.
 
 	renderer.draw_infobox = () => {
 
 		if (!renderer.ever_received_info) {
 			let html_nodes = infobox.children;
 			if (html_nodes.length === 0) {
-				let node = document.createElement("a");
-				node.href = `javascript: renderer.info_click(0);`;
+				let node = document.createElement("span");
+				node.id = "clicker_0";
 				infobox.appendChild(node);
 			}
-			if (html_nodes[0].innerHTML !== renderer.stderr_log) {		// Only update as needed, to allow select & copy
-				html_nodes[0].innerHTML = renderer.stderr_log;
-			}
+			html_nodes[0].innerHTML = renderer.stderr_log;
 			return;
 		}
 
@@ -742,8 +743,8 @@ function make_renderer() {
 				html_nodes[n].innerHTML = "";
 				html_nodes[n].className = "";
 			} else if (n < elements.length) {
-				let node = document.createElement("a");
-				node.href = `javascript: renderer.info_click(${n});`;
+				let node = document.createElement("span");
+				node.id = `clicker_${n}`;
 				infobox.appendChild(node);
 				html_nodes[n].innerHTML = elements[n].text;
 				html_nodes[n].className = elements[n].class;
@@ -755,7 +756,18 @@ function make_renderer() {
 		renderer.clickable_elements = elements;
 	};
 
-	renderer.info_click = (n) => {
+	renderer.info_click = (event) => {
+
+		// event is an event on the containing infobox, however it will hopefully have
+		// a target property that we can use.
+
+		if (!event || !event.target || !event.target.id || typeof event.target.id !== "string") return;
+
+		if (event.target.id.startsWith("clicker_") === false) {
+			return;
+		}
+
+		let n = parseInt(event.target.id.slice(8), 10);
 
 		// This is a bit icky, it relies on the fact that our clickable_elements list
 		// has some objects that lack a move property (the blue info bits).
@@ -1058,6 +1070,10 @@ ipcRenderer.on("set", (event, msg) => {
 
 canvas.addEventListener("mousedown", (event) => {
 	renderer.canvas_click(event);
+});
+
+infobox.addEventListener("mousedown", (event) => {
+	renderer.info_click(event);
 });
 
 // Setup return key on FEN box...

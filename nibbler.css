@@ -18,9 +18,9 @@ body {
 
 #canvas {
 	float: left;
-	user-select: none;
 	margin-right: 1em;
 	margin-bottom: 1em;
+	user-select: none;
 }
 
 #pgnchooser {
@@ -56,6 +56,7 @@ input[type=text]:focus{
 	color: #cccccc;
 	font-family: monospace, monospace;
 	overflow: hidden;
+	user-select: none;
 	white-space: pre-wrap;
 }
 
