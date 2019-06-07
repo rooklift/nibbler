@@ -607,7 +607,7 @@ function make_renderer() {
 			if (board.active === "w") {
 				elements2.push(`${board.fullmove}.`);
 			}
-			
+
 			elements2.push(board.nice_string(m));
 			board = board.move(m);
 		}
@@ -623,7 +623,25 @@ function make_renderer() {
 	};
 
 	renderer.pv_click = (i, n) => {
-		alert([i, n]);
+
+		if (i < 0 || i >= renderer.clickable_pv_lines.length) {
+			return;
+		}
+
+		let o = renderer.clickable_pv_lines[i];
+
+		if (o.board.compare(renderer.getboard()) === false) {
+			alert("pv_click() failed due to board mismatch. This should be impossible, please tell the author how you managed it.");
+			return;
+		}
+
+		let moves = o.pv.slice(0, n + 1);
+
+		for (let move of moves) {
+			renderer.moves.push(move);
+		}
+
+		renderer.position_changed();
 	};
 
 	renderer.draw_infobox = () => {
@@ -637,8 +655,8 @@ function make_renderer() {
 			return;
 		}
 
+		let board = renderer.getboard();
 		let info_list = renderer.info_table.sorted();
-
 		let s = "";
 
 		if (!renderer.running) {
@@ -650,7 +668,7 @@ function make_renderer() {
 			s += `<p>${info_list[i].nice_pv_string(config, i)}</p>`;
 
 			renderer.clickable_pv_lines.push({
-				board: renderer.pos,
+				board: board,
 				pv: info_list[i].pv
 			})
 		}
