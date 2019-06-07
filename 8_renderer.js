@@ -174,10 +174,11 @@ function make_renderer() {
 	renderer.clickable_pv_lines = [];				// List of PV objects we use to tell what the user clicked on.
 
 	renderer.start_pos = LoadFEN("rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1");
+	renderer.board_cache = null;
+
+	// IMPORTANT! These next two arrays must NEVER be the same object. Use Array.from() a lot to avoid this...
 	renderer.user_line = [];						// Entire history of the user variation, as a list of moves.
 	renderer.moves = [];							// History of the currently shown position.
-
-	renderer.board_cache = null;
 
 	fenbox.value = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1";
 
@@ -300,6 +301,20 @@ function make_renderer() {
 		}
 	};
 
+	renderer.goto_root = () => {
+		if (renderer.moves.length > 0) {
+			renderer.moves = [];
+			renderer.position_changed();
+		}
+	};
+
+	renderer.goto_end = () => {
+		if (renderer.moves.length !== renderer.user_line.length) {
+			renderer.moves = Array.from(renderer.user_line);
+			renderer.position_changed();
+		}
+	};
+
 	renderer.load_fen = (s) => {
 
 		let newpos;
@@ -312,6 +327,26 @@ function make_renderer() {
 		}
 
 		renderer.new_game(newpos);
+	};
+
+	renderer.open = (filename) => {
+
+		let buf = fs.readFileSync(filename);				// i.e. binary buffer object
+		let new_pgn_choices = pre_parse_pgn(buf);
+
+		if (new_pgn_choices.length === 1) {
+			let success = renderer.load_pgn_object(new_pgn_choices[0]);
+			if (success) {
+				renderer.pgn_choices = new_pgn_choices;		// We only want to set this to a 1 value array if it actually worked.
+			}
+		} else {
+			renderer.pgn_choices = new_pgn_choices;			// Setting it to a multi-value array is "always" OK.
+			renderer.show_pgn_chooser();					// Now we need to have the user choose a game.
+		}
+	};
+
+	renderer.show_pgn_chooser = () => {
+		// TODO
 	};
 
 	// --------------------------------------------------------------------------------------------
