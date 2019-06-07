@@ -765,6 +765,7 @@ function make_renderer() {
 		// has some objects that lack a move property (the blue info bits).
 
 		if (version !== renderer.clickable_elements_version) {
+			console.log(`out of date click (${version} vs ${renderer.clickable_elements_version}) rejected`);
 			return;
 		}
 
