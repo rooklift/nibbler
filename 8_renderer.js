@@ -651,7 +651,7 @@ function make_renderer() {
 	};
 
 	// --------------------------------------------------------------------------------------------
-	// We had some problems with the clicker: we used to destroy and create
+	// We had some problems with the info clicker: we used to destroy and create
 	// clickable objects a lot. This seemed to lead to moments where clicks wouldn't
 	// register. Now we only ever create them, i.e. the actual <a> elements are never
 	// destroyed, but have their contents changed as needed. This seems better.
