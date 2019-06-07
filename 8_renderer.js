@@ -155,14 +155,6 @@ for (let c of Array.from("KkQqRrBbNnPp")) {
 
 // ------------------------------------------------------------------------------------------------
 
-for (let n = 0; n < 1000; n++) {
-	let node = document.createElement("a");
-	node.href = `javascript: renderer.info_click(${n});`;
-	infobox.appendChild(node);
-}
-
-// ------------------------------------------------------------------------------------------------
-
 function make_renderer() {
 
 	let renderer = Object.create(null);
@@ -174,6 +166,7 @@ function make_renderer() {
 	renderer.stderr_log = "";						// All output received from the engine's stderr.
 	renderer.infobox_string = "";					// Just to help not redraw the infobox when not needed.
 	renderer.pgn_choices = null;					// All games found when opening a PGN file.
+	renderer.clickable_elements = [];
 
 	renderer.start_pos = LoadFEN("rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1");
 	renderer.info_table = NewInfoTable();
@@ -669,7 +662,6 @@ function make_renderer() {
 			elements.push({
 				class: "blue",
 				text: `${info.winrate} `,
-				type: "meta",
 			});
 
 			let colour = renderer.getboard().active;
@@ -681,7 +673,6 @@ function make_renderer() {
 				elements.push({
 					class: colour === "w" ? "white" : "pink",
 					text: move + " ",
-					type: "move",
 					move: info.pv[n],
 				});
 				colour = OppositeColour(colour);
@@ -692,18 +683,57 @@ function make_renderer() {
 			}
 		}
 
-		let html_nodes = infobox.children;
+		let html_nodes = infobox.children;		// Read only thing that's automatically updated when we append children.
 
-		for (let n = 0; n < elements.length && n < html_nodes.length; n++) {
-			html_nodes[n].innerHTML = elements[n].text;
-			html_nodes[n].className = elements[n].class;
+		for (let n = 0; true; n++) {
+			if (n < infobox.children.length && n < elements.length) {
+				html_nodes[n].innerHTML = elements[n].text;
+				html_nodes[n].className = elements[n].class;
+			} else if (n < html_nodes.length) {
+				html_nodes[n].innerHTML = "";
+				html_nodes[n].className = "";
+			} else if (n < elements.length) {
+				let node = document.createElement("a");
+				node.href = `javascript: renderer.info_click(${n});`;
+				infobox.appendChild(node);
+				html_nodes[n].innerHTML = elements[n].text;
+				html_nodes[n].className = elements[n].class;
+			} else {
+				break;
+			}
 		}
 
 		renderer.clickable_elements = elements;
 	};
 
 	renderer.info_click = (n) => {
-		alert(n);
+
+		// This is a bit icky, it relies on the fact that our clickable_elements list
+		// has some objects that lack a move property (the blue info bits).
+
+		if (!renderer.clickable_elements) {
+			return;
+		}
+
+		let move_list = [];
+
+		for (; n >= 0 && n < renderer.clickable_elements.length; n--) {
+			let element = renderer.clickable_elements[n];
+			if (!element.move) {
+				break;
+			}
+			move_list.push(element.move);
+		}
+
+		if (move_list.length === 0) {
+			return;
+		}
+
+		move_list.reverse();
+
+		renderer.moves = renderer.moves.concat(move_list);
+		renderer.position_changed();
+
 	};
 
 	renderer.canvas_coords = (x, y) => {
