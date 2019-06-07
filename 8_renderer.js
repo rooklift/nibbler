@@ -626,8 +626,7 @@ function make_renderer() {
 
 	renderer.draw_main_line = () => {
 
-		let elements1 = [];
-		let elements2 = [];
+		let elements = [];
 
 		let board = renderer.start_pos;
 		let deviated_from_pgn = false;
@@ -639,57 +638,67 @@ function make_renderer() {
 		for (let m of renderer.moves) {
 
 			if (renderer.pgn_line && renderer.pgn_line.length > 0 && deviated_from_pgn === false && renderer.pgn_line[i] !== m) {
-				elements1.push(`<span class="red">(deviated)</span>`);
+				elements.push(`<span class="red">(deviated)</span> `);
 				deviated_from_pgn = true;
 			}
 
+			let fm = "";
 			if (board.active === "w") {
-				elements1.push(`${board.fullmove}.`);
+				fm = `${board.fullmove}. `;
 			}
 
-			elements1.push(board.nice_string(m));
+			elements.push(`<span id="mainline_${i}">${fm}${board.nice_string(m)} </span>`);
 			board = board.move(m);
 
 			i++;
 		}
+
+		elements.push(`<span class="gray">`);
 
 		// Next, have the moves to the end of the user line.
 
 		for (let m of renderer.user_line.slice(renderer.moves.length)) {
 
 			if (renderer.pgn_line && renderer.pgn_line.length > 0 && deviated_from_pgn === false && renderer.pgn_line[i] !== m) {
-				elements2.push(`<span class="red">(deviated)</span>`);
+				elements.push(`<span class="red">(deviated)</span> `);
 				deviated_from_pgn = true;
 			}
 
+			let fm = "";
 			if (board.active === "w") {
-				elements2.push(`${board.fullmove}.`);
+				fm = `${board.fullmove}. `;
 			}
 
-			elements2.push(board.nice_string(m));
+			elements.push(`<span id="mainline_${i}">${fm}${board.nice_string(m)} </span>`);
 			board = board.move(m);
 
 			i++;
 		}
 
-		let s1 = elements1.join(" ");		// Possibly empty string
-		let s2 = elements2.join(" ");		// Possibly empty string
+		elements.push("</span>");
 
-		if (s2.length > 0) {
-			s2 = `<span class="gray">` + s2 + "</span>";
-		}
-
-		mainline.innerHTML = [s1, s2].filter(s => s !== "").join(" ");
+		mainline.innerHTML = elements.join("");
 	};
 
-	// --------------------------------------------------------------------------------------------
-	// We had some problems with the info clicker: we used to destroy and create
-	// clickable objects a lot. This seemed to lead to moments where clicks wouldn't
-	// register.
-	//
-	// A better approach is to use an event handler on the infobox element itself
-	// (which is set up at the bottom of this file) and examine the event for the
-	// target property.
+	renderer.mainline_click = (event) => {
+
+		let n = undefined;
+
+		for (let item of event.path) {
+			if (typeof item.id === "string" && item.id.startsWith("mainline_")) {
+				n = parseInt(item.id.slice(9), 10);
+			}
+		}
+
+		if (n === undefined) {
+			return;
+		}
+
+		if (n >= 0 && n < renderer.user_line.length) {
+			renderer.moves = renderer.user_line.slice(0, n + 1);
+			renderer.position_changed();
+		}
+	};
 
 	renderer.draw_infobox = () => {
 
@@ -1089,6 +1098,14 @@ ipcRenderer.on("set", (event, msg) => {
 	renderer.draw();
 });
 
+// --------------------------------------------------------------------------------------------
+// We had some problems with the various clickers: we used to destroy and create
+// clickable objects a lot. This seemed to lead to moments where clicks wouldn't
+// register.
+//
+// A better approach is to use event handlers on the outer elements, and examine
+// the event.path to see what was actually clicked on.
+
 pgnchooser.addEventListener("mousedown", (event) => {
 	renderer.choose_pgn(event);
 });
@@ -1099,6 +1116,10 @@ canvas.addEventListener("mousedown", (event) => {
 
 infobox.addEventListener("mousedown", (event) => {
 	renderer.info_click(event);
+});
+
+mainline.addEventListener("mousedown", (event) => {
+	renderer.mainline_click(event);
 });
 
 // Setup return key on FEN box...
