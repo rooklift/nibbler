@@ -168,9 +168,7 @@ function make_renderer() {
 	renderer.stderr_log = "";						// All output received from the engine's stderr.
 	renderer.infobox_string = "";					// Just to help not redraw the infobox when not needed.
 	renderer.pgn_choices = null;					// All games found when opening a PGN file.
-
 	renderer.clickable_elements = [];				// Objects relating to our infobox.
-	renderer.clickable_elements_version = 0;		// Iterate this every time, so we can check the incoming click is current.
 
 	renderer.start_pos = LoadFEN("rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1");
 	renderer.info_table = NewInfoTable();
@@ -672,8 +670,6 @@ function make_renderer() {
 	// clickable objects a lot. This seemed to lead to moments where clicks wouldn't
 	// register. Now we only ever create them, i.e. the actual <a> elements are never
 	// destroyed, but have their contents changed as needed. This seems better.
-	//
-	// Hmm, we now edit the href value, not sure if this can lead to the same issue.
 
 	renderer.draw_infobox = () => {
 
@@ -741,13 +737,12 @@ function make_renderer() {
 			if (n < infobox.children.length && n < elements.length) {
 				html_nodes[n].innerHTML = elements[n].text;
 				html_nodes[n].className = elements[n].class;
-				html_nodes[n].href = `javascript: renderer.info_click(${renderer.clickable_elements_version}, ${n});`;
 			} else if (n < html_nodes.length) {
 				html_nodes[n].innerHTML = "";
 				html_nodes[n].className = "";
 			} else if (n < elements.length) {
 				let node = document.createElement("a");
-				node.href = `javascript: renderer.info_click(${renderer.clickable_elements_version}, ${n});`;
+				node.href = `javascript: renderer.info_click(${n});`;
 				infobox.appendChild(node);
 				html_nodes[n].innerHTML = elements[n].text;
 				html_nodes[n].className = elements[n].class;
@@ -759,15 +754,15 @@ function make_renderer() {
 		renderer.clickable_elements = elements;
 	};
 
-	renderer.info_click = (version, n) => {
+	renderer.info_click = (n) => {
 
 		// This is a bit icky, it relies on the fact that our clickable_elements list
 		// has some objects that lack a move property (the blue info bits).
-
-		if (version !== renderer.clickable_elements_version) {
-			console.log(`out of date click (${version} vs ${renderer.clickable_elements_version}) rejected`);
-			return;
-		}
+		//
+		// There's also some small chance that we will receive an outdated click. 
+		// However, we know that our clickable_elements list matches the current board, 
+		// so the only danger is the user gets something unintended, but it will still 
+		// be legal.
 
 		if (!renderer.clickable_elements || n >= renderer.clickable_elements.length) {
 			return;
@@ -791,7 +786,7 @@ function make_renderer() {
 
 		move_list.reverse();
 
-		// Legality checks...
+		// Legality checks... probably unnecessary...
 
 		let tmp_board = renderer.getboard();
 		for (let move of move_list) {
