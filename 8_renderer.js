@@ -497,6 +497,14 @@ function make_renderer() {
 		send("go infinite");
 	};
 
+	renderer.reset_leela_cache = () => {
+		if (renderer.running) {
+			renderer.go(true);
+		} else {
+			send("ucinewgame");
+		}
+	};
+
 	// --------------------------------------------------------------------------------------------
 	// Visual stuff...
 
@@ -660,17 +668,21 @@ function make_renderer() {
 
 			elements.push({
 				class: "blue",
-				text: `${info.winrate}`,
+				text: `${info.winrate} `,
 				type: "meta",
 			});
 
 			let colour = renderer.getboard().active;
 
-			for (let move of info.nice_pv()) {
+			let nice_pv = info.nice_pv();
+
+			for (let n = 0; n < nice_pv.length; n++) {
+				let move = nice_pv[n];
 				elements.push({
 					class: colour === "w" ? "white" : "pink",
-					text: move,
+					text: move + " ",
 					type: "move",
+					move: info.pv[n],
 				});
 				colour = OppositeColour(colour);
 			}
@@ -687,6 +699,11 @@ function make_renderer() {
 			html_nodes[n].className = elements[n].class;
 		}
 
+		renderer.clickable_elements = elements;
+	};
+
+	renderer.info_click = (n) => {
+		alert(n);
 	};
 
 	renderer.canvas_coords = (x, y) => {
