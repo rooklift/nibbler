@@ -644,7 +644,10 @@ function make_renderer() {
 
 	renderer.pv_click = (i, n) => {
 
+		console.log(`pv_click(${i}, ${n})`);
+
 		if (i < 0 || i >= renderer.clickable_pv_lines.length) {
+			console.log("pv_click() failed due to i ===", i);
 			return;
 		}
 
