@@ -215,6 +215,7 @@ function make_renderer() {
 		return renderer.board_cache;
 	}
 
+	// --------------------------------------------------------------------------------------------
 	// There are 3 ways the position can change...
 	//
 	//		Moving inside a game.
@@ -301,6 +302,8 @@ function make_renderer() {
 
 		return true;
 	};
+
+	// --------------------------------------------------------------------------------------------
 
 	renderer.move = (s) => {
 
@@ -583,16 +586,20 @@ function make_renderer() {
 		let elements1 = [];
 		let elements2 = [];
 
+		let board = renderer.start_pos;
+
 		// First, have the moves actually made on the visible board.
 			
 		for (let m of renderer.moves) {
-			elements1.push(m);
+			elements1.push(board.nice_string(m));
+			board = board.move(m);
 		}
 
 		// Next, have the moves to the end of the user line.
 
 		for (let m of renderer.user_line.slice(renderer.moves.length)) {
-			elements2.push(m);
+			elements2.push(board.nice_string(m));
+			board = board.move(m);
 		}
 
 		let s1 = elements1.join(" ");		// Possibly empty string
