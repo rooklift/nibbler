@@ -54,11 +54,6 @@ assign_without_overwrite(config, {
 	"board_size": 640,
 	"mainline_height": 108,
 
-	"show_n": true,
-	"show_p": true,
-	"show_pv": true,
-	"show_winrate": true,
-
 	"rank_font": "24px Arial",
 
 	"light_square": "#dadada",
@@ -655,20 +650,41 @@ function make_renderer() {
 			return;			// FIXME
 		}
 
-		let elements = [];
-		let html_nodes = infobox.children;
-
 		let info_list = renderer.info_table.sorted();
 
+		let elements = [];
+
 		for (let i = 0; i < info_list.length && i < config.max_info_lines; i++) {
+
 			let info = info_list[i];
-			elements = elements.concat(info.nice_pv());
-			elements[elements.length - 1] += "<br><br>";
+
+			elements.push({
+				class: "blue",
+				text: `${info.winrate}`,
+				type: "meta",
+			});
+
+			let colour = renderer.getboard().active;
+
+			for (let move of info.nice_pv()) {
+				elements.push({
+					class: colour === "w" ? "white" : "pink",
+					text: move,
+					type: "move",
+				});
+				colour = OppositeColour(colour);
+			}
+
+			if (elements.length > 0) {
+				elements[elements.length - 1].text += "<br><br>";
+			}
 		}
 
-		for (let n = 0; n < elements.length && n < html_nodes.length; n++) {
+		let html_nodes = infobox.children;
 
-			html_nodes[n].innerHTML = elements[n] + " ";
+		for (let n = 0; n < elements.length && n < html_nodes.length; n++) {
+			html_nodes[n].innerHTML = elements[n].text;
+			html_nodes[n].className = elements[n].class;
 		}
 
 	};

@@ -11,11 +11,6 @@
 	"board_size": 640,
 	"mainline_height": 108,
 
-	"show_n": true,
-	"show_p": true,
-	"show_pv": true,
-	"show_winrate": true,
-
 	"rank_font": "24px Arial",
 
 	"light_square": "#dadada",
