@@ -414,7 +414,24 @@ function make_renderer() {
 		}
 	};
 
-	renderer.choose_pgn = (n) => {
+	renderer.choose_pgn = (event) => {
+
+		// The thing that's clickable has a bunch of spans, meaning the exact
+		// target might not be what we want, but we can examine the event.path
+		// array and find the item with the unique id.
+
+		let n = undefined;
+
+		for (let item of event.path) {
+			if (typeof item.id === "string" && item.id.startsWith("chooser_")) {
+				n = parseInt(item.id.slice(8), 10);
+			}
+		}
+
+		if (n === undefined) {
+			return;
+		}
+
 		if (renderer.pgn_choices && n >= 0 && n < renderer.pgn_choices.length) {
 			renderer.load_pgn_object(renderer.pgn_choices[n]);
 		}
@@ -544,7 +561,7 @@ function make_renderer() {
 			} else {
 				s = `${padding}${n + 1}. ${p.tags.White} - ${p.tags.Black}`;
 			}
-			lines.push(`<a href="javascript:renderer.choose_pgn(${n})">&nbsp;&nbsp;${s}</a>`);
+			lines.push(`<span id="chooser_${n}">&nbsp;&nbsp;${s}</span>`);
 		}
 
 		lines.push("&nbsp;");
@@ -758,18 +775,19 @@ function make_renderer() {
 
 	renderer.info_click = (event) => {
 
-		// event is an event on the containing infobox, however it will hopefully have
-		// a target property that we can use.
+		// Look at the path to find our element with the unique id.
 
-		if (!event || !event.target || !event.target.id || typeof event.target.id !== "string") {
-			return;
+		let n = undefined;
+
+		for (let item of event.path) {
+			if (typeof item.id === "string" && item.id.startsWith("clicker_")) {
+				n = parseInt(item.id.slice(8), 10);
+			}
 		}
 
-		if (event.target.id.startsWith("clicker_") === false) {
+		if (n === undefined) {
 			return;
 		}
-
-		let n = parseInt(event.target.id.slice(8), 10);
 
 		// This is a bit icky, it relies on the fact that our clickable_elements list
 		// has some objects that lack a move property (the blue info bits).
@@ -1068,6 +1086,10 @@ ipcRenderer.on("toggle", (event, cfgvar) => {
 ipcRenderer.on("set", (event, msg) => {
 	config[msg.key] = msg.value;
 	renderer.draw();
+});
+
+pgnchooser.addEventListener("mousedown", (event) => {
+	renderer.choose_pgn(event);
 });
 
 canvas.addEventListener("mousedown", (event) => {
