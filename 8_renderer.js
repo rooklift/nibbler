@@ -439,7 +439,7 @@ function make_renderer() {
 			}
 		}
 
-		alert(`This file seems OK. ${pgn_list.length} games checked.`);
+		alert(`This file seems OK. ${pgn_list.length} ${pgn_list.length === 1 ? "game" : "games"} checked.`);
 		return true;
 	};
 
