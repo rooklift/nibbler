@@ -259,9 +259,13 @@ function make_renderer() {
 		let board = renderer.getboard();
 		renderer.info_table.change(board);
 
-		renderer.draw();
+		renderer.escape();
 		renderer.draw_main_line();
 		fenbox.value = board.fen();
+
+		if (renderer.running) {
+			renderer.go();
+		}
 	};
 
 	renderer.new_game = (start_pos) => {
@@ -275,9 +279,13 @@ function make_renderer() {
 		renderer.moves = [];
 		renderer.info_table.change(renderer.start_pos);
 
-		renderer.draw();
+		renderer.escape();
 		renderer.draw_main_line();
 		fenbox.value = renderer.start_pos.fen();
+
+		if (renderer.running) {
+			renderer.go(true);
+		}
 	};
 
 	renderer.load_pgn_object = (o) => {			// Returns true or false - whether this actually succeeded.
@@ -297,9 +305,13 @@ function make_renderer() {
 		renderer.moves = [];
 		renderer.info_table.change(renderer.start_pos);
 
-		renderer.draw();
+		renderer.escape();
 		renderer.draw_main_line();
 		fenbox.value = renderer.start_pos.fen();
+
+		if (renderer.running) {
+			renderer.go(true);
+		}
 
 		return true;
 	};
@@ -362,7 +374,6 @@ function make_renderer() {
 	};
 
 	renderer.choose_pgn = (n) => {
-		renderer.hide_pgn_chooser();
 		if (renderer.pgn_choices && n >= 0 && n < renderer.pgn_choices.length) {
 			renderer.load_pgn_object(renderer.pgn_choices[n]);
 		}
@@ -392,7 +403,32 @@ function make_renderer() {
 	};
 
 	renderer.halt = () => {
-		// TODO
+		send("stop");
+		renderer.running = false;
+	};
+
+	renderer.go = (new_game_flag) => {
+
+		renderer.escape();
+		renderer.running = true;
+
+		let setup;
+		let start_fen = renderer.start_pos.fen();
+
+		if (start_fen !== "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1") {
+			setup = `fen ${start_fen}`;
+		} else {
+			setup = "startpos";
+		}
+
+		send("stop");
+		if (new_game_flag) {
+			send("ucinewgame");
+		}
+
+		send(`position ${setup} moves ${renderer.moves.join(" ")}`);
+		sync();																	// See comment on how sync() works
+		send("go infinite");
 	};
 
 	// --------------------------------------------------------------------------------------------
