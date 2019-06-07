@@ -212,7 +212,7 @@ function make_renderer() {
 		}
 		renderer.board_cache = board;
 		return renderer.board_cache;
-	}
+	};
 
 	// --------------------------------------------------------------------------------------------
 	// There are 3 ways the position can change...
@@ -322,7 +322,7 @@ function make_renderer() {
 			}
 		}
 
-		let illegal_reason = board.illegal(s)
+		let illegal_reason = board.illegal(s);
 		if (illegal_reason !== "") {
 			alert(`Illegal move requested (${s}, ${illegal_reason}). This should be impossible, please tell the author how you managed it.`);
 			return;
