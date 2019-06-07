@@ -54,11 +54,6 @@ assign_without_overwrite(config, {
 	"board_size": 640,
 	"mainline_height": 108,
 
-	"show_n": true,
-	"show_p": true,
-	"show_pv": true,
-	"show_winrate": true,
-
 	"rank_font": "24px Arial",
 
 	"light_square": "#dadada",
@@ -171,7 +166,7 @@ function make_renderer() {
 	renderer.stderr_log = "";						// All output received from the engine's stderr.
 	renderer.infobox_string = "";					// Just to help not redraw the infobox when not needed.
 	renderer.pgn_choices = null;					// All games found when opening a PGN file.
-	renderer.clickable_pv_lines = [];				// List of PV objects we use to tell what the user clicked on.
+	renderer.clickable_elements = [];
 
 	renderer.start_pos = LoadFEN("rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1");
 	renderer.info_table = NewInfoTable();
@@ -495,6 +490,14 @@ function make_renderer() {
 		send("go infinite");
 	};
 
+	renderer.reset_leela_cache = () => {
+		if (renderer.running) {
+			renderer.go(true);
+		} else {
+			send("ucinewgame");
+		}
+	};
+
 	// --------------------------------------------------------------------------------------------
 	// Visual stuff...
 
@@ -603,6 +606,7 @@ function make_renderer() {
 	};
 
 	renderer.draw_main_line = () => {
+
 		let elements1 = [];
 		let elements2 = [];
 
@@ -642,75 +646,121 @@ function make_renderer() {
 		mainline.innerHTML = [s1, s2].filter(s => s !== "").join(" ");
 	};
 
-	renderer.pv_click = (i, n) => {
-
-		if (renderer.pv_click.count === undefined) {
-			renderer.pv_click.count = 0;
-		}
-
-		renderer.pv_click.count++;
-
-		console.log(`${renderer.pv_click.count}: pv_click(${i}, ${n})`);
-
-		if (i < 0 || i >= renderer.clickable_pv_lines.length) {
-			console.log(`${renderer.pv_click.count}: pv_click() failed due to i === ${i}`);
-			return;
-		}
-
-		let o = renderer.clickable_pv_lines[i];
-
-		if (o.board.compare(renderer.getboard()) === false) {
-			console.log(`${renderer.pv_click.count}: pv_click() failed due to board mismatch`);
-			return;
-		}
-
-		let moves = o.pv.slice(0, n + 1);
-
-		for (let move of moves) {
-			renderer.moves.push(move);
-		}
-
-		console.log(`${renderer.pv_click.count}: succeeded`);
-		renderer.position_changed();
-	};
+	// --------------------------------------------------------------------------------------------
+	// We had some problems with the clicker: we used to destroy and create
+	// clickable objects a lot. This seemed to lead to moments where clicks wouldn't
+	// register. Now we only ever create them, i.e. the actual <a href="javascript">
+	// elements are never destroyed, but have their contents changed as needed.
 
 	renderer.draw_infobox = () => {
 
-		renderer.clickable_pv_lines = [];
-
 		if (!renderer.ever_received_info) {
-			if (infobox.innerHTML !== renderer.stderr_log) {	// Only update when needed, so user can select and copy.
-				infobox.innerHTML = renderer.stderr_log;
-			}
-			return;
+			return;			// FIXME
 		}
 
-		let board = renderer.getboard();
 		let info_list = renderer.info_table.sorted();
-		let s = "";
 
-		if (!renderer.running) {
-			s += "<p>&lt;halted&gt;</p>";
-		}
+		let elements = [];
 
 		for (let i = 0; i < info_list.length && i < config.max_info_lines; i++) {
 
-			s += `<p>${info_list[i].nice_pv_string(config, i)}</p>`;
+			let info = info_list[i];
 
-			renderer.clickable_pv_lines.push({
-				board: board,
-				pv: info_list[i].pv
-			})
+			elements.push({
+				class: "blue",
+				text: `${info.winrate_string()} `,
+			});
+
+			let colour = renderer.getboard().active;
+
+			let nice_pv = info.nice_pv();
+
+			for (let n = 0; n < nice_pv.length; n++) {
+				let move = nice_pv[n];
+				elements.push({
+					class: colour === "w" ? "white" : "pink",
+					text: move + " ",
+					move: info.pv[n],
+				});
+				colour = OppositeColour(colour);
+			}
+
+			elements.push({
+				class: "blue",
+				text: `(N: ${info.n.toString()}, P: ${info.p})`
+			});
+
+			if (elements.length > 0) {			// Always true.
+				elements[elements.length - 1].text += "<br><br>";
+			}
 		}
 
-		// Only update when needed, so user can select and copy. A direct comparison
-		// of s with innerHTML seems to fail (something must get changed).
+		let html_nodes = infobox.children;		// Read only thing that's automatically updated when we append children.
 
-		if (renderer.infobox_string !== s) {
-			renderer.infobox_string = s;
-			infobox.innerHTML = s;
+		for (let n = 0; true; n++) {
+			if (n < infobox.children.length && n < elements.length) {
+				html_nodes[n].innerHTML = elements[n].text;
+				html_nodes[n].className = elements[n].class;
+			} else if (n < html_nodes.length) {
+				html_nodes[n].innerHTML = "";
+				html_nodes[n].className = "";
+			} else if (n < elements.length) {
+				let node = document.createElement("a");
+				node.href = `javascript: renderer.info_click(${n});`;
+				infobox.appendChild(node);
+				html_nodes[n].innerHTML = elements[n].text;
+				html_nodes[n].className = elements[n].class;
+			} else {
+				break;
+			}
 		}
+
+		renderer.clickable_elements = elements;
 	};
+
+	renderer.info_click = (n) => {
+
+		// This is a bit icky, it relies on the fact that our clickable_elements list
+		// has some objects that lack a move property (the blue info bits).
+
+		if (!renderer.clickable_elements || n >= renderer.clickable_elements.length) {
+			return;
+		}
+
+		let move_list = [];
+
+		// Work backwards until we get to the start of the line...
+
+		for (; n >= 0; n--) {
+			let element = renderer.clickable_elements[n];
+			if (!element || !element.move) {
+				break;
+			}
+			move_list.push(element.move);
+		}
+
+		if (move_list.length === 0) {
+			return;
+		}
+
+		move_list.reverse();
+
+		// Legality checks...
+
+		let tmp_board = renderer.getboard();
+		for (let move of move_list) {
+			if (tmp_board.illegal(move) !== "") {
+				return;
+			}
+			tmp_board = tmp_board.move(move);
+		}
+
+		renderer.moves = renderer.moves.concat(move_list);
+		renderer.position_changed();
+
+	};
+
+	// --------------------------------------------------------------------------------------------
 
 	renderer.canvas_coords = (x, y) => {
 
