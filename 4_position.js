@@ -708,19 +708,6 @@ const position_prototype = {
 		return this.colour(point1) === this.colour(point2);
 	},
 
-	nice_lastmove: function() {
-
-		if (this.lastmove === null || this.parent === null) {
-			return "??";
-		}
-
-		if (!this.nice_lastmove_cache) {
-			this.nice_lastmove_cache = this.parent.nice_string(this.lastmove);
-		}
-
-		return this.nice_lastmove_cache;
-	},
-
 	nice_string: function(s) {
 
 		// Given some raw (but valid) UCI move string, return a nice human-readable
@@ -906,53 +893,6 @@ const position_prototype = {
 		list.reverse();
 		return list;
 	},
-
-	position_list: function() {
-		// Note, if this ever returns a cached list, it should return Array.from(cache) instead.
-		let list = [];
-		let node = this;
-		while (node) {
-			list.push(node);
-			node = node.parent;
-		}
-		list.reverse();
-		return list;
-	},
-
-	root: function() {
-		let node = this;
-		while (node.parent) {
-			node = node.parent;
-		}
-		return node;
-	},
-
-	has_ancestor: function(other) {
-		let node = this;
-		while (node.parent) {
-			if (node.parent === other) return true;
-			node = node.parent;
-		}
-		return false;
-	},
-
-	compare: function(other) {
-		if (this.active !== other.active) return false;
-		if (this.enpassant !== other.enpassant) return false;
-		if (this.castling !== other.castling) return false;
-		if (this.halfmove !== other.halfmove) return false;
-		if (this.fullmove !== other.fullmove) return false;
-		if (this.lastmove !== other.lastmove) return false;
-		for (let x = 0; x < 8; x++) {
-			for (let y = 0; y < 8; y++) {
-				if (this.state[x][y] !== other.state[x][y]) {
-					return false;
-				}
-			}
-		}
-
-		return true;
-	}
 };
 
 function NewPosition(state = null, active = "w", castling = "", enpassant = null, halfmove = 0, fullmove = 1, parent = null, lastmove = null) {
