@@ -591,6 +591,11 @@ function make_renderer() {
 		// First, have the moves actually made on the visible board.
 			
 		for (let m of renderer.moves) {
+
+			if (board.active === "w") {
+				elements1.push(`${board.fullmove}.`);
+			}
+
 			elements1.push(board.nice_string(m));
 			board = board.move(m);
 		}
@@ -598,6 +603,11 @@ function make_renderer() {
 		// Next, have the moves to the end of the user line.
 
 		for (let m of renderer.user_line.slice(renderer.moves.length)) {
+
+			if (board.active === "w") {
+				elements2.push(`${board.fullmove}.`);
+			}
+			
 			elements2.push(board.nice_string(m));
 			board = board.move(m);
 		}
