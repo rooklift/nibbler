@@ -176,7 +176,10 @@ function make_renderer() {
 	renderer.start_pos = LoadFEN("rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1");
 	renderer.board_cache = null;
 
-	// IMPORTANT! These next two arrays must NEVER be the same object. Use Array.from() a lot to avoid this...
+	// IMPORTANT! These next two arrays must NEVER be the same object. Use Array.from() a lot to avoid this.
+	// Note also that user_line is always supposed to contain moves. While in some ways it would be simpler
+	// to simply store an index of where we are in the user_line, this way has some advantages too...
+
 	renderer.user_line = [];						// Entire history of the user variation, as a list of moves.
 	renderer.moves = [];							// History of the currently shown position.
 
@@ -662,7 +665,17 @@ function make_renderer() {
 		renderer.draw_normal();
 	};
 
+	renderer.programmer_mistake_check = () => {
+		if (renderer.moves === renderer.user_line) {
+			alert("renderer.moves is the same object as renderer.user_line");
+		}
+		if (ArrayStartsWith(renderer.user_line, renderer.moves) === false) {
+			alert("renderer.user_line does not start with renderer.moves");
+		}
+	};
+
 	renderer.draw_loop = () => {
+		renderer.programmer_mistake_check();			// Regularly check that we haven't violated some assumptions...
 		renderer.draw();
 		setTimeout(renderer.draw_loop, 500);
 	};
