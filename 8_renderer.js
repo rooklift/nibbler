@@ -655,12 +655,28 @@ function make_renderer() {
 	renderer.draw_infobox = () => {
 
 		if (!renderer.ever_received_info) {
-			return;			// FIXME
+			let html_nodes = infobox.children;
+			if (html_nodes.length === 0) {
+				let node = document.createElement("a");
+				node.href = `javascript: renderer.info_click(0);`;
+				infobox.appendChild(node);
+			}
+			if (html_nodes[0].innerHTML !== renderer.stderr_log) {		// Only update as needed, to allow select & copy
+				html_nodes[0].innerHTML = renderer.stderr_log;
+			}
+			return;
 		}
 
 		let info_list = renderer.info_table.sorted();
 
 		let elements = [];
+
+		if (renderer.running === false) {
+			elements.push({
+				class: "gray",
+				text: "(halted)<br><br>"
+			});
+		}
 
 		for (let i = 0; i < info_list.length && i < config.max_info_lines; i++) {
 
