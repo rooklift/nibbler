@@ -195,11 +195,11 @@ function make_renderer() {
 		}
 		if (renderer.moves === renderer.user_line) {
 			renderer.programmer_mistake_check.warned = true;
-			alert("renderer.moves is the same object as renderer.user_line");
+			alert("renderer.moves is the same object as renderer.user_line. This should be impossible, please tell the author how you managed it.");
 		}
 		if (ArrayStartsWith(renderer.user_line, renderer.moves) === false) {
 			renderer.programmer_mistake_check.warned = true;
-			alert("renderer.user_line does not start with renderer.moves");
+			alert("renderer.user_line does not start with renderer.moves. This should be impossible, please tell the author how you managed it.");
 		}
 	};
 
