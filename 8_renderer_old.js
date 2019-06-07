@@ -170,16 +170,272 @@ function make_renderer() {
 	renderer.ever_received_info = false;			// When false, we write stderr log instead of move info.
 	renderer.stderr_log = "";						// All output received from the engine's stderr.
 	renderer.infobox_string = "";					// Just to help not redraw the infobox when not needed.
-	renderer.pgn_choices = null;					// All games found when opening a PGN file.
+	renderer.pgn_choices = null;					// Made into a temporary array when displaying the PGN choice.
+	renderer.pgn_line_end = null;					// The terminal position of the loaded PGN, if any.
 	renderer.clickable_pv_lines = [];				// List of PV objects we use to tell what the user clicked on.
 
-	renderer.start_pos = LoadFEN("rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1");
-	renderer.user_line = [];						// Entire history of the user variation, as a list of moves.
-	renderer.pos = renderer.start_pos				// Currently shown position.
+	// The following are never actually null (i.e. they're set immediately):
 
-	// --------------------------------------------------------------------------------------------
+	renderer.user_line_end = null;
+	renderer.pos = null;
 
-	renderer.move = (s) => {
+	// ---------------------------------------------
+
+	renderer.square_size = () => {
+		return config.board_size / 8;
+	};
+
+	renderer.pos_changed = (new_game_flag) => {
+
+		renderer.info_table.clear();
+
+		fenbox.value = renderer.pos.fen();
+		renderer.draw_main_line();
+
+		if (renderer.running) {
+			renderer.go(new_game_flag);
+		} else if (new_game_flag) {
+			send("ucinewgame");
+		}
+
+		renderer.escape();		// Among other things, this draws.
+	};
+
+	renderer.game_changed = () => {
+		renderer.pos_changed(true);
+	};
+
+	renderer.load_fen = (s) => {
+
+		try {
+			renderer.pos = LoadFEN(s);
+		} catch (err) {
+			alert(err);
+			return;
+		}
+
+		renderer.pgn_line_end = null;
+		renderer.user_line_end = renderer.pos;
+		renderer.game_changed();
+	};
+
+	renderer.new = () => {
+		renderer.load_fen("rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1");
+	};
+
+	renderer.load_pgn_object = (o) => {
+
+		// Returns true or false - whether this actually succeeded.
+
+		let final_pos;
+
+		try {
+			final_pos = LoadPGN(o.movetext);
+		} catch (err) {
+			alert(err);
+			return false;
+		}
+
+		// Icky way of storing the fact that a position is on the PGN...
+
+		for (let p of final_pos.position_list()) {
+			p.pgn_flag = true;
+		}
+
+		renderer.pgn_line_end = final_pos;
+		renderer.user_line_end = final_pos;
+		renderer.pos = final_pos.root();
+		renderer.game_changed();
+		return true;
+	};
+
+	renderer.choose_pgn = (n) => {
+		renderer.hide_pgn_chooser();
+		if (renderer.pgn_choices && n >= 0 && n < renderer.pgn_choices.length) {
+			renderer.load_pgn_object(renderer.pgn_choices[n]);
+		}
+	};
+
+	renderer.open = (filename) => {
+
+		let buf = fs.readFileSync(filename);				// i.e. binary buffer object
+		let new_pgn_choices = pre_parse_pgn(buf);
+
+		if (new_pgn_choices.length === 1) {
+			let success = renderer.load_pgn_object(new_pgn_choices[0]);
+			if (success) {
+				renderer.pgn_choices = new_pgn_choices;		// We only want to set this to a 1 value array if it actually worked.
+			}
+		} else {
+			renderer.pgn_choices = new_pgn_choices;			// Setting it to a multi-value array is "always" OK.
+			renderer.show_pgn_chooser();					// Now we need to have the user choose a game.
+		}
+	};
+
+	renderer.show_pgn_chooser = () => {
+
+		if (!renderer.pgn_choices) {
+			alert("No PGN loaded");
+			return;
+		}
+
+		renderer.halt();			// It's lame to run the GPU when we're clearly switching games.
+
+		let lines = [];
+
+		lines.push("&nbsp;");
+
+		let max_ordinal_length = renderer.pgn_choices.length.toString().length;
+		let padding = "";
+		for (let n = 0; n < max_ordinal_length - 1; n++) {
+			padding += "&nbsp;";
+		}
+
+		for (let n = 0; n < renderer.pgn_choices.length; n++) {
+
+			if (n === 9 || n === 99 || n === 999 || n === 9999 || n === 99999 || n === 999999) {
+				padding = padding.slice(0, padding.length - 6);
+			}
+
+			let p = renderer.pgn_choices[n];
+
+			let s;
+
+			if (p.tags.Result === "1-0") {
+				s = `${padding}${n + 1}. <span class="blue">${p.tags.White}</span> - ${p.tags.Black}`;
+			} else if (p.tags.Result === "0-1") {
+				s = `${padding}${n + 1}. ${p.tags.White} - <span class="blue">${p.tags.Black}</span>`;
+			} else {
+				s = `${padding}${n + 1}. ${p.tags.White} - ${p.tags.Black}`;
+			}
+			lines.push(`<a href="javascript:renderer.choose_pgn(${n})">&nbsp;&nbsp;${s}</a>`);
+		}
+
+		lines.push("&nbsp;");
+
+		pgnchooser.innerHTML = lines.join("<br>");
+		pgnchooser.style.display = "block";
+	};
+
+	renderer.hide_pgn_chooser = () => {
+		pgnchooser.style.display = "none";
+	};
+
+	renderer.escape = () => {						// Set things into a clean state.
+		renderer.hide_pgn_chooser();
+		renderer.active_square = null;
+		renderer.draw();
+	};
+
+	renderer.validate_pgn = (filename) => {
+
+		let buf = fs.readFileSync(filename);		// i.e. binary buffer object
+		let pgn_list = pre_parse_pgn(buf);
+
+		for (let n = 0; n < pgn_list.length; n++) {
+
+			let o = pgn_list[n];
+
+			try {
+				LoadPGN(o.movetext);
+			} catch (err) {
+				alert(`Game ${n + 1} - ${err.toString()}`);
+				return;
+			}
+		}
+
+		alert(`This file seems OK. ${pgn_list.length} games checked.`);
+		return true;
+	};
+
+	renderer.prev = () => {
+		if (renderer.pos.parent) {
+			renderer.pos = renderer.pos.parent;
+			renderer.pos_changed();
+		}
+	};
+
+	renderer.next = () => {
+
+		if (renderer.pos === renderer.user_line_end) {
+			return;
+		}
+
+		for (let p of renderer.user_line_end.position_list()) {
+			if (p.parent === renderer.pos) {
+				renderer.pos = p;
+				renderer.pos_changed();
+				return;
+			}
+		}
+	};
+
+	renderer.goto_root = () => {
+		renderer.pos = renderer.pos.root();
+		renderer.pos_changed();
+	};
+
+	renderer.goto_end = () => {
+		renderer.pos = renderer.user_line_end;
+		renderer.pos_changed();
+	};
+
+	renderer.return_to_pgn = () => {
+
+		if (!renderer.pgn_line_end) {
+			alert("No PGN loaded");
+			return;
+		}
+
+		let node = renderer.pos;
+
+		while (!node.pgn_flag) {
+			if (node.parent === null) {
+				break;
+			}
+			node = node.parent;
+		}
+
+		if (node.pgn_flag) {
+			renderer.user_line_end = renderer.pgn_line_end;
+			renderer.pos = node;
+			renderer.pos_changed();
+			return;
+		}
+
+		alert("Couldn't rejoin the PGN. This is a bug, tell the author how you achieved it.");
+	};
+
+	renderer.move_stays_on_user_line = (s) => {
+
+		for (let p of renderer.user_line_end.position_list()) {
+			if (p.parent === renderer.pos) {
+				if (p.lastmove === s) {
+					return true;
+				} else {
+					return false;
+				}
+			}
+		}
+
+		return false;
+	};
+
+	renderer.move = (s, skip_pos_changed) => {
+
+		// Add promotion if needed and not present...
+
+		if (s.length === 4) {
+			let source = Point(s.slice(0, 2));
+			if (renderer.pos.piece(source) === "P" && source.y === 1) {
+				console.log(`Move ${s} was promotion but had no promotion piece set; adjusting to ${s + "q"}`);
+				s += "q";
+			}
+			if (renderer.pos.piece(source) === "p" && source.y === 6) {
+				console.log(`Move ${s} was promotion but had no promotion piece set; adjusting to ${s + "q"}`);
+				s += "q";
+			}
+		}
 
 		let illegal_reason = renderer.pos.illegal(s)
 		if (illegal_reason !== "") {
@@ -187,14 +443,70 @@ function make_renderer() {
 			return;
 		}
 
+		if (renderer.move_stays_on_user_line(s)) {
+			for (let p of renderer.user_line_end.position_list()) {
+				if (p.parent === renderer.pos) {
+					renderer.pos = p;
+					if (!skip_pos_changed) {
+						renderer.pos_changed();
+					}
+					return;
+				}
+			}
+			console.log("Shouldn't get here.");
+		}
+
 		renderer.pos = renderer.pos.move(s);
-		renderer.draw();
+		renderer.user_line_end = renderer.pos;
+
+		if (!skip_pos_changed) {
+			renderer.pos_changed();
+		}
 	};
 
+	renderer.play_best = () => {
+		let info_list = renderer.info_table.sorted();
+		if (info_list.length > 0) {
+			renderer.move(info_list[0].move);
+		}
+	};
 
+	renderer.go = (new_game_flag) => {
 
-	// --------------------------------------------------------------------------------------------
-	// Things below this point are not related to the difficult task of keeping track of positions.
+		renderer.escape();
+		renderer.running = true;
+
+		let setup;
+
+		let initial_fen = renderer.pos.initial_fen();
+		if (initial_fen !== "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1") {
+			setup = `fen ${initial_fen}`;
+		} else {
+			setup = "startpos";
+		}
+
+		send("stop");
+		if (new_game_flag) {
+			send("ucinewgame");
+		}
+
+		send(`position ${setup} moves ${renderer.pos.history().join(" ")}`);
+		sync();																	// See comment on how sync() works
+		send("go infinite");
+	};
+
+	renderer.halt = () => {
+		send("stop");
+		renderer.running = false;
+	};
+
+	renderer.reset_leela_cache = () => {
+		if (renderer.running) {
+			renderer.go(true);
+		} else {
+			send("ucinewgame");
+		}
+	};
 
 	renderer.receive = (s) => {
 
@@ -214,10 +526,6 @@ function make_renderer() {
 		} else {
 			renderer.stderr_log += `${s}<br>`;
 		}
-	};
-
-	renderer.square_size = () => {
-		return config.board_size / 8;
 	};
 
 	renderer.canvas_click = (event) => {
@@ -264,10 +572,6 @@ function make_renderer() {
 		renderer.draw();
 	};
 
-	renderer.draw_main_line = () => {
-		// TODO
-	};
-
 	renderer.pv_click = (i, n) => {
 
 		if (i < 0 || i >= renderer.clickable_pv_lines.length) {
@@ -292,6 +596,63 @@ function make_renderer() {
 		}
 
 		renderer.pos_changed();
+	};
+
+	renderer.draw_main_line = () => {
+
+		let elements1 = [];
+		let elements2 = [];
+
+		// First, have the moves actually made on the visible board.
+
+		let poslist = renderer.pos.position_list();
+			
+		for (let p of poslist.slice(1)) {		// Start on the first position that has a lastmove
+
+			if (!p.pgn_flag && p.parent.pgn_flag) {
+				elements1.push(`<span class="red">(deviated)</span>`);
+			}
+
+			if (p.parent.active === "w") {
+				elements1.push(`${p.parent.fullmove}.`);
+			}
+
+			elements1.push(p.nice_lastmove());
+		}
+
+		// Next, have the moves to the end of the user line.
+
+		let start_flag = false;
+		for (let p of renderer.user_line_end.position_list()) {
+
+			if (p === renderer.pos) {
+				start_flag = true;
+				continue;
+			}
+
+			if (start_flag === false) {
+				continue;
+			}
+
+			if (!p.pgn_flag && p.parent.pgn_flag) {
+				elements2.push(`<span class="red">(deviated)</span>`);
+			}
+
+			if (p.parent.active === "w") {
+				elements2.push(`${p.parent.fullmove}.`);
+			}
+
+			elements2.push(p.nice_lastmove());
+		}
+
+		let s1 = elements1.join(" ");		// Possibly empty string
+		let s2 = elements2.join(" ");		// Possibly empty string
+
+		if (s2.length > 0) {
+			s2 = `<span class="gray">` + s2 + "</span>";
+		}
+
+		mainline.innerHTML = [s1, s2].filter(s => s !== "").join(" ");
 	};
 
 	renderer.draw_infobox = () => {
@@ -543,6 +904,7 @@ function make_renderer() {
 		setTimeout(renderer.draw_loop, 500);
 	};
 
+	renderer.load_fen("rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1");
 	return renderer;
 }
 
