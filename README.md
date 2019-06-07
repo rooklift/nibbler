@@ -14,9 +14,14 @@ I may well upload some premade Windows builds to the [Releases](https://github.c
 
 For full functionality, the required Lc0 version is (I believe) v0.21.0 or later, as we use Leela's `LogLiveStats` option, which was introduced in that version. While it is also *possible* to use a different engine (e.g. Stockfish) we do send the `MultiPV 500` command, which seems to drastically reduce traditional engine strength.
 
-# About the visualiser
+# About config options
 
-*Nibbler* draws moves based on how many nodes (visits) they have, compared to the top move; the threshold can be set as `node_display_threshold` in the `config.json` file. Colours are based on estimated winrate, and can be customised.
+The `config.json` file can be edited. Most of the options are self-explanatory, except the following:
+
+* `bad_move_threshold` is the winrate loss (compared to best move) required to draw a move in the "bad" colour.
+* `terrible_move_threshold` is the same, except moves will be drawn in the "terrible" colour.
+* `node_display_threshold` controls how many visits a move must have (compared to best) to be shown at all.
+* `update_delay` controls how often Nibbler draws to the screen; lower is faster but more CPU intensive.
 
 # Thanks
 
