@@ -80,7 +80,7 @@ assign_without_overwrite(config, {
 });
 
 infobox.style.height = config.board_size.toString() + "px";
-mainline.style.height = config.mainline_height.toString() + "px";		// Is there a way to avoid needing this, to get the scroll bar?
+mainline.style.height = config.mainline_height.toString() + "px";				// Is there a way to avoid needing this, to get the scroll bar?
 canvas.width = config.board_size;
 canvas.height = config.board_size;
 
@@ -92,7 +92,7 @@ Log("");
 if (config.path) {
 	exe = child_process.spawn(config.path);
 	exe.on("error", (err) => {
-			alert("Couldn't spawn process - check the path in the config file");			// Note that this alert will come some time in the future, not instantly.
+		alert("Couldn't spawn process - check the path in the config file");	// Note that this alert will come some time in the future, not instantly.
 	});
 
 	scanner = readline.createInterface({
@@ -179,6 +179,8 @@ function make_renderer() {
 
 	renderer.board_cache = null;
 
+	fenbox.value = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1";
+
 	// --------------------------------------------------------------------------------------------
 
 	renderer.getboard = () => {
@@ -228,10 +230,60 @@ function make_renderer() {
 		renderer.position_changed();
 	};
 
+	// There are 3 ways the position can change...
+	//
+	// Moving inside a game.
+	// New game.
+	// Loaded game.
+
 	renderer.position_changed = () => {
-		renderer.user_line = Array.from(renderer.moves);		// FIXME
+
+		if (ArrayStartsWith(renderer.user_line, renderer.moves) === false) {
+			// The new position (from moves) is not inside the current user_line
+			renderer.user_line = Array.from(renderer.moves);
+		}
+
 		renderer.draw();
 		renderer.draw_main_line();
+		fenbox.value = renderer.getboard().fen();
+	};
+
+	renderer.new_game = (start_pos) => {
+
+		if (!start_pos) {
+			start_pos = LoadFEN("rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1");
+		}
+
+		renderer.start_pos = start_pos;
+		renderer.user_line = [];
+		renderer.moves = [];
+
+		renderer.draw();
+		renderer.draw_main_line();
+		fenbox.value = renderer.start_pos.fen();
+	};
+
+	renderer.load_pgn_object = (o) => {			// Returns true or false - whether this actually succeeded.
+
+		let final_pos;
+
+		try {
+			final_pos = LoadPGN(o.movetext);
+		} catch (err) {
+			alert(err);
+			return false;
+		}
+
+		// FIXME: I think a PGN can actually specify a different starting position?
+		renderer.start_pos = LoadFEN("rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1");
+		renderer.user_line = Array.from(final_pos.history());
+		renderer.moves = [];
+
+		renderer.draw();
+		renderer.draw_main_line();
+		fenbox.value = renderer.start_pos.fen();
+
+		return true;
 	};
 
 	renderer.prev = () => {
@@ -239,6 +291,27 @@ function make_renderer() {
 			renderer.moves = renderer.moves.slice(0, renderer.moves.length - 1);
 			renderer.position_changed();
 		}
+	};
+
+	renderer.next = () => {
+		if (renderer.user_line.length > renderer.moves.length) {
+			renderer.moves = renderer.user_line.slice(0, renderer.moves.length + 1);
+			renderer.position_changed();
+		}
+	};
+
+	renderer.load_fen = (s) => {
+
+		let newpos;
+
+		try {
+			newpos = LoadFEN(s);
+		} catch (err) {
+			alert(err);
+			return;
+		}
+
+		renderer.new_game(newpos);
 	};
 
 	// --------------------------------------------------------------------------------------------

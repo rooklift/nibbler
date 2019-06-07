@@ -714,7 +714,7 @@ const position_prototype = {
 			return "??";
 		}
 
-		if (this.nice_lastmove_cache === undefined) {
+		if (!this.nice_lastmove_cache) {
 			this.nice_lastmove_cache = this.parent.nice_string(this.lastmove);
 		}
 
@@ -896,6 +896,7 @@ const position_prototype = {
 	},
 
 	history: function() {
+		// Note, if this ever returns a cached list, it should return Array.from(cache) instead.
 		let list = [];
 		let node = this;
 		while (node.parent) {			// no parent implies no lastmove
@@ -907,6 +908,7 @@ const position_prototype = {
 	},
 
 	position_list: function() {
+		// Note, if this ever returns a cached list, it should return Array.from(cache) instead.
 		let list = [];
 		let node = this;
 		while (node) {
