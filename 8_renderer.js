@@ -168,7 +168,7 @@ function make_renderer() {
 	renderer.stderr_log = "";						// All output received from the engine's stderr.
 	renderer.infobox_string = "";					// Just to help not redraw the infobox when not needed.
 	renderer.pgn_choices = null;					// All games found when opening a PGN file.
-	renderer.clickable_elements = [];				// Objects relating to our infobox.
+	renderer.infobox_clickers = [];					// Objects relating to our infobox.
 
 	renderer.start_pos = LoadFEN("rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1");
 	renderer.info_table = NewInfoTable();
@@ -884,7 +884,7 @@ function make_renderer() {
 			}
 		}
 
-		renderer.clickable_elements = elements;
+		renderer.infobox_clickers = elements;
 	};
 
 	renderer.infobox_click = (event) => {
@@ -902,15 +902,15 @@ function make_renderer() {
 			return;
 		}
 
-		// This is a bit icky, it relies on the fact that our clickable_elements list
+		// This is a bit icky, it relies on the fact that our infobox_clickers list
 		// has some objects that lack a move property (the blue info bits).
 		//
 		// There's also some small chance that we will receive an outdated click. 
-		// However, we know that our clickable_elements list matches the current board, 
+		// However, we know that our infobox_clickers list matches the current board, 
 		// so the only danger is the user gets something unintended, but it will still 
 		// be legal.
 
-		if (!renderer.clickable_elements || n >= renderer.clickable_elements.length) {
+		if (!renderer.infobox_clickers || n >= renderer.infobox_clickers.length) {
 			return;
 		}
 
@@ -919,7 +919,7 @@ function make_renderer() {
 		// Work backwards until we get to the start of the line...
 
 		for (; n >= 0; n--) {
-			let element = renderer.clickable_elements[n];
+			let element = renderer.infobox_clickers[n];
 			if (!element || !element.move) {
 				break;
 			}
