@@ -867,21 +867,6 @@ const position_prototype = {
 		return s + ` ${this.active} ${castling_string} ${ep_string} ${this.halfmove} ${this.fullmove}`;
 	},
 
-	simple_string: function() {
-
-		// Returns a simple representation of the board, which is convenient to
-		// use for the mouseover functions.
-
-		let chars = new Array(64);
-		for (let y = 0; y < 8; y++) {
-			for (let x = 0; x < 8; x++) {
-				let c = this.state[x][y];
-				chars[y * 8 + x] = c !== "" ? c : ".";
-			}
-		}
-		return chars.join("");
-	},
-
 	history: function() {
 		// Note, if this ever returns a cached list, it should return Array.from(cache) instead.
 		let list = [];
