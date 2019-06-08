@@ -20,7 +20,7 @@ function new_info(board, move) {
 			// the initial move is legal, since it's checked on receipt.
 
 			if (this.nice_pv_cache) {
-				return this.nice_pv_cache;
+				return Array.from(this.nice_pv_cache);
 			}
 
 			let tmp_board = this.board;
@@ -40,7 +40,7 @@ function new_info(board, move) {
 			}
 
 			this.nice_pv_cache = ret;
-			return this.nice_pv_cache;
+			return Array.from(this.nice_pv_cache);
 		},
 
 		winrate_string: function() {
