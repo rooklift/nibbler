@@ -38,6 +38,7 @@ The piece images were taken from the TCEC website. After discussion with Aloril,
 
 # TODO
 
+* Drag and drop for piece moves? Apparently it exists [natively](https://developer.mozilla.org/en-US/docs/Web/API/HTML_Drag_and_Drop_API).
 * Automatically move the scroll bar on the main line if needed (e.g. [this](http://jsfiddle.net/p3kar5bb/322/)).
 * When moving manually, the ability to underpromote (already works for Leela moves).
 * Some tree structure of user moves. Maybe.
