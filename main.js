@@ -119,11 +119,45 @@ function menu_build() {
 			label: "Navigation",
 			submenu: [
 				{
-					label: "Play Best",
-					accelerator: "CommandOrControl+D",
-					click: () => {
-						windows.send("main-window", "call", "play_best");
-					}
+					label: "Play Choice",
+					submenu: [
+						{
+						label: "1st",
+						accelerator: "F1",
+						click: () => {
+							windows.send("main-window", "call", {
+								fn: "play_info_index",
+								args: [0]
+							})}
+						},
+						{
+						label: "2nd",
+						accelerator: "F2",
+						click: () => {
+							windows.send("main-window", "call", {
+								fn: "play_info_index",
+								args: [1]
+							})}
+						},
+						{
+						label: "3rd",
+						accelerator: "F3",
+						click: () => {
+							windows.send("main-window", "call", {
+								fn: "play_info_index",
+								args: [2]
+							})}
+						},
+						{
+						label: "4th",
+						accelerator: "F4",
+						click: () => {
+							windows.send("main-window", "call", {
+								fn: "play_info_index",
+								args: [3]
+							})}
+						},
+					]
 				},
 				{
 					type: "separator"

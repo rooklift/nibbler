@@ -338,10 +338,10 @@ function make_renderer() {
 		renderer.position_changed();
 	};
 
-	renderer.play_best = () => {
+	renderer.play_info_index = (n) => {
 		let info_list = renderer.info_table.sorted();
-		if (info_list.length > 0) {
-			renderer.move(info_list[0].move);
+		if (n < info_list.length) {
+			renderer.move(info_list[n].move);
 		}
 	};
 
