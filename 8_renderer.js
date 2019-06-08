@@ -869,15 +869,16 @@ function make_renderer() {
 			if (n < infobox.children.length && n < elements.length) {
 				html_nodes[n].innerHTML = elements[n].text;
 				html_nodes[n].className = elements[n].class;
+				html_nodes[n].style.display = "inline";
 			} else if (n < html_nodes.length) {
-				html_nodes[n].innerHTML = "";
-				html_nodes[n].className = "";
+				html_nodes[n].style.display = "none";
 			} else if (n < elements.length) {
 				let node = document.createElement("span");
 				node.id = `clicker_${n}`;
 				infobox.appendChild(node);
 				html_nodes[n].innerHTML = elements[n].text;
 				html_nodes[n].className = elements[n].class;
+				html_nodes[n].style.display = "inline";
 			} else {
 				break;
 			}
