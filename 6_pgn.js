@@ -1,10 +1,18 @@
 "use strict";
 
-function LoadPGN(movetext) {
+function LoadPGN(o) {
 
-	let pos = LoadFEN("rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1");
+	let startpos;
 
-	let lines = movetext.split("\n");
+	if (o.tags["FEN"]) {
+		startpos = LoadFEN(o.tags["FEN"]);
+	} else {
+		startpos = LoadFEN("rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1");
+	}
+
+	let pos = startpos;
+
+	let lines = o.movetext.split("\n");
 	lines = lines.map(s => s.trim());
 
 	let all_tokens = [];
@@ -40,7 +48,7 @@ function LoadPGN(movetext) {
 
 	}
 
-	return pos;
+	return [startpos, pos];
 }
 
 function new_pgn_record() {

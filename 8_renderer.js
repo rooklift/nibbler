@@ -279,17 +279,17 @@ function make_renderer() {
 
 	renderer.load_pgn_object = (o) => {			// Returns true or false - whether this actually succeeded.
 
+		let start_pos;
 		let final_pos;
 
 		try {
-			final_pos = LoadPGN(o.movetext);
+			[start_pos, final_pos] = LoadPGN(o);
 		} catch (err) {
 			alert(err);
 			return false;
 		}
 
-		// FIXME: I think a PGN can actually specify a different starting position?
-		renderer.start_pos = LoadFEN("rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1");
+		renderer.start_pos = start_pos;
 		renderer.pgn_line = Array.from(final_pos.history());
 		renderer.user_line = Array.from(final_pos.history());
 		renderer.moves = [];
