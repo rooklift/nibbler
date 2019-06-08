@@ -508,7 +508,7 @@ function make_renderer() {
 			let o = pgn_list[n];
 
 			try {
-				LoadPGN(o.movetext);
+				LoadPGN(o);
 			} catch (err) {
 				alert(`Game ${n + 1} - ${err.toString()}`);
 				return false;
