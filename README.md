@@ -15,7 +15,7 @@
 
 # Installation
 
-If you have Windows, fully functional releases are uploaded to the [Releases](https://github.com/fohristiwhirl/nibbler/releases) section from time to time. Just edit `config.json` to point to your copy of Lc0, then double-click `Nibbler.exe`.
+If you have Windows, fully functional releases are uploaded to the [Releases](https://github.com/fohristiwhirl/nibbler/releases) section from time to time. Just edit `config.json` to point to your copy of Lc0 and your weightsfile, then double-click `Nibbler.exe`.
 
 Otherwise, running Nibbler from source requires Electron, but has no other dependencies. If you have Electron installed (e.g. `npm install -g electron`) you can likely enter the nibbler directory, then do `electron .`
 
