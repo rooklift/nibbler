@@ -35,9 +35,9 @@ Thanks for helpful discussions and advice from borg, brinan, Chad, coolchess123,
 
 # TODO
 
-* Move the scroll bar on the main line to show current position if needed (e.g. [this](http://jsfiddle.net/p3kar5bb/322/)).
+* Automatically move the scroll bar on the main line if needed (e.g. [this](http://jsfiddle.net/p3kar5bb/322/)).
 * When moving manually, the ability to underpromote.
-* Some tree structure of user moves.
-* PV display as a board.
+* Some tree structure of user moves. Maybe.
+* PV display as a board?
 * Winrate graph.
 * Et cetera.
