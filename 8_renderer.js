@@ -161,7 +161,7 @@ function make_renderer() {
 
 	let renderer = Object.create(null);
 
-	renderer.squares = [];							// Info about clickable squares.
+	renderer.squares = Object.create(null);			// Info about clickable squares.
 	renderer.active_square = null;					// Square clicked by user.
 	renderer.running = false;						// Whether to resend "go" to the engine after move, undo, etc.
 	renderer.ever_received_info = false;			// When false, we write stderr log instead of move info.
@@ -193,6 +193,14 @@ function make_renderer() {
 		if (renderer.moves === renderer.user_line) {
 			renderer.programmer_mistake_check.warned = true;
 			alert("renderer.moves is the same object as renderer.user_line. This should be impossible, please tell the author how you managed it.");
+		}
+		if (renderer.moves === renderer.pgn_line) {
+			renderer.programmer_mistake_check.warned = true;
+			alert("renderer.moves is the same object as renderer.pgn_line. This should be impossible, please tell the author how you managed it.");
+		}
+		if (renderer.user_line === renderer.pgn_line) {
+			renderer.programmer_mistake_check.warned = true;
+			alert("renderer.user_line is the same object as renderer.pgn_line. This should be impossible, please tell the author how you managed it.");
 		}
 		if (ArrayStartsWith(renderer.user_line, renderer.moves) === false) {
 			renderer.programmer_mistake_check.warned = true;
@@ -582,43 +590,53 @@ function make_renderer() {
 
 	renderer.canvas_click = (event) => {
 
-		let point = null;
+		let rsquare;
 
-		for (let n = 0; n < renderer.squares.length; n++) {
-			let foo = renderer.squares[n];
+		for (let foo of Object.values(renderer.squares)) {
 			if (foo.x1 < event.offsetX && foo.y1 < event.offsetY && foo.x2 > event.offsetX && foo.y2 > event.offsetY) {
-				point = foo.point;
+				rsquare = foo;
 				break;
 			}
 		}
 
-		if (point === null) {
+		if (!rsquare) {
 			return;
 		}
 
 		let board = renderer.getboard();
 
+		if (!renderer.active_square && rsquare.one_click_move_source) {
+			let move_string = rsquare.one_click_move_source.s + rsquare.point.s;
+			let illegal_reason = board.illegal(move_string);
+			if (illegal_reason === "") {			
+				renderer.move(move_string);
+				return;
+			} else {
+				console.log(illegal_reason);
+			}
+		}
+
 		if (renderer.active_square) {
 
-			let move_string = renderer.active_square.s + point.s;		// e.g. "e2e4"
+			let move_string = renderer.active_square.s + rsquare.point.s;		// e.g. "e2e4"
 			renderer.active_square = null;
 
 			let illegal_reason = board.illegal(move_string);	
 
 			if (illegal_reason === "") {			
 				renderer.move(move_string);
-				return;							// Skip the draw, below, since move() will do that.
+				return;
 			} else {
 				console.log(illegal_reason);
 			}
 
 		} else {
 
-			if (board.active === "w" && board.is_white(point)) {
-				renderer.active_square = point;
+			if (board.active === "w" && board.is_white(rsquare.point)) {
+				renderer.active_square = rsquare.point;
 			}
-			if (board.active === "b" && board.is_black(point)) {
-				renderer.active_square = point;
+			if (board.active === "b" && board.is_black(rsquare.point)) {
+				renderer.active_square = rsquare.point;
 			}
 		}
 
@@ -884,7 +902,7 @@ function make_renderer() {
 
 	renderer.draw_board = (light, dark) => {
 		
-		renderer.squares = [];
+		renderer.squares = Object.create(null);
 
 		for (let x = 0; x < 8; x++) {
 			for (let y = 0; y < 8; y++) {
@@ -904,7 +922,7 @@ function make_renderer() {
 
 				// Update renderer.squares each draw - our list of clickable coordinates.
 
-				renderer.squares.push({x1: cc.x1, y1: cc.y1, x2: cc.x2, y2: cc.y2, point: Point(x, y)});
+				renderer.squares[S(x, y)] = {x1: cc.x1, y1: cc.y1, x2: cc.x2, y2: cc.y2, point: Point(x, y)};
 			}
 		}
 	};
@@ -941,8 +959,6 @@ function make_renderer() {
 		context.textAlign = "center";
 		context.textBaseline = "middle";
 		context.font = config.rank_font;
-
-		renderer.draw_board(config.light_square, config.dark_square);
 
 		let pieces = [];
 		let board = renderer.getboard();
@@ -1005,7 +1021,9 @@ function make_renderer() {
 						y2: y2
 					});
 
-					// We only draw the best ranking for each particular target square...
+					// We only draw the best ranking for each particular target square.
+					// At the same time, the square becomes available for one-click
+					// movement; we set the relevant info in renderer.squares.
 
 					if (rankings[info_list[i].move.slice(2, 4)] === undefined) {
 						rankings[info_list[i].move.slice(2, 4)] = {
@@ -1015,6 +1033,7 @@ function make_renderer() {
 							x: x2,
 							y: y2
 						};
+						renderer.squares[S(x2, y2)].one_click_move_source = Point(x1, y1);
 					}
 				}
 			}
@@ -1062,6 +1081,7 @@ function make_renderer() {
 
 		requestAnimationFrame(() => {
 			renderer.draw_infobox();
+			renderer.draw_board(config.light_square, config.dark_square);
 			renderer.draw_normal();
 		});
 	};
