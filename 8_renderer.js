@@ -406,6 +406,10 @@ function make_renderer() {
 
 	renderer.load_fen = (s) => {
 
+		if (s.trim() === renderer.getboard().fen()) {
+			return;
+		}
+
 		let newpos;
 
 		try {
