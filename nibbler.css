@@ -101,3 +101,10 @@ p {
 .nobr {
 	white-space: nowrap;		/* Used for O-O and O-O-O tags */
 }
+
+/* The following is kind of cool for debugging... */
+/*
+* {
+    border: 2px dotted red;
+}
+*/
