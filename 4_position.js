@@ -6,10 +6,6 @@
 
 const position_prototype = {
 
-	copy: function() {
-		return NewPosition(this.state, this.active, this.castling, this.enpassant, this.halfmove, this.fullmove, this.parent, this.lastmove);
-	},
-
 	move: function(s) {
 
 		// s is something like "d1f3" or "e7e8q".
@@ -38,7 +34,6 @@ const position_prototype = {
 		total_moves_made++;
 
 		let ret = this.copy();
-		ret.parent = this;
 
 		let promotion_char = s.length > 4 ? s[4].toLowerCase() : "q";
 		
@@ -140,26 +135,17 @@ const position_prototype = {
 
 		// Handle promotions...
 
-		let promotion_flag;
-
 		if (y2 === 0 && pawn_flag) {
 			ret.state[x2][y2] = promotion_char.toUpperCase();
-			promotion_flag = true;
 		}
 
 		if (y2 === 7 && pawn_flag) {
 			ret.state[x2][y2] = promotion_char;		// Always lowercase.
-			promotion_flag = true;
 		}
 
-		// Set stuff...
+		// Swap who the current player is...
 
 		ret.active = white_flag ? "b" : "w";
-		ret.lastmove = s;
-
-		if (ret.lastmove.length === 4 && promotion_flag) {
-			ret.lastmove += promotion_char;
-		}
 
 		return ret;
 	},
@@ -867,20 +853,12 @@ const position_prototype = {
 		return s + ` ${this.active} ${castling_string} ${ep_string} ${this.halfmove} ${this.fullmove}`;
 	},
 
-	history: function() {
-		// Note, if this ever returns a cached list, it should return Array.from(cache) instead.
-		let list = [];
-		let node = this;
-		while (node.parent) {			// no parent implies no lastmove
-			list.push(node.lastmove);
-			node = node.parent;
-		}
-		list.reverse();
-		return list;
+	copy: function() {
+		return NewPosition(this.state, this.active, this.castling, this.enpassant, this.halfmove, this.fullmove);
 	},
 };
 
-function NewPosition(state = null, active = "w", castling = "", enpassant = null, halfmove = 0, fullmove = 1, parent = null, lastmove = null) {
+function NewPosition(state = null, active = "w", castling = "", enpassant = null, halfmove = 0, fullmove = 1) {
 
 	total_positions_made++;
 
@@ -910,9 +888,6 @@ function NewPosition(state = null, active = "w", castling = "", enpassant = null
 
 	p.halfmove = halfmove;
 	p.fullmove = fullmove;
-
-	p.parent = parent;
-	p.lastmove = lastmove;
 
 	return p;
 }	

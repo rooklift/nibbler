@@ -3,6 +3,7 @@
 function LoadPGN(o) {
 
 	let startpos;
+	let moves_list = [];
 
 	if (o.tags["FEN"] && o.tags["SetUp"] === "1") {
 		startpos = LoadFEN(o.tags["FEN"]);
@@ -44,11 +45,11 @@ function LoadPGN(o) {
 			throw `${token} -- ${error}`;
 		}
 
+		moves_list.push(move);
 		pos = pos.move(move);
-
 	}
 
-	return [startpos, pos];
+	return [startpos, moves_list];
 }
 
 function new_pgn_record() {

@@ -280,18 +280,18 @@ function make_renderer() {
 	renderer.load_pgn_object = (o) => {			// Returns true or false - whether this actually succeeded.
 
 		let start_pos;
-		let final_pos;
+		let moves_list;
 
 		try {
-			[start_pos, final_pos] = LoadPGN(o);
+			[start_pos, moves_list] = LoadPGN(o);
 		} catch (err) {
 			alert(err);
 			return false;
 		}
 
 		renderer.start_pos = start_pos;
-		renderer.pgn_line = Array.from(final_pos.history());
-		renderer.user_line = Array.from(final_pos.history());
+		renderer.pgn_line = Array.from(moves_list);
+		renderer.user_line = Array.from(moves_list);
 		renderer.moves = [];
 
 		renderer.board_cache = null;
