@@ -48,9 +48,6 @@ function menu_build() {
 					}
 				},
 				{
-					role: "toggledevtools"
-				},
-				{
 					type: "separator"
 				},
 				{
@@ -365,6 +362,20 @@ function menu_build() {
 							}
 						},
 					]
+				}
+			]
+		},
+		{
+			label: "Dev",
+			submenu: [
+				{
+					role: "toggledevtools"
+				},
+				{
+					label: "Toggle Debug CSS",
+					click: () => {
+						windows.send("main-window", "call", "toggle_debug_css");
+					}
 				}
 			]
 		}

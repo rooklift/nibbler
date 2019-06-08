@@ -603,6 +603,19 @@ function make_renderer() {
 		renderer.draw();
 	};
 
+	renderer.toggle_debug_css = () => {
+		let ss = document.styleSheets[0];
+		let i = 0;
+		for (let rule of Object.values(ss.cssRules)) {
+			if (rule.selectorText && rule.selectorText === "*") {
+				ss.deleteRule(i);
+				return;
+			}
+			i++;
+		}
+		ss.insertRule("* {border: 2px dotted red}");
+	};
+
 	renderer.show_pgn_chooser = () => {
 
 		if (!renderer.pgn_choices) {
