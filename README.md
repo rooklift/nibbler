@@ -11,6 +11,7 @@
 * (You can still make moves the old fashioned way, by clicking the moving piece first, of course.)
 * PGN and FEN loading.
 * Clickable moves in the variation lists.
+* Various aesthetic adjustments are possible in the `config.json` file.
 
 # Usage
 
