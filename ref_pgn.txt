@@ -1130,8 +1130,7 @@ starting with a set-up position.  If it appears with a tag value of "1", a FEN
 tag pair must also appear.
 
 
-9.7.2: Tag: FE
-N
+9.7.2: Tag: FEN
 
 This tag uses a string that gives the Forsyth-Edwards Notation for the starting
 position used in the game.  FEN is described in a later section of this

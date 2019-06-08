@@ -79,6 +79,19 @@ function menu_build() {
 					}
 				},
 				{
+					label: "Save PGN...",
+					accelerator: "CommandOrControl+S",
+					click: () => {
+						let file = electron.dialog.showSaveDialog();
+						if (file && file.length > 0) {
+							windows.send("main-window", "call", {
+								fn: "save",
+								args: [file]
+							});
+						}
+					}
+				},
+				{
 					label: "Validate PGN...",
 					click: () => {
 						let files = electron.dialog.showOpenDialog({
