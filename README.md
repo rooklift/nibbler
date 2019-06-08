@@ -13,11 +13,11 @@
 * Clickable moves in the variation lists.
 * Various aesthetic adjustments are possible in the `config.json` file.
 
-# Usage
+# Installation
 
-Running *Nibbler* from source requires Electron, but has no other dependencies. If you have Electron installed (e.g. `npm install -g electron`) you can likely enter the nibbler directory, edit the `config.json` file, then do `electron .`
+If you have Windows, fully functional releases are uploaded to the [Releases](https://github.com/fohristiwhirl/nibbler/releases) section from time to time.
 
-I'll try to upload some premade Windows builds to the [Releases](https://github.com/fohristiwhirl/nibbler/releases) section from time to time, if I remember. These won't require anything.
+Otherwise, running *Nibbler* from source requires Electron, but has no other dependencies. If you have Electron installed (e.g. `npm install -g electron`) you can likely enter the nibbler directory, edit the `config.json` file, then do `electron .`
 
 For full functionality, the required Lc0 version is (I believe) v0.21.0 or later, as we use Leela's `LogLiveStats` option, which was introduced in that version. While it is also *possible* to use a different engine (e.g. Stockfish) we do send the `MultiPV 500` command, which seems to drastically reduce traditional engine strength.
 
