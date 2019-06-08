@@ -614,8 +614,6 @@ function make_renderer() {
 
 		let lines = [];
 
-		lines.push("&nbsp;");
-
 		let max_ordinal_length = renderer.pgn_choices.length.toString().length;
 		let padding = "";
 		for (let n = 0; n < max_ordinal_length - 1; n++) {
@@ -639,12 +637,10 @@ function make_renderer() {
 			} else {
 				s = `${padding}${n + 1}. ${p.tags.White} - ${p.tags.Black}`;
 			}
-			lines.push(`<span id="chooser_${n}">&nbsp;&nbsp;${s}</span>`);
+			lines.push(`<li id="chooser_${n}">${s}</li>`);
 		}
 
-		lines.push("&nbsp;");
-
-		pgnchooser.innerHTML = lines.join("<br>");
+		pgnchooser.innerHTML = "<ul>" + lines.join("") + "</ul>";
 		pgnchooser.style.display = "block";
 	};
 
