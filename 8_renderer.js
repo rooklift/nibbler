@@ -535,7 +535,7 @@ function make_renderer() {
 	};
 
 	renderer.err_receive = (s) => {
-		if (s.indexOf("WARNING") !== -1) {
+		if (s.indexOf("WARNING") !== -1 || s.indexOf("error") !== -1) {
 			renderer.stderr_log += `<span class="red">${s}</span><br>`;
 		} else {
 			renderer.stderr_log += `${s}<br>`;
