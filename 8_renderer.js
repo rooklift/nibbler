@@ -373,6 +373,17 @@ function make_renderer() {
 		}
 	};
 
+/*
+	renderer.mwheel = (event) => {					// Some awkward interactions with the main line scroll wheel.
+		if (event.deltaY && event.deltaY < 0) {		// (And also the PGN chooser, but that would be easy to fix.)
+			renderer.prev();
+		}
+		if (event.deltaY && event.deltaY > 0) {
+			renderer.next();
+		}
+	};
+*/
+
 	renderer.return_to_pgn = () => {
 
 		if (!renderer.pgn_line || renderer.pgn_line.length === 0) {
