@@ -481,7 +481,7 @@ function make_renderer() {
 		// target might not be what we want, but we can examine the event.path
 		// array and find the item with the unique id.
 
-		let n = undefined;
+		let n;
 
 		for (let item of event.path) {
 			if (typeof item.id === "string" && item.id.startsWith("chooser_")) {
@@ -754,7 +754,7 @@ function make_renderer() {
 
 	renderer.mainline_click = (event) => {
 
-		let n = undefined;
+		let n;
 
 		for (let item of event.path) {
 			if (typeof item.id === "string") {
@@ -864,7 +864,7 @@ function make_renderer() {
 
 	renderer.infobox_click = (event) => {
 
-		let n = undefined;
+		let n;
 
 		for (let item of event.path) {
 			if (typeof item.id === "string" && item.id.startsWith("clicker_")) {
