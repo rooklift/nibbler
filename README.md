@@ -37,7 +37,7 @@ Thanks for helpful discussions and advice from borg, brinan, Chad, coolchess123,
 # TODO
 
 * Automatically move the scroll bar on the main line if needed (e.g. [this](http://jsfiddle.net/p3kar5bb/322/)).
-* When moving manually, the ability to underpromote.
+* When moving manually, the ability to underpromote (already works for Leela moves).
 * Some tree structure of user moves. Maybe.
 * PV display as a board?
 * Winrate graph.
