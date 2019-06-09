@@ -62,6 +62,7 @@ function NewInfoTable() {			// There's only ever going to be one of these made I
 		table: Object.create(null),
 	
 		clear: function() {
+			this.drawn = false;
 			this.table = Object.create(null);
 		},
 
