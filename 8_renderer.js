@@ -720,7 +720,7 @@ function make_renderer() {
 		let csquare = renderer.get_csquare(event.offsetX, event.offsetY);
 
 		// First case - no actual csquare for these mouse coordinates.
-		// We'll just let any highlight naturally end at next scheduled draw.
+		// Should be rare or impossible.
 
 		if (!csquare || csquare.point === Point(null)) {
 			renderer.mouse_hover = null;
@@ -734,8 +734,8 @@ function make_renderer() {
 			renderer.mouse_hover = csquare;
 			if (csquare.one_click_move) {
 				renderer.draw();
-				return;
 			}
+			return;
 		}
 
 		// Third case - we had hover coordinates already, and still do. Might need a redraw.
@@ -743,17 +743,24 @@ function make_renderer() {
 		// Note we can't just do a naive check of renderer.mouse_hover !== csquare (object identify).
 		// Their points, however, are directly comparible due to our Point() magic.
 
-		if (renderer.mouse_hover.point !== csquare.point) {
-			renderer.mouse_hover = csquare;
-			if (csquare.one_click_move) {
-				renderer.draw();
-				return;
-			}
+		if (renderer.mouse_hover.point === csquare.point) {
+			return;
+		}
+
+		let old_one_click_move = renderer.mouse_hover.one_click_move;		// possible undefined
+		renderer.mouse_hover = csquare;
+		if (csquare.one_click_move || old_one_click_move) {					// i.e we don't redraw if neither csquare had o.c. move attached.
+			renderer.draw();
 		}
 	};
 
 	renderer.canvas_mouseout = () => {
-		renderer.mouse_hover = null;
+		if (renderer.mouse_hover && renderer.mouse_hover.one_click_move) {
+			renderer.mouse_hover = null;
+			renderer.draw();
+		} else {
+			renderer.mouse_hover = null;
+		}
 	};
 
 	renderer.draw_main_line = () => {
@@ -841,7 +848,7 @@ function make_renderer() {
 
 	renderer.get_csquare = (mousex, mousey) => {
 		for (let foo of Object.values(renderer.squares)) {
-			if (foo.x1 < mousex && foo.y1 < mousey && foo.x2 > mousex && foo.y2 > mousey) {
+			if (foo.x1 <= mousex && foo.y1 <= mousey && foo.x2 > mousex && foo.y2 > mousey) {
 				return foo;
 			}
 		}
