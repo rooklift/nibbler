@@ -171,7 +171,7 @@ function make_renderer() {
 	renderer.infobox_clickers = [];					// Objects relating to our infobox.
 	renderer.mousex = null;							// Raw mouse X on the canvas, e.g. between 0 and 640.
 	renderer.mousey = null;							// Raw mouse Y on the canvas, e.g. between 0 and 640.
-	renderer.highlight_dest = Point(null);			// The destination of any highlighted move in the infobox.
+	renderer.highlight_dest = null;					// The destination of any highlighted move in the infobox.
 
 	renderer.start_pos = LoadFEN("rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1");
 	renderer.info_table = NewInfoTable();
@@ -841,7 +841,7 @@ function make_renderer() {
 		let csquare = renderer.get_csquare(renderer.mousex, renderer.mousey);
 
 		// By default we're highlighting nothing...
-		let highlight_dest = Point(null);
+		let highlight_dest = null;
 		let one_click_move = "__none__";
 
 		// But if the hovered square actually has a one-click move available, highlight its variation,
