@@ -896,29 +896,31 @@ function make_renderer() {
 				}
 			}
 
-			if (new_elements.length > 0) {			// Always true.
+			if (new_elements.length > 0) {					// Always true.
 				new_elements[new_elements.length - 1].text += "<br><br>";
 			}
 
 			elements = elements.concat(new_elements);
 		}
 
-		let html_nodes = infobox.children;		// Read only thing that's automatically updated when we append children.
+		let html_nodes = infobox.children;
+		let elements_length = elements.length;				// Is this type of optimisation helpful?
+		let initial_html_nodes_length = html_nodes.length;
 
 		for (let n = 0; true; n++) {
-			if (n < infobox.children.length && n < elements.length) {
+			if (n < initial_html_nodes_length && n < elements_length) {
 				html_nodes[n].innerHTML = elements[n].text;
 				html_nodes[n].className = elements[n].class;
 				html_nodes[n].style.display = "inline";
-			} else if (n < html_nodes.length) {
+			} else if (n < initial_html_nodes_length) {
 				html_nodes[n].style.display = "none";
-			} else if (n < elements.length) {
+			} else if (n < elements_length) {
 				let node = document.createElement("span");
 				node.id = `clicker_${n}`;
+				node.innerHTML = elements[n].text;
+				node.className = elements[n].class;
+				node.style.display = "inline";
 				infobox.appendChild(node);
-				html_nodes[n].innerHTML = elements[n].text;
-				html_nodes[n].className = elements[n].class;
-				html_nodes[n].style.display = "inline";
 			} else {
 				break;
 			}
