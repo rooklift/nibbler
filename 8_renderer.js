@@ -169,8 +169,9 @@ function make_renderer() {
 	renderer.infobox_string = "";					// Just to help not redraw the infobox when not needed.
 	renderer.pgn_choices = null;					// All games found when opening a PGN file.
 	renderer.infobox_clickers = [];					// Objects relating to our infobox.
-	renderer.mousex = null;
-	renderer.mousey = null;
+	renderer.mousex = null;							// Raw mouse X on the canvas, e.g. between 0 and 640.
+	renderer.mousey = null;							// Raw mouse Y on the canvas, e.g. between 0 and 640.
+	renderer.highlight_dest = Point(null);			// The destination of any highlighted move in the infobox.
 
 	renderer.start_pos = LoadFEN("rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1");
 	renderer.info_table = NewInfoTable();
@@ -836,15 +837,28 @@ function make_renderer() {
 			return;
 		}
 
-		// Is the user currently mouse-hovering over a one-click move dest?
-		// If so, record the move, so we can highlight it.
+		let csquare = renderer.get_csquare(renderer.mousex, renderer.mousey);
 
+		let highlight_dest = Point(null);
 		let one_click_move = "__none__";
 
-		let csquare = renderer.get_csquare(renderer.mousex, renderer.mousey);
 		if (csquare && csquare.one_click_move) {
+			highlight_dest = csquare.point;
 			one_click_move = csquare.one_click_move;
 		}
+
+		// The info_table.drawn property is set to false whenever new info is received from the engine.
+		// We can skip drawing the infobox maybe...
+
+		if (renderer.info_table.drawn) {
+			if (highlight_dest === renderer.highlight_dest) {
+				return;
+			}
+		}
+
+		renderer.highlight_dest = highlight_dest;
+
+		//
 
 		let info_list = renderer.info_table.sorted();
 		let elements = [];												// Not HTML elements, just our own objects
@@ -927,6 +941,8 @@ function make_renderer() {
 		}
 
 		renderer.infobox_clickers = elements;
+
+		renderer.info_table.drawn = true;
 	};
 
 	renderer.infobox_click = (event) => {
