@@ -714,8 +714,26 @@ function make_renderer() {
 
 	renderer.canvas_mousemove = (event) => {
 
+		// This can be called a zillion times in a second, so maybe best to use the simple
+		// version that doesn't try to redraw when needed, but just lets the redraw happen
+		// at the next scheduled draw...
+
+		let csquare = renderer.get_csquare(event.offsetX, event.offsetY);
+
+		if (!csquare || csquare.point === Point(null)) {
+			renderer.mouse_hover = null;
+			return;
+		}
+
+		renderer.mouse_hover = csquare;
+	}
+
+/*
+	renderer.canvas_mousemove_tryhard = (event) => {
+
 		// The mouse moved over the canvas. We therefore set renderer.mouse_hover.
 		// We may need to redraw the screen so that the one-click variation is highlighted.
+		// This version of the function can be surprisingly CPU intensive.
 
 		let csquare = renderer.get_csquare(event.offsetX, event.offsetY);
 
@@ -747,12 +765,13 @@ function make_renderer() {
 			return;
 		}
 
-		let old_one_click_move = renderer.mouse_hover.one_click_move;		// possible undefined
+		let old_one_click_move = renderer.mouse_hover.one_click_move;		// possibly undefined
 		renderer.mouse_hover = csquare;
 		if (csquare.one_click_move || old_one_click_move) {					// i.e we don't redraw if neither csquare had o.c. move attached.
 			renderer.draw();
 		}
 	};
+*/
 
 	renderer.canvas_mouseout = () => {
 		if (renderer.mouse_hover && renderer.mouse_hover.one_click_move) {

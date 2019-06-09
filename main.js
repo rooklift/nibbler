@@ -322,47 +322,6 @@ function menu_build() {
 						}
 					]
 				},
-				{
-					label: "Update rate",
-					submenu: [
-						{
-							label: "Slow",
-							click: () => {
-								windows.send("main-window", "set", {
-									key: "update_delay",
-									value: 500,
-								});
-							}
-						},
-						{
-							label: "Fast",
-							click: () => {
-								windows.send("main-window", "set", {
-									key: "update_delay",
-									value: 200,
-								});
-							}
-						},
-						{
-							label: "Faster",
-							click: () => {
-								windows.send("main-window", "set", {
-									key: "update_delay",
-									value: 80,
-								});
-							}
-						},
-						{
-							label: "Hyper",
-							click: () => {
-								windows.send("main-window", "set", {
-									key: "update_delay",
-									value: 20,
-								});
-							}
-						},
-					]
-				}
 			]
 		},
 		{
