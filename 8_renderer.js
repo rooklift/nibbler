@@ -837,18 +837,21 @@ function make_renderer() {
 			return;
 		}
 
+		// Find the square the user is hovering over (might be null)...
 		let csquare = renderer.get_csquare(renderer.mousex, renderer.mousey);
 
+		// By default we're highlighting nothing...
 		let highlight_dest = Point(null);
 		let one_click_move = "__none__";
 
+		// But if the hovered square actually has a one-click move available, highlight its variation...
 		if (csquare && csquare.one_click_move) {
 			highlight_dest = csquare.point;
 			one_click_move = csquare.one_click_move;
 		}
 
 		// The info_table.drawn property is set to false whenever new info is received from the engine.
-		// We can skip drawing the infobox maybe...
+		// So maybe we can skip drawing the infobox, and just return...
 
 		if (renderer.info_table.drawn) {
 			if (highlight_dest === renderer.highlight_dest) {
