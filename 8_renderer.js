@@ -613,7 +613,7 @@ function make_renderer() {
 			}
 			i++;
 		}
-		ss.insertRule("* {border: 2px dotted red}");
+		ss.insertRule("* {outline: 1px dotted red;}");
 	};
 
 	renderer.show_pgn_chooser = () => {
