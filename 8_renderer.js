@@ -169,7 +169,8 @@ function make_renderer() {
 	renderer.infobox_string = "";					// Just to help not redraw the infobox when not needed.
 	renderer.pgn_choices = null;					// All games found when opening a PGN file.
 	renderer.infobox_clickers = [];					// Objects relating to our infobox.
-	renderer.mouse_hover = null;					// Mouse hover target, as a csquare.
+	renderer.mousex = null;
+	renderer.mousey = null;
 
 	renderer.start_pos = LoadFEN("rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1");
 	renderer.info_table = NewInfoTable();
@@ -718,68 +719,13 @@ function make_renderer() {
 		// version that doesn't try to redraw when needed, but just lets the redraw happen
 		// at the next scheduled draw...
 
-		let csquare = renderer.get_csquare(event.offsetX, event.offsetY);
-
-		if (!csquare || csquare.point === Point(null)) {
-			renderer.mouse_hover = null;
-			return;
-		}
-
-		renderer.mouse_hover = csquare;
+		renderer.mousex = event.offsetX;
+		renderer.mousey = event.offsetY;
 	}
 
-/*
-	renderer.canvas_mousemove_tryhard = (event) => {
-
-		// The mouse moved over the canvas. We therefore set renderer.mouse_hover.
-		// We may need to redraw the screen so that the one-click variation is highlighted.
-		// This version of the function can be surprisingly CPU intensive.
-
-		let csquare = renderer.get_csquare(event.offsetX, event.offsetY);
-
-		// First case - no actual csquare for these mouse coordinates.
-		// Should be rare or impossible.
-
-		if (!csquare || csquare.point === Point(null)) {
-			renderer.mouse_hover = null;
-			return;
-		}
-
-		// Second case - we had no hover coordinates, and now we do. Definitely
-		// will need to immediately redraw if the csquare has a one-click move.
-
-		if (!renderer.mouse_hover) {
-			renderer.mouse_hover = csquare;
-			if (csquare.one_click_move) {
-				renderer.draw();
-			}
-			return;
-		}
-
-		// Third case - we had hover coordinates already, and still do. Might need a redraw.
-		//
-		// Note we can't just do a naive check of renderer.mouse_hover !== csquare (object identify).
-		// Their points, however, are directly comparible due to our Point() magic.
-
-		if (renderer.mouse_hover.point === csquare.point) {
-			return;
-		}
-
-		let old_one_click_move = renderer.mouse_hover.one_click_move;		// possibly undefined
-		renderer.mouse_hover = csquare;
-		if (csquare.one_click_move || old_one_click_move) {					// i.e we don't redraw if neither csquare had o.c. move attached.
-			renderer.draw();
-		}
-	};
-*/
-
 	renderer.canvas_mouseout = () => {
-		if (renderer.mouse_hover && renderer.mouse_hover.one_click_move) {
-			renderer.mouse_hover = null;
-			renderer.draw();
-		} else {
-			renderer.mouse_hover = null;
-		}
+		renderer.mousex = null;
+		renderer.mousey = null;
 	};
 
 	renderer.draw_main_line = () => {
@@ -866,6 +812,9 @@ function make_renderer() {
 	};
 
 	renderer.get_csquare = (mousex, mousey) => {
+		if (typeof mousex !== "number" || typeof mousey !== "number") {
+			return null;
+		}
 		for (let foo of Object.values(renderer.squares)) {
 			if (foo.x1 <= mousex && foo.y1 <= mousey && foo.x2 > mousex && foo.y2 > mousey) {
 				return foo;
@@ -892,12 +841,9 @@ function make_renderer() {
 
 		let one_click_move = "__none__";
 
-		if (renderer.mouse_hover) {
-			if (renderer.mouse_hover.point !== Point(null)) {
-				if (renderer.mouse_hover.one_click_move) {
-					one_click_move = renderer.mouse_hover.one_click_move;
-				}
-			}
+		let csquare = renderer.get_csquare(renderer.mousex, renderer.mousey);
+		if (csquare && csquare.one_click_move) {
+			one_click_move = csquare.one_click_move;
 		}
 
 		let info_list = renderer.info_table.sorted();
