@@ -161,7 +161,7 @@ function make_renderer() {
 
 	let renderer = Object.create(null);
 
-	renderer.squares = Object.create(null);			// Info about clickable squares.
+	renderer.squares = Object.create(null);			// Info about canvas squares, a.k.a. csquares.
 	renderer.active_square = null;					// Square clicked by user.
 	renderer.running = false;						// Whether to resend "go" to the engine after move, undo, etc.
 	renderer.ever_received_info = false;			// When false, we write stderr log instead of move info.
@@ -169,6 +169,7 @@ function make_renderer() {
 	renderer.infobox_string = "";					// Just to help not redraw the infobox when not needed.
 	renderer.pgn_choices = null;					// All games found when opening a PGN file.
 	renderer.infobox_clickers = [];					// Objects relating to our infobox.
+	renderer.mouse_hover = null;					// Mouse hover target, as a csquare.
 
 	renderer.start_pos = LoadFEN("rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1");
 	renderer.info_table = NewInfoTable();
@@ -613,7 +614,7 @@ function make_renderer() {
 			}
 			i++;
 		}
-		ss.insertRule("* {border: 2px dotted red}");
+		ss.insertRule("* {outline: 1px dotted red;}");
 	};
 
 	renderer.show_pgn_chooser = () => {
@@ -667,26 +668,17 @@ function make_renderer() {
 
 	renderer.canvas_click = (event) => {
 
-		let rsquare;
-
-		for (let foo of Object.values(renderer.squares)) {
-			if (foo.x1 < event.offsetX && foo.y1 < event.offsetY && foo.x2 > event.offsetX && foo.y2 > event.offsetY) {
-				rsquare = foo;
-				break;
-			}
-		}
-
-		if (!rsquare) {
+		let csquare = renderer.get_csquare(event.offsetX, event.offsetY);
+		if (!csquare) {
 			return;
 		}
 
 		let board = renderer.getboard();
 
-		if (!renderer.active_square && rsquare.one_click_move_source) {
-			let move_string = rsquare.one_click_move_source.s + rsquare.point.s;
-			let illegal_reason = board.illegal(move_string);
+		if (!renderer.active_square && csquare.one_click_move) {
+			let illegal_reason = board.illegal(csquare.one_click_move);
 			if (illegal_reason === "") {			
-				renderer.move(move_string);
+				renderer.move(csquare.one_click_move);
 				return;
 			} else {
 				console.log(illegal_reason);
@@ -695,13 +687,13 @@ function make_renderer() {
 
 		if (renderer.active_square) {
 
-			let move_string = renderer.active_square.s + rsquare.point.s;		// e.g. "e2e4"
+			let move = renderer.active_square.s + csquare.point.s;		// e.g. "e2e4"
 			renderer.active_square = null;
 
-			let illegal_reason = board.illegal(move_string);	
+			let illegal_reason = board.illegal(move);	
 
 			if (illegal_reason === "") {			
-				renderer.move(move_string);
+				renderer.move(move);
 				return;
 			} else {
 				console.log(illegal_reason);
@@ -709,15 +701,28 @@ function make_renderer() {
 
 		} else {
 
-			if (board.active === "w" && board.is_white(rsquare.point)) {
-				renderer.active_square = rsquare.point;
+			if (board.active === "w" && board.is_white(csquare.point)) {
+				renderer.active_square = csquare.point;
 			}
-			if (board.active === "b" && board.is_black(rsquare.point)) {
-				renderer.active_square = rsquare.point;
+			if (board.active === "b" && board.is_black(csquare.point)) {
+				renderer.active_square = csquare.point;
 			}
 		}
 
 		renderer.draw();
+	};
+
+	renderer.canvas_mousemove = (event) => {
+		let csquare = renderer.get_csquare(event.offsetX, event.offsetY);
+		if (!csquare) {
+			renderer.mouse_hover = null;
+			return;
+		}
+		renderer.mouse_hover = csquare;
+	};
+
+	renderer.canvas_mouseout = () => {
+		renderer.mouse_hover = null;
 	};
 
 	renderer.draw_main_line = () => {
@@ -803,6 +808,15 @@ function make_renderer() {
 		}
 	};
 
+	renderer.get_csquare = (mousex, mousey) => {
+		for (let foo of Object.values(renderer.squares)) {
+			if (foo.x1 < mousex && foo.y1 < mousey && foo.x2 > mousex && foo.y2 > mousey) {
+				return foo;
+			}
+		}
+		return null;
+	};
+
 	renderer.draw_infobox = () => {
 
 		if (!renderer.ever_received_info) {
@@ -814,6 +828,19 @@ function make_renderer() {
 			}
 			html_nodes[0].innerHTML = renderer.stderr_log;
 			return;
+		}
+
+		// Is the user currently mouse-hovering over a one-click move dest?
+		// If so, record the move, so we can highlight it.
+
+		let one_click_move = "__none__";
+
+		if (renderer.mouse_hover) {
+			if (renderer.mouse_hover.point !== Point(null)) {
+				if (renderer.mouse_hover.one_click_move) {
+					one_click_move = renderer.mouse_hover.one_click_move;
+				}
+			}
 		}
 
 		let info_list = renderer.info_table.sorted();
@@ -828,11 +855,13 @@ function make_renderer() {
 
 		for (let i = 0; i < info_list.length && i < config.max_info_lines; i++) {
 
+			let new_elements = [];
+
 			let info = info_list[i];
 
-			elements.push({
+			new_elements.push({
 				class: "blue",
-				text: `${info.winrate_string()} `,
+				text: `${info.value_string(1)} `,
 			});
 
 			let colour = renderer.getboard().active;
@@ -849,18 +878,26 @@ function make_renderer() {
 				if (nice_move.includes("O-O")) {
 					element.class += " nobr";
 				}
-				elements.push(element);
+				new_elements.push(element);
 				colour = OppositeColour(colour);
 			}
 
-			elements.push({
-				class: "blue",
+			new_elements.push({
+				class: "gray",
 				text: `(N: ${info.n.toString()}, P: ${info.p})`
 			});
 
-			if (elements.length > 0) {			// Always true.
-				elements[elements.length - 1].text += "<br><br>";
+			if (info.move === one_click_move) {
+				for (let e of new_elements) {
+					e.class += " redback";
+				}
 			}
+
+			if (new_elements.length > 0) {			// Always true.
+				new_elements[new_elements.length - 1].text += "<br><br>";
+			}
+
+			elements = elements.concat(new_elements);
 		}
 
 		let html_nodes = infobox.children;		// Read only thing that's automatically updated when we append children.
@@ -999,8 +1036,15 @@ function make_renderer() {
 				context.fillRect(cc.x1, cc.y1, cc.rss, cc.rss);
 
 				// Update renderer.squares each draw - our list of clickable coordinates.
+				// These may later get updated with a one_click_move.
 
-				renderer.squares[S(x, y)] = {x1: cc.x1, y1: cc.y1, x2: cc.x2, y2: cc.y2, point: Point(x, y)};
+				renderer.squares[S(x, y)] = {
+					x1: cc.x1,
+					y1: cc.y1,
+					x2: cc.x2,
+					y2: cc.y2,
+					point: Point(x, y)
+				};
 			}
 		}
 	};
@@ -1021,14 +1065,14 @@ function make_renderer() {
 		context.stroke();
 	};
 
-	renderer.draw_ranking = (o) => {		// Does draw the arrowhead
+	renderer.draw_head = (o) => {
 		let cc = renderer.canvas_coords(o.x, o.y);
 		context.fillStyle = o.colour;
 		context.beginPath();
 		context.arc(cc.cx, cc.cy, 12, 0, 2 * Math.PI);
 		context.fill();
 		context.fillStyle = "black";
-		context.fillText(`${o.rank}`, cc.cx, cc.cy + 1);
+		context.fillText(`${o.info.value_string(0)}`, cc.cx, cc.cy + 1);
 	};
 
 	renderer.draw_normal = () => {
@@ -1059,7 +1103,7 @@ function make_renderer() {
 		let info_list = renderer.info_table.sorted();
 
 		let arrows = [];
-		let rankings = Object.create(null);
+		let heads = Object.create(null);
 
 		if (info_list.length > 0) {
 
@@ -1074,8 +1118,8 @@ function make_renderer() {
 
 					let loss = 0;
 
-					if (typeof info_list[0].winrate === "number" && typeof info_list[i].winrate === "number") {
-						loss = info_list[0].winrate - info_list[i].winrate;
+					if (typeof info_list[0].value === "number" && typeof info_list[i].value === "number") {
+						loss = info_list[0].value - info_list[i].value;
 					}
 
 					let colour;
@@ -1103,15 +1147,15 @@ function make_renderer() {
 					// At the same time, the square becomes available for one-click
 					// movement; we set the relevant info in renderer.squares.
 
-					if (rankings[info_list[i].move.slice(2, 4)] === undefined) {
-						rankings[info_list[i].move.slice(2, 4)] = {
-							fn: renderer.draw_ranking,
+					if (heads[info_list[i].move.slice(2, 4)] === undefined) {
+						heads[info_list[i].move.slice(2, 4)] = {
+							fn: renderer.draw_head,
 							colour: colour,
-							rank: i + 1,
+							info: info_list[i],
 							x: x2,
 							y: y2
 						};
-						renderer.squares[S(x2, y2)].one_click_move_source = Point(x1, y1);
+						renderer.squares[S(x2, y2)].one_click_move = info_list[i].move;
 					}
 				}
 			}
@@ -1145,7 +1189,7 @@ function make_renderer() {
 			}
 		}
 
-		drawables = drawables.concat(Object.values(rankings));
+		drawables = drawables.concat(Object.values(heads));
 
 		for (let o of drawables) {
 			o.fn(o);
@@ -1225,6 +1269,14 @@ infobox.addEventListener("mousedown", (event) => {
 
 mainline.addEventListener("mousedown", (event) => {
 	renderer.mainline_click(event);
+});
+
+canvas.addEventListener("mousemove", (event) => {
+	renderer.canvas_mousemove(event);
+});
+
+canvas.addEventListener("mouseout", (event) => {
+	renderer.canvas_mouseout(event);
 });
 
 // Setup return key on FEN box...
