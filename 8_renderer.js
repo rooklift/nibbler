@@ -675,11 +675,10 @@ function make_renderer() {
 
 		let board = renderer.getboard();
 
-		if (!renderer.active_square && csquare.one_click_move_source) {
-			let move_string = csquare.one_click_move_source.s + csquare.point.s;
-			let illegal_reason = board.illegal(move_string);
+		if (!renderer.active_square && csquare.one_click_move) {
+			let illegal_reason = board.illegal(csquare.one_click_move);
 			if (illegal_reason === "") {			
-				renderer.move(move_string);
+				renderer.move(csquare.one_click_move);
 				return;
 			} else {
 				console.log(illegal_reason);
@@ -688,13 +687,13 @@ function make_renderer() {
 
 		if (renderer.active_square) {
 
-			let move_string = renderer.active_square.s + csquare.point.s;		// e.g. "e2e4"
+			let move = renderer.active_square.s + csquare.point.s;		// e.g. "e2e4"
 			renderer.active_square = null;
 
-			let illegal_reason = board.illegal(move_string);	
+			let illegal_reason = board.illegal(move);	
 
 			if (illegal_reason === "") {			
-				renderer.move(move_string);
+				renderer.move(move);
 				return;
 			} else {
 				console.log(illegal_reason);
@@ -838,8 +837,8 @@ function make_renderer() {
 
 		if (renderer.mouse_hover) {
 			if (renderer.mouse_hover.point !== Point(null)) {
-				if (renderer.mouse_hover.one_click_move_source) {
-					one_click_move = renderer.mouse_hover.one_click_move_source.s + renderer.mouse_hover.point.s;
+				if (renderer.mouse_hover.one_click_move) {
+					one_click_move = renderer.mouse_hover.one_click_move;
 				}
 			}
 		}
@@ -1037,7 +1036,7 @@ function make_renderer() {
 				context.fillRect(cc.x1, cc.y1, cc.rss, cc.rss);
 
 				// Update renderer.squares each draw - our list of clickable coordinates.
-				// These may later get updated with a one_click_move_source.
+				// These may later get updated with a one_click_move.
 
 				renderer.squares[S(x, y)] = {
 					x1: cc.x1,
@@ -1156,7 +1155,7 @@ function make_renderer() {
 							x: x2,
 							y: y2
 						};
-						renderer.squares[S(x2, y2)].one_click_move_source = Point(x1, y1);
+						renderer.squares[S(x2, y2)].one_click_move = info_list[i].move;
 					}
 				}
 			}
