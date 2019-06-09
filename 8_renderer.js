@@ -854,7 +854,7 @@ function make_renderer() {
 			}
 
 			elements.push({
-				class: "blue",
+				class: "gray",
 				text: `(N: ${info.n.toString()}, P: ${info.p})`
 			});
 
