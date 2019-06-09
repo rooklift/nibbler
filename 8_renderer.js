@@ -844,8 +844,9 @@ function make_renderer() {
 		let highlight_dest = Point(null);
 		let one_click_move = "__none__";
 
-		// But if the hovered square actually has a one-click move available, highlight its variation...
-		if (csquare && csquare.one_click_move) {
+		// But if the hovered square actually has a one-click move available, highlight its variation,
+		// unless we have an active (i.e. clicked) square...
+		if (csquare && csquare.one_click_move && renderer.active_square === null) {
 			highlight_dest = csquare.point;
 			one_click_move = csquare.one_click_move;
 		}
