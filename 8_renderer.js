@@ -713,12 +713,44 @@ function make_renderer() {
 	};
 
 	renderer.canvas_mousemove = (event) => {
+
+		// The mouse moved over the canvas. We therefore set renderer.mouse_hover.
+		// We may need to redraw the screen so that the one-click variation is highlighted.
+
 		let csquare = renderer.get_csquare(event.offsetX, event.offsetY);
-		if (!csquare) {
+
+		// First case - no actual csquare for these mouse coordinates.
+
+		if (!csquare || csquare.point === Point(null)) {
 			renderer.mouse_hover = null;
 			return;
 		}
-		renderer.mouse_hover = csquare;
+
+		// Second case - we had no hover coordinates, and now we do. Definitely
+		// will need to redraw if the csquare has a one-click move.
+
+		if (!renderer.mouse_hover) {
+			renderer.mouse_hover = csquare;
+			if (csquare.one_click_move) {
+				renderer.draw();
+				console.log("yes");
+				return;
+			}
+		}
+
+		// Third case - we had hover coordinates already, and still do. Might need a redraw.
+		//
+		// Note we can't just do a naive check of renderer.mouse_hover !== csquare (object identify).
+		// Their points, however, are directly comparible due to our Point() magic.
+
+		if (renderer.mouse_hover.point !== csquare.point) {
+			renderer.mouse_hover = csquare;
+			if (csquare.one_click_move) {
+				renderer.draw();
+				console.log("yes");
+				return;
+			}
+		}
 	};
 
 	renderer.canvas_mouseout = () => {
