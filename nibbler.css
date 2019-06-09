@@ -102,6 +102,11 @@ ul {
 	color: #6cccee;
 }
 
-.nobr {
-	white-space: nowrap;		/* Used for O-O and O-O-O tags */
+.redback {
+	background-color: #770000;
 }
+
+.nobr {
+	white-space: nowrap;		/* Used for O-O and O-O-O moves */
+}
+
