@@ -2,7 +2,7 @@
 
 *Nibbler* is intended to be somewhat like [Lizzie](https://github.com/featurecat/lizzie), but for [Leela Chess Zero](https://github.com/LeelaChessZero/lc0). In other words, it is a GUI that runs a single engine (in our case, Lc0) constantly, displaying opinions about the current position.
 
-![Screenshot](https://user-images.githubusercontent.com/16438795/58984287-9a1c3d00-87d0-11e9-9616-9b1e410447e7.png)
+![Screenshot](https://user-images.githubusercontent.com/16438795/59159439-7c492380-8ac1-11e9-9dde-71c1353c5909.png)
 
 # Features
 
