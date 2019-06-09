@@ -720,6 +720,7 @@ function make_renderer() {
 		let csquare = renderer.get_csquare(event.offsetX, event.offsetY);
 
 		// First case - no actual csquare for these mouse coordinates.
+		// We'll just let any highlight naturally end at next scheduled draw.
 
 		if (!csquare || csquare.point === Point(null)) {
 			renderer.mouse_hover = null;
@@ -727,13 +728,12 @@ function make_renderer() {
 		}
 
 		// Second case - we had no hover coordinates, and now we do. Definitely
-		// will need to redraw if the csquare has a one-click move.
+		// will need to immediately redraw if the csquare has a one-click move.
 
 		if (!renderer.mouse_hover) {
 			renderer.mouse_hover = csquare;
 			if (csquare.one_click_move) {
 				renderer.draw();
-				console.log("yes");
 				return;
 			}
 		}
@@ -747,7 +747,6 @@ function make_renderer() {
 			renderer.mouse_hover = csquare;
 			if (csquare.one_click_move) {
 				renderer.draw();
-				console.log("yes");
 				return;
 			}
 		}
