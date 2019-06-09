@@ -50,11 +50,11 @@ assign_without_overwrite(config, {
 	"options": {},
 
 	"width": 1280,
-	"height": 840,
+	"height": 835,
 	"board_size": 640,
-	"mainline_height": 108,
+	"mainline_height": 110,
 
-	"rank_font": "24px Arial",
+	"board_font": "18px Arial",
 
 	"light_square": "#dadada",
 	"dark_square": "#b4b4b4",
@@ -71,7 +71,7 @@ assign_without_overwrite(config, {
 	"node_display_threshold": 0.02,
 
 	"max_info_lines": 10,
-	"update_delay": 500,
+	"update_delay": 170,
 	
 	"logfile": null
 });
@@ -1105,7 +1105,7 @@ function make_renderer() {
 		context.lineWidth = 8;
 		context.textAlign = "center";
 		context.textBaseline = "middle";
-		context.font = config.rank_font;
+		context.font = config.board_font;
 
 		let pieces = [];
 		let board = renderer.getboard();

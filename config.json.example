@@ -11,7 +11,7 @@
 	"board_size": 640,
 	"mainline_height": 110,
 
-	"rank_font": "18px Arial",
+	"board_font": "18px Arial",
 
 	"light_square": "#dadada",
 	"dark_square": "#b4b4b4",
