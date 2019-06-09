@@ -1329,6 +1329,7 @@ mainline.addEventListener("mousedown", (event) => {
 });
 
 canvas.addEventListener("mousemove", (event) => {
+	// This can fire a LOT.
 	renderer.canvas_mousemove(event);
 });
 
