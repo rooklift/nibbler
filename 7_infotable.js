@@ -5,13 +5,14 @@ function new_info(board, move) {
 	return {
 		board: board,
 		cp: -999999,
+		d: null,
 		move: move,
 		multipv: 999,
 		n: 0,				// The draw logic will only ever draw things with non-negative n, so make this 0
 		p: "?",
 		pv: [],
 		nice_pv_cache: null,
-		winrate: null,
+		value: null,
 
 		nice_pv: function() {
 
@@ -43,27 +44,12 @@ function new_info(board, move) {
 			return Array.from(this.nice_pv_cache);
 		},
 
-		winrate_string: function() {
-
-			if (typeof this.winrate !== "number") {
+		value_string: function(dp) {
+			if (typeof this.value !== "number") {
 				return "?";
 			}
-
-			let s = this.winrate.toString();
-
-			if (s === "0" || s === "1") {
-				return s;
-			}
-
-			if (s[1] === ".") {
-				s = s.slice(1);
-			}
-
-			while (s.length < 4) {
-				s += "0";
-			}
-
-			return s.slice(0, 4);
+			let pc = Math.floor(this.value * 100 * 10) / 10;
+			return pc.toFixed(dp);
 		}
 	};
 }
@@ -143,17 +129,23 @@ function NewInfoTable() {			// There's only ever going to be one of these made I
 					this.table[move] = move_info;
 				}
 
-				let tmp = parseInt(InfoVal(s, "N:"), 10);
+				let tmp;
+
+				tmp = parseInt(InfoVal(s, "N:"), 10);
 				if (Number.isNaN(tmp) === false) {
 					move_info.n = tmp;
 				}
 
+				tmp = parseFloat(InfoVal(s, "(D:"));
+				if (Number.isNaN(tmp) === false) {
+					move_info.d = tmp;
+				}
+
 				move_info.p = InfoVal(s, "(P:");			// Worst case here is just empty string, which is OK.
 
-				tmp = InfoVal(s, "(Q:");
-				tmp = parseFloat(tmp);
+				tmp = parseFloat(InfoVal(s, "(Q:"));
 				if (Number.isNaN(tmp) === false) {
-					move_info.winrate = (tmp + 1) / 2;
+					move_info.value = (tmp + 1) / 2;
 				}
 			}
 		},

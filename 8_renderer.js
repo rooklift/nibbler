@@ -832,7 +832,7 @@ function make_renderer() {
 
 			elements.push({
 				class: "blue",
-				text: `${info.winrate_string()} `,
+				text: `${info.value_string(1)} `,
 			});
 
 			let colour = renderer.getboard().active;
@@ -1021,14 +1021,14 @@ function make_renderer() {
 		context.stroke();
 	};
 
-	renderer.draw_ranking = (o) => {		// Does draw the arrowhead
+	renderer.draw_head = (o) => {
 		let cc = renderer.canvas_coords(o.x, o.y);
 		context.fillStyle = o.colour;
 		context.beginPath();
 		context.arc(cc.cx, cc.cy, 12, 0, 2 * Math.PI);
 		context.fill();
 		context.fillStyle = "black";
-		context.fillText(`${o.rank}`, cc.cx, cc.cy + 1);
+		context.fillText(`${o.info.value_string(0)}`, cc.cx, cc.cy + 1);
 	};
 
 	renderer.draw_normal = () => {
@@ -1059,7 +1059,7 @@ function make_renderer() {
 		let info_list = renderer.info_table.sorted();
 
 		let arrows = [];
-		let rankings = Object.create(null);
+		let heads = Object.create(null);
 
 		if (info_list.length > 0) {
 
@@ -1074,8 +1074,8 @@ function make_renderer() {
 
 					let loss = 0;
 
-					if (typeof info_list[0].winrate === "number" && typeof info_list[i].winrate === "number") {
-						loss = info_list[0].winrate - info_list[i].winrate;
+					if (typeof info_list[0].value === "number" && typeof info_list[i].value === "number") {
+						loss = info_list[0].value - info_list[i].value;
 					}
 
 					let colour;
@@ -1103,11 +1103,11 @@ function make_renderer() {
 					// At the same time, the square becomes available for one-click
 					// movement; we set the relevant info in renderer.squares.
 
-					if (rankings[info_list[i].move.slice(2, 4)] === undefined) {
-						rankings[info_list[i].move.slice(2, 4)] = {
-							fn: renderer.draw_ranking,
+					if (heads[info_list[i].move.slice(2, 4)] === undefined) {
+						heads[info_list[i].move.slice(2, 4)] = {
+							fn: renderer.draw_head,
 							colour: colour,
-							rank: i + 1,
+							info: info_list[i],
 							x: x2,
 							y: y2
 						};
@@ -1145,7 +1145,7 @@ function make_renderer() {
 			}
 		}
 
-		drawables = drawables.concat(Object.values(rankings));
+		drawables = drawables.concat(Object.values(heads));
 
 		for (let o of drawables) {
 			o.fn(o);
