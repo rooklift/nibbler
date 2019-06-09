@@ -1,17 +1,17 @@
 {
-	"path": "C:\\Programs (self-installed)\\Lc0\\lc0.exe",
+	"path": "C:\\Programs (self-installed)\\Lc0-cudnn\\lc0.exe",
 	
 	"options": {
 		"Backend": "cudnn",
-		"WeightsFile": "C:\\Programs (self-installed)\\Lc0\\networks\\T40.T8.610"
+		"WeightsFile": "C:\\Programs (self-installed)\\Lc0-cudnn\\networks\\T40.T8.610"
 	},
 
 	"width": 1280,
-	"height": 840,
+	"height": 835,
 	"board_size": 640,
-	"mainline_height": 108,
+	"mainline_height": 110,
 
-	"rank_font": "24px Arial",
+	"rank_font": "18px Arial",
 
 	"light_square": "#dadada",
 	"dark_square": "#b4b4b4",
