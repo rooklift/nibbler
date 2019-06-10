@@ -52,7 +52,7 @@ assign_without_overwrite(config, {
 	"width": 1280,
 	"height": 835,
 	"board_size": 640,
-	"mainline_height": 110,
+	"movelist_height": 110,
 
 	"board_font": "18px Arial",
 
@@ -77,7 +77,7 @@ assign_without_overwrite(config, {
 });
 
 infobox.style.height = config.board_size.toString() + "px";
-mainline.style.height = config.mainline_height.toString() + "px";				// Is there a way to avoid needing this, to get the scroll bar?
+movelist.style.height = config.movelist_height.toString() + "px";				// Is there a way to avoid needing this, to get the scroll bar?
 canvas.width = config.board_size;
 canvas.height = config.board_size;
 
@@ -185,7 +185,7 @@ function make_renderer() {
 
 		renderer.draw();
 		fenbox.value = renderer.node.fen();
-		renderer.draw_tree();
+		renderer.draw_movelist();
 
 		if (renderer.running) {
 			renderer.go();
@@ -486,7 +486,7 @@ function make_renderer() {
 		renderer.draw();
 	};
 
-	renderer.draw_tree = () => {
+	renderer.draw_movelist = () => {
 
 		let elements = [];
 
@@ -528,34 +528,11 @@ function make_renderer() {
 			elements.push("</span>");
 		}
 
-		mainline.innerHTML = elements.join("");
+		movelist.innerHTML = elements.join("");
 	};
 
-	renderer.mainline_click = (event) => {
-
-		let n;
-
-		for (let item of event.path) {
-			if (typeof item.id === "string") {
-				if (item.id === "mainline_deviated") {
-					renderer.return_to_pgn();
-					return;
-				}
-				if (item.id.startsWith("mainline_")) {
-					n = parseInt(item.id.slice(9), 10);
-					break;
-				}
-			}
-		}
-
-		if (n === undefined) {
-			return;
-		}
-
-		if (n >= 0 && n < renderer.user_line.length) {
-			renderer.moves = renderer.user_line.slice(0, n + 1);
-			renderer.position_changed();
-		}
+	renderer.movelist_click = (event) => {
+		// TODO
 	};
 
 	renderer.mouse_to_point = (mousex, mousey) => {
@@ -1049,8 +1026,8 @@ infobox.addEventListener("mousedown", (event) => {
 	renderer.infobox_click(event);
 });
 
-mainline.addEventListener("mousedown", (event) => {
-	renderer.mainline_click(event);
+movelist.addEventListener("mousedown", (event) => {
+	renderer.movelist_click(event);
 });
 
 canvas.addEventListener("mousemove", (event) => {

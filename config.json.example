@@ -9,7 +9,7 @@
 	"width": 1280,
 	"height": 835,
 	"board_size": 640,
-	"mainline_height": 110,
+	"movelist_height": 110,
 
 	"board_font": "18px Arial",
 
