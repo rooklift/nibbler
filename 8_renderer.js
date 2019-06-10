@@ -185,6 +185,7 @@ function make_renderer() {
 
 		renderer.draw();
 		fenbox.value = renderer.node.fen();
+		renderer.draw_tree();
 
 		if (renderer.running) {
 			renderer.go();
@@ -479,60 +480,19 @@ function make_renderer() {
 		renderer.draw();
 	};
 
-	renderer.draw_main_line = () => {
+	renderer.draw_tree = () => {			// TODO / FIXME
 
 		let elements = [];
 
-		let board = renderer.node.get_root().get_board();
-		let deviated_from_pgn = false;
+		let node = renderer.node.get_root();
 
-		// First, have the moves actually made on the visible board.
-		
-		let i = 0;
-
-		for (let m of renderer.moves) {
-
-			if (renderer.pgn_line && renderer.pgn_line.length > 0 && deviated_from_pgn === false && renderer.pgn_line[i] !== m) {
-				elements.push(`<span class="red" id="mainline_deviated">[return to PGN]</span> `);
-				deviated_from_pgn = true;
-			}
-
-			let fm = "";
-			if (board.active === "w") {
-				fm = `${board.fullmove}. `;
-			}
-
-			elements.push(`<span id="mainline_${i}">${fm}${board.nice_string(m)} </span>`);
-			board = board.move(m);
-
-			i++;
+		while (node.children.length > 0) {
+			let board = node.get_board();
+			node = node.children[0];
+			elements.push(board.nice_string(node.move));
 		}
 
-		elements.push(`<span class="gray">`);
-
-		// Next, have the moves to the end of the user line.
-
-		for (let m of renderer.user_line.slice(renderer.moves.length)) {
-
-			if (renderer.pgn_line && renderer.pgn_line.length > 0 && deviated_from_pgn === false && renderer.pgn_line[i] !== m) {
-				elements.push(`<span class="red" id="mainline_deviated">[return to PGN]</span> `);
-				deviated_from_pgn = true;
-			}
-
-			let fm = "";
-			if (board.active === "w") {
-				fm = `${board.fullmove}. `;
-			}
-
-			elements.push(`<span id="mainline_${i}">${fm}${board.nice_string(m)} </span>`);
-			board = board.move(m);
-
-			i++;
-		}
-
-		elements.push("</span>");
-
-		mainline.innerHTML = elements.join("");
+		mainline.innerHTML = elements.join(" ");
 	};
 
 	renderer.mainline_click = (event) => {
