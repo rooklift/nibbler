@@ -172,8 +172,8 @@ function make_renderer() {
 	renderer.one_click_moves = New2DArray(8, 8);	// 2D array of [x][y] --> move string or null.
 	renderer.last_tick_highlight_dest = null;		// Used to skip redraws.
 
-	renderer.info_table = NewInfoTable();
-	renderer.node = NewTree();
+	renderer.info_table = NewInfoTable();			// Holds info about the engine evaluations.
+	renderer.node = NewTree();						// Our current place in the current tree.
 
 	fenbox.value = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1";
 
