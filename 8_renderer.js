@@ -261,9 +261,12 @@ function make_renderer() {
 
 	renderer.return_to_main_line = () => {
 
-		let node = renderer.node.get_root();		// start node at root
-		let main_line = node.get_end().history();
+		let root = renderer.node.get_root();
+
+		let main_line = root.get_end().history();
 		let history = renderer.node.history();
+
+		let node = root;
 
 		for (let n = 0; n < history.length; n++) {
 			if (main_line[n] !== history[n]) {
