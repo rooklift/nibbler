@@ -132,8 +132,8 @@ function PreParsePGN(buf) {
 	let current_movetext = new_byte_pusher();
 	let games = [new_pgn_record()];
 
-	let inside_brace = false;
-	let parentheses_depth = 0;
+	let inside_brace = false;				// {} are comments
+	let parentheses_depth = 0;				// () are variations
 	
 	for (let rawline of lines) {
 
