@@ -317,8 +317,8 @@ const position_prototype = {
 		}
 
 		// Check promotion and string lengths...
-		// We don't do this because our movegen elsewhere is naive and may not add the promotion character.
-/*
+		// We DO NOT tolerate missing promotion characters.
+
 		if ((y1 === 1 && this.state[x1][y1] === "P") || (y1 === 6 && this.state[x1][y1] === "p")) {
 
 			if (s.length !== 5) {
@@ -338,7 +338,7 @@ const position_prototype = {
 			}
 
 		}
-*/
+
 		// Check for check...
 
 		let tmp = this.move(s);
@@ -669,7 +669,7 @@ const position_prototype = {
 		let possible_moves = [];
 
 		for (let source of sources) {
-			possible_moves.push(source.s + dest.s);
+			possible_moves.push(source.s + dest.s + promotion);
 		}
 
 		let valid_moves = [];
@@ -773,7 +773,7 @@ const position_prototype = {
 			let valid_moves = [];
 
 			for (let foo of possible_sources) {
-				possible_moves.push(foo.s + dest.s);		// e.g. "e2e4"
+				possible_moves.push(foo.s + dest.s);		// e.g. "g1f3" - note we are only dealing with pieces, so no worries about promotion
 			}
 
 			for (let move of possible_moves) {
