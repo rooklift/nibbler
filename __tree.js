@@ -7,7 +7,7 @@ function NewTree(startpos) {
 	}
 
 	let ret = NewNode(null, null);
-	ret.startpos = startpos;			// only root gets this.
+	ret.position = startpos;
 
 	return ret;
 }
@@ -55,18 +55,13 @@ let node_prototype = {
 
 	get_board: function() {
 
-		if (!this.parent) {
-			return this.startpos;
+		if (this.position) {
+			return this.position;
 		}
 
-		let moves = this.history();
-		let pos = this.get_root().get_board();
-
-		for (let m of moves) {
-			pos = pos.move(m);
-		}
-
-		return pos;
+		let ppos = this.parent.get_board();
+		this.position = ppos.move(this.move);
+		return this.position;
 	},
 
 	fen: function() {
@@ -79,7 +74,7 @@ function NewNode(parent, move) {		// args are null for root only.
 	let ret = Object.create(node_prototype);
 
 	ret.parent = parent;
-	ret.move = move;
+	ret.move = move;					// Think of this as the move that led to the position associated with node.
 	ret.children = [];
 
 	return ret;
