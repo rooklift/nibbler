@@ -32,6 +32,19 @@ const node_prototype = {
 		return moves;
 	},
 
+	future_history: function() {
+
+		let moves = this.history();
+		let node = this;
+
+		while (node.children.length > 0) {
+			moves.push(node.children[0].move);
+			node = node.children[0];
+		}
+
+		return moves;
+	},
+
 	get_root: function() {
 
 		let node = this;

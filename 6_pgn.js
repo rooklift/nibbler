@@ -229,3 +229,6 @@ function PreParsePGN(buf) {
 
 	return games;
 }
+
+function SavePGN(startpos, moves) {
+}

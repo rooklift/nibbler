@@ -262,8 +262,7 @@ function make_renderer() {
 	renderer.return_to_main_line = () => {
 
 		let root = renderer.node.get_root();
-
-		let main_line = root.get_end().history();
+		let main_line = root.future_history();
 		let history = renderer.node.history();
 
 		let node = root;
@@ -561,7 +560,7 @@ function make_renderer() {
 		let elements = [];
 
 		let root = renderer.node.get_root();
-		let main_line = root.get_end().history();
+		let main_line = root.future_history();
 		let history = renderer.node.history();
 
 		let node = root;
@@ -584,7 +583,7 @@ function make_renderer() {
 				fm = `${board.fullmove}. `;
 			}
 
-			elements.push(`<span id="movelist_${n++}">` + fm + board.nice_string(move) + "</span>" + " ");
+			elements.push(`<span id="movelist_${n++}">` + fm + board.nice_string(move) + " </span>");
 			node = node.make_move(move);
 		}
 
@@ -602,7 +601,7 @@ function make_renderer() {
 					fm = `${board.fullmove}. `;
 				}
 
-				elements.push(`<span id="movelist_${n++}">` + fm + board.nice_string(node.children[0].move) + "</span>" + " ");
+				elements.push(`<span id="movelist_${n++}">` + fm + board.nice_string(node.children[0].move) + " </span>");
 				node = node.children[0];
 			}
 
@@ -633,13 +632,13 @@ function make_renderer() {
 			return;
 		}
 
-		let full_line = renderer.node.get_end().history();		// i.e. the backwards and forwards "history"
+		let future_history = renderer.node.future_history();
 
-		if (n < full_line.length) {
+		if (n < future_history.length) {
 
 			let node = renderer.node.get_root();
 
-			for (let move of full_line.slice(0, n + 1)) {
+			for (let move of future_history.slice(0, n + 1)) {
 				node = node.make_move(move);
 			}
 
