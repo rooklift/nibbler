@@ -317,7 +317,8 @@ const position_prototype = {
 		}
 
 		// Check promotion and string lengths...
-
+		// We don't do this because our movegen elsewhere is naive and may not add the promotion character.
+/*
 		if ((y1 === 1 && this.state[x1][y1] === "P") || (y1 === 6 && this.state[x1][y1] === "p")) {
 
 			if (s.length !== 5) {
@@ -337,7 +338,7 @@ const position_prototype = {
 			}
 
 		}
-
+*/
 		// Check for check...
 
 		let tmp = this.move(s);
