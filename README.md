@@ -13,6 +13,8 @@
 * Clickable moves in the variation lists.
 * Various aesthetic adjustments are possible in the `config.json` file.
 
+Nibbler is a work-in-progress. See or comment on the [todo list](https://github.com/fohristiwhirl/nibbler/issues/10) of hoped-for features.
+
 # Installation
 
 If you have Windows, fully functional releases are uploaded to the [Releases](https://github.com/fohristiwhirl/nibbler/releases) section from time to time. Just edit `config.json` to point to your copy of Lc0 and your weightsfile, then double-click `Nibbler.exe`.
@@ -35,13 +37,3 @@ The `config.json` file can be edited. Most of the options are self-explanatory, 
 Thanks for helpful discussions and advice from borg, brinan, Chad, coolchess123, crem, Faroe22, jhorthos, jjosh, KillerDucky, matoototo, mooskagh, Occyroexanthub, Tilps, and WCP.
 
 The piece images were taken from the TCEC website. After discussion with Aloril, we're not entirely sure where they originate - if they're yours and you object, get in touch.
-
-# TODO
-
-* Drag and drop for piece moves? Apparently it exists [natively](https://developer.mozilla.org/en-US/docs/Web/API/HTML_Drag_and_Drop_API).
-* Automatically move the scroll bar on the main line if needed (e.g. [this](http://jsfiddle.net/p3kar5bb/322/)).
-* When moving manually, the ability to underpromote (already works for Leela moves).
-* Some tree structure of user moves. Maybe.
-* PV display as a board?
-* Winrate graph.
-* Et cetera.
