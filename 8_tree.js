@@ -33,16 +33,7 @@ const node_prototype = {
 	},
 
 	future_history: function() {
-
-		let moves = this.history();
-		let node = this;
-
-		while (node.children.length > 0) {
-			moves.push(node.children[0].move);
-			node = node.children[0];
-		}
-
-		return moves;
+		return this.get_end().history();
 	},
 
 	get_root: function() {
