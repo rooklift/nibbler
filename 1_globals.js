@@ -15,7 +15,7 @@ const readline = require("readline");
 const canvas = document.getElementById("canvas");
 const fenbox = document.getElementById("fenbox");
 const infobox = document.getElementById("infobox");
-const mainline = document.getElementById("mainline");
+const movelist = document.getElementById("movelist");
 const pgnchooser = document.getElementById("pgnchooser");
 
 const context = canvas.getContext("2d");

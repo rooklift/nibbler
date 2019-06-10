@@ -76,7 +76,7 @@ function menu_build() {
 					}
 				},
 				{
-					label: "Save PGN...",
+					label: "Save Line...",
 					accelerator: "CommandOrControl+S",
 					click: () => {
 						let file = electron.dialog.showSaveDialog();
@@ -191,10 +191,10 @@ function menu_build() {
 					type: "separator"
 				},
 				{
-					label: "Return to PGN main line",
+					label: "Return to main line",
 					accelerator: "CommandOrControl+R",
 					click: () => {
-						windows.send("main-window", "call", "return_to_pgn");
+						windows.send("main-window", "call", "return_to_main_line");
 					}
 				},
 				{
@@ -202,6 +202,7 @@ function menu_build() {
 				},
 				{
 					label: "Show PGN games list",
+					accelerator: "CommandOrControl+P",
 					click: () => {
 						windows.send("main-window", "call", "show_pgn_chooser");
 					}

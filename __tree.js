@@ -1,5 +1,99 @@
 "use strict";
 
+const node_prototype = {
+
+	make_move: function(s) {
+
+		// s must be exactly a legal move, including having promotion char iff needed (e.g. e2e1q)
+
+		for (let child of this.children) {
+			if (child.move === s) {
+				return child;
+			}
+		}
+
+		let new_node = NewNode(this, s);
+		this.children.push(new_node);
+
+		return new_node;
+	},
+
+	history: function() {
+
+		let moves = [];
+		let node = this;
+
+		while (node.move) {
+			moves.push(node.move);
+			node = node.parent;
+		}
+
+		moves.reverse();
+		return moves;
+	},
+
+	future_history: function() {
+
+		let moves = this.history();
+		let node = this;
+
+		while (node.children.length > 0) {
+			moves.push(node.children[0].move);
+			node = node.children[0];
+		}
+
+		return moves;
+	},
+
+	get_root: function() {
+
+		let node = this;
+
+		while (node.parent) {
+			node = node.parent;
+		}
+
+		return node;
+	},
+
+	get_end: function() {
+
+		let node = this;
+
+		while (node.children.length > 0) {
+			node = node.children[0];
+		}
+
+		return node;
+	},
+
+	get_board: function() {
+
+		if (this.position) {
+			return this.position;
+		}
+
+		let ppos = this.parent.get_board();
+		this.position = ppos.move(this.move);
+		return this.position;
+	},
+
+	fen: function() {
+		return this.get_board().fen();
+	}
+};
+
+function NewNode(parent, move) {		// args are null for root only.
+
+	let ret = Object.create(node_prototype);
+
+	ret.parent = parent;
+	ret.move = move;					// Think of this as the move that led to the position associated with node.
+	ret.children = [];
+
+	return ret;
+}
+
 function NewTree(startpos) {
 	
 	if (!startpos) {
@@ -7,72 +101,7 @@ function NewTree(startpos) {
 	}
 
 	let ret = NewNode(null, null);
-	ret.startpos = startpos;			// only root gets this.
+	ret.position = startpos;
 
 	return ret;
-}
-
-function NewNode(parent, move) {		// args are null for root only.
-
-	return {
-
-		parent: parent,
-		move: move,
-		children: [],
-
-		make_move: function(s) {
-
-			for (let child of this.children) {
-				if (child.move === s) {
-					return child;
-				}
-			}
-
-			let new_node = NewNode(this, s);
-			this.children.push(new_node);
-
-			return new_node;
-		},
-
-		history: function() {
-
-			let moves = [];
-			let node = this;
-
-			while (node.move) {
-				moves.push(node.move);
-				node = node.parent;
-			}
-
-			moves.reverse();
-			return moves;
-		},
-
-		get_root: function() {
-
-			let node = this;
-
-			while (node.parent) {
-				node = node.parent;
-			}
-
-			return node;
-		},
-
-		board: function() {
-
-			if (!this.parent) {
-				return this.startpos;
-			}
-
-			let moves = this.history();
-			let pos = this.get_root().board();
-
-			for (let m of moves) {
-				pos = pos.move(m);
-			}
-
-			return pos;
-		}
-	};
 }

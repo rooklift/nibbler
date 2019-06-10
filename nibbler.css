@@ -60,7 +60,7 @@ input[type=text]:focus{
 	white-space: pre-wrap;
 }
 
-#mainline {
+#movelist {
 	font-family: monospace, monospace;
 	margin-top: 1em;
 	overflow-x: hidden;
