@@ -179,6 +179,22 @@ function make_renderer() {
 
 	// --------------------------------------------------------------------------------------------
 
+	renderer.position_changed = () => {
+
+		renderer.info_table.clear();
+
+		renderer.draw();
+		fenbox.value = renderer.node.fen();
+
+		if (renderer.running) {
+			renderer.go();
+		}
+	};
+
+	renderer.get_board = () => {
+		return renderer.node.get_board();
+	};
+
 	renderer.move = (s) => {		// It is safe to call this with illegal moves.
 
 		if (typeof s !== "string") {
@@ -186,7 +202,7 @@ function make_renderer() {
 			return;
 		}
 
-		let board = renderer.node.get_board();
+		let board = renderer.get_board();
 
 		// Add promotion if needed and not present...
 
@@ -221,18 +237,6 @@ function make_renderer() {
 		}
 	};
 
-	renderer.position_changed = () => {
-
-		renderer.info_table.clear();
-
-		renderer.draw();
-		fenbox.value = renderer.node.fen();
-
-		if (renderer.running) {
-			renderer.go();
-		}
-	};
-
 	renderer.prev = () => {
 		if (renderer.node.parent) {
 			renderer.node = renderer.node.parent;
@@ -245,7 +249,8 @@ function make_renderer() {
 	};
 
 	renderer.goto_root = () => {
-		// TODO
+		renderer.node = renderer.node.get_root();
+		renderer.position_changed();
 	};
 
 	renderer.goto_end = () => {
@@ -319,7 +324,7 @@ function make_renderer() {
 
 		if (s.startsWith("info")) {
 			renderer.ever_received_info = true;
-			renderer.info_table.receive(s, renderer.node.get_board());
+			renderer.info_table.receive(s, renderer.get_board());
 		}
 
 		if (s.startsWith("error")) {
@@ -345,19 +350,15 @@ function make_renderer() {
 		renderer.hide_pgn_chooser();
 		renderer.running = true;
 
-		let setup;
-		let start_fen = renderer.node.get_root().fen();
-
-		if (start_fen !== "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1") {
-			setup = `fen ${start_fen}`;
-		} else {
-			setup = "startpos";
-		}
-
 		send("stop");
 		if (new_game_flag) {
 			send("ucinewgame");
 		}
+
+		let start_fen = renderer.node.get_root().fen();
+		let setup = `fen ${start_fen}`;
+
+		// FIXME: can use "startpos" when normal starting position
 
 		send(`position ${setup} moves ${renderer.node.history().join(" ")}`);
 		sync();																	// See comment on how sync() works
@@ -451,7 +452,7 @@ function make_renderer() {
 		}
 
 		let ocm = renderer.one_click_moves[p.x][p.y];
-		let board = renderer.node.get_board();
+		let board = renderer.get_board();
 
 		if (!renderer.active_square && ocm) {
 			renderer.move(ocm);
@@ -478,26 +479,11 @@ function make_renderer() {
 		renderer.draw();
 	};
 
-	renderer.canvas_mousemove = (event) => {
-
-		// This can be called a zillion times in a second, so maybe best to use the simple
-		// version that doesn't try to redraw when needed, but just lets the redraw happen
-		// at the next scheduled draw...
-
-		renderer.mousex = event.offsetX;
-		renderer.mousey = event.offsetY;
-	}
-
-	renderer.canvas_mouseout = () => {
-		renderer.mousex = null;
-		renderer.mousey = null;
-	};
-
 	renderer.draw_main_line = () => {
 
 		let elements = [];
 
-		let board = renderer.start_pos;
+		let board = renderer.node.get_root().get_board();
 		let deviated_from_pgn = false;
 
 		// First, have the moves actually made on the visible board.
@@ -664,7 +650,7 @@ function make_renderer() {
 				text: `${info.value_string(1)} `,
 			});
 
-			let colour = renderer.node.get_board().active;
+			let colour = renderer.get_board().active;
 
 			let nice_pv = info.nice_pv();
 
@@ -775,7 +761,7 @@ function make_renderer() {
 
 		// Legality checks... best to assume nothing.
 
-		let tmp_board = renderer.node.get_board();
+		let tmp_board = renderer.get_board();
 		for (let move of move_list) {
 			if (tmp_board.illegal(move) !== "") {
 				return;
@@ -783,7 +769,9 @@ function make_renderer() {
 			tmp_board = tmp_board.move(move);
 		}
 
-		renderer.moves = renderer.moves.concat(move_list);
+		for (let move of move_list) {
+			renderer.node = renderer.node.make_move(move);
+		}
 		renderer.position_changed();
 
 	};
@@ -874,7 +862,7 @@ function make_renderer() {
 		context.font = config.board_font;
 
 		let pieces = [];
-		let board = renderer.node.get_board();
+		let board = renderer.get_board();
 
 		for (let x = 0; x < 8; x++) {
 			for (let y = 0; y < 8; y++) {
@@ -1070,12 +1058,14 @@ mainline.addEventListener("mousedown", (event) => {
 });
 
 canvas.addEventListener("mousemove", (event) => {
-	// This can fire a LOT.
-	renderer.canvas_mousemove(event);
+	// This can fire a LOT. So don't call any more functions.
+	renderer.mousex = event.offsetX;
+	renderer.mousey = event.offsetY;
 });
 
 canvas.addEventListener("mouseout", (event) => {
-	renderer.canvas_mouseout(event);
+	renderer.mousex = null;
+	renderer.mousey = null;
 });
 
 // Setup return key on FEN box...

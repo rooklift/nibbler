@@ -12,71 +12,75 @@ function NewTree(startpos) {
 	return ret;
 }
 
+let node_prototype = {
+
+	make_move: function(s) {
+
+		for (let child of this.children) {
+			if (child.move === s) {
+				return child;
+			}
+		}
+
+		let new_node = NewNode(this, s);
+		this.children.push(new_node);
+
+		return new_node;
+	},
+
+	history: function() {
+
+		let moves = [];
+		let node = this;
+
+		while (node.move) {
+			moves.push(node.move);
+			node = node.parent;
+		}
+
+		moves.reverse();
+		return moves;
+	},
+
+	get_root: function() {
+
+		let node = this;
+
+		while (node.parent) {
+			node = node.parent;
+		}
+
+		return node;
+	},
+
+	get_board: function() {
+
+		if (!this.parent) {
+			return this.startpos;
+		}
+
+		let moves = this.history();
+		let pos = this.get_root().get_board();
+
+		for (let m of moves) {
+			pos = pos.move(m);
+		}
+
+		return pos;
+	},
+
+	fen: function() {
+		return this.get_board().fen();
+	}
+};
+
 function NewNode(parent, move) {		// args are null for root only.
 
-	return {
+	let ret = Object.create(node_prototype);
 
-		parent: parent,
-		move: move,
-		children: [],
+	ret.parent = parent;
+	ret.move = move;
+	ret.children = [];
 
-		make_move: function(s) {
-
-			for (let child of this.children) {
-				if (child.move === s) {
-					return child;
-				}
-			}
-
-			let new_node = NewNode(this, s);
-			this.children.push(new_node);
-
-			return new_node;
-		},
-
-		history: function() {
-
-			let moves = [];
-			let node = this;
-
-			while (node.move) {
-				moves.push(node.move);
-				node = node.parent;
-			}
-
-			moves.reverse();
-			return moves;
-		},
-
-		get_root: function() {
-
-			let node = this;
-
-			while (node.parent) {
-				node = node.parent;
-			}
-
-			return node;
-		},
-
-		get_board: function() {
-
-			if (!this.parent) {
-				return this.startpos;
-			}
-
-			let moves = this.history();
-			let pos = this.get_root().get_board();
-
-			for (let m of moves) {
-				pos = pos.move(m);
-			}
-
-			return pos;
-		},
-
-		fen: function() {
-			return this.get_board().fen();
-		}
-	};
+	return ret;
 }
