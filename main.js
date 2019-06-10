@@ -191,10 +191,10 @@ function menu_build() {
 					type: "separator"
 				},
 				{
-					label: "Return to PGN main line",
+					label: "Return to main line",
 					accelerator: "CommandOrControl+R",
 					click: () => {
-						windows.send("main-window", "call", "return_to_pgn");
+						windows.send("main-window", "call", "return_to_main_line");
 					}
 				},
 				{

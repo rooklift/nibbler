@@ -255,14 +255,28 @@ function make_renderer() {
 	};
 
 	renderer.goto_end = () => {
-		while (renderer.node.children.length > 0) {
-			renderer.node = renderer.node.children[0];
-		}
+		renderer.node = renderer.node.get_end();
 		renderer.position_changed();
 	};
 
-	renderer.return_to_pgn = () => {
-		// TODO and rename
+	renderer.return_to_main_line = () => {
+
+		let node = renderer.node.get_root();		// start node at root
+		let main_line = node.get_end().history();
+		let history = renderer.node.history();
+
+		for (let n = 0; n < history.length; n++) {
+			if (main_line[n] !== history[n]) {
+				break;
+			}
+			if (node.children.length === 0) {
+				break;
+			}
+			node = node.children[0];
+		}
+
+		renderer.node = node;
+		renderer.position_changed();
 	};
 
 	renderer.load_fen = (s) => {
