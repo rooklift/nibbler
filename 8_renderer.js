@@ -563,6 +563,8 @@ function make_renderer() {
 		let node = renderer.node.get_root();
 		let history = renderer.node.history();
 
+		let n = 0;
+
 		for (let move of history) {
 
 			let fm = "";
@@ -573,7 +575,7 @@ function make_renderer() {
 				fm = `${board.fullmove}. `;
 			}
 
-			elements.push(fm + board.nice_string(move) + " ");
+			elements.push(`<span id="movelist_${n++}">` + fm + board.nice_string(move) + "</span>" + " ");
 			node = node.make_move(move);
 		}
 
@@ -591,7 +593,7 @@ function make_renderer() {
 					fm = `${board.fullmove}. `;
 				}
 
-				elements.push(fm + board.nice_string(node.children[0].move) + " ");
+				elements.push(`<span id="movelist_${n++}">` + fm + board.nice_string(node.children[0].move) + "</span>" + " ");
 				node = node.children[0];
 			}
 
@@ -602,7 +604,33 @@ function make_renderer() {
 	};
 
 	renderer.movelist_click = (event) => {
-		// TODO
+
+		let n;
+
+		for (let item of event.path) {
+			if (typeof item.id === "string" && item.id.startsWith("movelist_")) {
+				n = parseInt(item.id.slice(9), 10);
+				break;
+			}
+		}
+
+		if (n === undefined) {
+			return;
+		}
+
+		let full_line = renderer.node.get_end().history();		// i.e. the backwards and forwards "history"
+
+		if (n < full_line.length) {
+
+			let node = renderer.node.get_root();
+
+			for (let move of full_line.slice(0, n + 1)) {
+				node = node.make_move(move);
+			}
+
+			renderer.node = node;
+			renderer.position_changed();
+		}
 	};
 
 	renderer.mouse_to_point = (mousex, mousey) => {
