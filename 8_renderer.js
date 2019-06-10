@@ -560,12 +560,21 @@ function make_renderer() {
 
 		let elements = [];
 
-		let node = renderer.node.get_root();
+		let root = renderer.node.get_root();
+		let main_line = root.get_end().history();
 		let history = renderer.node.history();
 
+		let node = root;
 		let n = 0;
 
+		let deviated = false;
+
 		for (let move of history) {
+
+			if (deviated === false && node.children.length > 0 && node.children[0].move !== move) {
+				deviated = true;
+				elements.push(`<span class="red" id="mainline_deviated">[return to main]</span> `);
+			}
 
 			let fm = "";
 
@@ -608,9 +617,15 @@ function make_renderer() {
 		let n;
 
 		for (let item of event.path) {
-			if (typeof item.id === "string" && item.id.startsWith("movelist_")) {
-				n = parseInt(item.id.slice(9), 10);
-				break;
+			if (typeof item.id === "string") {
+				if (item.id === "mainline_deviated") {
+					renderer.return_to_main_line();
+					return;
+				}
+				if (item.id.startsWith("movelist_")) {
+					n = parseInt(item.id.slice(9), 10);
+					break;
+				}
 			}
 		}
 
