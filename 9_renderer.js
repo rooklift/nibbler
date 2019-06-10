@@ -76,6 +76,8 @@ assign_without_overwrite(config, {
 	"logfile": null
 });
 
+config.board_size = Math.floor(config.board_size / 8) * 8;
+
 infobox.style.height = config.board_size.toString() + "px";
 movelist.style.height = config.movelist_height.toString() + "px";				// Is there a way to avoid needing this, to get the scroll bar?
 canvas.width = config.board_size;
@@ -318,7 +320,7 @@ function make_renderer() {
 		SavePGN(filename, renderer.node.get_root().get_board(), renderer.node.future_history());
 	};
 
-	renderer.new_game = (new_root) => {
+	renderer.new_game = (new_root) => {			// Note that this wants a node, not a board.
 
 		if (!new_root) {
 			renderer.node = NewTree();
