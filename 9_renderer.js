@@ -135,9 +135,9 @@ for (let key of Object.keys(config.options)) {
 	setoption(key, config.options[key]);
 }
 
-setoption("VerboseMoveStats", true);		// Required for LogLiveStats to work.
-setoption("LogLiveStats", true);			// "Secret" Lc0 command.
-setoption("MultiPV", 500);
+setoption("VerboseMoveStats", true);			// Required for LogLiveStats to work.
+setoption("LogLiveStats", true);				// "Secret" Lc0 command.
+setoption("MultiPV", config.max_info_lines);
 send("ucinewgame");
 
 // ------------------------------------------------------------------------------------------------
@@ -453,7 +453,7 @@ function make_renderer() {
 
 	renderer.switch_weights = (filename) => {
 		renderer.halt();
-		send(`setoption name WeightsFile value ${filename}`);
+		setoption("WeightsFile", filename);
 		send("ucinewgame");
 	};
 
