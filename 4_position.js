@@ -681,7 +681,7 @@ const position_prototype = {
 		}
 
 		if (valid_moves.length === 1) {
-			return [valid_moves[0] + promotion, ""];
+			return [valid_moves[0], ""];
 		}
 
 		if (valid_moves.length === 0) {
