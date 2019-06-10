@@ -555,8 +555,9 @@ const position_prototype = {
 
 		// If the string contains any dots it'll be something like "1.e4"
 
-		while (s.indexOf(".") !== -1) {
-			s = s.slice(s.indexOf(".") + 1);
+		let lio = s.lastIndexOf(".")
+		if (lio !== -1 {
+			s = slice(lio + 1);
 		}
 
 		// Fix castling with zeroes...
