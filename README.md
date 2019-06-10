@@ -41,7 +41,7 @@ The piece images were taken from the TCEC website. After discussion with Aloril,
 * Drag and drop for piece moves? Apparently it exists [natively](https://developer.mozilla.org/en-US/docs/Web/API/HTML_Drag_and_Drop_API).
 * Automatically move the scroll bar on the main line if needed (e.g. [this](http://jsfiddle.net/p3kar5bb/322/)).
 * When moving manually, the ability to underpromote (already works for Leela moves).
-* Some tree structure of user moves. Maybe.
+* Better visualisation of the internal move tree.
 * PV display as a board?
 * Winrate graph.
 * Et cetera.
