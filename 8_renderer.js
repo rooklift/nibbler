@@ -172,143 +172,10 @@ function make_renderer() {
 	renderer.one_click_moves = New2DArray(8, 8);	// 2D array of [x][y] --> move string or null.
 	renderer.last_tick_highlight_dest = null;		// Used to skip redraws.
 
-	renderer.start_pos = LoadFEN("rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1");
 	renderer.info_table = NewInfoTable();
-	renderer.board_cache = null;
-
-	// IMPORTANT! The following arrays must NEVER be the same object. Use Array.from() a lot to avoid this.
-	// Note also that user_line is always supposed to contain moves. While in some ways it would be simpler
-	// to simply store an index of where we are in the user_line, this way has some advantages too...
-
-	renderer.pgn_line = [];							// The loaded PGN object, as a list of moves.
-	renderer.user_line = [];						// Entire history of the user variation, as a list of moves.
-	renderer.moves = [];							// History of the currently shown position.
+	renderer.node = NewTree();
 
 	fenbox.value = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1";
-
-	// --------------------------------------------------------------------------------------------
-
-	renderer.programmer_mistake_check = () => {
-		if (renderer.programmer_mistake_check.warned) {
-			return;
-		}
-		if (renderer.moves === renderer.user_line) {
-			renderer.programmer_mistake_check.warned = true;
-			alert("renderer.moves is the same object as renderer.user_line. This should be impossible, please tell the author how you managed it.");
-		}
-		if (renderer.moves === renderer.pgn_line) {
-			renderer.programmer_mistake_check.warned = true;
-			alert("renderer.moves is the same object as renderer.pgn_line. This should be impossible, please tell the author how you managed it.");
-		}
-		if (renderer.user_line === renderer.pgn_line) {
-			renderer.programmer_mistake_check.warned = true;
-			alert("renderer.user_line is the same object as renderer.pgn_line. This should be impossible, please tell the author how you managed it.");
-		}
-		if (ArrayStartsWith(renderer.user_line, renderer.moves) === false) {
-			renderer.programmer_mistake_check.warned = true;
-			alert("renderer.user_line does not start with renderer.moves. This should be impossible, please tell the author how you managed it.");
-		}
-	};
-
-	renderer.getboard = () => {
-		if (renderer.board_cache) {
-			return renderer.board_cache;
-		}
-		let board = renderer.start_pos;
-		for (let move of renderer.moves) {
-			board = board.move(move);
-		}
-		renderer.board_cache = board;
-		return renderer.board_cache;
-	};
-
-	// --------------------------------------------------------------------------------------------
-	// There are 3 ways the position can change...
-	//
-	//		Moving inside a game.
-	//		New game.
-	//		Loaded game.
-	//
-	// Although it seems like we do a lot of book-keeping,
-	// we only need to do it in these 3 functions.
-	//
-	// In general, changing position is as simple as setting
-	// renderer.moves and calling renderer.position_changed().
-	//
-	// Thankfully position_changed() is the simplest function.
-
-	renderer.position_changed = () => {
-
-		if (ArrayStartsWith(renderer.user_line, renderer.moves) === false) {
-			// The new position is not inside the current user_line
-			renderer.user_line = Array.from(renderer.moves);
-		}
-
-		renderer.board_cache = null;
-		renderer.info_table.clear();
-
-		renderer.escape();
-		renderer.draw_main_line();
-		fenbox.value = renderer.getboard().fen();		// Must be after the cache is cleared!
-
-		if (renderer.running) {
-			renderer.go();
-		}
-	};
-
-	renderer.new_game = (start_pos) => {
-
-		if (!start_pos) {
-			start_pos = LoadFEN("rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1");
-		}
-
-		renderer.start_pos = start_pos;
-		renderer.pgn_line = [];
-		renderer.user_line = [];
-		renderer.moves = [];
-
-		renderer.board_cache = null;
-		renderer.info_table.clear();
-
-		renderer.escape();
-		renderer.draw_main_line();
-		fenbox.value = renderer.start_pos.fen();
-
-		if (renderer.running) {
-			renderer.go(true);
-		}
-	};
-
-	renderer.load_pgn_object = (o) => {			// Returns true or false - whether this actually succeeded.
-
-		let start_pos;
-		let moves_list;
-
-		try {
-			[start_pos, moves_list] = LoadPGN(o);
-		} catch (err) {
-			alert(err);
-			return false;
-		}
-
-		renderer.start_pos = start_pos;
-		renderer.pgn_line = Array.from(moves_list);
-		renderer.user_line = Array.from(moves_list);
-		renderer.moves = [];
-
-		renderer.board_cache = null;
-		renderer.info_table.clear();
-
-		renderer.escape();
-		renderer.draw_main_line();
-		fenbox.value = renderer.start_pos.fen();
-
-		if (renderer.running) {
-			renderer.go(true);
-		}
-
-		return true;
-	};
 
 	// --------------------------------------------------------------------------------------------
 
@@ -319,7 +186,7 @@ function make_renderer() {
 			return;
 		}
 
-		let board = renderer.getboard();
+		let board = renderer.node.get_board();
 
 		// Add promotion if needed and not present...
 
@@ -343,7 +210,7 @@ function make_renderer() {
 			return;
 		}
 
-		renderer.moves.push(s);
+		renderer.node = renderer.node.make_move(s);
 		renderer.position_changed();
 	};
 
@@ -354,149 +221,51 @@ function make_renderer() {
 		}
 	};
 
+	renderer.position_changed = () => {
+
+		renderer.info_table.clear();
+
+		renderer.draw();
+		fenbox.value = renderer.node.fen();
+
+		if (renderer.running) {
+			renderer.go();
+		}
+	};
+
 	renderer.prev = () => {
-		if (renderer.moves.length > 0) {
-			renderer.moves = renderer.moves.slice(0, renderer.moves.length - 1);
+		if (renderer.node.parent) {
+			renderer.node = renderer.node.parent;
 			renderer.position_changed();
 		}
 	};
 
 	renderer.next = () => {
-		if (renderer.user_line.length > renderer.moves.length) {
-			renderer.moves = renderer.user_line.slice(0, renderer.moves.length + 1);
-			renderer.position_changed();
-		}
+		// TODO
 	};
 
 	renderer.goto_root = () => {
-		if (renderer.moves.length > 0) {
-			renderer.moves = [];
-			renderer.position_changed();
-		}
+		// TODO
 	};
 
 	renderer.goto_end = () => {
-		if (renderer.moves.length !== renderer.user_line.length) {
-			renderer.moves = Array.from(renderer.user_line);
-			renderer.position_changed();
-		}
+		// TODO
 	};
-
-/*
-	renderer.mwheel = (event) => {					// Some awkward interactions with the main line scroll wheel.
-		if (event.deltaY && event.deltaY < 0) {		// (And also the PGN chooser, but that would be easy to fix.)
-			renderer.prev();
-		}
-		if (event.deltaY && event.deltaY > 0) {
-			renderer.next();
-		}
-	};
-*/
 
 	renderer.return_to_pgn = () => {
-
-		if (!renderer.pgn_line || renderer.pgn_line.length === 0) {
-			alert("No PGN loaded.");
-			return;
-		}
-
-		let new_moves_list = [];
-		for (let i = 0; i < renderer.pgn_line.length; i++) {
-			if (renderer.pgn_line[i] !== renderer.moves[i]) {		// renderer.moves[i] may be undefined, that's OK
-				break;
-			}
-			new_moves_list.push(renderer.pgn_line[i]);
-		}
-
-		renderer.moves = new_moves_list;
-		renderer.user_line = Array.from(renderer.pgn_line);
-		renderer.position_changed();
+		// TODO and rename
 	};
 
 	renderer.load_fen = (s) => {
-
-		if (s.trim() === renderer.getboard().fen()) {
-			return;
-		}
-
-		let newpos;
-
-		try {
-			newpos = LoadFEN(s);
-		} catch (err) {
-			alert(err);
-			return;
-		}
-
-		renderer.new_game(newpos);
+		// TODO
 	};
 
 	renderer.open = (filename) => {
-		let buf = fs.readFileSync(filename);				// i.e. binary buffer object
-		let new_pgn_choices = PreParsePGN(buf);
-
-		if (new_pgn_choices.length === 1) {
-			let success = renderer.load_pgn_object(new_pgn_choices[0]);
-			if (success) {
-				renderer.pgn_choices = new_pgn_choices;		// We only want to set this to a 1 value array if it actually worked.
-			}
-		} else {
-			renderer.pgn_choices = new_pgn_choices;			// Setting it to a multi-value array is "always" OK.
-			renderer.show_pgn_chooser();					// Now we need to have the user choose a game.
-		}
+		// TODO
 	};
 
 	renderer.save = (filename) => {
-
-		let tags = [
-			`[Event "Nibbler Line"]`,
-			`[Site "The fevered dreams of a neural net"]`,
-			`[Date "1970.01.01"]`,
-			`[Round "1"]`,
-			`[White "White"]`,
-			`[Black "Black"]`,
-			`[Result "*"]`
-		];
-
-		let board = renderer.start_pos;
-		let start_fen = board.fen();
-
-		if (start_fen !== "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1") {
-			tags.push(`[FEN "${start_fen}"]`);
-			tags.push(`[SetUp "1"]`);
-		}
-
-		let move_items = [];
-
-		for (let move of renderer.user_line) {
-			if (board.active === "w") {
-				move_items.push(`${board.fullmove}.`);		// The move number e.g. "1."
-			}
-			move_items.push(board.nice_string(move));		// The nice move e.g. "Bxf7+"
-			board = board.move(move);
-		}
-
-		let move_lines = [];
-		let s = "";
-
-		for (let move of move_items) {
-
-			if (s.length + move.length > 80) {
-				move_lines.push(s);
-				s = "";
-			}
-
-			s += " " + move;
-		}
-
-		s += " *";
-		move_lines.push(s);
-
-		move_lines = move_lines.map(s => s.trim());
-
-		let final_string = tags.join("\n") + "\n\n" + move_lines.join("\n") + "\n";
-
-		fs.writeFileSync(filename, final_string);
+		// TODO
 	};
 
 	renderer.pgnchooser_click = (event) => {
@@ -550,7 +319,7 @@ function make_renderer() {
 
 		if (s.startsWith("info")) {
 			renderer.ever_received_info = true;
-			renderer.info_table.receive(s, renderer.getboard());
+			renderer.info_table.receive(s, renderer.node.get_board());
 		}
 
 		if (s.startsWith("error")) {
@@ -577,7 +346,7 @@ function make_renderer() {
 		renderer.running = true;
 
 		let setup;
-		let start_fen = renderer.start_pos.fen();
+		let start_fen = renderer.node.get_root().fen();
 
 		if (start_fen !== "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1") {
 			setup = `fen ${start_fen}`;
@@ -590,7 +359,7 @@ function make_renderer() {
 			send("ucinewgame");
 		}
 
-		send(`position ${setup} moves ${renderer.moves.join(" ")}`);
+		send(`position ${setup} moves ${renderer.node.history().join(" ")}`);
 		sync();																	// See comment on how sync() works
 		send("go infinite");
 	};
@@ -682,7 +451,7 @@ function make_renderer() {
 		}
 
 		let ocm = renderer.one_click_moves[p.x][p.y];
-		let board = renderer.getboard();
+		let board = renderer.node.get_board();
 
 		if (!renderer.active_square && ocm) {
 			renderer.move(ocm);
@@ -895,7 +664,7 @@ function make_renderer() {
 				text: `${info.value_string(1)} `,
 			});
 
-			let colour = renderer.getboard().active;
+			let colour = renderer.node.get_board().active;
 
 			let nice_pv = info.nice_pv();
 
@@ -1006,7 +775,7 @@ function make_renderer() {
 
 		// Legality checks... best to assume nothing.
 
-		let tmp_board = renderer.getboard();
+		let tmp_board = renderer.node.get_board();
 		for (let move of move_list) {
 			if (tmp_board.illegal(move) !== "") {
 				return;
@@ -1097,7 +866,7 @@ function make_renderer() {
 		context.fillText(`${o.info.value_string(0)}`, cc.cx, cc.cy + 1);
 	};
 
-	renderer.draw_normal = () => {
+	renderer.draw_position = () => {
 
 		context.lineWidth = 8;
 		context.textAlign = "center";
@@ -1105,7 +874,7 @@ function make_renderer() {
 		context.font = config.board_font;
 
 		let pieces = [];
-		let board = renderer.getboard();
+		let board = renderer.node.get_board();
 
 		for (let x = 0; x < 8; x++) {
 			for (let y = 0; y < 8; y++) {
@@ -1234,12 +1003,11 @@ function make_renderer() {
 		requestAnimationFrame(() => {
 			renderer.draw_infobox();
 			renderer.draw_board(config.light_square, config.dark_square);
-			renderer.draw_normal();
+			renderer.draw_position();
 		});
 	};
 
 	renderer.draw_loop = () => {
-		renderer.programmer_mistake_check();			// Regularly check that we haven't violated some assumptions...
 		renderer.draw();
 		setTimeout(renderer.draw_loop, config.update_delay);
 	};

@@ -59,20 +59,24 @@ function NewNode(parent, move) {		// args are null for root only.
 			return node;
 		},
 
-		board: function() {
+		get_board: function() {
 
 			if (!this.parent) {
 				return this.startpos;
 			}
 
 			let moves = this.history();
-			let pos = this.get_root().board();
+			let pos = this.get_root().get_board();
 
 			for (let m of moves) {
 				pos = pos.move(m);
 			}
 
 			return pos;
+		},
+
+		fen: function() {
+			return this.get_board().fen();
 		}
 	};
 }
