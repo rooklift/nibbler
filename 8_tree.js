@@ -58,7 +58,7 @@ const node_prototype = {
 		return node;
 	},
 
-	get_board: function() {
+	get_board: function() {				// This could be remade to be non-recursive.
 
 		if (this.position) {
 			return this.position;
@@ -74,7 +74,7 @@ const node_prototype = {
 	}
 };
 
-function NewNode(parent, move) {		// args are null for root only.
+function NewNode(parent, move) {		// Args are null for root only.
 
 	let ret = Object.create(node_prototype);
 
