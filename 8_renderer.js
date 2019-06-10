@@ -179,16 +179,16 @@ function make_renderer() {
 
 	// --------------------------------------------------------------------------------------------
 
-	renderer.position_changed = () => {
+	renderer.position_changed = (new_game_flag) => {
 
 		renderer.info_table.clear();
 
-		renderer.draw();
-		fenbox.value = renderer.node.fen();
+		renderer.escape();
 		renderer.draw_movelist();
+		fenbox.value = renderer.node.fen();
 
 		if (renderer.running) {
-			renderer.go();
+			renderer.go(new_game_flag);
 		}
 	};
 
@@ -234,7 +234,7 @@ function make_renderer() {
 
 	renderer.play_info_index = (n) => {
 		let info_list = renderer.info_table.sorted();
-		if (n < info_list.length) {
+		if (n >= 0 && n < info_list.length) {
 			renderer.move(info_list[n].move);
 		}
 	};
@@ -274,11 +274,49 @@ function make_renderer() {
 	};
 
 	renderer.open = (filename) => {
-		// TODO
+		let buf = fs.readFileSync(filename);				// i.e. binary buffer object
+		let new_pgn_choices = PreParsePGN(buf);
+
+		if (new_pgn_choices.length === 1) {
+			let success = renderer.load_pgn_object(new_pgn_choices[0]);
+			if (success) {
+				renderer.pgn_choices = new_pgn_choices;		// We only want to set this to a 1 value array if it actually worked.
+			}
+		} else {
+			renderer.pgn_choices = new_pgn_choices;			// Setting it to a multi-value array is "always" OK.
+			renderer.show_pgn_chooser();					// Now we need to have the user choose a game.
+		}
 	};
 
 	renderer.save = (filename) => {
 		// TODO
+	};
+
+	renderer.new_game = (new_root) => {
+
+		if (!new_root) {
+			renderer.node = NewTree();
+		} else {
+			renderer.node = new_root;
+		}
+
+		renderer.node = new_root;
+		renderer.position_changed(true);
+	};
+
+	renderer.load_pgn_object = (o) => {			// Returns true or false - whether this actually succeeded.
+
+		let new_root;
+
+		try {
+			new_root = LoadPGN(o);
+		} catch (err) {
+			alert(err);
+			return false;
+		}
+
+		renderer.new_game(new_root);
+		return true;
 	};
 
 	renderer.pgnchooser_click = (event) => {
@@ -476,7 +514,7 @@ function make_renderer() {
 			if (!success) {
 				renderer.draw();					// ... but if it doesn't, we draw to show the active_square cleared.
 			}
-			
+
 			return;
 
 		} else {

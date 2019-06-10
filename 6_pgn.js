@@ -3,7 +3,6 @@
 function LoadPGN(o) {
 
 	let startpos;
-	let moves_list = [];
 
 	if (o.tags.FEN && o.tags.SetUp === "1") {
 		startpos = LoadFEN(o.tags.FEN);
@@ -11,7 +10,7 @@ function LoadPGN(o) {
 		startpos = LoadFEN("rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1");
 	}
 
-	let pos = startpos;
+	let node = NewTree(startpos);
 
 	let lines = o.movetext.split("\n");
 	lines = lines.map(s => s.trim());
@@ -39,17 +38,16 @@ function LoadPGN(o) {
 			continue;
 		}
 
-		let [move, error] = pos.parse_pgn(token);
+		let [move, error] = node.get_board().parse_pgn(token);
 
 		if (error !== "") {
 			throw `${token} -- ${error}`;
 		}
 
-		moves_list.push(move);
-		pos = pos.move(move);
+		node = node.make_move(move);
 	}
 
-	return [startpos, moves_list];
+	return node.get_root();
 }
 
 function new_pgn_record() {

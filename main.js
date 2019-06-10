@@ -202,6 +202,7 @@ function menu_build() {
 				},
 				{
 					label: "Show PGN games list",
+					accelerator: "CommandOrControl+P",
 					click: () => {
 						windows.send("main-window", "call", "show_pgn_chooser");
 					}
