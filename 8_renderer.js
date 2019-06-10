@@ -516,7 +516,7 @@ function make_renderer() {
 
 		if (renderer.active_square) {
 
-			let move = renderer.active_square.s + p.s;		// e.g. "e2e4"
+			let move = renderer.active_square.s + p.s;		// e.g. "e2e4" - note promotion char is handled by renderer.move()
 			renderer.active_square = null;
 
 			let success = renderer.move(move);		// move() will draw if it succeeds...
