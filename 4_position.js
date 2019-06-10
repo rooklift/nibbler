@@ -557,7 +557,7 @@ const position_prototype = {
 
 		let lio = s.lastIndexOf(".")
 		if (lio !== -1) {
-			s = slice(lio + 1);
+			s = s.slice(lio + 1);
 		}
 
 		// Fix castling with zeroes...
