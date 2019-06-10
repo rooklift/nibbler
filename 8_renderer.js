@@ -312,7 +312,12 @@ function make_renderer() {
 
 	// --------------------------------------------------------------------------------------------
 
-	renderer.move = (s) => {
+	renderer.move = (s) => {		// It is safe to call this with illegal moves.
+
+		if (typeof s !== "string") {
+			console.log(`renderer.move(${s}) - bad argument`);
+			return;
+		}
 
 		let board = renderer.getboard();
 
@@ -330,9 +335,11 @@ function make_renderer() {
 			}
 		}
 
+		// The promised legality check...
+
 		let illegal_reason = board.illegal(s);
 		if (illegal_reason !== "") {
-			alert(`Illegal move requested (${s}, ${illegal_reason}). This should be impossible, please tell the author how you managed it.`);
+			console.log(`renderer.move(${s}) - ${illegal_reason}`);
 			return;
 		}
 
@@ -678,28 +685,16 @@ function make_renderer() {
 		let board = renderer.getboard();
 
 		if (!renderer.active_square && ocm) {
-			let illegal_reason = board.illegal(ocm);
-			if (illegal_reason === "") {			
-				renderer.move(ocm);
-				return;
-			} else {
-				console.log(illegal_reason);
-			}
+			renderer.move(ocm);
+			return;
 		}
 
 		if (renderer.active_square) {
 
 			let move = renderer.active_square.s + p.s;		// e.g. "e2e4"
-			renderer.active_square = null;
-
-			let illegal_reason = board.illegal(move);	
-
-			if (illegal_reason === "") {			
-				renderer.move(move);
-				return;
-			} else {
-				console.log(illegal_reason);
-			}
+			renderer.active_square = null;		
+			renderer.move(move);
+			return;
 
 		} else {
 
