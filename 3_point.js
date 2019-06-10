@@ -26,7 +26,7 @@ function Point(a, b) {
 
 	let s;
 
-	if (typeof a === "string") {		// Check if string, then check if not number...
+	if (typeof a === "string") {		// Check if string, then check if not numbers...
 		s = a;
 	} else if (typeof a !== "number" || typeof b !== "number") {
 		return Point.null_point;

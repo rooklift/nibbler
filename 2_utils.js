@@ -125,3 +125,17 @@ function Log(s) {
 
 	Log.logfile.write(s + "\n");
 }
+
+function New2DArray(width, height) {
+
+	let ret = [];
+
+	for (let x = 0; x < width; x++) {
+		ret.push([]);
+		for (let y = 0; y < height; y++) {
+			ret[x].push(null);
+		}
+	}
+
+	return ret;
+}

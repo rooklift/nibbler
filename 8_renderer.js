@@ -161,7 +161,7 @@ function make_renderer() {
 
 	let renderer = Object.create(null);
 
-	renderer.squares = Object.create(null);			// Info about canvas squares, a.k.a. csquares.
+	renderer.csquares = null;						// Info about canvas squares, a.k.a. csquares.
 	renderer.active_square = null;					// Square clicked by user.
 	renderer.running = false;						// Whether to resend "go" to the engine after move, undo, etc.
 	renderer.ever_received_info = false;			// When false, we write stderr log instead of move info.
@@ -813,15 +813,27 @@ function make_renderer() {
 	};
 
 	renderer.get_csquare = (mousex, mousey) => {
-		if (typeof mousex !== "number" || typeof mousey !== "number") {
+
+		if (!renderer.csquares || typeof mousex !== "number" || typeof mousey !== "number") {
 			return null;
 		}
-		for (let foo of Object.values(renderer.squares)) {
-			if (foo.x1 <= mousex && foo.y1 <= mousey && foo.x2 > mousex && foo.y2 > mousey) {
-				return foo;
-			}
+
+		let rss = renderer.square_size();
+
+		let boardx = Math.floor(mousex / rss);
+		let boardy = Math.floor(mousey / rss);
+
+		if (boardx < 0) boardx = 0;
+		if (boardy < 0) boardy = 0;
+		if (boardx > 7) boardx = 7;
+		if (boardy > 7) boardy = 7;
+
+		if (config.flip) {
+			boardx = 7 - boardx;
+			boardy = 7 - boardy;
 		}
-		return null;
+
+		return renderer.csquares[boardx][boardy];
 	};
 
 	renderer.draw_infobox = () => {
@@ -1041,8 +1053,10 @@ function make_renderer() {
 	};
 
 	renderer.draw_board = (light, dark) => {
-		
-		renderer.squares = Object.create(null);
+
+		if (!renderer.csquares) {
+			renderer.csquares = New2DArray(8, 8);
+		}
 
 		for (let x = 0; x < 8; x++) {
 			for (let y = 0; y < 8; y++) {
@@ -1060,15 +1074,13 @@ function make_renderer() {
 
 				context.fillRect(cc.x1, cc.y1, cc.rss, cc.rss);
 
-				// Update renderer.squares each draw - our list of clickable coordinates.
+				// Update renderer.csquares each draw - an array which helps us find
+				// 
 				// These may later get updated with a one_click_move.
 
-				renderer.squares[S(x, y)] = {
-					x1: cc.x1,
-					y1: cc.y1,
-					x2: cc.x2,
-					y2: cc.y2,
-					point: Point(x, y)
+				renderer.csquares[x][y] = {
+					point: Point(x, y),
+					one_click_move: null
 				};
 			}
 		}
@@ -1170,7 +1182,7 @@ function make_renderer() {
 
 					// We only draw the best ranking for each particular target square.
 					// At the same time, the square becomes available for one-click
-					// movement; we set the relevant info in renderer.squares.
+					// movement; we set the relevant info in renderer.csquares.
 
 					if (heads[info_list[i].move.slice(2, 4)] === undefined) {
 						heads[info_list[i].move.slice(2, 4)] = {
@@ -1180,7 +1192,7 @@ function make_renderer() {
 							x: x2,
 							y: y2
 						};
-						renderer.squares[S(x2, y2)].one_click_move = info_list[i].move;
+						renderer.csquares[x2][y2].one_click_move = info_list[i].move;
 					}
 				}
 			}
