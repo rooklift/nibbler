@@ -192,10 +192,6 @@ function make_renderer() {
 		}
 	};
 
-	renderer.get_board = () => {
-		return renderer.node.get_board();
-	};
-
 	renderer.move = (s) => {		// It is safe to call this with illegal moves.
 
 		if (typeof s !== "string") {
@@ -203,7 +199,7 @@ function make_renderer() {
 			return false;
 		}
 
-		let board = renderer.get_board();
+		let board = renderer.node.get_board();
 
 		// Add promotion if needed and not present...
 
@@ -270,7 +266,21 @@ function make_renderer() {
 	};
 
 	renderer.load_fen = (s) => {
-		// TODO
+
+		if (s.trim() === renderer.node.get_board().fen()) {
+			return;
+		}
+
+		let newpos;
+
+		try {
+			newpos = LoadFEN(s);
+		} catch (err) {
+			alert(err);
+			return;
+		}
+
+		renderer.new_game(NewTree(newpos));
 	};
 
 	renderer.open = (filename) => {
@@ -300,7 +310,6 @@ function make_renderer() {
 			renderer.node = new_root;
 		}
 
-		renderer.node = new_root;
 		renderer.position_changed(true);
 	};
 
@@ -370,7 +379,7 @@ function make_renderer() {
 
 		if (s.startsWith("info")) {
 			renderer.ever_received_info = true;
-			renderer.info_table.receive(s, renderer.get_board());
+			renderer.info_table.receive(s, renderer.node.get_board());
 		}
 
 		if (s.startsWith("error")) {
@@ -498,7 +507,7 @@ function make_renderer() {
 		}
 
 		let ocm = renderer.one_click_moves[p.x][p.y];
-		let board = renderer.get_board();
+		let board = renderer.node.get_board();
 
 		if (!renderer.active_square && ocm) {
 			renderer.move(ocm);
@@ -667,7 +676,7 @@ function make_renderer() {
 				text: `${info.value_string(1)} `,
 			});
 
-			let colour = renderer.get_board().active;
+			let colour = renderer.node.get_board().active;
 
 			let nice_pv = info.nice_pv();
 
@@ -778,7 +787,7 @@ function make_renderer() {
 
 		// Legality checks... best to assume nothing.
 
-		let tmp_board = renderer.get_board();
+		let tmp_board = renderer.node.get_board();
 		for (let move of move_list) {
 			if (tmp_board.illegal(move) !== "") {
 				return;
@@ -879,7 +888,7 @@ function make_renderer() {
 		context.font = config.board_font;
 
 		let pieces = [];
-		let board = renderer.get_board();
+		let board = renderer.node.get_board();
 
 		for (let x = 0; x < 8; x++) {
 			for (let y = 0; y < 8; y++) {
