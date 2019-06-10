@@ -4,6 +4,8 @@ const node_prototype = {
 
 	make_move: function(s) {
 
+		// s must be exactly a legal move, including having promotion char iff needed (e.g. e2e1q)
+
 		for (let child of this.children) {
 			if (child.move === s) {
 				return child;
