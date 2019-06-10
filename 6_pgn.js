@@ -230,5 +230,55 @@ function PreParsePGN(buf) {
 	return games;
 }
 
-function SavePGN(startpos, moves) {
+function SavePGN(filename, startpos, moves) {
+
+	let tags = [
+		`[Event "Nibbler Line"]`,
+		`[Site "The fevered dreams of a neural net"]`,
+		`[Date "1970.01.01"]`,
+		`[Round "1"]`,
+		`[White "White"]`,
+		`[Black "Black"]`,
+		`[Result "*"]`
+	];
+
+	let board = startpos;
+	let start_fen = board.fen();
+
+	if (start_fen !== "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1") {
+		tags.push(`[FEN "${start_fen}"]`);
+		tags.push(`[SetUp "1"]`);
+	}
+
+	let move_items = [];
+
+	for (let move of moves) {
+		if (board.active === "w") {
+			move_items.push(`${board.fullmove}.`);		// The move number e.g. "1."
+		}
+		move_items.push(board.nice_string(move));		// The nice move e.g. "Bxf7+"
+		board = board.move(move);
+	}
+
+	let move_lines = [];
+	let s = "";
+
+	for (let move of move_items) {
+
+		if (s.length + move.length > 80) {
+			move_lines.push(s);
+			s = "";
+		}
+
+		s += " " + move;
+	}
+
+	s += " *";
+	move_lines.push(s);
+
+	move_lines = move_lines.map(s => s.trim());
+
+	let final_string = tags.join("\n") + "\n\n" + move_lines.join("\n") + "\n";
+
+	fs.writeFileSync(filename, final_string);
 }

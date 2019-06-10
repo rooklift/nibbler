@@ -315,7 +315,7 @@ function make_renderer() {
 	};
 
 	renderer.save = (filename) => {
-		// TODO
+		SavePGN(filename, renderer.node.get_root().get_board(), renderer.node.future_history());
 	};
 
 	renderer.new_game = (new_root) => {
