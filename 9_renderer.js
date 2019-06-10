@@ -451,6 +451,12 @@ function make_renderer() {
 		}
 	};
 
+	renderer.switch_weights = (filename) => {
+		renderer.halt();
+		send(`setoption name WeightsFile value ${filename}`);
+		send("ucinewgame");
+	};
+
 	// --------------------------------------------------------------------------------------------
 	// Visual stuff...
 

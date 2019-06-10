@@ -254,6 +254,20 @@ function menu_build() {
 					type: "separator"
 				},
 				{
+					label: "Switch weights file...",
+					click: () => {
+						let files = electron.dialog.showOpenDialog({
+							properties: ["openFile"]
+						});
+						if (files && files.length > 0) {
+							windows.send("main-window", "call", {
+								fn: "switch_weights",
+								args: [files[0]]
+							});
+						}
+					}
+				},
+				{
 					label: "Reset Lc0 cache",
 					click: () => {
 						windows.send("main-window", "call", "reset_leela_cache");
