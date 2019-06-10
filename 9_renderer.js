@@ -726,10 +726,15 @@ function make_renderer() {
 
 		if (renderer.running === false) {
 			elements.push({
-				class: "gray",
-				text: "(halted)<br><br>"
+				class: "yellow",
+				text: "HALTED "
 			});
 		}
+
+		elements.push({
+			class: "gray",
+			text: `Nodes: ${renderer.info_table.nodes}, N/s: ${renderer.info_table.nps}<br><br>`
+		});
 
 		for (let i = 0; i < info_list.length && i < config.max_info_lines; i++) {
 

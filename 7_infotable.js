@@ -60,10 +60,14 @@ function NewInfoTable() {			// There's only ever going to be one of these made I
 
 		drawn: false,
 		table: Object.create(null),
+		nodes: 0,
+		nps: 0,
 	
 		clear: function() {
 			this.drawn = false;
 			this.table = Object.create(null);
+			this.nodes = 0;
+			this.nps = 0;
 		},
 
 		receive: function(s, board) {
@@ -103,6 +107,16 @@ function NewInfoTable() {			// There's only ever going to be one of these made I
 				tmp = parseInt(InfoVal(s, "multipv"), 10);	// Leela's ranking of the move, starting at 1
 				if (Number.isNaN(tmp) === false) {
 					move_info.multipv = tmp;
+				}
+
+				tmp = parseInt(InfoVal(s, "nodes"), 10);
+				if (Number.isNaN(tmp) === false) {
+					this.nodes = tmp;
+				}
+
+				tmp = parseInt(InfoVal(s, "nps"), 10);
+				if (Number.isNaN(tmp) === false) {
+					this.nps = tmp;
 				}
 
 				let new_pv = InfoPV(s);
