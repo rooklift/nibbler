@@ -527,6 +527,8 @@ const position_prototype = {
 		s = s.replaceAll("x", "");
 		s = s.replaceAll("+", "");
 		s = s.replaceAll("#", "");
+		s = s.replaceAll("!", "");
+		s = s.replaceAll("?", "");
 
 		// Fix castling with zeroes...
 
