@@ -1,17 +1,5 @@
 "use strict";
 
-function NewTree(startpos) {
-	
-	if (!startpos) {
-		startpos = LoadFEN("rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1");
-	}
-
-	let ret = NewNode(null, null);
-	ret.position = startpos;
-
-	return ret;
-}
-
 const node_prototype = {
 
 	make_move: function(s) {
@@ -76,6 +64,18 @@ function NewNode(parent, move) {		// args are null for root only.
 	ret.parent = parent;
 	ret.move = move;					// Think of this as the move that led to the position associated with node.
 	ret.children = [];
+
+	return ret;
+}
+
+function NewTree(startpos) {
+	
+	if (!startpos) {
+		startpos = LoadFEN("rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1");
+	}
+
+	let ret = NewNode(null, null);
+	ret.position = startpos;
 
 	return ret;
 }
