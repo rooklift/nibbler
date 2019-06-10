@@ -1004,7 +1004,7 @@ function make_renderer() {
 
 		move_list.reverse();
 
-		// Legality checks... probably unnecessary...
+		// Legality checks... best to assume nothing.
 
 		let tmp_board = renderer.getboard();
 		for (let move of move_list) {
