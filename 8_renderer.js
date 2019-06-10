@@ -486,7 +486,7 @@ function make_renderer() {
 		renderer.draw();
 	};
 
-	renderer.draw_tree = () => {			// TODO / FIXME
+	renderer.draw_tree = () => {
 
 		let elements = [];
 

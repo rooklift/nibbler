@@ -316,6 +316,28 @@ const position_prototype = {
 			}
 		}
 
+		// Check promotion and string lengths...
+
+		if ((y1 === 1 && this.state[x1][y1] === "P") || (y1 === 6 && this.state[x1][y1] === "p")) {
+
+			if (s.length !== 5) {
+				return "bad string length";
+			}
+
+			let promotion = s[4];
+
+			if (promotion !== "q" && promotion !== "r" && promotion !== "b" && promotion !== "n") {
+				return "move requires a valid promotion piece";
+			}
+
+		} else {
+
+			if (s.length !== 4) {
+				return "bad string length";
+			}
+
+		}
+
 		// Check for check...
 
 		let tmp = this.move(s);
