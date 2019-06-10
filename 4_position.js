@@ -530,6 +530,12 @@ const position_prototype = {
 		s = s.replaceAll("!", "");
 		s = s.replaceAll("?", "");
 
+		// If the string contains any dots it'll be something like "1.e4"
+
+		while (s.indexOf(".") !== -1) {
+			s = s.slice(s.indexOf(".") + 1);
+		}
+
 		// Fix castling with zeroes...
 
 		s = s.replaceAll("0-0", "O-O");
