@@ -705,7 +705,7 @@ function make_renderer() {
 
 		if (renderer.info_table.drawn) {
 			if (highlight_dest === renderer.last_tick_highlight_dest) {
-				renderer.infobox_skips++
+				renderer.infobox_skips++;
 				return;
 			}
 		}
