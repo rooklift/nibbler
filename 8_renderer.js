@@ -161,17 +161,16 @@ function make_renderer() {
 
 	let renderer = Object.create(null);
 
-	renderer.csquares = null;						// Info about canvas squares, a.k.a. csquares.
 	renderer.active_square = null;					// Square clicked by user.
 	renderer.running = false;						// Whether to resend "go" to the engine after move, undo, etc.
 	renderer.ever_received_info = false;			// When false, we write stderr log instead of move info.
 	renderer.stderr_log = "";						// All output received from the engine's stderr.
-	renderer.infobox_string = "";					// Just to help not redraw the infobox when not needed.
 	renderer.pgn_choices = null;					// All games found when opening a PGN file.
 	renderer.infobox_clickers = [];					// Objects relating to our infobox.
 	renderer.mousex = null;							// Raw mouse X on the canvas, e.g. between 0 and 640.
 	renderer.mousey = null;							// Raw mouse Y on the canvas, e.g. between 0 and 640.
-	renderer.highlight_dest = null;					// The destination of any highlighted move in the infobox.
+	renderer.one_click_moves = New2DArray(8, 8);	// 2D array of [x][y] --> move string or null.
+	renderer.last_tick_highlight_dest = null;		// Used to skip redraws.
 
 	renderer.start_pos = LoadFEN("rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1");
 	renderer.info_table = NewInfoTable();
@@ -670,17 +669,18 @@ function make_renderer() {
 
 	renderer.canvas_click = (event) => {
 
-		let csquare = renderer.get_csquare(event.offsetX, event.offsetY);
-		if (!csquare) {
+		let p = renderer.mouse_to_point(event.offsetX, event.offsetY);
+		if (!p) {
 			return;
 		}
 
+		let ocm = renderer.one_click_moves[p.x][p.y];
 		let board = renderer.getboard();
 
-		if (!renderer.active_square && csquare.one_click_move) {
-			let illegal_reason = board.illegal(csquare.one_click_move);
+		if (!renderer.active_square && ocm) {
+			let illegal_reason = board.illegal(ocm);
 			if (illegal_reason === "") {			
-				renderer.move(csquare.one_click_move);
+				renderer.move(ocm);
 				return;
 			} else {
 				console.log(illegal_reason);
@@ -689,7 +689,7 @@ function make_renderer() {
 
 		if (renderer.active_square) {
 
-			let move = renderer.active_square.s + csquare.point.s;		// e.g. "e2e4"
+			let move = renderer.active_square.s + p.s;		// e.g. "e2e4"
 			renderer.active_square = null;
 
 			let illegal_reason = board.illegal(move);	
@@ -703,11 +703,11 @@ function make_renderer() {
 
 		} else {
 
-			if (board.active === "w" && board.is_white(csquare.point)) {
-				renderer.active_square = csquare.point;
+			if (board.active === "w" && board.is_white(p)) {
+				renderer.active_square = p;
 			}
-			if (board.active === "b" && board.is_black(csquare.point)) {
-				renderer.active_square = csquare.point;
+			if (board.active === "b" && board.is_black(p)) {
+				renderer.active_square = p;
 			}
 		}
 
@@ -812,9 +812,11 @@ function make_renderer() {
 		}
 	};
 
-	renderer.get_csquare = (mousex, mousey) => {
+	renderer.mouse_to_point = (mousex, mousey) => {
 
-		if (!renderer.csquares || typeof mousex !== "number" || typeof mousey !== "number") {
+		// Assumes mousex and mousey are relative to canvas top left.
+
+		if (typeof mousex !== "number" || typeof mousey !== "number") {
 			return null;
 		}
 
@@ -823,19 +825,19 @@ function make_renderer() {
 		let boardx = Math.floor(mousex / rss);
 		let boardy = Math.floor(mousey / rss);
 
-		if (boardx < 0) boardx = 0;
-		if (boardy < 0) boardy = 0;
-		if (boardx > 7) boardx = 7;
-		if (boardy > 7) boardy = 7;
+		if (boardx < 0 || boardy < 0 || boardx > 7 || boardy > 7) {
+			return null;
+		}
 
 		if (config.flip) {
 			boardx = 7 - boardx;
 			boardy = 7 - boardy;
 		}
 
-		return renderer.csquares[boardx][boardy];
+		return Point(boardx, boardy);
 	};
 
+	renderer.infobox_skips = 0;			// Debugging...
 	renderer.draw_infobox = () => {
 
 		if (!renderer.ever_received_info) {
@@ -850,7 +852,7 @@ function make_renderer() {
 		}
 
 		// Find the square the user is hovering over (might be null)...
-		let csquare = renderer.get_csquare(renderer.mousex, renderer.mousey);
+		let p = renderer.mouse_to_point(renderer.mousex, renderer.mousey);
 
 		// By default we're highlighting nothing...
 		let highlight_dest = null;
@@ -858,21 +860,22 @@ function make_renderer() {
 
 		// But if the hovered square actually has a one-click move available, highlight its variation,
 		// unless we have an active (i.e. clicked) square...
-		if (csquare && csquare.one_click_move && renderer.active_square === null) {
-			highlight_dest = csquare.point;
-			one_click_move = csquare.one_click_move;
+		if (p && renderer.one_click_moves[p.x][p.y] && !renderer.active_square) {
+			highlight_dest = p;
+			one_click_move = renderer.one_click_moves[p.x][p.y];
 		}
 
 		// The info_table.drawn property is set to false whenever new info is received from the engine.
 		// So maybe we can skip drawing the infobox, and just return...
 
 		if (renderer.info_table.drawn) {
-			if (highlight_dest === renderer.highlight_dest) {
+			if (highlight_dest === renderer.last_tick_highlight_dest) {
+				renderer.infobox_skips++
 				return;
 			}
 		}
 
-		renderer.highlight_dest = highlight_dest;
+		renderer.last_tick_highlight_dest = highlight_dest;
 
 		//
 
@@ -1054,10 +1057,6 @@ function make_renderer() {
 
 	renderer.draw_board = (light, dark) => {
 
-		if (!renderer.csquares) {
-			renderer.csquares = New2DArray(8, 8);
-		}
-
 		for (let x = 0; x < 8; x++) {
 			for (let y = 0; y < 8; y++) {
 				if (x % 2 === y % 2) {
@@ -1073,15 +1072,6 @@ function make_renderer() {
 				}
 
 				context.fillRect(cc.x1, cc.y1, cc.rss, cc.rss);
-
-				// Update renderer.csquares each draw - an array which helps us find
-				// 
-				// These may later get updated with a one_click_move.
-
-				renderer.csquares[x][y] = {
-					point: Point(x, y),
-					one_click_move: null
-				};
 			}
 		}
 	};
@@ -1142,6 +1132,14 @@ function make_renderer() {
 		let arrows = [];
 		let heads = Object.create(null);
 
+		// Clear our 2D array of one-click moves.
+		// We will shortly update it with valid ones.
+		for (let x = 0; x < 8; x++) {
+			for (let y = 0; y < 8; y++) {
+				renderer.one_click_moves[x][y] = null;
+			}
+		}
+
 		if (info_list.length > 0) {
 
 			let best_nodes = info_list[0].n;
@@ -1182,7 +1180,7 @@ function make_renderer() {
 
 					// We only draw the best ranking for each particular target square.
 					// At the same time, the square becomes available for one-click
-					// movement; we set the relevant info in renderer.csquares.
+					// movement; we set the relevant info in renderer.one_click_moves.
 
 					if (heads[info_list[i].move.slice(2, 4)] === undefined) {
 						heads[info_list[i].move.slice(2, 4)] = {
@@ -1192,7 +1190,7 @@ function make_renderer() {
 							x: x2,
 							y: y2
 						};
-						renderer.csquares[x2][y2].one_click_move = info_list[i].move;
+						renderer.one_click_moves[x2][y2] = info_list[i].move;
 					}
 				}
 			}
