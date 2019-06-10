@@ -198,6 +198,13 @@ function menu_build() {
 					}
 				},
 				{
+					label: "Make this the main line",
+					accelerator: "CommandOrControl+M",
+					click: () => {
+						windows.send("main-window", "call", "promote_to_main_line");
+					}
+				},
+				{
 					type: "separator"
 				},
 				{

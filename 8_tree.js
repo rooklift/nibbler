@@ -69,6 +69,24 @@ const node_prototype = {
 		return this.position;
 	},
 
+	promote_to_main_line: function() {
+
+		let node = this;
+
+		while (node.parent) {
+			if (node.parent.children[0] !== node) {
+				for (let n = 1; n < node.parent.children.length; n++) {
+					if (node.parent.children[n] === node) {
+						node.parent.children[n] = node.parent.children[0];
+						node.parent.children[0] = node;
+						break;
+					}
+				}
+			}
+			node = node.parent;
+		}
+	},
+
 	fen: function() {
 		return this.get_board().fen();
 	}

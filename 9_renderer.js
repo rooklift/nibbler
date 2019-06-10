@@ -283,6 +283,11 @@ function make_renderer() {
 		renderer.position_changed();
 	};
 
+	renderer.promote_to_main_line = () => {
+		renderer.node.promote_to_main_line();
+		renderer.draw_movelist();
+	};
+
 	renderer.load_fen = (s) => {
 
 		if (s.trim() === renderer.node.get_board().fen()) {
