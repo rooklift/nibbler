@@ -245,8 +245,11 @@ function make_renderer() {
 		}
 	};
 
-	renderer.next = () => {
-		// TODO
+	renderer.next = () => {							// FIXME? Doesn't remember current line.
+		if (renderer.node.children.length > 0) {
+			renderer.node = renderer.node.children[0];
+			renderer.position_changed();
+		}
 	};
 
 	renderer.goto_root = () => {
@@ -255,7 +258,10 @@ function make_renderer() {
 	};
 
 	renderer.goto_end = () => {
-		// TODO
+		while (renderer.node.children.length > 0) {
+			renderer.node = renderer.node.children[0];
+		}
+		renderer.position_changed();
 	};
 
 	renderer.return_to_pgn = () => {
