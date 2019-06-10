@@ -2,6 +2,8 @@
 
 *Nibbler* is intended to be somewhat like [Lizzie](https://github.com/featurecat/lizzie), but for [Leela Chess Zero](https://github.com/LeelaChessZero/lc0). In other words, it is a GUI that runs a single engine (in our case, Lc0) constantly, displaying opinions about the current position.
 
+Nibbler is a work-in-progress. See or comment on the [todo list](https://github.com/fohristiwhirl/nibbler/issues/10) of hoped-for features.
+
 ![Screenshot](https://user-images.githubusercontent.com/16438795/59159439-7c492380-8ac1-11e9-9dde-71c1353c5909.png)
 
 # Features
@@ -35,13 +37,3 @@ The `config.json` file can be edited. Most of the options are self-explanatory, 
 Thanks for helpful discussions and advice from borg, brinan, Chad, coolchess123, crem, Faroe22, jhorthos, jjosh, KillerDucky, matoototo, mooskagh, Occyroexanthub, Tilps, and WCP.
 
 The piece images were taken from the TCEC website. After discussion with Aloril, we're not entirely sure where they originate - if they're yours and you object, get in touch.
-
-# TODO
-
-* Drag and drop for piece moves? Apparently it exists [natively](https://developer.mozilla.org/en-US/docs/Web/API/HTML_Drag_and_Drop_API).
-* Automatically move the scroll bar on the main line if needed (e.g. [this](http://jsfiddle.net/p3kar5bb/322/)).
-* When moving manually, the ability to underpromote (already works for Leela moves).
-* Better visualisation of the internal move tree.
-* PV display as a board?
-* Winrate graph.
-* Et cetera.
