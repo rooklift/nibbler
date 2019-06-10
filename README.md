@@ -2,8 +2,6 @@
 
 *Nibbler* is intended to be somewhat like [Lizzie](https://github.com/featurecat/lizzie), but for [Leela Chess Zero](https://github.com/LeelaChessZero/lc0). In other words, it is a GUI that runs a single engine (in our case, Lc0) constantly, displaying opinions about the current position.
 
-Nibbler is a work-in-progress. See or comment on the [todo list](https://github.com/fohristiwhirl/nibbler/issues/10) of hoped-for features.
-
 ![Screenshot](https://user-images.githubusercontent.com/16438795/59159439-7c492380-8ac1-11e9-9dde-71c1353c5909.png)
 
 # Features
@@ -14,6 +12,8 @@ Nibbler is a work-in-progress. See or comment on the [todo list](https://github.
 * PGN and FEN loading.
 * Clickable moves in the variation lists.
 * Various aesthetic adjustments are possible in the `config.json` file.
+
+Nibbler is a work-in-progress. See or comment on the [todo list](https://github.com/fohristiwhirl/nibbler/issues/10) of hoped-for features.
 
 # Installation
 
