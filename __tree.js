@@ -12,7 +12,7 @@ function NewTree(startpos) {
 	return ret;
 }
 
-let node_prototype = {
+const node_prototype = {
 
 	make_move: function(s) {
 
