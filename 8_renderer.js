@@ -491,14 +491,44 @@ function make_renderer() {
 		let elements = [];
 
 		let node = renderer.node.get_root();
+		let history = renderer.node.history();
 
-		while (node.children.length > 0) {
+		for (let move of history) {
+
+			let fm = "";
+
 			let board = node.get_board();
-			node = node.children[0];
-			elements.push(board.nice_string(node.move));
+
+			if (board.active === "w") {
+				fm = `${board.fullmove}. `;
+			}
+
+			elements.push(fm + board.nice_string(move) + " ");
+			node = node.make_move(move);
 		}
 
-		mainline.innerHTML = elements.join(" ");
+		if (node.children.length > 0) {
+
+			elements.push(`<span class="gray">`);
+
+			while (node.children.length > 0) {
+
+				let fm = "";
+
+				let board = node.get_board();
+
+				if (board.active === "w") {
+					fm = `${board.fullmove}. `;
+				}
+
+				elements.push(fm + board.nice_string(node.children[0].move) + " ");
+				node = node.children[0];
+			}
+
+			elements.push("</span>");
+		}
+
+		mainline.innerHTML = elements.join("");
 	};
 
 	renderer.mainline_click = (event) => {
