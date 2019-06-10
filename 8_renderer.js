@@ -200,7 +200,7 @@ function make_renderer() {
 
 		if (typeof s !== "string") {
 			console.log(`renderer.move(${s}) - bad argument`);
-			return;
+			return false;
 		}
 
 		let board = renderer.get_board();
@@ -224,11 +224,12 @@ function make_renderer() {
 		let illegal_reason = board.illegal(s);
 		if (illegal_reason !== "") {
 			console.log(`renderer.move(${s}) - ${illegal_reason}`);
-			return;
+			return false;
 		}
 
 		renderer.node = renderer.node.make_move(s);
 		renderer.position_changed();
+		return true;
 	};
 
 	renderer.play_info_index = (n) => {
@@ -469,8 +470,13 @@ function make_renderer() {
 		if (renderer.active_square) {
 
 			let move = renderer.active_square.s + p.s;		// e.g. "e2e4"
-			renderer.active_square = null;		
-			renderer.move(move);
+			renderer.active_square = null;
+
+			let success = renderer.move(move);		// move() will draw if it succeeds...
+			if (!success) {
+				renderer.draw();					// ... but if it doesn't, we draw to show the active_square cleared.
+			}
+			
 			return;
 
 		} else {
