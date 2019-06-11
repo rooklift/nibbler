@@ -1,62 +1,5 @@
 "use strict";
 
-function LoadPGN(o) {
-
-	let startpos;
-
-	if (o.tags.FEN && o.tags.SetUp === "1") {
-		startpos = LoadFEN(o.tags.FEN);
-	} else {
-		startpos = LoadFEN("rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1");
-	}
-
-	let node = NewTree(startpos);
-
-	let lines = o.movetext.split("\n");
-	lines = lines.map(s => s.trim());
-
-	let all_tokens = [];
-
-	for (let line of lines) {
-		let tokens = line.split(" ");
-		tokens = tokens.filter(s => s !== "");
-		tokens = tokens.map(s => s.trim());
-		all_tokens = all_tokens.concat(tokens);
-	}
-
-	for (let token of all_tokens) {
-
-		if (token === "1/2-1/2" || token === "1-0" || token === "0-1" || token === "*") {
-			break;
-		}
-
-		if (token.endsWith(".")) {
-			continue;
-		}
-
-		if (token.startsWith("$")) {
-			continue;
-		}
-
-		let [move, error] = node.get_board().parse_pgn(token);
-
-		if (error !== "") {
-			throw `${token} -- ${error}`;
-		}
-
-		node = node.make_move(move);
-	}
-
-	return node.get_root();
-}
-
-function new_pgn_record() {
-	return {
-		tags: Object.create(null),
-		movetext: ""
-	};
-}
-
 function split_buffer(buf) {
 
 	// Split a binary buffer into an array of binary buffers corresponding to lines.
@@ -72,7 +15,7 @@ function split_buffer(buf) {
 	};
 
 	let a = 0;
-	let b = 0;
+	let b;
 
 	for (b = 0; b < buf.length; b++) {
 		let ch = buf[b];
@@ -91,13 +34,17 @@ function split_buffer(buf) {
 	return lines;
 }
 
-function new_byte_pusher() {
+function new_byte_pusher(size) {
+
+	if (!size || size <= 0) {
+		size = 16;
+	}
 
 	// I bet Node has something like this, but I didn't read the docs.
 
 	return {
 
-		storage: new Uint8Array(128),
+		storage: new Uint8Array(size),
 		length: 0,							// Both the length and also the next index to write to.
 
 		push: function(c) {
@@ -122,17 +69,22 @@ function new_byte_pusher() {
 	};
 }
 
+function new_pgn_record() {
+	return {
+		tags: Object.create(null),
+		movebufs: []
+	};
+}
+
 function PreParsePGN(buf) {
 
-	// Returns an array of the pgn_record objects, of at least length 1.
+	// Returns an array of pgn_record objects which have
+	//		- a tags object
+	//		- a movebuf list which contains the movetext lines for that game, as a binary buffer.
 
-	let lines = split_buffer(buf);
-	let current_movetext = new_byte_pusher();
 	let games = [new_pgn_record()];
+	let lines = split_buffer(buf);
 
-	let inside_brace = false;				// {} are comments
-	let parentheses_depth = 0;				// () are variations
-	
 	for (let rawline of lines) {
 
 		if (rawline.length === 0) {
@@ -143,19 +95,11 @@ function PreParsePGN(buf) {
 			continue;
 		}
 
-		if (inside_brace === false && rawline[0] === 91) {			// Opening square bracket [ means this is a TAG line.
+		if (rawline[0] === 91) {			// This is probably a TAG line...... FIXME: might catch [ inside a comment. Hmm.
 
-			if (current_movetext.length > 0) {
-
-				// We have movetext already, so this must be a new game.
-				// Write the found movetext to the object...
-
-				games[games.length - 1].movetext = current_movetext.string();
-
-				// And start a new one.
-
+			if (games[games.length - 1].movebufs.length > 0) {
+				// We have movetext already, so this must be a new game. Start it.
 				games.push(new_pgn_record());
-				current_movetext = new_byte_pusher();
 			}
 
 			// Parse the tag line...
@@ -164,7 +108,7 @@ function PreParsePGN(buf) {
 
 			if (line.endsWith("]")) {
 
-				line = line.slice(1, line.length - 1);		// So now it's like:		Foo "bar etc"
+				line = line.slice(1, line.length - 1);						// So now it's like:		Foo "bar etc"
 
 				let quote_i = line.indexOf(`"`);
 
@@ -182,55 +126,143 @@ function PreParsePGN(buf) {
 				games[games.length - 1].tags[key] = SafeString(value);		// Escape evil characters. IMPORTANT!
 			}
 
-		} else {								// This is a MOVETEXT line.
+		} else {
 
-			if (current_movetext.length > 0) {
-				current_movetext.push(32);		// Add a space to what we have.
-			}
+			games[games.length - 1].movebufs.push(rawline);
 
-			for (let i = 0; i < rawline.length; i++) {
-
-				let c = rawline[i];
-
-				if (c === 123) {				// The opening brace {
-					inside_brace = true;
-					continue;
-				}
-
-				if (inside_brace) {
-					if (c === 125) {			// The closing brace }
-						inside_brace = false;
-					}
-					continue;
-				}
-
-				if (c === 40) {					// The opening parenthesis (
-					parentheses_depth++;
-					continue;
-				}
-
-				if (parentheses_depth > 0) {
-					if (c === 41) {				// The closing parenthesis )
-						parentheses_depth--;
-					}
-					continue;
-				}
-
-				// So, we are not in a brace nor a parenthesis...
-
-				current_movetext.push(c);
-			}
 		}
-	}
-
-	if (current_movetext.length > 0 && games[games.length - 1].movetext === "") {
-		games[games.length - 1].movetext = current_movetext.string();
 	}
 
 	return games;
 }
 
+function LoadPGNRecord(o) {
+
+	let startpos;
+
+	if (o.tags.FEN && o.tags.SetUp === "1") {
+		startpos = LoadFEN(o.tags.FEN);
+	} else {
+		startpos = LoadFEN("rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1");
+	}
+
+	let root = NewTree(startpos);
+	let node = root;
+
+	let inside_brace = false;			// {} are comments. Braces do not nest.
+
+	let callstack = [];					// When a parenthesis "(" opens, we record the node to "return" to later, on the "callstack".
+
+	let token = new_byte_pusher();
+
+	let finished = false;
+
+	for (let rawline of o.movebufs) {
+
+		if (rawline.length === 0) {
+			continue;
+		}
+
+		if (rawline[0] === 37) {		// Percent % sign is a special comment type.
+			continue;
+		}
+
+		for (let i = 0; i < rawline.length; i++) {
+
+			// Note that, when adding characters to our current token, we peek forwards
+			// to check if it's the end of the token. Therefore, it's safe for these
+			// special characters to fire a continue immediately.
+
+			let c = rawline[i];
+
+			if (c === 123) {									// The opening brace { for a comment
+				inside_brace = true;
+				continue;
+			}
+
+			if (inside_brace) {
+				if (c === 125) {								// The closing brace }
+					inside_brace = false;
+				}
+				continue;
+			}
+
+			if (c === 40) {										// The opening parenthesis (
+				callstack.push(node);
+				node = node.parent;								// Unplay the last move.
+				continue;
+			}
+
+			if (c === 41) {										// The closing parenthesis )
+				node = callstack[callstack.length - 1];
+				callstack = callstack.slice(0, callstack.length - 1);
+				continue;
+			}
+
+			// So, we are not in a brace nor a parenthesis...
+
+			token.push(c);
+
+			// It the current token complete?
+
+			let peek = rawline[i + 1];
+
+			if (
+			peek === undefined		||			// end of line
+			peek <= 32				||			// whitespace
+			peek === 40				||			// (
+			peek === 41				||			// )
+			peek === 46				||			// .
+			peek === 123) {						// {
+
+				let initial_s = token.string();
+				let s = initial_s.trim();
+
+				token = new_byte_pusher();			// For the next round.
+
+				// Parse s.
+
+				if (s === "" || s.endsWith(".") || s.startsWith("$") || peek === 46) {
+					// Useless token.
+					continue;
+				}
+
+				if (s === "1/2-1/2" || s === "1-0" || s === "0-1" || s === "*") {
+					finished = true;
+					break;
+				}
+
+				// Probably an actual move...
+
+				let [move, error] = node.get_board().parse_pgn(s);
+
+				if (error !== "") {
+					throw `"${s}" -- ${error}`;
+				}
+
+				node = node.make_move(move);
+			}
+		}
+
+		if (finished) {
+			break;
+		}
+	}
+
+	// Add a tags property into the root.
+
+	root.tags = Object.create(null);
+
+	for (let key of Object.keys(o.tags)) {
+		root.tags[key] = o.tags[key];
+	}
+
+	return root;
+}
+
 function SavePGN(filename, startpos, moves) {
+
+	// TODO: save the full recursive structure.
 
 	let tags = [
 		`[Event "Nibbler Line"]`,

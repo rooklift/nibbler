@@ -341,7 +341,7 @@ function make_renderer() {
 		let new_root;
 
 		try {
-			new_root = LoadPGN(o);
+			new_root = LoadPGNRecord(o);
 		} catch (err) {
 			alert(err);
 			return false;
@@ -384,7 +384,7 @@ function make_renderer() {
 			let o = pgn_list[n];
 
 			try {
-				LoadPGN(o);
+				LoadPGNRecord(o);
 			} catch (err) {
 				alert(`Game ${n + 1} - ${err.toString()}`);
 				return false;
