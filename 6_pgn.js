@@ -137,10 +137,16 @@ function PreParsePGN(buf) {
 }
 
 function LoadPGNRecord(o) {
-	
-	let lines = o.movebufs;
 
-	let root = NewTree();
+	let startpos;
+
+	if (o.tags.FEN && o.tags.SetUp === "1") {
+		startpos = LoadFEN(o.tags.FEN);
+	} else {
+		startpos = LoadFEN("rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1");
+	}
+
+	let root = NewTree(startpos);
 	let node = root;
 
 	let inside_brace = false;			// {} are comments. Braces do not nest.
@@ -151,7 +157,7 @@ function LoadPGNRecord(o) {
 
 	let finished = false;
 
-	for (let rawline of lines) {
+	for (let rawline of o.movebufs) {
 
 		if (rawline.length === 0) {
 			continue;
