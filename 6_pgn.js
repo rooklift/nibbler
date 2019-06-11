@@ -294,14 +294,14 @@ function SavePGN(filename, node) {
 function StringPGN(node) {
 
 	node = node.get_root();
-	let tokens = []
+	let tokens = [];
 	write_tree(node, tokens, false, true);
 	tokens.push("*");
 
 	// Now it's all about wrapping to 80 chars...
 
-	let lines = []
-	let line = ""
+	let lines = [];
+	let line = "";
 
 	for (let token of tokens) {
 		if (line.length + token.length > 79) {
