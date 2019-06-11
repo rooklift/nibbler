@@ -1,12 +1,5 @@
 "use strict";
 
-function new_pgn_record() {
-	return {
-		tags: Object.create(null),
-		movebufs: []
-	};
-}
-
 function split_buffer(buf) {
 
 	// Split a binary buffer into an array of binary buffers corresponding to lines.
@@ -22,7 +15,7 @@ function split_buffer(buf) {
 	};
 
 	let a = 0;
-	let b = 0;
+	let b;
 
 	for (b = 0; b < buf.length; b++) {
 		let ch = buf[b];
@@ -73,6 +66,13 @@ function new_byte_pusher(size) {
 		string: function() {
 			return decoder.decode(this.bytes());
 		}
+	};
+}
+
+function new_pgn_record() {
+	return {
+		tags: Object.create(null),
+		movebufs: []
 	};
 }
 
@@ -129,6 +129,7 @@ function PreParsePGN(buf) {
 		} else {
 
 			games[games.length - 1].movebufs.push(rawline);
+
 		}
 	}
 
@@ -248,6 +249,8 @@ function LoadPGNRecord(o) {
 }
 
 function SavePGN(filename, startpos, moves) {
+
+	// TODO: save the full recursive structure.
 
 	let tags = [
 		`[Event "Nibbler Line"]`,
