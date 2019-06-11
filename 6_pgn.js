@@ -6,11 +6,17 @@ function split_buffer(buf) {
 
 	let lines = [];
 
+	// Note: in push() we'd best use Buffer.from() rather than simple slices.
+	// It seems buf might get garbage-collected later, leading to the naive
+	// slices being invalid if we just used them as-is?
+	//
+	// Well, see https://github.com/fohristiwhirl/electron_crash_test
+
 	let push = (arr) => {
 		if (arr.length > 0 && arr[arr.length - 1] === 13) {		// Discard \r
-			lines.push(arr.slice(0, arr.length - 1));
+			lines.push(Buffer.from(arr.slice(0, arr.length - 1)));
 		} else {
-			lines.push(arr);
+			lines.push(Buffer.from(arr));
 		}
 	};
 

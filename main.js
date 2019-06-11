@@ -106,6 +106,18 @@ function menu_build() {
 					type: "separator"
 				},
 				{
+					label: "Load PGN from clipboard",
+					click: () => {
+						windows.send("main-window", "call", {
+							fn: "load_pgn_from_string",
+							args: [electron.clipboard.readText()]
+						});
+					}
+				},
+				{
+					type: "separator"
+				},
+				{
 					role: "quit",
 					label: "Quit",
 					accelerator: "CommandOrControl+Q"

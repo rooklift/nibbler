@@ -306,8 +306,7 @@ function make_renderer() {
 		renderer.new_game(NewTree(newpos));
 	};
 
-	renderer.open = (filename) => {
-		let buf = fs.readFileSync(filename);				// i.e. binary buffer object
+	renderer.load_pgn_buffer = (buf) => {
 		let new_pgn_choices = PreParsePGN(buf);
 
 		if (new_pgn_choices.length === 1) {
@@ -319,6 +318,16 @@ function make_renderer() {
 			renderer.pgn_choices = new_pgn_choices;			// Setting it to a multi-value array is "always" OK.
 			renderer.show_pgn_chooser();					// Now we need to have the user choose a game.
 		}
+	};
+
+	renderer.open = (filename) => {
+		let buf = fs.readFileSync(filename);
+		renderer.load_pgn_buffer(buf);
+	};
+
+	renderer.load_pgn_from_string = (s) => {
+		let buf = Buffer.from(s);
+		renderer.load_pgn_buffer(buf);
 	};
 
 	renderer.save = (filename) => {
