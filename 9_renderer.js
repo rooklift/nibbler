@@ -307,18 +307,33 @@ function make_renderer() {
 	};
 
 	renderer.open = (filename) => {
-		let buf = fs.readFileSync(filename);				// i.e. binary buffer object
-		let new_pgn_choices = PreParsePGN(buf);
 
-		if (new_pgn_choices.length === 1) {
-			let success = renderer.load_pgn_object(new_pgn_choices[0]);
-			if (success) {
-				renderer.pgn_choices = new_pgn_choices;		// We only want to set this to a 1 value array if it actually worked.
-			}
-		} else {
-			renderer.pgn_choices = new_pgn_choices;			// Setting it to a multi-value array is "always" OK.
-			renderer.show_pgn_chooser();					// Now we need to have the user choose a game.
+		let buf = fs.readFileSync(filename);
+		let new_pgn_choices = [];
+
+		try {
+			new_pgn_choices = NewPGNLoader(buf);
+		} catch (err) {
+			alert(err);
 		}
+
+		console.log("new_pgn_choices.length ===", new_pgn_choices.length);
+
+		if (new_pgn_choices.length === 0) {
+			return;
+		}
+
+		// So, success...
+
+		renderer.pgn_choices = new_pgn_choices;
+
+		if (renderer.pgn_choices.length === 1) {
+			renderer.node = renderer.pgn_choices[0];
+			renderer.position_changed(true);
+			return;
+		}
+
+		renderer.show_pgn_chooser();
 	};
 
 	renderer.save = (filename) => {
@@ -371,7 +386,8 @@ function make_renderer() {
 		}
 
 		if (renderer.pgn_choices && n >= 0 && n < renderer.pgn_choices.length) {
-			renderer.load_pgn_object(renderer.pgn_choices[n]);
+			renderer.node = renderer.pgn_choices[n];
+			renderer.position_changed(true);
 		}
 	};
 
