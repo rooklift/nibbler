@@ -12,8 +12,8 @@ let config = {};
 try {
 	if (fs.existsSync("config.json")) {
 		config = JSON.parse(debork_json(fs.readFileSync("config.json", "utf8")));
-	} else if (fs.existsSync("config.json.example")) {
-		config = JSON.parse(debork_json(fs.readFileSync("config.json.example", "utf8")));
+	} else if (fs.existsSync("config.example.json")) {
+		config = JSON.parse(debork_json(fs.readFileSync("config.example.json", "utf8")));
 	}
 } catch (err) {
 	// pass

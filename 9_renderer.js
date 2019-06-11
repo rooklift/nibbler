@@ -34,8 +34,8 @@ function sync() {
 try {
 	if (fs.existsSync("config.json")) {
 		config = JSON.parse(debork_json(fs.readFileSync("config.json", "utf8")));
-	} else if (fs.existsSync("config.json.example")) {
-		config = JSON.parse(debork_json(fs.readFileSync("config.json.example", "utf8")));
+	} else if (fs.existsSync("config.example.json")) {
+		config = JSON.parse(debork_json(fs.readFileSync("config.example.json", "utf8")));
 		config.warn_filename = true;
 	} else {
 		alert("config.json not present");
@@ -1120,7 +1120,7 @@ function make_renderer() {
 let renderer = make_renderer();
 
 if (config && config.warn_filename) {
-	renderer.err_receive(`<span class="blue">Nibbler says: You should rename config.json.example to config.json</span>`);
+	renderer.err_receive(`<span class="blue">Nibbler says: You should rename config.example.json to config.json</span>`);
 	renderer.err_receive("");
 }
 
