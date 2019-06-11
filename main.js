@@ -76,7 +76,7 @@ function menu_build() {
 					}
 				},
 				{
-					label: "Save Line...",
+					label: "Save PGN...",
 					accelerator: "CommandOrControl+S",
 					click: () => {
 						let file = electron.dialog.showSaveDialog();
