@@ -323,6 +323,8 @@ function StringPGN(node) {
 
 function write_tree(node, tokens, skip_self_flag, force_number_string) {
 
+	// Write this node itself...
+
 	if (node.move && node.parent && !skip_self_flag) {
 		if (node.parent.get_board().active === "w" || force_number_string) {
 			tokens.push(node.parent.get_board().next_number_string());
@@ -330,14 +332,22 @@ function write_tree(node, tokens, skip_self_flag, force_number_string) {
 		tokens.push(node.nice_move());
 	}
 
+	// Write descendents as long as there's no branching,
+	// or return if we reach a node with no children.
+
+	while (node.children.length === 1) {
+		if (node.get_board().active === "w") {
+			tokens.push(node.get_board().next_number_string());
+		}
+		node = node.children[0];
+		tokens.push(node.nice_move());
+	}
+
 	if (node.children.length === 0) {
 		return;
 	}
 
-	if (node.children.length === 1) {
-		write_tree(node.children[0], tokens, false, false);
-		return;
-	}
+	// So multiple child nodes exist...
 
 	let main_child = node.children[0];
 
