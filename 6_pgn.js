@@ -243,7 +243,13 @@ function LoadPGNRecord(o) {
 		}
 	}
 
-	// FIXME: likely add the PGN tags into the root.
+	// Add a tags property into the root.
+
+	root.tags = Object.create(null);
+
+	for (let key of Object.keys(o.tags)) {
+		root.tags[key] = o.tags[key];
+	}
 
 	return root;
 }
