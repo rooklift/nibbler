@@ -844,6 +844,14 @@ const position_prototype = {
 		return ret;
 	},
 
+	next_number_string: function() {
+		if (this.active === "w") {
+			return `${this.fullmove}.`;
+		} else {
+			return `${this.fullmove}...`;
+		}
+	},
+
 	fen: function() {
 
 		let s = "";

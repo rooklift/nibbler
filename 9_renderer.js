@@ -322,7 +322,7 @@ function make_renderer() {
 	};
 
 	renderer.save = (filename) => {
-		SavePGN(filename, renderer.node.get_root().get_board(), renderer.node.future_history());
+		SavePGN(filename, renderer.node);
 	};
 
 	renderer.new_game = (new_root) => {			// Note that this wants a node, not a board.

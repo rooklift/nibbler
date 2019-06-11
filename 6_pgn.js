@@ -260,9 +260,8 @@ function LoadPGNRecord(o) {
 	return root;
 }
 
-function SavePGN(filename, startpos, moves) {
 
-	// TODO: save the full recursive structure.
+function SavePGN(filename, node) {
 
 	let tags = [
 		`[Event "Nibbler Line"]`,
@@ -274,6 +273,9 @@ function SavePGN(filename, startpos, moves) {
 		`[Result "*"]`
 	];
 
+	node = node.get_root();
+
+	let startpos = node.get_board();
 	let board = startpos;
 	let start_fen = board.fen();
 
@@ -282,35 +284,50 @@ function SavePGN(filename, startpos, moves) {
 		tags.push(`[SetUp "1"]`);
 	}
 
-	let move_items = [];
+	let s = StringPGN(node);
 
-	for (let move of moves) {
-		if (board.active === "w") {
-			move_items.push(`${board.fullmove}.`);		// The move number e.g. "1."
+	let final = tags.join("\n") + "\n\n" + s + "*" + "\n";
+
+	fs.writeFileSync(filename, final);
+}
+
+function StringPGN(node) {
+	node = node.get_root();
+	let holder = {s: ""};
+	write_tree(node, holder, false, true);
+	return holder.s;
+}
+
+function write_tree(node, holder, skip_self_flag, force_number_string) {
+
+	if (node.move && node.parent && !skip_self_flag) {
+		if (node.parent.get_board().active === "w" || force_number_string) {
+			holder.s += node.parent.get_board().next_number_string() + " ";
 		}
-		move_items.push(board.nice_string(move));		// The nice move e.g. "Bxf7+"
-		board = board.move(move);
+		holder.s += node.nice_move() + " ";
 	}
 
-	let move_lines = [];
-	let s = "";
-
-	for (let move of move_items) {
-
-		if (s.length + move.length > 80) {
-			move_lines.push(s);
-			s = "";
-		}
-
-		s += " " + move;
+	if (node.children.length === 0) {
+		return;
 	}
 
-	s += " *";
-	move_lines.push(s);
+	if (node.children.length === 1) {
+		write_tree(node.children[0], holder, false, false);
+		return;
+	}
 
-	move_lines = move_lines.map(s => s.trim());
+	let main_child = node.children[0];
 
-	let final_string = tags.join("\n") + "\n\n" + move_lines.join("\n") + "\n";
+	if (node.get_board().active === "w") {
+		holder.s += node.get_board().next_number_string() + " ";
+	}
+	holder.s += main_child.nice_move() + " ";
 
-	fs.writeFileSync(filename, final_string);
+	for (let child of node.children.slice(1)) {
+		holder.s += "( ";
+		write_tree(child, holder, false, true);
+		holder.s += ") ";
+	}
+
+	write_tree(main_child, holder, true, false);
 }

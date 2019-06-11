@@ -89,6 +89,14 @@ const node_prototype = {
 
 	fen: function() {
 		return this.get_board().fen();
+	},
+
+	nice_move: function() {
+		if (!this.move || !this.parent) {
+			return "??";
+		}
+
+		return this.parent.get_board().nice_string(this.move);
 	}
 };
 
