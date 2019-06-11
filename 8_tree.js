@@ -58,15 +58,15 @@ const node_prototype = {
 		return node;
 	},
 
-	get_board: function() {				// This could be remade to be non-recursive.
+	get_board: function() {
 
-		if (this.position) {
-			return this.position;
+		if (this.__position) {
+			return this.__position;
 		}
 
 		let ppos = this.parent.get_board();
-		this.position = ppos.move(this.move);
-		return this.position;
+		this.__position = ppos.move(this.move);
+		return this.__position;
 	},
 
 	promote_to_main_line: function() {
@@ -118,7 +118,7 @@ function NewTree(startpos) {
 	}
 
 	let ret = NewNode(null, null);
-	ret.position = startpos;
+	ret.__position = startpos;
 
 	return ret;
 }
