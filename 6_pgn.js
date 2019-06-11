@@ -286,25 +286,48 @@ function SavePGN(filename, node) {
 
 	let s = StringPGN(node);
 
-	let final = tags.join("\n") + "\n\n" + s + "*" + "\n";
+	let final = tags.join("\n") + "\n\n" + s + "\n";
 
 	fs.writeFileSync(filename, final);
 }
 
 function StringPGN(node) {
+
 	node = node.get_root();
-	let holder = {s: ""};
-	write_tree(node, holder, false, true);
-	return holder.s;
+	let tokens = []
+	write_tree(node, tokens, false, true);
+	tokens.push("*");
+
+	// Now it's all about wrapping to 80 chars...
+
+	let lines = []
+	let line = ""
+
+	for (let token of tokens) {
+		if (line.length + token.length > 79) {
+			lines.push(line);
+			line = token;
+		} else {
+			if (line.length > 0) {
+				line += " ";
+			}
+			line += token;
+		}
+	}
+	if (line !== "") {
+		lines.push(line);
+	}
+
+	return lines.join("\n");
 }
 
-function write_tree(node, holder, skip_self_flag, force_number_string) {
+function write_tree(node, tokens, skip_self_flag, force_number_string) {
 
 	if (node.move && node.parent && !skip_self_flag) {
 		if (node.parent.get_board().active === "w" || force_number_string) {
-			holder.s += node.parent.get_board().next_number_string() + " ";
+			tokens.push(node.parent.get_board().next_number_string());
 		}
-		holder.s += node.nice_move() + " ";
+		tokens.push(node.nice_move());
 	}
 
 	if (node.children.length === 0) {
@@ -312,22 +335,22 @@ function write_tree(node, holder, skip_self_flag, force_number_string) {
 	}
 
 	if (node.children.length === 1) {
-		write_tree(node.children[0], holder, false, false);
+		write_tree(node.children[0], tokens, false, false);
 		return;
 	}
 
 	let main_child = node.children[0];
 
 	if (node.get_board().active === "w") {
-		holder.s += node.get_board().next_number_string() + " ";
+		tokens.push(node.get_board().next_number_string());
 	}
-	holder.s += main_child.nice_move() + " ";
+	tokens.push(main_child.nice_move());
 
 	for (let child of node.children.slice(1)) {
-		holder.s += "( ";
-		write_tree(child, holder, false, true);
-		holder.s += ") ";
+		tokens.push("(");
+		write_tree(child, tokens, false, true);
+		tokens.push(")");
 	}
 
-	write_tree(main_child, holder, true, false);
+	write_tree(main_child, tokens, true, false);
 }
