@@ -519,6 +519,11 @@ function make_renderer() {
 			} else {
 				s = `${padding}${n + 1}. ${p.tags.White} - ${p.tags.Black}`;
 			}
+
+			if (p.tags.Opening) {
+				s += `  <span class="gray">(${p.tags.Opening})</span>`;
+			}
+
 			lines.push(`<li id="chooser_${n}">${s}</li>`);
 		}
 
