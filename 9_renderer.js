@@ -303,7 +303,8 @@ function make_renderer() {
 			return;
 		}
 
-		renderer.new_game(NewTree(newpos));
+		renderer.node = NewTree(newpos);
+		renderer.position_changed(true);
 	};
 
 	renderer.load_pgn_buffer = (buf) => {
@@ -334,14 +335,8 @@ function make_renderer() {
 		SavePGN(filename, renderer.node);
 	};
 
-	renderer.new_game = (new_root) => {			// Note that this wants a node, not a board.
-
-		if (!new_root) {
-			renderer.node = NewTree();
-		} else {
-			renderer.node = new_root;
-		}
-
+	renderer.new_game = () => {
+		renderer.node = NewTree();
 		renderer.position_changed(true);
 	};
 
@@ -356,7 +351,9 @@ function make_renderer() {
 			return false;
 		}
 
-		renderer.new_game(new_root);
+		renderer.node = new_root;
+		renderer.position_changed(true);
+
 		return true;
 	};
 
