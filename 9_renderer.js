@@ -595,6 +595,9 @@ function make_renderer() {
 			foo = foo.parent;
 		}
 
+		// FIXME: if the object stored in renderer.movelist_connections is still valid,
+		// we should reuse it rather than make a new one.
+		
 		let connections = TokenNodeConnections(renderer.node);
 
 		let elements = [];
