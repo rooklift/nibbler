@@ -41,7 +41,7 @@ try {
 		config = JSON.parse(debork_json(fs.readFileSync(config_example_filename, "utf8")));
 		config.warn_filename = true;
 	} else {
-		alert("config.json not present");
+		alert(`Couldn't find config file. Looked at:\n${config_filename}`);
 	}
 } catch (err) {
 	alert("Failed to parse config file - make sure it is valid JSON, and in particular, if on Windows, use \\\\ instead of \\ as a path separator.");

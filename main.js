@@ -18,7 +18,8 @@ try {
 	} else if (fs.existsSync(config_example_filename)) {
 		config = JSON.parse(debork_json(fs.readFileSync(config_example_filename, "utf8")));
 	} else {
-		console.log("Main process couldn't find config file.");
+		console.log("Main process couldn't find config file. Looked at:");
+		console.log("   " + config_filename);
 	}
 } catch (err) {
 	console.log("Main process couldn't parse config file.")
