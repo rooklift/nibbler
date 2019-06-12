@@ -367,7 +367,7 @@ function write_tree2(node, connector, skip_self_flag, force_number_string) {
 
 	if (node.move && node.parent && !skip_self_flag) {
 		if (node.parent.get_board().active === "w" || force_number_string) {
-			connector.push(node.parent.get_board().next_number_string(), null);
+			connector.push(node.parent.get_board().next_number_string(), node);
 		}
 		connector.push(node.nice_move(), node);
 	}
@@ -378,7 +378,7 @@ function write_tree2(node, connector, skip_self_flag, force_number_string) {
 	while (node.children.length === 1) {
 		node = node.children[0];
 		if (node.parent.get_board().active === "w") {
-			connector.push(node.parent.get_board().next_number_string(), null);
+			connector.push(node.parent.get_board().next_number_string(), node);
 		}
 		connector.push(node.nice_move(), node);
 	}
@@ -392,7 +392,7 @@ function write_tree2(node, connector, skip_self_flag, force_number_string) {
 	let main_child = node.children[0];
 
 	if (node.get_board().active === "w") {
-		connector.push(node.get_board().next_number_string(), null);
+		connector.push(node.get_board().next_number_string(), main_child);
 	}
 	connector.push(main_child.nice_move(), main_child);
 

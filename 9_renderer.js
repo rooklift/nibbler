@@ -585,6 +585,16 @@ function make_renderer() {
 
 	renderer.draw_movelist = () => {
 
+		// As an ugly hack, go through the nodes on the displayed line and add a flag
+		// to them so we know to draw them in a different colour. We'll undo the damage
+		// after we write the list.
+
+		let foo = renderer.node;
+		while(foo) {
+			foo.bright = true;
+			foo = foo.parent;
+		}
+
 		let connections = TokenNodeConnections(renderer.node);
 
 		let elements = [];
@@ -593,19 +603,28 @@ function make_renderer() {
 
 			let s = connections.tokens[n];
 			let next_s = connections.tokens[n + 1];		// possibly undefined
-			let node = connections.nodes[n];
+			let node = connections.nodes[n];			// possibly null
 
 			let space = (s === "(" || next_s === ")") ? "" : " ";
 
 			if (node === renderer.node && s.endsWith(".") === false) {
 				elements.push(`<span class="blue" id="movelist_${n}">${s}${space}</span>`);
+			} else if (node && node.bright) {
+				elements.push(`<span class="white" id="movelist_${n}">${s}${space}</span>`);
 			} else {
-				elements.push(`<span id="movelist_${n}">${s}${space}</span>`);
+				elements.push(`<span class="gray" id="movelist_${n}">${s}${space}</span>`);
 			}
 		}
 
-		movelist.innerHTML = elements.join("");
+		// Undo the damage...
 
+		foo = renderer.node;
+		while(foo) {
+			delete foo.bright;
+			foo = foo.parent;
+		}
+
+		movelist.innerHTML = elements.join("");
 		renderer.movelist_connections = connections;
 	};
 
