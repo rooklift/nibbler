@@ -592,12 +592,15 @@ function make_renderer() {
 		for (let n = 0; n < connections.length; n++) {
 
 			let s = connections.tokens[n];
+			let next_s = connections.tokens[n + 1];		// possibly undefined
 			let node = connections.nodes[n];
 
+			let space = (s === "(" || next_s === ")") ? "" : " ";
+
 			if (node === renderer.node && s.endsWith(".") === false) {
-				elements.push(`<span class="blue" id="movelist_${n}">` + s + " </span>");
+				elements.push(`<span class="blue" id="movelist_${n}">${s}${space}</span>`);
 			} else {
-				elements.push(`<span id="movelist_${n}">` + s + " </span>");
+				elements.push(`<span id="movelist_${n}">${s}${space}</span>`);
 			}
 		}
 
