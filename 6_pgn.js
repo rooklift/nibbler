@@ -100,7 +100,16 @@ function PreParsePGN(buf) {
 			continue;
 		}
 
-		if (rawline[0] === 91) {			// This is probably a TAG line...... FIXME: might catch [ inside a comment. Hmm.
+		let tagline = "";
+
+		if (rawline[0] === 91) {
+			let s = decoder.decode(rawline).trim();
+			if (s.endsWith(`"]`)) {
+				tagline = s;
+			}
+		}
+
+		if (tagline !== "") {
 
 			if (games[games.length - 1].movebufs.length > 0) {
 				// We have movetext already, so this must be a new game. Start it.
@@ -109,27 +118,22 @@ function PreParsePGN(buf) {
 
 			// Parse the tag line...
 
-			let line = decoder.decode(rawline).trim();
+			tagline = tagline.slice(1, tagline.length - 1);				// So now it's like:		Foo "bar etc"
 
-			if (line.endsWith("]")) {
+			let quote_i = tagline.indexOf(`"`);
 
-				line = line.slice(1, line.length - 1);						// So now it's like:		Foo "bar etc"
-
-				let quote_i = line.indexOf(`"`);
-
-				if (quote_i === -1) {
-					continue;
-				}
-
-				let key = line.slice(0, quote_i).trim();
-				let value = line.slice(quote_i + 1).trim();
-
-				if (value.endsWith(`"`)) {
-					value = value.slice(0, value.length - 1);
-				}
-
-				games[games.length - 1].tags[key] = SafeString(value);		// Escape evil characters. IMPORTANT!
+			if (quote_i === -1) {
+				continue;
 			}
+
+			let key = tagline.slice(0, quote_i).trim();
+			let value = tagline.slice(quote_i + 1).trim();
+
+			if (value.endsWith(`"`)) {
+				value = value.slice(0, value.length - 1);
+			}
+
+			games[games.length - 1].tags[key] = SafeString(value);		// Escape evil characters. IMPORTANT!
 
 		} else {
 
