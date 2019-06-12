@@ -7,8 +7,7 @@ function split_buffer(buf) {
 	let lines = [];
 
 	// Note: in push() we'd best use Buffer.from() rather than simple slices.
-	// It seems buf might get garbage-collected later, leading to the naive
-	// slices being invalid if we just used them as-is?
+	// There's some Electron bug I've encountered, see:
 	//
 	// Well, see https://github.com/fohristiwhirl/electron_crash_test
 
