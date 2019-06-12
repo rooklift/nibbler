@@ -9,7 +9,8 @@
 * Display Leela's top choices graphically.
 * One-click movement! Play one of Leela's choices by clicking on its target square.
 * (You can still make moves the old fashioned way, by clicking the moving piece first, of course.)
-* PGN and FEN loading.
+* FEN loading.
+* PGN loading via menu, clipboard, or drag-and-drop.
 * Clickable moves in the variation lists.
 * Various aesthetic adjustments are possible in the `config.json` file.
 
