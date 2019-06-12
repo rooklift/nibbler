@@ -175,6 +175,7 @@ function make_renderer() {
 	renderer.mousex = null;							// Raw mouse X on the canvas, e.g. between 0 and 640.
 	renderer.mousey = null;							// Raw mouse Y on the canvas, e.g. between 0 and 640.
 	renderer.one_click_moves = New2DArray(8, 8);	// 2D array of [x][y] --> move string or null.
+	renderer.movelist_connections = null;			// List of objects telling us what movelist clicks go to what nodes.
 	renderer.last_tick_highlight_dest = null;		// Used to skip redraws.
 
 	renderer.info_table = NewInfoTable();			// Holds info about the engine evaluations.
@@ -584,61 +585,32 @@ function make_renderer() {
 
 	renderer.draw_movelist = () => {
 
+		let connections = TokenNodeConnections(renderer.node);
+
 		let elements = [];
 
-		let root = renderer.node.get_root();
-		let main_line = root.future_history();
-		let history = renderer.node.history();
+		for (let n = 0; n < connections.length; n++) {
 
-		let node = root;
-		let n = 0;
+			let s = connections.tokens[n];
+			let node = connections.nodes[n];
 
-		let deviated = false;
-
-		for (let move of history) {
-
-			if (deviated === false && node.children.length > 0 && node.children[0].move !== move) {
-				deviated = true;
-				elements.push(`<span class="red" id="mainline_deviated">[return to main]</span> `);
+			if (node === renderer.node && s.endsWith(".") === false) {
+				elements.push(`<span class="blue" id="movelist_${n}">` + s + " </span>");
+			} else {
+				elements.push(`<span id="movelist_${n}">` + s + " </span>");
 			}
-
-			let fm = "";
-
-			let board = node.get_board();
-
-			if (board.active === "w") {
-				fm = `${board.fullmove}. `;
-			}
-
-			elements.push(`<span id="movelist_${n++}">` + fm + board.nice_string(move) + " </span>");
-			node = node.make_move(move);
-		}
-
-		if (node.children.length > 0) {
-
-			elements.push(`<span class="gray">`);
-
-			while (node.children.length > 0) {
-
-				let fm = "";
-
-				let board = node.get_board();
-
-				if (board.active === "w") {
-					fm = `${board.fullmove}. `;
-				}
-
-				elements.push(`<span id="movelist_${n++}">` + fm + board.nice_string(node.children[0].move) + " </span>");
-				node = node.children[0];
-			}
-
-			elements.push("</span>");
 		}
 
 		movelist.innerHTML = elements.join("");
+
+		renderer.movelist_connections = connections;
 	};
 
 	renderer.movelist_click = (event) => {
+
+		if (!renderer.movelist_connections) {
+			return;
+		}
 
 		let n;
 
@@ -659,19 +631,22 @@ function make_renderer() {
 			return;
 		}
 
-		let future_history = renderer.node.future_history();
-
-		if (n < future_history.length) {
-
-			let node = renderer.node.get_root();
-
-			for (let move of future_history.slice(0, n + 1)) {
-				node = node.make_move(move);
-			}
-
-			renderer.node = node;
-			renderer.position_changed();
+		if (n < 0 || n >= renderer.movelist_connections.length) {
+			return;
 		}
+
+		let node = renderer.movelist_connections.nodes[n];
+
+		if (!node) {
+			return;
+		}
+
+		if (node.get_root() !== renderer.node.get_root()) {
+			return;
+		}
+
+		renderer.node = node;
+		renderer.position_changed();
 	};
 
 	renderer.mouse_to_point = (mousex, mousey) => {

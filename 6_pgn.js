@@ -302,6 +302,9 @@ function SavePGN(filename, node) {
 
 function StringPGN(node) {
 
+	// FIXME: rewrite this to use TokenNodeConnections()
+	// and delete write_tree()
+
 	node = node.get_root();
 	let tokens = [];
 	write_tree(node, tokens, false, true);
@@ -372,4 +375,72 @@ function write_tree(node, tokens, skip_self_flag, force_number_string) {
 	}
 
 	write_tree(main_child, tokens, true, false);
+}
+
+function new_string_node_connector() {
+
+	// Object will contain the tokens of a PGN string, plus
+	// what node (possibly null) we should go to if they're clicked on.
+
+	return {
+		tokens: [],
+		nodes: [],
+		length: 0,
+		push: function(token, node) {
+			this.tokens.push(token);
+			this.nodes.push(node);
+			this.length++;
+		}
+	};
+}
+
+function TokenNodeConnections(node) {
+	let connector = new_string_node_connector();
+	node = node.get_root();
+	write_tree2(node, connector, false, true);
+	return connector;
+}
+
+function write_tree2(node, connector, skip_self_flag, force_number_string) {
+
+	// Write this node itself...
+
+	if (node.move && node.parent && !skip_self_flag) {
+		if (node.parent.get_board().active === "w" || force_number_string) {
+			connector.push(node.parent.get_board().next_number_string(), null);
+		}
+		connector.push(node.nice_move(), node);
+	}
+
+	// Write descendents as long as there's no branching,
+	// or return if we reach a node with no children.
+
+	while (node.children.length === 1) {
+		node = node.children[0];
+		if (node.parent.get_board().active === "w") {
+			connector.push(node.parent.get_board().next_number_string(), null);
+		}
+		connector.push(node.nice_move(), node);
+	}
+
+	if (node.children.length === 0) {
+		return;
+	}
+
+	// So multiple child nodes exist...
+
+	let main_child = node.children[0];
+
+	if (node.get_board().active === "w") {
+		connector.push(node.get_board().next_number_string(), null);
+	}
+	connector.push(main_child.nice_move(), main_child);
+
+	for (let child of node.children.slice(1)) {
+		connector.push("(", null);
+		write_tree2(child, connector, false, true);
+		connector.push(")", null);
+	}
+
+	write_tree2(main_child, connector, true, false);
 }
