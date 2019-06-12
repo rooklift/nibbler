@@ -12,6 +12,6 @@
 		"pack": "electron-builder --dir"
 	},
 	"build": {
-		"electronVersion": "5.0.2"
+		"electronVersion": "5.0.3"
 	}
 }
