@@ -1171,6 +1171,8 @@ movelist.addEventListener("mousedown", (event) => {
 	renderer.movelist_click(event);
 });
 
+// Constantly track the mouse...
+
 canvas.addEventListener("mousemove", (event) => {
 	// This can fire a LOT. So don't call any more functions.
 	renderer.mousex = event.offsetX;
@@ -1187,6 +1189,17 @@ fenbox.onkeydown = (event) => {
 	if (event.key === "Enter") {
 		renderer.load_fen(fenbox.value);
 	}
+};
+
+// Setup drag-and-drop for PGN files into the window itself...
+
+window.ondragover = () => false;
+window.ondragleave = () => false;
+window.ondragend = () => false;
+window.ondrop = (event) => {
+	event.preventDefault();
+	renderer.open(event.dataTransfer.files[0].path);
+	return false;
 };
 
 function draw_after_images_load() {
