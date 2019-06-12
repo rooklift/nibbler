@@ -32,10 +32,13 @@ function sync() {
 // ------------------------------------------------------------------------------------------------
 
 try {
-	if (fs.existsSync("config.json")) {
-		config = JSON.parse(debork_json(fs.readFileSync("config.json", "utf8")));
-	} else if (fs.existsSync("config.example.json")) {
-		config = JSON.parse(debork_json(fs.readFileSync("config.example.json", "utf8")));
+	let config_filename = path.join(get_main_folder(), "config.json");
+	let config_example_filename = path.join(get_main_folder(), "config.example.json");
+
+	if (fs.existsSync(config_filename)) {
+		config = JSON.parse(debork_json(fs.readFileSync(config_filename, "utf8")));
+	} else if (fs.existsSync(config_example_filename)) {
+		config = JSON.parse(debork_json(fs.readFileSync(config_example_filename, "utf8")));
 		config.warn_filename = true;
 	} else {
 		alert("config.json not present");

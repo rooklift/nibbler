@@ -10,13 +10,18 @@ const windows = require("./modules/windows");
 let config = {};
 
 try {
-	if (fs.existsSync("config.json")) {
-		config = JSON.parse(debork_json(fs.readFileSync("config.json", "utf8")));
-	} else if (fs.existsSync("config.example.json")) {
-		config = JSON.parse(debork_json(fs.readFileSync("config.example.json", "utf8")));
+	let config_filename = path.join(get_main_folder(), "config.json");
+	let config_example_filename = path.join(get_main_folder(), "config.example.json");
+
+	if (fs.existsSync(config_filename)) {
+		config = JSON.parse(debork_json(fs.readFileSync(config_filename, "utf8")));
+	} else if (fs.existsSync(config_example_filename)) {
+		config = JSON.parse(debork_json(fs.readFileSync(config_example_filename, "utf8")));
+	} else {
+		console.log("Main process couldn't find config file.");
 	}
 } catch (err) {
-	// pass
+	console.log("Main process couldn't parse config file.")
 }
 
 if (config.width === undefined || config.width <= 0) {
@@ -39,7 +44,8 @@ electron.app.on("window-all-closed", () => {
 electron.ipcMain.on("renderer_ready", () => {
 
 	// Open a file via command line. We must wait until the renderer has properly loaded before we do this.
-	// Also some awkwardness around the different ways Nibbler can be started.
+	// Also some awkwardness around the different ways Nibbler can be started, meaning the number of arguments
+	// we get can be different.
 
 	let filename = "";
 
@@ -54,7 +60,6 @@ electron.ipcMain.on("renderer_ready", () => {
 	}
 
 	if (filename !== "") {
-		console.log("yes");
 		windows.send("main-window", "call", {
 			fn: "open",
 			args: [filename]
@@ -416,4 +421,22 @@ number of moves. Note that displayed winrates are dubious for moves \
 with few visits.`;
 
 	alert(s);
+}
+
+function get_main_folder() {
+
+	// Sadly this can't be a module since __dirname will change if it's
+	// in the modules folder. So this code is duplicated between the
+	// renderer and main process code...
+
+
+	// Return the dir of this .js file if we're being run from electron.exe
+
+	if (path.basename(process.argv[0]) === "electron" || path.basename(process.argv[0]) === "electron.exe") {
+		return __dirname;
+	}
+
+	// Return the location of Nibbler.exe
+
+	return path.dirname(process.argv[0]);
 }

@@ -139,3 +139,21 @@ function New2DArray(width, height) {
 
 	return ret;
 }
+
+function get_main_folder() {
+
+	// Sadly this can't be a module since __dirname will change if it's
+	// in the modules folder. So this code is duplicated between the
+	// renderer and main process code...
+
+
+	// Return the dir of this .js file if we're being run from electron.exe
+
+	if (path.basename(process.argv[0]) === "electron" || path.basename(process.argv[0]) === "electron.exe") {
+		return __dirname;
+	}
+
+	// Return the location of Nibbler.exe
+
+	return path.dirname(process.argv[0]);
+}
