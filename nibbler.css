@@ -65,6 +65,7 @@ input[type=text]:focus{
 	margin-top: 1em;
 	overflow-x: hidden;
 	overflow-y: auto;
+	user-select: none;
 	white-space: pre-wrap;
 }
 
