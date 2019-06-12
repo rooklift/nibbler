@@ -1202,12 +1202,13 @@ window.ondrop = (event) => {
 	return false;
 };
 
-function draw_after_images_load() {
+function enter_loop() {
 	if (loads === 12) {
 		renderer.draw_loop();
+		ipcRenderer.send("renderer_ready", null);
 	} else {
-		setTimeout(draw_after_images_load, 25);
+		setTimeout(enter_loop, 25);
 	}
 }
 
-draw_after_images_load();
+enter_loop();

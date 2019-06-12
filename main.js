@@ -36,6 +36,32 @@ electron.app.on("window-all-closed", () => {
 	electron.app.quit();
 });
 
+electron.ipcMain.on("renderer_ready", () => {
+
+	// Open a file via command line. We must wait until the renderer has properly loaded before we do this.
+	// Also some awkwardness around the different ways Nibbler can be started.
+
+	let filename = "";
+
+	if (path.basename(process.argv[0]) === "electron" || path.basename(process.argv[0]) === "electron.exe") {
+		if (process.argv.length > 2) {
+			filename = process.argv[process.argv.length - 1];
+		}
+	} else {
+		if (process.argv.length > 1) {
+			filename = process.argv[process.argv.length - 1];
+		}
+	}
+
+	if (filename !== "") {
+		console.log("yes");
+		windows.send("main-window", "call", {
+			fn: "open",
+			args: [filename]
+		});
+	}
+});
+
 function menu_build() {
 	const template = [
 		{
