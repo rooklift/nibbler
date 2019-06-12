@@ -74,6 +74,8 @@ function new_byte_pusher(size) {
 	};
 }
 
+// -------------------------------------------------------------------------
+
 function new_pgn_record() {
 	return {
 		tags: Object.create(null),
@@ -269,6 +271,7 @@ function LoadPGNRecord(o) {
 	return root;
 }
 
+// -------------------------------------------------------------------------
 
 function SavePGN(filename, node) {
 
@@ -302,20 +305,17 @@ function SavePGN(filename, node) {
 
 function StringPGN(node) {
 
-	// FIXME: rewrite this to use TokenNodeConnections()
-	// and delete write_tree()
-
+	let connector = new_string_node_connector();
 	node = node.get_root();
-	let tokens = [];
-	write_tree(node, tokens, false, true);
-	tokens.push("*");
+	write_tree2(node, connector, false, true);
+	connector.push("*", null);
 
 	// Now it's all about wrapping to 80 chars...
 
 	let lines = [];
 	let line = "";
 
-	for (let token of tokens) {
+	for (let token of connector.tokens) {
 		if (line.length + token.length > 79) {
 			lines.push(line);
 			line = token;
@@ -333,48 +333,15 @@ function StringPGN(node) {
 	return lines.join("\n");
 }
 
-function write_tree(node, tokens, skip_self_flag, force_number_string) {
+// -------------------------------------------------------------------------
+// This section was invented for the window's move_list, but incidentally
+// also produces valid PGN.
 
-	// Write this node itself...
-
-	if (node.move && node.parent && !skip_self_flag) {
-		if (node.parent.get_board().active === "w" || force_number_string) {
-			tokens.push(node.parent.get_board().next_number_string());
-		}
-		tokens.push(node.nice_move());
-	}
-
-	// Write descendents as long as there's no branching,
-	// or return if we reach a node with no children.
-
-	while (node.children.length === 1) {
-		if (node.get_board().active === "w") {
-			tokens.push(node.get_board().next_number_string());
-		}
-		node = node.children[0];
-		tokens.push(node.nice_move());
-	}
-
-	if (node.children.length === 0) {
-		return;
-	}
-
-	// So multiple child nodes exist...
-
-	let main_child = node.children[0];
-
-	if (node.get_board().active === "w") {
-		tokens.push(node.get_board().next_number_string());
-	}
-	tokens.push(main_child.nice_move());
-
-	for (let child of node.children.slice(1)) {
-		tokens.push("(");
-		write_tree(child, tokens, false, true);
-		tokens.push(")");
-	}
-
-	write_tree(main_child, tokens, true, false);
+function TokenNodeConnections(node) {
+	let connector = new_string_node_connector();
+	node = node.get_root();
+	write_tree2(node, connector, false, true);
+	return connector;
 }
 
 function new_string_node_connector() {
@@ -392,13 +359,6 @@ function new_string_node_connector() {
 			this.length++;
 		}
 	};
-}
-
-function TokenNodeConnections(node) {
-	let connector = new_string_node_connector();
-	node = node.get_root();
-	write_tree2(node, connector, false, true);
-	return connector;
 }
 
 function write_tree2(node, connector, skip_self_flag, force_number_string) {
