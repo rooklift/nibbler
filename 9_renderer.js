@@ -7,7 +7,11 @@ function send(msg) {
 		exe.stdin.write("\n");
 		Log("--> " + msg);
 	} catch (err) {
-		// pass
+		Log("(failed) --> " + msg);
+		if (exe.connected === false && !send.warned) {
+			send.warned = true;
+			alert("The engine appears to have crashed.");
+		}
 	}
 }
 
