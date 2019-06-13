@@ -253,6 +253,7 @@ function menu_build() {
 				},
 				{
 					label: "Delete move",
+					accelerator: "CommandOrControl+Backspace",
 					click: () => {
 						windows.send("main-window", "call", "delete_move");
 					}
