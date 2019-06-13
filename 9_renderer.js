@@ -270,8 +270,8 @@ function make_renderer() {
 		renderer.position_changed();
 	};
 
-	renderer.mwheel = (event) => {					// Some awkward interactions with the main line scroll wheel.
-		if (event.deltaY && event.deltaY < 0) {		// (And also the PGN chooser, but that would be easy to fix.)
+	renderer.mwheel = (event) => {					// Some awkward interactions with the movelist
+		if (event.deltaY && event.deltaY < 0) {		// scrollbar and also with the PGN chooser.
 			renderer.prev();
 		}
 		if (event.deltaY && event.deltaY > 0) {
@@ -1272,7 +1272,7 @@ document.addEventListener("wheel", (event) => {
 
 	if (event.path) {
 		for (let item of event.path) {
-			if (typeof item.id === "string" && item.id === "movelist") {
+			if (item.id === "movelist") {
 				allow = false;
 				break;
 			}
