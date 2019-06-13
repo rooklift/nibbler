@@ -180,7 +180,7 @@ function make_renderer() {
 	renderer.mousey = null;							// Raw mouse Y on the canvas, e.g. between 0 and 640.
 	renderer.one_click_moves = New2DArray(8, 8);	// 2D array of [x][y] --> move string or null.
 	renderer.movelist_connections = null;			// List of objects telling us what movelist clicks go to what nodes.
-	renderer.movelist_connections_version = -1;		// 
+	renderer.movelist_connections_version = -1;		// Set equal to total_tree_changes when movelist_connections changes.
 	renderer.last_tick_highlight_dest = null;		// Used to skip redraws.
 
 	renderer.info_table = NewInfoTable();			// Holds info about the engine evaluations.
@@ -590,7 +590,7 @@ function make_renderer() {
 
 	renderer.draw_movelist = () => {
 
-		// As an ugly hack, go through the nodes on the displayed line and add a flag
+		// As a cheap hack, go through the nodes on the displayed line and add a flag
 		// to them so we know to draw them in a different colour. We'll undo the damage
 		// after we write the list.
 
@@ -605,26 +605,38 @@ function make_renderer() {
 			renderer.movelist_connections_version = total_tree_changes;
 		}
 
-		let elements = [];
+		let elements = [];		// Objects containing class and text.
+
+		let blue_element_n;
 
 		for (let n = 0; n < renderer.movelist_connections.length; n++) {
 
 			let s = renderer.movelist_connections.tokens[n];
+
 			let next_s = renderer.movelist_connections.tokens[n + 1];	// possibly undefined
 			let node = renderer.movelist_connections.nodes[n];			// possibly null
 
 			let space = (s === "(" || next_s === ")") ? "" : " ";
 
+			let element = {
+				text: `${s}${space}`
+			};
+
 			if (node === renderer.node && s.endsWith(".") === false) {
-				elements.push(`<span class="blue" id="movelist_${n}">${s}${space}</span>`);
+				element.class = "blue";
+				blue_element_n = n;
 			} else if (node && node.bright) {
-				elements.push(`<span class="white" id="movelist_${n}">${s}${space}</span>`);
+				element.class = "white";
 			} else {
-				elements.push(`<span class="gray" id="movelist_${n}">${s}${space}</span>`);
+				element.class = "gray";
 			}
+
+			elements.push(element);
 		}
 
-		// Undo the damage...
+		renderer.update_clickable_thingy(movelist, elements, "movelist");
+
+		// Undo the damage to our tree...
 
 		foo = renderer.node;
 		while(foo) {
@@ -632,7 +644,27 @@ function make_renderer() {
 			foo = foo.parent;
 		}
 
-		movelist.innerHTML = elements.join("");
+		// Fix the scrollbar position...
+
+		if (blue_element_n !== undefined) {
+
+			let top = document.getElementById(`movelist_${blue_element_n}`).offsetTop - movelist.offsetTop;
+
+			if (top < movelist.scrollTop) {
+				movelist.scrollTop = top;
+			}
+
+			let bottom = top + document.getElementById(`movelist_${blue_element_n}`).offsetHeight;
+
+			if (bottom > movelist.scrollTop + movelist.offsetHeight) {
+				movelist.scrollTop = bottom - movelist.offsetHeight;
+			}
+
+		} else if (!renderer.node.parent) {
+
+			movelist.scrollTop = 0;
+
+		}
 	};
 
 	renderer.movelist_click = (event) => {
@@ -703,17 +735,31 @@ function make_renderer() {
 		return Point(boardx, boardy);
 	};
 
-	renderer.infobox_skips = 0;			// Debugging...
+	renderer.update_clickable_thingy = (thingy, elements, prefix) => {
+
+		// What this is: given a container (the thingy) and a list of elements (which are normal JS objects
+		// containing a "text" and a "class" property) we make the container have child spans which have the
+		// said text and class, as well as a unique id so they can be clicked on (e.g. "foo_37").
+		//
+		// It seems setting innerHTML is the performant way to do this. Direct DOM manipulation
+		// on the other hand is (shockingly to me) apparently slower than just setting innerHTML.
+
+		let new_inner_parts = [];
+
+		let elements_length = elements.length;					// Is this type of optimisation helpful?
+
+		for (let n = 0; n < elements.length; n++) {
+			let part = `<span id="${prefix}_${n}" class="${elements[n].class}">${elements[n].text}</span>`;
+			new_inner_parts.push(part)
+		}
+
+		thingy.innerHTML = new_inner_parts.join("");
+	};
+
 	renderer.draw_infobox = () => {
 
 		if (!renderer.ever_received_info) {
-			let html_nodes = infobox.children;
-			if (html_nodes.length === 0) {
-				let node = document.createElement("span");
-				node.id = "clicker_0";
-				infobox.appendChild(node);
-			}
-			html_nodes[0].innerHTML = renderer.stderr_log;
+			infobox.innerHTML = renderer.stderr_log;
 			return;
 		}
 
@@ -735,8 +781,12 @@ function make_renderer() {
 		// So maybe we can skip drawing the infobox, and just return...
 
 		if (renderer.info_table.drawn) {
+
 			if (highlight_dest === renderer.last_tick_highlight_dest) {
-				renderer.infobox_skips++;
+
+				// Count skips for debugging...
+
+				renderer.draw_infobox.skips = renderer.draw_infobox.skips === undefined ? 1 : renderer.draw_infobox.skips + 1;
 				return;
 			}
 		}
@@ -746,7 +796,7 @@ function make_renderer() {
 		//
 
 		let info_list = renderer.info_table.sorted();
-		let elements = [];												// Not HTML elements, just our own objects
+		let elements = [];									// Not HTML elements, just our own objects.
 
 		if (renderer.running === false) {
 			elements.push({
@@ -807,31 +857,8 @@ function make_renderer() {
 			elements = elements.concat(new_elements);
 		}
 
-		let html_nodes = infobox.children;
-		let elements_length = elements.length;				// Is this type of optimisation helpful?
-		let initial_html_nodes_length = html_nodes.length;
-
-		for (let n = 0; true; n++) {
-			if (n < initial_html_nodes_length && n < elements_length) {
-				html_nodes[n].innerHTML = elements[n].text;
-				html_nodes[n].className = elements[n].class;
-				html_nodes[n].style.display = "inline";
-			} else if (n < initial_html_nodes_length) {
-				html_nodes[n].style.display = "none";
-			} else if (n < elements_length) {
-				let node = document.createElement("span");
-				node.id = `clicker_${n}`;
-				node.innerHTML = elements[n].text;
-				node.className = elements[n].class;
-				node.style.display = "inline";
-				infobox.appendChild(node);
-			} else {
-				break;
-			}
-		}
-
-		renderer.infobox_clickers = elements;
-
+		renderer.update_clickable_thingy(infobox, elements, "infobox");
+		renderer.infobox_clickers = elements;				// We actually only need the move or its absence in each object. Meh.
 		renderer.info_table.drawn = true;
 	};
 
@@ -840,7 +867,7 @@ function make_renderer() {
 		let n;
 
 		for (let item of event.path) {
-			if (typeof item.id === "string" && item.id.startsWith("clicker_")) {
+			if (typeof item.id === "string" && item.id.startsWith("infobox_")) {
 				n = parseInt(item.id.slice(8), 10);
 				break;
 			}
