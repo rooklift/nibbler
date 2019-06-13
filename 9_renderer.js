@@ -605,10 +605,25 @@ function make_renderer() {
 		// after we write the list.
 
 		let foo = renderer.node;
-		while(foo) {
+		while (foo) {
 			foo.bright = true;
 			foo = foo.parent;
 		}
+
+		// We'd also like to know if the current node is on the main line...
+
+		let on_mainline = false;
+
+		foo = renderer.node.get_root().get_end();
+		while (foo) {
+			if (foo === renderer.node) {
+				on_mainline = true;
+				break;
+			}
+			foo = foo.parent;
+		}
+
+		//
 
 		if (!renderer.movelist_connections || renderer.movelist_connections_version !== total_tree_changes) {
 			renderer.movelist_connections = TokenNodeConnections(renderer.node);
@@ -617,7 +632,7 @@ function make_renderer() {
 
 		let elements = [];		// Objects containing class and text.
 
-		let blue_element_n;
+		let renderer_move_element_n;
 
 		for (let n = 0; n < renderer.movelist_connections.length; n++) {
 
@@ -633,8 +648,8 @@ function make_renderer() {
 			};
 
 			if (node === renderer.node && s.endsWith(".") === false) {
-				element.class = "blue";
-				blue_element_n = n;
+				element.class = on_mainline ? "blue" : "yellow";
+				renderer_move_element_n = n;
 			} else if (node && node.bright) {
 				element.class = "white";
 			} else {
@@ -656,15 +671,15 @@ function make_renderer() {
 
 		// Fix the scrollbar position...
 
-		if (blue_element_n !== undefined) {
+		if (renderer_move_element_n !== undefined) {
 
-			let top = document.getElementById(`movelist_${blue_element_n}`).offsetTop - movelist.offsetTop;
+			let top = document.getElementById(`movelist_${renderer_move_element_n}`).offsetTop - movelist.offsetTop;
 
 			if (top < movelist.scrollTop) {
 				movelist.scrollTop = top;
 			}
 
-			let bottom = top + document.getElementById(`movelist_${blue_element_n}`).offsetHeight;
+			let bottom = top + document.getElementById(`movelist_${renderer_move_element_n}`).offsetHeight;
 
 			if (bottom > movelist.scrollTop + movelist.offsetHeight) {
 				movelist.scrollTop = bottom - movelist.offsetHeight;
