@@ -737,48 +737,25 @@ function make_renderer() {
 		// containing a "text" and a "class" property) we make the container have child spans which have the
 		// said text and class, as well as a unique id so they can be clicked on (e.g. "foo_37").
 		//
-		// If the children already exist, we reuse them.
-		// We hide existing children if there are too many.
-		// We create more children as needed.
+		// It seems setting innerHTML is the performant way to do this. Direct DOM manipulation
+		// on the other hand is (shockingly to me) apparently slower than just setting innerHTML.
 
-		let html_nodes = thingy.children;
+		let new_inner_parts = [];
+
 		let elements_length = elements.length;					// Is this type of optimisation helpful?
-		let initial_html_nodes_length = html_nodes.length;
 
-		for (let n = 0; true; n++) {
-			if (n < initial_html_nodes_length && n < elements_length) {
-				html_nodes[n].innerHTML = elements[n].text;
-				html_nodes[n].className = elements[n].class;
-				html_nodes[n].style.display = "inline";
-				if (html_nodes[n].id !== `${prefix}_${n}`) {
-					console.log("update_clickable_thingy(): Pre-existing child did not have correct id");
-					html_nodes[n].id = `${prefix}_${n}`;
-				}
-			} else if (n < initial_html_nodes_length) {
-				html_nodes[n].style.display = "none";
-			} else if (n < elements_length) {
-				let node = document.createElement("span");
-				node.id = `${prefix}_${n}`;
-				node.innerHTML = elements[n].text;
-				node.className = elements[n].class;
-				node.style.display = "inline";
-				thingy.appendChild(node);
-			} else {
-				break;
-			}
+		for (let n = 0; n < elements.length; n++) {
+			let part = `<span id="${prefix}_${n}" class="${elements[n].class}">${elements[n].text}</span>`;
+			new_inner_parts.push(part)
 		}
+
+		thingy.innerHTML = new_inner_parts.join("");
 	};
 
 	renderer.draw_infobox = () => {
 
 		if (!renderer.ever_received_info) {
-			let html_nodes = infobox.children;
-			if (html_nodes.length === 0) {
-				let node = document.createElement("span");
-				node.id = "infobox_0";
-				infobox.appendChild(node);
-			}
-			html_nodes[0].innerHTML = renderer.stderr_log;
+			infobox.innerHTML = renderer.stderr_log;
 			return;
 		}
 
