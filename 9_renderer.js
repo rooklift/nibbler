@@ -775,7 +775,7 @@ function make_renderer() {
 			let html_nodes = infobox.children;
 			if (html_nodes.length === 0) {
 				let node = document.createElement("span");
-				node.id = "clicker_0";
+				node.id = "infobox_0";
 				infobox.appendChild(node);
 			}
 			html_nodes[0].innerHTML = renderer.stderr_log;
@@ -800,8 +800,11 @@ function make_renderer() {
 		// So maybe we can skip drawing the infobox, and just return...
 
 		if (renderer.info_table.drawn) {
+
 			if (highlight_dest === renderer.last_tick_highlight_dest) {
+
 				// Count skips for debugging...
+
 				renderer.draw_infobox.skips = renderer.draw_infobox.skips === undefined ? 1 : renderer.draw_infobox.skips + 1;
 				return;
 			}
@@ -812,7 +815,7 @@ function make_renderer() {
 		//
 
 		let info_list = renderer.info_table.sorted();
-		let elements = [];												// Not HTML elements, just our own objects
+		let elements = [];									// Not HTML elements, just our own objects.
 
 		if (renderer.running === false) {
 			elements.push({
@@ -873,7 +876,7 @@ function make_renderer() {
 			elements = elements.concat(new_elements);
 		}
 
-		renderer.update_clickable_thingy(infobox, elements, "clicker");
+		renderer.update_clickable_thingy(infobox, elements, "infobox");
 		renderer.infobox_clickers = elements;				// We actually only need the move or its absence in each object. Meh.
 		renderer.info_table.drawn = true;
 	};
@@ -883,7 +886,7 @@ function make_renderer() {
 		let n;
 
 		for (let item of event.path) {
-			if (typeof item.id === "string" && item.id.startsWith("clicker_")) {
+			if (typeof item.id === "string" && item.id.startsWith("infobox_")) {
 				n = parseInt(item.id.slice(8), 10);
 				break;
 			}
