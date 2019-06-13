@@ -180,6 +180,7 @@ function make_renderer() {
 	renderer.mousey = null;							// Raw mouse Y on the canvas, e.g. between 0 and 640.
 	renderer.one_click_moves = New2DArray(8, 8);	// 2D array of [x][y] --> move string or null.
 	renderer.movelist_connections = null;			// List of objects telling us what movelist clicks go to what nodes.
+	renderer.movelist_connections_version = -1;		// 
 	renderer.last_tick_highlight_dest = null;		// Used to skip redraws.
 
 	renderer.info_table = NewInfoTable();			// Holds info about the engine evaluations.
@@ -599,18 +600,18 @@ function make_renderer() {
 			foo = foo.parent;
 		}
 
-		// FIXME: if the object stored in renderer.movelist_connections is still valid,
-		// we should reuse it rather than make a new one.
-		
-		let connections = TokenNodeConnections(renderer.node);
+		if (!renderer.movelist_connections || renderer.movelist_connections_version !== total_tree_changes) {
+			renderer.movelist_connections = TokenNodeConnections(renderer.node);
+			renderer.movelist_connections_version = total_tree_changes;
+		}
 
 		let elements = [];
 
-		for (let n = 0; n < connections.length; n++) {
+		for (let n = 0; n < renderer.movelist_connections.length; n++) {
 
-			let s = connections.tokens[n];
-			let next_s = connections.tokens[n + 1];		// possibly undefined
-			let node = connections.nodes[n];			// possibly null
+			let s = renderer.movelist_connections.tokens[n];
+			let next_s = renderer.movelist_connections.tokens[n + 1];	// possibly undefined
+			let node = renderer.movelist_connections.nodes[n];			// possibly null
 
 			let space = (s === "(" || next_s === ")") ? "" : " ";
 
@@ -632,7 +633,6 @@ function make_renderer() {
 		}
 
 		movelist.innerHTML = elements.join("");
-		renderer.movelist_connections = connections;
 	};
 
 	renderer.movelist_click = (event) => {

@@ -1,5 +1,11 @@
 "use strict";
 
+// EVERYTHING that changes the tree structure must increment total_tree_changes.
+// Currently this means:
+//
+//		- NewNode()
+//		- promote_to_main_line()
+
 const node_prototype = {
 
 	make_move: function(s) {
@@ -71,6 +77,8 @@ const node_prototype = {
 
 	promote_to_main_line: function() {
 
+		total_tree_changes++;
+
 		let node = this;
 
 		while (node.parent) {
@@ -101,6 +109,8 @@ const node_prototype = {
 };
 
 function NewNode(parent, move) {		// Args are null for root only.
+
+	total_tree_changes++;
 
 	let ret = Object.create(node_prototype);
 
