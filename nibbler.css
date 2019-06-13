@@ -107,8 +107,16 @@ span.blue {
 	color: #6cccee;
 }
 
+span.blueback {
+	background-color: #222244;
+}
+
 span.redback {
 	background-color: #770000;
+}
+
+span.yellowback {
+	background-color: #444422;
 }
 
 span.nobr {

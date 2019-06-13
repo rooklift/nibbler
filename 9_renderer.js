@@ -650,7 +650,7 @@ function make_renderer() {
 			};
 
 			if (node === renderer.node && s.endsWith(".") === false) {
-				element.class = on_mainline ? "blue" : "yellow";
+				element.class = on_mainline ? "blue blueback" : "yellow yellowback";
 				renderer_move_element_n = n;
 			} else if (node && node.current_line) {
 				element.class = "white";
