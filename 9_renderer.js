@@ -590,7 +590,7 @@ function make_renderer() {
 
 	renderer.draw_movelist = () => {
 
-		// As an ugly hack, go through the nodes on the displayed line and add a flag
+		// As a cheap hack, go through the nodes on the displayed line and add a flag
 		// to them so we know to draw them in a different colour. We'll undo the damage
 		// after we write the list.
 
@@ -605,35 +605,38 @@ function make_renderer() {
 			renderer.movelist_connections_version = total_tree_changes;
 		}
 
-		let elements = [];
+		let elements = [];		// Objects containing class and text.
 
-		// FIXME: we should likely create HTML nodes and add them to the DOM, rather than
-		// doing things via innerHTML, which must be slower I'd think.
-
-		let node_n;
+		let blue_element_n;
 
 		for (let n = 0; n < renderer.movelist_connections.length; n++) {
 
 			let s = renderer.movelist_connections.tokens[n];
+
 			let next_s = renderer.movelist_connections.tokens[n + 1];	// possibly undefined
 			let node = renderer.movelist_connections.nodes[n];			// possibly null
 
 			let space = (s === "(" || next_s === ")") ? "" : " ";
 
+			let element = {
+				text: `${s}${space}`
+			};
+
 			if (node === renderer.node && s.endsWith(".") === false) {
-				elements.push(`<span class="blue" id="movelist_${n}">${s}${space}</span>`);
+				element.class = "blue";
+				blue_element_n = n;
 			} else if (node && node.bright) {
-				elements.push(`<span class="white" id="movelist_${n}">${s}${space}</span>`);
+				element.class = "white";
 			} else {
-				elements.push(`<span class="gray" id="movelist_${n}">${s}${space}</span>`);
+				element.class = "gray";
 			}
 
-			if (node === renderer.node && s !== "(" && s !== ")" && s.endsWith(".") === false) {
-				node_n = n;
-			}
+			elements.push(element);
 		}
 
-		// Undo the damage...
+		renderer.update_clickable_thingy(movelist, elements, "movelist");
+
+		// Undo the damage to our tree...
 
 		foo = renderer.node;
 		while(foo) {
@@ -641,19 +644,17 @@ function make_renderer() {
 			foo = foo.parent;
 		}
 
-		movelist.innerHTML = elements.join("");
-
 		// Fix the scrollbar position...
 
-		if (node_n !== undefined) {
+		if (blue_element_n !== undefined) {
 
-			let top = document.getElementById(`movelist_${node_n}`).offsetTop - movelist.offsetTop;
+			let top = document.getElementById(`movelist_${blue_element_n}`).offsetTop - movelist.offsetTop;
 
 			if (top < movelist.scrollTop) {
 				movelist.scrollTop = top;
 			}
 
-			let bottom = top + document.getElementById(`movelist_${node_n}`).offsetHeight;
+			let bottom = top + document.getElementById(`movelist_${blue_element_n}`).offsetHeight;
 
 			if (bottom > movelist.scrollTop + movelist.offsetHeight) {
 				movelist.scrollTop = bottom - movelist.offsetHeight;
@@ -728,6 +729,36 @@ function make_renderer() {
 		}
 
 		return Point(boardx, boardy);
+	};
+
+	renderer.update_clickable_thingy = (thingy, elements, prefix) => {
+
+		// The elements are not HTML elements but rather our own
+		// objects containing class and text properties. It may
+		// also contain other properties not used here.
+
+		let html_nodes = thingy.children;
+		let elements_length = elements.length;					// Is this type of optimisation helpful?
+		let initial_html_nodes_length = html_nodes.length;
+
+		for (let n = 0; true; n++) {
+			if (n < initial_html_nodes_length && n < elements_length) {
+				html_nodes[n].innerHTML = elements[n].text;
+				html_nodes[n].className = elements[n].class;
+				html_nodes[n].style.display = "inline";
+			} else if (n < initial_html_nodes_length) {
+				html_nodes[n].style.display = "none";
+			} else if (n < elements_length) {
+				let node = document.createElement("span");
+				node.id = `${prefix}_${n}`;
+				node.innerHTML = elements[n].text;
+				node.className = elements[n].class;
+				node.style.display = "inline";
+				thingy.appendChild(node);
+			} else {
+				break;
+			}
+		}
 	};
 
 	renderer.infobox_skips = 0;			// Debugging...
@@ -834,31 +865,8 @@ function make_renderer() {
 			elements = elements.concat(new_elements);
 		}
 
-		let html_nodes = infobox.children;
-		let elements_length = elements.length;				// Is this type of optimisation helpful?
-		let initial_html_nodes_length = html_nodes.length;
-
-		for (let n = 0; true; n++) {
-			if (n < initial_html_nodes_length && n < elements_length) {
-				html_nodes[n].innerHTML = elements[n].text;
-				html_nodes[n].className = elements[n].class;
-				html_nodes[n].style.display = "inline";
-			} else if (n < initial_html_nodes_length) {
-				html_nodes[n].style.display = "none";
-			} else if (n < elements_length) {
-				let node = document.createElement("span");
-				node.id = `clicker_${n}`;
-				node.innerHTML = elements[n].text;
-				node.className = elements[n].class;
-				node.style.display = "inline";
-				infobox.appendChild(node);
-			} else {
-				break;
-			}
-		}
-
+		renderer.update_clickable_thingy(infobox, elements, "clicker");
 		renderer.infobox_clickers = elements;
-
 		renderer.info_table.drawn = true;
 	};
 
