@@ -635,6 +635,9 @@ function make_renderer() {
 
 		for (let n = 0; n < renderer.movelist_connections.length; n++) {
 
+			// Each item in the movelist_connections must have a corresponding element
+			// in our elements list. The indices must match.
+
 			let s = renderer.movelist_connections.tokens[n];
 
 			let next_s = renderer.movelist_connections.tokens[n + 1];	// possibly undefined
