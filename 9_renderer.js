@@ -180,7 +180,7 @@ function make_renderer() {
 	renderer.mousey = null;							// Raw mouse Y on the canvas, e.g. between 0 and 640.
 	renderer.one_click_moves = New2DArray(8, 8);	// 2D array of [x][y] --> move string or null.
 	renderer.movelist_connections = null;			// List of objects telling us what movelist clicks go to what nodes.
-	renderer.movelist_connections_version = -1;		// 
+	renderer.movelist_connections_version = -1;		// Set equal to total_tree_changes when movelist_connections changes.
 	renderer.last_tick_highlight_dest = null;		// Used to skip redraws.
 
 	renderer.info_table = NewInfoTable();			// Holds info about the engine evaluations.
@@ -659,6 +659,10 @@ function make_renderer() {
 			if (bottom > movelist.scrollTop + movelist.offsetHeight) {
 				movelist.scrollTop = bottom - movelist.offsetHeight;
 			}
+
+		} else if (!renderer.node.parent) {
+
+			movelist.scrollTop = 0;
 
 		}
 	};
