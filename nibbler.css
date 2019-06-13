@@ -83,35 +83,34 @@ ul {
 	list-style: none;
 }
 
-.pink {
+span.pink {
 	color: #ffaaaa;
 }
 
-.white {
+span.white {
 	color: #eeeeee;
 }
 
-.gray {
+span.gray {
 	color: #888888;
 }
 
-.red {
+span.red {
 	color: #dd7766;
 }
 
-.yellow {
+span.yellow {
 	color: #ffff00;
 }
 
-.blue {
+span.blue {
 	color: #6cccee;
 }
 
-.redback {
+span.redback {
 	background-color: #770000;
 }
 
-.nobr {
+span.nobr {
 	white-space: nowrap;		/* Used for O-O and O-O-O moves */
 }
-
