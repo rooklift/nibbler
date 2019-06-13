@@ -270,6 +270,15 @@ function make_renderer() {
 		renderer.position_changed();
 	};
 
+	renderer.mwheel = (event) => {					// Some awkward interactions with the main line scroll wheel.
+		if (event.deltaY && event.deltaY < 0) {		// (And also the PGN chooser, but that would be easy to fix.)
+			renderer.prev();
+		}
+		if (event.deltaY && event.deltaY > 0) {
+			renderer.next();
+		}
+	};
+
 	renderer.return_to_main_line = () => {
 
 		let root = renderer.node.get_root();
@@ -1244,6 +1253,35 @@ canvas.addEventListener("mousemove", (event) => {
 canvas.addEventListener("mouseout", (event) => {
 	renderer.mousex = null;
 	renderer.mousey = null;
+});
+
+document.addEventListener("wheel", (event) => {
+
+	// Only if the PGN chooser is closed, and the move_list has no scroll bar or isn't the target.
+
+	if (pgnchooser.style.display !== "none") {
+		return;
+	}
+
+	if (movelist.scrollHeight <= movelist.clientHeight) {
+		renderer.mwheel(event);
+		return;
+	}
+
+	let allow = true;
+
+	if (event.path) {
+		for (let item of event.path) {
+			if (typeof item.id === "string" && item.id === "movelist") {
+				allow = false;
+				break;
+			}
+		}
+	}
+
+	if (allow) {
+		renderer.mwheel(event);
+	}
 });
 
 // Setup return key on FEN box...
