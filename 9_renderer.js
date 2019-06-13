@@ -600,13 +600,12 @@ function make_renderer() {
 
 	renderer.draw_movelist = () => {
 
-		// As a cheap hack, go through the nodes on the displayed line and add a flag
-		// to them so we know to draw them in a different colour. We'll undo the damage
-		// after we write the list.
+		// Flag nodes that are on the current line (including into the future).
+		// We'll undo this damage to the tree in a bit.
 
-		let foo = renderer.node;
+		let foo = renderer.node.get_end();
 		while (foo) {
-			foo.bright = true;
+			foo.current_line = true;
 			foo = foo.parent;
 		}
 
@@ -650,7 +649,7 @@ function make_renderer() {
 			if (node === renderer.node && s.endsWith(".") === false) {
 				element.class = on_mainline ? "blue" : "yellow";
 				renderer_move_element_n = n;
-			} else if (node && node.bright) {
+			} else if (node && node.current_line) {
 				element.class = "white";
 			} else {
 				element.class = "gray";
@@ -663,9 +662,9 @@ function make_renderer() {
 
 		// Undo the damage to our tree...
 
-		foo = renderer.node;
+		foo = renderer.node.get_end();
 		while(foo) {
-			delete foo.bright;
+			delete foo.current_line;
 			foo = foo.parent;
 		}
 
