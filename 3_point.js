@@ -42,3 +42,7 @@ function Point(a, b) {
 
 	return p;
 }
+
+// Note: I rather regret now the existence of Point(null) - it means there's two
+// different ways for a variable that usually holds a Point to be null - either
+// having the actual null (or undefined) value, or the Point(null) value. Alas.
