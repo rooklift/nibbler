@@ -733,9 +733,13 @@ function make_renderer() {
 
 	renderer.update_clickable_thingy = (thingy, elements, prefix) => {
 
-		// The elements are not HTML elements but rather our own
-		// objects containing class and text properties. It may
-		// also contain other properties not used here.
+		// What this is: given a container (the thingy) and a list of elements (which are normal JS objects
+		// containing a "text" and a "class" property) we make the container have child spans which have the
+		// said text and class, as well as a unique id so they can be clicked on (e.g. "foo_37").
+		//
+		// If the children already exist, we reuse them.
+		// We hide existing children if there are too many.
+		// We create more children as needed.
 
 		let html_nodes = thingy.children;
 		let elements_length = elements.length;					// Is this type of optimisation helpful?
@@ -746,6 +750,10 @@ function make_renderer() {
 				html_nodes[n].innerHTML = elements[n].text;
 				html_nodes[n].className = elements[n].class;
 				html_nodes[n].style.display = "inline";
+				if (html_nodes[n].id !== `${prefix}_${n}`) {
+					console.log("update_clickable_thingy(): Pre-existing child did not have correct id");
+					html_nodes[n].id = `${prefix}_${n}`;
+				}
 			} else if (n < initial_html_nodes_length) {
 				html_nodes[n].style.display = "none";
 			} else if (n < elements_length) {
@@ -761,7 +769,6 @@ function make_renderer() {
 		}
 	};
 
-	renderer.infobox_skips = 0;			// Debugging...
 	renderer.draw_infobox = () => {
 
 		if (!renderer.ever_received_info) {
@@ -794,7 +801,8 @@ function make_renderer() {
 
 		if (renderer.info_table.drawn) {
 			if (highlight_dest === renderer.last_tick_highlight_dest) {
-				renderer.infobox_skips++;
+				// Count skips for debugging...
+				renderer.draw_infobox.skips = renderer.draw_infobox.skips === undefined ? 1 : renderer.draw_infobox.skips + 1;
 				return;
 			}
 		}
@@ -866,7 +874,7 @@ function make_renderer() {
 		}
 
 		renderer.update_clickable_thingy(infobox, elements, "clicker");
-		renderer.infobox_clickers = elements;
+		renderer.infobox_clickers = elements;				// We actually only need the move or its absence in each object. Meh.
 		renderer.info_table.drawn = true;
 	};
 
