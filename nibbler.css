@@ -1,7 +1,7 @@
 body {
-	background-color: black;
+	background-color: #080808;
 	border: 0;
-	color: white;
+	color: #eeeeee;
 	cursor: default;
 	margin: 0;
 	overflow: hidden;
@@ -24,7 +24,7 @@ body {
 }
 
 #pgnchooser {
-	background-color: black;
+	background-color: #080808;
 	display: none;						/* better than visibility: hidden - never intercepts inputs */
 	font-family: monospace, monospace;
 	font-size: 100%;
@@ -37,7 +37,7 @@ body {
 }
 
 #fenbox {
-	background-color: black;
+	background-color: #080808;
 	border: none;
 	caret-color: white;
 	color: #6cccee;
@@ -53,7 +53,7 @@ input[type=text]:focus{
 }
 
 #infobox {
-	color: #cccccc;
+	color: #cccccc;						/* only used for Lc0 stderr output at startup */
 	font-family: monospace, monospace;
 	overflow: hidden;
 	user-select: none;
@@ -88,11 +88,11 @@ ul {
 }
 
 .white {
-	color: #ffffff;
+	color: #eeeeee;
 }
 
 .gray {
-	color: #999999;
+	color: #888888;
 }
 
 .red {
