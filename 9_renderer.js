@@ -743,6 +743,7 @@ function make_renderer() {
 		//
 		// It seems setting innerHTML is the performant way to do this. Direct DOM manipulation
 		// on the other hand is (shockingly to me) apparently slower than just setting innerHTML.
+		// The difference for this is about 400% or something.
 
 		let new_inner_parts = [];
 
