@@ -607,6 +607,11 @@ function make_renderer() {
 
 		let elements = [];
 
+		// FIXME: we should likely create HTML nodes and add them to the DOM, rather than
+		// doing things via innerHTML, which must be slower I'd think.
+
+		let node_n;
+
 		for (let n = 0; n < renderer.movelist_connections.length; n++) {
 
 			let s = renderer.movelist_connections.tokens[n];
@@ -622,6 +627,10 @@ function make_renderer() {
 			} else {
 				elements.push(`<span class="gray" id="movelist_${n}">${s}${space}</span>`);
 			}
+
+			if (node === renderer.node && s !== "(" && s !== ")" && s.endsWith(".") === false) {
+				node_n = n;
+			}
 		}
 
 		// Undo the damage...
@@ -633,6 +642,24 @@ function make_renderer() {
 		}
 
 		movelist.innerHTML = elements.join("");
+
+		// Fix the scrollbar position...
+
+		if (node_n !== undefined) {
+
+			let top = document.getElementById(`movelist_${node_n}`).offsetTop - movelist.offsetTop;
+
+			if (top < movelist.scrollTop) {
+				movelist.scrollTop = top;
+			}
+
+			let bottom = top + document.getElementById(`movelist_${node_n}`).offsetHeight;
+
+			if (bottom > movelist.scrollTop + movelist.offsetHeight) {
+				movelist.scrollTop = bottom - movelist.offsetHeight;
+			}
+
+		}
 	};
 
 	renderer.movelist_click = (event) => {
