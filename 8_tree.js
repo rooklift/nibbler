@@ -77,8 +77,6 @@ const node_prototype = {
 
 	promote_to_main_line: function() {
 
-		total_tree_changes++;
-
 		let node = this;
 
 		while (node.parent) {
@@ -93,6 +91,8 @@ const node_prototype = {
 			}
 			node = node.parent;
 		}
+
+		total_tree_changes++;
 	},
 
 	fen: function() {
@@ -105,12 +105,34 @@ const node_prototype = {
 		}
 
 		return this.parent.get_board().nice_string(this.move);
+	},
+
+	detach: function() {
+
+		// Returns the node that the renderer should point to,
+		// which is either the parent (if there is one) or
+		// this node itself (if there isn't).
+
+		let parent = this.parent;
+		if (!parent) return this;
+
+		let new_list_for_parent = [];
+
+		for (let c of parent.children) {
+			if (c !== this) {
+				new_list_for_parent.push(c);
+			}
+		}
+
+		parent.children = new_list_for_parent;
+		this.parent = null;
+
+		total_tree_changes++;
+		return parent;
 	}
 };
 
 function NewNode(parent, move) {		// Args are null for root only.
-
-	total_tree_changes++;
 
 	let ret = Object.create(node_prototype);
 
@@ -118,6 +140,7 @@ function NewNode(parent, move) {		// Args are null for root only.
 	ret.move = move;					// Think of this as the move that led to the position associated with node.
 	ret.children = [];
 
+	total_tree_changes++;
 	return ret;
 }
 

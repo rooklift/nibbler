@@ -297,6 +297,16 @@ function make_renderer() {
 		renderer.draw_movelist();
 	};
 
+	renderer.delete_move = () => {
+
+		if (!renderer.node.parent) {
+			return;
+		}
+
+		renderer.node = renderer.node.detach();
+		renderer.position_changed();
+	};
+
 	renderer.load_fen = (s) => {
 
 		if (s.trim() === renderer.node.get_board().fen()) {

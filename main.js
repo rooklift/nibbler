@@ -252,6 +252,15 @@ function menu_build() {
 					type: "separator"
 				},
 				{
+					label: "Delete move",
+					click: () => {
+						windows.send("main-window", "call", "delete_move");
+					}
+				},
+				{
+					type: "separator"
+				},
+				{
 					label: "Show PGN games list",
 					accelerator: "CommandOrControl+P",
 					click: () => {
