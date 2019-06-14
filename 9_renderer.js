@@ -658,7 +658,7 @@ function make_renderer() {
 				text: `${s}${space}`
 			};
 
-			if (node === renderer.node && s.endsWith(".") === false) {
+			if (node === renderer.node /* && s.endsWith(".") === false */) {
 				element.class = on_mainline ? "blue blueback" : "yellow yellowback";
 				renderer_move_element_n = n;
 			} else if (node && node.current_line) {
