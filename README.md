@@ -2,7 +2,7 @@
 
 *Nibbler* is intended to be somewhat like [Lizzie](https://github.com/featurecat/lizzie), but for [Leela Chess Zero](https://github.com/LeelaChessZero/lc0). In other words, it is a GUI that runs a single engine (in our case, Lc0) constantly, displaying opinions about the current position.
 
-![Screenshot](https://user-images.githubusercontent.com/16438795/59391936-cce4a900-8d6d-11e9-8a53-5ea1ac89c56a.png)
+![Screenshot](https://user-images.githubusercontent.com/16438795/59531566-2ff54d80-8ede-11e9-9b7d-7c75be6699f9.png)
 
 # Features
 
@@ -36,6 +36,6 @@ The `config.json` file can be edited. Most of the options are self-explanatory, 
 
 # Thanks
 
-Thanks for helpful discussions and advice from borg, brinan, Chad, coolchess123, crem, Faroe22, jhorthos, jjosh, KillerDucky, liamlim, matoototo, mooskagh, Occyroexanthub, Tilps, and WCP.
+Thanks for helpful discussions and advice from borg, brinan, Chad, coolchess123, crem, Faroe22, jhorthos, jjosh, KillerDucky, lealgo, liamlim, matoototo, mooskagh, Occyroexanthub, Tilps, and WCP.
 
 The piece images were taken from the TCEC website. After discussion with Aloril, we're not entirely sure where they originate - if they're yours and you object, get in touch.
