@@ -294,14 +294,20 @@ function menu_build() {
 					label: "Go",
 					accelerator: "CommandOrControl+G",
 					click: () => {
-						windows.send("main-window", "call", "go");
+						windows.send("main-window", "call", {
+							fn: "set_versus",
+							args: ["wb"],
+						});
 					}
 				},
 				{
 					label: "Halt",
 					accelerator: "CommandOrControl+H",
 					click: () => {
-						windows.send("main-window", "call", "halt");
+						windows.send("main-window", "call", {
+							fn: "set_versus",
+							args: [""],
+						});
 					}
 				},
 				{
@@ -397,6 +403,29 @@ function menu_build() {
 							}
 						}
 					]
+				},
+			]
+		},
+		{
+			label: "Versus",
+			submenu: [
+				{
+					label: "Leela plays White",
+					click: () => {
+						windows.send("main-window", "call", {
+							fn: "set_versus",
+							args: ["w"],
+						});
+					}
+				},
+				{
+					label: "Leela plays Black",
+					click: () => {
+						windows.send("main-window", "call", {
+							fn: "set_versus",
+							args: ["b"],
+						});
+					}
 				},
 			]
 		},

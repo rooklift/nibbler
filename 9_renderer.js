@@ -171,7 +171,7 @@ function make_renderer() {
 	let renderer = Object.create(null);
 
 	renderer.active_square = null;					// Square clicked by user.
-	renderer.running = false;						// Whether to resend "go" to the engine after move, undo, etc.
+	renderer.versus = "";							// Colours that Leela is "playing".
 	renderer.ever_received_info = false;			// When false, we write stderr log instead of move info.
 	renderer.stderr_log = "";						// All output received from the engine's stderr.
 	renderer.pgn_choices = null;					// All games found when opening a PGN file.
@@ -198,9 +198,13 @@ function make_renderer() {
 		renderer.draw_movelist();
 		fenbox.value = renderer.node.fen();
 
-		if (renderer.running) {
+		if (renderer.running()) {
 			renderer.go(new_game_flag);
 		}
+	};
+
+	renderer.running = () => {
+		return renderer.versus.includes(renderer.node.get_board().active);
 	};
 
 	renderer.move = (s) => {		// It is safe to call this with illegal moves.
@@ -452,15 +456,23 @@ function make_renderer() {
 		}
 	};
 
+	renderer.set_versus = (s) => {
+		renderer.versus = s;
+		renderer.draw_infobox(true);
+		if (renderer.running()) {
+			renderer.go();
+		} else {
+			renderer.halt();
+		}
+	};
+
 	renderer.halt = () => {
 		send("stop");
-		renderer.running = false;
 	};
 
 	renderer.go = (new_game_flag) => {
 
 		renderer.hide_pgn_chooser();
-		renderer.running = true;
 
 		send("stop");
 		if (new_game_flag) {
@@ -478,7 +490,7 @@ function make_renderer() {
 	};
 
 	renderer.reset_leela_cache = () => {
-		if (renderer.running) {
+		if (renderer.running()) {
 			renderer.go(true);
 		} else {
 			send("ucinewgame");
@@ -793,7 +805,7 @@ function make_renderer() {
 		thingy.innerHTML = new_inner_parts.join("");
 	};
 
-	renderer.draw_infobox = () => {
+	renderer.draw_infobox = (force) => {
 
 		if (!renderer.ever_received_info) {
 			infobox.innerHTML = renderer.stderr_log;
@@ -817,7 +829,7 @@ function make_renderer() {
 		// The info_table.drawn property is set to false whenever new info is received from the engine.
 		// So maybe we can skip drawing the infobox, and just return...
 
-		if (renderer.info_table.drawn) {
+		if (renderer.info_table.drawn && !force) {
 
 			if (highlight_dest === renderer.last_tick_highlight_dest) {
 
@@ -835,10 +847,10 @@ function make_renderer() {
 		let info_list = renderer.info_table.sorted();
 		let elements = [];									// Not HTML elements, just our own objects.
 
-		if (renderer.running === false) {
+		if (renderer.running() === false) {
 			elements.push({
 				class: "yellow",
-				text: "HALTED "
+				text: renderer.versus === "" ? "HALTED " : "YOUR MOVE ",
 			});
 		}
 
