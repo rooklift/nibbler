@@ -198,12 +198,14 @@ function make_renderer() {
 		renderer.draw_movelist();
 		fenbox.value = renderer.node.fen();
 
-		if (renderer.running()) {
+		if (renderer.leela_should_go()) {
 			renderer.go(new_game_flag);
+		} else {
+			renderer.halt();
 		}
 	};
 
-	renderer.running = () => {
+	renderer.leela_should_go = () => {
 		return renderer.versus.includes(renderer.node.get_board().active);
 	};
 
@@ -459,7 +461,7 @@ function make_renderer() {
 	renderer.set_versus = (s) => {
 		renderer.versus = s;
 		renderer.draw_infobox(true);
-		if (renderer.running()) {
+		if (renderer.leela_should_go()) {
 			renderer.go();
 		} else {
 			renderer.halt();
@@ -490,7 +492,7 @@ function make_renderer() {
 	};
 
 	renderer.reset_leela_cache = () => {
-		if (renderer.running()) {
+		if (renderer.leela_should_go()) {
 			renderer.go(true);
 		} else {
 			send("ucinewgame");
@@ -847,7 +849,7 @@ function make_renderer() {
 		let info_list = renderer.info_table.sorted();
 		let elements = [];									// Not HTML elements, just our own objects.
 
-		if (renderer.running() === false) {
+		if (renderer.leela_should_go() === false) {
 			elements.push({
 				class: "yellow",
 				text: renderer.versus === "" ? "HALTED " : "YOUR MOVE ",
