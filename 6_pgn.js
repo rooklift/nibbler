@@ -296,14 +296,14 @@ function SavePGN(filename, node) {
 		tags.push(`[SetUp "1"]`);
 	}
 
-	let s = StringPGN(node);
+	let movetext = make_movetext(node);
 
-	let final = tags.join("\n") + "\n\n" + s + "\n";
+	let final = tags.join("\n") + "\n\n" + movetext + "\n";
 
 	fs.writeFileSync(filename, final);
 }
 
-function StringPGN(node) {
+function make_movetext(node) {
 
 	let connector = new_string_node_connector();
 	node = node.get_root();
