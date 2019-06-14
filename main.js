@@ -427,6 +427,15 @@ function menu_build() {
 						});
 					}
 				},
+				{
+					type: "separator"
+				},
+				{
+					label: "About Versus Mode",
+					click: () => {
+						about_versus_mode();
+					}
+				}
 			]
 		},
 		{
@@ -449,20 +458,6 @@ function menu_build() {
 	electron.Menu.setApplicationMenu(menu);
 }
 
-function about_move_display() {
-
-	let s = `
-
-Nibbler decides whether to display a move based on how many visits it \
-has, compared to the best move. Exactly how many moves will be \
-displayed depends on the position; positions with more viable moves \
-will display more. Sometimes different settings will display the same \
-number of moves. Note that displayed winrates are dubious for moves \
-with few visits.`;
-
-	alert(s);
-}
-
 function get_main_folder() {
 
 	// Sadly this can't be a module since __dirname will change if it's
@@ -479,4 +474,30 @@ function get_main_folder() {
 	// Return the location of Nibbler.exe
 
 	return path.dirname(process.argv[0]);
+}
+
+function about_move_display() {
+
+	let s = `
+
+Nibbler decides whether to display a move based on how many visits it \
+has, compared to the best move. Exactly how many moves will be \
+displayed depends on the position; positions with more viable moves \
+will display more. Sometimes different settings will display the same \
+number of moves. Note that displayed winrates are dubious for moves \
+with few visits.`;
+
+	alert(s);
+}
+
+function about_versus_mode() {
+
+	let s = `
+
+Versus Mode causes Leela to evaluate one side of the position only. \
+You must still manually decide which of Leela's suggestions to play. \
+You can exit Versus Mode with the Go or Halt commands in the Analysis \
+menu.`;
+
+	alert(s);
 }
