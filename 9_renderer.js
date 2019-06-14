@@ -205,6 +205,16 @@ function make_renderer() {
 		}
 	};
 
+	renderer.set_versus = (s) => {
+		renderer.versus = s;
+		renderer.draw_infobox(true);
+		if (renderer.leela_should_go()) {
+			renderer.go();
+		} else {
+			renderer.halt();
+		}
+	};
+
 	renderer.leela_should_go = () => {
 		return renderer.versus.includes(renderer.node.get_board().active);
 	};
@@ -455,16 +465,6 @@ function make_renderer() {
 			renderer.stderr_log += `<span class="red">${s}</span><br>`;
 		} else {
 			renderer.stderr_log += `${s}<br>`;
-		}
-	};
-
-	renderer.set_versus = (s) => {
-		renderer.versus = s;
-		renderer.draw_infobox(true);
-		if (renderer.leela_should_go()) {
-			renderer.go();
-		} else {
-			renderer.halt();
 		}
 	};
 
