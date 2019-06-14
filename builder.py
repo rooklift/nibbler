@@ -10,8 +10,8 @@ windows_electron = "electron_zipped/electron-v5.0.3-win32-x64.zip"
 
 # Setup directories...
 
-linux_dir = "./dist/nibbler-{}-linux".format(version)
-windows_dir = "./dist/nibbler-{}-windows".format(version)
+linux_dir = "dist/nibbler-{}-linux".format(version)
+windows_dir = "dist/nibbler-{}-windows".format(version)
 
 linux_app_dir = os.path.join(linux_dir, "resources/app")
 windows_app_dir = os.path.join(windows_dir, "resources/app")
