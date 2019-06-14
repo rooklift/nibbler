@@ -13,6 +13,7 @@
 * PGN loading via menu, clipboard, or drag-and-drop.
 * Supports PGN variations of arbitrary depth.
 * Clickable moves in the variation lists.
+* Versus Mode - where Leela only analyses one side.
 * Various aesthetic adjustments are possible in the `config.json` file.
 
 Nibbler is a work-in-progress. See or comment on the [todo list](https://github.com/fohristiwhirl/nibbler/issues/10) of hoped-for features.
