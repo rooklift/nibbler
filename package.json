@@ -7,11 +7,5 @@
 	"repository": {
 		"type": "git",
 		"url": "https://github.com/fohristiwhirl/nibbler"
-	},
-	"scripts": {
-		"pack": "electron-builder --dir"
-	},
-	"build": {
-		"electronVersion": "5.0.3"
 	}
 }
