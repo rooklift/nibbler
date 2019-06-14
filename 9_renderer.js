@@ -487,7 +487,7 @@ function make_renderer() {
 		// FIXME: can use "startpos" when normal starting position
 
 		send(`position ${setup} moves ${renderer.node.history().join(" ")}`);
-		sync();																	// See comment on how sync() works
+		sync();																		// See comment on how sync() works
 		send("go infinite");
 	};
 
@@ -500,15 +500,14 @@ function make_renderer() {
 	};
 
 	renderer.switch_weights = (filename) => {
-		renderer.halt();
+		renderer.set_versus("");
 		setoption("WeightsFile", filename);
-		send("ucinewgame");
 	};
 
 	// --------------------------------------------------------------------------------------------
 	// Visual stuff...
 
-	renderer.escape = () => {			// Set things into a clean state.
+	renderer.escape = () => {						// Set things into a clean state.
 		renderer.hide_pgn_chooser();
 		renderer.active_square = null;
 		renderer.draw();
@@ -534,7 +533,7 @@ function make_renderer() {
 			return;
 		}
 
-		renderer.halt();				// It's lame to run the GPU when we're clearly switching games.
+		renderer.set_versus("");			// It's lame to run the GPU when we're clearly switching games.
 
 		let lines = [];
 
