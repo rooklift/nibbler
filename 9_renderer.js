@@ -487,9 +487,13 @@ function make_renderer() {
 		}
 
 		let start_fen = renderer.node.get_root().fen();
-		let setup = `fen ${start_fen}`;
 
-		// FIXME: can use "startpos" when normal starting position
+		let setup;
+		if (start_fen === "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1") {
+			setup = "startpos";
+		} else {
+			setup = `fen ${start_fen}`;
+		}
 
 		send(`position ${setup} moves ${renderer.node.history().join(" ")}`);
 		sync();																		// See comment on how sync() works
