@@ -334,6 +334,71 @@ function menu_build() {
 					}
 				},
 				{
+					label: "CPuct",
+					submenu: [
+					{
+							label: "20",
+							type: "radio",
+							checked: false,
+							click: () => {
+								windows.send("main-window", "call", {
+									fn: "set_cpuct",
+									args: [20],
+								});
+							}
+						},
+						{
+							label: "12",
+							type: "radio",
+							checked: false,
+							click: () => {
+								windows.send("main-window", "call", {
+									fn: "set_cpuct",
+									args: [12],
+								});
+							}
+						},
+						{
+							label: "8",
+							type: "radio",
+							checked: false,
+							click: () => {
+								windows.send("main-window", "call", {
+									fn: "set_cpuct",
+									args: [8],
+								});
+							}
+						},
+						{
+							label: "5",
+							type: "radio",
+							checked: false,
+							click: () => {
+								windows.send("main-window", "call", {
+									fn: "set_cpuct",
+									args: [5],
+								});
+							}
+						},
+						{
+							label: "3.4 (Default)",
+							type: "radio",
+							checked: false,
+							click: () => {
+								windows.send("main-window", "call", {
+									fn: "set_cpuct",
+									args: [3.4],
+								});
+							}
+						},
+						{
+							label: "Whatever",
+							type: "radio",
+							checked: true,
+						}
+					]
+				},
+				{
 					type: "separator"
 				},
 				{

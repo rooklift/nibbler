@@ -504,6 +504,11 @@ function make_renderer() {
 		setoption("WeightsFile", filename);
 	};
 
+	renderer.set_cpuct = (val) => {
+		setoption("CPuct", val);
+		renderer.set_versus(renderer.versus);		// Restart the search.
+	};
+
 	// --------------------------------------------------------------------------------------------
 	// Visual stuff...
 
