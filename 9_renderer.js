@@ -800,7 +800,7 @@ function make_renderer() {
 
 		for (let n = 0; n < elements.length; n++) {
 			let part = `<span id="${prefix}_${n}" class="${elements[n].class}">${elements[n].text}</span>`;
-			new_inner_parts.push(part)
+			new_inner_parts.push(part);
 		}
 
 		thingy.innerHTML = new_inner_parts.join("");
