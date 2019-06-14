@@ -80,7 +80,8 @@ assign_without_overwrite(config, {
 	"max_info_lines": 10,
 	"update_delay": 170,
 	
-	"logfile": null
+	"logfile": null,
+	"log_info_lines": false
 });
 
 config.board_size = Math.floor(config.board_size / 8) * 8;
@@ -127,11 +128,15 @@ if (config.path) {
 		}
 
 		if (readyok_required > 0) {
-			Log("(ignored) < " + line);
+			if (config.log_info_lines || line.includes("info") === false) {
+				Log("(ignored) < " + line);
+			}
 			return;
 		}
 
-		Log("< " + line);
+		if (config.log_info_lines || line.includes("info") === false) {
+			Log("< " + line);
+		}
 		renderer.receive(line);
 	});
 }
