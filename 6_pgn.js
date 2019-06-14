@@ -363,6 +363,15 @@ function new_string_node_connector() {
 
 function write_tree2(node, connector, skip_self_flag, force_number_string) {
 
+	// Create the connector object - it has a list of tokens and a corresponding
+	// list of nodes/null. Example tokens:
+	//
+	// 		4...
+	//		Nf3
+	//		exf8=Q+
+	//		(
+	//		)
+
 	// Write this node itself...
 
 	if (node.move && node.parent && !skip_self_flag) {
