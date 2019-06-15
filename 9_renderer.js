@@ -658,13 +658,14 @@ function make_renderer() {
 
 	renderer.draw_movelist_lazy = () => {
 
-		// The tree hasn't changed, nor has the end node of the displayed line.
+		// The tree hasn't changed, nor has the end node of the displayed line. Therefore the highlight colour
+		// will not be changing, assuming thr root node is not involved.
 
 		let span = renderer.get_movelist_highlight();
 		let highlight_class = span ? span.className : "movelist_highlight_blue";	// If no span found, old position was root.
 
 		if (span) {
-			span.className = "white";		// Since the end of the line hasn't changed, the old highlight is on the line.
+			span.className = "white";		// This is always correct, it's never gray.
 		}
 
 		// Find the n of the new highlight...
@@ -680,7 +681,7 @@ function make_renderer() {
 
 		if (typeof n === "number") {
 			let span = document.getElementById(`movelist_${n}`);
-			span.outerHTML = `<span class="${highlight_class}" id="movelist_${n}">${span.innerHTML}</span>`;
+			span.className = highlight_class;
 		}
 
 	};
