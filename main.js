@@ -533,6 +533,7 @@ function get_main_folder() {
 	// Return the dir of this .js file if we're being run from electron.exe
 
 	if (path.basename(process.argv[0]).toLowerCase() === "electron" ||
+		path.basename(process.argv[0]).toLowerCase() === "electron framework" ||
 		path.basename(process.argv[0]).toLowerCase() === "electron helper" ||
 		path.basename(process.argv[0]).toLowerCase() === "electron.exe") {
 		return __dirname;
