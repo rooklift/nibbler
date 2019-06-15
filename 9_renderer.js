@@ -186,7 +186,8 @@ function make_renderer() {
 	renderer.one_click_moves = New2DArray(8, 8);	// 2D array of [x][y] --> move string or null.
 	renderer.movelist_connections = null;			// List of objects telling us what movelist clicks go to what nodes.
 	renderer.movelist_connections_version = -1;		// Set equal to total_tree_changes when movelist_connections changes.
-	renderer.last_tick_highlight_dest = null;		// Used to skip redraws.
+	renderer.movelist_line_end = null;				// What node was the end of the line when movelist was drawn.
+	renderer.last_tick_highlight_dest = null;		// Used to skip redraws in infobox.
 
 	renderer.info_table = NewInfoTable();			// Holds info about the engine evaluations.
 	renderer.node = NewTree();						// Our current place in the current tree.
@@ -633,12 +634,67 @@ function make_renderer() {
 		renderer.draw();
 	};
 
+	renderer.get_movelist_highlight = () => {
+		let span = document.getElementsByClassName("movelist_highlight_blue")[0];
+		if (span) {
+			return span;
+		}
+		span = document.getElementsByClassName("movelist_highlight_yellow")[0];
+		if (span) {
+			return span;
+		}
+		return null;
+	};
+
 	renderer.draw_movelist = () => {
+		let end = renderer.node.get_end();
+		if (end === renderer.movelist_line_end && renderer.movelist_connections_version === total_tree_changes) {
+			renderer.draw_movelist_lazy();
+		} else {
+			renderer.draw_movelist_hard();
+		}
+		renderer.fix_scrollbar_position();
+	};
+
+	renderer.draw_movelist_lazy = () => {
+
+		// The tree hasn't changed, nor has the end node of the displayed line. Therefore the highlight colour
+		// will not be changing, assuming thr root node is not involved.
+
+		let span = renderer.get_movelist_highlight();
+		let highlight_class = span ? span.className : "movelist_highlight_blue";	// If no span found, old position was root.
+
+		if (span) {
+			span.className = "white";		// This is always correct, it's never gray.
+		}
+
+		// Find the n of the new highlight...
+
+		let n = null;
+
+		for (let i = 0; i < renderer.movelist_connections.length; i++) {
+			if (renderer.movelist_connections.nodes[i] === renderer.node) {
+				n = i;
+				break;
+			}
+		}
+
+		if (typeof n === "number") {
+			let span = document.getElementById(`movelist_${n}`);
+			span.className = highlight_class;
+		}
+
+	};
+
+	renderer.draw_movelist_hard = () => {
 
 		// Flag nodes that are on the current line (including into the future).
 		// We'll undo this damage to the tree in a bit.
 
-		let foo = renderer.node.get_end();
+		let end = renderer.node.get_end();
+		renderer.movelist_line_end = end;
+
+		let foo = end;
 		while (foo) {
 			foo.current_line = true;
 			foo = foo.parent;
@@ -666,8 +722,6 @@ function make_renderer() {
 
 		let elements = [];		// Objects containing class and text.
 
-		let renderer_move_element_n;
-
 		for (let n = 0; n < renderer.movelist_connections.length; n++) {
 
 			// Each item in the movelist_connections must have a corresponding element
@@ -684,9 +738,8 @@ function make_renderer() {
 				text: `${s}${space}`
 			};
 
-			if (node === renderer.node /* && s.endsWith(".") === false */) {
-				element.class = on_mainline ? "blue blueback" : "yellow yellowback";
-				renderer_move_element_n = n;
+			if (node === renderer.node) {
+				element.class = on_mainline ? "movelist_highlight_blue" : "movelist_highlight_yellow";
 			} else if (node && node.current_line) {
 				element.class = "white";
 			} else {
@@ -705,18 +758,21 @@ function make_renderer() {
 			delete foo.current_line;
 			foo = foo.parent;
 		}
+	};
 
-		// Fix the scrollbar position...
+	renderer.fix_scrollbar_position = () => {
 
-		if (renderer_move_element_n !== undefined) {
+		let highlight = renderer.get_movelist_highlight();
 
-			let top = document.getElementById(`movelist_${renderer_move_element_n}`).offsetTop - movelist.offsetTop;
+		if (highlight) {
+
+			let top = highlight.offsetTop - movelist.offsetTop;
 
 			if (top < movelist.scrollTop) {
 				movelist.scrollTop = top;
 			}
 
-			let bottom = top + document.getElementById(`movelist_${renderer_move_element_n}`).offsetHeight;
+			let bottom = top + highlight.offsetHeight;
 
 			if (bottom > movelist.scrollTop + movelist.offsetHeight) {
 				movelist.scrollTop = bottom - movelist.offsetHeight;
@@ -811,7 +867,7 @@ function make_renderer() {
 
 		let elements_length = elements.length;					// Is this type of optimisation helpful?
 
-		for (let n = 0; n < elements.length; n++) {
+		for (let n = 0; n < elements_length; n++) {
 			let part = `<span id="${prefix}_${n}" class="${elements[n].class}">${elements[n].text}</span>`;
 			new_inner_parts.push(part);
 		}
