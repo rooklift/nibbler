@@ -175,8 +175,7 @@ for byte.
 Export format should also be used for archival storage.  Here, "archival"
 storage is defined as storage that may be accessed by a variety of computing
 systems.  The only extra requirement for archival storage is that the newline
-charac
-ter have a specific representation that is independent of its value for a
+character have a specific representation that is independent of its value for a
 particular computing system's text file usage.  The archival representation of
 a newline is the ASCII control character LF (line feed, decimal value 10,
 hexadecimal value 0x0a).
@@ -521,8 +520,7 @@ tag value field always uses a standard ten character format: "YYYY.MM.DD".  The
 first four characters are digits that give the year, the next character is a
 period, the next two characters are digits that give the month, the next
 character is a period, and the final two characters are digits that give the
-day
-of the month.  If the any of the digit fields are not known, then question
+day of the month.  If the any of the digit fields are not known, then question
 marks are used in place of the digits.
 
 Examples:
@@ -736,8 +734,7 @@ It is admittedly a bit chauvinistic to select English piece letters over those
 from other languages.  There is a slight justification in that English is a de
 facto universal second language among most chessplayers and program users.  It
 is probably the best that can be done for now.  A later section of this
-document gives altern
-ative piece letters, but these should be used only for
+document gives alternative piece letters, but these should be used only for
 local presentation software and not for archival storage or for dynamic
 interchange among programs.
 
@@ -904,8 +901,7 @@ for information not contained in the Seven Tag Roster.
 9.1: Player related information
 
 Note that if there is more than one player field in an instance of a player
-(White or Black) tag, then there will be correspondi
-ng multiple fields in any
+(White or Black) tag, then there will be corresponding multiple fields in any
 of the following tags.  For example, if the White tag has the three field value
 "Jones:Smith:Zacharias" (a consultation game), then the WhiteTitle tag could
 have a value of "IM:-:GM" if Jones was an International Master, Smith was
@@ -2027,8 +2023,7 @@ the en passant target square, the halfmove clock, and the fullmove number.
 These can all fit on a single text line in an easily read format.  The length
 of a FEN position description varies somewhat according to the position. In
 some cases, the description could be eighty or more characters in length and so
-may
- not fit conveniently on some displays.  However, these positions aren't too
+may not fit conveniently on some displays.  However, these positions aren't too
 common.
 
 A FEN description has six fields.  Each field is composed only of non-blank
@@ -2216,8 +2211,7 @@ target square then the single character symbol "-" appears.  If there is an en
 passant target square then is represented by a lowercase file character
 immediately followed by a rank digit.  Obviously, the rank digit will be "3"
 following a white pawn double advance (Black is the active color) or else be
-the digit "6"
-after a black pawn double advance (White being the active color).
+the digit "6" after a black pawn double advance (White being the active color).
 
 An en passant target square is given if and only if the last move was a pawn
 advance of two squares.  Therefore, an en passant target square field may have
@@ -2387,8 +2381,7 @@ are less than or equal to 32766.
 A value greater than 32000 indicates the availability of a forced mate to the
 active player.  The number of plies until mate is given by subtracting the
 evaluation from the value 32767.  Thus, a winning mate in N fullmoves is a mate
-in ((2 * N) - 1) halfmoves (or ply) a
-nd has a corresponding centipawn
+in ((2 * N) - 1) halfmoves (or ply) and has a corresponding centipawn
 evaluation of (32767 - ((2 * N) - 1)).  For example, a mate on the move (mate
 in one) has a centipawn evaluation of 32766 while a mate in five has a
 centipawn evaluation of 32758.
@@ -2572,8 +2565,7 @@ The "sm" opcode is used to provide a single supplied move for the indicated
 position.  It has exactly one operand, a move playable from the position.  This
 move is the move to be played from the position.
 
-The "sm" opcode is intended for use to communicate the most re
-cent played move
+The "sm" opcode is intended for use to communicate the most recent played move
 in an active game.  It is used to communicate moves between programs in
 automatic play via a network.  This includes correspondence play using e-mail
 and also programs acting as network front ends to human players.
@@ -2769,8 +2761,7 @@ move ordinal 4 corresponds to "a3", and move ordinal 19 corresponds to "h4".
 
 Moves can be organized into sequences and sets.  A move sequence is an ordered
 list of moves that are played, one after another from first to last.  A move
-set is a list of moves t
-hat are all playable from the current position.
+set is a list of moves that are all playable from the current position.
 
 Move sequence data is represented using a length header followed by move
 ordinal data.  The length header is an unsigned integer that may be a byte or a
