@@ -1,5 +1,7 @@
 import json, os, shutil, zipfile
 
+# https://electronjs.org/docs/tutorial/application-distribution
+
 with open("package.json") as f:  
     version = json.load(f)["version"]
 
@@ -40,17 +42,19 @@ for folder in folders:
 shutil.copy("config.example.json", linux_dir)
 shutil.copy("config.example.json", windows_dir)
 
-# Extract Electron
+# Extract Electron...
 
+print("Extracting for Linux...")
 z = zipfile.ZipFile(linux_electron, "r")
 z.extractall(linux_dir)
 z.close()
 
+print("Extracting for Windows...")
 z = zipfile.ZipFile(windows_electron, "r")
 z.extractall(windows_dir)
 z.close()
 
-# Rename Electron
+# Rename Electron...
 
 os.rename(os.path.join(linux_dir, "electron"), os.path.join(linux_dir, "nibbler"))
 os.rename(os.path.join(windows_dir, "electron.exe"), os.path.join(windows_dir, "nibbler.exe"))
