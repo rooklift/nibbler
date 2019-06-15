@@ -5,8 +5,8 @@ with open("package.json") as f:
 
 # Location of zipped electron distributions...
 
-linux_electron = "electron_zipped/electron-v5.0.3-linux-x64.zip"
-windows_electron = "electron_zipped/electron-v5.0.3-win32-x64.zip"
+linux_electron = "electron_zipped/electron-v5.0.4-linux-x64.zip"
+windows_electron = "electron_zipped/electron-v5.0.4-win32-x64.zip"
 
 # Setup directories...
 
@@ -16,8 +16,8 @@ windows_dir = "dist/nibbler-{}-windows".format(version)
 linux_app_dir = os.path.join(linux_dir, "resources/app")
 windows_app_dir = os.path.join(windows_dir, "resources/app")
 
-os.makedirs(linux_app_dir, exist_ok = True)
-os.makedirs(windows_app_dir, exist_ok = True)
+os.makedirs(linux_app_dir)
+os.makedirs(windows_app_dir)
 
 # Source and other technical files...
 
@@ -35,7 +35,7 @@ for folder in folders:
 	shutil.copytree(folder, os.path.join(linux_app_dir, folder))
 	shutil.copytree(folder, os.path.join(windows_app_dir, folder))
 
-# config.example.json - to the high level dir, not the app dir
+# Copy config.example.json - to the high level dir, not the app dir...
 
 shutil.copy("config.example.json", linux_dir)
 shutil.copy("config.example.json", windows_dir)
