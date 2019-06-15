@@ -324,8 +324,10 @@ function make_renderer() {
 			node = node.children[0];
 		}
 
-		renderer.node = node;
-		renderer.position_changed();
+		if (renderer.node !== node) {
+			renderer.node = node;
+			renderer.position_changed();
+		}
 	};
 
 	renderer.promote_to_main_line = () => {
