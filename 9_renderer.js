@@ -634,16 +634,6 @@ function make_renderer() {
 		renderer.draw();
 	};
 
-	renderer.draw_movelist = () => {
-		let end = renderer.node.get_end();
-		if (end === renderer.movelist_line_end && renderer.movelist_connections_version === total_tree_changes) {
-			renderer.draw_movelist_lazy();
-		} else {
-			renderer.draw_movelist_hard();
-		}
-		renderer.fix_scrollbar_position();
-	};
-
 	renderer.get_movelist_highlight = () => {
 		let span = document.getElementsByClassName("movelist_highlight_blue")[0];
 		if (span) {
@@ -654,6 +644,16 @@ function make_renderer() {
 			return span;
 		}
 		return null;
+	};
+
+	renderer.draw_movelist = () => {
+		let end = renderer.node.get_end();
+		if (end === renderer.movelist_line_end && renderer.movelist_connections_version === total_tree_changes) {
+			renderer.draw_movelist_lazy();
+		} else {
+			renderer.draw_movelist_hard();
+		}
+		renderer.fix_scrollbar_position();
 	};
 
 	renderer.draw_movelist_lazy = () => {
