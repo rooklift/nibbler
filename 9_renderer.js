@@ -282,13 +282,19 @@ function make_renderer() {
 	};
 
 	renderer.goto_root = () => {
-		renderer.node = renderer.node.get_root();
-		renderer.position_changed();
+		let root = renderer.node.get_root();
+		if (renderer.node !== root) {
+			renderer.node = root;
+			renderer.position_changed();
+		}
 	};
 
 	renderer.goto_end = () => {
-		renderer.node = renderer.node.get_end();
-		renderer.position_changed();
+		let end = renderer.node.get_end();
+		if (renderer.node !== end) {
+			renderer.node = end;
+			renderer.position_changed();
+		}
 	};
 
 	renderer.mwheel = (event) => {					// Some awkward interactions with the movelist
