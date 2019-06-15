@@ -635,6 +635,15 @@ function make_renderer() {
 		renderer.draw();
 	};
 
+	renderer.draw_movelist = () => {
+		let end = renderer.node.get_end();
+		if (end === renderer.movelist_line_end && renderer.movelist_connections_version === total_tree_changes) {
+			renderer.draw_movelist_lazy();
+		} else {
+			renderer.draw_movelist_hard();
+		}
+	};
+
 	renderer.draw_movelist_lazy = () => {
 
 		// The tree hasn't changed, nor has the end node of the line.
@@ -645,7 +654,7 @@ function make_renderer() {
 		if (typeof old_n === "number") {
 			let span = document.getElementById(`movelist_${old_n}`);
 			old_class = span.className;
-			span.outerHTML = `<span class="white" id="movelist_${old_n}">${renderer.movelist_connections.tokens[old_n]} </span>`;
+			span.outerHTML = `<span class="white" id="movelist_${old_n}">${span.innerHTML}</span>`;
 		}
 
 		if (old_class === "") {					// means no move was highlighted, meaning position was root.
@@ -667,29 +676,20 @@ function make_renderer() {
 
 		if (typeof n === "number") {
 			let span = document.getElementById(`movelist_${n}`);
-			span.outerHTML = `<span class="${old_class}" id="movelist_${n}">${renderer.movelist_connections.tokens[n]} </span>`;
+			span.outerHTML = `<span class="${old_class}" id="movelist_${n}">${span.innerHTML}</span>`;
 		}
 
 		renderer.fix_scrollbar_position();
 
 	};
 
-	renderer.draw_movelist = () => {
-
-		let end = renderer.node.get_end();
-
-		if (end === renderer.movelist_line_end && renderer.movelist_connections_version === total_tree_changes) {
-			// Nothing has changed except for what move needs to be highlighted in blue / yellow.
-			renderer.draw_movelist_lazy();
-			return;
-		}
-
-		renderer.movelist_line_end = end;
+	renderer.draw_movelist_hard = () => {
 
 		// Flag nodes that are on the current line (including into the future).
 		// We'll undo this damage to the tree in a bit.
 
-		let foo = end;
+		let foo = renderer.node.get_end();
+		renderer.movelist_line_end = foo;
 
 		while (foo) {
 			foo.current_line = true;
