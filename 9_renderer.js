@@ -297,15 +297,6 @@ function make_renderer() {
 		}
 	};
 
-	renderer.mwheel = (event) => {					// Some awkward interactions with the movelist
-		if (event.deltaY && event.deltaY < 0) {		// scrollbar and also with the PGN chooser.
-			renderer.prev();
-		}
-		if (event.deltaY && event.deltaY > 0) {
-			renderer.next();
-		}
-	};
-
 	renderer.return_to_main_line = () => {
 
 		let root = renderer.node.get_root();
@@ -1254,6 +1245,35 @@ ipcRenderer.on("set", (event, msg) => {
 });
 
 // --------------------------------------------------------------------------------------------
+// prev() and next() calls are the things most likely to lag the app if we've a pathologically
+// branchy PGN. To mitigate this, when one comes in, don't execute it immediately, but place it
+// on a queue, which is regularly examined. If there's multiple stuff on the queue, drop stuff.
+//
+// This is a poor solution to the fact that draw_movelist is so laggy when the tree is big,
+// ideally that should be fixed.
+
+let prev_next_queue = [];
+
+ipcRenderer.on("prev", (event) => {
+	prev_next_queue.push(renderer.prev);
+});
+
+ipcRenderer.on("next", (event) => {
+	prev_next_queue.push(renderer.next);
+});
+
+function prev_next_loop() {
+	if (prev_next_queue.length > 0) {
+		let fn_to_call = prev_next_queue[prev_next_queue.length - 1];
+		fn_to_call();
+		prev_next_queue = [];
+	}
+	setTimeout(prev_next_loop, 10);
+}
+
+prev_next_loop();
+
+// --------------------------------------------------------------------------------------------
 // We had some problems with the various clickers: we used to destroy and create
 // clickable objects a lot. This seemed to lead to moments where clicks wouldn't
 // register.
@@ -1299,7 +1319,8 @@ document.addEventListener("wheel", (event) => {
 	}
 
 	if (movelist.scrollHeight <= movelist.clientHeight) {
-		renderer.mwheel(event);
+		if (event.deltaY && event.deltaY < 0) prev_next_queue.push(renderer.prev);
+		if (event.deltaY && event.deltaY > 0) prev_next_queue.push(renderer.next);
 		return;
 	}
 
@@ -1315,7 +1336,8 @@ document.addEventListener("wheel", (event) => {
 	}
 
 	if (allow) {
-		renderer.mwheel(event);
+		if (event.deltaY && event.deltaY < 0) prev_next_queue.push(renderer.prev);
+		if (event.deltaY && event.deltaY > 0) prev_next_queue.push(renderer.next);
 	}
 });
 
