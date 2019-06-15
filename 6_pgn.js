@@ -375,10 +375,11 @@ function write_tree2(node, connector, skip_self_flag, force_number_string) {
 	// Write this node itself...
 
 	if (node.move && node.parent && !skip_self_flag) {
+		let s = "";
 		if (node.parent.get_board().active === "w" || force_number_string) {
-			connector.push(node.parent.get_board().next_number_string(), node);
+			s = node.parent.get_board().next_number_string() + " ";
 		}
-		connector.push(node.nice_move(), node);
+		connector.push(s + node.nice_move(), node);
 	}
 
 	// Write descendents as long as there's no branching,
@@ -386,10 +387,11 @@ function write_tree2(node, connector, skip_self_flag, force_number_string) {
 
 	while (node.children.length === 1) {
 		node = node.children[0];
+		let s = "";
 		if (node.parent.get_board().active === "w") {
-			connector.push(node.parent.get_board().next_number_string(), node);
+			s = node.parent.get_board().next_number_string() + " ";
 		}
-		connector.push(node.nice_move(), node);
+		connector.push(s + node.nice_move(), node);
 	}
 
 	if (node.children.length === 0) {
@@ -400,10 +402,11 @@ function write_tree2(node, connector, skip_self_flag, force_number_string) {
 
 	let main_child = node.children[0];
 
+	let s = "";
 	if (node.get_board().active === "w") {
-		connector.push(node.get_board().next_number_string(), main_child);
+		s = node.get_board().next_number_string() + " ";
 	}
-	connector.push(main_child.nice_move(), main_child);
+	connector.push(s + main_child.nice_move(), main_child);
 
 	for (let child of node.children.slice(1)) {
 		connector.push("(", null);
