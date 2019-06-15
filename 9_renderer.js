@@ -186,7 +186,7 @@ function make_renderer() {
 	renderer.one_click_moves = New2DArray(8, 8);	// 2D array of [x][y] --> move string or null.
 	renderer.movelist_connections = null;			// List of objects telling us what movelist clicks go to what nodes.
 	renderer.movelist_connections_version = -1;		// Set equal to total_tree_changes when movelist_connections changes.
-	renderer.movelist_line_end = null;
+	renderer.movelist_line_end = null;				// What node was the end of the line when movelist was drawn.
 	renderer.last_tick_highlight_dest = null;		// Used to skip redraws in infobox.
 
 	renderer.info_table = NewInfoTable();			// Holds info about the engine evaluations.
