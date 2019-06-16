@@ -1,5 +1,10 @@
 "use strict";
 
+// In an ideal world, the inherent tree structure in the Chess record and the
+// inherent tree structure in the DOM would relate to each other in such a way
+// that inserting a new move, or highlighting a new node, etc, would have an
+// obviously corresponding set of operations that had to occur in the DOM. Hmm.
+
 function get_movelist_highlight() {
 	let span = document.getElementsByClassName("movelist_highlight_blue")[0];
 	if (span) {
