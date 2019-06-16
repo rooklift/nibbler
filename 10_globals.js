@@ -25,10 +25,5 @@ const context = canvas.getContext("2d");
 // Global variables.................................................
 
 let config = {};
-
 let decoder = new util.TextDecoder("utf8");
-
-let total_moves_made = 0;		// For debugging / info
-let total_positions_made = 0;	// For debugging / info
-
 let total_tree_changes = 0;

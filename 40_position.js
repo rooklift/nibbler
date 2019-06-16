@@ -31,8 +31,6 @@ const position_prototype = {
 			return this;
 		}
 
-		total_moves_made++;
-
 		let ret = this.copy();
 
 		let promotion_char = s.length > 4 ? s[4].toLowerCase() : "q";
@@ -899,8 +897,6 @@ const position_prototype = {
 };
 
 function NewPosition(state = null, active = "w", castling = "", enpassant = null, halfmove = 0, fullmove = 1) {
-
-	total_positions_made++;
 
 	let p = Object.create(position_prototype);
 
