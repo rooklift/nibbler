@@ -1,10 +1,11 @@
 "use strict";
 
-// EVERYTHING that changes the tree structure must increment total_tree_changes.
+// EVERYTHING that changes the tree structure must increment the global counter  total_tree_changes
 // Currently this means:
 //
 //		- NewNode()
 //		- promote_to_main_line()
+//		- detach()
 
 const node_prototype = {
 
