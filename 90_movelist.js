@@ -10,7 +10,7 @@ function get_movelist_highlight() {
 		return span;
 	}
 	return null;
-};
+}
 
 function fix_scrollbar_position(node) {
 	let highlight = get_movelist_highlight();
@@ -26,7 +26,7 @@ function fix_scrollbar_position(node) {
 	} else {
 		movelist.scrollTop = 0;
 	}
-};
+}
 
 function NewMovelistHander() {
 
