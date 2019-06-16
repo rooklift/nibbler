@@ -175,22 +175,20 @@ function make_renderer() {
 
 	let renderer = Object.create(null);
 
-	renderer.active_square = null;					// Square clicked by user.
-	renderer.versus = "";							// Colours that Leela is "playing".
-	renderer.ever_received_info = false;			// When false, we write stderr log instead of move info.
-	renderer.stderr_log = "";						// All output received from the engine's stderr.
-	renderer.pgn_choices = null;					// All games found when opening a PGN file.
-	renderer.infobox_clickers = [];					// Objects relating to our infobox.
-	renderer.mousex = null;							// Raw mouse X on the canvas, e.g. between 0 and 640.
-	renderer.mousey = null;							// Raw mouse Y on the canvas, e.g. between 0 and 640.
-	renderer.one_click_moves = New2DArray(8, 8);	// 2D array of [x][y] --> move string or null.
-	renderer.movelist_connections = null;			// List of objects telling us what movelist clicks go to what nodes.
-	renderer.movelist_connections_version = -1;		// Set equal to total_tree_changes when movelist_connections changes.
-	renderer.movelist_line_end = null;				// What node was the end of the line when movelist was drawn.
-	renderer.last_tick_highlight_dest = null;		// Used to skip redraws in infobox.
+	renderer.active_square = null;						// Square clicked by user.
+	renderer.versus = "";								// Colours that Leela is "playing".
+	renderer.ever_received_info = false;				// When false, we write stderr log instead of move info.
+	renderer.stderr_log = "";							// All output received from the engine's stderr.
+	renderer.pgn_choices = null;						// All games found when opening a PGN file.
+	renderer.infobox_clickers = [];						// Objects relating to our infobox.
+	renderer.mousex = null;								// Raw mouse X on the canvas, e.g. between 0 and 640.
+	renderer.mousey = null;								// Raw mouse Y on the canvas, e.g. between 0 and 640.
+	renderer.one_click_moves = New2DArray(8, 8);		// 2D array of [x][y] --> move string or null.
+	renderer.last_tick_highlight_dest = null;			// Used to skip redraws in infobox.
 
-	renderer.info_table = NewInfoTable();			// Holds info about the engine evaluations.
-	renderer.node = NewTree();						// Our current place in the current tree.
+	renderer.movelist_handler = NewMovelistHander();
+	renderer.info_table = NewInfoTable();				// Holds info about the engine evaluations.
+	renderer.node = NewTree();							// Our current place in the current tree.
 
 	fenbox.value = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1";
 
@@ -201,7 +199,7 @@ function make_renderer() {
 		renderer.info_table.clear();
 
 		renderer.escape();
-		renderer.draw_movelist();
+		renderer.movelist_handler.draw(renderer.node);
 		fenbox.value = renderer.node.fen();
 
 		if (renderer.leela_should_go()) {
@@ -324,7 +322,7 @@ function make_renderer() {
 
 	renderer.promote_to_main_line = () => {
 		renderer.node.promote_to_main_line();
-		renderer.draw_movelist();
+		renderer.movelist_handler.draw(renderer.node);
 	};
 
 	renderer.delete_move = () => {
@@ -634,192 +632,11 @@ function make_renderer() {
 		renderer.draw();
 	};
 
-	renderer.get_movelist_highlight = () => {
-		let span = document.getElementsByClassName("movelist_highlight_blue")[0];
-		if (span) {
-			return span;
-		}
-		span = document.getElementsByClassName("movelist_highlight_yellow")[0];
-		if (span) {
-			return span;
-		}
-		return null;
-	};
-
-	renderer.draw_movelist = () => {
-		let end = renderer.node.get_end();
-		if (end === renderer.movelist_line_end && renderer.movelist_connections_version === total_tree_changes) {
-			renderer.draw_movelist_lazy();
-		} else {
-			renderer.draw_movelist_hard();
-		}
-		renderer.fix_scrollbar_position();
-	};
-
-	renderer.draw_movelist_lazy = () => {
-
-		// The tree hasn't changed, nor has the end node of the displayed line. Therefore very little needs
-		// to be done, except the highlight class needs to be applied to a different element.
-
-		let span = renderer.get_movelist_highlight();
-		let highlight_class = span ? span.className : "movelist_highlight_blue";	// If no span found, old position was root.
-
-		if (span) {
-			span.className = "white";		// This is always correct, it's never gray.
-		}
-
-		// Find the n of the new highlight...
-
-		let n = null;
-
-		for (let i = 0; i < renderer.movelist_connections.length; i++) {
-			if (renderer.movelist_connections.nodes[i] === renderer.node) {
-				n = i;
-				break;
-			}
-		}
-
-		if (typeof n === "number") {
-			let span = document.getElementById(`movelist_${n}`);
-			span.className = highlight_class;
-		}
-	};
-
-	renderer.draw_movelist_hard = () => {
-
-		// Flag nodes that are on the current line (including into the future).
-		// We'll undo this damage to the tree in a bit.
-
-		let end = renderer.node.get_end();
-		renderer.movelist_line_end = end;
-
-		let foo = end;
-		while (foo) {
-			foo.current_line = true;
-			foo = foo.parent;
-		}
-
-		// We'd also like to know if the current node is on the main line...
-
-		let on_mainline = false;
-
-		foo = renderer.node.get_root().get_end();
-		while (foo) {
-			if (foo === renderer.node) {
-				on_mainline = true;
-				break;
-			}
-			foo = foo.parent;
-		}
-
-		//
-
-		if (!renderer.movelist_connections || renderer.movelist_connections_version !== total_tree_changes) {
-			renderer.movelist_connections = TokenNodeConnections(renderer.node);
-			renderer.movelist_connections_version = total_tree_changes;
-		}
-
-		let elements = [];		// Objects containing class and text.
-
-		for (let n = 0; n < renderer.movelist_connections.length; n++) {
-
-			// Each item in the movelist_connections must have a corresponding element
-			// in our elements list. The indices must match.
-
-			let s = renderer.movelist_connections.tokens[n];
-
-			let next_s = renderer.movelist_connections.tokens[n + 1];	// possibly undefined
-			let node = renderer.movelist_connections.nodes[n];			// possibly null
-
-			let space = (s === "(" || next_s === ")") ? "" : " ";
-
-			let element = {
-				text: `${s}${space}`
-			};
-
-			if (node === renderer.node) {
-				element.class = on_mainline ? "movelist_highlight_blue" : "movelist_highlight_yellow";
-			} else if (node && node.current_line) {
-				element.class = "white";
-			} else {
-				element.class = "gray";
-			}
-
-			elements.push(element);
-		}
-
-		renderer.update_clickable_thingy(movelist, elements, "movelist");
-
-		// Undo the damage to our tree...
-
-		foo = renderer.node.get_end();
-		while(foo) {
-			delete foo.current_line;
-			foo = foo.parent;
-		}
-	};
-
-	renderer.fix_scrollbar_position = () => {
-
-		let highlight = renderer.get_movelist_highlight();
-
-		if (highlight) {
-
-			let top = highlight.offsetTop - movelist.offsetTop;
-
-			if (top < movelist.scrollTop) {
-				movelist.scrollTop = top;
-			}
-
-			let bottom = top + highlight.offsetHeight;
-
-			if (bottom > movelist.scrollTop + movelist.offsetHeight) {
-				movelist.scrollTop = bottom - movelist.offsetHeight;
-			}
-
-		} else if (!renderer.node.parent) {
-
-			movelist.scrollTop = 0;
-
-		}
-	};
-
 	renderer.movelist_click = (event) => {
 
-		if (!renderer.movelist_connections) {
-			return;
-		}
+		let node = renderer.movelist_handler.node_from_click(event);
 
-		let n;
-
-		for (let item of event.path) {
-			if (typeof item.id === "string") {
-				if (item.id === "mainline_deviated") {
-					renderer.return_to_main_line();
-					return;
-				}
-				if (item.id.startsWith("movelist_")) {
-					n = parseInt(item.id.slice(9), 10);
-					break;
-				}
-			}
-		}
-
-		if (n === undefined) {
-			return;
-		}
-
-		if (n < 0 || n >= renderer.movelist_connections.length) {
-			return;
-		}
-
-		let node = renderer.movelist_connections.nodes[n];
-
-		if (!node) {
-			return;
-		}
-
-		if (node.get_root() !== renderer.node.get_root()) {
+		if (!node || node.get_root() !== renderer.node.get_root()) {
 			return;
 		}
 
@@ -1303,9 +1120,6 @@ ipcRenderer.on("set", (event, msg) => {
 // prev() and next() calls are the things most likely to lag the app if we've a pathologically
 // branchy PGN. To mitigate this, when one comes in, don't execute it immediately, but place it
 // on a queue, which is regularly examined. If there's multiple stuff on the queue, drop stuff.
-//
-// This is a poor solution to the fact that draw_movelist is so laggy when the tree is big,
-// ideally that should be fixed.
 
 let prev_next_queue = [];
 
