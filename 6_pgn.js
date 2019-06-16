@@ -371,6 +371,10 @@ function write_tree2(node, connector, skip_self_flag, force_number_string) {
 	//		exf8=Q+
 	//		(
 	//		)
+	//
+	// UPDATE after about 615 commits: when writing the move number, we now make
+	// a single token containing both the number and the move, e.g. "7. exd5"
+	// would be a single token. This has some advantages elsewhere.
 
 	// Write this node itself...
 
