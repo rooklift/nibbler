@@ -683,7 +683,6 @@ function make_renderer() {
 			let span = document.getElementById(`movelist_${n}`);
 			span.className = highlight_class;
 		}
-
 	};
 
 	renderer.draw_movelist_hard = () => {
