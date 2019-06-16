@@ -110,6 +110,29 @@ const node_prototype = {
 		return this.parent.get_board().nice_string(this.move);
 	},
 
+	token: function() {
+
+		// The complete token when writing the move, including number string if necessary,
+		// which depends on position within variations etc...
+
+		if (!this.parent) {
+			return "";
+		}
+
+		let need_number_string = false;
+
+		if (this.parent.get_board().active === "w") need_number_string = true;
+		if (this.parent.children[0] !== this) need_number_string = true;
+
+		// In theory we should also write the number if the parent had siblings. Meh.
+
+		if (need_number_string) {
+			return this.parent.get_board().next_number_string() + " " + this.nice_move();
+		} else {
+			return this.nice_move();
+		}
+	},
+
 	detach: function() {
 
 		// Returns the node that the renderer should point to,

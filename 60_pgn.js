@@ -363,27 +363,13 @@ function new_string_node_connector() {
 
 function write_tree2(node, connector, skip_self_flag, force_number_string) {
 
-	// Create the connector object - it has a list of tokens and a corresponding
-	// list of nodes/null. Example tokens:
-	//
-	// 		4...
-	//		Nf3
-	//		exf8=Q+
-	//		(
-	//		)
-	//
-	// UPDATE after about 615 commits: when writing the move number, we now make
-	// a single token containing both the number and the move, e.g. "7. exd5"
-	// would be a single token. This has some advantages elsewhere.
+	// Create the connector object - it has a list of tokens
+	// and a corresponding list of nodes/null.
 
 	// Write this node itself...
 
-	if (node.move && node.parent && !skip_self_flag) {
-		let s = "";
-		if (node.parent.get_board().active === "w" || force_number_string) {
-			s = node.parent.get_board().next_number_string() + " ";
-		}
-		connector.push(s + node.nice_move(), node);
+	if (node.parent && !skip_self_flag) {
+		connector.push(node.token(), node);
 	}
 
 	// Write descendents as long as there's no branching,
@@ -391,11 +377,7 @@ function write_tree2(node, connector, skip_self_flag, force_number_string) {
 
 	while (node.children.length === 1) {
 		node = node.children[0];
-		let s = "";
-		if (node.parent.get_board().active === "w") {
-			s = node.parent.get_board().next_number_string() + " ";
-		}
-		connector.push(s + node.nice_move(), node);
+		connector.push(node.token(), node);
 	}
 
 	if (node.children.length === 0) {
@@ -405,12 +387,7 @@ function write_tree2(node, connector, skip_self_flag, force_number_string) {
 	// So multiple child nodes exist...
 
 	let main_child = node.children[0];
-
-	let s = "";
-	if (node.get_board().active === "w") {
-		s = node.get_board().next_number_string() + " ";
-	}
-	connector.push(s + main_child.nice_move(), main_child);
+	connector.push(main_child.token(), main_child);
 
 	for (let child of node.children.slice(1)) {
 		connector.push("(", null);
