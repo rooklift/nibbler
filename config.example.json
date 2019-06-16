@@ -3,7 +3,7 @@
 	
 	"options": {
 		"Backend": "cudnn",
-		"WeightsFile": "C:\\Programs (self-installed)\\Lc0-cudnn\\networks\\T40.T8.610"
+		"WeightsFile": "C:\\Users\\Owner\\Documents\\Misc\\Lc0 Networks\\42482"
 	},
 
 	"width": 1280,
