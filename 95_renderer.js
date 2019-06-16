@@ -15,7 +15,7 @@ function make_renderer() {
 	renderer.one_click_moves = New2DArray(8, 8);		// 2D array of [x][y] --> move string or null.
 	renderer.last_tick_highlight_dest = null;			// Used to skip redraws in infobox.
 
-	renderer.movelist_handler = NewMovelistHander();
+	renderer.movelist_handler = NewMovelistHander();	// Object that deals with the movelist at the bottom.
 	renderer.info_table = NewInfoTable();				// Holds info about the engine evaluations.
 	renderer.node = NewTree();							// Our current place in the current tree.
 
@@ -523,12 +523,7 @@ function make_renderer() {
 		// So maybe we can skip drawing the infobox, and just return...
 
 		if (renderer.info_table.drawn && !force) {
-
 			if (highlight_dest === renderer.last_tick_highlight_dest) {
-
-				// Count skips for debugging...
-
-				renderer.draw_infobox.skips = renderer.draw_infobox.skips === undefined ? 1 : renderer.draw_infobox.skips + 1;
 				return;
 			}
 		}
