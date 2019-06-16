@@ -25,10 +25,6 @@ const context = canvas.getContext("2d");
 // Global variables.................................................
 
 let config = {};
-let exe = null;
-let scanner = null;
-let err_scanner = null;
-let readyok_required = 0;
 
 let decoder = new util.TextDecoder("utf8");
 

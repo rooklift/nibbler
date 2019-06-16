@@ -1,6 +1,8 @@
 "use strict";
 
-function make_renderer() {
+// FIXME: should probably remove a bunch of closures by saying "this" instead of "renderer" a lot.
+
+function NewRenderer() {
 
 	let renderer = Object.create(null);
 
@@ -18,7 +20,7 @@ function make_renderer() {
 	renderer.info_table = NewInfoTable();				// Holds info about the engine evaluations.
 	renderer.node = NewTree();							// Our current place in the current tree.
 
-	fenbox.value = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1";
+	renderer.engine = NewEngine();
 
 	// --------------------------------------------------------------------------------------------
 
@@ -329,6 +331,10 @@ function make_renderer() {
 		return renderer.versus.includes(renderer.node.get_board().active);
 	};
 
+	// Note that receive() and err_receive() should not use the "this" keyword
+	// since they are going to be treated as first class functions and passed
+	// as arguments to the engine object, therefore "this" leads to confusion.
+
 	renderer.receive = (s) => {
 		if (s.startsWith("info")) {
 			renderer.ever_received_info = true;
@@ -348,16 +354,16 @@ function make_renderer() {
 	};
 
 	renderer.halt = () => {
-		send("stop");
+		renderer.engine.send("stop");
 	};
 
 	renderer.go = (new_game_flag) => {
 
 		renderer.hide_pgn_chooser();
 
-		send("stop");
+		renderer.engine.send("stop");
 		if (new_game_flag) {
-			send("ucinewgame");
+			renderer.engine.send("ucinewgame");
 		}
 
 		let start_fen = renderer.node.get_root().fen();
@@ -369,26 +375,26 @@ function make_renderer() {
 			setup = `fen ${start_fen}`;
 		}
 
-		send(`position ${setup} moves ${renderer.node.history().join(" ")}`);
-		sync();																		// See comment on how sync() works
-		send("go infinite");
+		renderer.engine.send(`position ${setup} moves ${renderer.node.history().join(" ")}`);
+		renderer.engine.sync();
+		renderer.engine.send("go infinite");
 	};
 
 	renderer.reset_leela_cache = () => {
 		if (renderer.leela_should_go()) {
 			renderer.go(true);
 		} else {
-			send("ucinewgame");
+			renderer.engine.send("ucinewgame");
 		}
 	};
 
 	renderer.switch_weights = (filename) => {
 		renderer.set_versus("");
-		setoption("WeightsFile", filename);
+		renderer.engine.setoption("WeightsFile", filename);
 	};
 
 	renderer.set_cpuct = (val) => {
-		setoption("CPuct", val);
+		renderer.engine.setoption("CPuct", val);
 		renderer.set_versus(renderer.versus);		// Restart the search.
 	};
 
@@ -745,6 +751,27 @@ function make_renderer() {
 		renderer.draw();
 		setTimeout(renderer.draw_loop, config.update_delay);
 	};
+
+	// --------------------------------------------------------------------------------------------
+	// The call to setup needs to happen after renderer.receive and .err_receive actually exist...
+
+	if (config && config.path) {
+
+		renderer.engine.setup(config.path, renderer.receive, renderer.err_receive, config.log_info_lines);
+
+		renderer.engine.send("uci");
+		for (let key of Object.keys(config.options)) {
+			renderer.engine.setoption(key, config.options[key]);
+		}
+		renderer.engine.setoption("VerboseMoveStats", true);			// Required for LogLiveStats to work.
+		renderer.engine.setoption("LogLiveStats", true);				// "Secret" Lc0 command.
+		renderer.engine.setoption("MultiPV", config.max_info_lines);
+		renderer.engine.send("ucinewgame");
+	}
+
+	// Final thing that needs to happen...
+
+	fenbox.value = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1";
 
 	return renderer;
 }

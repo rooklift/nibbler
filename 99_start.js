@@ -1,156 +1,14 @@
 "use strict";
 
-function send(msg) {
-	try {
-		msg = msg.trim();
-		exe.stdin.write(msg);
-		exe.stdin.write("\n");
-		Log("--> " + msg);
-	} catch (err) {
-		Log("(failed) --> " + msg);
-		if (exe.connected === false && !send.warned) {
-			send.warned = true;
-			alert("The engine appears to have crashed.");
-		}
-	}
-}
-
-function setoption(name, value) {
-	send(`setoption name ${name} value ${value}`);
-}
-
-// The sync function exists so that we can disregard all output until a certain point.
-// Basically we use it after sending a position, so that we can ignore all analysis
-// that comes until LZ sends "readyok" in response to our "isready". All output before
-// that moment would refer to the obsolete position.
-//
-// While this seems to work correctly with Lc0, tests with Stockfish show that it
-// definitely violates our assumptions and sends things out of order, hence the need
-// for validity checking on incoming messages anyway.
-
-function sync() {
-	send("isready");
-	readyok_required++;
-}
-
-// ------------------------------------------------------------------------------------------------
-
-try {
-	let config_filename = path.join(get_main_folder(), "config.json");
-	let config_example_filename = path.join(get_main_folder(), "config.example.json");
-
-	if (fs.existsSync(config_filename)) {
-		config = JSON.parse(debork_json(fs.readFileSync(config_filename, "utf8")));
-	} else if (fs.existsSync(config_example_filename)) {
-		config = JSON.parse(debork_json(fs.readFileSync(config_example_filename, "utf8")));
-		config.warn_filename = true;
-	} else {
-		alert(`Couldn't find config file. Looked at:\n${config_filename}`);
-	}
-} catch (err) {
-	alert("Failed to parse config file - make sure it is valid JSON, and in particular, if on Windows, use \\\\ instead of \\ as a path separator.");
-}
-
-// Some tolerable default values for config...
-
-assign_without_overwrite(config, {
-	"options": {},
-
-	"width": 1280,
-	"height": 835,
-	"board_size": 640,
-	"movelist_height": 110,
-
-	"board_font": "18px Arial",
-
-	"light_square": "#dadada",
-	"dark_square": "#b4b4b4",
-	"active_square": "#cc9966",
-
-	"best_colour": "#66aaaa",
-	"good_colour": "#66aa66",
-	"bad_colour": "#cccc66",
-	"terrible_colour": "#cc6666",
-
-	"bad_move_threshold": 0.02,
-	"terrible_move_threshold": 0.04,
-
-	"node_display_threshold": 0.02,
-
-	"max_info_lines": 10,
-	"update_delay": 170,
-	
-	"logfile": null,
-	"log_info_lines": false
-});
-
-config.board_size = Math.floor(config.board_size / 8) * 8;
-
-infobox.style.height = config.board_size.toString() + "px";
-movelist.style.height = config.movelist_height.toString() + "px";				// Is there a way to avoid needing this, to get the scroll bar?
-canvas.width = config.board_size;
-canvas.height = config.board_size;
-
 Log("");
 Log("======================================================================================================================================");
 Log(`Nibbler startup at ${new Date().toUTCString()}`);
 Log("");
 
-if (config.path) {
-	exe = child_process.spawn(config.path);
-	exe.on("error", (err) => {
-		alert("Couldn't spawn process - check the path in the config file");	// Note that this alert will come some time in the future, not instantly.
-	});
-
-	scanner = readline.createInterface({
-		input: exe.stdout,
-		output: undefined,
-		terminal: false
-	});
-
-	err_scanner = readline.createInterface({
-		input: exe.stderr,
-		output: undefined,
-		terminal: false
-	});
-
-	err_scanner.on("line", (line) => {
-		Log("! " + line);
-		renderer.err_receive(line);
-	});
-
-	scanner.on("line", (line) => {
-
-		// We want to ignore all output when waiting for readyok
-
-		if (line.includes("readyok") && readyok_required > 0) {
-			readyok_required--;
-		}
-
-		if (readyok_required > 0) {
-			if (config.log_info_lines || line.includes("info") === false) {
-				Log("(ignored) < " + line);
-			}
-			return;
-		}
-
-		if (config.log_info_lines || line.includes("info") === false) {
-			Log("< " + line);
-		}
-		renderer.receive(line);
-	});
-}
-
-send("uci");
-
-for (let key of Object.keys(config.options)) {
-	setoption(key, config.options[key]);
-}
-
-setoption("VerboseMoveStats", true);			// Required for LogLiveStats to work.
-setoption("LogLiveStats", true);				// "Secret" Lc0 command.
-setoption("MultiPV", config.max_info_lines);
-send("ucinewgame");
+infobox.style.height = config.board_size.toString() + "px";
+movelist.style.height = config.movelist_height.toString() + "px";		// Is there a way to avoid needing this, to get the scroll bar?
+canvas.width = config.board_size;
+canvas.height = config.board_size;
 
 // ------------------------------------------------------------------------------------------------
 
@@ -171,7 +29,7 @@ for (let c of Array.from("KkQqRrBbNnPp")) {
 
 // ------------------------------------------------------------------------------------------------
 
-let renderer = make_renderer();
+let renderer = NewRenderer();
 
 if (config && config.warn_filename) {
 	renderer.err_receive(`<span class="blue">Nibbler says: You should rename config.example.json to config.json</span>`);
