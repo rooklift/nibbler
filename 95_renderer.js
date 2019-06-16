@@ -754,6 +754,7 @@ function NewRenderer() {
 
 	// --------------------------------------------------------------------------------------------
 	// The call to setup needs to happen after renderer.receive and .err_receive actually exist...
+	// One could argue that this stuff shouldn't be in NewRenderer() at all.
 
 	if (config && config.path) {
 
@@ -769,7 +770,7 @@ function NewRenderer() {
 		renderer.engine.send("ucinewgame");
 	}
 
-	// Final thing that needs to happen...
+	// Another thing that needs to happen somewhere...
 
 	fenbox.value = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1";
 
