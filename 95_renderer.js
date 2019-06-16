@@ -9,13 +9,12 @@ function make_renderer() {
 	renderer.ever_received_info = false;				// When false, we write stderr log instead of move info.
 	renderer.stderr_log = "";							// All output received from the engine's stderr.
 	renderer.pgn_choices = null;						// All games found when opening a PGN file.
-	renderer.infobox_clickers = [];						// Objects relating to our infobox.
 	renderer.mousex = null;								// Raw mouse X on the canvas, e.g. between 0 and 640.
 	renderer.mousey = null;								// Raw mouse Y on the canvas, e.g. between 0 and 640.
 	renderer.one_click_moves = New2DArray(8, 8);		// 2D array of [x][y] --> move string or null.
-	renderer.last_tick_highlight_dest = null;			// Used to skip redraws in infobox.
 
 	renderer.movelist_handler = NewMovelistHander();	// Object that deals with the movelist at the bottom.
+	renderer.infobox_handler = NewInfoboxHandler();		// Object that deals with the infobox on the right.
 	renderer.info_table = NewInfoTable();				// Holds info about the engine evaluations.
 	renderer.node = NewTree();							// Our current place in the current tree.
 
@@ -40,7 +39,7 @@ function make_renderer() {
 
 	renderer.set_versus = (s) => {
 		renderer.versus = s;
-		renderer.draw_infobox(true);
+		renderer.infobox_handler.draw(renderer, true);			// true so the draw is not wrongly skipped
 		if (renderer.leela_should_go()) {
 			renderer.go();
 		} else {
@@ -498,179 +497,28 @@ function make_renderer() {
 		return Point(boardx, boardy);
 	};
 
-	renderer.draw_infobox = (force) => {
-
-		if (!renderer.ever_received_info) {
-			infobox.innerHTML = renderer.stderr_log;
-			return;
-		}
-
-		// Find the square the user is hovering over (might be null)...
-		let p = renderer.mouse_to_point(renderer.mousex, renderer.mousey);
-
-		// By default we're highlighting nothing...
-		let highlight_dest = null;
-		let one_click_move = "__none__";
-
-		// But if the hovered square actually has a one-click move available, highlight its variation,
-		// unless we have an active (i.e. clicked) square...
-		if (p && renderer.one_click_moves[p.x][p.y] && !renderer.active_square) {
-			highlight_dest = p;
-			one_click_move = renderer.one_click_moves[p.x][p.y];
-		}
-
-		// The info_table.drawn property is set to false whenever new info is received from the engine.
-		// So maybe we can skip drawing the infobox, and just return...
-
-		if (renderer.info_table.drawn && !force) {
-			if (highlight_dest === renderer.last_tick_highlight_dest) {
-				return;
-			}
-		}
-
-		renderer.last_tick_highlight_dest = highlight_dest;
-
-		//
-
-		let info_list = renderer.info_table.sorted();
-		let elements = [];									// Not HTML elements, just our own objects.
-
-		if (renderer.leela_should_go() === false) {
-			elements.push({
-				class: "yellow",
-				text: renderer.versus === "" ? "HALTED " : "YOUR MOVE ",
-			});
-		}
-
-		elements.push({
-			class: "gray",
-			text: `Nodes: ${renderer.info_table.nodes}, N/s: ${renderer.info_table.nps}<br><br>`
-		});
-
-		for (let i = 0; i < info_list.length && i < config.max_info_lines; i++) {
-
-			let new_elements = [];
-
-			let info = info_list[i];
-
-			new_elements.push({
-				class: "blue",
-				text: `${info.value_string(1)} `,
-			});
-
-			let colour = renderer.node.get_board().active;
-
-			let nice_pv = info.nice_pv();
-
-			for (let n = 0; n < nice_pv.length; n++) {
-				let nice_move = nice_pv[n];
-				let element = {
-					class: colour === "w" ? "white" : "pink",
-					text: nice_move + " ",
-					move: info.pv[n],
-				};
-				if (nice_move.includes("O-O")) {
-					element.class += " nobr";
-				}
-				new_elements.push(element);
-				colour = OppositeColour(colour);
-			}
-
-			new_elements.push({
-				class: "gray",
-				text: `(N: ${info.n.toString()}, P: ${info.p})`
-			});
-
-			if (info.move === one_click_move) {
-				for (let e of new_elements) {
-					e.class += " redback";
-				}
-			}
-
-			if (new_elements.length > 0) {					// Always true.
-				new_elements[new_elements.length - 1].text += "<br><br>";
-			}
-
-			elements = elements.concat(new_elements);
-		}
-
-		// Generate the new innerHTML for the infobox <div>
-
-		let new_inner_parts = [];
-
-		for (let n = 0; n < elements.length; n++) {
-			let part = `<span id="infobox_${n}" class="${elements[n].class}">${elements[n].text}</span>`;
-			new_inner_parts.push(part);
-		}
-
-		infobox.innerHTML = new_inner_parts.join("");		// Setting innerHTML is performant. Direct DOM manipulation is worse, somehow.
-
-		// And save our elements so that we know what clicks mean.
-
-		renderer.infobox_clickers = elements;				// We actually only need the move or its absence in each object. Meh.
-		renderer.info_table.drawn = true;
-	};
-
 	renderer.infobox_click = (event) => {
 
-		let n;
+		let moves = renderer.infobox_handler.moves_from_click(event);
 
-		for (let item of event.path) {
-			if (typeof item.id === "string" && item.id.startsWith("infobox_")) {
-				n = parseInt(item.id.slice(8), 10);
-				break;
-			}
-		}
-
-		if (n === undefined) {
+		if (!moves || moves.length === 0) {
 			return;
 		}
-
-		// This is a bit icky, it relies on the fact that our infobox_clickers list
-		// has some objects that lack a move property (the blue info bits).
-		//
-		// There's also some small chance that we will receive an outdated click. 
-		// However, we know that our infobox_clickers list matches the current board, 
-		// so the only danger is the user gets something unintended, but it will still 
-		// be legal.
-
-		if (!renderer.infobox_clickers || n >= renderer.infobox_clickers.length) {
-			return;
-		}
-
-		let move_list = [];
-
-		// Work backwards until we get to the start of the line...
-
-		for (; n >= 0; n--) {
-			let element = renderer.infobox_clickers[n];
-			if (!element || !element.move) {
-				break;
-			}
-			move_list.push(element.move);
-		}
-
-		if (move_list.length === 0) {
-			return;
-		}
-
-		move_list.reverse();
 
 		// Legality checks... best to assume nothing.
 
 		let tmp_board = renderer.node.get_board();
-		for (let move of move_list) {
+		for (let move of moves) {
 			if (tmp_board.illegal(move) !== "") {
 				return;
 			}
 			tmp_board = tmp_board.move(move);
 		}
 
-		for (let move of move_list) {
+		for (let move of moves) {
 			renderer.node = renderer.node.make_move(move);
 		}
 		renderer.position_changed();
-
 	};
 
 	// --------------------------------------------------------------------------------------------
@@ -886,7 +734,7 @@ function make_renderer() {
 		// may make the "animation" smoother, I think.
 
 		requestAnimationFrame(() => {
-			renderer.draw_infobox();
+			renderer.infobox_handler.draw(renderer);
 			renderer.draw_board(config.light_square, config.dark_square);
 			renderer.draw_position();
 		});
