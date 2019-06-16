@@ -1,196 +1,23 @@
 "use strict";
 
-function send(msg) {
-	try {
-		msg = msg.trim();
-		exe.stdin.write(msg);
-		exe.stdin.write("\n");
-		Log("--> " + msg);
-	} catch (err) {
-		Log("(failed) --> " + msg);
-		if (exe.connected === false && !send.warned) {
-			send.warned = true;
-			alert("The engine appears to have crashed.");
-		}
-	}
-}
-
-function setoption(name, value) {
-	send(`setoption name ${name} value ${value}`);
-}
-
-// The sync function exists so that we can disregard all output until a certain point.
-// Basically we use it after sending a position, so that we can ignore all analysis
-// that comes until LZ sends "readyok" in response to our "isready". All output before
-// that moment would refer to the obsolete position.
-//
-// While this seems to work correctly with Lc0, tests with Stockfish show that it
-// definitely violates our assumptions and sends things out of order, hence the need
-// for validity checking on incoming messages anyway.
-
-function sync() {
-	send("isready");
-	readyok_required++;
-}
-
-// ------------------------------------------------------------------------------------------------
-
-try {
-	let config_filename = path.join(get_main_folder(), "config.json");
-	let config_example_filename = path.join(get_main_folder(), "config.example.json");
-
-	if (fs.existsSync(config_filename)) {
-		config = JSON.parse(debork_json(fs.readFileSync(config_filename, "utf8")));
-	} else if (fs.existsSync(config_example_filename)) {
-		config = JSON.parse(debork_json(fs.readFileSync(config_example_filename, "utf8")));
-		config.warn_filename = true;
-	} else {
-		alert(`Couldn't find config file. Looked at:\n${config_filename}`);
-	}
-} catch (err) {
-	alert("Failed to parse config file - make sure it is valid JSON, and in particular, if on Windows, use \\\\ instead of \\ as a path separator.");
-}
-
-// Some tolerable default values for config...
-
-assign_without_overwrite(config, {
-	"options": {},
-
-	"width": 1280,
-	"height": 835,
-	"board_size": 640,
-	"movelist_height": 110,
-
-	"board_font": "18px Arial",
-
-	"light_square": "#dadada",
-	"dark_square": "#b4b4b4",
-	"active_square": "#cc9966",
-
-	"best_colour": "#66aaaa",
-	"good_colour": "#66aa66",
-	"bad_colour": "#cccc66",
-	"terrible_colour": "#cc6666",
-
-	"bad_move_threshold": 0.02,
-	"terrible_move_threshold": 0.04,
-
-	"node_display_threshold": 0.02,
-
-	"max_info_lines": 10,
-	"update_delay": 170,
-	
-	"logfile": null,
-	"log_info_lines": false
-});
-
-config.board_size = Math.floor(config.board_size / 8) * 8;
-
-infobox.style.height = config.board_size.toString() + "px";
-movelist.style.height = config.movelist_height.toString() + "px";				// Is there a way to avoid needing this, to get the scroll bar?
-canvas.width = config.board_size;
-canvas.height = config.board_size;
-
-Log("");
-Log("======================================================================================================================================");
-Log(`Nibbler startup at ${new Date().toUTCString()}`);
-Log("");
-
-if (config.path) {
-	exe = child_process.spawn(config.path);
-	exe.on("error", (err) => {
-		alert("Couldn't spawn process - check the path in the config file");	// Note that this alert will come some time in the future, not instantly.
-	});
-
-	scanner = readline.createInterface({
-		input: exe.stdout,
-		output: undefined,
-		terminal: false
-	});
-
-	err_scanner = readline.createInterface({
-		input: exe.stderr,
-		output: undefined,
-		terminal: false
-	});
-
-	err_scanner.on("line", (line) => {
-		Log("! " + line);
-		renderer.err_receive(line);
-	});
-
-	scanner.on("line", (line) => {
-
-		// We want to ignore all output when waiting for readyok
-
-		if (line.includes("readyok") && readyok_required > 0) {
-			readyok_required--;
-		}
-
-		if (readyok_required > 0) {
-			if (config.log_info_lines || line.includes("info") === false) {
-				Log("(ignored) < " + line);
-			}
-			return;
-		}
-
-		if (config.log_info_lines || line.includes("info") === false) {
-			Log("< " + line);
-		}
-		renderer.receive(line);
-	});
-}
-
-send("uci");
-
-for (let key of Object.keys(config.options)) {
-	setoption(key, config.options[key]);
-}
-
-setoption("VerboseMoveStats", true);			// Required for LogLiveStats to work.
-setoption("LogLiveStats", true);				// "Secret" Lc0 command.
-setoption("MultiPV", config.max_info_lines);
-send("ucinewgame");
-
-// ------------------------------------------------------------------------------------------------
-
-let images = Object.create(null);
-let loads = 0;
-
-for (let c of Array.from("KkQqRrBbNnPp")) {
-	images[c] = new Image();
-	if (c === c.toUpperCase()) {
-		images[c].src = `./pieces/${c}.png`;
-	} else {
-		images[c].src = `./pieces/_${c.toUpperCase()}.png`;
-	}
-	images[c].onload = () => {
-		loads++;
-	};
-}
-
-// ------------------------------------------------------------------------------------------------
-
 function make_renderer() {
 
 	let renderer = Object.create(null);
 
-	renderer.active_square = null;					// Square clicked by user.
-	renderer.versus = "";							// Colours that Leela is "playing".
-	renderer.ever_received_info = false;			// When false, we write stderr log instead of move info.
-	renderer.stderr_log = "";						// All output received from the engine's stderr.
-	renderer.pgn_choices = null;					// All games found when opening a PGN file.
-	renderer.infobox_clickers = [];					// Objects relating to our infobox.
-	renderer.mousex = null;							// Raw mouse X on the canvas, e.g. between 0 and 640.
-	renderer.mousey = null;							// Raw mouse Y on the canvas, e.g. between 0 and 640.
-	renderer.one_click_moves = New2DArray(8, 8);	// 2D array of [x][y] --> move string or null.
-	renderer.movelist_connections = null;			// List of objects telling us what movelist clicks go to what nodes.
-	renderer.movelist_connections_version = -1;		// Set equal to total_tree_changes when movelist_connections changes.
-	renderer.movelist_line_end = null;				// What node was the end of the line when movelist was drawn.
-	renderer.last_tick_highlight_dest = null;		// Used to skip redraws in infobox.
+	renderer.active_square = null;						// Square clicked by user.
+	renderer.versus = "";								// Colours that Leela is "playing".
+	renderer.ever_received_info = false;				// When false, we write stderr log instead of move info.
+	renderer.stderr_log = "";							// All output received from the engine's stderr.
+	renderer.pgn_choices = null;						// All games found when opening a PGN file.
+	renderer.infobox_clickers = [];						// Objects relating to our infobox.
+	renderer.mousex = null;								// Raw mouse X on the canvas, e.g. between 0 and 640.
+	renderer.mousey = null;								// Raw mouse Y on the canvas, e.g. between 0 and 640.
+	renderer.one_click_moves = New2DArray(8, 8);		// 2D array of [x][y] --> move string or null.
+	renderer.last_tick_highlight_dest = null;			// Used to skip redraws in infobox.
 
-	renderer.info_table = NewInfoTable();			// Holds info about the engine evaluations.
-	renderer.node = NewTree();						// Our current place in the current tree.
+	renderer.movelist_handler = NewMovelistHander();
+	renderer.info_table = NewInfoTable();				// Holds info about the engine evaluations.
+	renderer.node = NewTree();							// Our current place in the current tree.
 
 	fenbox.value = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1";
 
@@ -201,7 +28,7 @@ function make_renderer() {
 		renderer.info_table.clear();
 
 		renderer.escape();
-		renderer.draw_movelist();
+		renderer.movelist_handler.draw(renderer.node);
 		fenbox.value = renderer.node.fen();
 
 		if (renderer.leela_should_go()) {
@@ -324,7 +151,7 @@ function make_renderer() {
 
 	renderer.promote_to_main_line = () => {
 		renderer.node.promote_to_main_line();
-		renderer.draw_movelist();
+		renderer.movelist_handler.draw(renderer.node);
 	};
 
 	renderer.delete_move = () => {
@@ -634,192 +461,11 @@ function make_renderer() {
 		renderer.draw();
 	};
 
-	renderer.get_movelist_highlight = () => {
-		let span = document.getElementsByClassName("movelist_highlight_blue")[0];
-		if (span) {
-			return span;
-		}
-		span = document.getElementsByClassName("movelist_highlight_yellow")[0];
-		if (span) {
-			return span;
-		}
-		return null;
-	};
-
-	renderer.draw_movelist = () => {
-		let end = renderer.node.get_end();
-		if (end === renderer.movelist_line_end && renderer.movelist_connections_version === total_tree_changes) {
-			renderer.draw_movelist_lazy();
-		} else {
-			renderer.draw_movelist_hard();
-		}
-		renderer.fix_scrollbar_position();
-	};
-
-	renderer.draw_movelist_lazy = () => {
-
-		// The tree hasn't changed, nor has the end node of the displayed line. Therefore very little needs
-		// to be done, except the highlight class needs to be applied to a different element.
-
-		let span = renderer.get_movelist_highlight();
-		let highlight_class = span ? span.className : "movelist_highlight_blue";	// If no span found, old position was root.
-
-		if (span) {
-			span.className = "white";		// This is always correct, it's never gray.
-		}
-
-		// Find the n of the new highlight...
-
-		let n = null;
-
-		for (let i = 0; i < renderer.movelist_connections.length; i++) {
-			if (renderer.movelist_connections.nodes[i] === renderer.node) {
-				n = i;
-				break;
-			}
-		}
-
-		if (typeof n === "number") {
-			let span = document.getElementById(`movelist_${n}`);
-			span.className = highlight_class;
-		}
-	};
-
-	renderer.draw_movelist_hard = () => {
-
-		// Flag nodes that are on the current line (including into the future).
-		// We'll undo this damage to the tree in a bit.
-
-		let end = renderer.node.get_end();
-		renderer.movelist_line_end = end;
-
-		let foo = end;
-		while (foo) {
-			foo.current_line = true;
-			foo = foo.parent;
-		}
-
-		// We'd also like to know if the current node is on the main line...
-
-		let on_mainline = false;
-
-		foo = renderer.node.get_root().get_end();
-		while (foo) {
-			if (foo === renderer.node) {
-				on_mainline = true;
-				break;
-			}
-			foo = foo.parent;
-		}
-
-		//
-
-		if (!renderer.movelist_connections || renderer.movelist_connections_version !== total_tree_changes) {
-			renderer.movelist_connections = TokenNodeConnections(renderer.node);
-			renderer.movelist_connections_version = total_tree_changes;
-		}
-
-		let elements = [];		// Objects containing class and text.
-
-		for (let n = 0; n < renderer.movelist_connections.length; n++) {
-
-			// Each item in the movelist_connections must have a corresponding element
-			// in our elements list. The indices must match.
-
-			let s = renderer.movelist_connections.tokens[n];
-
-			let next_s = renderer.movelist_connections.tokens[n + 1];	// possibly undefined
-			let node = renderer.movelist_connections.nodes[n];			// possibly null
-
-			let space = (s === "(" || next_s === ")") ? "" : " ";
-
-			let element = {
-				text: `${s}${space}`
-			};
-
-			if (node === renderer.node) {
-				element.class = on_mainline ? "movelist_highlight_blue" : "movelist_highlight_yellow";
-			} else if (node && node.current_line) {
-				element.class = "white";
-			} else {
-				element.class = "gray";
-			}
-
-			elements.push(element);
-		}
-
-		renderer.update_clickable_thingy(movelist, elements, "movelist");
-
-		// Undo the damage to our tree...
-
-		foo = renderer.node.get_end();
-		while(foo) {
-			delete foo.current_line;
-			foo = foo.parent;
-		}
-	};
-
-	renderer.fix_scrollbar_position = () => {
-
-		let highlight = renderer.get_movelist_highlight();
-
-		if (highlight) {
-
-			let top = highlight.offsetTop - movelist.offsetTop;
-
-			if (top < movelist.scrollTop) {
-				movelist.scrollTop = top;
-			}
-
-			let bottom = top + highlight.offsetHeight;
-
-			if (bottom > movelist.scrollTop + movelist.offsetHeight) {
-				movelist.scrollTop = bottom - movelist.offsetHeight;
-			}
-
-		} else if (!renderer.node.parent) {
-
-			movelist.scrollTop = 0;
-
-		}
-	};
-
 	renderer.movelist_click = (event) => {
 
-		if (!renderer.movelist_connections) {
-			return;
-		}
+		let node = renderer.movelist_handler.node_from_click(event);
 
-		let n;
-
-		for (let item of event.path) {
-			if (typeof item.id === "string") {
-				if (item.id === "mainline_deviated") {
-					renderer.return_to_main_line();
-					return;
-				}
-				if (item.id.startsWith("movelist_")) {
-					n = parseInt(item.id.slice(9), 10);
-					break;
-				}
-			}
-		}
-
-		if (n === undefined) {
-			return;
-		}
-
-		if (n < 0 || n >= renderer.movelist_connections.length) {
-			return;
-		}
-
-		let node = renderer.movelist_connections.nodes[n];
-
-		if (!node) {
-			return;
-		}
-
-		if (node.get_root() !== renderer.node.get_root()) {
+		if (!node || node.get_root() !== renderer.node.get_root()) {
 			return;
 		}
 
@@ -850,28 +496,6 @@ function make_renderer() {
 		}
 
 		return Point(boardx, boardy);
-	};
-
-	renderer.update_clickable_thingy = (thingy, elements, prefix) => {
-
-		// What this is: given a container (the thingy) and a list of elements (which are normal JS objects
-		// containing a "text" and a "class" property) we make the container have child spans which have the
-		// said text and class, as well as a unique id so they can be clicked on (e.g. "foo_37").
-		//
-		// It seems setting innerHTML is the performant way to do this. Direct DOM manipulation
-		// on the other hand is (shockingly to me) apparently slower than just setting innerHTML.
-		// The difference for this is about 400% or something.
-
-		let new_inner_parts = [];
-
-		let elements_length = elements.length;					// Is this type of optimisation helpful?
-
-		for (let n = 0; n < elements_length; n++) {
-			let part = `<span id="${prefix}_${n}" class="${elements[n].class}">${elements[n].text}</span>`;
-			new_inner_parts.push(part);
-		}
-
-		thingy.innerHTML = new_inner_parts.join("");
 	};
 
 	renderer.draw_infobox = (force) => {
@@ -975,7 +599,19 @@ function make_renderer() {
 			elements = elements.concat(new_elements);
 		}
 
-		renderer.update_clickable_thingy(infobox, elements, "infobox");
+		// Generate the new innerHTML for the infobox <div>
+
+		let new_inner_parts = [];
+
+		for (let n = 0; n < elements.length; n++) {
+			let part = `<span id="infobox_${n}" class="${elements[n].class}">${elements[n].text}</span>`;
+			new_inner_parts.push(part);
+		}
+
+		infobox.innerHTML = new_inner_parts.join("");		// Setting innerHTML is performant. Direct DOM manipulation is worse, somehow.
+
+		// And save our elements so that we know what clicks mean.
+
 		renderer.infobox_clickers = elements;				// We actually only need the move or its absence in each object. Meh.
 		renderer.info_table.drawn = true;
 	};
@@ -1268,159 +904,3 @@ function make_renderer() {
 
 	return renderer;
 }
-
-// ------------------------------------------------------------------------------------------------
-
-let renderer = make_renderer();
-
-if (config && config.warn_filename) {
-	renderer.err_receive(`<span class="blue">Nibbler says: You should rename config.example.json to config.json</span>`);
-	renderer.err_receive("");
-}
-
-ipcRenderer.on("call", (event, msg) => {
-	if (typeof msg === "string") {
-		renderer[msg]();
-	} else if (typeof msg === "object" && msg.fn && msg.args) {
-		renderer[msg.fn](...msg.args);
-	} else {
-		console.log("Bad call, msg was...");
-		console.log(msg);
-	}
-});
-
-ipcRenderer.on("toggle", (event, cfgvar) => {
-	config[cfgvar] = !config[cfgvar];
-	renderer.draw();
-});
-
-ipcRenderer.on("set", (event, msg) => {
-	config[msg.key] = msg.value;
-	renderer.draw();
-});
-
-// --------------------------------------------------------------------------------------------
-// prev() and next() calls are the things most likely to lag the app if we've a pathologically
-// branchy PGN. To mitigate this, when one comes in, don't execute it immediately, but place it
-// on a queue, which is regularly examined. If there's multiple stuff on the queue, drop stuff.
-//
-// This is a poor solution to the fact that draw_movelist is so laggy when the tree is big,
-// ideally that should be fixed.
-
-let prev_next_queue = [];
-
-ipcRenderer.on("prev", (event) => {
-	prev_next_queue.push(renderer.prev);
-});
-
-ipcRenderer.on("next", (event) => {
-	prev_next_queue.push(renderer.next);
-});
-
-function prev_next_loop() {
-	if (prev_next_queue.length > 0) {
-		let fn_to_call = prev_next_queue[prev_next_queue.length - 1];
-		fn_to_call();
-		prev_next_queue = [];
-	}
-	setTimeout(prev_next_loop, 10);
-}
-
-prev_next_loop();
-
-// --------------------------------------------------------------------------------------------
-// We had some problems with the various clickers: we used to destroy and create
-// clickable objects a lot. This seemed to lead to moments where clicks wouldn't
-// register.
-//
-// A better approach is to use event handlers on the outer elements, and examine
-// the event.path to see what was actually clicked on.
-
-pgnchooser.addEventListener("mousedown", (event) => {
-	renderer.pgnchooser_click(event);
-});
-
-canvas.addEventListener("mousedown", (event) => {
-	renderer.canvas_click(event);
-});
-
-infobox.addEventListener("mousedown", (event) => {
-	renderer.infobox_click(event);
-});
-
-movelist.addEventListener("mousedown", (event) => {
-	renderer.movelist_click(event);
-});
-
-// Constantly track the mouse...
-
-canvas.addEventListener("mousemove", (event) => {
-	// This can fire a LOT. So don't call any more functions.
-	renderer.mousex = event.offsetX;
-	renderer.mousey = event.offsetY;
-});
-
-canvas.addEventListener("mouseout", (event) => {
-	renderer.mousex = null;
-	renderer.mousey = null;
-});
-
-document.addEventListener("wheel", (event) => {
-
-	// Only if the PGN chooser is closed, and the move_list has no scroll bar or isn't the target.
-
-	if (pgnchooser.style.display !== "none") {
-		return;
-	}
-
-	if (movelist.scrollHeight <= movelist.clientHeight) {
-		if (event.deltaY && event.deltaY < 0) prev_next_queue.push(renderer.prev);
-		if (event.deltaY && event.deltaY > 0) prev_next_queue.push(renderer.next);
-		return;
-	}
-
-	let allow = true;
-
-	if (event.path) {
-		for (let item of event.path) {
-			if (item.id === "movelist") {
-				allow = false;
-				break;
-			}
-		}
-	}
-
-	if (allow) {
-		if (event.deltaY && event.deltaY < 0) prev_next_queue.push(renderer.prev);
-		if (event.deltaY && event.deltaY > 0) prev_next_queue.push(renderer.next);
-	}
-});
-
-// Setup return key on FEN box...
-fenbox.onkeydown = (event) => {
-	if (event.key === "Enter") {
-		renderer.load_fen(fenbox.value);
-	}
-};
-
-// Setup drag-and-drop for PGN files into the window itself...
-
-window.ondragover = () => false;
-window.ondragleave = () => false;
-window.ondragend = () => false;
-window.ondrop = (event) => {
-	event.preventDefault();
-	renderer.open(event.dataTransfer.files[0].path);
-	return false;
-};
-
-function enter_loop() {
-	if (loads === 12) {
-		renderer.draw_loop();
-		ipcRenderer.send("renderer_ready", null);
-	} else {
-		setTimeout(enter_loop, 25);
-	}
-}
-
-enter_loop();
