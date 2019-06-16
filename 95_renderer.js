@@ -39,7 +39,7 @@ function make_renderer() {
 
 	renderer.set_versus = (s) => {
 		renderer.versus = s;
-		renderer.infobox_handler.draw(renderer, true);
+		renderer.infobox_handler.draw(renderer, true);			// true so the draw is not wrongly skipped
 		if (renderer.leela_should_go()) {
 			renderer.go();
 		} else {
