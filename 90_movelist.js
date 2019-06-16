@@ -43,24 +43,24 @@ function NewMovelistHander() {
 
 	return {
 
-		movelist_connections: null,
-		movelist_connections_version: -1,
-		movelist_line_end: null,
+		connections: null,
+		connections_version: -1,
+		line_end: null,
 
 		draw: function(node) {
 
 			let end = node.get_end();
 
-			if (end === this.movelist_line_end && this.movelist_connections_version === total_tree_changes) {
-				this.draw_movelist_lazy(node);
+			if (end === this.line_end && this.connections_version === total_tree_changes) {
+				this.draw_lazy(node);
 			} else {
-				this.draw_movelist_hard(node);
+				this.draw_hard(node);
 			}
 
 			fix_scrollbar_position();
 		},
 
-		draw_movelist_lazy: function(node) {
+		draw_lazy: function(node) {
 
 			// The tree hasn't changed, nor has the end node of the displayed line. Therefore very little needs
 			// to be done, except the highlight class needs to be applied to a different element.
@@ -76,8 +76,8 @@ function NewMovelistHander() {
 
 			let n = null;
 
-			for (let i = 0; i < this.movelist_connections.length; i++) {
-				if (this.movelist_connections.nodes[i] === node) {
+			for (let i = 0; i < this.connections.length; i++) {
+				if (this.connections.nodes[i] === node) {
 					n = i;
 					break;
 				}
@@ -89,13 +89,13 @@ function NewMovelistHander() {
 			}
 		},
 
-		draw_movelist_hard: function(node) {
+		draw_hard: function(node) {
 
 			// Flag nodes that are on the current line (including into the future).
 			// We'll undo this damage to the tree in a bit.
 
 			let end = node.get_end();
-			this.movelist_line_end = end;
+			this.line_end = end;
 
 			let foo = end;
 			while (foo) {
@@ -118,22 +118,22 @@ function NewMovelistHander() {
 
 			//
 
-			if (!this.movelist_connections || this.movelist_connections_version !== total_tree_changes) {
-				this.movelist_connections = TokenNodeConnections(node);
-				this.movelist_connections_version = total_tree_changes;
+			if (!this.connections || this.connections_version !== total_tree_changes) {
+				this.connections = TokenNodeConnections(node);
+				this.connections_version = total_tree_changes;
 			}
 
 			let elements = [];		// Objects containing class and text.
 
-			for (let n = 0; n < this.movelist_connections.length; n++) {
+			for (let n = 0; n < this.connections.length; n++) {
 
-				// Each item in the movelist_connections must have a corresponding element
+				// Each item in the connections must have a corresponding element
 				// in our elements list. The indices must match.
 
-				let s = this.movelist_connections.tokens[n];
+				let s = this.connections.tokens[n];
 
-				let next_s = this.movelist_connections.tokens[n + 1];		// possibly undefined
-				let connode = this.movelist_connections.nodes[n];			// possibly null
+				let next_s = this.connections.tokens[n + 1];		// possibly undefined
+				let connode = this.connections.nodes[n];			// possibly null
 
 				let space = (s === "(" || next_s === ")") ? "" : " ";
 
@@ -156,9 +156,7 @@ function NewMovelistHander() {
 
 			let new_inner_parts = [];
 
-			let elements_length = elements.length;			// I know this optimisation has some effect, but maybe quite little.
-
-			for (let n = 0; n < elements_length; n++) {
+			for (let n = 0; n < elements.length; n++) {
 				let part = `<span id="movelist_${n}" class="${elements[n].class}">${elements[n].text}</span>`;
 				new_inner_parts.push(part);
 			}
@@ -176,7 +174,7 @@ function NewMovelistHander() {
 
 		node_from_click: function(event) {
 
-			if (!this.movelist_connections) {
+			if (!this.connections) {
 				return null;
 			}
 
@@ -195,11 +193,11 @@ function NewMovelistHander() {
 				return null;
 			}
 
-			if (n < 0 || n >= this.movelist_connections.length) {
+			if (n < 0 || n >= this.connections.length) {
 				return null;
 			}
 
-			let node = this.movelist_connections.nodes[n];
+			let node = this.connections.nodes[n];
 
 			if (!node) {
 				return null;
