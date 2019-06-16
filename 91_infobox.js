@@ -1,10 +1,16 @@
 "use strict";
 
+// Right, the challenge is to remove all (or most) references to renderer.
+// It currently uses a lot of state from the renderer.
+
 function NewInfoboxHandler() {
 
 	return {
 
-		draw: function(force) {
+		clickers: [];
+		last_highlight_dest: null,			// Used to skip redraws.
+
+		draw: function(renderer, force) {
 
 			if (!renderer.ever_received_info) {
 				infobox.innerHTML = renderer.stderr_log;
@@ -29,12 +35,12 @@ function NewInfoboxHandler() {
 			// So maybe we can skip drawing the infobox, and just return...
 
 			if (renderer.info_table.drawn && !force) {
-				if (highlight_dest === renderer.last_tick_highlight_dest) {
+				if (highlight_dest === this.last_highlight_dest) {
 					return;
 				}
 			}
 
-			renderer.last_tick_highlight_dest = highlight_dest;
+			this.last_highlight_dest = highlight_dest;
 
 			//
 
@@ -113,7 +119,7 @@ function NewInfoboxHandler() {
 
 			// And save our elements so that we know what clicks mean.
 
-			renderer.infobox_clickers = elements;				// We actually only need the move or its absence in each object. Meh.
+			this.clickers = elements;							// We actually only need the move or its absence in each object. Meh.
 			renderer.info_table.drawn = true;
 		},
 
@@ -132,10 +138,10 @@ function NewInfoboxHandler() {
 				return [];
 			}
 
-			// This is a bit icky, it relies on the fact that our infobox_clickers list
+			// This is a bit icky, it relies on the fact that our clickers list
 			// has some objects that lack a move property (the blue info bits).
 
-			if (!renderer.infobox_clickers || n < 0 || n >= renderer.infobox_clickers.length) {
+			if (!this.clickers || n < 0 || n >= this.clickers.length) {
 				return [];
 			}
 
@@ -144,7 +150,7 @@ function NewInfoboxHandler() {
 			// Work backwards until we get to the start of the line...
 
 			for (; n >= 0; n--) {
-				let element = renderer.infobox_clickers[n];
+				let element = this.clickers[n];
 				if (!element || !element.move) {
 					break;
 				}
