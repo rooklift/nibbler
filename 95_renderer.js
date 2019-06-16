@@ -47,10 +47,6 @@ function make_renderer() {
 		}
 	};
 
-	renderer.leela_should_go = () => {
-		return renderer.versus.includes(renderer.node.get_board().active);
-	};
-
 	renderer.move = (s) => {		// It is safe to call this with illegal moves.
 
 		if (typeof s !== "string") {
@@ -182,7 +178,30 @@ function make_renderer() {
 		renderer.position_changed(true);
 	};
 
+	renderer.new_game = () => {
+		renderer.node = NewTree();
+		renderer.position_changed(true);
+	};
+
+	// --------------------------------------------------------------------------------------------
+	// PGN...
+
+	renderer.save = (filename) => {
+		SavePGN(filename, renderer.node);
+	};
+
+	renderer.open = (filename) => {
+		let buf = fs.readFileSync(filename);
+		renderer.load_pgn_buffer(buf);
+	};
+
+	renderer.load_pgn_from_string = (s) => {
+		let buf = Buffer.from(s);
+		renderer.load_pgn_buffer(buf);
+	};
+
 	renderer.load_pgn_buffer = (buf) => {
+
 		let new_pgn_choices = PreParsePGN(buf);
 
 		if (new_pgn_choices.length === 1) {
@@ -196,26 +215,7 @@ function make_renderer() {
 		}
 	};
 
-	renderer.open = (filename) => {
-		let buf = fs.readFileSync(filename);
-		renderer.load_pgn_buffer(buf);
-	};
-
-	renderer.load_pgn_from_string = (s) => {
-		let buf = Buffer.from(s);
-		renderer.load_pgn_buffer(buf);
-	};
-
-	renderer.save = (filename) => {
-		SavePGN(filename, renderer.node);
-	};
-
-	renderer.new_game = () => {
-		renderer.node = NewTree();
-		renderer.position_changed(true);
-	};
-
-	renderer.load_pgn_object = (o) => {			// Returns true or false - whether this actually succeeded.
+	renderer.load_pgn_object = (o) => {						// Returns true or false - whether this actually succeeded.
 
 		let new_root;
 
@@ -232,11 +232,57 @@ function make_renderer() {
 		return true;
 	};
 
-	renderer.pgnchooser_click = (event) => {
+	renderer.show_pgn_chooser = () => {
 
-		// The thing that's clickable has a bunch of spans, meaning the exact
-		// target might not be what we want, but we can examine the event.path
-		// array and find the item with the unique id.
+		if (!renderer.pgn_choices) {
+			alert("No PGN loaded");
+			return;
+		}
+
+		renderer.set_versus("");		// It's lame to run the GPU when we're clearly switching games.
+
+		let lines = [];
+
+		let max_ordinal_length = renderer.pgn_choices.length.toString().length;
+		let padding = "";
+		for (let n = 0; n < max_ordinal_length - 1; n++) {
+			padding += "&nbsp;";
+		}
+
+		for (let n = 0; n < renderer.pgn_choices.length; n++) {
+
+			if (n === 9 || n === 99 || n === 999 || n === 9999 || n === 99999 || n === 999999) {
+				padding = padding.slice(0, padding.length - 6);
+			}
+
+			let p = renderer.pgn_choices[n];
+
+			let s;
+
+			if (p.tags.Result === "1-0") {
+				s = `${padding}${n + 1}. <span class="blue">${p.tags.White}</span> - ${p.tags.Black}`;
+			} else if (p.tags.Result === "0-1") {
+				s = `${padding}${n + 1}. ${p.tags.White} - <span class="blue">${p.tags.Black}</span>`;
+			} else {
+				s = `${padding}${n + 1}. ${p.tags.White} - ${p.tags.Black}`;
+			}
+
+			if (p.tags.Opening) {
+				s += `  <span class="gray">(${p.tags.Opening})</span>`;
+			}
+
+			lines.push(`<li id="chooser_${n}">${s}</li>`);
+		}
+
+		pgnchooser.innerHTML = "<ul>" + lines.join("") + "</ul>";
+		pgnchooser.style.display = "block";
+	};
+
+	renderer.hide_pgn_chooser = () => {
+		pgnchooser.style.display = "none";
+	};
+
+	renderer.pgnchooser_click = (event) => {
 
 		let n;
 
@@ -279,13 +325,15 @@ function make_renderer() {
 	// --------------------------------------------------------------------------------------------
 	// Engine stuff...
 
-	renderer.receive = (s) => {
+	renderer.leela_should_go = () => {
+		return renderer.versus.includes(renderer.node.get_board().active);
+	};
 
+	renderer.receive = (s) => {
 		if (s.startsWith("info")) {
 			renderer.ever_received_info = true;
 			renderer.info_table.receive(s, renderer.node.get_board());
 		}
-
 		if (s.startsWith("error")) {
 			renderer.err_receive(s);
 		}
@@ -347,6 +395,10 @@ function make_renderer() {
 	// --------------------------------------------------------------------------------------------
 	// Visual stuff...
 
+	renderer.square_size = () => {
+		return config.board_size / 8;
+	};
+
 	renderer.escape = () => {						// Set things into a clean state.
 		renderer.hide_pgn_chooser();
 		renderer.active_square = null;
@@ -366,58 +418,32 @@ function make_renderer() {
 		ss.insertRule("* {outline: 1px dotted red;}");
 	};
 
-	renderer.show_pgn_chooser = () => {
+	// --------------------------------------------------------------------------------------------
+	// Clickers... (except the PGN clicker, which is in the PGN section).
 
-		if (!renderer.pgn_choices) {
-			alert("No PGN loaded");
-			return;
+	renderer.mouse_to_point = (mousex, mousey) => {
+
+		// Assumes mousex and mousey are relative to canvas top left.
+
+		if (typeof mousex !== "number" || typeof mousey !== "number") {
+			return null;
 		}
 
-		renderer.set_versus("");			// It's lame to run the GPU when we're clearly switching games.
+		let rss = renderer.square_size();
 
-		let lines = [];
+		let boardx = Math.floor(mousex / rss);
+		let boardy = Math.floor(mousey / rss);
 
-		let max_ordinal_length = renderer.pgn_choices.length.toString().length;
-		let padding = "";
-		for (let n = 0; n < max_ordinal_length - 1; n++) {
-			padding += "&nbsp;";
+		if (boardx < 0 || boardy < 0 || boardx > 7 || boardy > 7) {
+			return null;
 		}
 
-		for (let n = 0; n < renderer.pgn_choices.length; n++) {
-
-			if (n === 9 || n === 99 || n === 999 || n === 9999 || n === 99999 || n === 999999) {
-				padding = padding.slice(0, padding.length - 6);
-			}
-
-			let p = renderer.pgn_choices[n];
-
-			let s;
-
-			if (p.tags.Result === "1-0") {
-				s = `${padding}${n + 1}. <span class="blue">${p.tags.White}</span> - ${p.tags.Black}`;
-			} else if (p.tags.Result === "0-1") {
-				s = `${padding}${n + 1}. ${p.tags.White} - <span class="blue">${p.tags.Black}</span>`;
-			} else {
-				s = `${padding}${n + 1}. ${p.tags.White} - ${p.tags.Black}`;
-			}
-
-			if (p.tags.Opening) {
-				s += `  <span class="gray">(${p.tags.Opening})</span>`;
-			}
-
-			lines.push(`<li id="chooser_${n}">${s}</li>`);
+		if (config.flip) {
+			boardx = 7 - boardx;
+			boardy = 7 - boardy;
 		}
 
-		pgnchooser.innerHTML = "<ul>" + lines.join("") + "</ul>";
-		pgnchooser.style.display = "block";
-	};
-
-	renderer.hide_pgn_chooser = () => {
-		pgnchooser.style.display = "none";
-	};
-
-	renderer.square_size = () => {
-		return config.board_size / 8;
+		return Point(boardx, boardy);
 	};
 
 	renderer.canvas_click = (event) => {
@@ -460,43 +486,6 @@ function make_renderer() {
 		renderer.draw();
 	};
 
-	renderer.movelist_click = (event) => {
-
-		let node = renderer.movelist_handler.node_from_click(event);
-
-		if (!node || node.get_root() !== renderer.node.get_root()) {
-			return;
-		}
-
-		renderer.node = node;
-		renderer.position_changed();
-	};
-
-	renderer.mouse_to_point = (mousex, mousey) => {
-
-		// Assumes mousex and mousey are relative to canvas top left.
-
-		if (typeof mousex !== "number" || typeof mousey !== "number") {
-			return null;
-		}
-
-		let rss = renderer.square_size();
-
-		let boardx = Math.floor(mousex / rss);
-		let boardy = Math.floor(mousey / rss);
-
-		if (boardx < 0 || boardy < 0 || boardx > 7 || boardy > 7) {
-			return null;
-		}
-
-		if (config.flip) {
-			boardx = 7 - boardx;
-			boardy = 7 - boardy;
-		}
-
-		return Point(boardx, boardy);
-	};
-
 	renderer.infobox_click = (event) => {
 
 		let moves = renderer.infobox_handler.moves_from_click(event);
@@ -518,6 +507,18 @@ function make_renderer() {
 		for (let move of moves) {
 			renderer.node = renderer.node.make_move(move);
 		}
+		renderer.position_changed();
+	};
+
+	renderer.movelist_click = (event) => {
+
+		let node = renderer.movelist_handler.node_from_click(event);
+
+		if (!node || node.get_root() !== renderer.node.get_root()) {
+			return;
+		}
+
+		renderer.node = node;
 		renderer.position_changed();
 	};
 
