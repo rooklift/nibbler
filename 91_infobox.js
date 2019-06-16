@@ -7,7 +7,7 @@ function NewInfoboxHandler() {
 
 	return {
 
-		clickers: [];
+		clickers: [],
 		last_highlight_dest: null,			// Used to skip redraws.
 
 		draw: function(renderer, force) {
