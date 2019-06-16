@@ -9,11 +9,9 @@ function make_renderer() {
 	renderer.ever_received_info = false;				// When false, we write stderr log instead of move info.
 	renderer.stderr_log = "";							// All output received from the engine's stderr.
 	renderer.pgn_choices = null;						// All games found when opening a PGN file.
-	renderer.infobox_clickers = [];						// Objects relating to our infobox.
 	renderer.mousex = null;								// Raw mouse X on the canvas, e.g. between 0 and 640.
 	renderer.mousey = null;								// Raw mouse Y on the canvas, e.g. between 0 and 640.
 	renderer.one_click_moves = New2DArray(8, 8);		// 2D array of [x][y] --> move string or null.
-	renderer.last_tick_highlight_dest = null;			// Used to skip redraws in infobox.
 
 	renderer.movelist_handler = NewMovelistHander();	// Object that deals with the movelist at the bottom.
 	renderer.infobox_handler = NewInfoboxHandler();		// Object that deals with the infobox on the right.
@@ -41,7 +39,7 @@ function make_renderer() {
 
 	renderer.set_versus = (s) => {
 		renderer.versus = s;
-		renderer.infobox_handler.draw(true);
+		renderer.infobox_handler.draw(renderer, true);
 		if (renderer.leela_should_go()) {
 			renderer.go();
 		} else {
@@ -501,23 +499,23 @@ function make_renderer() {
 
 	renderer.infobox_click = (event) => {
 
-		let move_list = renderer.infobox_handler.moves_from_click(event);
+		let moves = renderer.infobox_handler.moves_from_click(event);
 
-		if (movelist_length === 0) {
+		if (!moves || moves.length === 0) {
 			return;
 		}
 
 		// Legality checks... best to assume nothing.
 
 		let tmp_board = renderer.node.get_board();
-		for (let move of move_list) {
+		for (let move of moves) {
 			if (tmp_board.illegal(move) !== "") {
 				return;
 			}
 			tmp_board = tmp_board.move(move);
 		}
 
-		for (let move of move_list) {
+		for (let move of moves) {
 			renderer.node = renderer.node.make_move(move);
 		}
 		renderer.position_changed();
@@ -736,7 +734,7 @@ function make_renderer() {
 		// may make the "animation" smoother, I think.
 
 		requestAnimationFrame(() => {
-			renderer.infobox_handler.draw();
+			renderer.infobox_handler.draw(renderer);
 			renderer.draw_board(config.light_square, config.dark_square);
 			renderer.draw_position();
 		});
