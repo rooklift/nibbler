@@ -498,28 +498,6 @@ function make_renderer() {
 		return Point(boardx, boardy);
 	};
 
-	renderer.update_clickable_thingy = (thingy, elements, prefix) => {
-
-		// What this is: given a container (the thingy) and a list of elements (which are normal JS objects
-		// containing a "text" and a "class" property) we make the container have child spans which have the
-		// said text and class, as well as a unique id so they can be clicked on (e.g. "foo_37").
-		//
-		// It seems setting innerHTML is the performant way to do this. Direct DOM manipulation
-		// on the other hand is (shockingly to me) apparently slower than just setting innerHTML.
-		// The difference for this is about 400% or something.
-
-		let new_inner_parts = [];
-
-		let elements_length = elements.length;					// Is this type of optimisation helpful?
-
-		for (let n = 0; n < elements_length; n++) {
-			let part = `<span id="${prefix}_${n}" class="${elements[n].class}">${elements[n].text}</span>`;
-			new_inner_parts.push(part);
-		}
-
-		thingy.innerHTML = new_inner_parts.join("");
-	};
-
 	renderer.draw_infobox = (force) => {
 
 		if (!renderer.ever_received_info) {
@@ -621,7 +599,21 @@ function make_renderer() {
 			elements = elements.concat(new_elements);
 		}
 
-		renderer.update_clickable_thingy(infobox, elements, "infobox");
+		// Generate the new innerHTML for the infobox <div>
+
+		let new_inner_parts = [];
+
+		let elements_length = elements.length;				// I know this optimisation has some effect, but maybe quite little.
+
+		for (let n = 0; n < elements_length; n++) {
+			let part = `<span id="infobox_${n}" class="${elements[n].class}">${elements[n].text}</span>`;
+			new_inner_parts.push(part);
+		}
+
+		infobox.innerHTML = new_inner_parts.join("");		// Setting innerHTML is performant. Direct DOM manipulation is worse, somehow.
+
+		// And save our elements so that we know what clicks mean.
+
 		renderer.infobox_clickers = elements;				// We actually only need the move or its absence in each object. Meh.
 		renderer.info_table.drawn = true;
 	};

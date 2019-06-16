@@ -156,14 +156,14 @@ function NewMovelistHander() {
 
 			let new_inner_parts = [];
 
-			let elements_length = elements.length;			// Is this type of optimisation helpful?
+			let elements_length = elements.length;			// I know this optimisation has some effect, but maybe quite little.
 
 			for (let n = 0; n < elements_length; n++) {
 				let part = `<span id="movelist_${n}" class="${elements[n].class}">${elements[n].text}</span>`;
 				new_inner_parts.push(part);
 			}
 
-			movelist.innerHTML = new_inner_parts.join("");
+			movelist.innerHTML = new_inner_parts.join("");	// Setting innerHTML is performant. Direct DOM manipulation is worse, somehow.
 
 			// Undo the damage to our tree...
 
