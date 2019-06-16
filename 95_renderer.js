@@ -603,9 +603,7 @@ function make_renderer() {
 
 		let new_inner_parts = [];
 
-		let elements_length = elements.length;				// I know this optimisation has some effect, but maybe quite little.
-
-		for (let n = 0; n < elements_length; n++) {
+		for (let n = 0; n < elements.length; n++) {
 			let part = `<span id="infobox_${n}" class="${elements[n].class}">${elements[n].text}</span>`;
 			new_inner_parts.push(part);
 		}
