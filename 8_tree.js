@@ -8,13 +8,15 @@
 
 const node_prototype = {
 
-	make_move: function(s) {
+	make_move: function(s, force_new_node) {
 
 		// s must be exactly a legal move, including having promotion char iff needed (e.g. e2e1q)
 
-		for (let child of this.children) {
-			if (child.move === s) {
-				return child;
+		if (!force_new_node) {
+			for (let child of this.children) {
+				if (child.move === s) {
+					return child;
+				}
 			}
 		}
 

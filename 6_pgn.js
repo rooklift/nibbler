@@ -251,7 +251,7 @@ function LoadPGNRecord(o) {
 					throw `"${s}" -- ${error}`;
 				}
 
-				node = node.make_move(move);
+				node = node.make_move(move, true);
 			}
 		}
 
