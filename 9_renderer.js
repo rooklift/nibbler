@@ -658,8 +658,8 @@ function make_renderer() {
 
 	renderer.draw_movelist_lazy = () => {
 
-		// The tree hasn't changed, nor has the end node of the displayed line. Therefore the highlight colour
-		// will not be changing, assuming thr root node is not involved.
+		// The tree hasn't changed, nor has the end node of the displayed line. Therefore very little needs
+		// to be done, except the highlight class needs to be applied to a different element.
 
 		let span = renderer.get_movelist_highlight();
 		let highlight_class = span ? span.className : "movelist_highlight_blue";	// If no span found, old position was root.
