@@ -27,18 +27,21 @@
 		
 	</div>
 
-	<script src="0_shims.js"></script>
-	<script src="1_globals.js"></script>
-	<script src="2_utils.js"></script>
-	<script src="3_point.js"></script>
-	<script src="4_position.js"></script>
-	<script src="5_fen.js"></script>
-	<script src="6_pgn.js"></script>
-	<script src="7_infotable.js"></script>
-	<script src="8_tree.js"></script>
-	<script src="__movelist.js"></script>
-	<script src="9_renderer.js"></script>
+	<!-- Most of our components are fairly well encapsulated and could be in
+	module form. Still, for the time being we have everything in one namespace and
+	so load them in a particular order... -->
 
+	<script src="00_shims.js"></script>
+	<script src="10_globals.js"></script>
+	<script src="20_utils.js"></script>
+	<script src="30_point.js"></script>
+	<script src="40_position.js"></script>
+	<script src="50_fen.js"></script>
+	<script src="60_pgn.js"></script>
+	<script src="70_infotable.js"></script>
+	<script src="80_tree.js"></script>
+	<script src="90_movelist.js"></script>
+	<script src="99_renderer.js"></script>
 
 </body>
 </html>
