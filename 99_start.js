@@ -199,7 +199,6 @@ fenbox.onkeydown = (event) => {
 window.ondragover = () => false;		// Allows drops to happen, I think.
 
 window.ondrop = (event) => {
-	console.log(event);
 	hub.handle_drop(event);
 };
 
