@@ -172,29 +172,22 @@ document.addEventListener("wheel", (event) => {
 });
 
 // Setup return key on FEN box...
+
 fenbox.onkeydown = (event) => {
 	if (event.key === "Enter") {
 		hub.load_fen(fenbox.value);
 	}
 };
 
-// Setup drag-and-drop for PGN files into the window itself...
-
-//window.ondragover = () => false;
-//window.ondragleave = () => false;
-//window.ondragend = () => false;
-//window.ondrop = (event) => {			// FIXME
-	//event.preventDefault();
-	//hub.open(event.dataTransfer.files[0].path);
-	//return false;
-//};
-
+// Setup drag-and-drop...
 
 window.ondragover = () => false;		// Allows drops to happen, I think.
 
 window.ondrop = (event) => {
 	hub.handle_drop(event);
 }
+
+// Go...
 
 function enter_loop() {
 	if (loads === 12) {
