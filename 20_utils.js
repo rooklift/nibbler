@@ -93,15 +93,20 @@ function OppositeColour(s) {
 	return "";
 }
 
+function ReplaceAll(s, search, replace) {
+	if (typeof s !== "string" || typeof search !== "string" || typeof replace !== "string") throw "ReplaceAll - bad call";
+	return s.split(search).join(replace);
+}
+
 function SafeString(s) {
 	if (typeof s !== "string") {
 		return undefined;
 	}
-	s = s.replaceAll("&", "&amp;");		// This needs to be first of course.
-	s = s.replaceAll("<", "&lt;");
-	s = s.replaceAll(">", "&gt;");
-	s = s.replaceAll("'", "&apos;");
-	s = s.replaceAll("\"", "&quot;");
+	s = ReplaceAll(s, "&", "&amp;");		// This needs to be first of course.
+	s = ReplaceAll(s, "<", "&lt;");
+	s = ReplaceAll(s, ">", "&gt;");
+	s = ReplaceAll(s, "'", "&apos;");
+	s = ReplaceAll(s, "\"", "&quot;");
 	return s;
 }
 

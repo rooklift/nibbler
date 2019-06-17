@@ -46,29 +46,29 @@ const position_prototype = {
 		// Update castling info...
 
 		if (ret.state[x1][y1] === "K") {
-			ret.castling = ret.castling.replaceAll("K", "");
-			ret.castling = ret.castling.replaceAll("Q", "");
+			ret.castling = ReplaceAll(ret.castling, "K", "");
+			ret.castling = ReplaceAll(ret.castling, "Q", "");
 		}
 
 		if (ret.state[x1][y1] === "k") {
-			ret.castling = ret.castling.replaceAll("k", "");
-			ret.castling = ret.castling.replaceAll("q", "");
+			ret.castling = ReplaceAll(ret.castling, "k", "");
+			ret.castling = ReplaceAll(ret.castling, "q", "");
 		}
 
 		if ((x1 == 0 && y1 == 0) || (x2 == 0 && y2 == 0)) {
-			ret.castling = ret.castling.replaceAll("q", "");
+			ret.castling = ReplaceAll(ret.castling, "q", "");
 		}
 
 		if ((x1 == 7 && y1 == 0) || (x2 == 7 && y2 == 0)) {
-			ret.castling = ret.castling.replaceAll("k", "");
+			ret.castling = ReplaceAll(ret.castling, "k", "");
 		}
 
 		if ((x1 == 0 && y1 == 7) || (x2 == 0 && y2 == 7)) {
-			ret.castling = ret.castling.replaceAll("Q", "");
+			ret.castling = ReplaceAll(ret.castling, "Q", "");
 		}
 
 		if ((x1 == 7 && y1 == 7) || (x2 == 7 && y2 == 7)) {
-			ret.castling = ret.castling.replaceAll("K", "");
+			ret.castling = ReplaceAll(ret.castling, "K", "");
 		}
 
 		// Update halfmove and fullmove...
@@ -545,11 +545,11 @@ const position_prototype = {
 
 		// Delete things we don't need...
 
-		s = s.replaceAll("x", "");
-		s = s.replaceAll("+", "");
-		s = s.replaceAll("#", "");
-		s = s.replaceAll("!", "");
-		s = s.replaceAll("?", "");
+		s = ReplaceAll(s, "x", "");
+		s = ReplaceAll(s, "+", "");
+		s = ReplaceAll(s, "#", "");
+		s = ReplaceAll(s, "!", "");
+		s = ReplaceAll(s, "?", "");
 
 		// If the string contains any dots it'll be something like "1.e4"
 
@@ -560,8 +560,8 @@ const position_prototype = {
 
 		// Fix castling with zeroes...
 
-		s = s.replaceAll("0-0", "O-O");
-		s = s.replaceAll("0-0-0", "O-O-O");
+		s = ReplaceAll(s, "0-0", "O-O");
+		s = ReplaceAll(s, "0-0-0", "O-O-O");
 
 		if (s.toUpperCase() === "O-O") {
 			if (this.active === "w") {
@@ -597,7 +597,7 @@ const position_prototype = {
 
 		// Just in case, delete any "-" characters (after handling castling, of course)...
 
-		s = s.replaceAll("-", "");
+		s = ReplaceAll(s, "-", "");
 
 		// Save promotion string, if any, then delete it from s...
 

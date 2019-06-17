@@ -4,9 +4,9 @@ function LoadFEN(fen) {
 
 	let ret = NewPosition();
 
-	fen = fen.replaceAll("\t", " ");
-	fen = fen.replaceAll("\n", " ");
-	fen = fen.replaceAll("\r", " ");
+	fen = ReplaceAll(fen, "\t", " ");
+	fen = ReplaceAll(fen, "\n", " ");
+	fen = ReplaceAll(fen, "\r", " ");
 
 	let tokens = fen.split(" ").filter(s => s !== "");
 
