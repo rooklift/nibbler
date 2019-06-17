@@ -160,14 +160,14 @@ const node_prototype = {
 
 function NewNode(parent, move) {		// Args are null for root only.
 
-	let ret = Object.create(node_prototype);
+	let node = Object.create(node_prototype);
 
-	ret.parent = parent;
-	ret.move = move;					// Think of this as the move that led to the position associated with node.
-	ret.children = [];
+	node.parent = parent;
+	node.move = move;					// Think of this as the move that led to the position associated with node.
+	node.children = [];
 
 	total_tree_changes++;
-	return ret;
+	return node;
 }
 
 function NewTree(startpos) {
@@ -176,8 +176,8 @@ function NewTree(startpos) {
 		startpos = LoadFEN("rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1");
 	}
 
-	let ret = NewNode(null, null);
-	ret.__position = startpos;
+	let root = NewNode(null, null);
+	root.__position = startpos;
 
-	return ret;
+	return root;
 }
