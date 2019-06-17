@@ -1,6 +1,8 @@
 "use strict";
 
 // FIXME: should probably remove a bunch of closures by saying "this" instead of "renderer" a lot.
+// This will also require the => functions to be replaced with function().
+// Use bind to avoid "this" issues when using methods as first class functions.
 
 function NewRenderer() {
 
@@ -92,17 +94,17 @@ function NewRenderer() {
 		}
 	};
 
-	renderer.prev = () => {
-		if (renderer.node.parent) {
-			renderer.node = renderer.node.parent;
-			renderer.position_changed();
+	renderer.prev = function() {
+		if (this.node.parent) {
+			this.node = this.node.parent;
+			this.position_changed();
 		}
 	};
 
-	renderer.next = () => {							// FIXME? Doesn't remember current line.
-		if (renderer.node.children.length > 0) {
-			renderer.node = renderer.node.children[0];
-			renderer.position_changed();
+	renderer.next = function() {
+		if (this.node.children.length > 0) {
+			this.node = this.node.children[0];
+			this.position_changed();
 		}
 	};
 
@@ -331,25 +333,21 @@ function NewRenderer() {
 		return renderer.versus.includes(renderer.node.get_board().active);
 	};
 
-	// Note that receive() and err_receive() should not use the "this" keyword
-	// since they are going to be treated as first class functions and passed
-	// as arguments to the engine object, therefore "this" leads to confusion.
-
-	renderer.receive = (s) => {
+	renderer.receive = function(s) {
 		if (s.startsWith("info")) {
-			renderer.ever_received_info = true;
-			renderer.info_table.receive(s, renderer.node.get_board());
+			this.ever_received_info = true;
+			this.info_table.receive(s, this.node.get_board());
 		}
 		if (s.startsWith("error")) {
-			renderer.err_receive(s);
+			this.err_receive(s);
 		}
 	};
 
-	renderer.err_receive = (s) => {
+	renderer.err_receive = function(s) {
 		if (s.indexOf("WARNING") !== -1 || s.indexOf("error") !== -1) {
-			renderer.stderr_log += `<span class="red">${s}</span><br>`;
+			this.stderr_log += `<span class="red">${s}</span><br>`;
 		} else {
-			renderer.stderr_log += `${s}<br>`;
+			this.stderr_log += `${s}<br>`;
 		}
 	};
 
@@ -581,13 +579,13 @@ function NewRenderer() {
 	};
 
 	renderer.draw_piece = (o) => {
-		let cc = renderer.canvas_coords(o.x, o.y);
+		let cc = this.canvas_coords(o.x, o.y);
 		context.drawImage(images[o.piece], cc.x1, cc.y1, cc.rss, cc.rss);
 	};
 
 	renderer.draw_arrow_line = (o) => {		// Doesn't draw the arrowhead
-		let cc1 = renderer.canvas_coords(o.x1, o.y1);
-		let cc2 = renderer.canvas_coords(o.x2, o.y2);
+		let cc1 = this.canvas_coords(o.x1, o.y1);
+		let cc2 = this.canvas_coords(o.x2, o.y2);
 		context.strokeStyle = o.colour;
 		context.fillStyle = o.colour;
 		context.beginPath();
@@ -597,7 +595,7 @@ function NewRenderer() {
 	};
 
 	renderer.draw_head = (o) => {
-		let cc = renderer.canvas_coords(o.x, o.y);
+		let cc = this.canvas_coords(o.x, o.y);
 		context.fillStyle = o.colour;
 		context.beginPath();
 		context.arc(cc.cx, cc.cy, 12, 0, 2 * Math.PI);
@@ -621,8 +619,12 @@ function NewRenderer() {
 				if (board.state[x][y] === "") {
 					continue;
 				}
+
+				let fn = renderer.draw_piece.bind(renderer);
+				console.log(fn);
+
 				pieces.push({
-					fn: renderer.draw_piece,
+					fn: renderer.draw_piece.bind(renderer),
 					piece: board.state[x][y],
 					colour: board.state[x][y].toUpperCase() === board.state[x][y] ? "w" : "b",
 					x: x,
@@ -674,7 +676,7 @@ function NewRenderer() {
 					}
 
 					arrows.push({
-						fn: renderer.draw_arrow_line,
+						fn: renderer.draw_arrow_line.bind(renderer),
 						colour: colour,
 						x1: x1,
 						y1: y1,
@@ -688,7 +690,7 @@ function NewRenderer() {
 
 					if (heads[info_list[i].move.slice(2, 4)] === undefined) {
 						heads[info_list[i].move.slice(2, 4)] = {
-							fn: renderer.draw_head,
+							fn: renderer.draw_head.bind(renderer),
 							colour: colour,
 							info: info_list[i],
 							x: x2,
@@ -731,7 +733,7 @@ function NewRenderer() {
 		drawables = drawables.concat(Object.values(heads));
 
 		for (let o of drawables) {
-			o.fn.call(renderer, o);		// In case it uses "this", specify that "this" means renderer.
+			o.fn(o);
 		}
 	};
 
@@ -758,7 +760,7 @@ function NewRenderer() {
 
 	if (config && config.path) {
 
-		renderer.engine.setup(config.path, renderer.receive, renderer.err_receive, config.log_info_lines);
+		renderer.engine.setup(config.path, renderer.receive.bind(renderer), renderer.err_receive.bind(renderer), config.log_info_lines);
 
 		renderer.engine.send("uci");
 		for (let key of Object.keys(config.options)) {

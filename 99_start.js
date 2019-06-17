@@ -65,17 +65,17 @@ ipcRenderer.on("set", (event, msg) => {
 let prev_next_queue = [];
 
 ipcRenderer.on("prev", (event) => {
-	prev_next_queue.push(renderer.prev);
+	prev_next_queue.push(renderer.prev.bind(renderer));
 });
 
 ipcRenderer.on("next", (event) => {
-	prev_next_queue.push(renderer.next);
+	prev_next_queue.push(renderer.next.bind(renderer));
 });
 
 function prev_next_loop() {
 	if (prev_next_queue.length > 0) {
 		let fn = prev_next_queue[prev_next_queue.length - 1];
-		fn.call(renderer);			// In case it uses "this", specify that "this" means renderer.
+		fn();
 		prev_next_queue = [];
 	}
 	setTimeout(prev_next_loop, 10);
@@ -129,8 +129,8 @@ document.addEventListener("wheel", (event) => {
 	}
 
 	if (movelist.scrollHeight <= movelist.clientHeight) {
-		if (event.deltaY && event.deltaY < 0) prev_next_queue.push(renderer.prev);
-		if (event.deltaY && event.deltaY > 0) prev_next_queue.push(renderer.next);
+		if (event.deltaY && event.deltaY < 0) prev_next_queue.push(renderer.prev.bind(renderer));
+		if (event.deltaY && event.deltaY > 0) prev_next_queue.push(renderer.next.bind(renderer));
 		return;
 	}
 
@@ -146,8 +146,8 @@ document.addEventListener("wheel", (event) => {
 	}
 
 	if (allow) {
-		if (event.deltaY && event.deltaY < 0) prev_next_queue.push(renderer.prev);
-		if (event.deltaY && event.deltaY > 0) prev_next_queue.push(renderer.next);
+		if (event.deltaY && event.deltaY < 0) prev_next_queue.push(renderer.prev.bind(renderer));
+		if (event.deltaY && event.deltaY > 0) prev_next_queue.push(renderer.next.bind(renderer));
 	}
 });
 
