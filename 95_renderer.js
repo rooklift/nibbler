@@ -36,7 +36,6 @@ function NewRenderer() {
 
 		this.escape();
 
-		context.clearRect(0, 0, canvas.width, canvas.height);
 		this.movelist_handler.draw(this.node);
 		this.infobox_handler.draw(this);
 		this.draw();
