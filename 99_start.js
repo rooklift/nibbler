@@ -7,14 +7,9 @@ Log("");
 
 infobox.style.height = config.board_size.toString() + "px";
 movelist.style.height = config.movelist_height.toString() + "px";		// Is there a way to avoid needing this, to get the scroll bar?
-//canvas.width = config.board_size;
-//canvas.height = config.board_size;
 
 boardtable.width = config.board_size;
 boardtable.height = config.board_size;
-
-boardtable.setAttribute("ondragover", "javascript:(e) => {e.preventDefault();}");
-boardtable.setAttribute("ondrop", "javascript:console.log(event);");
 
 for (let y = 0; y < 8; y++) {
 	let tr = document.createElement("tr");
@@ -119,7 +114,7 @@ pgnchooser.addEventListener("mousedown", (event) => {
 });
 
 boardtable.addEventListener("mousedown", (event) => {
-	hub.canvas_click(event);
+	hub.boardtable_click(event);
 });
 
 infobox.addEventListener("mousedown", (event) => {
@@ -183,14 +178,21 @@ fenbox.onkeydown = (event) => {
 
 // Setup drag-and-drop for PGN files into the window itself...
 
-window.ondragover = () => false;
-window.ondragleave = () => false;
-window.ondragend = () => false;
+//window.ondragover = () => false;
+//window.ondragleave = () => false;
+//window.ondragend = () => false;
 //window.ondrop = (event) => {			// FIXME
 	//event.preventDefault();
 	//hub.open(event.dataTransfer.files[0].path);
 	//return false;
 //};
+
+
+window.ondragover = () => false;		// Allows drops to happen, I think.
+
+window.ondrop = (event) => {
+	hub.handle_drop(event);
+}
 
 function enter_loop() {
 	if (loads === 12) {

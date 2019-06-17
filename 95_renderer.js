@@ -12,6 +12,7 @@ function NewRenderer() {
 	renderer.mousex = null;								// Raw mouse X on the canvas, e.g. between 0 and 640.
 	renderer.mousey = null;								// Raw mouse Y on the canvas, e.g. between 0 and 640.
 	renderer.one_click_moves = New2DArray(8, 8);		// 2D array of [x][y] --> move string or null.
+	renderer.last_drawn_position = null;
 
 	renderer.movelist_handler = NewMovelistHander();	// Object that deals with the movelist at the bottom.
 	renderer.infobox_handler = NewInfoboxHandler();		// Object that deals with the infobox on the right.
@@ -524,6 +525,37 @@ function NewRenderer() {
 
 	// --------------------------------------------------------------------------------------------
 
+	renderer.handle_drop = function(event) {
+
+		// Could be many different types of things being dropped...
+
+		let text_data = event.dataTransfer.getData("text");
+
+		if (text_data.startsWith("square_")) {
+
+			// It is a piece...
+
+			let source = Point(text_data.slice(7, 9));
+
+			let dest = Point(null);
+
+			for (let item of event.path) {
+				if (typeof item.id === "string" && item.id.startsWith("square_")) {
+					dest = Point(item.id.slice(7, 9));
+					break;
+				}
+			}
+
+			if (source !== Point(null) && dest !== Point(null)) {
+				this.move(source.s + dest.s);
+			}
+
+			return;
+		}
+	}
+
+	// --------------------------------------------------------------------------------------------
+
 	renderer.canvas_coords = function(x, y) {
 
 		// Given the x, y coordinates on the board (a8 is 0, 0)
@@ -553,45 +585,30 @@ function NewRenderer() {
 		return {x1, y1, x2, y2, cx, cy, rss};
 	};
 
-	renderer.draw_piece = function(o) {
-		let s = S(o.x, o.y);
-		let td = document.getElementById("square_" + s);
-		let img = images[o.piece].cloneNode();
-		img.setAttribute("ondragover", "javascript:(e) => {e.preventDefault();}");		// Allow to be target of drag.
-		img.setAttribute("draggable", true);											// Allow to be source of drag.
-		img.setAttribute("ondragstart", "javascript:console.log(event)");
-		td.appendChild(img);
-	};
-
-	renderer.draw_arrow_line = function(o) {
-		return;
-	};
-
-	renderer.draw_head = function(o) {
-		return;
-	};
-
 	renderer.draw_position = function() {
 
 		let position = this.node.get_board();
 
 		for (let x = 0; x < 8; x++) {
 			for (let y = 0; y < 8; y++) {
+
 				if (this.last_drawn_position && this.last_drawn_position.state[x][y] === position.state[x][y]) {
 					continue;
 				}
 
-				let td = document.getElementById("square_" + Point(x, y).s);
+				let s = Point(x, y).s;
+				let td = document.getElementById("square_" + s);
+				td.innerHTML = "";
 
 				if (position.state[x][y] === "") {
-					td.innerHTML = "";
-				} else {
-					let img = images[position.state[x][y]].cloneNode();
-					img.setAttribute("ondragover", "javascript:(e) => {e.preventDefault();}");		// Allow to be target of drag.
-					img.setAttribute("draggable", true);											// Allow to be source of drag.
-					img.setAttribute("ondragstart", "javascript:console.log(event)");
-					td.appendChild(img);
+					continue;
 				}
+
+				let img = images[position.state[x][y]].cloneNode();
+				img.ondragstart = (event) => {
+					event.dataTransfer.setData("text", "square_" + s);
+				};
+				td.appendChild(img);
 			}
 		}
 
