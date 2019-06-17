@@ -484,11 +484,11 @@ function NewRenderer() {
 
 		let [mousex, mousey] = [this.mousex, this.mousey];
 
-		// Assumes mousex and mousey are relative to canvas top left.
-
 		if (typeof mousex !== "number" || typeof mousey !== "number") {
 			return null;
 		}
+
+		// Assumes mousex and mousey are relative to the whole window.
 
 		mousex -= boardfriends.getBoundingClientRect().left;
 		mousey -= boardfriends.getBoundingClientRect().top;
