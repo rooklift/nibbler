@@ -416,7 +416,7 @@ function NewRenderer() {
 
 		for (let x = 0; x < 8; x++) {
 			for (let y = 0; y < 8; y++) {
-				let element = document.getElementById("square_" + S(x, y));
+				let element = document.getElementById("overlay_" + S(x, y));
 				element.id = "tmp_" + S(x, y);
 			}
 		}
@@ -424,7 +424,7 @@ function NewRenderer() {
 		for (let x = 0; x < 8; x++) {
 			for (let y = 0; y < 8; y++) {
 				let element = document.getElementById("tmp_" + S(x, y));
-				element.setAttribute("id", "square_" + S(7 - x, 7 - y));
+				element.setAttribute("id", "overlay_" + S(7 - x, 7 - y));
 			}
 		}
 
@@ -510,8 +510,8 @@ function NewRenderer() {
 		let p = Point(null);
 
 		for (let item of event.path) {
-			if (typeof item.id === "string" && item.id.startsWith("square_")) {
-				p = Point(item.id.slice(7, 9));
+			if (typeof item.id === "string" && item.id.startsWith("overlay_")) {
+				p = Point(item.id.slice(8, 10));
 				break;
 			}
 		}
@@ -601,15 +601,15 @@ function NewRenderer() {
 		// Is it a piece?
 
 		let text_data = event.dataTransfer.getData("text");
-		if (text_data.startsWith("square_")) {
+		if (text_data.startsWith("overlay_")) {
 
-			let source = Point(text_data.slice(7, 9));
+			let source = Point(text_data.slice(8, 10));
 
 			let dest = Point(null);
 
 			for (let item of event.path) {
-				if (typeof item.id === "string" && item.id.startsWith("square_")) {
-					dest = Point(item.id.slice(7, 9));
+				if (typeof item.id === "string" && item.id.startsWith("overlay_")) {
+					dest = Point(item.id.slice(8, 10));
 					break;
 				}
 			}
@@ -661,7 +661,7 @@ function NewRenderer() {
 			for (let y = 0; y < 8; y++) {
 
 				let s = Point(x, y).s;
-				let td = document.getElementById("square_" + s);
+				let td = document.getElementById("overlay_" + s);
 				td.innerHTML = "";
 
 				if (position.colour(Point(x, y)) !== position.active) {
@@ -675,7 +675,7 @@ function NewRenderer() {
 				let img = images[position.state[x][y]].cloneNode();
 				img.ondragstart = (event) => {
 					this.set_active_square(Point(x, y));
-					event.dataTransfer.setData("text", "square_" + s);
+					event.dataTransfer.setData("text", "overlay_" + s);
 				};
 				td.appendChild(img);
 			}

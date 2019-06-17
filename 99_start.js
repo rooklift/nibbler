@@ -32,7 +32,7 @@ for (let y = 0; y < 8; y++) {
 		let td1 = document.createElement("td");
 		let td2 = document.createElement("td");
 		td1.id = "underlay_" + Point(x, y).s;
-		td2.id = "square_" + Point(x, y).s;
+		td2.id = "overlay_" + Point(x, y).s;
 		td1.width = td2.width = config.board_size / 8;
 		td1.height = td2.height = config.board_size / 8;
 		if ((x + y) % 2 === 0) {
