@@ -620,9 +620,6 @@ function NewRenderer() {
 					continue;
 				}
 
-				let fn = renderer.draw_piece.bind(renderer);
-				console.log(fn);
-
 				pieces.push({
 					fn: renderer.draw_piece.bind(renderer),
 					piece: board.state[x][y],
