@@ -127,13 +127,13 @@ movelist.addEventListener("mousedown", (event) => {
 
 // Constantly track the mouse...
 
-boardtable.addEventListener("mousemove", (event) => {
+document.addEventListener("mousemove", (event) => {
 	// This can fire a LOT. So don't call any more functions.
-	hub.mousex = event.offsetX;
-	hub.mousey = event.offsetY;
+	hub.mousex = event.x;
+	hub.mousey = event.y;
 });
 
-boardtable.addEventListener("mouseout", (event) => {
+document.addEventListener("mouseout", (event) => {
 	hub.mousex = null;
 	hub.mousey = null;
 });

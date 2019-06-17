@@ -9,10 +9,11 @@ function NewRenderer() {
 	renderer.ever_received_info = false;				// When false, we write stderr log instead of move info.
 	renderer.stderr_log = "";							// All output received from the engine's stderr.
 	renderer.pgn_choices = null;						// All games found when opening a PGN file.
-	renderer.mousex = null;								// Raw mouse X on the canvas, e.g. between 0 and 640.
-	renderer.mousey = null;								// Raw mouse Y on the canvas, e.g. between 0 and 640.
+	renderer.mousex = null;								// Raw mouse X on the document.
+	renderer.mousey = null;								// Raw mouse Y on the document.
 	renderer.one_click_moves = New2DArray(8, 8);		// 2D array of [x][y] --> move string or null.
 	renderer.last_drawn_position = null;
+	renderer.flip = false;
 
 	renderer.movelist_handler = NewMovelistHander();	// Object that deals with the movelist at the bottom.
 	renderer.infobox_handler = NewInfoboxHandler();		// Object that deals with the infobox on the right.
@@ -303,28 +304,6 @@ function NewRenderer() {
 		}
 	};
 
-	renderer.set_active_square = function(new_point) {
-
-		// Clear the old...
-
-		let old_point = this.active_square;
-
-		if (old_point && old_point !== Point(null)) {
-			let td = document.getElementById("square_" + old_point.s);
-			td.style["background-color"] = (old_point.x + old_point.y) % 2 === 0 ? config.light_square : config.dark_square;
-		}
-
-		this.active_square = null;
-
-		// Bring the new...
-
-		if (new_point && new_point !== Point(null)) {
-			let td = document.getElementById("square_" + new_point.s);
-			td.style["background-color"] = config.active_square;
-			this.active_square = new_point;
-		}
-	};
-
 	renderer.validate_pgn = function(filename) {
 		let buf = fs.readFileSync(filename);		// i.e. binary buffer object
 		let pgn_list = PreParsePGN(buf);
@@ -422,6 +401,34 @@ function NewRenderer() {
 		return config.board_size / 8;
 	};
 
+	renderer.toggle_flip = function() {
+
+		this.flip = !this.flip;
+		this.last_drawn_position = null;
+
+		let active_square = this.active_square;		// Save and clear this for now.
+		this.set_active_square(null);
+
+		// Set all the ids to a temporary value so they can always have unique ids...
+
+		for (let x = 0; x < 8; x++) {
+			for (let y = 0; y < 8; y++) {
+				let element = document.getElementById("square_" + S(x, y));
+				element.id = "tmp_" + S(x, y);
+			}
+		}
+
+		for (let x = 0; x < 8; x++) {
+			for (let y = 0; y < 8; y++) {
+				let element = document.getElementById("tmp_" + S(x, y));
+				element.setAttribute("id", "square_" + S(7 - x, 7 - y));
+			}
+		}
+
+		this.set_active_square(active_square);		// Put it back.
+		this.draw_position();
+	};
+
 	renderer.escape = function() {					// Set things into a clean state.
 		this.hide_pgn_chooser();
 		this.set_active_square(null);
@@ -444,13 +451,40 @@ function NewRenderer() {
 	// --------------------------------------------------------------------------------------------
 	// Clickers... (except the PGN clicker, which is in the PGN section).
 
-	renderer.mouse_to_point = function(mousex, mousey) {
+	renderer.set_active_square = function(new_point) {
+
+		// Clear the old...
+
+		let old_point = this.active_square;
+
+		if (old_point && old_point !== Point(null)) {
+			let td = document.getElementById("square_" + old_point.s);
+			td.style["background-color"] = (old_point.x + old_point.y) % 2 === 0 ? config.light_square : config.dark_square;
+		}
+
+		this.active_square = null;
+
+		// Bring the new...
+
+		if (new_point && new_point !== Point(null)) {
+			let td = document.getElementById("square_" + new_point.s);
+			td.style["background-color"] = config.active_square;
+			this.active_square = new_point;
+		}
+	};
+
+	renderer.mouse_point = function() {
+
+		let [mousex, mousey] = [this.mousex, this.mousey];
 
 		// Assumes mousex and mousey are relative to canvas top left.
 
 		if (typeof mousex !== "number" || typeof mousey !== "number") {
 			return null;
 		}
+
+		mousex -= boardtable.getBoundingClientRect().left;
+		mousey -= boardtable.getBoundingClientRect().top;
 
 		let rss = this.square_size();
 
@@ -461,7 +495,7 @@ function NewRenderer() {
 			return null;
 		}
 
-		if (config.flip) {
+		if (this.flip) {
 			boardx = 7 - boardx;
 			boardy = 7 - boardy;
 		}
@@ -580,43 +614,14 @@ function NewRenderer() {
 
 	// --------------------------------------------------------------------------------------------
 
-	renderer.canvas_coords = function(x, y) {
-
-		// Given the x, y coordinates on the board (a8 is 0, 0)
-		// return an object with the canvas coordinates for
-		// the square, and also the centre. Also has rss.
-		//
-		//      x1,y1--------
-		//        |         |
-		//        |  cx,cy  |
-		//        |         |
-		//        --------x2,y2
-
-		let rss = this.square_size();
-		let x1 = x * rss;
-		let y1 = y * rss;
-		let x2 = x1 + rss;
-		let y2 = y1 + rss;
-
-		if (config.flip) {
-			[x1, x2] = [(rss * 8) - x2, (rss * 8) - x1];
-			[y1, y2] = [(rss * 8) - y2, (rss * 8) - y1];
-		}
-
-		let cx = x1 + rss / 2;
-		let cy = y1 + rss / 2;
-
-		return {x1, y1, x2, y2, cx, cy, rss};
-	};
-
-	renderer.draw_position = function() {
+	renderer.draw_position = function(force) {
 
 		let position = this.node.get_board();
 
 		for (let x = 0; x < 8; x++) {
 			for (let y = 0; y < 8; y++) {
 
-				if (this.last_drawn_position && this.last_drawn_position.state[x][y] === position.state[x][y]) {
+				if (this.last_drawn_position && this.last_drawn_position.state[x][y] === position.state[x][y] && !force) {
 					continue;
 				}
 
@@ -637,6 +642,34 @@ function NewRenderer() {
 		}
 
 		this.last_drawn_position = position;
+
+		// ------------------------------------------------------
+
+		for (let x = 0; x < 8; x++) {
+			for (let y = 0; y < 8; y++) {
+				this.one_click_moves[x][y] = null;
+			}
+		}
+
+		let info_list = this.info_table.sorted();
+
+		if (info_list.length > 0) {
+
+			let best_nodes = info_list[0].n;		// nodes for the best move in the list
+			
+			for (let i = 0; i < info_list.length; i++) {
+
+				if (info_list[i].n >= best_nodes * config.node_display_threshold) {
+
+					// let [x1, y1] = XY(info_list[i].move.slice(0, 2));
+					let [x2, y2] = XY(info_list[i].move.slice(2, 4));
+
+					if (!this.one_click_moves[x2][y2]) {
+						this.one_click_moves[x2][y2] = info_list[i].move;
+					}
+				}
+			}
+		}
 	};
 
 	renderer.draw = function() {

@@ -282,7 +282,7 @@ function menu_build() {
 					label: "Flip Board",
 					accelerator: "CommandOrControl+F",
 					click: () => {
-						windows.send("main-window", "toggle", "flip");
+						windows.send("main-window", "call", "toggle_flip");
 					}
 				},
 			]
