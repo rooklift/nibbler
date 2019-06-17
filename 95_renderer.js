@@ -37,7 +37,6 @@ function NewRenderer() {
 		this.escape();
 
 		this.movelist_handler.draw(this.node);
-		this.infobox_handler.draw(this);
 		this.draw();
 
 		fenbox.value = this.node.fen();
