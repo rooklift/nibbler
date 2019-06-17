@@ -29,18 +29,18 @@ for (let c of Array.from("KkQqRrBbNnPp")) {
 
 // ------------------------------------------------------------------------------------------------
 
-let renderer = NewRenderer();
+let hub = NewRenderer();
 
 if (config && config.warn_filename) {
-	renderer.err_receive(`<span class="blue">Nibbler says: You should rename config.example.json to config.json</span>`);
-	renderer.err_receive("");
+	hub.err_receive(`<span class="blue">Nibbler says: You should rename config.example.json to config.json</span>`);
+	hub.err_receive("");
 }
 
 ipcRenderer.on("call", (event, msg) => {
 	if (typeof msg === "string") {
-		renderer[msg]();
+		hub[msg]();
 	} else if (typeof msg === "object" && msg.fn && msg.args) {
-		renderer[msg.fn](...msg.args);
+		hub[msg.fn](...msg.args);
 	} else {
 		console.log("Bad call, msg was...");
 		console.log(msg);
@@ -49,12 +49,12 @@ ipcRenderer.on("call", (event, msg) => {
 
 ipcRenderer.on("toggle", (event, cfgvar) => {
 	config[cfgvar] = !config[cfgvar];
-	renderer.draw();
+	hub.draw();
 });
 
 ipcRenderer.on("set", (event, msg) => {
 	config[msg.key] = msg.value;
-	renderer.draw();
+	hub.draw();
 });
 
 // --------------------------------------------------------------------------------------------
@@ -65,11 +65,11 @@ ipcRenderer.on("set", (event, msg) => {
 let prev_next_queue = [];
 
 ipcRenderer.on("prev", (event) => {
-	prev_next_queue.push(renderer.prev.bind(renderer));
+	prev_next_queue.push(hub.prev.bind(hub));
 });
 
 ipcRenderer.on("next", (event) => {
-	prev_next_queue.push(renderer.next.bind(renderer));
+	prev_next_queue.push(hub.next.bind(hub));
 });
 
 function prev_next_loop() {
@@ -92,32 +92,32 @@ prev_next_loop();
 // the event.path to see what was actually clicked on.
 
 pgnchooser.addEventListener("mousedown", (event) => {
-	renderer.pgnchooser_click(event);
+	hub.pgnchooser_click(event);
 });
 
 canvas.addEventListener("mousedown", (event) => {
-	renderer.canvas_click(event);
+	hub.canvas_click(event);
 });
 
 infobox.addEventListener("mousedown", (event) => {
-	renderer.infobox_click(event);
+	hub.infobox_click(event);
 });
 
 movelist.addEventListener("mousedown", (event) => {
-	renderer.movelist_click(event);
+	hub.movelist_click(event);
 });
 
 // Constantly track the mouse...
 
 canvas.addEventListener("mousemove", (event) => {
 	// This can fire a LOT. So don't call any more functions.
-	renderer.mousex = event.offsetX;
-	renderer.mousey = event.offsetY;
+	hub.mousex = event.offsetX;
+	hub.mousey = event.offsetY;
 });
 
 canvas.addEventListener("mouseout", (event) => {
-	renderer.mousex = null;
-	renderer.mousey = null;
+	hub.mousex = null;
+	hub.mousey = null;
 });
 
 document.addEventListener("wheel", (event) => {
@@ -129,8 +129,8 @@ document.addEventListener("wheel", (event) => {
 	}
 
 	if (movelist.scrollHeight <= movelist.clientHeight) {
-		if (event.deltaY && event.deltaY < 0) prev_next_queue.push(renderer.prev.bind(renderer));
-		if (event.deltaY && event.deltaY > 0) prev_next_queue.push(renderer.next.bind(renderer));
+		if (event.deltaY && event.deltaY < 0) prev_next_queue.push(hub.prev.bind(hub));
+		if (event.deltaY && event.deltaY > 0) prev_next_queue.push(hub.next.bind(hub));
 		return;
 	}
 
@@ -146,15 +146,15 @@ document.addEventListener("wheel", (event) => {
 	}
 
 	if (allow) {
-		if (event.deltaY && event.deltaY < 0) prev_next_queue.push(renderer.prev.bind(renderer));
-		if (event.deltaY && event.deltaY > 0) prev_next_queue.push(renderer.next.bind(renderer));
+		if (event.deltaY && event.deltaY < 0) prev_next_queue.push(hub.prev.bind(hub));
+		if (event.deltaY && event.deltaY > 0) prev_next_queue.push(hub.next.bind(hub));
 	}
 });
 
 // Setup return key on FEN box...
 fenbox.onkeydown = (event) => {
 	if (event.key === "Enter") {
-		renderer.load_fen(fenbox.value);
+		hub.load_fen(fenbox.value);
 	}
 };
 
@@ -165,13 +165,13 @@ window.ondragleave = () => false;
 window.ondragend = () => false;
 window.ondrop = (event) => {
 	event.preventDefault();
-	renderer.open(event.dataTransfer.files[0].path);
+	hub.open(event.dataTransfer.files[0].path);
 	return false;
 };
 
 function enter_loop() {
 	if (loads === 12) {
-		renderer.draw_loop();
+		hub.draw_loop();
 		ipcRenderer.send("renderer_ready", null);
 	} else {
 		setTimeout(enter_loop, 25);
