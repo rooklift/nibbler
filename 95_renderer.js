@@ -408,24 +408,28 @@ function NewRenderer() {
 
 	renderer.toggle_flip = function() {
 
-		this.flip = !this.flip;
-
 		let active_square = this.active_square;		// Save and clear this for now.
 		this.set_active_square(null);
+
+		this.flip = !this.flip;
 
 		// Set all the ids to a temporary value so they can always have unique ids...
 
 		for (let x = 0; x < 8; x++) {
 			for (let y = 0; y < 8; y++) {
-				let element = document.getElementById("overlay_" + S(x, y));
-				element.id = "tmp_" + S(x, y);
+				let underlay_element = document.getElementById("underlay_" + S(x, y));
+				let overlay_element = document.getElementById("overlay_" + S(x, y));
+				underlay_element.id = "underlay_tmp_" + S(x, y);
+				overlay_element.id = "overlay_tmp_" + S(x, y);
 			}
 		}
 
 		for (let x = 0; x < 8; x++) {
 			for (let y = 0; y < 8; y++) {
-				let element = document.getElementById("tmp_" + S(x, y));
-				element.setAttribute("id", "overlay_" + S(7 - x, 7 - y));
+				let underlay_element = document.getElementById("underlay_tmp_" + S(x, y));
+				let overlay_element = document.getElementById("overlay_tmp_" + S(x, y));
+				underlay_element.id = "underlay_" + S(7 - x, 7 - y);
+				overlay_element.id = "overlay_" + S(7 - x, 7 - y);
 			}
 		}
 
