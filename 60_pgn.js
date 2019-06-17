@@ -307,7 +307,7 @@ function make_movetext(node) {
 
 	let connector = new_string_node_connector();
 	node = node.get_root();
-	write_tree2(node, connector, false, true);
+	write_tree(node, connector, false, true);
 	connector.push("*", null);
 
 	// Now it's all about wrapping to 80 chars...
@@ -340,7 +340,7 @@ function make_movetext(node) {
 function TokenNodeConnections(node) {
 	let connector = new_string_node_connector();
 	node = node.get_root();
-	write_tree2(node, connector, false, true);
+	write_tree(node, connector, false, true);
 	return connector;
 }
 
@@ -361,7 +361,7 @@ function new_string_node_connector() {
 	};
 }
 
-function write_tree2(node, connector, skip_self_flag, force_number_string) {
+function write_tree(node, connector, skip_self_flag, force_number_string) {
 
 	// Create the connector object - it has a list of tokens
 	// and a corresponding list of nodes/null.
@@ -391,9 +391,9 @@ function write_tree2(node, connector, skip_self_flag, force_number_string) {
 
 	for (let child of node.children.slice(1)) {
 		connector.push("(", null);
-		write_tree2(child, connector, false, true);
+		write_tree(child, connector, false, true);
 		connector.push(")", null);
 	}
 
-	write_tree2(main_child, connector, true, false);
+	write_tree(main_child, connector, true, false);
 }
