@@ -10,30 +10,40 @@ movelist.style.height = config.movelist_height.toString() + "px";		// Is there a
 
 // Create the board and its squares, and make the canvas sit on top of it...
 
-boardtable.width = config.board_size;
-boardtable.height = config.board_size;
+boardsquares.width = config.board_size;
+boardsquares.height = config.board_size;
 
 for (let y = 0; y < 8; y++) {
-	let tr = document.createElement("tr");
-	boardtable.appendChild(tr);
+	let tr1 = document.createElement("tr");
+	let tr2 = document.createElement("tr");
+	boardsquares.appendChild(tr1);
+	boardfriends.appendChild(tr2);
 	for (let x = 0; x < 8; x++) {
-		let td = document.createElement("td");
-		td.id = "square_" + Point(x, y).s;
-		td.width = config.board_size / 8;
-		td.height = config.board_size / 8;
+		let td1 = document.createElement("td");
+		let td2 = document.createElement("td");
+		td1.id = "underlay_" + Point(x, y).s;
+		td2.id = "square_" + Point(x, y).s;
+		td1.width = td2.width = config.board_size / 8;
+		td1.height = td2.height = config.board_size / 8;
 		if ((x + y) % 2 === 0) {
-			td.style["background-color"] = config.light_square;
+			td1.style["background-color"] = config.light_square;
 		} else {
-			td.style["background-color"] = config.dark_square;
+			td1.style["background-color"] = config.dark_square;
 		}
-		tr.appendChild(td);
+		tr1.appendChild(td1);
+		tr2.appendChild(td2);
 	}
 }
 
+boardfriends.width = config.board_size;
+boardfriends.height = config.board_size;
+boardfriends.style.left = boardsquares.offsetLeft.toString() + "px";
+boardfriends.style.top = boardsquares.offsetTop.toString() + "px";
+
 canvas.width = config.board_size;
 canvas.height = config.board_size;
-canvas.style.left = boardtable.offsetLeft.toString() + "px";
-canvas.style.top = boardtable.offsetTop.toString() + "px";
+canvas.style.left = boardsquares.offsetLeft.toString() + "px";
+canvas.style.top = boardsquares.offsetTop.toString() + "px";
 
 // ------------------------------------------------------------------------------------------------
 
@@ -120,8 +130,8 @@ pgnchooser.addEventListener("mousedown", (event) => {
 	hub.pgnchooser_click(event);
 });
 
-boardtable.addEventListener("mousedown", (event) => {
-	hub.boardtable_click(event);
+boardfriends.addEventListener("mousedown", (event) => {
+	hub.boardfriends_click(event);
 });
 
 infobox.addEventListener("mousedown", (event) => {
@@ -196,8 +206,7 @@ window.ondrop = (event) => {
 
 function enter_loop() {
 	if (loads === 12) {
-		hub.draw_board();
-		hub.draw_info_loop();
+		hub.draw_loop();
 		ipcRenderer.send("renderer_ready", null);
 	} else {
 		setTimeout(enter_loop, 25);

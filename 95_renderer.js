@@ -12,7 +12,6 @@ function NewRenderer() {
 	renderer.mousex = null;								// Raw mouse X on the document.
 	renderer.mousey = null;								// Raw mouse Y on the document.
 	renderer.one_click_moves = New2DArray(8, 8);		// 2D array of [x][y] --> move string or null.
-	renderer.last_drawn_position = null;
 	renderer.flip = false;
 
 	renderer.movelist_handler = NewMovelistHander();	// Object that deals with the movelist at the bottom.
@@ -39,7 +38,7 @@ function NewRenderer() {
 		context.clearRect(0, 0, canvas.width, canvas.height);
 		this.movelist_handler.draw(this.node);
 		this.infobox_handler.draw(this);
-		this.draw_board();
+		this.draw();
 
 		fenbox.value = this.node.fen();
 	};
@@ -409,7 +408,6 @@ function NewRenderer() {
 	renderer.toggle_flip = function() {
 
 		this.flip = !this.flip;
-		this.last_drawn_position = null;
 
 		let active_square = this.active_square;		// Save and clear this for now.
 		this.set_active_square(null);
@@ -431,7 +429,7 @@ function NewRenderer() {
 		}
 
 		this.set_active_square(active_square);		// Put it back.
-		this.draw_board();
+		this.draw();
 	};
 
 	renderer.escape = function() {					// Set things into a clean state.
@@ -462,7 +460,7 @@ function NewRenderer() {
 		let old_point = this.active_square;
 
 		if (old_point && old_point !== Point(null)) {
-			let td = document.getElementById("square_" + old_point.s);
+			let td = document.getElementById("underlay_" + old_point.s);
 			td.style["background-color"] = (old_point.x + old_point.y) % 2 === 0 ? config.light_square : config.dark_square;
 		}
 
@@ -471,7 +469,7 @@ function NewRenderer() {
 		// Bring the new...
 
 		if (new_point && new_point !== Point(null)) {
-			let td = document.getElementById("square_" + new_point.s);
+			let td = document.getElementById("underlay_" + new_point.s);
 			td.style["background-color"] = config.active_square;
 			this.active_square = new_point;
 		}
@@ -487,8 +485,8 @@ function NewRenderer() {
 			return null;
 		}
 
-		mousex -= boardtable.getBoundingClientRect().left;
-		mousey -= boardtable.getBoundingClientRect().top;
+		mousex -= boardfriends.getBoundingClientRect().left;
+		mousey -= boardfriends.getBoundingClientRect().top;
 
 		let rss = this.square_size();
 
@@ -507,7 +505,7 @@ function NewRenderer() {
 		return Point(boardx, boardy);
 	};
 
-	renderer.boardtable_click = function(event) {
+	renderer.boardfriends_click = function(event) {
 
 		let p = Point(null);
 
@@ -644,7 +642,7 @@ function NewRenderer() {
 		let x2 = x1 + rss;
 		let y2 = y1 + rss;
 
-		if (config.flip) {
+		if (this.flip) {
 			[x1, x2] = [(rss * 8) - x2, (rss * 8) - x1];
 			[y1, y2] = [(rss * 8) - y2, (rss * 8) - y1];
 		}
@@ -655,37 +653,33 @@ function NewRenderer() {
 		return {x1, y1, x2, y2, cx, cy, rss};
 	};
 
-	renderer.draw_board = function() {
+	renderer.draw_friendlies_in_table = function() {
 
 		let position = this.node.get_board();
 
-		if (this.last_drawn_position !== position) {
-			for (let x = 0; x < 8; x++) {
-				for (let y = 0; y < 8; y++) {
+		for (let x = 0; x < 8; x++) {
+			for (let y = 0; y < 8; y++) {
 
-					if (this.last_drawn_position && this.last_drawn_position.state[x][y] === position.state[x][y]) {
-						continue;
-					}
+				let s = Point(x, y).s;
+				let td = document.getElementById("square_" + s);
+				td.innerHTML = "";
 
-					let s = Point(x, y).s;
-					let td = document.getElementById("square_" + s);
-					td.innerHTML = "";
-
-					if (position.state[x][y] === "") {
-						continue;
-					}
-
-					let img = images[position.state[x][y]].cloneNode();
-					img.ondragstart = (event) => {
-						this.set_active_square(Point(x, y));
-						event.dataTransfer.setData("text", "square_" + s);
-					};
-					td.appendChild(img);
+				if (position.colour(Point(x, y)) !== position.active) {
+					continue;
 				}
+
+				if (position.state[x][y] === "") {
+					continue;
+				}
+
+				let img = images[position.state[x][y]].cloneNode();
+				img.ondragstart = (event) => {
+					this.set_active_square(Point(x, y));
+					event.dataTransfer.setData("text", "square_" + s);
+				};
+				td.appendChild(img);
 			}
 		}
-
-		this.last_drawn_position = position;
 	};
 
 	renderer.draw_arrows = function() {
@@ -790,7 +784,7 @@ function NewRenderer() {
 		}
 	};
 
-	renderer.draw_friendly_overlay = function() {
+	renderer.draw_enemies_in_canvas = function() {
 
 		let board = this.node.get_board();
 
@@ -800,7 +794,7 @@ function NewRenderer() {
 					continue;
 				}
 
-				if (board.colour(Point(x, y)) !== board.active) {
+				if (board.colour(Point(x, y)) === board.active) {
 					continue
 				}
 
@@ -811,17 +805,22 @@ function NewRenderer() {
 		}
 	};
 
-	renderer.draw_info_loop = function() {		// Loop for the things that rapidly update.
+	renderer.draw = function() {
+		this.infobox_handler.draw(this);
+		context.clearRect(0, 0, canvas.width, canvas.height);
+		this.draw_enemies_in_canvas();
+		this.draw_arrows();
+		this.draw_friendlies_in_table();
+	}
+
+	renderer.draw_loop = function() {
 
 		// Not using requestAnimationFrame the normal way. But it still
 		// may make the "animation" smoother, I think.
 
 		requestAnimationFrame(() => {
-			context.clearRect(0, 0, canvas.width, canvas.height);
-			this.infobox_handler.draw(this);
-			this.draw_arrows();
-			this.draw_friendly_overlay();
-			setTimeout(this.draw_info_loop.bind(this), config.update_delay);
+			this.draw();
+			setTimeout(this.draw_loop.bind(this), config.update_delay);
 		});
 	};
 

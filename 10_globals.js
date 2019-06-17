@@ -14,7 +14,8 @@ const util = require("util");
 
 // HTML stuff.......................................................
 
-const boardtable = document.getElementById("boardtable");
+const boardsquares = document.getElementById("boardsquares");
+const boardfriends = document.getElementById("boardfriends");
 const fenbox = document.getElementById("fenbox");
 const infobox = document.getElementById("infobox");
 const movelist = document.getElementById("movelist");

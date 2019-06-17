@@ -16,27 +16,35 @@ body {
 	display: flex;
 }
 
+#boardsquares {
+	border-collapse: collapse;
+	margin-right: 1em;
+	margin-bottom: 1em;
+	pointer-events: none;
+	table-layout: fixed;
+	user-select: none;
+}
+
 #canvas {
 	pointer-events: none;
 	position: fixed;
 	user-select: none;
 }
 
-#boardtable {
+#boardfriends {
 	border-collapse: collapse;
-	margin-right: 1em;
-	margin-bottom: 1em;
+	position: fixed;
 	table-layout: fixed;
 	user-select: none;
 }
 
-#boardtable td {
+td {
 	border: 0;
 	margin: 0;
 	padding: 0;
 }
 
-#boardtable img {
+img {
 	display: block;
 }
 
