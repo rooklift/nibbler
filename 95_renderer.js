@@ -4,7 +4,7 @@ function NewRenderer() {
 
 	let renderer = Object.create(null);
 
-	renderer.active_square = null;						// Square clicked by user.
+	renderer.active_square = null;						// Clicked square. Don't set directly, call set_active_square()
 	renderer.versus = "";								// Colours that Leela is "playing".
 	renderer.ever_received_info = false;				// When false, we write stderr log instead of move info.
 	renderer.stderr_log = "";							// All output received from the engine's stderr.
@@ -303,6 +303,28 @@ function NewRenderer() {
 		}
 	};
 
+	renderer.set_active_square = function(new_point) {
+
+		// Clear the old...
+
+		let old_point = this.active_square;
+
+		if (old_point && old_point !== Point(null)) {
+			let td = document.getElementById("square_" + old_point.s);
+			td.style["background-color"] = (old_point.x + old_point.y) % 2 === 0 ? config.light_square : config.dark_square;
+		}
+
+		this.active_square = null;
+
+		// Bring the new...
+
+		if (new_point && new_point !== Point(null)) {
+			let td = document.getElementById("square_" + new_point.s);
+			td.style["background-color"] = config.active_square;
+			this.active_square = new_point;
+		}
+	};
+
 	renderer.validate_pgn = function(filename) {
 		let buf = fs.readFileSync(filename);		// i.e. binary buffer object
 		let pgn_list = PreParsePGN(buf);
@@ -402,7 +424,7 @@ function NewRenderer() {
 
 	renderer.escape = function() {					// Set things into a clean state.
 		this.hide_pgn_chooser();
-		this.active_square = null;
+		this.set_active_square(null);
 		this.draw();
 	};
 
@@ -447,17 +469,26 @@ function NewRenderer() {
 		return Point(boardx, boardy);
 	};
 
-	renderer.canvas_click = function(event) {
+	renderer.boardtable_click = function(event) {
 
-		let p = this.mouse_to_point(event.offsetX, event.offsetY);
-		if (!p) {
+		let p = Point(null);
+
+		for (let item of event.path) {
+			if (typeof item.id === "string" && item.id.startsWith("square_")) {
+				p = Point(item.id.slice(7, 9));
+				break;
+			}
+		}
+
+		if (p === Point(null)) {
 			return;
 		}
 
-		let ocm = this.one_click_moves[p.x][p.y];
+		let ocm = this.one_click_moves[p.x][p.y];		// FIXME - there are no one_click_moves right now.
 		let board = this.node.get_board();
 
 		if (!this.active_square && ocm) {
+			this.set_active_square(null);
 			this.move(ocm);
 			return;
 		}
@@ -465,26 +496,19 @@ function NewRenderer() {
 		if (this.active_square) {
 
 			let move = this.active_square.s + p.s;		// e.g. "e2e4" - note promotion char is handled by renderer.move()
-			this.active_square = null;
-
-			let success = this.move(move);				// move() will draw if it succeeds...
-			if (!success) {
-				this.draw();							// ... but if it doesn't, we draw to show the active_square cleared.
-			}
-
+			this.set_active_square(null);
+			this.move(move);
 			return;
 
 		} else {
 
 			if (board.active === "w" && board.is_white(p)) {
-				this.active_square = p;
+				this.set_active_square(p);
 			}
 			if (board.active === "b" && board.is_black(p)) {
-				this.active_square = p;
+				this.set_active_square(p);
 			}
 		}
-
-		this.draw();
 	};
 
 	renderer.infobox_click = function(event) {
