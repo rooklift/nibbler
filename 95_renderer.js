@@ -643,6 +643,7 @@ function NewRenderer() {
 
 					let img = images[position.state[x][y]].cloneNode();
 					img.ondragstart = (event) => {
+						this.set_active_square(Point(x, y));
 						event.dataTransfer.setData("text", "square_" + s);
 					};
 					td.appendChild(img);
