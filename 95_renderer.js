@@ -592,13 +592,17 @@ function NewRenderer() {
 
 		this.set_active_square(null);
 
-		// Could be many different types of things being dropped...
+		// Is it a file?
+
+		if (event.dataTransfer && event.dataTransfer.files && event.dataTransfer.files[0] && event.dataTransfer.files[0].path) {
+			this.open(event.dataTransfer.files[0].path);
+			return;
+		}
+
+		// Is it a piece?
 
 		let text_data = event.dataTransfer.getData("text");
-
 		if (text_data.startsWith("square_")) {
-
-			// It is a piece...
 
 			let source = Point(text_data.slice(7, 9));
 
