@@ -614,14 +614,14 @@ function NewRenderer() {
 
 	// --------------------------------------------------------------------------------------------
 
-	renderer.draw_position = function(force) {
+	renderer.draw_position = function() {
 
 		let position = this.node.get_board();
 
 		for (let x = 0; x < 8; x++) {
 			for (let y = 0; y < 8; y++) {
 
-				if (this.last_drawn_position && this.last_drawn_position.state[x][y] === position.state[x][y] && !force) {
+				if (this.last_drawn_position && this.last_drawn_position.state[x][y] === position.state[x][y]) {
 					continue;
 				}
 

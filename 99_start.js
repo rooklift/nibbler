@@ -8,6 +8,8 @@ Log("");
 infobox.style.height = config.board_size.toString() + "px";
 movelist.style.height = config.movelist_height.toString() + "px";		// Is there a way to avoid needing this, to get the scroll bar?
 
+// Create the board and its squares...
+
 boardtable.width = config.board_size;
 boardtable.height = config.board_size;
 
