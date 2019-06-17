@@ -94,7 +94,6 @@ function OppositeColour(s) {
 }
 
 function ReplaceAll(s, search, replace) {
-	if (typeof s !== "string" || typeof search !== "string" || typeof replace !== "string") throw "ReplaceAll - bad call";
 	return s.split(search).join(replace);
 }
 
