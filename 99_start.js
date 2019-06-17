@@ -8,10 +8,20 @@ Log("");
 infobox.style.height = config.board_size.toString() + "px";
 movelist.style.height = config.movelist_height.toString() + "px";		// Is there a way to avoid needing this, to get the scroll bar?
 
-// Create the board and its squares, and make the canvas sit on top of it...
+// We have 3 things that get drawn to:
+//
+//		- boardsquares, a table with the actual squares of the board.
+//		- canvas, which gets enemy pieces and arrows drawn on it.
+//		- boardfriends, a table with friendly pieces.
+//
+// boardsquares has its natural position, while the other two get
+// fixed position that is set to be on top of it.
 
-boardsquares.width = config.board_size;
-boardsquares.height = config.board_size;
+boardsquares.width = boardfriends.width = canvas.width = config.board_size;
+boardsquares.height = boardfriends.height = canvas.height = config.board_size;
+
+boardfriends.style.left = canvas.style.left = boardsquares.offsetLeft.toString() + "px";
+boardfriends.style.top = canvas.style.top = boardsquares.offsetTop.toString() + "px";
 
 for (let y = 0; y < 8; y++) {
 	let tr1 = document.createElement("tr");
@@ -34,16 +44,6 @@ for (let y = 0; y < 8; y++) {
 		tr2.appendChild(td2);
 	}
 }
-
-boardfriends.width = config.board_size;
-boardfriends.height = config.board_size;
-boardfriends.style.left = boardsquares.offsetLeft.toString() + "px";
-boardfriends.style.top = boardsquares.offsetTop.toString() + "px";
-
-canvas.width = config.board_size;
-canvas.height = config.board_size;
-canvas.style.left = boardsquares.offsetLeft.toString() + "px";
-canvas.style.top = boardsquares.offsetTop.toString() + "px";
 
 // ------------------------------------------------------------------------------------------------
 
@@ -199,6 +199,7 @@ fenbox.onkeydown = (event) => {
 window.ondragover = () => false;		// Allows drops to happen, I think.
 
 window.ondrop = (event) => {
+	console.log(event);
 	hub.handle_drop(event);
 }
 
