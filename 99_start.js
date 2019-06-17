@@ -8,7 +8,7 @@ Log("");
 infobox.style.height = config.board_size.toString() + "px";
 movelist.style.height = config.movelist_height.toString() + "px";		// Is there a way to avoid needing this, to get the scroll bar?
 
-// Create the board and its squares...
+// Create the board and its squares, and make the canvas sit on top of it...
 
 boardtable.width = config.board_size;
 boardtable.height = config.board_size;
@@ -29,6 +29,11 @@ for (let y = 0; y < 8; y++) {
 		tr.appendChild(td);
 	}
 }
+
+canvas.width = config.board_size;
+canvas.height = config.board_size;
+canvas.style.left = boardtable.offsetLeft.toString() + "px";
+canvas.style.top = boardtable.offsetTop.toString() + "px";
 
 // ------------------------------------------------------------------------------------------------
 

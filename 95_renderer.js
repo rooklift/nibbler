@@ -36,6 +36,7 @@ function NewRenderer() {
 
 		this.escape();
 
+		context.clearRect(0, 0, canvas.width, canvas.height);
 		this.movelist_handler.draw(this.node);
 		this.infobox_handler.draw(this);
 		this.draw_board();
@@ -625,6 +626,35 @@ function NewRenderer() {
 
 	// --------------------------------------------------------------------------------------------
 
+	renderer.canvas_coords = function(x, y) {
+
+		// Given the x, y coordinates on the board (a8 is 0, 0)
+		// return an object with the canvas coordinates for
+		// the square, and also the centre. Also has rss.
+		//
+		//      x1,y1--------
+		//        |         |
+		//        |  cx,cy  |
+		//        |         |
+		//        --------x2,y2
+
+		let rss = this.square_size();
+		let x1 = x * rss;
+		let y1 = y * rss;
+		let x2 = x1 + rss;
+		let y2 = y1 + rss;
+
+		if (config.flip) {
+			[x1, x2] = [(rss * 8) - x2, (rss * 8) - x1];
+			[y1, y2] = [(rss * 8) - y2, (rss * 8) - y1];
+		}
+
+		let cx = x1 + rss / 2;
+		let cy = y1 + rss / 2;
+
+		return {x1, y1, x2, y2, cx, cy, rss};
+	};
+
 	renderer.draw_board = function() {
 
 		let position = this.node.get_board();
@@ -660,6 +690,14 @@ function NewRenderer() {
 
 	renderer.draw_arrows = function() {
 
+		context.lineWidth = 8;
+		context.textAlign = "center";
+		context.textBaseline = "middle";
+		context.font = config.board_font;
+
+		let arrows = [];
+		let heads = [];
+
 		for (let x = 0; x < 8; x++) {
 			for (let y = 0; y < 8; y++) {
 				this.one_click_moves[x][y] = null;
@@ -676,21 +714,115 @@ function NewRenderer() {
 
 				if (info_list[i].n >= best_nodes * config.node_display_threshold) {
 
-					// let [x1, y1] = XY(info_list[i].move.slice(0, 2));
+					let [x1, y1] = XY(info_list[i].move.slice(0, 2));
 					let [x2, y2] = XY(info_list[i].move.slice(2, 4));
+
+					let loss = 0;
+
+					if (typeof info_list[0].value === "number" && typeof info_list[i].value === "number") {
+						loss = info_list[0].value - info_list[i].value;
+					}
+
+					let colour;
+
+					if (i === 0) {
+						colour = config.best_colour;
+					} else if (loss > config.terrible_move_threshold) {
+						colour = config.terrible_colour;
+					} else if (loss > config.bad_move_threshold) {
+						colour = config.bad_colour;
+					} else {
+						colour = config.good_colour;
+					}
+
+					arrows.push({
+						colour: colour,
+						x1: x1,
+						y1: y1,
+						x2: x2,
+						y2: y2
+					});
 
 					if (!this.one_click_moves[x2][y2]) {
 						this.one_click_moves[x2][y2] = info_list[i].move;
+						heads.push({
+							colour: colour,
+							x2: x2,
+							y2: y2,
+							info: info_list[i]
+						});
 					}
 				}
+			}
+		}
+
+		// It looks best if the longest arrows are drawn underneath. Manhattan distance is good enough.
+
+		arrows.sort((a, b) => {
+			if (Math.abs(a.x2 - a.x1) + Math.abs(a.y2 - a.y1) < Math.abs(b.x2 - b.x1) + Math.abs(b.y2 - b.y1)) {
+				return 1;
+			}
+			if (Math.abs(a.x2 - a.x1) + Math.abs(a.y2 - a.y1) > Math.abs(b.x2 - b.x1) + Math.abs(b.y2 - b.y1)) {
+				return -1;
+			}
+			return 0;
+		});
+
+		for (let o of arrows) {
+			let cc1 = this.canvas_coords(o.x1, o.y1);
+			let cc2 = this.canvas_coords(o.x2, o.y2);
+			context.strokeStyle = o.colour;
+			context.fillStyle = o.colour;
+			context.beginPath();
+			context.moveTo(cc1.cx, cc1.cy);
+			context.lineTo(cc2.cx, cc2.cy);
+			context.stroke();
+		}
+
+		for (let o of heads) {
+			let cc2 = this.canvas_coords(o.x2, o.y2);
+			context.fillStyle = o.colour;
+			context.beginPath();
+			context.arc(cc2.cx, cc2.cy, 12, 0, 2 * Math.PI);
+			context.fill();
+			context.fillStyle = "black";
+			context.fillText(`${o.info.value_string(0)}`, cc2.cx, cc2.cy + 1);
+		}
+	};
+
+	renderer.draw_friendly_overlay = function() {
+
+		let board = this.node.get_board();
+
+		for (let x = 0; x < 8; x++) {
+			for (let y = 0; y < 8; y++) {
+				if (board.state[x][y] === "") {
+					continue;
+				}
+
+				if (board.colour(Point(x, y)) !== board.active) {
+					continue
+				}
+
+				let piece = board.state[x][y];
+				let cc = this.canvas_coords(x, y);
+				context.drawImage(images[piece], cc.x1, cc.y1, cc.rss, cc.rss);
 			}
 		}
 	};
 
 	renderer.draw_info_loop = function() {		// Loop for the things that rapidly update.
-		this.infobox_handler.draw(this);
-		this.draw_arrows();
-		setTimeout(this.draw_info_loop.bind(this), config.update_delay);
+
+		// Not using requestAnimationFrame the normal way. But it still
+		// may make the "animation" smoother, I think.
+
+		requestAnimationFrame(() => {
+			context.clearRect(0, 0, canvas.width, canvas.height);
+			this.infobox_handler.draw(this);
+			this.draw_arrows();
+			this.draw_friendly_overlay();
+			setTimeout(this.draw_info_loop.bind(this), config.update_delay);
+		});
 	};
 
 	// --------------------------------------------------------------------------------------------

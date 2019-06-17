@@ -20,6 +20,9 @@ const infobox = document.getElementById("infobox");
 const movelist = document.getElementById("movelist");
 const pgnchooser = document.getElementById("pgnchooser");
 
+const canvas = document.getElementById("canvas");
+const context = canvas.getContext("2d");
+
 // Global variables.................................................
 
 let config = {};
