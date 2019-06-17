@@ -588,6 +588,10 @@ function NewRenderer() {
 
 	renderer.handle_drop = function(event) {
 
+		// Just about any drop should clear the active square...
+
+		this.set_active_square(null);
+
 		// Could be many different types of things being dropped...
 
 		let text_data = event.dataTransfer.getData("text");

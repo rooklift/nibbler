@@ -115,7 +115,7 @@ pgnchooser.addEventListener("mousedown", (event) => {
 	hub.pgnchooser_click(event);
 });
 
-boardtable.addEventListener("click", (event) => {
+boardtable.addEventListener("mousedown", (event) => {
 	hub.boardtable_click(event);
 });
 
