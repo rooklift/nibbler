@@ -526,7 +526,7 @@ function NewRenderer() {
 			return;
 		}
 
-		let ocm = this.one_click_moves[p.x][p.y];		// FIXME - there are no one_click_moves right now.
+		let ocm = this.one_click_moves[p.x][p.y];
 		let board = this.node.get_board();
 
 		if (!this.active_square && ocm) {
