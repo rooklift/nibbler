@@ -12,7 +12,8 @@ function NewRenderer() {
 	renderer.mousex = null;								// Raw mouse X on the document.
 	renderer.mousey = null;								// Raw mouse Y on the document.
 	renderer.one_click_moves = New2DArray(8, 8);		// 2D array of [x][y] --> move string or null.
-	renderer.flip = false;
+	renderer.friendly_draws = New2DArray(8, 8);			// What pieces are drawn in boardfriends. Used to skip redraws.
+	renderer.flip = false;								// Flip.
 
 	renderer.movelist_handler = NewMovelistHander();	// Object that deals with the movelist at the bottom.
 	renderer.infobox_handler = NewInfoboxHandler();		// Object that deals with the infobox on the right.
@@ -429,6 +430,7 @@ function NewRenderer() {
 		}
 
 		this.set_active_square(active_square);		// Put it back.
+		this.friendly_draws = New2DArray(8, 8);		// Everything needs drawn.
 		this.draw();
 	};
 
@@ -660,13 +662,23 @@ function NewRenderer() {
 		for (let x = 0; x < 8; x++) {
 			for (let y = 0; y < 8; y++) {
 
-				let s = Point(x, y).s;
-				let td = document.getElementById("overlay_" + s);
-				td.innerHTML = "";
+				let piece_to_draw = "";
 
-				if (position.colour(Point(x, y)) !== position.active) {
+				if (position.colour(Point(x, y)) === position.active) {
+					piece_to_draw = position.state[x][y];
+				}
+
+				if (piece_to_draw === this.friendly_draws[x][y]) {
 					continue;
 				}
+
+				// So if we get to here, we need to draw...
+
+				this.friendly_draws[x][y] = position.state[x][y];
+
+				let s = S(x, y);
+				let td = document.getElementById("overlay_" + s);
+				td.innerHTML = "";
 
 				if (position.state[x][y] === "") {
 					continue;
