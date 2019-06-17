@@ -811,7 +811,7 @@ function NewRenderer() {
 				}
 
 				if (board.colour(Point(x, y)) === board.active) {
-					continue
+					continue;
 				}
 
 				let piece = board.state[x][y];
@@ -827,7 +827,7 @@ function NewRenderer() {
 		this.draw_enemies_in_canvas();
 		this.draw_arrows();
 		this.draw_friendlies_in_table();
-	}
+	};
 
 	renderer.draw_loop = function() {
 
