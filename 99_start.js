@@ -75,7 +75,7 @@ ipcRenderer.on("next", (event) => {
 function prev_next_loop() {
 	if (prev_next_queue.length > 0) {
 		let fn_to_call = prev_next_queue[prev_next_queue.length - 1];
-		fn_to_call();
+		fn_to_call.call(renderer);		// In case it uses "this", specify that "this" means renderer.
 		prev_next_queue = [];
 	}
 	setTimeout(prev_next_loop, 10);

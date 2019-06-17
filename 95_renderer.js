@@ -731,7 +731,7 @@ function NewRenderer() {
 		drawables = drawables.concat(Object.values(heads));
 
 		for (let o of drawables) {
-			o.fn(o);
+			o.fn.call(renderer, o);		// In case it uses "this", specify that "this" means renderer.
 		}
 	};
 
