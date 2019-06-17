@@ -578,12 +578,12 @@ function NewRenderer() {
 		}
 	};
 
-	renderer.draw_piece = (o) => {
+	renderer.draw_piece = function(o) {
 		let cc = this.canvas_coords(o.x, o.y);
 		context.drawImage(images[o.piece], cc.x1, cc.y1, cc.rss, cc.rss);
 	};
 
-	renderer.draw_arrow_line = (o) => {		// Doesn't draw the arrowhead
+	renderer.draw_arrow_line = function(o) {		// Doesn't draw the arrowhead
 		let cc1 = this.canvas_coords(o.x1, o.y1);
 		let cc2 = this.canvas_coords(o.x2, o.y2);
 		context.strokeStyle = o.colour;
@@ -594,7 +594,7 @@ function NewRenderer() {
 		context.stroke();
 	};
 
-	renderer.draw_head = (o) => {
+	renderer.draw_head = function(o) {
 		let cc = this.canvas_coords(o.x, o.y);
 		context.fillStyle = o.colour;
 		context.beginPath();
