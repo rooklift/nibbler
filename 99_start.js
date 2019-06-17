@@ -198,7 +198,8 @@ window.ondrop = (event) => {
 
 function enter_loop() {
 	if (loads === 12) {
-		hub.draw_loop();
+		hub.draw_board();
+		hub.draw_info_loop();
 		ipcRenderer.send("renderer_ready", null);
 	} else {
 		setTimeout(enter_loop, 25);

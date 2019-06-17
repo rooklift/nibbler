@@ -28,15 +28,19 @@ function NewRenderer() {
 
 		this.info_table.clear();
 
-		this.escape();
-		this.movelist_handler.draw(this.node);
-		fenbox.value = this.node.fen();
-
 		if (this.leela_should_go()) {
 			this.go(new_game_flag);
 		} else {
 			this.halt();
 		}
+
+		this.escape();
+
+		this.movelist_handler.draw(this.node);
+		this.infobox_handler.draw(this);
+		this.draw_board();
+
+		fenbox.value = this.node.fen();
 	};
 
 	renderer.set_versus = function(s) {
@@ -426,13 +430,12 @@ function NewRenderer() {
 		}
 
 		this.set_active_square(active_square);		// Put it back.
-		this.draw_position();
+		this.draw_board();
 	};
 
 	renderer.escape = function() {					// Set things into a clean state.
 		this.hide_pgn_chooser();
 		this.set_active_square(null);
-		this.draw();
 	};
 
 	renderer.toggle_debug_css = function() {
@@ -610,40 +613,43 @@ function NewRenderer() {
 
 			return;
 		}
-	}
+	};
 
 	// --------------------------------------------------------------------------------------------
 
-	renderer.draw_position = function() {
+	renderer.draw_board = function() {
 
 		let position = this.node.get_board();
 
-		for (let x = 0; x < 8; x++) {
-			for (let y = 0; y < 8; y++) {
+		if (this.last_drawn_position !== position) {
+			for (let x = 0; x < 8; x++) {
+				for (let y = 0; y < 8; y++) {
 
-				if (this.last_drawn_position && this.last_drawn_position.state[x][y] === position.state[x][y]) {
-					continue;
+					if (this.last_drawn_position && this.last_drawn_position.state[x][y] === position.state[x][y]) {
+						continue;
+					}
+
+					let s = Point(x, y).s;
+					let td = document.getElementById("square_" + s);
+					td.innerHTML = "";
+
+					if (position.state[x][y] === "") {
+						continue;
+					}
+
+					let img = images[position.state[x][y]].cloneNode();
+					img.ondragstart = (event) => {
+						event.dataTransfer.setData("text", "square_" + s);
+					};
+					td.appendChild(img);
 				}
-
-				let s = Point(x, y).s;
-				let td = document.getElementById("square_" + s);
-				td.innerHTML = "";
-
-				if (position.state[x][y] === "") {
-					continue;
-				}
-
-				let img = images[position.state[x][y]].cloneNode();
-				img.ondragstart = (event) => {
-					event.dataTransfer.setData("text", "square_" + s);
-				};
-				td.appendChild(img);
 			}
 		}
 
 		this.last_drawn_position = position;
+	};
 
-		// ------------------------------------------------------
+	renderer.draw_arrows = function() {
 
 		for (let x = 0; x < 8; x++) {
 			for (let y = 0; y < 8; y++) {
@@ -672,20 +678,10 @@ function NewRenderer() {
 		}
 	};
 
-	renderer.draw = function() {
-
-		// Not using requestAnimationFrame the normal way. But it still
-		// may make the "animation" smoother, I think.
-
-		requestAnimationFrame(() => {
-			this.infobox_handler.draw(this);
-			this.draw_position();
-		});
-	};
-
-	renderer.draw_loop = function() {
-		this.draw();
-		setTimeout(this.draw_loop.bind(this), config.update_delay);
+	renderer.draw_info_loop = function() {		// Loop for the things that rapidly update.
+		this.infobox_handler.draw(this);
+		this.draw_arrows();
+		setTimeout(this.draw_info_loop.bind(this), config.update_delay);
 	};
 
 	// --------------------------------------------------------------------------------------------
