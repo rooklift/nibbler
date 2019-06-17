@@ -14,12 +14,14 @@ const util = require("util");
 
 // HTML stuff.......................................................
 
-const canvas = document.getElementById("canvas");
+const boardsquares = document.getElementById("boardsquares");
+const boardfriends = document.getElementById("boardfriends");
 const fenbox = document.getElementById("fenbox");
 const infobox = document.getElementById("infobox");
 const movelist = document.getElementById("movelist");
 const pgnchooser = document.getElementById("pgnchooser");
 
+const canvas = document.getElementById("canvas");
 const context = canvas.getContext("2d");
 
 // Global variables.................................................

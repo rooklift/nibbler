@@ -7,8 +7,43 @@ Log("");
 
 infobox.style.height = config.board_size.toString() + "px";
 movelist.style.height = config.movelist_height.toString() + "px";		// Is there a way to avoid needing this, to get the scroll bar?
-canvas.width = config.board_size;
-canvas.height = config.board_size;
+
+// We have 3 things that get drawn to:
+//
+//		- boardsquares, a table with the actual squares of the board.
+//		- canvas, which gets enemy pieces and arrows drawn on it.
+//		- boardfriends, a table with friendly pieces.
+//
+// boardsquares has its natural position, while the other two get
+// fixed position that is set to be on top of it.
+
+boardsquares.width = boardfriends.width = canvas.width = config.board_size;
+boardsquares.height = boardfriends.height = canvas.height = config.board_size;
+
+boardfriends.style.left = canvas.style.left = boardsquares.offsetLeft.toString() + "px";
+boardfriends.style.top = canvas.style.top = boardsquares.offsetTop.toString() + "px";
+
+for (let y = 0; y < 8; y++) {
+	let tr1 = document.createElement("tr");
+	let tr2 = document.createElement("tr");
+	boardsquares.appendChild(tr1);
+	boardfriends.appendChild(tr2);
+	for (let x = 0; x < 8; x++) {
+		let td1 = document.createElement("td");
+		let td2 = document.createElement("td");
+		td1.id = "underlay_" + Point(x, y).s;
+		td2.id = "overlay_" + Point(x, y).s;
+		td1.width = td2.width = config.board_size / 8;
+		td1.height = td2.height = config.board_size / 8;
+		if ((x + y) % 2 === 0) {
+			td1.style["background-color"] = config.light_square;
+		} else {
+			td1.style["background-color"] = config.dark_square;
+		}
+		tr1.appendChild(td1);
+		tr2.appendChild(td2);
+	}
+}
 
 // ------------------------------------------------------------------------------------------------
 
@@ -95,8 +130,8 @@ pgnchooser.addEventListener("mousedown", (event) => {
 	hub.pgnchooser_click(event);
 });
 
-canvas.addEventListener("mousedown", (event) => {
-	hub.canvas_click(event);
+boardfriends.addEventListener("mousedown", (event) => {
+	hub.boardfriends_click(event);
 });
 
 infobox.addEventListener("mousedown", (event) => {
@@ -109,13 +144,13 @@ movelist.addEventListener("mousedown", (event) => {
 
 // Constantly track the mouse...
 
-canvas.addEventListener("mousemove", (event) => {
+document.addEventListener("mousemove", (event) => {
 	// This can fire a LOT. So don't call any more functions.
-	hub.mousex = event.offsetX;
-	hub.mousey = event.offsetY;
+	hub.mousex = event.x;
+	hub.mousey = event.y;
 });
 
-canvas.addEventListener("mouseout", (event) => {
+document.addEventListener("mouseout", (event) => {
 	hub.mousex = null;
 	hub.mousey = null;
 });
@@ -152,22 +187,23 @@ document.addEventListener("wheel", (event) => {
 });
 
 // Setup return key on FEN box...
+
 fenbox.onkeydown = (event) => {
 	if (event.key === "Enter") {
 		hub.load_fen(fenbox.value);
 	}
 };
 
-// Setup drag-and-drop for PGN files into the window itself...
+// Setup drag-and-drop...
 
-window.ondragover = () => false;
-window.ondragleave = () => false;
-window.ondragend = () => false;
+window.ondragover = () => false;		// Allows drops to happen, I think.
+
 window.ondrop = (event) => {
-	event.preventDefault();
-	hub.open(event.dataTransfer.files[0].path);
-	return false;
-};
+	console.log(event);
+	hub.handle_drop(event);
+}
+
+// Go...
 
 function enter_loop() {
 	if (loads === 12) {

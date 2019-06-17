@@ -16,11 +16,36 @@ body {
 	display: flex;
 }
 
-#canvas {
-	float: left;
+#boardsquares {
+	border-collapse: collapse;
 	margin-right: 1em;
 	margin-bottom: 1em;
+	pointer-events: none;		/* important, mouse events don't interact */
+	table-layout: fixed;
 	user-select: none;
+}
+
+#canvas {
+	pointer-events: none;		/* important, mouse events don't interact */
+	position: fixed;
+	user-select: none;
+}
+
+#boardfriends {
+	border-collapse: collapse;
+	position: fixed;
+	table-layout: fixed;
+	user-select: none;
+}
+
+td {
+	border: 0;
+	margin: 0;
+	padding: 0;
+}
+
+img {
+	display: block;
 }
 
 #pgnchooser {

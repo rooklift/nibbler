@@ -18,7 +18,7 @@ function NewInfoboxHandler() {
 		}
 
 		// Find the square the user is hovering over (might be null)...
-		let p = renderer.mouse_to_point(renderer.mousex, renderer.mousey);
+		let p = renderer.mouse_point();
 
 		// By default we're highlighting nothing...
 		let highlight_dest = null;

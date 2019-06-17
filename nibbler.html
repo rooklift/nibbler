@@ -9,23 +9,28 @@
 
 <body>
 
-	<div id="pgnchooser">If you see this, something is quite wrong. Tell the author.</div>
-
 	<div class="main">
 
 		<div class="row">
+
 			<div class="leftcolumn">
-				<canvas id="canvas"></canvas>
+				<table id="boardsquares"></table>		<!-- table for light and dark squares -->
+				<canvas id="canvas"></canvas>			<!-- canvas for enemy pieces and arrows -->
+				<table id="boardfriends"></table>		<!-- table for friendly pieces -->
 			</div>
+
 	  		<div class="rightcolumn">
 	  			<div id="infobox"></div>
 	  		</div>
+	  		
 		</div>
 	
 		<input type="text" id="fenbox" value="">
 		<p id="movelist"></p>
 		
 	</div>
+
+	<div id="pgnchooser">If you see this, something is quite wrong. Tell the author.</div>
 
 	<!-- Most of our components are fairly well encapsulated and could be in
 	module form. Still, for the time being we have everything in one namespace and
