@@ -674,17 +674,17 @@ function NewRenderer() {
 
 				// So if we get to here, we need to draw...
 
-				this.friendly_draws[x][y] = position.state[x][y];
+				this.friendly_draws[x][y] = piece_to_draw;
 
 				let s = S(x, y);
 				let td = document.getElementById("overlay_" + s);
 				td.innerHTML = "";
 
-				if (position.state[x][y] === "") {
+				if (piece_to_draw === "") {
 					continue;
 				}
 
-				let img = images[position.state[x][y]].cloneNode();
+				let img = images[piece_to_draw].cloneNode();
 				img.ondragstart = (event) => {
 					this.set_active_square(Point(x, y));
 					event.dataTransfer.setData("text", "overlay_" + s);
