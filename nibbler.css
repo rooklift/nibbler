@@ -23,6 +23,13 @@ body {
 	user-select: none;
 }
 
+#boardtable {
+	border-collapse: collapse;
+	margin-right: 1em;
+	margin-bottom: 1em;
+	table-layout: fixed;
+}
+
 #pgnchooser {
 	background-color: #080808;
 	display: none;						/* better than visibility: hidden - never intercepts inputs */

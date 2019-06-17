@@ -7,8 +7,25 @@ Log("");
 
 infobox.style.height = config.board_size.toString() + "px";
 movelist.style.height = config.movelist_height.toString() + "px";		// Is there a way to avoid needing this, to get the scroll bar?
-canvas.width = config.board_size;
-canvas.height = config.board_size;
+//canvas.width = config.board_size;
+//canvas.height = config.board_size;
+
+boardtable.width = config.board_size;
+boardtable.height = config.board_size;
+
+for (let x = 0; x < 8; x++) {
+	for (let y = 0; y < 8; y++) {
+		let point = Point(x, y);
+		let td = document.getElementById(point.s);
+		td.width = config.board_size / 8;
+		td.height = config.board_size / 8;
+		if ((x + y) % 2 === 0) {
+			td.style["background-color"] = config.light_square;
+		} else {
+			td.style["background-color"] = config.dark_square;
+		}
+	}
+}
 
 // ------------------------------------------------------------------------------------------------
 
@@ -95,7 +112,7 @@ pgnchooser.addEventListener("mousedown", (event) => {
 	hub.pgnchooser_click(event);
 });
 
-canvas.addEventListener("mousedown", (event) => {
+boardtable.addEventListener("mousedown", (event) => {
 	hub.canvas_click(event);
 });
 
@@ -109,13 +126,13 @@ movelist.addEventListener("mousedown", (event) => {
 
 // Constantly track the mouse...
 
-canvas.addEventListener("mousemove", (event) => {
+boardtable.addEventListener("mousemove", (event) => {
 	// This can fire a LOT. So don't call any more functions.
 	hub.mousex = event.offsetX;
 	hub.mousey = event.offsetY;
 });
 
-canvas.addEventListener("mouseout", (event) => {
+boardtable.addEventListener("mouseout", (event) => {
 	hub.mousex = null;
 	hub.mousey = null;
 });

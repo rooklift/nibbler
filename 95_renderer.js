@@ -553,27 +553,6 @@ function NewRenderer() {
 		return {x1, y1, x2, y2, cx, cy, rss};
 	};
 
-	renderer.draw_board = function(light, dark) {
-
-		for (let x = 0; x < 8; x++) {
-			for (let y = 0; y < 8; y++) {
-				if (x % 2 === y % 2) {
-					context.fillStyle = light;
-				} else {
-					context.fillStyle = dark;
-				}
-
-				let cc = this.canvas_coords(x, y);
-
-				if (this.active_square === Point(x, y)) {
-					context.fillStyle = config.active_square;
-				}
-
-				context.fillRect(cc.x1, cc.y1, cc.rss, cc.rss);
-			}
-		}
-	};
-
 	renderer.draw_piece = function(o) {
 		let cc = this.canvas_coords(o.x, o.y);
 		context.drawImage(images[o.piece], cc.x1, cc.y1, cc.rss, cc.rss);
@@ -737,7 +716,6 @@ function NewRenderer() {
 
 		requestAnimationFrame(() => {
 			this.infobox_handler.draw(this);
-			this.draw_board(config.light_square, config.dark_square);
 			this.draw_position();
 		});
 	};
