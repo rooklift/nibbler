@@ -554,159 +554,48 @@ function NewRenderer() {
 	};
 
 	renderer.draw_piece = function(o) {
-		let cc = this.canvas_coords(o.x, o.y);
-		context.drawImage(images[o.piece], cc.x1, cc.y1, cc.rss, cc.rss);
+		let s = S(o.x, o.y);
+		let td = document.getElementById("square_" + s);
+		let img = images[o.piece].cloneNode();
+		img.setAttribute("ondragover", "javascript:(e) => {e.preventDefault();}");		// Allow to be target of drag.
+		img.setAttribute("draggable", true);											// Allow to be source of drag.
+		img.setAttribute("ondragstart", "javascript:console.log(event)");
+		td.appendChild(img);
 	};
 
-	renderer.draw_arrow_line = function(o) {		// Doesn't draw the arrowhead
-		let cc1 = this.canvas_coords(o.x1, o.y1);
-		let cc2 = this.canvas_coords(o.x2, o.y2);
-		context.strokeStyle = o.colour;
-		context.fillStyle = o.colour;
-		context.beginPath();
-		context.moveTo(cc1.cx, cc1.cy);
-		context.lineTo(cc2.cx, cc2.cy);
-		context.stroke();
+	renderer.draw_arrow_line = function(o) {
+		return;
 	};
 
 	renderer.draw_head = function(o) {
-		let cc = this.canvas_coords(o.x, o.y);
-		context.fillStyle = o.colour;
-		context.beginPath();
-		context.arc(cc.cx, cc.cy, 12, 0, 2 * Math.PI);
-		context.fill();
-		context.fillStyle = "black";
-		context.fillText(`${o.info.value_string(0)}`, cc.cx, cc.cy + 1);
+		return;
 	};
 
 	renderer.draw_position = function() {
 
-		context.lineWidth = 8;
-		context.textAlign = "center";
-		context.textBaseline = "middle";
-		context.font = config.board_font;
-
-		let pieces = [];
-		let board = this.node.get_board();
+		let position = this.node.get_board();
 
 		for (let x = 0; x < 8; x++) {
 			for (let y = 0; y < 8; y++) {
-				if (board.state[x][y] === "") {
+				if (this.last_drawn_position && this.last_drawn_position.state[x][y] === position.state[x][y]) {
 					continue;
 				}
 
-				pieces.push({
-					fn: this.draw_piece.bind(this),
-					piece: board.state[x][y],
-					colour: board.state[x][y].toUpperCase() === board.state[x][y] ? "w" : "b",
-					x: x,
-					y: y
-				});
-			}
-		}
+				let td = document.getElementById("square_" + Point(x, y).s);
 
-		let info_list = this.info_table.sorted();
-
-		let arrows = [];
-		let heads = Object.create(null);
-
-		// Clear our 2D array of one-click moves.
-		// We will shortly update it with valid ones.
-		for (let x = 0; x < 8; x++) {
-			for (let y = 0; y < 8; y++) {
-				this.one_click_moves[x][y] = null;
-			}
-		}
-
-		if (info_list.length > 0) {
-
-			let best_nodes = info_list[0].n;
-			
-			for (let i = 0; i < info_list.length; i++) {
-
-				let [x1, y1] = XY(info_list[i].move.slice(0, 2));
-				let [x2, y2] = XY(info_list[i].move.slice(2, 4));
-
-				if (info_list[i].n >= best_nodes * config.node_display_threshold) {
-
-					let loss = 0;
-
-					if (typeof info_list[0].value === "number" && typeof info_list[i].value === "number") {
-						loss = info_list[0].value - info_list[i].value;
-					}
-
-					let colour;
-
-					if (i === 0) {
-						colour = config.best_colour;
-					} else if (loss > config.terrible_move_threshold) {
-						colour = config.terrible_colour;
-					} else if (loss > config.bad_move_threshold) {
-						colour = config.bad_colour;
-					} else {
-						colour = config.good_colour;
-					}
-
-					arrows.push({
-						fn: this.draw_arrow_line.bind(this),
-						colour: colour,
-						x1: x1,
-						y1: y1,
-						x2: x2,
-						y2: y2
-					});
-
-					// We only draw the best ranking for each particular target square.
-					// At the same time, the square becomes available for one-click
-					// movement; we set the relevant info in renderer.one_click_moves.
-
-					if (heads[info_list[i].move.slice(2, 4)] === undefined) {
-						heads[info_list[i].move.slice(2, 4)] = {
-							fn: this.draw_head.bind(this),
-							colour: colour,
-							info: info_list[i],
-							x: x2,
-							y: y2
-						};
-						this.one_click_moves[x2][y2] = info_list[i].move;
-					}
+				if (position.state[x][y] === "") {
+					td.innerHTML = "";
+				} else {
+					let img = images[position.state[x][y]].cloneNode();
+					img.setAttribute("ondragover", "javascript:(e) => {e.preventDefault();}");		// Allow to be target of drag.
+					img.setAttribute("draggable", true);											// Allow to be source of drag.
+					img.setAttribute("ondragstart", "javascript:console.log(event)");
+					td.appendChild(img);
 				}
 			}
 		}
 
-		// It looks best if the longest arrows are drawn underneath. Manhattan distance is good enough.
-
-		arrows.sort((a, b) => {
-			if (Math.abs(a.x2 - a.x1) + Math.abs(a.y2 - a.y1) < Math.abs(b.x2 - b.x1) + Math.abs(b.y2 - b.y1)) {
-				return 1;
-			}
-			if (Math.abs(a.x2 - a.x1) + Math.abs(a.y2 - a.y1) > Math.abs(b.x2 - b.x1) + Math.abs(b.y2 - b.y1)) {
-				return -1;
-			}
-			return 0;
-		});
-
-		let drawables = [];
-
-		for (let o of pieces) {
-			if (o.colour !== board.active) {
-				drawables.push(o);
-			}
-		}
-
-		drawables = drawables.concat(arrows);
-
-		for (let o of pieces) {
-			if (o.colour === board.active) {
-				drawables.push(o);
-			}
-		}
-
-		drawables = drawables.concat(Object.values(heads));
-
-		for (let o of drawables) {
-			o.fn(o);
-		}
+		this.last_drawn_position = position;
 	};
 
 	renderer.draw = function() {

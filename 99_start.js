@@ -13,10 +13,15 @@ movelist.style.height = config.movelist_height.toString() + "px";		// Is there a
 boardtable.width = config.board_size;
 boardtable.height = config.board_size;
 
-for (let x = 0; x < 8; x++) {
-	for (let y = 0; y < 8; y++) {
-		let point = Point(x, y);
-		let td = document.getElementById(point.s);
+boardtable.setAttribute("ondragover", "javascript:(e) => {e.preventDefault();}");
+boardtable.setAttribute("ondrop", "javascript:console.log(event);");
+
+for (let y = 0; y < 8; y++) {
+	let tr = document.createElement("tr");
+	boardtable.appendChild(tr);
+	for (let x = 0; x < 8; x++) {
+		let td = document.createElement("td");
+		td.id = "square_" + Point(x, y).s;
 		td.width = config.board_size / 8;
 		td.height = config.board_size / 8;
 		if ((x + y) % 2 === 0) {
@@ -24,6 +29,7 @@ for (let x = 0; x < 8; x++) {
 		} else {
 			td.style["background-color"] = config.dark_square;
 		}
+		tr.appendChild(td);
 	}
 }
 
@@ -180,11 +186,11 @@ fenbox.onkeydown = (event) => {
 window.ondragover = () => false;
 window.ondragleave = () => false;
 window.ondragend = () => false;
-window.ondrop = (event) => {
-	event.preventDefault();
-	hub.open(event.dataTransfer.files[0].path);
-	return false;
-};
+//window.ondrop = (event) => {			// FIXME
+	//event.preventDefault();
+	//hub.open(event.dataTransfer.files[0].path);
+	//return false;
+//};
 
 function enter_loop() {
 	if (loads === 12) {

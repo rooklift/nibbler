@@ -28,6 +28,17 @@ body {
 	margin-right: 1em;
 	margin-bottom: 1em;
 	table-layout: fixed;
+	user-select: none;
+}
+
+#boardtable td {
+	border: 0;
+	margin: 0;
+	padding: 0;
+}
+
+#boardtable img {
+	display: block;
 }
 
 #pgnchooser {
