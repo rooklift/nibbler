@@ -1,9 +1,5 @@
 "use strict";
 
-// FIXME: should probably remove a bunch of closures by saying "this" instead of "renderer" a lot.
-// This will also require the => functions to be replaced with function().
-// Use bind to avoid "this" issues when using methods as first class functions.
-
 function NewRenderer() {
 
 	let renderer = Object.create(null);
@@ -26,39 +22,39 @@ function NewRenderer() {
 
 	// --------------------------------------------------------------------------------------------
 
-	renderer.position_changed = (new_game_flag) => {
+	renderer.position_changed = function(new_game_flag) {
 
-		renderer.info_table.clear();
+		this.info_table.clear();
 
-		renderer.escape();
-		renderer.movelist_handler.draw(renderer.node);
-		fenbox.value = renderer.node.fen();
+		this.escape();
+		this.movelist_handler.draw(this.node);
+		fenbox.value = this.node.fen();
 
-		if (renderer.leela_should_go()) {
-			renderer.go(new_game_flag);
+		if (this.leela_should_go()) {
+			this.go(new_game_flag);
 		} else {
-			renderer.halt();
+			this.halt();
 		}
 	};
 
-	renderer.set_versus = (s) => {
-		renderer.versus = s;
-		renderer.infobox_handler.draw(renderer, true);			// just so "HALTED" / "YOUR MOVE" can be switched if needed.
-		if (renderer.leela_should_go()) {
-			renderer.go();
+	renderer.set_versus = function(s) {
+		this.versus = s;
+		this.infobox_handler.draw(this, true);			// just so "HALTED" / "YOUR MOVE" can be switched if needed.
+		if (this.leela_should_go()) {
+			this.go();
 		} else {
-			renderer.halt();
+			this.halt();
 		}
 	};
 
-	renderer.move = (s) => {		// It is safe to call this with illegal moves.
+	renderer.move = function(s) {						// It is safe to call this with illegal moves.
 
 		if (typeof s !== "string") {
 			console.log(`renderer.move(${s}) - bad argument`);
 			return false;
 		}
 
-		let board = renderer.node.get_board();
+		let board = this.node.get_board();
 
 		// Add promotion if needed and not present...
 
@@ -82,15 +78,15 @@ function NewRenderer() {
 			return false;
 		}
 
-		renderer.node = renderer.node.make_move(s);
-		renderer.position_changed();
+		this.node = this.node.make_move(s);
+		this.position_changed();
 		return true;
 	};
 
-	renderer.play_info_index = (n) => {
-		let info_list = renderer.info_table.sorted();
+	renderer.play_info_index = function(n) {
+		let info_list = this.info_table.sorted();
 		if (n >= 0 && n < info_list.length) {
-			renderer.move(info_list[n].move);
+			this.move(info_list[n].move);
 		}
 	};
 
@@ -108,27 +104,27 @@ function NewRenderer() {
 		}
 	};
 
-	renderer.goto_root = () => {
-		let root = renderer.node.get_root();
-		if (renderer.node !== root) {
-			renderer.node = root;
-			renderer.position_changed();
+	renderer.goto_root = function() {
+		let root = this.node.get_root();
+		if (this.node !== root) {
+			this.node = root;
+			this.position_changed();
 		}
 	};
 
-	renderer.goto_end = () => {
-		let end = renderer.node.get_end();
-		if (renderer.node !== end) {
-			renderer.node = end;
-			renderer.position_changed();
+	renderer.goto_end = function() {
+		let end = this.node.get_end();
+		if (this.node !== end) {
+			this.node = end;
+			this.position_changed();
 		}
 	};
 
-	renderer.return_to_main_line = () => {
+	renderer.return_to_main_line = function() {
 
-		let root = renderer.node.get_root();
+		let root = this.node.get_root();
 		let main_line = root.future_history();
-		let history = renderer.node.history();
+		let history = this.node.history();
 
 		let node = root;
 
@@ -142,30 +138,30 @@ function NewRenderer() {
 			node = node.children[0];
 		}
 
-		if (renderer.node !== node) {
-			renderer.node = node;
-			renderer.position_changed();
+		if (this.node !== node) {
+			this.node = node;
+			this.position_changed();
 		}
 	};
 
-	renderer.promote_to_main_line = () => {
-		renderer.node.promote_to_main_line();
-		renderer.movelist_handler.draw(renderer.node);
+	renderer.promote_to_main_line = function() {
+		this.node.promote_to_main_line();
+		this.movelist_handler.draw(this.node);
 	};
 
-	renderer.delete_move = () => {
+	renderer.delete_move = function() {
 
-		if (!renderer.node.parent) {
+		if (!this.node.parent) {
 			return;
 		}
 
-		renderer.node = renderer.node.detach();
-		renderer.position_changed();
+		this.node = this.node.detach();
+		this.position_changed();
 	};
 
-	renderer.load_fen = (s) => {
+	renderer.load_fen = function(s) {
 
-		if (s.trim() === renderer.node.get_board().fen()) {
+		if (s.trim() === this.node.get_board().fen()) {
 			return;
 		}
 
@@ -178,48 +174,48 @@ function NewRenderer() {
 			return;
 		}
 
-		renderer.node = NewTree(newpos);
-		renderer.position_changed(true);
+		this.node = NewTree(newpos);
+		this.position_changed(true);
 	};
 
-	renderer.new_game = () => {
-		renderer.node = NewTree();
-		renderer.position_changed(true);
+	renderer.new_game = function() {
+		this.node = NewTree();
+		this.position_changed(true);
 	};
 
 	// --------------------------------------------------------------------------------------------
 	// PGN...
 
-	renderer.save = (filename) => {
-		SavePGN(filename, renderer.node);
+	renderer.save = function(filename) {
+		SavePGN(filename, this.node);
 	};
 
-	renderer.open = (filename) => {
+	renderer.open = function(filename) {
 		let buf = fs.readFileSync(filename);
-		renderer.load_pgn_buffer(buf);
+		this.load_pgn_buffer(buf);
 	};
 
-	renderer.load_pgn_from_string = (s) => {
+	renderer.load_pgn_from_string = function(s) {
 		let buf = Buffer.from(s);
-		renderer.load_pgn_buffer(buf);
+		this.load_pgn_buffer(buf);
 	};
 
-	renderer.load_pgn_buffer = (buf) => {
+	renderer.load_pgn_buffer = function(buf) {
 
 		let new_pgn_choices = PreParsePGN(buf);
 
 		if (new_pgn_choices.length === 1) {
-			let success = renderer.load_pgn_object(new_pgn_choices[0]);
+			let success = this.load_pgn_object(new_pgn_choices[0]);
 			if (success) {
-				renderer.pgn_choices = new_pgn_choices;		// We only want to set this to a 1 value array if it actually worked.
+				this.pgn_choices = new_pgn_choices;			// We only want to set this to a 1 value array if it actually worked.
 			}
 		} else {
-			renderer.pgn_choices = new_pgn_choices;			// Setting it to a multi-value array is "always" OK.
-			renderer.show_pgn_chooser();					// Now we need to have the user choose a game.
+			this.pgn_choices = new_pgn_choices;				// Setting it to a multi-value array is "always" OK.
+			this.show_pgn_chooser();						// Now we need to have the user choose a game.
 		}
 	};
 
-	renderer.load_pgn_object = (o) => {						// Returns true or false - whether this actually succeeded.
+	renderer.load_pgn_object = function(o) {				// Returns true or false - whether this actually succeeded.
 
 		let new_root;
 
@@ -230,36 +226,36 @@ function NewRenderer() {
 			return false;
 		}
 
-		renderer.node = new_root;
-		renderer.position_changed(true);
+		this.node = new_root;
+		this.position_changed(true);
 
 		return true;
 	};
 
-	renderer.show_pgn_chooser = () => {
+	renderer.show_pgn_chooser = function() {
 
-		if (!renderer.pgn_choices) {
+		if (!this.pgn_choices) {
 			alert("No PGN loaded");
 			return;
 		}
 
-		renderer.set_versus("");		// It's lame to run the GPU when we're clearly switching games.
+		this.set_versus("");		// It's lame to run the GPU when we're clearly switching games.
 
 		let lines = [];
 
-		let max_ordinal_length = renderer.pgn_choices.length.toString().length;
+		let max_ordinal_length = this.pgn_choices.length.toString().length;
 		let padding = "";
 		for (let n = 0; n < max_ordinal_length - 1; n++) {
 			padding += "&nbsp;";
 		}
 
-		for (let n = 0; n < renderer.pgn_choices.length; n++) {
+		for (let n = 0; n < this.pgn_choices.length; n++) {
 
 			if (n === 9 || n === 99 || n === 999 || n === 9999 || n === 99999 || n === 999999) {
 				padding = padding.slice(0, padding.length - 6);
 			}
 
-			let p = renderer.pgn_choices[n];
+			let p = this.pgn_choices[n];
 
 			let s;
 
@@ -282,11 +278,11 @@ function NewRenderer() {
 		pgnchooser.style.display = "block";
 	};
 
-	renderer.hide_pgn_chooser = () => {
+	renderer.hide_pgn_chooser = function() {
 		pgnchooser.style.display = "none";
 	};
 
-	renderer.pgnchooser_click = (event) => {
+	renderer.pgnchooser_click = function(event) {
 
 		let n;
 
@@ -301,12 +297,12 @@ function NewRenderer() {
 			return;
 		}
 
-		if (renderer.pgn_choices && n >= 0 && n < renderer.pgn_choices.length) {
-			renderer.load_pgn_object(renderer.pgn_choices[n]);
+		if (this.pgn_choices && n >= 0 && n < this.pgn_choices.length) {
+			this.load_pgn_object(this.pgn_choices[n]);
 		}
 	};
 
-	renderer.validate_pgn = (filename) => {
+	renderer.validate_pgn = function(filename) {
 		let buf = fs.readFileSync(filename);		// i.e. binary buffer object
 		let pgn_list = PreParsePGN(buf);
 
@@ -329,8 +325,8 @@ function NewRenderer() {
 	// --------------------------------------------------------------------------------------------
 	// Engine stuff...
 
-	renderer.leela_should_go = () => {
-		return renderer.versus.includes(renderer.node.get_board().active);
+	renderer.leela_should_go = function() {
+		return this.versus.includes(this.node.get_board().active);
 	};
 
 	renderer.receive = function(s) {
@@ -351,20 +347,20 @@ function NewRenderer() {
 		}
 	};
 
-	renderer.halt = () => {
-		renderer.engine.send("stop");
+	renderer.halt = function() {
+		this.engine.send("stop");
 	};
 
-	renderer.go = (new_game_flag) => {
+	renderer.go = function(new_game_flag) {
 
-		renderer.hide_pgn_chooser();
+		this.hide_pgn_chooser();
 
-		renderer.engine.send("stop");
+		this.engine.send("stop");
 		if (new_game_flag) {
-			renderer.engine.send("ucinewgame");
+			this.engine.send("ucinewgame");
 		}
 
-		let start_fen = renderer.node.get_root().fen();
+		let start_fen = this.node.get_root().fen();
 
 		let setup;
 		if (start_fen === "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1") {
@@ -373,43 +369,43 @@ function NewRenderer() {
 			setup = `fen ${start_fen}`;
 		}
 
-		renderer.engine.send(`position ${setup} moves ${renderer.node.history().join(" ")}`);
-		renderer.engine.sync();
-		renderer.engine.send("go infinite");
+		this.engine.send(`position ${setup} moves ${this.node.history().join(" ")}`);
+		this.engine.sync();
+		this.engine.send("go infinite");
 	};
 
-	renderer.reset_leela_cache = () => {
-		if (renderer.leela_should_go()) {
-			renderer.go(true);
+	renderer.reset_leela_cache = function() {
+		if (this.leela_should_go()) {
+			this.go(true);
 		} else {
-			renderer.engine.send("ucinewgame");
+			this.engine.send("ucinewgame");
 		}
 	};
 
-	renderer.switch_weights = (filename) => {
-		renderer.set_versus("");
-		renderer.engine.setoption("WeightsFile", filename);
+	renderer.switch_weights = function(filename) {
+		this.set_versus("");
+		this.engine.setoption("WeightsFile", filename);
 	};
 
-	renderer.set_cpuct = (val) => {
-		renderer.engine.setoption("CPuct", val);
-		renderer.set_versus(renderer.versus);		// Restart the search.
+	renderer.set_cpuct = function(val) {
+		this.engine.setoption("CPuct", val);
+		this.set_versus(this.versus);				// Restart the search.
 	};
 
 	// --------------------------------------------------------------------------------------------
 	// Visual stuff...
 
-	renderer.square_size = () => {
+	renderer.square_size = function() {
 		return config.board_size / 8;
 	};
 
-	renderer.escape = () => {						// Set things into a clean state.
-		renderer.hide_pgn_chooser();
-		renderer.active_square = null;
-		renderer.draw();
+	renderer.escape = function() {					// Set things into a clean state.
+		this.hide_pgn_chooser();
+		this.active_square = null;
+		this.draw();
 	};
 
-	renderer.toggle_debug_css = () => {
+	renderer.toggle_debug_css = function() {
 		let ss = document.styleSheets[0];
 		let i = 0;
 		for (let rule of Object.values(ss.cssRules)) {
@@ -425,7 +421,7 @@ function NewRenderer() {
 	// --------------------------------------------------------------------------------------------
 	// Clickers... (except the PGN clicker, which is in the PGN section).
 
-	renderer.mouse_to_point = (mousex, mousey) => {
+	renderer.mouse_to_point = function(mousex, mousey) {
 
 		// Assumes mousex and mousey are relative to canvas top left.
 
@@ -433,7 +429,7 @@ function NewRenderer() {
 			return null;
 		}
 
-		let rss = renderer.square_size();
+		let rss = this.square_size();
 
 		let boardx = Math.floor(mousex / rss);
 		let boardy = Math.floor(mousey / rss);
@@ -450,29 +446,29 @@ function NewRenderer() {
 		return Point(boardx, boardy);
 	};
 
-	renderer.canvas_click = (event) => {
+	renderer.canvas_click = function(event) {
 
-		let p = renderer.mouse_to_point(event.offsetX, event.offsetY);
+		let p = this.mouse_to_point(event.offsetX, event.offsetY);
 		if (!p) {
 			return;
 		}
 
-		let ocm = renderer.one_click_moves[p.x][p.y];
-		let board = renderer.node.get_board();
+		let ocm = this.one_click_moves[p.x][p.y];
+		let board = this.node.get_board();
 
-		if (!renderer.active_square && ocm) {
-			renderer.move(ocm);
+		if (!this.active_square && ocm) {
+			this.move(ocm);
 			return;
 		}
 
-		if (renderer.active_square) {
+		if (this.active_square) {
 
-			let move = renderer.active_square.s + p.s;		// e.g. "e2e4" - note promotion char is handled by renderer.move()
-			renderer.active_square = null;
+			let move = this.active_square.s + p.s;		// e.g. "e2e4" - note promotion char is handled by renderer.move()
+			this.active_square = null;
 
-			let success = renderer.move(move);		// move() will draw if it succeeds...
+			let success = this.move(move);				// move() will draw if it succeeds...
 			if (!success) {
-				renderer.draw();					// ... but if it doesn't, we draw to show the active_square cleared.
+				this.draw();							// ... but if it doesn't, we draw to show the active_square cleared.
 			}
 
 			return;
@@ -480,19 +476,19 @@ function NewRenderer() {
 		} else {
 
 			if (board.active === "w" && board.is_white(p)) {
-				renderer.active_square = p;
+				this.active_square = p;
 			}
 			if (board.active === "b" && board.is_black(p)) {
-				renderer.active_square = p;
+				this.active_square = p;
 			}
 		}
 
-		renderer.draw();
+		this.draw();
 	};
 
-	renderer.infobox_click = (event) => {
+	renderer.infobox_click = function(event) {
 
-		let moves = renderer.infobox_handler.moves_from_click(event);
+		let moves = this.infobox_handler.moves_from_click(event);
 
 		if (!moves || moves.length === 0) {
 			return;
@@ -500,7 +496,7 @@ function NewRenderer() {
 
 		// Legality checks... best to assume nothing.
 
-		let tmp_board = renderer.node.get_board();
+		let tmp_board = this.node.get_board();
 		for (let move of moves) {
 			if (tmp_board.illegal(move) !== "") {
 				return;
@@ -509,26 +505,26 @@ function NewRenderer() {
 		}
 
 		for (let move of moves) {
-			renderer.node = renderer.node.make_move(move);
+			this.node = this.node.make_move(move);
 		}
-		renderer.position_changed();
+		this.position_changed();
 	};
 
-	renderer.movelist_click = (event) => {
+	renderer.movelist_click = function(event) {
 
-		let node = renderer.movelist_handler.node_from_click(event);
+		let node = this.movelist_handler.node_from_click(event);
 
-		if (!node || node.get_root() !== renderer.node.get_root()) {
+		if (!node || node.get_root() !== this.node.get_root()) {
 			return;
 		}
 
-		renderer.node = node;
-		renderer.position_changed();
+		this.node = node;
+		this.position_changed();
 	};
 
 	// --------------------------------------------------------------------------------------------
 
-	renderer.canvas_coords = (x, y) => {
+	renderer.canvas_coords = function(x, y) {
 
 		// Given the x, y coordinates on the board (a8 is 0, 0)
 		// return an object with the canvas coordinates for
@@ -540,7 +536,7 @@ function NewRenderer() {
 		//        |         |
 		//        --------x2,y2
 
-		let rss = renderer.square_size();
+		let rss = this.square_size();
 		let x1 = x * rss;
 		let y1 = y * rss;
 		let x2 = x1 + rss;
@@ -557,7 +553,7 @@ function NewRenderer() {
 		return {x1, y1, x2, y2, cx, cy, rss};
 	};
 
-	renderer.draw_board = (light, dark) => {
+	renderer.draw_board = function(light, dark) {
 
 		for (let x = 0; x < 8; x++) {
 			for (let y = 0; y < 8; y++) {
@@ -567,9 +563,9 @@ function NewRenderer() {
 					context.fillStyle = dark;
 				}
 
-				let cc = renderer.canvas_coords(x, y);
+				let cc = this.canvas_coords(x, y);
 
-				if (renderer.active_square === Point(x, y)) {
+				if (this.active_square === Point(x, y)) {
 					context.fillStyle = config.active_square;
 				}
 
@@ -604,7 +600,7 @@ function NewRenderer() {
 		context.fillText(`${o.info.value_string(0)}`, cc.cx, cc.cy + 1);
 	};
 
-	renderer.draw_position = () => {
+	renderer.draw_position = function() {
 
 		context.lineWidth = 8;
 		context.textAlign = "center";
@@ -612,7 +608,7 @@ function NewRenderer() {
 		context.font = config.board_font;
 
 		let pieces = [];
-		let board = renderer.node.get_board();
+		let board = this.node.get_board();
 
 		for (let x = 0; x < 8; x++) {
 			for (let y = 0; y < 8; y++) {
@@ -621,7 +617,7 @@ function NewRenderer() {
 				}
 
 				pieces.push({
-					fn: renderer.draw_piece.bind(renderer),
+					fn: this.draw_piece.bind(this),
 					piece: board.state[x][y],
 					colour: board.state[x][y].toUpperCase() === board.state[x][y] ? "w" : "b",
 					x: x,
@@ -630,7 +626,7 @@ function NewRenderer() {
 			}
 		}
 
-		let info_list = renderer.info_table.sorted();
+		let info_list = this.info_table.sorted();
 
 		let arrows = [];
 		let heads = Object.create(null);
@@ -639,7 +635,7 @@ function NewRenderer() {
 		// We will shortly update it with valid ones.
 		for (let x = 0; x < 8; x++) {
 			for (let y = 0; y < 8; y++) {
-				renderer.one_click_moves[x][y] = null;
+				this.one_click_moves[x][y] = null;
 			}
 		}
 
@@ -673,7 +669,7 @@ function NewRenderer() {
 					}
 
 					arrows.push({
-						fn: renderer.draw_arrow_line.bind(renderer),
+						fn: this.draw_arrow_line.bind(this),
 						colour: colour,
 						x1: x1,
 						y1: y1,
@@ -687,13 +683,13 @@ function NewRenderer() {
 
 					if (heads[info_list[i].move.slice(2, 4)] === undefined) {
 						heads[info_list[i].move.slice(2, 4)] = {
-							fn: renderer.draw_head.bind(renderer),
+							fn: this.draw_head.bind(this),
 							colour: colour,
 							info: info_list[i],
 							x: x2,
 							y: y2
 						};
-						renderer.one_click_moves[x2][y2] = info_list[i].move;
+						this.one_click_moves[x2][y2] = info_list[i].move;
 					}
 				}
 			}
@@ -734,21 +730,21 @@ function NewRenderer() {
 		}
 	};
 
-	renderer.draw = () => {
+	renderer.draw = function() {
 
 		// Not using requestAnimationFrame the normal way. But it still
 		// may make the "animation" smoother, I think.
 
 		requestAnimationFrame(() => {
-			renderer.infobox_handler.draw(renderer);
-			renderer.draw_board(config.light_square, config.dark_square);
-			renderer.draw_position();
+			this.infobox_handler.draw(this);
+			this.draw_board(config.light_square, config.dark_square);
+			this.draw_position();
 		});
 	};
 
-	renderer.draw_loop = () => {
-		renderer.draw();
-		setTimeout(renderer.draw_loop, config.update_delay);
+	renderer.draw_loop = function() {
+		this.draw();
+		setTimeout(this.draw_loop.bind(this), config.update_delay);
 	};
 
 	// --------------------------------------------------------------------------------------------
