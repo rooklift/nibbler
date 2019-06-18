@@ -88,9 +88,11 @@ function NewInfoboxHandler() {
 				colour = OppositeColour(colour);
 			}
 
+			let node_display_fraction = (100 * info.n / (renderer.info_table.nodes + 1)).toFixed(2);
+
 			new_elements.push({
 				class: "gray",
-				text: `(N: ${info.n.toString()}, P: ${info.p})`
+				text: `(N: ${node_display_fraction}%, P: ${info.p})`
 			});
 
 			if (info.move === one_click_move) {
