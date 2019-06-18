@@ -524,6 +524,15 @@ function menu_build() {
 							}
 						},
 						{
+							label: "Best move only",
+							click: () => {
+								windows.send("main-window", "set", {
+									key: "node_display_threshold",
+									value: 1
+								});
+							}
+						},
+						{
 							type: "separator"
 						},
 						{
