@@ -380,7 +380,21 @@ function NewRenderer() {
 
 		this.engine.send(`position ${setup} moves ${this.node.history().join(" ")}`);
 		this.engine.sync();
-		this.engine.send("go infinite");
+
+		if (config.search_nodes === "infinite") {
+			this.engine.send("go infinite");
+		} else if (typeof config.search_nodes === "number") {
+			this.engine.send(`go nodes ${config.search_nodes}`);
+		} else if (typeof config.search_nodes === "string") {
+			let n = parseInt(config.search_nodes, 10);
+			if (Number.isNaN(n) === false) {
+				this.engine.send(`go nodes ${n}`);
+			} else {
+				this.engine.send("go infinite");
+			}
+		} else {
+			this.engine.send("go infinite");
+		}
 	};
 
 	renderer.reset_leela_cache = function() {

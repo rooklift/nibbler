@@ -65,6 +65,8 @@ assign_without_overwrite(config, {
 
 	"max_info_lines": 10,
 	"update_delay": 170,
+
+	"search_nodes": "infinite",
 	
 	"logfile": null,
 	"log_info_lines": false

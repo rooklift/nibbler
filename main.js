@@ -343,8 +343,6 @@ function menu_build() {
 					submenu: [
 					{
 							label: "20",
-							type: "radio",
-							checked: false,
 							click: () => {
 								windows.send("main-window", "call", {
 									fn: "set_cpuct",
@@ -354,8 +352,6 @@ function menu_build() {
 						},
 						{
 							label: "12",
-							type: "radio",
-							checked: false,
 							click: () => {
 								windows.send("main-window", "call", {
 									fn: "set_cpuct",
@@ -365,8 +361,6 @@ function menu_build() {
 						},
 						{
 							label: "8",
-							type: "radio",
-							checked: false,
 							click: () => {
 								windows.send("main-window", "call", {
 									fn: "set_cpuct",
@@ -376,8 +370,6 @@ function menu_build() {
 						},
 						{
 							label: "5",
-							type: "radio",
-							checked: false,
 							click: () => {
 								windows.send("main-window", "call", {
 									fn: "set_cpuct",
@@ -387,8 +379,6 @@ function menu_build() {
 						},
 						{
 							label: "3.4 (Default)",
-							type: "radio",
-							checked: false,
 							click: () => {
 								windows.send("main-window", "call", {
 									fn: "set_cpuct",
@@ -396,11 +386,81 @@ function menu_build() {
 								});
 							}
 						},
+					]
+				},
+				{
+					label: "Node limit",
+					submenu: [
 						{
-							label: "Whatever",
-							type: "radio",
-							checked: true,
-						}
+							label: "Infinite",
+							click: () => {
+								windows.send("main-window", "set", {
+									key: "search_nodes",
+									value: "infinite"
+								});
+								windows.send("main-window", "call", "reset_leela_cache");
+							}
+						},
+						{
+							label: "1,000,000",
+							click: () => {
+								windows.send("main-window", "set", {
+									key: "search_nodes",
+									value: 1000000
+								});
+								windows.send("main-window", "call", "reset_leela_cache");
+							}
+						},
+						{
+							label: "100,000",
+							click: () => {
+								windows.send("main-window", "set", {
+									key: "search_nodes",
+									value: 100000
+								});
+								windows.send("main-window", "call", "reset_leela_cache");
+							}
+						},
+						{
+							label: "10,000",
+							click: () => {
+								windows.send("main-window", "set", {
+									key: "search_nodes",
+									value: 10000
+								});
+								windows.send("main-window", "call", "reset_leela_cache");
+							}
+						},
+						{
+							label: "1,000",
+							click: () => {
+								windows.send("main-window", "set", {
+									key: "search_nodes",
+									value: 1000
+								});
+								windows.send("main-window", "call", "reset_leela_cache");
+							}
+						},
+						{
+							label: "100",
+							click: () => {
+								windows.send("main-window", "set", {
+									key: "search_nodes",
+									value: 100
+								});
+								windows.send("main-window", "call", "reset_leela_cache");
+							}
+						},
+						{
+							label: "2",
+							click: () => {
+								windows.send("main-window", "set", {
+									key: "search_nodes",
+									value: 2
+								});
+								windows.send("main-window", "call", "reset_leela_cache");
+							}
+						},
 					]
 				},
 				{
