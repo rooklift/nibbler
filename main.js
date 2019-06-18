@@ -58,6 +58,7 @@ electron.ipcMain.on("renderer_ready", () => {
 		if (process.argv.length > 2) {
 			filename = process.argv[process.argv.length - 1];
 		}
+
 	} else {
 		if (process.argv.length > 1) {
 			filename = process.argv[process.argv.length - 1];

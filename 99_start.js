@@ -104,15 +104,29 @@ ipcRenderer.on("call", (event, msg) => {
 // The queue needs to be examined very regularly and acted upon.
 
 function input_loop() {
+
+	let fn;
+
 	let length = input_queue.length;
+
 	if (length === 1) {
-		input_queue[0]();
+		fn = input_queue[0];
 	} else if (length > 1) {
-		input_queue[length - 1]();
 		total_dropped_inputs += length - 1;
 		console.log(`input_loop() dropped ${length - 1} input${length === 2 ? "" : "s"}, total now ${total_dropped_inputs}.`);
+		fn = input_queue[length - 1];
 	}
+
 	input_queue = [];
+
+	if (fn) {
+		try {
+			fn();
+		} catch (err) {
+			console.log(err);
+		}
+	}
+
 	setTimeout(input_loop, 10);
 }
 

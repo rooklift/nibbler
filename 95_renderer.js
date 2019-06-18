@@ -848,7 +848,11 @@ function NewRenderer() {
 		// may make the "animation" smoother, I think.
 
 		requestAnimationFrame(() => {
-			this.draw();
+			try {
+				this.draw();
+			} catch (err) {
+				console.log(err);
+			}
 			setTimeout(this.draw_loop.bind(this), config.update_delay);
 		});
 	};
