@@ -50,7 +50,11 @@ electron.ipcMain.on("renderer_ready", () => {
 
 	let filename = "";
 
-	if (path.basename(process.argv[0]) === "electron" || path.basename(process.argv[0]) === "electron.exe") {
+	if (path.basename(process.argv[0]).toLowerCase() === "electron" ||
+		path.basename(process.argv[0]).toLowerCase() === "electron framework" ||
+		path.basename(process.argv[0]).toLowerCase() === "electron helper" ||
+		path.basename(process.argv[0]).toLowerCase() === "electron.exe") {
+
 		if (process.argv.length > 2) {
 			filename = process.argv[process.argv.length - 1];
 		}
