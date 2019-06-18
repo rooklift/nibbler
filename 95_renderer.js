@@ -824,8 +824,14 @@ function NewRenderer() {
 			context.fill();
 			context.fillStyle = "black";
 
-			// let s = (100 * o.info.n / (this.info_table.nodes + 1)).toFixed(0);		// Could display node % of total
-			let s = o.info.value_string(0);
+			let s = "";
+
+			if (config.arrowhead_type === 0) {
+				s = o.info.value_string(0);
+			}
+			if (config.arrowhead_type === 1) {
+				s = (100 * o.info.n / (this.info_table.nodes + 1)).toFixed(0);
+			}
 
 			context.fillText(s, cc2.cx, cc2.cy + 1);
 		}

@@ -467,6 +467,29 @@ function menu_build() {
 					type: "separator"
 				},
 				{
+					label: "Arrowhead type",
+					submenu: [
+						{
+							label: "Winrates",
+							click: () => {
+								windows.send("main-window", "set", {
+									key: "arrowhead_type",
+									value: 0,
+								});
+							}
+						},
+						{
+							label: "Node %",
+							click: () => {
+								windows.send("main-window", "set", {
+									key: "arrowhead_type",
+									value: 1,
+								});
+							}
+						},
+					]
+				},
+				{
 					label: "Move display",
 					submenu: [
 						{

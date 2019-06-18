@@ -26,6 +26,7 @@
 	"terrible_move_threshold": 0.04,
 
 	"node_display_threshold": 0.02,
+	"arrowhead_type": 0,
 
 	"max_info_lines": 10,
 	"update_delay": 170,
