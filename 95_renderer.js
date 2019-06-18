@@ -777,7 +777,8 @@ function NewRenderer() {
 						x1: x1,
 						y1: y1,
 						x2: x2,
-						y2: y2
+						y2: y2,
+						info: info_list[i]
 					});
 
 					if (!this.one_click_moves[x2][y2]) {
@@ -794,6 +795,8 @@ function NewRenderer() {
 		}
 
 		// It looks best if the longest arrows are drawn underneath. Manhattan distance is good enough.
+		// For the sake of displaying the best pawn promotion (of the 4 possible), sort ties are broken
+		// by winrate, with lower winrates drawn first.
 
 		arrows.sort((a, b) => {
 			if (Math.abs(a.x2 - a.x1) + Math.abs(a.y2 - a.y1) < Math.abs(b.x2 - b.x1) + Math.abs(b.y2 - b.y1)) {
@@ -801,6 +804,14 @@ function NewRenderer() {
 			}
 			if (Math.abs(a.x2 - a.x1) + Math.abs(a.y2 - a.y1) > Math.abs(b.x2 - b.x1) + Math.abs(b.y2 - b.y1)) {
 				return -1;
+			}
+			if (a.info.value && b.info.value) {
+				if (a.info.value < b.info.value) {
+					return -1;
+				}
+				if (a.info.value > b.info.value) {
+					return 1;
+				}
 			}
 			return 0;
 		});
