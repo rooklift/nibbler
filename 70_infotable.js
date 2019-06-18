@@ -215,5 +215,13 @@ function NewInfoTable() {			// There's only ever going to be one of these made I
 		return info_list;
 	};
 
+	it.total_nodes = function() {
+		let n = 0;
+		for (let key of Object.keys(this.table)) {
+			n += this.table[key].n;
+		}
+		return n;
+	};
+
 	return it;
 }
