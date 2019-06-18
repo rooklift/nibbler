@@ -221,14 +221,14 @@ function menu_build() {
 					label: "Backward",
 					accelerator: "Left",
 					click: () => {
-						windows.send("main-window", "prev", null);		// Don't call renderer.prev(), but use this special message.
+						windows.send("main-window", "call", "prev");
 					}
 				},
 				{
 					label: "Forward",
 					accelerator: "Right",
 					click: () => {
-						windows.send("main-window", "next", null);		// Don't call renderer.next(), but use this special message.
+						windows.send("main-window", "call", "next");
 					}
 				},
 				{

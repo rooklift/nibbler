@@ -71,52 +71,50 @@ if (config && config.warn_filename) {
 	hub.err_receive("");
 }
 
-ipcRenderer.on("call", (event, msg) => {
-	if (typeof msg === "string") {
-		hub[msg]();
-	} else if (typeof msg === "object" && msg.fn && msg.args) {
-		hub[msg.fn](...msg.args);
-	} else {
-		console.log("Bad call, msg was...");
-		console.log(msg);
-	}
-});
-
-ipcRenderer.on("toggle", (event, cfgvar) => {
-	config[cfgvar] = !config[cfgvar];
-	hub.draw();
-});
-
-ipcRenderer.on("set", (event, msg) => {
+ipcRenderer.on("set", (event, msg) => {		// Should only be for things that don't need immediate action.
 	config[msg.key] = msg.value;
 	hub.draw();
 });
 
 // --------------------------------------------------------------------------------------------
-// prev() and next() calls are the things most likely to lag the app if we've a pathologically
-// branchy PGN. To mitigate this, when one comes in, don't execute it immediately, but place it
-// on a queue, which is regularly examined. If there's multiple stuff on the queue, drop stuff.
+// In bad cases of super-large, trees, the UI can become unresponsive. To mitigate this, we
+// put user input in a queue, and drop things if they build up.
 
-let prev_next_queue = [];
+let input_queue = [];
 
-ipcRenderer.on("prev", (event) => {
-	prev_next_queue.push(hub.prev.bind(hub));
-});
+ipcRenderer.on("call", (event, msg) => {
 
-ipcRenderer.on("next", (event) => {
-	prev_next_queue.push(hub.next.bind(hub));
-});
+	let fn;
 
-function prev_next_loop() {
-	if (prev_next_queue.length > 0) {
-		let fn = prev_next_queue[prev_next_queue.length - 1];
-		fn();
-		prev_next_queue = [];
+	if (typeof msg === "string") {									// msg is function name
+		fn = hub[msg].bind(hub);
+	} else if (typeof msg === "object" && msg.fn && msg.args) {		// msg is object with fn and args
+		fn = hub[msg.fn].bind(hub, ...msg.args);
+	} else {
+		console.log("Bad call, msg was...");
+		console.log(msg);
 	}
-	setTimeout(prev_next_loop, 10);
+
+	if (fn) {
+		input_queue.push(fn);
+	}
+});
+
+// The queue needs to be examined very regularly and acted upon.
+
+function input_loop() {
+	let length = input_queue.length;
+	if (length === 1) {
+		input_queue[0]();
+	} else if (length > 1) {
+		input_queue[length - 1]();
+		console.log(`input_loop() dropped ${length - 1} command${length === 2 ? "" : "s"}.`);
+	}
+	input_queue = [];
+	setTimeout(input_loop, 10);
 }
 
-prev_next_loop();
+input_loop();
 
 // --------------------------------------------------------------------------------------------
 // We had some problems with the various clickers: we used to destroy and create
