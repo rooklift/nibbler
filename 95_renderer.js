@@ -4,8 +4,14 @@ function NewRenderer() {
 
 	let renderer = Object.create(null);
 
-	renderer.active_square = null;						// Clicked square. Don't set directly, call set_active_square()
-	renderer.versus = "";								// Colours that Leela is "playing".
+	renderer.movelist_handler = NewMovelistHander();	// Object that deals with the movelist at the bottom.
+	renderer.infobox_handler = NewInfoboxHandler();		// Object that deals with the infobox on the right.
+	renderer.info_table = NewInfoTable();				// Holds info about the engine evaluations.
+	renderer.node = NewTree();							// Our current place in the current tree.
+	renderer.engine = NewEngine();						// Engine connection. Needs its setup() called.
+
+	// Various state we have to keep track of...
+
 	renderer.ever_received_info = false;				// When false, we write stderr log instead of move info.
 	renderer.stderr_log = "";							// All output received from the engine's stderr.
 	renderer.pgn_choices = null;						// All games found when opening a PGN file.
@@ -13,14 +19,12 @@ function NewRenderer() {
 	renderer.mousey = null;								// Raw mouse Y on the document.
 	renderer.one_click_moves = New2DArray(8, 8);		// 2D array of [x][y] --> move string or null.
 	renderer.friendly_draws = New2DArray(8, 8);			// What pieces are drawn in boardfriends. Used to skip redraws.
+
+	// These things are options that should not be set directly, but rather set via the relevant method...
+
+	renderer.active_square = null;						// Clicked square.
+	renderer.versus = "";								// Colours that Leela is "playing".
 	renderer.flip = false;								// Flip.
-
-	renderer.movelist_handler = NewMovelistHander();	// Object that deals with the movelist at the bottom.
-	renderer.infobox_handler = NewInfoboxHandler();		// Object that deals with the infobox on the right.
-	renderer.info_table = NewInfoTable();				// Holds info about the engine evaluations.
-	renderer.node = NewTree();							// Our current place in the current tree.
-
-	renderer.engine = NewEngine();
 
 	// --------------------------------------------------------------------------------------------
 
@@ -623,6 +627,12 @@ function NewRenderer() {
 			}
 
 			return;
+		}
+	};
+
+	renderer.console = function(...args) {
+		for (let item of args) {
+			console.log(item);
 		}
 	};
 
