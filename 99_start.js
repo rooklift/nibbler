@@ -81,6 +81,7 @@ ipcRenderer.on("set", (event, msg) => {		// Should only be for things that don't
 // put user input in a queue, and drop things if they build up.
 
 let input_queue = [];
+let total_dropped_inputs = 0;
 
 ipcRenderer.on("call", (event, msg) => {
 
@@ -108,7 +109,8 @@ function input_loop() {
 		input_queue[0]();
 	} else if (length > 1) {
 		input_queue[length - 1]();
-		console.log(`input_loop() dropped ${length - 1} command${length === 2 ? "" : "s"}.`);
+		total_dropped_inputs += length - 1;
+		console.log(`input_loop() dropped ${length - 1} input${length === 2 ? "" : "s"}, total now ${total_dropped_inputs}.`);
 	}
 	input_queue = [];
 	setTimeout(input_loop, 10);
