@@ -595,6 +595,9 @@ function NewRenderer() {
 
 	renderer.handle_drop = function(event) {
 
+		// Note to self - examining the event in the console can be misleading
+		// because the object seems to get changed after we've used it.
+
 		// Just about any drop should clear the active square...
 
 		this.set_active_square(null);
