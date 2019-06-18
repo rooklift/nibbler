@@ -749,7 +749,7 @@ function NewRenderer() {
 			
 			for (let i = 0; i < info_list.length; i++) {
 
-				if (info_list[i].n >= best_nodes * config.node_display_threshold) {
+				if (info_list[i].n >= best_nodes * config.node_display_threshold && (config.node_display_threshold < 1 || i === 0)) {
 
 					let [x1, y1] = XY(info_list[i].move.slice(0, 2));
 					let [x2, y2] = XY(info_list[i].move.slice(2, 4));
