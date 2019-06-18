@@ -470,7 +470,7 @@ function menu_build() {
 					label: "Arrowhead type",
 					submenu: [
 						{
-							label: "Winrates",
+							label: "Winrate",
 							click: () => {
 								windows.send("main-window", "set", {
 									key: "arrowhead_type",
@@ -484,6 +484,15 @@ function menu_build() {
 								windows.send("main-window", "set", {
 									key: "arrowhead_type",
 									value: 1,
+								});
+							}
+						},
+						{
+							label: "Policy",
+							click: () => {
+								windows.send("main-window", "set", {
+									key: "arrowhead_type",
+									value: 2,
 								});
 							}
 						},

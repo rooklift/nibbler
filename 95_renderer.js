@@ -828,10 +828,18 @@ function NewRenderer() {
 
 			if (config.arrowhead_type === 0) {
 				s = o.info.value_string(0);
-			}
-			if (config.arrowhead_type === 1) {
+			} else if (config.arrowhead_type === 1) {
 				let divisor = this.info_table.nodes > 0 ? this.info_table.nodes : 1;
 				s = (100 * o.info.n / divisor).toFixed(0);
+			} else if (config.arrowhead_type === 2) {
+				let pstr = o.info.p;
+				if (pstr.endsWith("%")) {
+					pstr = pstr.slice(0, pstr.length - 1);
+				}
+				let p = parseFloat(pstr);
+				if (Number.isNaN(p) === false) {
+					s = p.toFixed(0);
+				}
 			}
 
 			context.fillText(s, cc2.cx, cc2.cy + 1);
