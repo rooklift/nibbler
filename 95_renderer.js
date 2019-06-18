@@ -823,7 +823,11 @@ function NewRenderer() {
 			context.arc(cc2.cx, cc2.cy, 12, 0, 2 * Math.PI);
 			context.fill();
 			context.fillStyle = "black";
-			context.fillText(`${o.info.value_string(0)}`, cc2.cx, cc2.cy + 1);
+
+			// let s = (100 * o.info.n / (this.info_table.nodes + 1)).toFixed(0);		// Could display node % of total
+			let s = o.info.value_string(0);
+
+			context.fillText(s, cc2.cx, cc2.cy + 1);
 		}
 	};
 
