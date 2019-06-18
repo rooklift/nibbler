@@ -700,6 +700,8 @@ function NewRenderer() {
 				}
 
 				let img = images[piece_to_draw].cloneNode();		// Note images are draggable by default.
+				img.width = this.square_size();
+				img.height = this.square_size();
 				img.ondragstart = (event) => {
 					this.set_active_square(Point(x, y));
 					event.dataTransfer.setData("text", "overlay_" + s);
