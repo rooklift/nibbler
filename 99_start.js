@@ -164,8 +164,8 @@ document.addEventListener("wheel", (event) => {
 	}
 
 	if (movelist.scrollHeight <= movelist.clientHeight) {
-		if (event.deltaY && event.deltaY < 0) prev_next_queue.push(hub.prev.bind(hub));
-		if (event.deltaY && event.deltaY > 0) prev_next_queue.push(hub.next.bind(hub));
+		if (event.deltaY && event.deltaY < 0) input_queue.push(hub.prev.bind(hub));
+		if (event.deltaY && event.deltaY > 0) input_queue.push(hub.next.bind(hub));
 		return;
 	}
 
@@ -181,8 +181,8 @@ document.addEventListener("wheel", (event) => {
 	}
 
 	if (allow) {
-		if (event.deltaY && event.deltaY < 0) prev_next_queue.push(hub.prev.bind(hub));
-		if (event.deltaY && event.deltaY > 0) prev_next_queue.push(hub.next.bind(hub));
+		if (event.deltaY && event.deltaY < 0) input_queue.push(hub.prev.bind(hub));
+		if (event.deltaY && event.deltaY > 0) input_queue.push(hub.next.bind(hub));
 	}
 });
 
