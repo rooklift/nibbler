@@ -805,13 +805,11 @@ function NewRenderer() {
 			if (Math.abs(a.x2 - a.x1) + Math.abs(a.y2 - a.y1) > Math.abs(b.x2 - b.x1) + Math.abs(b.y2 - b.y1)) {
 				return -1;
 			}
-			if (a.info.value && b.info.value) {
-				if (a.info.value < b.info.value) {
-					return -1;
-				}
-				if (a.info.value > b.info.value) {
-					return 1;
-				}
+			if (a.info.n < b.info.n) {
+				return -1;
+			}
+			if (a.info.n > b.info.n) {
+				return 1;
 			}
 			return 0;
 		});
