@@ -88,7 +88,8 @@ function NewInfoboxHandler() {
 				colour = OppositeColour(colour);
 			}
 
-			let node_display_fraction = (100 * info.n / (renderer.info_table.nodes + 1)).toFixed(2);
+			let divisor = renderer.info_table.nodes > 0 ? renderer.info_table.nodes : 1;
+			let node_display_fraction = (100 * info.n / divisor).toFixed(2);
 
 			new_elements.push({
 				class: "gray",

@@ -490,7 +490,7 @@ function menu_build() {
 					]
 				},
 				{
-					label: "Move display",
+					label: "Moves to show",
 					submenu: [
 						{
 							label: "All",

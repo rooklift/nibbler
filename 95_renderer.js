@@ -830,7 +830,8 @@ function NewRenderer() {
 				s = o.info.value_string(0);
 			}
 			if (config.arrowhead_type === 1) {
-				s = (100 * o.info.n / (this.info_table.nodes + 1)).toFixed(0);
+				let divisor = this.info_table.nodes > 0 ? this.info_table.nodes : 1;
+				s = (100 * o.info.n / divisor).toFixed(0);
 			}
 
 			context.fillText(s, cc2.cx, cc2.cy + 1);
@@ -895,7 +896,7 @@ function NewRenderer() {
 		}
 		renderer.engine.setoption("VerboseMoveStats", true);			// Required for LogLiveStats to work.
 		renderer.engine.setoption("LogLiveStats", true);				// "Secret" Lc0 command.
-		renderer.engine.setoption("MultiPV", config.max_info_lines);
+		renderer.engine.setoption("MultiPV", 500);
 		renderer.engine.send("ucinewgame");
 	}
 
