@@ -7,6 +7,7 @@ const fs = require("fs");
 const path = require("path");
 const windows = require("./modules/windows");
 
+let menu;
 let config = {};
 
 try {
@@ -343,7 +344,10 @@ function menu_build() {
 					submenu: [
 					{
 							label: "20",
+							type: "checkbox",
+							checked: config.options.CPuct === 20,
 							click: () => {
+								set_checks(["Analysis", "CPuct"], 0);
 								windows.send("main-window", "call", {
 									fn: "set_cpuct",
 									args: [20],
@@ -352,7 +356,10 @@ function menu_build() {
 						},
 						{
 							label: "12",
+							type: "checkbox",
+							checked: config.options.CPuct === 12,
 							click: () => {
+								set_checks(["Analysis", "CPuct"], 1);
 								windows.send("main-window", "call", {
 									fn: "set_cpuct",
 									args: [12],
@@ -361,7 +368,10 @@ function menu_build() {
 						},
 						{
 							label: "8",
+							type: "checkbox",
+							checked: config.options.CPuct === 8,
 							click: () => {
+								set_checks(["Analysis", "CPuct"], 2);
 								windows.send("main-window", "call", {
 									fn: "set_cpuct",
 									args: [8],
@@ -370,7 +380,10 @@ function menu_build() {
 						},
 						{
 							label: "5",
+							type: "checkbox",
+							checked: config.options.CPuct === 5,
 							click: () => {
+								set_checks(["Analysis", "CPuct"], 3);
 								windows.send("main-window", "call", {
 									fn: "set_cpuct",
 									args: [5],
@@ -379,7 +392,10 @@ function menu_build() {
 						},
 						{
 							label: "3.4 (Default)",
+							type: "checkbox",
+							checked: config.options.CPuct === 3.4,
 							click: () => {
+								set_checks(["Analysis", "CPuct"], 4);
 								windows.send("main-window", "call", {
 									fn: "set_cpuct",
 									args: [3.4],
@@ -393,7 +409,10 @@ function menu_build() {
 					submenu: [
 						{
 							label: "Infinite",
+							type: "checkbox",
+							checked: config.search_nodes === "infinite",
 							click: () => {
+								set_checks(["Analysis", "Node limit"], 0);
 								windows.send("main-window", "set", {
 									key: "search_nodes",
 									value: "infinite"
@@ -403,7 +422,10 @@ function menu_build() {
 						},
 						{
 							label: "1,000,000",
+							type: "checkbox",
+							checked: config.search_nodes === 1000000,
 							click: () => {
+								set_checks(["Analysis", "Node limit"], 1);
 								windows.send("main-window", "set", {
 									key: "search_nodes",
 									value: 1000000
@@ -413,7 +435,10 @@ function menu_build() {
 						},
 						{
 							label: "100,000",
+							type: "checkbox",
+							checked: config.search_nodes === 100000,
 							click: () => {
+								set_checks(["Analysis", "Node limit"], 2);
 								windows.send("main-window", "set", {
 									key: "search_nodes",
 									value: 100000
@@ -423,7 +448,10 @@ function menu_build() {
 						},
 						{
 							label: "10,000",
+							type: "checkbox",
+							checked: config.search_nodes === 10000,
 							click: () => {
+								set_checks(["Analysis", "Node limit"], 3);
 								windows.send("main-window", "set", {
 									key: "search_nodes",
 									value: 10000
@@ -433,7 +461,10 @@ function menu_build() {
 						},
 						{
 							label: "1,000",
+							type: "checkbox",
+							checked: config.search_nodes === 1000,
 							click: () => {
+								set_checks(["Analysis", "Node limit"], 4);
 								windows.send("main-window", "set", {
 									key: "search_nodes",
 									value: 1000
@@ -443,7 +474,10 @@ function menu_build() {
 						},
 						{
 							label: "100",
+							type: "checkbox",
+							checked: config.search_nodes === 100,
 							click: () => {
+								set_checks(["Analysis", "Node limit"], 5);
 								windows.send("main-window", "set", {
 									key: "search_nodes",
 									value: 100
@@ -453,7 +487,10 @@ function menu_build() {
 						},
 						{
 							label: "2",
+							type: "checkbox",
+							checked: config.search_nodes === 2,
 							click: () => {
+								set_checks(["Analysis", "Node limit"], 6);
 								windows.send("main-window", "set", {
 									key: "search_nodes",
 									value: 2
@@ -471,7 +508,10 @@ function menu_build() {
 					submenu: [
 						{
 							label: "Winrate",
+							type: "checkbox",
+							checked: config.arrowhead_type === 0,
 							click: () => {
+								set_checks(["Analysis", "Arrowhead type"], 0);
 								windows.send("main-window", "set", {
 									key: "arrowhead_type",
 									value: 0,
@@ -480,7 +520,10 @@ function menu_build() {
 						},
 						{
 							label: "Node %",
+							type: "checkbox",
+							checked: config.arrowhead_type === 1,
 							click: () => {
+								set_checks(["Analysis", "Arrowhead type"], 1);
 								windows.send("main-window", "set", {
 									key: "arrowhead_type",
 									value: 1,
@@ -489,7 +532,10 @@ function menu_build() {
 						},
 						{
 							label: "Policy",
+							type: "checkbox",
+							checked: config.arrowhead_type === 2,
 							click: () => {
+								set_checks(["Analysis", "Arrowhead type"], 2);
 								windows.send("main-window", "set", {
 									key: "arrowhead_type",
 									value: 2,
@@ -498,7 +544,10 @@ function menu_build() {
 						},
 						{
 							label: "MultiPV rank",
+							type: "checkbox",
+							checked: config.arrowhead_type === 3,
 							click: () => {
+								set_checks(["Analysis", "Arrowhead type"], 3);
 								windows.send("main-window", "set", {
 									key: "arrowhead_type",
 									value: 3,
@@ -512,7 +561,10 @@ function menu_build() {
 					submenu: [
 						{
 							label: "All",
+							type: "checkbox",
+							checked: config.node_display_threshold === 0,
 							click: () => {
+								set_checks(["Analysis", "Moves to show"], 0);
 								windows.send("main-window", "set", {
 									key: "node_display_threshold",
 									value: 0
@@ -521,7 +573,10 @@ function menu_build() {
 						},
 						{
 							label: "Very many",
+							type: "checkbox",
+							checked: config.node_display_threshold === 0.005,
 							click: () => {
+								set_checks(["Analysis", "Moves to show"], 1);
 								windows.send("main-window", "set", {
 									key: "node_display_threshold",
 									value: 0.005
@@ -530,7 +585,10 @@ function menu_build() {
 						},
 						{
 							label: "Many",
+							type: "checkbox",
+							checked: config.node_display_threshold === 0.01,
 							click: () => {
+								set_checks(["Analysis", "Moves to show"], 2);
 								windows.send("main-window", "set", {
 									key: "node_display_threshold",
 									value: 0.01
@@ -539,7 +597,10 @@ function menu_build() {
 						},
 						{
 							label: "Some",
+							type: "checkbox",
+							checked: config.node_display_threshold === 0.02,
 							click: () => {
+								set_checks(["Analysis", "Moves to show"], 3);
 								windows.send("main-window", "set", {
 									key: "node_display_threshold",
 									value: 0.02
@@ -548,7 +609,10 @@ function menu_build() {
 						},
 						{
 							label: "Few",
+							type: "checkbox",
+							checked: config.node_display_threshold === 0.05,
 							click: () => {
+								set_checks(["Analysis", "Moves to show"], 4);
 								windows.send("main-window", "set", {
 									key: "node_display_threshold",
 									value: 0.05
@@ -557,7 +621,10 @@ function menu_build() {
 						},
 						{
 							label: "Very few",
+							type: "checkbox",
+							checked: config.node_display_threshold === 0.1,
 							click: () => {
+								set_checks(["Analysis", "Moves to show"], 5);
 								windows.send("main-window", "set", {
 									key: "node_display_threshold",
 									value: 0.1
@@ -566,7 +633,10 @@ function menu_build() {
 						},
 						{
 							label: "Best move only",
+							type: "checkbox",
+							checked: config.node_display_threshold === 1,
 							click: () => {
+								set_checks(["Analysis", "Moves to show"], 6);
 								windows.send("main-window", "set", {
 									key: "node_display_threshold",
 									value: 1
@@ -634,7 +704,7 @@ function menu_build() {
 		}
 	];
 
-	const menu = electron.Menu.buildFromTemplate(template);
+	menu = electron.Menu.buildFromTemplate(template);
 	electron.Menu.setApplicationMenu(menu);
 }
 
@@ -683,4 +753,35 @@ You can exit Versus Mode with the Go or Halt commands in the Analysis \
 menu.`;
 
 	alert(s);
+}
+
+function get_submenu_items(...args) {
+
+	let o = menu.items;
+
+	for (let arg of args) {
+		for (let item of o) {
+			if (item.label === arg) {
+				o = item.submenu.items;
+				break;
+			}
+		}
+	}
+
+	return o;
+}
+
+function set_checks(menupath, except) {
+
+	// Since I don't know precisely how the menu works behind the scenes,
+	// give a little time for the original click to go through first.
+
+	setTimeout(() => {
+		let items = get_submenu_items(...menupath);
+		for (let n = 0; n < items.length; n++) {
+			if (items[n].checked !== undefined) {
+				items[n].checked = n === except ? true : false;
+			}
+		}
+	}, 50);
 }
