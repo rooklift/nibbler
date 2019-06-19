@@ -111,20 +111,12 @@ function SafeString(s) {
 
 function Log(s) {
 
-	if (!config) {
+	if (!config || typeof config.logfile !== "string" || config.logfile === "") {
 		return;
 	}
 
-	// Using some properties embedded into the function object
-	// as if they are static variables.
-
 	if (Log.logfile === undefined) {
-		if (typeof config.logfile !== "string" || config.logfile === "" || Log.tried_to_open) {
-			return;
-		}
-
-		Log.logfile = fs.createWriteStream(config.logfile, {flags:'a'});
-		Log.tried_to_open = true;
+		Log.logfile = fs.createWriteStream(config.logfile, {flags: "a"});
 	}
 
 	Log.logfile.write(s + "\n");
