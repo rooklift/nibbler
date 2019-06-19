@@ -496,6 +496,15 @@ function menu_build() {
 								});
 							}
 						},
+						{
+							label: "MultiPV rank",
+							click: () => {
+								windows.send("main-window", "set", {
+									key: "arrowhead_type",
+									value: 3,
+								});
+							}
+						},
 					]
 				},
 				{

@@ -15,7 +15,7 @@ const util = require("util");
 // HTML stuff.......................................................
 //
 // All of this may be redundant since id-havers are in the global
-// namespace automatically... not sure of performance implications.
+// namespace automatically. But declaring them const has some value.
 
 const boardfriends = document.getElementById("boardfriends");
 const boardsquares = document.getElementById("boardsquares");
@@ -25,10 +25,10 @@ const infobox = document.getElementById("infobox");
 const movelist = document.getElementById("movelist");
 const pgnchooser = document.getElementById("pgnchooser");
 
-const context = canvas.getContext("2d");
+// Globals..........................................................
 
-// Global variables.................................................
+const context = canvas.getContext("2d");
+const decoder = new util.TextDecoder("utf8");
 
 let config = {};
-let decoder = new util.TextDecoder("utf8");
 let total_tree_changes = 0;

@@ -833,14 +833,17 @@ function NewRenderer() {
 			context.fill();
 			context.fillStyle = "black";
 
-			let s = "";
+			let s;
 
-			if (config.arrowhead_type === 0) {
+			switch (config.arrowhead_type) {
+			case 0:
 				s = o.info.value_string(0);
-			} else if (config.arrowhead_type === 1) {
+				break;
+			case 1:
 				let divisor = this.info_table.nodes > 0 ? this.info_table.nodes : 1;
 				s = (100 * o.info.n / divisor).toFixed(0);
-			} else if (config.arrowhead_type === 2) {
+				break;
+			case 2:
 				let pstr = o.info.p;
 				if (pstr.endsWith("%")) {
 					pstr = pstr.slice(0, pstr.length - 1);
@@ -849,6 +852,13 @@ function NewRenderer() {
 				if (Number.isNaN(p) === false) {
 					s = p.toFixed(0);
 				}
+				break;
+			case 3:
+				s = o.info.multipv;
+				break;
+			default:
+				s = "!";
+				break;
 			}
 
 			context.fillText(s, cc2.cx, cc2.cy + 1);
