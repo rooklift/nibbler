@@ -755,13 +755,13 @@ menu.`;
 	alert(s);
 }
 
-function get_submenu_items(...args) {
+function get_submenu_items(menupath) {
 
 	let o = menu.items;
 
-	for (let arg of args) {
+	for (let p of menupath) {
 		for (let item of o) {
-			if (item.label === arg) {
+			if (item.label === p) {
 				o = item.submenu.items;
 				break;
 			}
@@ -777,7 +777,7 @@ function set_checks(menupath, except) {
 	// give a little time for the original click to go through first.
 
 	setTimeout(() => {
-		let items = get_submenu_items(...menupath);
+		let items = get_submenu_items(menupath);
 		for (let n = 0; n < items.length; n++) {
 			if (items[n].checked !== undefined) {
 				items[n].checked = n === except;
