@@ -9,32 +9,26 @@
 
 <body>
 
+	<!-- note to self, only use id for things the JS needs to see, they pollute the namespace -->
+
 	<div class="main">
-
 		<div class="row">
-
-			<div class="leftcolumn">
+			<div>
 				<table id="boardsquares"></table>		<!-- table for light and dark squares -->
 				<canvas id="canvas"></canvas>			<!-- canvas for enemy pieces and arrows -->
 				<table id="boardfriends"></table>		<!-- table for friendly pieces -->
 			</div>
-
-	  		<div class="rightcolumn">
-	  			<div id="infobox"></div>
-	  		</div>
-	  		
+			<div id="infobox"></div>
 		</div>
-	
 		<input type="text" id="fenbox" value="">
 		<p id="movelist"></p>
-		
 	</div>
 
-	<div id="pgnchooser">If you see this, something is quite wrong. Tell the author.</div>
+	<div id="pgnchooser">PGN Chooser (hidden)</div>
 
 	<!-- Most of our components are fairly well encapsulated and could be in
-	module form. Still, for the time being we have everything in one namespace and
-	so load them in a particular order... -->
+	module form. Still, for the time being we have everything in one namespace
+	and so load them in a particular order... -->
 
 	<script src="10_globals.js"></script>
 	<script src="11_config.js"></script>

@@ -913,6 +913,10 @@ function NewRenderer() {
 		}
 		renderer.engine.setoption("VerboseMoveStats", true);			// Required for LogLiveStats to work.
 		renderer.engine.setoption("LogLiveStats", true);				// "Secret" Lc0 command.
+
+		// Give me all the variations. Wait. Wait! I'm worried that what you heard was "give me
+		// a lot of variations". To clarify - give me all the variations!
+
 		renderer.engine.setoption("MultiPV", 500);
 		renderer.engine.send("ucinewgame");
 	}
