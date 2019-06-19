@@ -20,13 +20,13 @@ body {
 	border-collapse: collapse;
 	margin-right: 1em;
 	margin-bottom: 1em;
-	pointer-events: none;		/* important, mouse events don't interact */
+	pointer-events: none;		/* likely unneeded -- mouse events don't interact */
 	table-layout: fixed;
 	user-select: none;
 }
 
 #canvas {
-	pointer-events: none;		/* important, mouse events don't interact */
+	pointer-events: none;		/* likely unneeded -- mouse events don't interact */
 	position: fixed;
 	user-select: none;
 }
