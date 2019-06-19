@@ -410,11 +410,6 @@ function NewRenderer() {
 		this.engine.setoption("WeightsFile", filename);
 	};
 
-	renderer.set_cpuct = function(val) {
-		this.engine.setoption("CPuct", val);
-		this.set_versus(this.versus);				// Restart the search.
-	};
-
 	// --------------------------------------------------------------------------------------------
 	// Visual stuff...
 
