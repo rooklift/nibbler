@@ -202,19 +202,21 @@ document.addEventListener("wheel", (event) => {
 
 // Setup return key on FEN box...
 
-fenbox.onkeydown = (event) => {
+fenbox.addEventListener("keydown", (event) => {
 	if (event.key === "Enter") {
 		hub.load_fen(fenbox.value);
 	}
-};
+});
 
 // Setup drag-and-drop...
 
-window.ondragover = () => false;		// Allows drops to happen, I think.
+window.addEventListener("dragover", (event) => {
+	event.preventDefault();
+});
 
-window.ondrop = (event) => {
+window.addEventListener("drop", (event) => {
 	hub.handle_drop(event);
-};
+});
 
 // Go...
 
