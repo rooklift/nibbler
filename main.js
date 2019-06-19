@@ -780,7 +780,7 @@ function set_checks(menupath, except) {
 		let items = get_submenu_items(...menupath);
 		for (let n = 0; n < items.length; n++) {
 			if (items[n].checked !== undefined) {
-				items[n].checked = n === except ? true : false;
+				items[n].checked = n === except;
 			}
 		}
 	}, 50);
