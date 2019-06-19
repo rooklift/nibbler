@@ -14,16 +14,16 @@ const util = require("util");
 
 // HTML stuff.......................................................
 //
-// All of this is redundant since id-havers are in the global
-// namespace automatically...
-//
-// const boardsquares = document.getElementById("boardsquares");
-// const boardfriends = document.getElementById("boardfriends");
-// const fenbox = document.getElementById("fenbox");
-// const infobox = document.getElementById("infobox");
-// const movelist = document.getElementById("movelist");
-// const pgnchooser = document.getElementById("pgnchooser");
-// const canvas = document.getElementById("canvas");
+// All of this may be redundant since id-havers are in the global
+// namespace automatically... not sure of performance implications.
+
+const boardfriends = document.getElementById("boardfriends");
+const boardsquares = document.getElementById("boardsquares");
+const canvas = document.getElementById("canvas");
+const fenbox = document.getElementById("fenbox");
+const infobox = document.getElementById("infobox");
+const movelist = document.getElementById("movelist");
+const pgnchooser = document.getElementById("pgnchooser");
 
 const context = canvas.getContext("2d");
 
