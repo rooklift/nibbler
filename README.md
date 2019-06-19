@@ -7,11 +7,10 @@
 # Features
 
 * Display Leela's top choices graphically.
-* One-click movement! Play one of Leela's choices by clicking on its target square.
-* (You can still make moves the old fashioned way, of course.)
-* FEN loading.
+* Choice of winrate, node %, or policy display.
 * PGN loading via menu, clipboard, or drag-and-drop.
 * Supports PGN variations of arbitrary depth.
+* FEN loading.
 * Clickable moves in the variation lists.
 * Versus Mode - where Leela only analyses one side.
 * Various aesthetic adjustments are possible in the `config.json` file.
