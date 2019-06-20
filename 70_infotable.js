@@ -48,10 +48,11 @@ function new_info(board, move) {
 	info.d = null;
 	info.move = move;
 	info.multipv = 999;
-	info.n = 0;						// The draw logic will only ever draw things with non-negative n, so make this 0
+	info.n = 0;						// The draw logic will only ever draw things with non-negative n, so make this 0.
 	info.p = "?";
 	info.pv = [];
 	info.nice_pv_cache = null;
+	info.u = 0;						// Is this a sane default? I don't understand U at all.
 	info.value = null;
 	return info;
 }
@@ -161,6 +162,11 @@ function NewInfoTable() {			// There's only ever going to be one of these made I
 			tmp = parseFloat(InfoVal(s, "(D:"));
 			if (Number.isNaN(tmp) === false) {
 				move_info.d = tmp;
+			}
+
+			tmp = parseFloat(InfoVal(s, "(U:"));
+			if (Number.isNaN(tmp) === false) {
+				move_info.u = tmp;
 			}
 
 			move_info.p = InfoVal(s, "(P:");			// Worst case here is just empty string, which is OK.

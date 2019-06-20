@@ -93,7 +93,7 @@ function NewInfoboxHandler() {
 
 			new_elements.push({
 				class: "gray",
-				text: `(N: ${node_display_fraction}%, P: ${info.p})`
+				text: `(N: ${node_display_fraction}%, P: ${info.p}, U: ${info.u.toFixed(4)})`
 			});
 
 			if (info.move === one_click_move) {
