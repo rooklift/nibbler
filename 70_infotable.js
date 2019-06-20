@@ -52,6 +52,7 @@ function new_info(board, move) {
 	info.p = "?";
 	info.pv = [];
 	info.nice_pv_cache = null;
+	info.q = -1;
 	info.u = 0;						// Is this a sane default? I don't understand U at all.
 	info.value = null;
 	return info;
@@ -173,6 +174,7 @@ function NewInfoTable() {			// There's only ever going to be one of these made I
 
 			tmp = parseFloat(InfoVal(s, "(Q:"));
 			if (Number.isNaN(tmp) === false) {
+				move_info.q = tmp;
 				move_info.value = (tmp + 1) / 2;
 			}
 		}
