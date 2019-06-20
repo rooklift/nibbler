@@ -623,6 +623,47 @@ function menu_build() {
 						}
 					]
 				},
+				{
+					type: "separator"
+				},
+				{
+					label: "Infobox stats",
+					submenu: [
+						{
+							label: "Show N",
+							type: "checkbox",
+							checked: config.show_n,
+							click: () => {
+								windows.send("main-window", "call", {
+									fn: "toggle",
+									args: ["show_n"],
+								});
+							}
+						},
+						{
+							label: "Show P",
+							type: "checkbox",
+							checked: config.show_p,
+							click: () => {
+								windows.send("main-window", "call", {
+									fn: "toggle",
+									args: ["show_p"],
+								});
+							}
+						},
+						{
+							label: "Show U",
+							type: "checkbox",
+							checked: config.show_u,
+							click: () => {
+								windows.send("main-window", "call", {
+									fn: "toggle",
+									args: ["show_u"],
+								});
+							}
+						},
+					]
+				}
 			]
 		},
 		{

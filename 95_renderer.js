@@ -648,6 +648,11 @@ function NewRenderer() {
 		}
 	};
 
+	renderer.toggle = function(option) {
+		config[option] = !config[option];
+		this.info_table.drawn = false;			// Force fresh redraw of the infobox next draw.
+	};
+
 	// --------------------------------------------------------------------------------------------
 
 	renderer.canvas_coords = function(x, y) {

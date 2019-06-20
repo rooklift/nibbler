@@ -88,13 +88,28 @@ function NewInfoboxHandler() {
 				colour = OppositeColour(colour);
 			}
 
-			let divisor = renderer.info_table.nodes > 0 ? renderer.info_table.nodes : 1;
-			let node_display_fraction = (100 * info.n / divisor).toFixed(2);
+			let extra_stat_strings = [];
 
-			new_elements.push({
-				class: "gray",
-				text: `(N: ${node_display_fraction}%, P: ${info.p}, U: ${info.u.toFixed(4)})`
-			});
+			if (config.show_n) {
+				let divisor = renderer.info_table.nodes > 0 ? renderer.info_table.nodes : 1;
+				let node_display_fraction = (100 * info.n / divisor).toFixed(2);
+				extra_stat_strings.push(`N: ${node_display_fraction}%`);
+			}
+
+			if (config.show_p) {
+				extra_stat_strings.push(`P: ${info.p}`);
+			}
+
+			if (config.show_u) {
+				extra_stat_strings.push(`U: ${info.u.toFixed(4)}`);
+			}
+
+			if (extra_stat_strings.length > 0) {
+				new_elements.push({
+					class: "gray",
+					text: "(" + extra_stat_strings.join(", ") + ")"
+				});
+			}
 
 			if (info.move === one_click_move) {
 				for (let e of new_elements) {
