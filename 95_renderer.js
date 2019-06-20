@@ -707,6 +707,7 @@ function NewRenderer() {
 
 				let s = S(x, y);
 				let td = document.getElementById("overlay_" + s);
+				
 				td.innerHTML = "";
 
 				if (piece_to_draw === "") {
@@ -716,10 +717,10 @@ function NewRenderer() {
 				let img = images[piece_to_draw].cloneNode();		// Note images are draggable by default.
 				img.width = this.square_size();
 				img.height = this.square_size();
-				img.ondragstart = (event) => {
+				img.addEventListener("dragstart", (event) => {
 					this.set_active_square(Point(x, y));
 					event.dataTransfer.setData("text", "overlay_" + s);
-				};
+				});
 				td.appendChild(img);
 			}
 		}
