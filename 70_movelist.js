@@ -51,7 +51,7 @@ function NewMovelistHander() {
 
 		let end = node.get_end();
 
-		if (end === this.line_end && this.connections_version === total_tree_changes) {
+		if (end === this.line_end && this.connections_version === tree_version) {
 			this.draw_lazy(node);
 		} else {
 			this.draw_hard(node);
@@ -118,9 +118,9 @@ function NewMovelistHander() {
 
 		//
 
-		if (!this.connections || this.connections_version !== total_tree_changes) {
+		if (!this.connections || this.connections_version !== tree_version) {
 			this.connections = TokenNodeConnections(node);
-			this.connections_version = total_tree_changes;
+			this.connections_version = tree_version;
 		}
 
 		let elements = [];		// Objects containing class and text.

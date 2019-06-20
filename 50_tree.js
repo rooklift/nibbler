@@ -1,6 +1,6 @@
 "use strict";
 
-// EVERYTHING that changes the tree structure must increment the global counter  total_tree_changes
+// EVERYTHING that changes the tree structure must increment the global counter  tree_version
 // Currently this means:
 //
 //		- NewNode()
@@ -95,7 +95,7 @@ const node_prototype = {
 			node = node.parent;
 		}
 
-		total_tree_changes++;
+		tree_version++;
 	},
 
 	fen: function() {
@@ -153,7 +153,7 @@ const node_prototype = {
 		parent.children = new_list_for_parent;
 		this.parent = null;
 
-		total_tree_changes++;
+		tree_version++;
 		return parent;
 	}
 };
@@ -166,7 +166,7 @@ function NewNode(parent, move) {		// Args are null for root only.
 	node.move = move;					// Think of this as the move that led to the position associated with node.
 	node.children = [];
 
-	total_tree_changes++;
+	tree_version++;
 	return node;
 }
 

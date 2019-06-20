@@ -32,4 +32,4 @@ const context = canvas.getContext("2d");
 const decoder = new util.TextDecoder("utf8");
 
 let config = {};
-let total_tree_changes = 0;
+let tree_version = 0;
