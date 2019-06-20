@@ -8,6 +8,8 @@
 
 	"args": [],
 
+	"NOTE": "All the things below have sensible defaults and you can delete all of them from this file, if you like.",
+
 	"width": 1280,
 	"height": 835,
 	"board_size": 640,

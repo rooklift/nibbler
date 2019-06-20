@@ -65,6 +65,10 @@ assign_without_overwrite(config, {
 	"node_display_threshold": 0.02,
 	"arrowhead_type": 0,
 
+	"show_n": true,
+	"show_p": true,
+	"show_u": true,
+
 	"max_info_lines": 10,
 	"update_delay": 170,
 
