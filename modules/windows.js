@@ -115,15 +115,13 @@ exports.get_window = (token) => {
 };
 
 function quit_if_all_windows_are_hidden() {
-	let keys = Object.keys(all_windows);
-	for (let n = 0; n < keys.length; n++) {
-		let key = keys[n];
-		let win = all_windows[key];
+
+	for (let w of Object.values(all_windows)) {
 		try {
-			if (win.isVisible()) {		// Note that backgroundThrottling:false affects this, I believe.
+			if (w.isVisible()) {		// Note that backgroundThrottling:false affects this, I believe. [Edit: what??]
 				return;
 			}
-		} catch (e) {
+		} catch (err) {
 			// Can fail at end of app life when the window has been destroyed.
 		}
 	}
