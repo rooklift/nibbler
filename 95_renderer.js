@@ -707,7 +707,7 @@ function NewRenderer() {
 
 				let s = S(x, y);
 				let td = document.getElementById("overlay_" + s);
-				
+
 				td.innerHTML = "";
 
 				if (piece_to_draw === "") {
@@ -896,18 +896,12 @@ function NewRenderer() {
 	};
 
 	renderer.draw_loop = function() {
-
-		// Not using requestAnimationFrame the normal way. But it still
-		// may make the "animation" smoother, I think.
-
-		requestAnimationFrame(() => {
-			try {
-				this.draw();
-			} catch (err) {
-				console.log(err);
-			}
-			setTimeout(this.draw_loop.bind(this), config.update_delay);
-		});
+		try {
+			this.draw();
+		} catch (err) {
+			console.log(err);
+		}
+		setTimeout(this.draw_loop.bind(this), config.update_delay);
 	};
 
 	// --------------------------------------------------------------------------------------------
