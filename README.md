@@ -36,6 +36,6 @@ The `config.json` file can be edited. Most of the options are self-explanatory, 
 
 # Thanks
 
-Thanks for helpful discussions and advice from borg, brinan, Chad, coolchess123, crem, Faroe22, jhorthos, jjosh, KillerDucky, lealgo, liamlim, matoototo, mooskagh, Occyroexanthub, Tilps, twoplan, and WCP.
+Thanks for helpful discussions and advice from borg, brinan, Chad, coolchess123, crem, Faroe22, jhorthos, jjosh, KillerDucky, kiudee, lealgo, liamlim, matoototo, mooskagh, Occyroexanthub, oscardssmith, Tilps, twoplan, and WCP.
 
 The piece images were taken from the TCEC website. After discussion with Aloril, we're not entirely sure where they originate - if they're yours and you object, get in touch.
