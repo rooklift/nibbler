@@ -20,7 +20,7 @@ exports.new = (token, pagepath, params) => {		// token is an internal name for u
 		params.webPreferences = {};
 	}
 
-	params.webPrerences.zoomFactor = 1 / electron.screen.getPrimaryDisplay().scaleFactor;
+	params.webPreferences.zoomFactor = 1 / electron.screen.getPrimaryDisplay().scaleFactor;
 
 	let win = new electron.BrowserWindow(params);
 
