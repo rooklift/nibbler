@@ -35,7 +35,7 @@ if (config.height === undefined || config.height <= 0) {
 }
 
 electron.app.on("ready", () => {
-	windows.new("main-window", {width: config.width, height: config.height, page: path.join(__dirname, "nibbler.html")});
+	windows.new("main-window", {width: config.width, height: config.height, show: false, page: path.join(__dirname, "nibbler.html")});
 	menu_build();
 });
 
@@ -44,6 +44,11 @@ electron.app.on("window-all-closed", () => {
 });
 
 electron.ipcMain.on("renderer_ready", () => {
+
+	// Show the window...
+
+	windows.show("main-window");
+	windows.focus("main-window");
 
 	// Open a file via command line. We must wait until the renderer has properly loaded before we do this.
 	// Also some awkwardness around the different ways Nibbler can be started, meaning the number of arguments

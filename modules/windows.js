@@ -127,6 +127,13 @@ exports.hide = (token) => {
 	all_windows[token].hide();
 };
 
+exports.focus = (token) => {
+	if (all_windows[token] === undefined) {
+		return;
+	}
+	all_windows[token].focus();
+};
+
 exports.get_window = (token) => {
 	return all_windows[token];
 };
