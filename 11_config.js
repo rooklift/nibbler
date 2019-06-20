@@ -37,45 +37,6 @@ try {
 	alert("Failed to parse config file - make sure it is valid JSON, and in particular, if on Windows, use \\\\ instead of \\ as a path separator.");
 }
 
-// Some tolerable default values for config...
-
-assign_without_overwrite(config, {
-	"options": {},
-	"args": [],
-
-	"width": 1280,
-	"height": 835,
-	"board_size": 640,
-	"movelist_height": 110,
-
-	"board_font": "18px Arial",
-
-	"light_square": "#dadada",
-	"dark_square": "#b4b4b4",
-	"active_square": "#66aaaa",
-
-	"best_colour": "#66aaaa",
-	"good_colour": "#66aa66",
-	"bad_colour": "#cccc66",
-	"terrible_colour": "#cc6666",
-
-	"bad_move_threshold": 0.02,
-	"terrible_move_threshold": 0.04,
-
-	"node_display_threshold": 0.02,
-	"arrowhead_type": 0,
-
-	"show_n": true,
-	"show_p": true,
-	"show_u": true,
-
-	"max_info_lines": 10,
-	"update_delay": 170,
-
-	"search_nodes": "infinite",
-	
-	"logfile": null,
-	"log_info_lines": false
-});
+apply_defaults(config);		// Some tolerable default values for config are in the relevant module...
 
 config.board_size = Math.floor(config.board_size / 8) * 8;

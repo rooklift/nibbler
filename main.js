@@ -1,6 +1,7 @@
 "use strict";
 
 const alert = require("./modules/alert");
+const apply_defaults = require("./modules/apply_defaults");
 const debork_json = require("./modules/debork_json");
 const electron = require("electron");
 const fs = require("fs");
@@ -26,13 +27,7 @@ try {
 	console.log("Main process couldn't parse config file.")
 }
 
-if (config.width === undefined || config.width <= 0) {
-	config.width = 1280;
-}
-
-if (config.height === undefined || config.height <= 0) {
-	config.height = 840;
-}
+apply_defaults(config);
 
 electron.app.on("ready", () => {
 	windows.new("main-window", path.join(__dirname, "nibbler.html"), {
