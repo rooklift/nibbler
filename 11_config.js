@@ -41,6 +41,7 @@ try {
 
 assign_without_overwrite(config, {
 	"options": {},
+	"args": [],
 
 	"width": 1280,
 	"height": 835,

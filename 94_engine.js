@@ -49,7 +49,7 @@ function NewEngine() {
 		this.readyok_required++;
 	};
 
-	eng.setup = function(path, receive_fn, err_receive_fn, log_info_lines) {
+	eng.setup = function(path, args, receive_fn, err_receive_fn, log_info_lines) {
 
 		// This is slightly sketchy, the passed functions get saved to our engine
 		// object in a way that makes them look like methods of this object. Hmm.
@@ -59,7 +59,7 @@ function NewEngine() {
 
 		this.log_info_lines = log_info_lines;
 
-		this.exe = child_process.spawn(path);
+		this.exe = child_process.spawn(path, args);
 		this.exe.on("error", (err) => {
 			alert("Couldn't spawn process - check the path in the config file");	// Note that this alert will come some time in the future, not instantly.
 		});

@@ -910,7 +910,7 @@ function NewRenderer() {
 
 	if (config && config.path) {
 
-		renderer.engine.setup(config.path, renderer.receive.bind(renderer), renderer.err_receive.bind(renderer), config.log_info_lines);
+		renderer.engine.setup(config.path, config.args, renderer.receive.bind(renderer), renderer.err_receive.bind(renderer), config.log_info_lines);
 
 		renderer.engine.send("uci");
 		for (let key of Object.keys(config.options)) {
