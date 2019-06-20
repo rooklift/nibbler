@@ -13,7 +13,7 @@ function NewRenderer() {
 	// Various state we have to keep track of...
 
 	renderer.ever_received_info = false;				// When false, we write stderr log instead of move info.
-	renderer.stderr_log = "";							// All output received from the engine's stderr.
+	renderer.stderr_log = "";							// Engine stderr is appended here. Cleared when infobox writes it.
 	renderer.pgn_choices = null;						// All games found when opening a PGN file.
 	renderer.mousex = null;								// Raw mouse X on the document.
 	renderer.mousey = null;								// Raw mouse Y on the document.

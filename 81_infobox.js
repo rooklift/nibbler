@@ -13,7 +13,10 @@ function NewInfoboxHandler() {
 	handler.draw = function(renderer, force) {
 
 		if (!renderer.ever_received_info) {
-			infobox.innerHTML = renderer.stderr_log;
+			if (renderer.stderr_log.length > 0) {
+				infobox.innerHTML += renderer.stderr_log;
+				renderer.stderr_log = "";
+			}
 			return;
 		}
 
