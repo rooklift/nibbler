@@ -35,7 +35,18 @@ if (config.height === undefined || config.height <= 0) {
 }
 
 electron.app.on("ready", () => {
-	windows.new("main-window", {width: config.width, height: config.height, show: false, page: path.join(__dirname, "nibbler.html")});
+	windows.new("main-window", path.join(__dirname, "nibbler.html"), {
+		width: config.width,
+		height: config.height,
+		backgroundColor: "#000000",
+		resizable: true,
+		show: false,
+		useContentSize: true,
+		webPreferences: {
+			backgroundThrottling: false,
+			nodeIntegration: true
+		}
+	});
 	menu_build();
 });
 
