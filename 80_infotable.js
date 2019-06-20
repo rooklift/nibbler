@@ -62,13 +62,13 @@ function NewInfoTable() {			// There's only ever going to be one of these made I
 
 	let it = Object.create(null);
 
-	it.drawn = false;
+	it.version = 0;
 	it.table = Object.create(null);
 	it.nodes = 0;
 	it.nps = 0;
 	
 	it.clear = function() {
-		this.drawn = false;
+		this.version++;
 		this.table = Object.create(null);
 		this.nodes = 0;
 		this.nps = 0;
@@ -82,7 +82,7 @@ function NewInfoTable() {			// There's only ever going to be one of these made I
 
 		if (s.startsWith("info") && s.indexOf(" pv ") !== -1) {
 
-			this.drawn = false;
+			this.version++;
 
 			// info depth 13 seldepth 48 time 5603 nodes 67686 score cp 40 hashfull 204 nps 12080 tbhits 0 multipv 2
 			// pv d2d4 g8f6 c2c4 e7e6 g2g3 f8b4 c1d2 b4e7 g1f3 e8g8 d1c2 a7a6 f1g2 b7b5 e1g1 c8b7 f1c1 b7e4 c2d1 b5c4 c1c4 a6a5 d2e1 h7h6 c4c1 d7d6
@@ -134,7 +134,7 @@ function NewInfoTable() {			// There's only ever going to be one of these made I
 
 		} else if (s.startsWith("info string")) {
 
-			this.drawn = false;
+			this.version++;
 
 			// info string d2d4  (293 ) N:   12845 (+121) (P: 20.10%) (Q:  0.09001) (D:  0.000) (U: 0.02410) (Q+U:  0.11411) (V:  0.1006)
 

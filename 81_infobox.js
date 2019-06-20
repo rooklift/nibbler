@@ -9,6 +9,7 @@ function NewInfoboxHandler() {
 
 	handler.clickers = [];
 	handler.last_highlight_dest = null;			// Used to skip redraws.
+	handler.last_table_version = null;			// Used to skip redraws.
 
 	handler.draw = function(renderer, force) {
 
@@ -34,18 +35,20 @@ function NewInfoboxHandler() {
 			one_click_move = renderer.one_click_moves[p.x][p.y];
 		}
 
-		// The info_table.drawn property is set to false whenever new info is received from the engine.
-		// So maybe we can skip drawing the infobox, and just return...
+		// Maybe we can skip drawing the infobox, and just return...
 
-		if (renderer.info_table.drawn && !force) {
-			if (highlight_dest === this.last_highlight_dest) {
-				return;
+		if (!force) {
+			if (this.last_table_version === renderer.info_table.version) {
+				if (this.last_highlight_dest === highlight_dest) {
+					return;
+				}
 			}
 		}
 
 		this.last_highlight_dest = highlight_dest;
+		this.last_table_version = renderer.info_table.version;
 
-		//
+		// OK I guess we're drawing...
 
 		let info_list = renderer.info_table.sorted();
 		let elements = [];									// Not HTML elements, just our own objects.
@@ -141,7 +144,6 @@ function NewInfoboxHandler() {
 		// And save our elements so that we know what clicks mean.
 
 		this.clickers = elements;							// We actually only need the move or its absence in each object. Meh.
-		renderer.info_table.drawn = true;
 	};
 
 	handler.moves_from_click = function(event) {

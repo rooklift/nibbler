@@ -650,7 +650,7 @@ function NewRenderer() {
 
 	renderer.toggle = function(option) {
 		config[option] = !config[option];
-		this.info_table.drawn = false;			// Force fresh redraw of the infobox next draw.
+		this.infobox_handler.last_table_version = null;			// Force fresh redraw of the infobox next draw.
 	};
 
 	// --------------------------------------------------------------------------------------------
