@@ -16,6 +16,12 @@ exports.new = (token, pagepath, params) => {		// token is an internal name for u
 		return;
 	}
 
+	if (!params.webPreferences) {
+		params.webPreferences = {};
+	}
+
+	params.webPrerences.zoomFactor = 1 / electron.screen.getPrimaryDisplay().scaleFactor;
+
 	let win = new electron.BrowserWindow(params);
 
 	if (fs.existsSync(pagepath) === false) {
