@@ -44,7 +44,7 @@ function NewMovelistHander() {
 	let handler = Object.create(null);
 
 	handler.connections = null;
-	handler.connections_version = -1;
+	handler.connections_version = null;
 	handler.line_end = null;
 
 	handler.draw = function(node) {
