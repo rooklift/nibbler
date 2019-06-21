@@ -709,7 +709,6 @@ function NewRenderer() {
 	};
 
 	renderer.draw_loop = function() {
-
 		if (config.dev) {
 			this.draw();
 		} else {
