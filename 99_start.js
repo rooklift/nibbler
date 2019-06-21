@@ -120,16 +120,7 @@ function input_loop() {
 	input_queue = [];
 
 	if (fn) {
-
-		if (config.dev) {
-			fn();
-		} else {
-			try {
-				fn();
-			} catch (err) {
-				console.log(err);
-			}
-		}
+		fn();		// We could wrap this in a try, but for dev purposes it's best to break hard.
 	}
 
 	setTimeout(input_loop, 10);

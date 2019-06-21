@@ -721,15 +721,7 @@ function NewRenderer() {
 	};
 
 	renderer.draw_loop = function() {
-		if (config.dev) {
-			this.draw();
-		} else {
-			try {
-				this.draw();
-			} catch (err) {
-				console.log(err);
-			}
-		}
+		this.draw();	// We could wrap this in a try, but for dev purposes it's best to break hard.
 		setTimeout(this.draw_loop.bind(this), config.update_delay);
 	};
 
