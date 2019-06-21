@@ -4,8 +4,8 @@ function NewRenderer() {
 
 	let renderer = Object.create(null);
 
-	renderer.movelist_handler = NewMovelistHander();	// Object that deals with the movelist at the bottom.
-	renderer.info_handler = NewCombinedInfoObject();	
+	renderer.movelist_handler = NewMovelistHander();	// Deals with the movelist at the bottom.
+	renderer.info_handler = NewInfoHandler();			// Handles info from the engine, and drawing it.
 	renderer.node = NewTree();							// Our current place in the current tree.
 	renderer.engine = NewEngine();						// Engine connection. Needs its setup() called.
 
@@ -15,11 +15,7 @@ function NewRenderer() {
 	renderer.mousex = null;								// Raw mouse X on the document.
 	renderer.mousey = null;								// Raw mouse Y on the document.
 	renderer.friendly_draws = New2DArray(8, 8);			// What pieces are drawn in boardfriends. Used to skip redraws.
-
-	// These things are options that should not be set directly, but rather set via the relevant method...
-
 	renderer.active_square = null;						// Clicked square.
-	renderer.versus = "";								// Colours that Leela is "playing".
 
 	// --------------------------------------------------------------------------------------------
 
@@ -42,8 +38,8 @@ function NewRenderer() {
 	};
 
 	renderer.set_versus = function(s) {
-		this.versus = s;
-		this.info_handler.must_draw();
+		config.versus = s;
+		this.info_handler.must_draw_infobox();
 		if (this.leela_should_go()) {
 			this.go();
 		} else {
@@ -330,7 +326,7 @@ function NewRenderer() {
 	// Engine stuff...
 
 	renderer.leela_should_go = function() {
-		return this.versus.includes(this.node.get_board().active);
+		return config.versus.includes(this.node.get_board().active);
 	};
 
 	renderer.receive = function(s) {
@@ -402,10 +398,6 @@ function NewRenderer() {
 
 	// --------------------------------------------------------------------------------------------
 	// Visual stuff...
-
-	renderer.square_size = function() {
-		return config.board_size / 8;
-	};
 
 	renderer.toggle_flip = function() {
 
@@ -495,10 +487,10 @@ function NewRenderer() {
 		mousex -= boardfriends.getBoundingClientRect().left;
 		mousey -= boardfriends.getBoundingClientRect().top;
 
-		let rss = this.square_size();
+		let css = config.square_size;
 
-		let boardx = Math.floor(mousex / rss);
-		let boardy = Math.floor(mousey / rss);
+		let boardx = Math.floor(mousex / css);
+		let boardy = Math.floor(mousey / css);
 
 		if (boardx < 0 || boardy < 0 || boardx > 7 || boardy > 7) {
 			return null;
@@ -640,7 +632,7 @@ function NewRenderer() {
 
 	renderer.toggle = function(option) {
 		config[option] = !config[option];
-		this.info_handler.must_draw();
+		this.info_handler.must_draw_infobox();
 	};
 
 	// --------------------------------------------------------------------------------------------
@@ -676,8 +668,8 @@ function NewRenderer() {
 				}
 
 				let img = images[piece_to_draw].cloneNode();		// Note images are draggable by default.
-				img.width = this.square_size();
-				img.height = this.square_size();
+				img.width = config.square_size;
+				img.height = config.square_size;
 				img.addEventListener("dragstart", (event) => {
 					this.set_active_square(Point(x, y));
 					event.dataTransfer.setData("text", "overlay_" + s);
@@ -703,13 +695,13 @@ function NewRenderer() {
 
 				let piece = board.state[x][y];
 				let cc = CanvasCoords(x, y);
-				context.drawImage(images[piece], cc.x1, cc.y1, cc.rss, cc.rss);
+				context.drawImage(images[piece], cc.x1, cc.y1, config.square_size, config.square_size);
 			}
 		}
 	};
 
 	renderer.draw = function() {
-		this.info_handler.draw(this);
+		this.info_handler.draw_infobox(this);
 		context.clearRect(0, 0, canvas.width, canvas.height);
 		this.draw_enemies_in_canvas();
 		this.info_handler.draw_arrows();

@@ -140,7 +140,7 @@ function CanvasCoords(x, y) {
 
 	// Given the x, y coordinates on the board (a8 is 0, 0)
 	// return an object with the canvas coordinates for
-	// the square, and also the centre. Also has rss.
+	// the square, and also the centre.
 	//
 	//      x1,y1--------
 	//        |         |
@@ -148,19 +148,19 @@ function CanvasCoords(x, y) {
 	//        |         |
 	//        --------x2,y2
 
-	let rss = config.board_size / 8;
-	let x1 = x * rss;
-	let y1 = y * rss;
-	let x2 = x1 + rss;
-	let y2 = y1 + rss;
+	let css = config.square_size;
+	let x1 = x * css;
+	let y1 = y * css;
+	let x2 = x1 + css;
+	let y2 = y1 + css;
 
 	if (config.flip) {
-		[x1, x2] = [(rss * 8) - x2, (rss * 8) - x1];
-		[y1, y2] = [(rss * 8) - y2, (rss * 8) - y1];
+		[x1, x2] = [(css * 8) - x2, (css * 8) - x1];
+		[y1, y2] = [(css * 8) - y2, (css * 8) - y1];
 	}
 
-	let cx = x1 + rss / 2;
-	let cy = y1 + rss / 2;
+	let cx = x1 + css / 2;
+	let cy = y1 + css / 2;
 
-	return {x1, y1, x2, y2, cx, cy, rss};
+	return {x1, y1, x2, y2, cx, cy};
 };

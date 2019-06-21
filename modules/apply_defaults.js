@@ -35,5 +35,10 @@ module.exports = (o) => {
 	});
 
 	o.board_size = Math.floor(o.board_size / 8) * 8;
-	o.flip = false;		// Must never be set to true manually.
+	o.square_size = o.board_size / 8;
+
+	// These things should not be set naively. Rather, the correct function in the renderer must be called...
+
+	o.flip = false;
+	o.versus = "";
 }

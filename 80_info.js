@@ -1,6 +1,6 @@
 "use strict";
 
-function NewCombinedInfoObject() {
+function NewInfoHandler() {
 
 	let o = Object.create(null);
 
@@ -13,7 +13,7 @@ function NewCombinedInfoObject() {
 	o.stderr_log = "";
 
 	o.one_click_moves = New2DArray(8, 8);	// Clicks on the canvas.
-	o.clickers = [];						// Clicks on the infobox lines.
+	o.info_clickers = [];					// Clicks on the infobox lines.
 
 	o.last_highlight_dest = null;			// Used to skip redraws.
 	o.last_drawn_version = null;			// Used to skip redraws.
@@ -184,11 +184,11 @@ function NewCombinedInfoObject() {
 		return info_list;
 	};
 
-	o.must_draw = function() {
+	o.must_draw_infobox = function() {
 		this.last_drawn_version = null;
 	};
 
-	o.draw = function(renderer) {
+	o.draw_infobox = function(renderer) {
 
 		if (!this.ever_received_info) {
 			if (this.stderr_log.length > 0) {
@@ -231,7 +231,7 @@ function NewCombinedInfoObject() {
 		if (renderer.leela_should_go() === false) {
 			elements.push({
 				class: "yellow",
-				text: renderer.versus === "" ? "HALTED " : "YOUR MOVE ",
+				text: config.versus === "" ? "HALTED " : "YOUR MOVE ",
 			});
 		}
 
@@ -318,7 +318,7 @@ function NewCombinedInfoObject() {
 
 		// And save our elements so that we know what clicks mean.
 
-		this.clickers = elements;							// We actually only need the move or its absence in each object. Meh.
+		this.info_clickers = elements;						// We actually only need the move or its absence in each object. Meh.
 	};
 
 	o.moves_from_click = function(event) {
@@ -339,7 +339,7 @@ function NewCombinedInfoObject() {
 		// This is a bit icky, it relies on the fact that our clickers list
 		// has some objects that lack a move property (the blue info bits).
 
-		if (!this.clickers || n < 0 || n >= this.clickers.length) {
+		if (!this.info_clickers || n < 0 || n >= this.info_clickers.length) {
 			return [];
 		}
 
@@ -348,7 +348,7 @@ function NewCombinedInfoObject() {
 		// Work backwards until we get to the start of the line...
 
 		for (; n >= 0; n--) {
-			let element = this.clickers[n];
+			let element = this.info_clickers[n];
 			if (!element || !element.move) {
 				break;
 			}
