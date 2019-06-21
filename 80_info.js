@@ -188,7 +188,9 @@ function NewInfoHandler() {
 		this.last_drawn_version = null;
 	};
 
-	ih.draw_infobox = function(renderer) {
+	ih.draw_infobox = function(mouse_point, active_square, leela_should_go, active_colour) {
+
+		// Needs a bit more of the renderer state than I'd like.
 
 		if (!this.ever_received_info) {
 			if (this.stderr_log.length > 0) {
@@ -198,18 +200,15 @@ function NewInfoHandler() {
 			return;
 		}
 
-		// Find the square the user is hovering over (might be null)...
-		let p = renderer.mouse_point();
-
 		// By default we're highlighting nothing...
 		let highlight_dest = null;
 		let one_click_move = "__none__";
 
 		// But if the hovered square actually has a one-click move available, highlight its variation,
 		// unless we have an active (i.e. clicked) square...
-		if (p && this.one_click_moves[p.x][p.y] && !renderer.active_square) {
-			highlight_dest = p;
-			one_click_move = this.one_click_moves[p.x][p.y];
+		if (mouse_point && this.one_click_moves[mouse_point.x][mouse_point.y] && !active_square) {
+			highlight_dest = mouse_point;
+			one_click_move = this.one_click_moves[mouse_point.x][mouse_point.y];
 		}
 
 		// Maybe we can skip drawing the infobox, and just return...
@@ -228,7 +227,7 @@ function NewInfoHandler() {
 		let info_list = this.sorted();
 		let elements = [];									// Not HTML elements, just our own objects.
 
-		if (renderer.leela_should_go() === false) {
+		if (leela_should_go === false) {
 			elements.push({
 				class: "yellow",
 				text: config.versus === "" ? "HALTED " : "YOUR MOVE ",
@@ -251,7 +250,7 @@ function NewInfoHandler() {
 				text: `${info.value_string(1)} `,
 			});
 
-			let colour = renderer.node.get_board().active;
+			let colour = active_colour;
 
 			let nice_pv = info.nice_pv();
 

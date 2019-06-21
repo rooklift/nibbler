@@ -705,8 +705,16 @@ function NewRenderer() {
 	};
 
 	renderer.draw = function() {
-		this.info_handler.draw_infobox(this);
+
+		this.info_handler.draw_infobox(		// The info handler needs a bit more state than I'd like, but what can you do.
+			this.mouse_point(),
+			this.active_square,
+			this.leela_should_go(),
+			this.node.get_board().active,
+		);
+
 		context.clearRect(0, 0, canvas.width, canvas.height);
+
 		this.draw_enemies_in_canvas();
 		this.info_handler.draw_arrows();
 		this.draw_friendlies_in_table();
