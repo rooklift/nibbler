@@ -8,6 +8,7 @@ const fs = require("fs");
 const path = require("path");
 const windows = require("./modules/windows");
 
+let renderer_ready = false;
 let menu;
 let config = {};
 
@@ -50,6 +51,12 @@ electron.app.on("window-all-closed", () => {
 });
 
 electron.ipcMain.on("renderer_ready", () => {
+
+	if (renderer_ready) {
+		return;
+	} else {
+		renderer_ready = true;
+	}
 
 	// Show the window...
 
