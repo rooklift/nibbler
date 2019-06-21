@@ -408,7 +408,7 @@ const position_prototype = {
 			return false;
 		}
 
-		// Attacks along the lines (excludes pawns)...
+		// Attacks along the lines...
 
 		for (let step_x = -1; step_x <= 1; step_x++) {
 
