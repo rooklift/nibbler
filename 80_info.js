@@ -190,8 +190,6 @@ function NewInfoHandler() {
 
 	ih.draw_infobox = function(mouse_point, active_square, leela_should_go, active_colour) {
 
-		// Needs a bit more of the renderer state than I'd like.
-
 		if (!this.ever_received_info) {
 			if (this.stderr_log.length > 0) {
 				infobox.innerHTML += this.stderr_log;
