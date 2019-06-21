@@ -26,7 +26,7 @@
 	"arrowhead_type": 0,
 	"show_n": true,
 	"show_p": true,
-	"show_u": true,
+	"show_u": false,
 	"max_info_lines": 10,
 	"update_delay": 170,
 	"search_nodes": "infinite",
