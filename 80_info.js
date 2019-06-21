@@ -4,16 +4,16 @@ function NewInfoHandler() {
 
 	let o = Object.create(null);
 
-	o.table = Object.create(null);
-	o.version = 0;
-	o.nodes = 0;
-	o.nps = 0;
+	o.table = Object.create(null);			// Map of move (e.g. "e2e4") --> info object.
+	o.version = 0;							// Incremented on any change.
+	o.nodes = 0;							// Stat sent by engine.
+	o.nps = 0;								// Stat sent by engine.
 
 	o.ever_received_info = false;
 	o.stderr_log = "";
 
-	o.one_click_moves = New2DArray(8, 8);	// Clicks on the canvas.
-	o.info_clickers = [];					// Clicks on the infobox lines.
+	o.one_click_moves = New2DArray(8, 8);	// Array of possible one-click moves. Updated by draw_arrows().
+	o.info_clickers = [];					// Elements in the infobox. Updated by draw_infobox().
 
 	o.last_highlight_dest = null;			// Used to skip redraws.
 	o.last_drawn_version = null;			// Used to skip redraws.
