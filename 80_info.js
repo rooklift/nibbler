@@ -539,6 +539,9 @@ let info_prototype = {
 			return "?";
 		}
 		let pc = Math.floor(this.value * 100 * 10) / 10;
+		if (pc < 0) {
+			return "?";				// Happens when 0 nodes, I think.
+		}
 		return pc.toFixed(dp);
 	}
 };
