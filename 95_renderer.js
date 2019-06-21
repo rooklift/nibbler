@@ -16,7 +16,16 @@ function NewRenderer() {
 	renderer.mousey = null;								// Raw mouse Y on the document.
 	renderer.friendly_draws = New2DArray(8, 8);			// What pieces are drawn in boardfriends. Used to skip redraws.
 	renderer.active_square = null;						// Clicked square.
+
+	// Some sync stuff...
+
 	renderer.leela_maybe_running = false;				// Whether we last sent "go" or "stop" to Leela.
+	renderer.leela_position = null;						// The position we last sent to Leela.
+
+	// We use both leela_position and the engine.sync() method to ensure that we are actually synced up
+	// with Lc0 when interpreting Lc0 output. Neither one on its own is really enough (future me: trust
+	// me about this). Indeed I'm not sure if both together are foolproof, which is why we also don't
+	// trust moves to be legal.
 
 	// --------------------------------------------------------------------------------------------
 
@@ -332,7 +341,9 @@ function NewRenderer() {
 
 	renderer.receive = function(s) {
 		if (s.startsWith("info")) {
-			this.info_handler.receive(s, this.node.get_board());
+			if (this.leela_position === this.node.get_board()) {		// Note leela_position is a misleading name - it's the last position we
+				this.info_handler.receive(s, this.node.get_board());	// sent, but Leela may well be sending info about the previous position.
+			}															// So this condition only helps us in a few cases.
 		}
 		if (s.startsWith("error")) {
 			this.info_handler.err_receive(s);
@@ -344,18 +355,9 @@ function NewRenderer() {
 	};
 
 	renderer.halt = function() {
-
 		if (this.leela_maybe_running) {
-
 			this.engine.send("stop");
-			this.engine.sync();
-
-			// In theory calling sync() should allow us to ignore Leela's response to the
-			// "stop" command and thus ensure we don't mistake that response to be info
-			// about a different position. In practice, it doesn't really work, as Lc0
-			// sends "readyok" out-of-order sometimes. So we have to validate all info
-			// that's ever sent to us. Bah!
-
+			this.engine.sync();			// Disregard Leela output until "readyok" comes. Not foolproof, Lc0 sends stuff out of order.
 			this.leela_maybe_running = false;
 		}
 	};
@@ -382,7 +384,7 @@ function NewRenderer() {
 		}
 
 		this.engine.send(`position ${setup} moves ${this.node.history().join(" ")}`);
-		this.engine.sync();
+		this.engine.sync();				// Disregard Leela output until "readyok" comes. Not foolproof, Lc0 sends stuff out of order.
 
 		if (config.search_nodes === "infinite") {
 			this.engine.send("go infinite");
@@ -400,6 +402,7 @@ function NewRenderer() {
 		}
 
 		this.leela_maybe_running = true;
+		this.leela_position = this.node.get_board();
 	};
 
 	renderer.reset_leela_cache = function() {
