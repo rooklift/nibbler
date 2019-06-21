@@ -135,3 +135,32 @@ function New2DArray(width, height) {
 
 	return ret;
 }
+
+function CanvasCoords(x, y) {
+
+	// Given the x, y coordinates on the board (a8 is 0, 0)
+	// return an object with the canvas coordinates for
+	// the square, and also the centre. Also has rss.
+	//
+	//      x1,y1--------
+	//        |         |
+	//        |  cx,cy  |
+	//        |         |
+	//        --------x2,y2
+
+	let rss = config.board_size / 8;
+	let x1 = x * rss;
+	let y1 = y * rss;
+	let x2 = x1 + rss;
+	let y2 = y1 + rss;
+
+	if (config.flip) {
+		[x1, x2] = [(rss * 8) - x2, (rss * 8) - x1];
+		[y1, y2] = [(rss * 8) - y2, (rss * 8) - y1];
+	}
+
+	let cx = x1 + rss / 2;
+	let cy = y1 + rss / 2;
+
+	return {x1, y1, x2, y2, cx, cy, rss};
+};

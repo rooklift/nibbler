@@ -120,10 +120,15 @@ function input_loop() {
 	input_queue = [];
 
 	if (fn) {
-		try {
+
+		if (config.dev) {
 			fn();
-		} catch (err) {
-			console.log(err);
+		} else {
+			try {
+				fn();
+			} catch (err) {
+				console.log(err);
+			}
 		}
 	}
 

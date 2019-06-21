@@ -35,7 +35,7 @@ electron.app.on("ready", () => {
 		height: config.height,
 		backgroundColor: "#000000",
 		resizable: true,
-		show: false,
+		show: true,						// FIXME
 		useContentSize: true,
 		webPreferences: {
 			backgroundThrottling: false,
