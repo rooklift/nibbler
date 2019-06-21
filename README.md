@@ -23,16 +23,7 @@ Some Windows and Linux standalone releases are uploaded to the [Releases](https:
 
 Running Nibbler from source requires Electron, but has no other dependencies. If you have Electron installed (e.g. `npm install -g electron`) you can likely enter the nibbler directory, then do `electron .`
 
-For full functionality, the required Lc0 version is v0.21.0 or later, as we use Leela's `LogLiveStats` option, which was introduced in that version. 
-
-# About config options
-
-The `config.json` file can be edited. Most of the options are self-explanatory, except the following:
-
-* `bad_move_threshold` is the winrate loss (compared to best move) required to draw a move in the "bad" colour.
-* `terrible_move_threshold` is the same, except moves will be drawn in the "terrible" colour.
-* `node_display_threshold` controls how many visits a move must have (compared to best) to be shown at all.
-* `update_delay` controls how often Nibbler draws to the screen; lower is faster but more CPU intensive.
+*The required Lc0 version is v0.21.0 or later*. <!-- because we need `LogLiveStats` which was introduced in that version. -->
 
 # Using an lc0.config file
 
