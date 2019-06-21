@@ -16,6 +16,7 @@ function NewRenderer() {
 	renderer.mousey = null;								// Raw mouse Y on the document.
 	renderer.friendly_draws = New2DArray(8, 8);			// What pieces are drawn in boardfriends. Used to skip redraws.
 	renderer.active_square = null;						// Clicked square.
+	renderer.leela_maybe_running = false;				// Whether we last sent "go" or "stop" to Leela.
 
 	// --------------------------------------------------------------------------------------------
 
@@ -37,7 +38,7 @@ function NewRenderer() {
 		fenbox.value = this.node.fen();
 	};
 
-	renderer.set_versus = function(s) {
+	renderer.set_versus = function(s) {					// config.versus should not be directly set, call this function instead.
 		config.versus = s;
 		this.info_handler.must_draw_infobox();
 		if (this.leela_should_go()) {
@@ -343,21 +344,30 @@ function NewRenderer() {
 	};
 
 	renderer.halt = function() {
-		this.engine.send("stop");
-		this.engine.sync();
 
-		// In theory calling sync() should allow us to ignore Leela's response to the
-		// "stop" command and thus ensure we don't mistake that response to be info
-		// about a different position. In practice, it doesn't really work, as Lc0
-		// sends "readyok" out-of-order sometimes. So we have to validate all info
-		// that's ever sent to us. Bah!
+		if (this.leela_maybe_running) {
+
+			this.engine.send("stop");
+			this.engine.sync();
+
+			// In theory calling sync() should allow us to ignore Leela's response to the
+			// "stop" command and thus ensure we don't mistake that response to be info
+			// about a different position. In practice, it doesn't really work, as Lc0
+			// sends "readyok" out-of-order sometimes. So we have to validate all info
+			// that's ever sent to us. Bah!
+
+			this.leela_maybe_running = false;
+		}
 	};
 
 	renderer.go = function(new_game_flag) {
 
 		this.hide_pgn_chooser();
 
-		this.engine.send("stop");
+		if (this.leela_maybe_running) {
+			this.engine.send("stop");
+		}
+
 		if (new_game_flag) {
 			this.engine.send("ucinewgame");
 		}
@@ -388,6 +398,8 @@ function NewRenderer() {
 		} else {
 			this.engine.send("go infinite");
 		}
+
+		this.leela_maybe_running = true;
 	};
 
 	renderer.reset_leela_cache = function() {
@@ -406,7 +418,7 @@ function NewRenderer() {
 	// --------------------------------------------------------------------------------------------
 	// Visual stuff...
 
-	renderer.toggle_flip = function() {
+	renderer.toggle_flip = function() {				// config.flip should not be directly set, call this function instead.
 
 		let active_square = this.active_square;		// Save and clear this for now.
 		this.set_active_square(null);
