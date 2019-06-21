@@ -639,6 +639,10 @@ function NewRenderer() {
 
 	renderer.draw_friendlies_in_table = function() {
 
+		// Our strategy for avoiding redraws doesn't make so much sense any more,
+		// since only friendly pieces are drawn, moving from node to node in a
+		// normal way always means everything has to be drawn. Meh.
+
 		let position = this.node.get_board();
 
 		for (let x = 0; x < 8; x++) {
