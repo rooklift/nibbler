@@ -4,33 +4,24 @@ function NewRenderer() {
 
 	let renderer = Object.create(null);
 
-	renderer.movelist_handler = NewMovelistHander();	// Object that deals with the movelist at the bottom.
-	renderer.infobox_handler = NewInfoboxHandler();		// Object that deals with the infobox on the right.
-	renderer.info_table = NewInfoTable();				// Holds info about the engine evaluations.
+	renderer.movelist_handler = NewMovelistHander();	// Deals with the movelist at the bottom.
+	renderer.info_handler = NewInfoHandler();			// Handles info from the engine, and drawing it.
 	renderer.node = NewTree();							// Our current place in the current tree.
 	renderer.engine = NewEngine();						// Engine connection. Needs its setup() called.
 
 	// Various state we have to keep track of...
 
-	renderer.ever_received_info = false;				// When false, we write stderr log instead of move info.
-	renderer.stderr_log = "";							// Engine stderr is appended here. Cleared when infobox writes it.
 	renderer.pgn_choices = null;						// All games found when opening a PGN file.
 	renderer.mousex = null;								// Raw mouse X on the document.
 	renderer.mousey = null;								// Raw mouse Y on the document.
-	renderer.one_click_moves = New2DArray(8, 8);		// 2D array of [x][y] --> move string or null.
 	renderer.friendly_draws = New2DArray(8, 8);			// What pieces are drawn in boardfriends. Used to skip redraws.
-
-	// These things are options that should not be set directly, but rather set via the relevant method...
-
 	renderer.active_square = null;						// Clicked square.
-	renderer.versus = "";								// Colours that Leela is "playing".
-	renderer.flip = false;								// Flip.
 
 	// --------------------------------------------------------------------------------------------
 
 	renderer.position_changed = function(new_game_flag) {
 
-		this.info_table.clear();
+		this.info_handler.clear();
 
 		if (this.leela_should_go()) {
 			this.go(new_game_flag);
@@ -47,8 +38,8 @@ function NewRenderer() {
 	};
 
 	renderer.set_versus = function(s) {
-		this.versus = s;
-		this.infobox_handler.draw(this, true);			// just so "HALTED" / "YOUR MOVE" can be switched if needed.
+		config.versus = s;
+		this.info_handler.must_draw_infobox();
 		if (this.leela_should_go()) {
 			this.go();
 		} else {
@@ -93,7 +84,7 @@ function NewRenderer() {
 	};
 
 	renderer.play_info_index = function(n) {
-		let info_list = this.info_table.sorted();
+		let info_list = this.info_handler.sorted();
 		if (n >= 0 && n < info_list.length) {
 			this.move(info_list[n].move);
 		}
@@ -335,25 +326,20 @@ function NewRenderer() {
 	// Engine stuff...
 
 	renderer.leela_should_go = function() {
-		return this.versus.includes(this.node.get_board().active);
+		return config.versus.includes(this.node.get_board().active);
 	};
 
 	renderer.receive = function(s) {
 		if (s.startsWith("info")) {
-			this.ever_received_info = true;
-			this.info_table.receive(s, this.node.get_board());
+			this.info_handler.receive(s, this.node.get_board());
 		}
 		if (s.startsWith("error")) {
-			this.err_receive(s);
+			this.info_handler.err_receive(s);
 		}
 	};
 
 	renderer.err_receive = function(s) {
-		if (s.indexOf("WARNING") !== -1 || s.indexOf("error") !== -1) {
-			this.stderr_log += `<span class="red">${s}</span><br>`;
-		} else {
-			this.stderr_log += `${s}<br>`;
-		}
+		this.info_handler.err_receive(s);
 	};
 
 	renderer.halt = function() {
@@ -413,16 +399,12 @@ function NewRenderer() {
 	// --------------------------------------------------------------------------------------------
 	// Visual stuff...
 
-	renderer.square_size = function() {
-		return config.board_size / 8;
-	};
-
 	renderer.toggle_flip = function() {
 
 		let active_square = this.active_square;		// Save and clear this for now.
 		this.set_active_square(null);
 
-		this.flip = !this.flip;
+		config.flip = !config.flip;
 
 		// Set all the ids to a temporary value so they can always have unique ids...
 
@@ -505,16 +487,16 @@ function NewRenderer() {
 		mousex -= boardfriends.getBoundingClientRect().left;
 		mousey -= boardfriends.getBoundingClientRect().top;
 
-		let rss = this.square_size();
+		let css = config.square_size;
 
-		let boardx = Math.floor(mousex / rss);
-		let boardy = Math.floor(mousey / rss);
+		let boardx = Math.floor(mousex / css);
+		let boardy = Math.floor(mousey / css);
 
 		if (boardx < 0 || boardy < 0 || boardx > 7 || boardy > 7) {
 			return null;
 		}
 
-		if (this.flip) {
+		if (config.flip) {
 			boardx = 7 - boardx;
 			boardy = 7 - boardy;
 		}
@@ -537,7 +519,7 @@ function NewRenderer() {
 			return;
 		}
 
-		let ocm = this.one_click_moves[p.x][p.y];
+		let ocm = this.info_handler.one_click_moves[p.x][p.y];
 		let board = this.node.get_board();
 
 		if (!this.active_square && ocm) {
@@ -566,7 +548,7 @@ function NewRenderer() {
 
 	renderer.infobox_click = function(event) {
 
-		let moves = this.infobox_handler.moves_from_click(event);
+		let moves = this.info_handler.moves_from_click(event);
 
 		if (!moves || moves.length === 0) {
 			return;
@@ -650,39 +632,10 @@ function NewRenderer() {
 
 	renderer.toggle = function(option) {
 		config[option] = !config[option];
-		this.infobox_handler.last_table_version = null;			// Force fresh redraw of the infobox next draw.
+		this.info_handler.must_draw_infobox();
 	};
 
 	// --------------------------------------------------------------------------------------------
-
-	renderer.canvas_coords = function(x, y) {
-
-		// Given the x, y coordinates on the board (a8 is 0, 0)
-		// return an object with the canvas coordinates for
-		// the square, and also the centre. Also has rss.
-		//
-		//      x1,y1--------
-		//        |         |
-		//        |  cx,cy  |
-		//        |         |
-		//        --------x2,y2
-
-		let rss = this.square_size();
-		let x1 = x * rss;
-		let y1 = y * rss;
-		let x2 = x1 + rss;
-		let y2 = y1 + rss;
-
-		if (this.flip) {
-			[x1, x2] = [(rss * 8) - x2, (rss * 8) - x1];
-			[y1, y2] = [(rss * 8) - y2, (rss * 8) - y1];
-		}
-
-		let cx = x1 + rss / 2;
-		let cy = y1 + rss / 2;
-
-		return {x1, y1, x2, y2, cx, cy, rss};
-	};
 
 	renderer.draw_friendlies_in_table = function() {
 
@@ -715,154 +668,14 @@ function NewRenderer() {
 				}
 
 				let img = images[piece_to_draw].cloneNode();		// Note images are draggable by default.
-				img.width = this.square_size();
-				img.height = this.square_size();
+				img.width = config.square_size;
+				img.height = config.square_size;
 				img.addEventListener("dragstart", (event) => {
 					this.set_active_square(Point(x, y));
 					event.dataTransfer.setData("text", "overlay_" + s);
 				});
 				td.appendChild(img);
 			}
-		}
-	};
-
-	renderer.draw_arrows = function() {
-
-		context.lineWidth = 8;
-		context.textAlign = "center";
-		context.textBaseline = "middle";
-		context.font = config.board_font;
-
-		let arrows = [];
-		let heads = [];
-
-		for (let x = 0; x < 8; x++) {
-			for (let y = 0; y < 8; y++) {
-				this.one_click_moves[x][y] = null;
-			}
-		}
-
-		let info_list = this.info_table.sorted();
-
-		if (info_list.length > 0) {
-
-			let best_nodes = info_list[0].n;		// nodes for the best move in the list
-			
-			for (let i = 0; i < info_list.length; i++) {
-
-				if (info_list[i].n >= best_nodes * config.node_display_threshold && (config.node_display_threshold < 1 || i === 0)) {
-
-					let [x1, y1] = XY(info_list[i].move.slice(0, 2));
-					let [x2, y2] = XY(info_list[i].move.slice(2, 4));
-
-					let loss = 0;
-
-					if (typeof info_list[0].value === "number" && typeof info_list[i].value === "number") {
-						loss = info_list[0].value - info_list[i].value;
-					}
-
-					let colour;
-
-					if (i === 0) {
-						colour = config.best_colour;
-					} else if (loss > config.terrible_move_threshold) {
-						colour = config.terrible_colour;
-					} else if (loss > config.bad_move_threshold) {
-						colour = config.bad_colour;
-					} else {
-						colour = config.good_colour;
-					}
-
-					arrows.push({
-						colour: colour,
-						x1: x1,
-						y1: y1,
-						x2: x2,
-						y2: y2,
-						info: info_list[i]
-					});
-
-					if (!this.one_click_moves[x2][y2]) {
-						this.one_click_moves[x2][y2] = info_list[i].move;
-						heads.push({
-							colour: colour,
-							x2: x2,
-							y2: y2,
-							info: info_list[i]
-						});
-					}
-				}
-			}
-		}
-
-		// It looks best if the longest arrows are drawn underneath. Manhattan distance is good enough.
-		// For the sake of displaying the best pawn promotion (of the 4 possible), sort ties are broken
-		// by winrate, with lower winrates drawn first.
-
-		arrows.sort((a, b) => {
-			if (Math.abs(a.x2 - a.x1) + Math.abs(a.y2 - a.y1) < Math.abs(b.x2 - b.x1) + Math.abs(b.y2 - b.y1)) {
-				return 1;
-			}
-			if (Math.abs(a.x2 - a.x1) + Math.abs(a.y2 - a.y1) > Math.abs(b.x2 - b.x1) + Math.abs(b.y2 - b.y1)) {
-				return -1;
-			}
-			if (a.info.n < b.info.n) {
-				return -1;
-			}
-			if (a.info.n > b.info.n) {
-				return 1;
-			}
-			return 0;
-		});
-
-		for (let o of arrows) {
-			let cc1 = this.canvas_coords(o.x1, o.y1);
-			let cc2 = this.canvas_coords(o.x2, o.y2);
-			context.strokeStyle = o.colour;
-			context.fillStyle = o.colour;
-			context.beginPath();
-			context.moveTo(cc1.cx, cc1.cy);
-			context.lineTo(cc2.cx, cc2.cy);
-			context.stroke();
-		}
-
-		for (let o of heads) {
-			let cc2 = this.canvas_coords(o.x2, o.y2);
-			context.fillStyle = o.colour;
-			context.beginPath();
-			context.arc(cc2.cx, cc2.cy, 12, 0, 2 * Math.PI);
-			context.fill();
-			context.fillStyle = "black";
-
-			let s;
-
-			switch (config.arrowhead_type) {
-			case 0:
-				s = o.info.value_string(0);
-				break;
-			case 1:
-				let divisor = this.info_table.nodes > 0 ? this.info_table.nodes : 1;
-				s = (100 * o.info.n / divisor).toFixed(0);
-				break;
-			case 2:
-				let pstr = o.info.p;
-				if (pstr.endsWith("%")) {
-					pstr = pstr.slice(0, pstr.length - 1);
-				}
-				let p = parseFloat(pstr);
-				if (Number.isNaN(p) === false) {
-					s = p.toFixed(0);
-				}
-				break;
-			case 3:
-				s = o.info.multipv;
-				break;
-			default:
-				s = "!";
-				break;
-			}
-
-			context.fillText(s, cc2.cx, cc2.cy + 1);
 		}
 	};
 
@@ -881,25 +694,29 @@ function NewRenderer() {
 				}
 
 				let piece = board.state[x][y];
-				let cc = this.canvas_coords(x, y);
-				context.drawImage(images[piece], cc.x1, cc.y1, cc.rss, cc.rss);
+				let cc = CanvasCoords(x, y);
+				context.drawImage(images[piece], cc.x1, cc.y1, config.square_size, config.square_size);
 			}
 		}
 	};
 
 	renderer.draw = function() {
-		this.infobox_handler.draw(this);
+		this.info_handler.draw_infobox(this);
 		context.clearRect(0, 0, canvas.width, canvas.height);
 		this.draw_enemies_in_canvas();
-		this.draw_arrows();
+		this.info_handler.draw_arrows();
 		this.draw_friendlies_in_table();
 	};
 
 	renderer.draw_loop = function() {
-		try {
+		if (config.dev) {
 			this.draw();
-		} catch (err) {
-			console.log(err);
+		} else {
+			try {
+				this.draw();
+			} catch (err) {
+				console.log(err);
+			}
 		}
 		setTimeout(this.draw_loop.bind(this), config.update_delay);
 	};
