@@ -163,4 +163,4 @@ function CanvasCoords(x, y) {
 	let cy = y1 + css / 2;
 
 	return {x1, y1, x2, y2, cx, cy};
-};
+}

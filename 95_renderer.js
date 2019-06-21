@@ -732,8 +732,7 @@ function NewRenderer() {
 			this.mouse_point(),
 			this.active_square,
 			this.leela_should_go(),
-			this.node.get_board().active,
-		);
+			this.node.get_board().active);
 
 		context.clearRect(0, 0, canvas.width, canvas.height);
 
