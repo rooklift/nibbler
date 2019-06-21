@@ -29,7 +29,7 @@ const pgnchooser = document.getElementById("pgnchooser");
 // Globals..........................................................
 
 const context = canvas.getContext("2d");
-const decoder = new util.TextDecoder("utf8");
+const decoder = new util.TextDecoder("utf8");	// https://github.com/electron/electron/issues/18733
 
 let config = {};
 let tree_version = 0;
