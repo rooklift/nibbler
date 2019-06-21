@@ -38,5 +38,3 @@ try {
 }
 
 apply_defaults(config);		// Some tolerable default values for config are in the relevant module...
-
-config.board_size = Math.floor(config.board_size / 8) * 8;

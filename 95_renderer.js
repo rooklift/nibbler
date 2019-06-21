@@ -43,7 +43,7 @@ function NewRenderer() {
 
 	renderer.set_versus = function(s) {
 		this.versus = s;
-		this.info_handler.draw(this, true);				// just so "HALTED" / "YOUR MOVE" can be switched if needed.
+		this.info_handler.must_draw();
 		if (this.leela_should_go()) {
 			this.go();
 		} else {
@@ -640,7 +640,7 @@ function NewRenderer() {
 
 	renderer.toggle = function(option) {
 		config[option] = !config[option];
-		this.info_handler.last_drawn_version = null;			// Force fresh redraw of the infobox next draw.
+		this.info_handler.must_draw();
 	};
 
 	// --------------------------------------------------------------------------------------------

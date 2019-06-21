@@ -1,63 +1,5 @@
 "use strict";
 
-let info_prototype = {
-
-	nice_pv: function() {
-
-		// Human readable moves. Since there's no real guarantee that our
-		// moves list is legal, we legality check them. We at least know
-		// the initial move is legal, since it's checked on receipt.
-
-		if (this.nice_pv_cache) {
-			return Array.from(this.nice_pv_cache);
-		}
-
-		let tmp_board = this.board;
-
-		if (!this.pv || this.pv.length === 0) {
-			return [tmp_board.nice_string(this.move)];
-		}
-
-		let ret = [];
-
-		for (let move of this.pv) {
-			if (tmp_board.illegal(move) !== "") {
-				break;
-			}
-			ret.push(tmp_board.nice_string(move));
-			tmp_board = tmp_board.move(move);
-		}
-
-		this.nice_pv_cache = ret;
-		return Array.from(this.nice_pv_cache);
-	},
-
-	value_string: function(dp) {
-		if (typeof this.value !== "number") {
-			return "?";
-		}
-		let pc = Math.floor(this.value * 100 * 10) / 10;
-		return pc.toFixed(dp);
-	}
-};
-
-function new_info(board, move) {
-	let info = Object.create(info_prototype);
-	info.board = board;
-	info.cp = -999999;
-	info.d = null;
-	info.move = move;
-	info.multipv = 999;
-	info.n = 0;						// The draw logic will only ever draw things with non-negative n, so make this 0.
-	info.p = "?";
-	info.pv = [];
-	info.nice_pv_cache = null;
-	info.q = -1;
-	info.u = 0;						// Is this a sane default? I don't understand U at all.
-	info.value = null;
-	return info;
-}
-
 function NewCombinedInfoObject() {
 
 	let o = Object.create(null);
@@ -242,7 +184,11 @@ function NewCombinedInfoObject() {
 		return info_list;
 	};
 
-	o.draw = function(renderer, force) {
+	o.must_draw = function() {
+		this.last_drawn_version = null;
+	};
+
+	o.draw = function(renderer) {
 
 		if (!this.ever_received_info) {
 			if (this.stderr_log.length > 0) {
@@ -268,11 +214,9 @@ function NewCombinedInfoObject() {
 
 		// Maybe we can skip drawing the infobox, and just return...
 
-		if (!force) {
-			if (this.last_drawn_version === this.version) {
-				if (this.last_highlight_dest === highlight_dest) {
-					return;
-				}
+		if (this.last_drawn_version === this.version) {
+			if (this.last_highlight_dest === highlight_dest) {
+				return;
 			}
 		}
 
@@ -557,4 +501,64 @@ function NewCombinedInfoObject() {
 	};
 
 	return o;
+}
+
+// --------------------------------------------------------------------------------------------
+
+let info_prototype = {
+
+	nice_pv: function() {
+
+		// Human readable moves. Since there's no real guarantee that our
+		// moves list is legal, we legality check them. We at least know
+		// the initial move is legal, since it's checked on receipt.
+
+		if (this.nice_pv_cache) {
+			return Array.from(this.nice_pv_cache);
+		}
+
+		let tmp_board = this.board;
+
+		if (!this.pv || this.pv.length === 0) {
+			return [tmp_board.nice_string(this.move)];
+		}
+
+		let ret = [];
+
+		for (let move of this.pv) {
+			if (tmp_board.illegal(move) !== "") {
+				break;
+			}
+			ret.push(tmp_board.nice_string(move));
+			tmp_board = tmp_board.move(move);
+		}
+
+		this.nice_pv_cache = ret;
+		return Array.from(this.nice_pv_cache);
+	},
+
+	value_string: function(dp) {
+		if (typeof this.value !== "number") {
+			return "?";
+		}
+		let pc = Math.floor(this.value * 100 * 10) / 10;
+		return pc.toFixed(dp);
+	}
+};
+
+function new_info(board, move) {
+	let info = Object.create(info_prototype);
+	info.board = board;
+	info.cp = -999999;
+	info.d = null;
+	info.move = move;
+	info.multipv = 999;
+	info.n = 0;						// The draw logic will only ever draw things with non-negative n, so make this 0.
+	info.p = "?";
+	info.pv = [];
+	info.nice_pv_cache = null;
+	info.q = -1;
+	info.u = 0;						// Is this a sane default? I don't understand U at all.
+	info.value = null;
+	return info;
 }
