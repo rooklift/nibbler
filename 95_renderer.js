@@ -342,8 +342,8 @@ function NewRenderer() {
 	renderer.receive = function(s) {
 		if (s.startsWith("info")) {
 			if (this.leela_position === this.node.get_board()) {		// Note leela_position is a misleading name - it's the last position we
-				this.info_handler.receive(s, this.node.get_board());	// sent, but Leela may well be sending info about the previous position.
-			}															// So this condition only helps us in a few cases.
+				this.info_handler.receive(s, this.node.get_board());	// sent, but Leela could be sending info about the previous position.
+			}															// So the above condition doesn't prove the info is current.
 		}
 		if (s.startsWith("error")) {
 			this.info_handler.err_receive(s);
