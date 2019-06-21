@@ -344,6 +344,13 @@ function NewRenderer() {
 
 	renderer.halt = function() {
 		this.engine.send("stop");
+		this.engine.sync();
+
+		// In theory calling sync() should allow us to ignore Leela's response to the
+		// "stop" command and thus ensure we don't mistake that response to be info
+		// about a different position. In practice, it doesn't really work, as Lc0
+		// sends "readyok" out-of-order sometimes. So we have to validate all info
+		// that's ever sent to us. Bah!
 	};
 
 	renderer.go = function(new_game_flag) {
