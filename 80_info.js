@@ -2,30 +2,30 @@
 
 function NewInfoHandler() {
 
-	let o = Object.create(null);
+	let ih = Object.create(null);
 
-	o.table = Object.create(null);			// Map of move (e.g. "e2e4") --> info object.
-	o.version = 0;							// Incremented on any change.
-	o.nodes = 0;							// Stat sent by engine.
-	o.nps = 0;								// Stat sent by engine.
+	ih.table = Object.create(null);			// Map of move (e.g. "e2e4") --> info object.
+	ih.version = 0;							// Incremented on any change.
+	ih.nodes = 0;							// Stat sent by engine.
+	ih.nps = 0;								// Stat sent by engine.
 
-	o.ever_received_info = false;
-	o.stderr_log = "";
+	ih.ever_received_info = false;
+	ih.stderr_log = "";
 
-	o.one_click_moves = New2DArray(8, 8);	// Array of possible one-click moves. Updated by draw_arrows().
-	o.info_clickers = [];					// Elements in the infobox. Updated by draw_infobox().
+	ih.one_click_moves = New2DArray(8, 8);	// Array of possible one-click moves. Updated by draw_arrows().
+	ih.info_clickers = [];					// Elements in the infobox. Updated by draw_infobox().
 
-	o.last_highlight_dest = null;			// Used to skip redraws.
-	o.last_drawn_version = null;			// Used to skip redraws.
+	ih.last_highlight_dest = null;			// Used to skip redraws.
+	ih.last_drawn_version = null;			// Used to skip redraws.
 
-	o.clear = function() {
+	ih.clear = function() {
 		this.table = Object.create(null);
 		this.version++;
 		this.nodes = 0;
 		this.nps = 0;
 	};
 
-	o.err_receive = function(s) {
+	ih.err_receive = function(s) {
 		if (s.indexOf("WARNING") !== -1 || s.indexOf("error") !== -1) {
 			this.stderr_log += `<span class="red">${s}</span><br>`;
 		} else {
@@ -33,7 +33,7 @@ function NewInfoHandler() {
 		}
 	};
 
-	o.receive = function(s, board) {
+	ih.receive = function(s, board) {
 
 		// Although the renderer tries to avoid sending invalid moves by
 		// syncing with "isready" "readyok" an engine like Stockfish doesn't
@@ -141,7 +141,7 @@ function NewInfoHandler() {
 		}
 	};
 
-	o.sorted = function() {
+	ih.sorted = function() {
 
 		let info_list = [];
 
@@ -184,11 +184,11 @@ function NewInfoHandler() {
 		return info_list;
 	};
 
-	o.must_draw_infobox = function() {
+	ih.must_draw_infobox = function() {
 		this.last_drawn_version = null;
 	};
 
-	o.draw_infobox = function(renderer) {
+	ih.draw_infobox = function(renderer) {
 
 		if (!this.ever_received_info) {
 			if (this.stderr_log.length > 0) {
@@ -321,7 +321,7 @@ function NewInfoHandler() {
 		this.info_clickers = elements;						// We actually only need the move or its absence in each object. Meh.
 	};
 
-	o.moves_from_click = function(event) {
+	ih.moves_from_click = function(event) {
 
 		let n;
 
@@ -360,7 +360,7 @@ function NewInfoHandler() {
 		return move_list;
 	};
 
-	o.draw_arrows = function() {
+	ih.draw_arrows = function() {
 
 		context.lineWidth = 8;
 		context.textAlign = "center";
@@ -500,7 +500,7 @@ function NewInfoHandler() {
 		}
 	};
 
-	return o;
+	return ih;
 }
 
 // --------------------------------------------------------------------------------------------
