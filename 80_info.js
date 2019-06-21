@@ -465,7 +465,7 @@ function NewInfoHandler() {
 			context.fill();
 			context.fillStyle = "black";
 
-			let s;
+			let s = "?";
 
 			switch (config.arrowhead_type) {
 			case 0:
