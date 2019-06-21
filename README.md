@@ -23,7 +23,7 @@ Some Windows and Linux standalone releases are uploaded to the [Releases](https:
 
 Running Nibbler from source requires Electron, but has no other dependencies. If you have Electron installed (e.g. `npm install -g electron`) you can likely enter the nibbler directory, then do `electron .`
 
-For full functionality, the required Lc0 version is (I believe) v0.21.0 or later, as we use Leela's `LogLiveStats` option, which was introduced in that version. While it is also *possible* to use a different engine (e.g. Stockfish) we do send the `MultiPV 500` command, which seems to drastically reduce traditional engine strength.
+For full functionality, the required Lc0 version is v0.21.0 or later, as we use Leela's `LogLiveStats` option, which was introduced in that version. 
 
 # About config options
 
@@ -37,6 +37,12 @@ The `config.json` file can be edited. Most of the options are self-explanatory, 
 # Using an lc0.config file
 
 Some people configure Leela with an `lc0.config` file in their Lc0 directory. If you do this, you should probably delete the entire `options` object from your Nibbler config file.
+
+# About other engines
+
+Various people have inquired about the possiblity of using a conventional engine with Nibbler. While such an engine will at least run, there are various problems. Firstly, we rely on custom output which only Lc0 gives. Secondly, it's in the nature of conventional engines that they usually *cannot* give an accurate value for anything except their main line, due to alpha-beta pruning.
+
+One can effectively disable alpha-beta pruning by sending `MultiPV 500` (which we do) but this drastically weakens conventional engines.
 
 # Thanks
 
