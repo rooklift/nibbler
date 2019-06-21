@@ -34,6 +34,10 @@ The `config.json` file can be edited. Most of the options are self-explanatory, 
 * `node_display_threshold` controls how many visits a move must have (compared to best) to be shown at all.
 * `update_delay` controls how often Nibbler draws to the screen; lower is faster but more CPU intensive.
 
+# Using an lc0.config file
+
+Some people configure Leela with an `lc0.config` file in their Lc0 directory. If you do this, you should probably delete the entire `options` object from your Nibbler config file.
+
 # Thanks
 
 Thanks for helpful discussions and advice from borg, brinan, Chad, coolchess123, crem, Faroe22, jhorthos, jjosh, KillerDucky, kiudee, lealgo, liamlim, matoototo, mooskagh, Occyroexanthub, oscardssmith, Tilps, twoplan, and WCP.
