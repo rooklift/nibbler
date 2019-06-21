@@ -40,9 +40,10 @@ function NewEngine() {
 	// that comes until LZ sends "readyok" in response to our "isready". All output before
 	// that moment would refer to the obsolete position.
 	//
-	// While this seems to work correctly with Lc0, tests with Stockfish show that it
-	// definitely violates our assumptions and sends things out of order, hence the need
-	// for validity checking on incoming messages anyway.
+	// Sadly this doesn't always work, because engines - including Lc0 - often send readyok
+	// too early, i.e. before they've finished sending info about the position they were
+	// just analysing, meaning we have to always assume the info could be about the wrong
+	// position. Bah!
 
 	eng.sync = function() {
 		this.send("isready");
