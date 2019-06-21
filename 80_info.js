@@ -475,7 +475,7 @@ function NewInfoHandler() {
 				s = o.info.value_string(0);
 				break;
 			case 1:
-				let divisor = this.info_table.nodes > 0 ? this.info_table.nodes : 1;
+				let divisor = this.nodes > 0 ? this.nodes : 1;
 				s = (100 * o.info.n / divisor).toFixed(0);
 				break;
 			case 2:
