@@ -481,6 +481,7 @@ function menu_build() {
 							label: "Winrate",
 							type: "checkbox",
 							checked: config.arrowhead_type === 0,
+							accelerator: "F5",
 							click: () => {
 								set_checks(["Analysis", "Arrowhead type"], 0);
 								windows.send("main-window", "set", {
@@ -493,6 +494,7 @@ function menu_build() {
 							label: "Node %",
 							type: "checkbox",
 							checked: config.arrowhead_type === 1,
+							accelerator: "F6",
 							click: () => {
 								set_checks(["Analysis", "Arrowhead type"], 1);
 								windows.send("main-window", "set", {
@@ -505,6 +507,7 @@ function menu_build() {
 							label: "Policy",
 							type: "checkbox",
 							checked: config.arrowhead_type === 2,
+							accelerator: "F7",
 							click: () => {
 								set_checks(["Analysis", "Arrowhead type"], 2);
 								windows.send("main-window", "set", {
@@ -517,6 +520,7 @@ function menu_build() {
 							label: "MultiPV rank",
 							type: "checkbox",
 							checked: config.arrowhead_type === 3,
+							accelerator: "F8",
 							click: () => {
 								set_checks(["Analysis", "Arrowhead type"], 3);
 								windows.send("main-window", "set", {
