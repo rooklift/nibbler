@@ -44,6 +44,11 @@ function NewEngine() {
 	// too early, i.e. before they've finished sending info about the position they were
 	// just analysing, meaning we have to always assume the info could be about the wrong
 	// position. Bah!
+	//
+	// Observations:
+	//
+	// Leela seems to send readyok at roughly the correct time if it is after a position
+	// command. But not after a mere stop command.
 
 	eng.sync = function() {
 		this.send("isready");

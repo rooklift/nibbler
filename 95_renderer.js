@@ -357,7 +357,7 @@ function NewRenderer() {
 	renderer.halt = function() {
 		if (this.leela_maybe_running) {
 			this.engine.send("stop");
-			this.engine.sync();			// Disregard Leela output until "readyok" comes. Not foolproof, Lc0 sends stuff out of order.
+			// this.engine.sync();				// Not needed. If we're changing position, invalid data will be discarded by renderer.receive().
 			this.leela_maybe_running = false;
 		}
 	};
@@ -384,7 +384,7 @@ function NewRenderer() {
 		}
 
 		this.engine.send(`position ${setup} moves ${this.node.history().join(" ")}`);
-		this.engine.sync();				// Disregard Leela output until "readyok" comes. Not foolproof, Lc0 sends stuff out of order.
+		this.engine.sync();			// Disregard Leela output until "readyok" comes. Leela seems to time "readyok" correctly after "position" commands.
 
 		if (config.search_nodes === "infinite") {
 			this.engine.send("go infinite");
