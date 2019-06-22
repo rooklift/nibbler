@@ -149,6 +149,10 @@ function menu_build() {
 					label: "Save this game...",
 					accelerator: "CommandOrControl+S",
 					click: () => {
+						if (!config.save_enabled) {
+							save_not_enabled();
+							return;
+						}
 						let file = electron.dialog.showSaveDialog();
 						if (file && file.length > 0) {
 							windows.send("main-window", "call", {
@@ -807,6 +811,25 @@ Versus Mode causes Leela to evaluate one side of the position only. \
 You must still manually decide which of Leela's suggestions to play. \
 You can exit Versus Mode with the Go or Halt commands in the Analysis \
 menu.`;
+
+	alert(s);
+}
+
+function save_not_enabled() {
+
+	let s = `
+
+Save is disabled until you read the following warning.
+
+Nibbler does not append to PGN files, nor does it save collections. It \
+only writes the current game to file. When you try to save, you will \
+prompted with a standard "Save As" dialog. If you save to a file that \
+already exists, that file will be DESTROYED and REPLACED with a file \
+containing only the current game.
+
+This behaviour may change in future versions.
+
+To enable save, set "save_enabled" to true in the config file.`;
 
 	alert(s);
 }

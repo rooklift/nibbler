@@ -30,6 +30,7 @@ module.exports = (o) => {
 		"max_info_lines": 10,
 		"update_delay": 170,
 		"search_nodes": "infinite",
+		"save_enabled": false,
 		"logfile": null,
 		"log_info_lines": false
 	});
