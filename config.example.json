@@ -22,7 +22,7 @@
 	"terrible_colour": "#cc6666",
 	"bad_move_threshold": 0.02,
 	"terrible_move_threshold": 0.04,
-	"node_display_threshold": 0.02,
+	"uncertainty_cutoff": 0.1,
 	"arrowhead_type": 0,
 	"show_n": true,
 	"show_p": true,

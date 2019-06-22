@@ -279,7 +279,7 @@ function NewInfoHandler() {
 			}
 
 			if (config.show_u) {
-				extra_stat_strings.push(`U: ${info.u.toFixed(4)}`);
+				extra_stat_strings.push(`U: ${info.u.toFixed(3)}`);
 			}
 
 			if (extra_stat_strings.length > 0) {
@@ -376,12 +376,10 @@ function NewInfoHandler() {
 		let info_list = this.sorted();
 
 		if (info_list.length > 0) {
-
-			let best_nodes = info_list[0].n;		// nodes for the best move in the list
 			
 			for (let i = 0; i < info_list.length; i++) {
 
-				if (info_list[i].n >= best_nodes * config.node_display_threshold && (config.node_display_threshold < 1 || i === 0)) {
+				if (info_list[i].u < config.uncertainty_cutoff || i === 0) {
 
 					let [x1, y1] = XY(info_list[i].move.slice(0, 2));
 					let [x2, y2] = XY(info_list[i].move.slice(2, 4));
@@ -558,7 +556,7 @@ function new_info(board, move) {
 	info.pv = [];
 	info.nice_pv_cache = null;
 	info.q = -1;
-	info.u = 0;						// Is this a sane default? I don't understand U at all.
+	info.u = 2;						// Is this a sane default? Values above 1 are possible, so...
 	info.value = null;
 	return info;
 }

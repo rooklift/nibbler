@@ -535,86 +535,121 @@ function menu_build() {
 					label: "Moves to show",
 					submenu: [
 						{
-							label: "All",
+							label: "All moves",
 							type: "checkbox",
-							checked: config.node_display_threshold === 0,
+							checked: config.uncertainty_cutoff === 999,				// Semi-special value we use
 							click: () => {
 								set_checks(["Analysis", "Moves to show"], 0);
 								windows.send("main-window", "set", {
-									key: "node_display_threshold",
-									value: 0
+									key: "uncertainty_cutoff",
+									value: 999
 								});
 							}
 						},
 						{
-							label: "Very many",
+							label: "U < 0.2",
 							type: "checkbox",
-							checked: config.node_display_threshold === 0.005,
+							checked: config.uncertainty_cutoff === 0.2,
 							click: () => {
 								set_checks(["Analysis", "Moves to show"], 1);
 								windows.send("main-window", "set", {
-									key: "node_display_threshold",
-									value: 0.005
+									key: "uncertainty_cutoff",
+									value: 0.2
 								});
 							}
 						},
 						{
-							label: "Many",
+							label: "U < 0.175",
 							type: "checkbox",
-							checked: config.node_display_threshold === 0.01,
+							checked: config.uncertainty_cutoff === 0.15,
 							click: () => {
 								set_checks(["Analysis", "Moves to show"], 2);
 								windows.send("main-window", "set", {
-									key: "node_display_threshold",
-									value: 0.01
+									key: "uncertainty_cutoff",
+									value: 0.175
 								});
 							}
 						},
 						{
-							label: "Some",
+							label: "U < 0.15",
 							type: "checkbox",
-							checked: config.node_display_threshold === 0.02,
+							checked: config.uncertainty_cutoff === 0.15,
 							click: () => {
 								set_checks(["Analysis", "Moves to show"], 3);
 								windows.send("main-window", "set", {
-									key: "node_display_threshold",
-									value: 0.02
+									key: "uncertainty_cutoff",
+									value: 0.15
 								});
 							}
 						},
 						{
-							label: "Few",
+							label: "U < 0.125",
 							type: "checkbox",
-							checked: config.node_display_threshold === 0.05,
+							checked: config.uncertainty_cutoff === 0.15,
 							click: () => {
 								set_checks(["Analysis", "Moves to show"], 4);
 								windows.send("main-window", "set", {
-									key: "node_display_threshold",
+									key: "uncertainty_cutoff",
+									value: 0.125
+								});
+							}
+						},
+						{
+							label: "U < 0.1",
+							type: "checkbox",
+							checked: config.uncertainty_cutoff === 0.1,
+							click: () => {
+								set_checks(["Analysis", "Moves to show"], 5);
+								windows.send("main-window", "set", {
+									key: "uncertainty_cutoff",
+									value: 0.1
+								});
+							}
+						},{
+							label: "U < 0.075",
+							type: "checkbox",
+							checked: config.uncertainty_cutoff === 0.15,
+							click: () => {
+								set_checks(["Analysis", "Moves to show"], 6);
+								windows.send("main-window", "set", {
+									key: "uncertainty_cutoff",
+									value: 0.075
+								});
+							}
+						},
+						{
+							label: "U < 0.05",
+							type: "checkbox",
+							checked: config.uncertainty_cutoff === 0.05,
+							click: () => {
+								set_checks(["Analysis", "Moves to show"], 7);
+								windows.send("main-window", "set", {
+									key: "uncertainty_cutoff",
 									value: 0.05
 								});
 							}
 						},
 						{
-							label: "Very few",
+							label: "U < 0.025",
 							type: "checkbox",
-							checked: config.node_display_threshold === 0.1,
+							checked: config.uncertainty_cutoff === 0.05,
 							click: () => {
-								set_checks(["Analysis", "Moves to show"], 5);
+								set_checks(["Analysis", "Moves to show"], 8);
 								windows.send("main-window", "set", {
-									key: "node_display_threshold",
-									value: 0.1
+									key: "uncertainty_cutoff",
+									value: 0.025
 								});
 							}
 						},
 						{
 							label: "Best move only",
 							type: "checkbox",
-							checked: config.node_display_threshold === 1,
+							checked: config.uncertainty_cutoff === -999,				// Semi-special value we use
 							click: () => {
-								set_checks(["Analysis", "Moves to show"], 6);
+								set_checks(["Analysis", "Moves to show"], 9);
 								windows.send("main-window", "set", {
-									key: "node_display_threshold",
-									value: 1
+									key: "uncertainty_cutoff",
+									value: -999
 								});
 							}
 						},
@@ -749,12 +784,10 @@ function about_move_display() {
 
 	let s = `
 
-Nibbler decides whether to display a move based on how many visits it \
-has, compared to the best move. Exactly how many moves will be \
-displayed depends on the position; positions with more viable moves \
-will display more. Sometimes different settings will display the same \
-number of moves. Note that displayed winrates are VERY DUBIOUS for \
-moves with few visits.`;
+Leela sends a statistic U showing how uncertain it is about its evaluation
+of each move. Nibbler decides which moves to show on the board using this
+statistic. Often the U statistic remains high for most moves, when Leela
+thinks the right move is "obvious".`;
 
 	alert(s);
 }

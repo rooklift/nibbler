@@ -22,7 +22,7 @@ module.exports = (o) => {
 		"terrible_colour": "#cc6666",
 		"bad_move_threshold": 0.02,
 		"terrible_move_threshold": 0.04,
-		"node_display_threshold": 0.02,
+		"uncertainty_cutoff": 0.1,
 		"arrowhead_type": 0,
 		"show_n": true,
 		"show_p": true,
@@ -41,4 +41,9 @@ module.exports = (o) => {
 
 	o.flip = false;
 	o.versus = "";
+
+	// Uncertainty can, counterintuitively, be above 1 or below 0. Adjust for the user's likely intention...
+
+	if (o.uncertainty_cutoff >= 1) o.uncertainty_cutoff = 999;
+	if (o.uncertainty_cutoff <= 0) o.uncertainty_cutoff = -999;
 }
