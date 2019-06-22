@@ -8,7 +8,6 @@ const fs = require("fs");
 const path = require("path");
 const windows = require("./modules/windows");
 
-let renderer_ready = false;
 let menu;
 let config = {};
 
@@ -31,7 +30,7 @@ try {
 apply_defaults(config);
 
 electron.app.on("ready", () => {
-	windows.new("main-window", path.join(__dirname, "nibbler.html"), {
+	let win = windows.new("main-window", path.join(__dirname, "nibbler.html"), {
 		width: config.width,
 		height: config.height,
 		backgroundColor: "#000000",
@@ -43,6 +42,10 @@ electron.app.on("ready", () => {
 			nodeIntegration: true
 		}
 	});
+	win.once("ready-to-show", () => {		// Thankfully, fires even after exception during renderer startup.
+		win.show();
+		win.focus();
+	});
 	menu_build();
 });
 
@@ -50,18 +53,7 @@ electron.app.on("window-all-closed", () => {
 	electron.app.quit();
 });
 
-electron.ipcMain.on("renderer_ready", () => {
-
-	if (renderer_ready) {
-		return;
-	} else {
-		renderer_ready = true;
-	}
-
-	// Show the window...
-
-	windows.show("main-window");
-	windows.focus("main-window");
+electron.ipcMain.once("renderer_ready", () => {
 
 	// Open a file via command line. We must wait until the renderer has properly loaded before we do this.
 	// Also some awkwardness around the different ways Nibbler can be started, meaning the number of arguments
