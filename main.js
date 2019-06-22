@@ -149,7 +149,7 @@ function menu_build() {
 					label: "Save this game...",
 					accelerator: "CommandOrControl+S",
 					click: () => {
-						if (!config.save_enabled) {
+						if (config.save_enabled !== true) {		// Note: exact test for true, not just any truthy value
 							save_not_enabled();
 							return;
 						}
@@ -822,7 +822,7 @@ function save_not_enabled() {
 Save is disabled until you read the following warning.
 
 Nibbler does not append to PGN files, nor does it save collections. It \
-only writes the current game to file. When you try to save, you will \
+only writes the current game to file. When you try to save, you will be \
 prompted with a standard "Save As" dialog. If you save to a file that \
 already exists, that file will be DESTROYED and REPLACED with a file \
 containing only the current game.
