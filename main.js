@@ -561,7 +561,7 @@ function menu_build() {
 						{
 							label: "U < 0.175",
 							type: "checkbox",
-							checked: config.uncertainty_cutoff === 0.15,
+							checked: config.uncertainty_cutoff === 0.175,
 							click: () => {
 								set_checks(["Analysis", "Moves to show"], 2);
 								windows.send("main-window", "set", {
@@ -585,7 +585,7 @@ function menu_build() {
 						{
 							label: "U < 0.125",
 							type: "checkbox",
-							checked: config.uncertainty_cutoff === 0.15,
+							checked: config.uncertainty_cutoff === 0.125,
 							click: () => {
 								set_checks(["Analysis", "Moves to show"], 4);
 								windows.send("main-window", "set", {
@@ -608,7 +608,7 @@ function menu_build() {
 						},{
 							label: "U < 0.075",
 							type: "checkbox",
-							checked: config.uncertainty_cutoff === 0.15,
+							checked: config.uncertainty_cutoff === 0.075,
 							click: () => {
 								set_checks(["Analysis", "Moves to show"], 6);
 								windows.send("main-window", "set", {
@@ -632,7 +632,7 @@ function menu_build() {
 						{
 							label: "U < 0.025",
 							type: "checkbox",
-							checked: config.uncertainty_cutoff === 0.05,
+							checked: config.uncertainty_cutoff === 0.025,
 							click: () => {
 								set_checks(["Analysis", "Moves to show"], 8);
 								windows.send("main-window", "set", {
