@@ -196,6 +196,10 @@ function NewRenderer() {
 	// --------------------------------------------------------------------------------------------
 	// PGN...
 
+	renderer.pgn_to_clipboard = function() {
+		PGNToClipboard(this.node);
+	}
+
 	renderer.save = function(filename) {
 		SavePGN(filename, this.node);
 	};

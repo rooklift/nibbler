@@ -37,6 +37,6 @@ One can effectively disable alpha-beta pruning by sending `MultiPV 500` (which w
 
 # Thanks
 
-Thanks for helpful discussions and advice from borg, brinan, Chad, coolchess123, crem, Faroe22, jhorthos, jjosh, KillerDucky, kiudee, lealgo, liamlim, matoototo, mooskagh, Occyroexanthub, oscardssmith, Ted Summers, Tilps, twoplan, and WCP.
+Thanks for helpful discussions and advice from borg, brinan, Chad, ChiefPushesWood, coolchess123, crem, Faroe22, jhorthos, jjosh, KillerDucky, kiudee, lealgo, liamlim, matoototo, mooskagh, Occyroexanthub, oscardssmith, Ted Summers, Tilps, twoplan, WCP, and anyone I've missed.
 
 The piece images were taken from the TCEC website. After discussion with Aloril, we're not entirely sure where they originate - if they're yours and you object, get in touch.

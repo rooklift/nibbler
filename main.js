@@ -171,6 +171,13 @@ function menu_build() {
 					}
 				},
 				{
+					label: "Write PGN to clipboard",
+					accelerator: "CommandOrControl+K",
+					click: () => {
+						windows.send("main-window", "call", "pgn_to_clipboard");
+					}
+				},
+				{
 					type: "separator"
 				},
 					{

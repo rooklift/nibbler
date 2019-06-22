@@ -6,6 +6,7 @@ const alert = require("./modules/alert");
 const apply_defaults = require("./modules/apply_defaults");
 const assign_without_overwrite = require("./modules/utils").assign_without_overwrite;
 const child_process = require("child_process");
+const clipboard = require("electron").clipboard;
 const debork_json = require("./modules/debork_json");
 const fs = require("fs");
 const ipcRenderer = require("electron").ipcRenderer;

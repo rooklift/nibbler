@@ -298,6 +298,13 @@ function SavePGN(filename, node) {
 	fs.writeFileSync(filename, final);
 }
 
+function PGNToClipboard(node) {
+	let connector = new_string_node_connector();
+	node = node.get_root();
+	write_tree(node, connector, false, true);
+	clipboard.writeText(connector.tokens.join(" "));
+}
+
 function make_movetext(node) {
 
 	let connector = new_string_node_connector();
