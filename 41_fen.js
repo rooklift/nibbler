@@ -63,6 +63,29 @@ function LoadFEN(fen) {
 	if (tokens[2].includes("k")) ret.castling += "k";
 	if (tokens[2].includes("q")) ret.castling += "q";
 
+	// Tolerate bad castling rights, but fix them...
+
+	if (ret.castling.includes("K")) {
+		if (ret.state[4][7] !== "K" || ret.state[7][7] !== "R") {
+			ret.castling = ReplaceAll(ret.castling, "K", "");
+		}
+	}
+	if (ret.castling.includes("Q")) {
+		if (ret.state[4][7] !== "K" || ret.state[0][7] !== "R") {
+			ret.castling = ReplaceAll(ret.castling, "Q", "");
+		}
+	}
+	if (ret.castling.includes("k")) {
+		if (ret.state[4][0] !== "k" || ret.state[7][0] !== "r") {
+			ret.castling = ReplaceAll(ret.castling, "k", "");
+		}
+	}
+	if (ret.castling.includes("q")) {
+		if (ret.state[4][0] !== "k" || ret.state[0][0] !== "r") {
+			ret.castling = ReplaceAll(ret.castling, "q", "");
+		}
+	}
+
 	tokens[3] = tokens[3].toLowerCase();
 	ret.enpassant = Point(tokens[3]);
 	
