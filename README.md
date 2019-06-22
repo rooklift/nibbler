@@ -27,7 +27,7 @@ Running Nibbler from source requires Electron, but has no other dependencies. If
 
 # Using an lc0.config file
 
-Some people configure Leela with an `lc0.config` file in their Lc0 directory. If you do this, you should probably delete the entire `options` object from your Nibbler config file, as it is redundant.
+Some people configure Leela with an `lc0.config` file in their Lc0 directory. If you do this, you should probably delete the `options` object from your Nibbler config file, as it is redundant.
 
 # About other engines
 
