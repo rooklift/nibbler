@@ -49,6 +49,10 @@ function NewMovelistHander() {
 
 	handler.draw = function(node) {
 
+		if (!node) {
+			return;
+		}
+
 		let end = node.get_end();
 
 		if (end === this.line_end && this.connections_version === tree_version) {
@@ -169,6 +173,27 @@ function NewMovelistHander() {
 		while(foo) {
 			delete foo.current_line;
 			foo = foo.parent;
+		}
+	};
+
+	handler.redraw_node = function(node) {
+
+		// For when some node in the tree has had its stats changed and we want to redraw just it.
+
+		if (!this.connections) {
+			return;
+		}
+
+		for (let n = 0; n < this.connections.length; n++) {
+			if (this.connections.nodes[n] === node) {
+				let span = document.getElementById(`movelist_${n}`);
+				if (span) {
+					let space = this.connections.tokens[n + 1] === ")" ? "" : " ";
+					let text = `${node.token()}${space}`;
+					span.innerHTML = text;
+					break;
+				}
+			}
 		}
 	};
 

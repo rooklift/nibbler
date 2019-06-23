@@ -25,3 +25,15 @@ containing only the current game.
 This behaviour may change in future versions.
 
 To enable save, set "save_enabled" to true in the config file.`;
+
+exports.about_serious_analysis = `
+Serious Analysis Mode has two effects.
+
+Firstly, clicking on a move in the infobox on the right will add the \
+relevant moves to the tree, but will not actually take you there; i.e. \
+we will continue analysing the current position.
+
+Secondly, clicking on a move in the infobox will cause some statistics \
+about the first move in the line to be displayed in the tree.
+
+This was a request from a hardcore correspondence player.`;

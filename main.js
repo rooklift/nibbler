@@ -703,16 +703,25 @@ function menu_build() {
 					]
 				},
 				{
-					label: "Infobox clicks insert variation",
+					type: "separator"
+				},
+				{
+					label: "Serious Analysis Mode",
 					type: "checkbox",
-					checked: config.insert_variation,
+					checked: config.serious_analysis_mode,
 					click: () => {
 						win.webContents.send("call", {
 							fn: "toggle",
-							args: ["insert_variation"],
+							args: ["serious_analysis_mode"],
 						});
 					}
 				},
+				{
+					label: "About Serious Analysis Mode",
+					click: () => {
+						alert(messages.about_serious_analysis);
+					}
+				}
 			]
 		},
 		{

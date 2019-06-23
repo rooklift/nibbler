@@ -126,11 +126,19 @@ const node_prototype = {
 
 		// In theory we should also write the number if the parent had siblings. Meh.
 
+		let s = "";
+
 		if (need_number_string) {
-			return this.parent.get_board().next_number_string() + " " + this.nice_move();
-		} else {
-			return this.nice_move();
+			s += this.parent.get_board().next_number_string() + " ";
 		}
+		
+		s += this.nice_move();
+
+		if (this.stats) {
+			s += " {" + this.stats + "}";
+		}
+
+		return s;
 	},
 
 	detach: function() {

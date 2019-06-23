@@ -593,18 +593,41 @@ function NewRenderer() {
 		// Add the moves to the tree...
 
 		let node = this.node;
+		let first_node = null;		// The first created (or found) node, i.e. the one that actually has the relevant move.
 
 		for (let move of moves) {
 			node = node.make_move(move);
+			if (!first_node) {
+				first_node = node;
+			}
 		}
 
-		// insert_variation controls whether we travel down to the new node, or stay where we were.
+		// For the first move, save a stats string into its node, iff we're in serious analysis mode.
 
-		if (!config.insert_variation) {
+		if (moves.length > 0 && first_node && config.serious_analysis_mode) {
+			let info = this.info_handler.table[moves[0]];
+			if (info) {
+				let divisor = this.info_handler.nodes > 0 ? this.info_handler.nodes : 1;
+				let nstr = (100 * info.n / divisor).toFixed(2);
+				let s = `WR: ${info.value_string(1)}%, N: ${nstr}% of ${this.info_handler.nodes}`;
+				first_node.stats = s;
+			}
+		}
+
+		// serious_analysis_mode also controls whether we travel down to the new node, or stay where we were.
+
+		if (!config.serious_analysis_mode) {
 			this.node = node;
 			this.position_changed();
 		} else {
 			this.movelist_handler.draw(this.node);
+		}
+
+		// In the event we added no nodes to the tree, the movelist_handler will not have redrawn the stats
+		// on the first_node, so tell it to redraw that node...
+
+		if (first_node && first_node.stats) {
+			this.movelist_handler.redraw_node(first_node);
 		}
 	};
 
