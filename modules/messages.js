@@ -1,7 +1,5 @@
 "use strict";
 
-const alert = require("./alert");
-
 
 exports.about_move_display = `
 Leela sends a statistic U showing how uncertain it is about its evaluation
