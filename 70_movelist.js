@@ -49,6 +49,8 @@ function NewMovelistHander() {
 
 	handler.draw = function(node) {
 
+		// Note that the node passed as an argument is the node to highlight.
+
 		if (!node) {
 			return;
 		}
@@ -180,7 +182,7 @@ function NewMovelistHander() {
 
 		// For when some node in the tree has had its stats changed and we want to redraw just it.
 
-		if (!this.connections) {
+		if (!this.connections || !node) {
 			return;
 		}
 
