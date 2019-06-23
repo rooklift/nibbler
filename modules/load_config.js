@@ -2,6 +2,7 @@
 
 const fs = require("fs");
 const path = require("path");
+const running_as_electron = require("./running_as_electron");
 
 function apply_defaults(o) {
 
@@ -62,18 +63,10 @@ function assign_without_overwrite(target, source) {
 }
 
 function get_main_folder() {
-
-	// Return the dir one level above this .js file if we're being run from electron.exe
-	if (path.basename(process.argv[0]).toLowerCase() === "electron" ||
-		path.basename(process.argv[0]).toLowerCase() === "electron framework" ||
-		path.basename(process.argv[0]).toLowerCase() === "electron helper" ||
-		path.basename(process.argv[0]).toLowerCase() === "electron.exe") {
-
-		return path.join(__dirname, "..");
+	if (running_as_electron()) {
+		return path.join(__dirname, "..");		// Return the dir one level above this .js file
 	}
-
-	// Return the location of Nibbler.exe
-	return path.dirname(process.argv[0]);
+	return path.dirname(process.argv[0]);		// Return the location of Nibbler.exe
 }
 
 function replace_all(s, search, replace) {

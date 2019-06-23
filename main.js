@@ -5,6 +5,7 @@ const electron = require("electron");
 const load_config = require("./modules/load_config");
 const messages = require("./modules/messages");
 const path = require("path");
+const running_as_electron = require("./modules/running_as_electron");
 const url = require("url");
 
 let config = load_config();			// Do this first, it's a needed global.
@@ -59,15 +60,10 @@ electron.ipcMain.once("renderer_ready", () => {
 
 	let filename = "";
 
-	if (path.basename(process.argv[0]).toLowerCase() === "electron" ||
-		path.basename(process.argv[0]).toLowerCase() === "electron framework" ||
-		path.basename(process.argv[0]).toLowerCase() === "electron helper" ||
-		path.basename(process.argv[0]).toLowerCase() === "electron.exe") {
-
+	if (running_as_electron()) {
 		if (process.argv.length > 2) {
 			filename = process.argv[process.argv.length - 1];
 		}
-
 	} else {
 		if (process.argv.length > 1) {
 			filename = process.argv[process.argv.length - 1];
