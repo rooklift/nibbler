@@ -34,16 +34,14 @@ function NewRenderer() {
 		this.info_handler.clear();
 
 		if (this.leela_should_go()) {
-			this.go(new_game_flag);
+			this.__go(new_game_flag);
 		} else {
-			this.halt();
+			this.__halt();
 		}
 
 		this.escape();
-
-		this.movelist_handler.draw(this.node);
 		this.draw();
-
+		this.movelist_handler.draw(this.node);
 		fenbox.value = this.node.fen();
 	};
 
@@ -51,9 +49,9 @@ function NewRenderer() {
 		config.versus = s;
 		this.info_handler.must_draw_infobox();
 		if (this.leela_should_go()) {
-			this.go();
+			this.__go();
 		} else {
-			this.halt();
+			this.__halt();
 		}
 	};
 
@@ -358,7 +356,9 @@ function NewRenderer() {
 		this.info_handler.err_receive(s);
 	};
 
-	renderer.halt = function() {
+	// The go and halt methods should generally not be called directly.
+
+	renderer.__halt = function() {
 		if (this.leela_maybe_running) {
 			this.engine.send("stop");
 			// this.engine.sync();				// Not needed. If we're changing position, invalid data will be discarded by renderer.receive().
@@ -366,7 +366,7 @@ function NewRenderer() {
 		}
 	};
 
-	renderer.go = function(new_game_flag) {
+	renderer.__go = function(new_game_flag) {
 
 		this.hide_pgn_chooser();
 
@@ -411,7 +411,7 @@ function NewRenderer() {
 
 	renderer.reset_leela_cache = function() {
 		if (this.leela_should_go()) {
-			this.go(true);
+			this.__go(true);
 		} else {
 			this.engine.send("ucinewgame");
 		}
