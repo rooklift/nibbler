@@ -576,7 +576,7 @@ function NewRenderer() {
 
 		let moves = this.info_handler.moves_from_click(event);
 
-		if (!moves || moves.length === 0) {
+		if (!moves || moves.length === 0) {			// We do assume length > 0 below.
 			return;
 		}
 
@@ -593,42 +593,33 @@ function NewRenderer() {
 		// Add the moves to the tree...
 
 		let node = this.node;
-		let first_node = null;		// The first created (or found) node, i.e. the one that actually has the relevant move.
-
 		for (let move of moves) {
 			node = node.make_move(move);
-			if (!first_node) {
-				first_node = node;
-			}
 		}
 
-		// For the first move, save a stats string into its node, iff we're in serious analysis mode.
-
-		if (moves.length > 0 && first_node && config.serious_analysis_mode) {
-			let info = this.info_handler.table[moves[0]];		// info for the first move in our clicked line.
-			if (info) {
-				let divisor = this.info_handler.nodes > 0 ? this.info_handler.nodes : 1;
-				let nstr = (100 * info.n / divisor).toFixed(2);
-				let s = `WR: ${info.value_string(1)}%, N: ${nstr}% of ${this.info_handler.nodes}`;
-				first_node.stats = s;
-			}
-		}
-
-		// serious_analysis_mode also controls whether we travel down to the new node, or stay where we were.
+		// Maybe we're done...
 
 		if (!config.serious_analysis_mode) {
 			this.node = node;
 			this.position_changed();
-		} else {
-			this.movelist_handler.draw(this.node);
+			return;
 		}
 
-		// In the event we added no nodes to the tree, the movelist_handler will not have redrawn the stats
-		// on the first_node, so tell it to redraw that node...
+		// OK, so we're in Serious Analysis Mode (tm). We don't change this.node.
+		// But we do save some statistics into the node of the first move made...
 
-		if (first_node && first_node.stats) {
-			this.movelist_handler.redraw_node(first_node);
+		let stats_node = this.node.make_move(moves[0]);
+		let info = this.info_handler.table[moves[0]];		// info for the first move in our clicked line.
+
+		if (info) {
+			let divisor = this.info_handler.nodes > 0 ? this.info_handler.nodes : 1;
+			let nstr = (100 * info.n / divisor).toFixed(2);
+			let s = `WR: ${info.value_string(1)}%, N: ${nstr}% of ${this.info_handler.nodes}`;
+			stats_node.stats = s;
 		}
+
+		this.movelist_handler.draw(this.node);				// Draw the tree with the current node (this.node) as highlight.
+		this.movelist_handler.redraw_node(stats_node);		// Redraw the stats node, which might not have been drawn (if draw was lazy).
 	};
 
 	renderer.movelist_click = function(event) {
