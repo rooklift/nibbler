@@ -5,32 +5,17 @@ const apply_defaults = require("./modules/apply_defaults");
 const debork_json = require("./modules/debork_json");
 const electron = require("electron");
 const fs = require("fs");
+const messages = require("./modules/messages");
 const path = require("path");
-const windows = require("./modules/windows");
+const url = require("url");
 
-let menu;
-let config = {};
-
-try {
-	let config_filename = path.join(get_main_folder(), "config.json");
-	let config_example_filename = path.join(get_main_folder(), "config.example.json");
-
-	if (fs.existsSync(config_filename)) {
-		config = JSON.parse(debork_json(fs.readFileSync(config_filename, "utf8")));
-	} else if (fs.existsSync(config_example_filename)) {
-		config = JSON.parse(debork_json(fs.readFileSync(config_example_filename, "utf8")));
-	} else {
-		console.log("Main process couldn't find config file. Looked at:");
-		console.log("   " + config_filename);
-	}
-} catch (err) {
-	console.log("Main process couldn't parse config file.")
-}
-
-apply_defaults(config);
+let config = load_config();		// Do this first, it's a needed global.
+let menu = menu_build();
+let win;
 
 electron.app.on("ready", () => {
-	let win = windows.new("main-window", path.join(__dirname, "nibbler.html"), {
+
+	win = new electron.BrowserWindow({
 		width: config.width,
 		height: config.height,
 		backgroundColor: "#000000",
@@ -39,14 +24,25 @@ electron.app.on("ready", () => {
 		useContentSize: true,
 		webPreferences: {
 			backgroundThrottling: false,
-			nodeIntegration: true
+			nodeIntegration: true,
+			zoomFactor: 1 / electron.screen.getPrimaryDisplay().scaleFactor
 		}
 	});
+
+	let pagepath = path.join(__dirname, "nibbler.html");
+
+	win.loadURL(url.format({
+		protocol: "file:",
+		pathname: pagepath,
+		slashes: true
+	}));
+
 	win.once("ready-to-show", () => {		// Thankfully, fires even after exception during renderer startup.
 		win.show();
 		win.focus();
 	});
-	menu_build();
+
+	electron.Menu.setApplicationMenu(menu);
 });
 
 electron.app.on("window-all-closed", () => {
@@ -77,7 +73,7 @@ electron.ipcMain.once("renderer_ready", () => {
 	}
 
 	if (filename !== "") {
-		windows.send("main-window", "call", {
+		win.webContents.send("call", {
 			fn: "open",
 			args: [filename]
 		});
@@ -102,7 +98,7 @@ function menu_build() {
 					label: "New Game",
 					accelerator: "CommandOrControl+N",
 					click: () => {
-						windows.send("main-window", "call", "new_game");
+						win.webContents.send("call", "new_game");
 					}
 				},
 				{
@@ -116,7 +112,7 @@ function menu_build() {
 							properties: ["openFile"]
 						});
 						if (files && files.length > 0) {
-							windows.send("main-window", "call", {
+							win.webContents.send("call", {
 								fn: "open",
 								args: [files[0]]
 							});
@@ -130,7 +126,7 @@ function menu_build() {
 							properties: ["openFile"]
 						});
 						if (files && files.length > 0) {
-							windows.send("main-window", "call", {
+							win.webContents.send("call", {
 								fn: "validate_pgn",
 								args: [files[0]]
 							});
@@ -142,12 +138,12 @@ function menu_build() {
 					accelerator: "CommandOrControl+S",
 					click: () => {
 						if (config.save_enabled !== true) {		// Note: exact test for true, not just any truthy value
-							save_not_enabled();
+							alert(messages.save_not_enabled);
 							return;
 						}
 						let file = electron.dialog.showSaveDialog();
 						if (file && file.length > 0) {
-							windows.send("main-window", "call", {
+							win.webContents.send("call", {
 								fn: "save",
 								args: [file]
 							});
@@ -160,7 +156,7 @@ function menu_build() {
 				{
 					label: "Load PGN from clipboard",
 					click: () => {
-						windows.send("main-window", "call", {
+						win.webContents.send("call", {
 							fn: "load_pgn_from_string",
 							args: [electron.clipboard.readText()]
 						});
@@ -170,7 +166,7 @@ function menu_build() {
 					label: "Write PGN to clipboard",
 					accelerator: "CommandOrControl+K",
 					click: () => {
-						windows.send("main-window", "call", "pgn_to_clipboard");
+						win.webContents.send("call", "pgn_to_clipboard");
 					}
 				},
 				{
@@ -211,7 +207,7 @@ function menu_build() {
 						label: "1st",
 						accelerator: "F1",
 						click: () => {
-							windows.send("main-window", "call", {
+							win.webContents.send("call", {
 								fn: "play_info_index",
 								args: [0]
 							})}
@@ -220,7 +216,7 @@ function menu_build() {
 						label: "2nd",
 						accelerator: "F2",
 						click: () => {
-							windows.send("main-window", "call", {
+							win.webContents.send("call", {
 								fn: "play_info_index",
 								args: [1]
 							})}
@@ -229,7 +225,7 @@ function menu_build() {
 						label: "3rd",
 						accelerator: "F3",
 						click: () => {
-							windows.send("main-window", "call", {
+							win.webContents.send("call", {
 								fn: "play_info_index",
 								args: [2]
 							})}
@@ -238,7 +234,7 @@ function menu_build() {
 						label: "4th",
 						accelerator: "F4",
 						click: () => {
-							windows.send("main-window", "call", {
+							win.webContents.send("call", {
 								fn: "play_info_index",
 								args: [3]
 							})}
@@ -252,28 +248,28 @@ function menu_build() {
 					label: "Root",
 					accelerator: "Home",
 					click: () => {
-						windows.send("main-window", "call", "goto_root");
+						win.webContents.send("call", "goto_root");
 					}
 				},
 				{
 					label: "End",
 					accelerator: "End",
 					click: () => {
-						windows.send("main-window", "call", "goto_end");
+						win.webContents.send("call", "goto_end");
 					}
 				},
 				{
 					label: "Backward",
 					accelerator: "Left",
 					click: () => {
-						windows.send("main-window", "call", "prev");
+						win.webContents.send("call", "prev");
 					}
 				},
 				{
 					label: "Forward",
 					accelerator: "Right",
 					click: () => {
-						windows.send("main-window", "call", "next");
+						win.webContents.send("call", "next");
 					}
 				},
 				{
@@ -283,14 +279,14 @@ function menu_build() {
 					label: "Return to main line",
 					accelerator: "CommandOrControl+R",
 					click: () => {
-						windows.send("main-window", "call", "return_to_main_line");
+						win.webContents.send("call", "return_to_main_line");
 					}
 				},
 				{
 					label: "Make this the main line",
 					accelerator: "CommandOrControl+M",
 					click: () => {
-						windows.send("main-window", "call", "promote_to_main_line");
+						win.webContents.send("call", "promote_to_main_line");
 					}
 				},
 				{
@@ -300,7 +296,7 @@ function menu_build() {
 					label: "Delete move",
 					accelerator: "CommandOrControl+Backspace",
 					click: () => {
-						windows.send("main-window", "call", "delete_move");
+						win.webContents.send("call", "delete_move");
 					}
 				},
 				{
@@ -310,14 +306,14 @@ function menu_build() {
 					label: "Show PGN games list",
 					accelerator: "CommandOrControl+P",
 					click: () => {
-						windows.send("main-window", "call", "show_pgn_chooser");
+						win.webContents.send("call", "show_pgn_chooser");
 					}
 				},
 				{
 					label: "Escape",
 					accelerator: "Escape",
 					click: () => {
-						windows.send("main-window", "call", "escape");
+						win.webContents.send("call", "escape");
 					}
 				},
 				{
@@ -327,7 +323,7 @@ function menu_build() {
 					label: "Flip Board",
 					accelerator: "CommandOrControl+F",
 					click: () => {
-						windows.send("main-window", "call", "toggle_flip");
+						win.webContents.send("call", "toggle_flip");
 					}
 				},
 			]
@@ -339,7 +335,7 @@ function menu_build() {
 					label: "Go",
 					accelerator: "CommandOrControl+G",
 					click: () => {
-						windows.send("main-window", "call", {
+						win.webContents.send("call", {
 							fn: "set_versus",
 							args: ["wb"],
 						});
@@ -349,7 +345,7 @@ function menu_build() {
 					label: "Halt",
 					accelerator: "CommandOrControl+H",
 					click: () => {
-						windows.send("main-window", "call", {
+						win.webContents.send("call", {
 							fn: "set_versus",
 							args: [""],
 						});
@@ -365,7 +361,7 @@ function menu_build() {
 							properties: ["openFile"]
 						});
 						if (files && files.length > 0) {
-							windows.send("main-window", "call", {
+							win.webContents.send("call", {
 								fn: "switch_weights",
 								args: [files[0]]
 							});
@@ -375,7 +371,7 @@ function menu_build() {
 				{
 					label: "Reset Lc0 cache",
 					click: () => {
-						windows.send("main-window", "call", "reset_leela_cache");
+						win.webContents.send("call", "reset_leela_cache");
 					}
 				},
 				{
@@ -387,11 +383,11 @@ function menu_build() {
 							checked: config.search_nodes === "infinite",
 							click: () => {
 								set_checks(["Analysis", "Node limit"], 0);
-								windows.send("main-window", "set", {
+								win.webContents.send("set", {
 									key: "search_nodes",
 									value: "infinite"
 								});
-								windows.send("main-window", "call", "reset_leela_cache");
+								win.webContents.send("call", "reset_leela_cache");
 							}
 						},
 						{
@@ -400,11 +396,11 @@ function menu_build() {
 							checked: config.search_nodes === 1000000,
 							click: () => {
 								set_checks(["Analysis", "Node limit"], 1);
-								windows.send("main-window", "set", {
+								win.webContents.send("set", {
 									key: "search_nodes",
 									value: 1000000
 								});
-								windows.send("main-window", "call", "reset_leela_cache");
+								win.webContents.send("call", "reset_leela_cache");
 							}
 						},
 						{
@@ -413,11 +409,11 @@ function menu_build() {
 							checked: config.search_nodes === 100000,
 							click: () => {
 								set_checks(["Analysis", "Node limit"], 2);
-								windows.send("main-window", "set", {
+								win.webContents.send("set", {
 									key: "search_nodes",
 									value: 100000
 								});
-								windows.send("main-window", "call", "reset_leela_cache");
+								win.webContents.send("call", "reset_leela_cache");
 							}
 						},
 						{
@@ -426,11 +422,11 @@ function menu_build() {
 							checked: config.search_nodes === 10000,
 							click: () => {
 								set_checks(["Analysis", "Node limit"], 3);
-								windows.send("main-window", "set", {
+								win.webContents.send("set", {
 									key: "search_nodes",
 									value: 10000
 								});
-								windows.send("main-window", "call", "reset_leela_cache");
+								win.webContents.send("call", "reset_leela_cache");
 							}
 						},
 						{
@@ -439,11 +435,11 @@ function menu_build() {
 							checked: config.search_nodes === 1000,
 							click: () => {
 								set_checks(["Analysis", "Node limit"], 4);
-								windows.send("main-window", "set", {
+								win.webContents.send("set", {
 									key: "search_nodes",
 									value: 1000
 								});
-								windows.send("main-window", "call", "reset_leela_cache");
+								win.webContents.send("call", "reset_leela_cache");
 							}
 						},
 						{
@@ -452,11 +448,11 @@ function menu_build() {
 							checked: config.search_nodes === 100,
 							click: () => {
 								set_checks(["Analysis", "Node limit"], 5);
-								windows.send("main-window", "set", {
+								win.webContents.send("set", {
 									key: "search_nodes",
 									value: 100
 								});
-								windows.send("main-window", "call", "reset_leela_cache");
+								win.webContents.send("call", "reset_leela_cache");
 							}
 						},
 						{
@@ -465,11 +461,11 @@ function menu_build() {
 							checked: config.search_nodes === 2,
 							click: () => {
 								set_checks(["Analysis", "Node limit"], 6);
-								windows.send("main-window", "set", {
+								win.webContents.send("set", {
 									key: "search_nodes",
 									value: 2
 								});
-								windows.send("main-window", "call", "reset_leela_cache");
+								win.webContents.send("call", "reset_leela_cache");
 							}
 						},
 					]
@@ -487,7 +483,7 @@ function menu_build() {
 							accelerator: "F5",
 							click: () => {
 								set_checks(["Analysis", "Arrowhead type"], 0);
-								windows.send("main-window", "set", {
+								win.webContents.send("set", {
 									key: "arrowhead_type",
 									value: 0,
 								});
@@ -500,7 +496,7 @@ function menu_build() {
 							accelerator: "F6",
 							click: () => {
 								set_checks(["Analysis", "Arrowhead type"], 1);
-								windows.send("main-window", "set", {
+								win.webContents.send("set", {
 									key: "arrowhead_type",
 									value: 1,
 								});
@@ -513,7 +509,7 @@ function menu_build() {
 							accelerator: "F7",
 							click: () => {
 								set_checks(["Analysis", "Arrowhead type"], 2);
-								windows.send("main-window", "set", {
+								win.webContents.send("set", {
 									key: "arrowhead_type",
 									value: 2,
 								});
@@ -526,7 +522,7 @@ function menu_build() {
 							accelerator: "F8",
 							click: () => {
 								set_checks(["Analysis", "Arrowhead type"], 3);
-								windows.send("main-window", "set", {
+								win.webContents.send("set", {
 									key: "arrowhead_type",
 									value: 3,
 								});
@@ -543,7 +539,7 @@ function menu_build() {
 							checked: config.uncertainty_cutoff === 999,				// Semi-special value we use
 							click: () => {
 								set_checks(["Analysis", "Moves to show"], 0);
-								windows.send("main-window", "set", {
+								win.webContents.send("set", {
 									key: "uncertainty_cutoff",
 									value: 999
 								});
@@ -555,7 +551,7 @@ function menu_build() {
 							checked: config.uncertainty_cutoff === 0.2,
 							click: () => {
 								set_checks(["Analysis", "Moves to show"], 1);
-								windows.send("main-window", "set", {
+								win.webContents.send("set", {
 									key: "uncertainty_cutoff",
 									value: 0.2
 								});
@@ -567,7 +563,7 @@ function menu_build() {
 							checked: config.uncertainty_cutoff === 0.175,
 							click: () => {
 								set_checks(["Analysis", "Moves to show"], 2);
-								windows.send("main-window", "set", {
+								win.webContents.send("set", {
 									key: "uncertainty_cutoff",
 									value: 0.175
 								});
@@ -579,7 +575,7 @@ function menu_build() {
 							checked: config.uncertainty_cutoff === 0.15,
 							click: () => {
 								set_checks(["Analysis", "Moves to show"], 3);
-								windows.send("main-window", "set", {
+								win.webContents.send("set", {
 									key: "uncertainty_cutoff",
 									value: 0.15
 								});
@@ -591,7 +587,7 @@ function menu_build() {
 							checked: config.uncertainty_cutoff === 0.125,
 							click: () => {
 								set_checks(["Analysis", "Moves to show"], 4);
-								windows.send("main-window", "set", {
+								win.webContents.send("set", {
 									key: "uncertainty_cutoff",
 									value: 0.125
 								});
@@ -603,7 +599,7 @@ function menu_build() {
 							checked: config.uncertainty_cutoff === 0.1,
 							click: () => {
 								set_checks(["Analysis", "Moves to show"], 5);
-								windows.send("main-window", "set", {
+								win.webContents.send("set", {
 									key: "uncertainty_cutoff",
 									value: 0.1
 								});
@@ -614,7 +610,7 @@ function menu_build() {
 							checked: config.uncertainty_cutoff === 0.075,
 							click: () => {
 								set_checks(["Analysis", "Moves to show"], 6);
-								windows.send("main-window", "set", {
+								win.webContents.send("set", {
 									key: "uncertainty_cutoff",
 									value: 0.075
 								});
@@ -626,7 +622,7 @@ function menu_build() {
 							checked: config.uncertainty_cutoff === 0.05,
 							click: () => {
 								set_checks(["Analysis", "Moves to show"], 7);
-								windows.send("main-window", "set", {
+								win.webContents.send("set", {
 									key: "uncertainty_cutoff",
 									value: 0.05
 								});
@@ -638,7 +634,7 @@ function menu_build() {
 							checked: config.uncertainty_cutoff === 0.025,
 							click: () => {
 								set_checks(["Analysis", "Moves to show"], 8);
-								windows.send("main-window", "set", {
+								win.webContents.send("set", {
 									key: "uncertainty_cutoff",
 									value: 0.025
 								});
@@ -650,7 +646,7 @@ function menu_build() {
 							checked: config.uncertainty_cutoff === -999,				// Semi-special value we use
 							click: () => {
 								set_checks(["Analysis", "Moves to show"], 9);
-								windows.send("main-window", "set", {
+								win.webContents.send("set", {
 									key: "uncertainty_cutoff",
 									value: -999
 								});
@@ -662,7 +658,7 @@ function menu_build() {
 						{
 							label: "About this option",
 							click: () => {
-								about_move_display();
+								alert(messages.about_move_display);
 							}
 						}
 					]
@@ -678,7 +674,7 @@ function menu_build() {
 							type: "checkbox",
 							checked: config.show_n,
 							click: () => {
-								windows.send("main-window", "call", {
+								win.webContents.send("call", {
 									fn: "toggle",
 									args: ["show_n"],
 								});
@@ -689,7 +685,7 @@ function menu_build() {
 							type: "checkbox",
 							checked: config.show_p,
 							click: () => {
-								windows.send("main-window", "call", {
+								win.webContents.send("call", {
 									fn: "toggle",
 									args: ["show_p"],
 								});
@@ -700,7 +696,7 @@ function menu_build() {
 							type: "checkbox",
 							checked: config.show_u,
 							click: () => {
-								windows.send("main-window", "call", {
+								win.webContents.send("call", {
 									fn: "toggle",
 									args: ["show_u"],
 								});
@@ -716,7 +712,7 @@ function menu_build() {
 				{
 					label: "Leela plays White",
 					click: () => {
-						windows.send("main-window", "call", {
+						win.webContents.send("call", {
 							fn: "set_versus",
 							args: ["w"],
 						});
@@ -725,7 +721,7 @@ function menu_build() {
 				{
 					label: "Leela plays Black",
 					click: () => {
-						windows.send("main-window", "call", {
+						win.webContents.send("call", {
 							fn: "set_versus",
 							args: ["b"],
 						});
@@ -737,7 +733,7 @@ function menu_build() {
 				{
 					label: "About Versus Mode",
 					click: () => {
-						about_versus_mode();
+						alert(messages.about_versus_mode);
 					}
 				}
 			]
@@ -751,15 +747,14 @@ function menu_build() {
 				{
 					label: "Toggle Debug CSS",
 					click: () => {
-						windows.send("main-window", "call", "toggle_debug_css");
+						win.webContents.send("call", "toggle_debug_css");
 					}
 				}
 			]
 		}
 	];
 
-	menu = electron.Menu.buildFromTemplate(template);
-	electron.Menu.setApplicationMenu(menu);
+	return electron.Menu.buildFromTemplate(template);
 }
 
 function get_main_folder() {
@@ -768,9 +763,7 @@ function get_main_folder() {
 	// in the modules folder. So this code is duplicated between the
 	// renderer and main process code...
 
-
 	// Return the dir of this .js file if we're being run from electron.exe
-
 	if (path.basename(process.argv[0]).toLowerCase() === "electron" ||
 		path.basename(process.argv[0]).toLowerCase() === "electron framework" ||
 		path.basename(process.argv[0]).toLowerCase() === "electron helper" ||
@@ -779,51 +772,7 @@ function get_main_folder() {
 	}
 
 	// Return the location of Nibbler.exe
-
 	return path.dirname(process.argv[0]);
-}
-
-function about_move_display() {
-
-	let s = `
-
-Leela sends a statistic U showing how uncertain it is about its evaluation
-of each move. Nibbler decides which moves to show on the board using this
-statistic. Often the U statistic remains high for most moves, when Leela
-thinks the right move is "obvious".`;
-
-	alert(s);
-}
-
-function about_versus_mode() {
-
-	let s = `
-
-Versus Mode causes Leela to evaluate one side of the position only. \
-You must still manually decide which of Leela's suggestions to play. \
-You can exit Versus Mode with the Go or Halt commands in the Analysis \
-menu.`;
-
-	alert(s);
-}
-
-function save_not_enabled() {
-
-	let s = `
-
-Save is disabled until you read the following warning.
-
-Nibbler does not append to PGN files, nor does it save collections. It \
-only writes the current game to file. When you try to save, you will be \
-prompted with a standard "Save As" dialog. If you save to a file that \
-already exists, that file will be DESTROYED and REPLACED with a file \
-containing only the current game.
-
-This behaviour may change in future versions.
-
-To enable save, set "save_enabled" to true in the config file.`;
-
-	alert(s);
 }
 
 function get_submenu_items(menupath) {
@@ -855,4 +804,29 @@ function set_checks(menupath, except) {
 			}
 		}
 	}, 50);
+}
+
+function load_config() {
+
+	let cfg = {};
+
+	try {
+		let config_filename = path.join(get_main_folder(), "config.json");
+		let config_example_filename = path.join(get_main_folder(), "config.example.json");
+
+		if (fs.existsSync(config_filename)) {
+			cfg = JSON.parse(debork_json(fs.readFileSync(config_filename, "utf8")));
+		} else if (fs.existsSync(config_example_filename)) {
+			cfg = JSON.parse(debork_json(fs.readFileSync(config_example_filename, "utf8")));
+		} else {
+			console.log("Main process couldn't find config file. Looked at:");
+			console.log("   " + config_filename);
+		}
+	} catch (err) {
+		console.log("Main process couldn't parse config file.")
+	}
+
+	apply_defaults(cfg);
+
+	return cfg;
 }
