@@ -6,9 +6,7 @@ function get_main_folder() {
 	// in the modules folder. So this code is duplicated between the
 	// renderer and main process code...
 
-
 	// Return the dir of this .js file if we're being run from electron.exe
-
 	if (path.basename(process.argv[0]).toLowerCase() === "electron" ||
 		path.basename(process.argv[0]).toLowerCase() === "electron framework" ||
 		path.basename(process.argv[0]).toLowerCase() === "electron helper" ||
@@ -17,7 +15,6 @@ function get_main_folder() {
 	}
 
 	// Return the location of Nibbler.exe
-
 	return path.dirname(process.argv[0]);
 }
 
