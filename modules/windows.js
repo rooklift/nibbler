@@ -37,6 +37,9 @@ exports.new = (token, pagepath, params) => {		// token is an internal name for u
 	// win.setMenu(null);			// I'm sure there was a reason for this but I forget, and it seems to cause Linux issues.
 
 	all_windows[token] = win;
+/*
+	// The following is for multi-window apps, but causes some issues on Mac, i.e. minimising a window hides it
+	// and so closes the app... Hmm.
 
 	win.on("close", (evt) => {
 		evt.preventDefault();
@@ -47,7 +50,7 @@ exports.new = (token, pagepath, params) => {		// token is an internal name for u
 	win.on("hide", () => {
 		quit_if_all_windows_are_hidden();
 	});
-
+*/
 	return win;		// Though caller may well not need this.
 };
 
