@@ -243,9 +243,19 @@ function NewInfoHandler() {
 
 			let info = info_list[i];
 
+			let value_string = "?";
+			if (config.show_cp) {
+				value_string = info.cp.toString();
+				if (info.cp > 0) {
+					value_string = "+" + value_string;
+				}
+			} else {
+				value_string = info.value_string(1);
+			}
+
 			new_elements.push({
 				class: "blue",
-				text: `${info.value_string(1)} `,
+				text: value_string + " ",
 			});
 
 			let colour = active_colour;

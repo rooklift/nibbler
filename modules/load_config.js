@@ -26,6 +26,7 @@ function apply_defaults(o) {
 		"terrible_move_threshold": 0.04,
 		"uncertainty_cutoff": 0.1,
 		"arrowhead_type": 0,
+		"show_cp": false,
 		"show_n": true,
 		"show_p": true,
 		"show_u": true,
