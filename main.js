@@ -1,10 +1,7 @@
 "use strict";
 
 const alert = require("./modules/alert");
-const apply_defaults = require("./modules/apply_defaults");
-const debork_json = require("./modules/debork_json");
 const electron = require("electron");
-const fs = require("fs");
 const load_config = require("./modules/load_config");
 const messages = require("./modules/messages");
 const path = require("path");
