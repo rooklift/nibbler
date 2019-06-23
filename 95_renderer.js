@@ -590,10 +590,22 @@ function NewRenderer() {
 			tmp_board = tmp_board.move(move);
 		}
 
+		// Add the moves to the tree...
+
+		let node = this.node;
+
 		for (let move of moves) {
-			this.node = this.node.make_move(move);
+			node = node.make_move(move);
 		}
-		this.position_changed();
+
+		// insert_variation controls whether we travel down to the new node, or stay where we were.
+
+		if (!config.insert_variation) {
+			this.node = node;
+			this.position_changed();
+		} else {
+			this.movelist_handler.draw(this.node);
+		}
 	};
 
 	renderer.movelist_click = function(event) {
@@ -658,7 +670,7 @@ function NewRenderer() {
 
 	renderer.toggle = function(option) {
 		config[option] = !config[option];
-		this.info_handler.must_draw_infobox();
+		this.info_handler.must_draw_infobox();		// Because many toggle-ables affect it.
 	};
 
 	// --------------------------------------------------------------------------------------------

@@ -701,7 +701,18 @@ function menu_build() {
 							}
 						},
 					]
-				}
+				},
+				{
+					label: "Infobox clicks insert variation",
+					type: "checkbox",
+					checked: config.insert_variation,
+					click: () => {
+						win.webContents.send("call", {
+							fn: "toggle",
+							args: ["insert_variation"],
+						});
+					}
+				},
 			]
 		},
 		{
