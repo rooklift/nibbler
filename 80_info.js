@@ -558,15 +558,15 @@ function new_info(board, move) {
 	let info = Object.create(info_prototype);
 	info.board = board;
 	info.cp = -99999;
-	info.d = null;
+	info.d = 0;				// Although wrong, this is the value Leela sends if WDL not supported.
 	info.move = move;
 	info.multipv = 999;
 	info.n = 0;
-	info.p = "?";					// Note we receive P as a string, unlike the other stuff.
+	info.p = "?";			// Note we receive P as a string, unlike the other stuff.
 	info.pv = [];
 	info.nice_pv_cache = null;
 	info.q = -1;
-	info.u = 2;						// Is this a sane default? Values above 1 are possible, so...
+	info.u = 2;				// Is this a sane default? Values above 1 are possible, so...
 	info.value = 0;
 	return info;
 }
