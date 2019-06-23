@@ -35,6 +35,10 @@ Various people have inquired about the possiblity of using a conventional engine
 
 One can effectively disable alpha-beta pruning by sending `MultiPV 500` (which we do) but this drastically weakens conventional engines.
 
+# About serious analysis
+
+At the moment, and possibly forever, Nibbler is more of a toy than a serious analysis tool. I really can't promise this will ever change; writing a toy Chess GUI is hard enough...
+
 # Thanks
 
 Thanks for helpful discussions and advice from borg, brinan, Chad, ChiefPushesWood, coolchess123, crem, Faroe22, jhorthos, jjosh, KillerDucky, kiudee, lealgo, liamlim, matoototo, mooskagh, Occyroexanthub, oscardssmith, Ted Summers, Tilps, twoplan, WCP, and anyone I've missed.
