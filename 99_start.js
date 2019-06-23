@@ -66,9 +66,13 @@ for (let c of Array.from("KkQqRrBbNnPp")) {
 
 let hub = NewRenderer();
 
-if (config && config.warn_filename) {
+if (config.warn_filename) {
 	hub.err_receive(`<span class="blue">Nibbler says: You should rename config.example.json to config.json</span>`);
 	hub.err_receive("");
+}
+
+if (config.failure) {
+	alert(config.failure);
 }
 
 ipcRenderer.on("set", (event, msg) => {		// Should only be for things that don't need immediate action.

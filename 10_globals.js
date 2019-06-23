@@ -10,6 +10,7 @@ const clipboard = require("electron").clipboard;
 const debork_json = require("./modules/debork_json");
 const fs = require("fs");
 const ipcRenderer = require("electron").ipcRenderer;
+const load_config = require("./modules/load_config");
 const path = require("path");
 const readline = require("readline");
 const util = require("util");
@@ -32,5 +33,5 @@ const pgnchooser = document.getElementById("pgnchooser");
 const context = canvas.getContext("2d");
 const decoder = new util.TextDecoder("utf8");	// https://github.com/electron/electron/issues/18733
 
-let config = {};
+let config = load_config();
 let tree_version = 0;

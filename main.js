@@ -5,11 +5,16 @@ const apply_defaults = require("./modules/apply_defaults");
 const debork_json = require("./modules/debork_json");
 const electron = require("electron");
 const fs = require("fs");
+const load_config = require("./modules/load_config");
 const messages = require("./modules/messages");
 const path = require("path");
 const url = require("url");
 
-let config = load_config();		// Do this first, it's a needed global.
+let config = load_config();			// Do this first, it's a needed global.
+if (config.failure) {				// Do this early, while console.log still works.
+	console.log(config.failure);
+}
+
 let menu = menu_build();
 let win;
 
@@ -757,24 +762,6 @@ function menu_build() {
 	return electron.Menu.buildFromTemplate(template);
 }
 
-function get_main_folder() {
-
-	// Sadly this can't be a module since __dirname will change if it's
-	// in the modules folder. So this code is duplicated between the
-	// renderer and main process code...
-
-	// Return the dir of this .js file if we're being run from electron.exe
-	if (path.basename(process.argv[0]).toLowerCase() === "electron" ||
-		path.basename(process.argv[0]).toLowerCase() === "electron framework" ||
-		path.basename(process.argv[0]).toLowerCase() === "electron helper" ||
-		path.basename(process.argv[0]).toLowerCase() === "electron.exe") {
-		return __dirname;
-	}
-
-	// Return the location of Nibbler.exe
-	return path.dirname(process.argv[0]);
-}
-
 function get_submenu_items(menupath) {
 
 	let o = menu.items;
@@ -804,29 +791,4 @@ function set_checks(menupath, except) {
 			}
 		}
 	}, 50);
-}
-
-function load_config() {
-
-	let cfg = {};
-
-	try {
-		let config_filename = path.join(get_main_folder(), "config.json");
-		let config_example_filename = path.join(get_main_folder(), "config.example.json");
-
-		if (fs.existsSync(config_filename)) {
-			cfg = JSON.parse(debork_json(fs.readFileSync(config_filename, "utf8")));
-		} else if (fs.existsSync(config_example_filename)) {
-			cfg = JSON.parse(debork_json(fs.readFileSync(config_example_filename, "utf8")));
-		} else {
-			console.log("Main process couldn't find config file. Looked at:");
-			console.log("   " + config_filename);
-		}
-	} catch (err) {
-		console.log("Main process couldn't parse config file.")
-	}
-
-	apply_defaults(cfg);
-
-	return cfg;
 }
