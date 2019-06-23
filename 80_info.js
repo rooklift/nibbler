@@ -557,16 +557,16 @@ let info_prototype = {
 function new_info(board, move) {
 	let info = Object.create(info_prototype);
 	info.board = board;
-	info.cp = -999999;
+	info.cp = -99999;
 	info.d = null;
 	info.move = move;
 	info.multipv = 999;
-	info.n = 0;						// The draw logic will only ever draw things with non-negative n, so make this 0.
-	info.p = "?";
+	info.n = 0;
+	info.p = "?";					// Note we receive P as a string, unlike the other stuff.
 	info.pv = [];
 	info.nice_pv_cache = null;
 	info.q = -1;
 	info.u = 2;						// Is this a sane default? Values above 1 are possible, so...
-	info.value = null;
+	info.value = 0;
 	return info;
 }
