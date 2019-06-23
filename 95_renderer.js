@@ -605,7 +605,7 @@ function NewRenderer() {
 		// For the first move, save a stats string into its node, iff we're in serious analysis mode.
 
 		if (moves.length > 0 && first_node && config.serious_analysis_mode) {
-			let info = this.info_handler.table[moves[0]];
+			let info = this.info_handler.table[moves[0]];		// info for the first move in our clicked line.
 			if (info) {
 				let divisor = this.info_handler.nodes > 0 ? this.info_handler.nodes : 1;
 				let nstr = (100 * info.n / divisor).toFixed(2);
