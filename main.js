@@ -286,7 +286,7 @@ function menu_build() {
 				},
 				{
 					label: "Make this the main line",
-					accelerator: "CommandOrControl+M",
+					accelerator: "CommandOrControl+L",
 					click: () => {
 						win.webContents.send("call", "promote_to_main_line");
 					}
