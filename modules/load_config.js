@@ -1,6 +1,5 @@
 "use strict";
 
-const assign_without_overwrite = require("./utils").assign_without_overwrite;
 const fs = require("fs");
 const path = require("path");
 
@@ -51,6 +50,15 @@ function apply_defaults(o) {
 	if (o.uncertainty_cutoff <= 0) o.uncertainty_cutoff = -999;
 
 	return o;
+}
+
+function assign_without_overwrite(target, source) {
+	let keys = Object.keys(source)
+	for (let key of keys) {
+		if (target.hasOwnProperty(key) === false) {
+			target[key] = source[key];
+		}
+	}
 }
 
 function get_main_folder() {
