@@ -204,6 +204,7 @@ function __destroy_tree(node) {
 	while (node.children.length === 1) {
 		node.parent = null;
 		node.__position = null;
+		node.move = null;
 		let child = node.children[0];
 		node.children = null;
 		node = child;
@@ -211,6 +212,7 @@ function __destroy_tree(node) {
 
 	node.parent = null;
 	node.__position = null;
+	node.move = null;
 
 	for (let child of node.children) {
 		__destroy_tree(child);
