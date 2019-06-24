@@ -5,6 +5,8 @@ Log("===========================================================================
 Log(`Nibbler startup at ${new Date().toUTCString()}`);
 Log("");
 
+let hub = NewRenderer();
+
 // ------------------------------------------------------------------------------------------------
 
 infobox.style.height = config.board_size.toString() + "px";
@@ -44,6 +46,11 @@ for (let y = 0; y < 8; y++) {
 		}
 		tr1.appendChild(td1);
 		tr2.appendChild(td2);
+
+		td2.addEventListener("dragstart", (event) => {
+			hub.set_active_square(Point(x, y));
+			event.dataTransfer.setData("text", "overlay_" + S(x, y));
+		});
 	}
 }
 
@@ -54,8 +61,6 @@ promotiontable.style.top = (boardsquares.offsetTop + config.square_size * 3.5).t
 promotiontable.style["background-color"] = config.active_square;
 
 // ------------------------------------------------------------------------------------------------
-
-let hub = NewRenderer();
 
 if (config.warn_filename) {
 	hub.err_receive(`<span class="blue">Nibbler says: You should rename config.example.json to config.json</span>`);

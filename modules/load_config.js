@@ -1,8 +1,8 @@
 "use strict";
 
 const fs = require("fs");
+const get_main_folder = require("./get_main_folder");
 const path = require("path");
-const running_as_electron = require("./running_as_electron");
 
 function apply_defaults(o) {
 
@@ -62,13 +62,6 @@ function assign_without_overwrite(target, source) {
 			target[key] = source[key];
 		}
 	}
-}
-
-function get_main_folder() {
-	if (running_as_electron()) {
-		return path.join(__dirname, "..");		// Return the dir one level above this .js file
-	}
-	return path.dirname(process.argv[0]);		// Return the location of Nibbler.exe
 }
 
 function replace_all(s, search, replace) {
