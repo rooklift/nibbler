@@ -68,6 +68,7 @@ for (let y = 0; y < 8; y++) {
 
 promotiontable.style.left = (boardsquares.offsetLeft + config.square_size * 2).toString() + "px";
 promotiontable.style.top = (boardsquares.offsetTop + config.square_size * 3.5).toString() + "px";
+promotiontable.style["background-color"] = config.active_square;
 
 // ------------------------------------------------------------------------------------------------
 
