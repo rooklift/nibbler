@@ -1,6 +1,7 @@
 "use strict";
 
 const get_main_folder = require("./get_main_folder");
+const path = require("path");
 
 let sprites = Object.create(null);
 let loads = 0;
@@ -25,9 +26,9 @@ sprites.k = new Image(); sprites.k.src = "data:image/svg+xml;base64,PHN2ZyBjbGlw
 for (let c of Array.from("KkQqRrBbNnPp")) {
 	sprites[c] = new Image();
 	if (c === c.toUpperCase()) {
-		sprites[c].src = `pieces/${c}.png`;
+		sprites[c].src = path.join(get_main_folder(), `pieces/${c}.png`);
 	} else {
-		sprites[c].src = `pieces/_${c.toUpperCase()}.png`;
+		sprites[c].src = path.join(get_main_folder(), `pieces/_${c.toUpperCase()}.png`);
 	}
 	sprites[c].onload = () => {
 		loads++;
