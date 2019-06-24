@@ -216,5 +216,13 @@ window.addEventListener("drop", (event) => {
 
 // Go...
 
-hub.draw_loop();
-ipcRenderer.send("renderer_ready", null);
+function enter_loop() {
+	if (images.fully_loaded()) {
+		hub.draw_loop();
+		ipcRenderer.send("renderer_ready", null);
+	} else {
+		setTimeout(enter_loop, 25);
+	}
+}
+
+enter_loop();
