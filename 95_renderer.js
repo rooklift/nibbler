@@ -659,18 +659,17 @@ function NewRenderer() {
 			let td = document.createElement("td");
 			td.width = config.square_size;
 			td.height = config.square_size;
+			td.style["background-image"] = "url('" + images.sprites[piece].src + "')";
+			td.style["background-size"] = "contain";
 
-			let img = images[piece].cloneNode();
-			img.width = config.square_size;
-			img.height = config.square_size;
+			// This isn't a memory leak is it? The handlers are deleted when the element is deleted, right?
 
-			img.addEventListener("mousedown", () => {
+			td.addEventListener("mousedown", () => {
 				this.hide_promotiontable();
 				this.move(partial_move + piece.toLowerCase());
 			});
 
 			tr.appendChild(td);
-			td.appendChild(img);
 		}
 
 		promotiontable.style.display = "block";
