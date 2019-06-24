@@ -59,7 +59,7 @@ function NewRenderer() {
 
 		if (typeof s !== "string") {
 			console.log(`renderer.move(${s}) - bad argument`);
-			return false;
+			return;
 		}
 
 		let board = this.node.get_board();
@@ -69,12 +69,13 @@ function NewRenderer() {
 
 		if (s.length === 4) {
 			let source = Point(s.slice(0, 2));
-			if (board.piece(source) === "P" && source.y === 1) {
-				this.show_promotiontable(s);
-				return;
-			}
-			if (board.piece(source) === "p" && source.y === 6) {
-				this.show_promotiontable(s);
+			if ((board.piece(source) === "P" && source.y === 1) || (board.piece(source) === "p" && source.y === 6)) {
+				let illegal_reason = board.illegal(s + "q");
+				if (illegal_reason !== "") {
+					console.log(`renderer.move(${s}) - ${illegal_reason}`);
+				} else {
+					this.show_promotiontable(s);
+				}
 				return;
 			}
 		}
@@ -84,12 +85,12 @@ function NewRenderer() {
 		let illegal_reason = board.illegal(s);
 		if (illegal_reason !== "") {
 			console.log(`renderer.move(${s}) - ${illegal_reason}`);
-			return false;
+			return;
 		}
 
 		this.node = this.node.make_move(s);
 		this.position_changed();
-		return true;
+		return;
 	};
 
 	renderer.play_info_index = function(n) {
