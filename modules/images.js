@@ -16,9 +16,7 @@ for (let c of Array.from("KkQqRrBbNnPp")) {
 	} else {
 		sprites[c].src = path.join(__dirname, `../pieces/_${c.toUpperCase()}.png`);
 	}
-	sprites[c].onload = () => {
-		sprites.loads++;
-	};
+	sprites[c].addEventListener("load", () => {sprites.loads++;}, {once: true});
 }
 
 module.exports = sprites;
