@@ -659,7 +659,7 @@ function NewRenderer() {
 			let td = document.createElement("td");
 			td.width = config.square_size;
 			td.height = config.square_size;
-			td.style["background-image"] = "url('" + images.sprites[piece].src + "')";
+			td.style["background-image"] = "url('" + images[piece].src + "')";
 			td.style["background-size"] = "contain";
 
 			// This isn't a memory leak is it? The handlers are deleted when the element is deleted, right?
@@ -766,7 +766,7 @@ function NewRenderer() {
 					td.style["background-image"] = "none";
 					td.draggable = false;
 				} else {
-					td.style["background-image"] = "url('" + images.sprites[piece_to_draw].src + "')";
+					td.style["background-image"] = "url('" + images[piece_to_draw].src + "')";
 					td.style["background-size"] = "contain";
 					td.draggable = true;
 				}
@@ -790,7 +790,7 @@ function NewRenderer() {
 
 				let piece = board.state[x][y];
 				let cc = CanvasCoords(x, y);
-				context.drawImage(images.sprites[piece], cc.x1, cc.y1, config.square_size, config.square_size);
+				context.drawImage(images[piece], cc.x1, cc.y1, config.square_size, config.square_size);
 			}
 		}
 	};
