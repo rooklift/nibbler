@@ -763,20 +763,14 @@ function NewRenderer() {
 				let s = S(x, y);
 				let td = document.getElementById("overlay_" + s);
 
-				td.innerHTML = "";
-
 				if (piece_to_draw === "") {
-					continue;
+					td.style["background-image"] = "none";
+					td.draggable = false;
+				} else {
+					td.style["background-image"] = "url('" + images.sprites[piece_to_draw].src + "')";
+					td.style["background-size"] = "contain";
+					td.draggable = true;
 				}
-
-				let img = images[piece_to_draw].cloneNode();		// Note images are draggable by default.
-				img.width = config.square_size;
-				img.height = config.square_size;
-				img.addEventListener("dragstart", (event) => {
-					this.set_active_square(Point(x, y));
-					event.dataTransfer.setData("text", "overlay_" + s);
-				});
-				td.appendChild(img);
 			}
 		}
 	};
@@ -797,7 +791,7 @@ function NewRenderer() {
 
 				let piece = board.state[x][y];
 				let cc = CanvasCoords(x, y);
-				context.drawImage(images[piece], cc.x1, cc.y1, config.square_size, config.square_size);
+				context.drawImage(images.sprites[piece], cc.x1, cc.y1, config.square_size, config.square_size);
 			}
 		}
 	};

@@ -6,6 +6,7 @@ const alert = require("./modules/alert");
 const child_process = require("child_process");
 const clipboard = require("electron").clipboard;
 const fs = require("fs");
+const images = require("./modules/images");
 const ipcRenderer = require("electron").ipcRenderer;
 const load_config = require("./modules/load_config");
 const path = require("path");

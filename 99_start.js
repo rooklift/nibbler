@@ -5,22 +5,7 @@ Log("===========================================================================
 Log(`Nibbler startup at ${new Date().toUTCString()}`);
 Log("");
 
-// ------------------------------------------------------------------------------------------------
-
-let images = Object.create(null);
-let loads = 0;
-
-for (let c of Array.from("KkQqRrBbNnPp")) {
-	images[c] = new Image();
-	if (c === c.toUpperCase()) {
-		images[c].src = `./pieces/${c}.png`;
-	} else {
-		images[c].src = `./pieces/_${c.toUpperCase()}.png`;
-	}
-	images[c].onload = () => {
-		loads++;
-	};
-}
+let hub = NewRenderer();
 
 // ------------------------------------------------------------------------------------------------
 
@@ -61,6 +46,11 @@ for (let y = 0; y < 8; y++) {
 		}
 		tr1.appendChild(td1);
 		tr2.appendChild(td2);
+
+		td2.addEventListener("dragstart", (event) => {
+			hub.set_active_square(Point(x, y));
+			event.dataTransfer.setData("text", "overlay_" + S(x, y));
+		});
 	}
 }
 
@@ -71,8 +61,6 @@ promotiontable.style.top = (boardsquares.offsetTop + config.square_size * 3.5).t
 promotiontable.style["background-color"] = config.active_square;
 
 // ------------------------------------------------------------------------------------------------
-
-let hub = NewRenderer();
 
 if (config.warn_filename) {
 	hub.err_receive(`<span class="blue">Nibbler says: You should rename config.example.json to config.json</span>`);
@@ -229,7 +217,7 @@ window.addEventListener("drop", (event) => {
 // Go...
 
 function enter_loop() {
-	if (loads === 12) {
+	if (images.fully_loaded()) {
 		hub.draw_loop();
 		ipcRenderer.send("renderer_ready", null);
 	} else {
