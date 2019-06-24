@@ -210,7 +210,7 @@ window.addEventListener("dragenter", (event) => {		// Necessary to prevent brief
 	event.preventDefault();
 });
 
-window.addEventListener("dragover", (event) => {
+window.addEventListener("dragover", (event) => {		// Necessary to prevent always having the "not allowed" icon.
 	event.preventDefault();
 });
 
