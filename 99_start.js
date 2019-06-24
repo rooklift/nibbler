@@ -7,23 +7,6 @@ Log("");
 
 // ------------------------------------------------------------------------------------------------
 
-let images = Object.create(null);
-let loads = 0;
-
-for (let c of Array.from("KkQqRrBbNnPp")) {
-	images[c] = new Image();
-	if (c === c.toUpperCase()) {
-		images[c].src = `./pieces/${c}.png`;
-	} else {
-		images[c].src = `./pieces/_${c.toUpperCase()}.png`;
-	}
-	images[c].onload = () => {
-		loads++;
-	};
-}
-
-// ------------------------------------------------------------------------------------------------
-
 infobox.style.height = config.board_size.toString() + "px";
 movelist.style.height = config.movelist_height.toString() + "px";		// Is there a way to avoid needing this, to get the scroll bar?
 
@@ -228,13 +211,5 @@ window.addEventListener("drop", (event) => {
 
 // Go...
 
-function enter_loop() {
-	if (loads === 12) {
-		hub.draw_loop();
-		ipcRenderer.send("renderer_ready", null);
-	} else {
-		setTimeout(enter_loop, 25);
-	}
-}
-
-enter_loop();
+hub.draw_loop();
+ipcRenderer.send("renderer_ready", null);
