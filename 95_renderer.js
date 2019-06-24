@@ -182,11 +182,13 @@ function NewRenderer() {
 			return;
 		}
 
+		DestroyTree(this.node);			// Optional, but might help the GC.
 		this.node = NewTree(newpos);
 		this.position_changed(true);
 	};
 
 	renderer.new_game = function() {
+		DestroyTree(this.node);			// Optional, but might help the GC.
 		this.node = NewTree();
 		this.position_changed(true);
 	};
@@ -238,6 +240,7 @@ function NewRenderer() {
 			return false;
 		}
 
+		DestroyTree(this.node);								// Optional, but might help the GC.
 		this.node = new_root;
 		this.position_changed(true);
 

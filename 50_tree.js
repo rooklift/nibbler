@@ -170,6 +170,7 @@ function NewNode(parent, move) {		// Args are null for root only.
 
 	let node = Object.create(node_prototype);
 
+	node.__position = null;
 	node.parent = parent;
 	node.move = move;					// Think of this as the move that led to the position associated with node.
 	node.children = [];
@@ -188,4 +189,33 @@ function NewTree(startpos) {
 	root.__position = startpos;
 
 	return root;
+}
+
+// On the theory that it might help the garbage collector, we can
+// destroy trees when we're done with them. Perhaps this is totally
+// unnecessary. I've seen it matter in Python.
+
+function DestroyTree(node) {
+	__destroy_tree(node.get_root());
+}
+
+function __destroy_tree(node) {
+
+	while (node.children.length === 1) {
+		node.parent = null;
+		node.__position = null;
+		let child = node.children[0];
+		node.children = null;
+		node = child;
+	}
+
+	node.parent = null;
+	node.__position = null;
+
+	for (let child of node.children) {
+		__destroy_tree(child);
+	}
+
+	node.children = null;
+	return;
 }
