@@ -206,6 +206,10 @@ fenbox.addEventListener("keydown", (event) => {
 
 // Setup drag-and-drop...
 
+window.addEventListener("dragenter", (event) => {		// Necessary to prevent brief flashes of "not allowed" icon.
+	event.preventDefault();
+});
+
 window.addEventListener("dragover", (event) => {
 	event.preventDefault();
 });
