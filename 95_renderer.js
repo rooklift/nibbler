@@ -64,17 +64,18 @@ function NewRenderer() {
 
 		let board = this.node.get_board();
 
-		// Add promotion if needed and not present...
+		// If a promotion character is required and not present, show the promotion chooser and return
+		// without committing to anything.
 
 		if (s.length === 4) {
 			let source = Point(s.slice(0, 2));
 			if (board.piece(source) === "P" && source.y === 1) {
-				console.log(`Move ${s} was promotion but had no promotion piece set; adjusting to ${s + "q"}`);
-				s += "q";
+				this.show_promotiontable(s);
+				return;
 			}
 			if (board.piece(source) === "p" && source.y === 6) {
-				console.log(`Move ${s} was promotion but had no promotion piece set; adjusting to ${s + "q"}`);
-				s += "q";
+				this.show_promotiontable(s);
+				return;
 			}
 		}
 
@@ -254,7 +255,8 @@ function NewRenderer() {
 			return;
 		}
 
-		this.set_versus("");		// It's lame to run the GPU when we're clearly switching games.
+		this.hide_promotiontable();		// Just in case it's up.
+		this.set_versus("");			// It's lame to run the GPU when we're clearly switching games.
 
 		let lines = [];
 
@@ -462,6 +464,7 @@ function NewRenderer() {
 
 	renderer.escape = function() {					// Set things into a clean state.
 		this.hide_pgn_chooser();
+		this.hide_promotiontable();
 		this.set_active_square(null);
 	};
 
@@ -534,6 +537,8 @@ function NewRenderer() {
 	};
 
 	renderer.boardfriends_click = function(event) {
+
+		this.hide_promotiontable();						// Just in case it's up.
 
 		let p = Point(null);
 
@@ -633,6 +638,45 @@ function NewRenderer() {
 
 		this.node = node;
 		this.position_changed();
+	};
+
+	renderer.show_promotiontable = function(partial_move) {
+
+		promotiontable.innerHTML = "";
+
+		let tr = document.createElement("tr");
+		promotiontable.appendChild(tr);
+
+		let pieces = "QRBN";
+
+		if (renderer.node.get_board().active === "b") {
+			pieces = "qrbn";
+		}
+
+		for (let piece of Array.from(pieces)) {
+
+			let td = document.createElement("td");
+			td.width = config.square_size;
+			td.height = config.square_size;
+
+			let img = images[piece].cloneNode();
+			img.width = config.square_size;
+			img.height = config.square_size;
+
+			img.addEventListener("mousedown", () => {
+				this.hide_promotiontable();
+				this.move(partial_move + piece.toLowerCase());
+			});
+
+			tr.appendChild(td);
+			td.appendChild(img);
+		}
+
+		promotiontable.style.display = "block";
+	};
+
+	renderer.hide_promotiontable = function() {
+		promotiontable.style.display = "none";
 	};
 
 	// --------------------------------------------------------------------------------------------

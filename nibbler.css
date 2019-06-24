@@ -61,6 +61,15 @@ img {
 	width: 100%;
 }
 
+#promotiontable {
+	background-color: #66aaaa;
+	border-collapse: collapse;
+	display: none;
+	position: fixed;
+	table-layout: fixed;
+	user-select: none;
+}
+
 #fenbox {
 	background-color: #080808;
 	border: none;

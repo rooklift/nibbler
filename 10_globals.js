@@ -24,6 +24,7 @@ const fenbox = document.getElementById("fenbox");
 const infobox = document.getElementById("infobox");
 const movelist = document.getElementById("movelist");
 const pgnchooser = document.getElementById("pgnchooser");
+const promotiontable = document.getElementById("promotiontable");
 
 // Globals..........................................................
 

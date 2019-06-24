@@ -5,10 +5,29 @@ Log("===========================================================================
 Log(`Nibbler startup at ${new Date().toUTCString()}`);
 Log("");
 
+// ------------------------------------------------------------------------------------------------
+
+let images = Object.create(null);
+let loads = 0;
+
+for (let c of Array.from("KkQqRrBbNnPp")) {
+	images[c] = new Image();
+	if (c === c.toUpperCase()) {
+		images[c].src = `./pieces/${c}.png`;
+	} else {
+		images[c].src = `./pieces/_${c.toUpperCase()}.png`;
+	}
+	images[c].onload = () => {
+		loads++;
+	};
+}
+
+// ------------------------------------------------------------------------------------------------
+
 infobox.style.height = config.board_size.toString() + "px";
 movelist.style.height = config.movelist_height.toString() + "px";		// Is there a way to avoid needing this, to get the scroll bar?
 
-// We have 3 things that get drawn to:
+// We have 3 main things that get drawn to:
 //
 //		- boardsquares, a table with the actual squares of the board.
 //		- canvas, which gets enemy pieces and arrows drawn on it.
@@ -33,8 +52,8 @@ for (let y = 0; y < 8; y++) {
 		let td2 = document.createElement("td");
 		td1.id = "underlay_" + S(x, y);
 		td2.id = "overlay_" + S(x, y);
-		td1.width = td2.width = config.board_size / 8;
-		td1.height = td2.height = config.board_size / 8;
+		td1.width = td2.width = config.square_size;
+		td1.height = td2.height = config.square_size;
 		if ((x + y) % 2 === 0) {
 			td1.style["background-color"] = config.light_square;
 		} else {
@@ -45,22 +64,10 @@ for (let y = 0; y < 8; y++) {
 	}
 }
 
-// ------------------------------------------------------------------------------------------------
+// The promotion table pops up when needed...
 
-let images = Object.create(null);
-let loads = 0;
-
-for (let c of Array.from("KkQqRrBbNnPp")) {
-	images[c] = new Image();
-	if (c === c.toUpperCase()) {
-		images[c].src = `./pieces/${c}.png`;
-	} else {
-		images[c].src = `./pieces/_${c.toUpperCase()}.png`;
-	}
-	images[c].onload = () => {
-		loads++;
-	};
-}
+promotiontable.style.left = (boardsquares.offsetLeft + config.square_size * 2).toString() + "px";
+promotiontable.style.top = (boardsquares.offsetTop + config.square_size * 3.5).toString() + "px";
 
 // ------------------------------------------------------------------------------------------------
 
