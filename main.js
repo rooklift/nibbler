@@ -55,8 +55,8 @@ electron.app.on("window-all-closed", () => {
 electron.ipcMain.once("renderer_ready", () => {
 
 	// Open a file via command line. We must wait until the renderer has properly loaded before we do this.
-	// Also some awkwardness around the different ways Nibbler can be started, meaning the number of arguments
-	// we get can be different.
+	// While it might seem like we could do this after "ready-to-show" I'm not 100% sure that the renderer
+	// will have fully loaded when that fires.
 
 	let filename = "";
 
