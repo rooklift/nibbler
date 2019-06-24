@@ -49,7 +49,8 @@ function NewMovelistHander() {
 
 	handler.draw = function(node) {
 
-		// Note that the node passed as an argument is the node to highlight.
+		// Note that the node passed as an argument is the currently displayed node.
+		// This info is used to decide what to highlight.
 
 		if (!node) {
 			return;
@@ -57,7 +58,7 @@ function NewMovelistHander() {
 
 		let end = node.get_end();
 
-		if (end === this.line_end && this.connections_version === tree_version) {
+		if (end === this.line_end && this.connections && this.connections_version === tree_version) {
 			this.draw_lazy(node);
 		} else {
 			this.draw_hard(node);
@@ -100,10 +101,9 @@ function NewMovelistHander() {
 		// Flag nodes that are on the current line (including into the future).
 		// We'll undo this damage to the tree in a bit.
 
-		let end = node.get_end();
-		this.line_end = end;
+		this.line_end = node.get_end();
 
-		let foo = end;
+		let foo = this.line_end;
 		while (foo) {
 			foo.current_line = true;
 			foo = foo.parent;
@@ -171,7 +171,7 @@ function NewMovelistHander() {
 
 		// Undo the damage to our tree...
 
-		foo = node.get_end();
+		foo = this.line_end;
 		while(foo) {
 			delete foo.current_line;
 			foo = foo.parent;

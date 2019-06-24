@@ -582,12 +582,10 @@ function NewRenderer() {
 
 		// Legality checks... best to assume nothing.
 
-		let tmp_board = this.node.get_board();
-		for (let move of moves) {
-			if (tmp_board.illegal(move) !== "") {
-				return;
-			}
-			tmp_board = tmp_board.move(move);
+		let reason = this.node.get_board().sequence_illegal(moves);
+		if (reason !== "") {
+			console.log("infobox_click(): " + reason);
+			return;
 		}
 
 		// Add the moves to the tree...

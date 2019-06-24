@@ -359,6 +359,21 @@ const position_prototype = {
 		return "";
 	},
 
+	sequence_illegal: function(moves) {
+
+		let pos = this;
+
+		for (let s of moves) {
+			let reason = pos.illegal(s);
+			if (reason !== "") {
+				return `${s} - ${reason}`;
+			}
+			pos = pos.move(s);
+		}
+
+		return "";
+	},
+
 	los: function(x1, y1, x2, y2) {		// Returns false if there is no "line of sight" between the 2 points.
 
 		// Check the line is straight....
