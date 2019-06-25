@@ -39,7 +39,7 @@ One can effectively disable alpha-beta pruning by sending `MultiPV 500` (which w
 
 # About serious analysis
 
-At the moment, and possibly forever, Nibbler is more of a toy than a serious analysis tool. I really can't promise this will ever change; writing a toy Chess GUI is hard enough...
+At the moment, and possibly forever, Nibbler is more of a toy than a serious analysis tool. I really can't promise this will ever change; writing a toy Chess GUI is hard enough. Still, some extra features (and especially, the `searchmoves` UCI function) are available via the *Serious Analysis Mode* option.
 
 # Thanks
 
