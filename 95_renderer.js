@@ -30,9 +30,9 @@ function NewRenderer() {
 
 	// --------------------------------------------------------------------------------------------
 
-	renderer.__go_or_halt = function() {
+	renderer.__go_or_halt = function(new_game_flag) {
 		if (this.leela_should_go()) {
-			this.__go();								
+			this.__go(new_game_flag);								
 		} else {
 			this.__halt();
 		}
@@ -43,7 +43,7 @@ function NewRenderer() {
 		this.info_handler.clear();
 		this.searchmoves = [];
 
-		this.__go_or_halt();
+		this.__go_or_halt(new_game_flag);
 
 		this.escape();
 		this.draw();
