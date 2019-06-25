@@ -665,16 +665,16 @@ function NewRenderer() {
 
 	renderer.infobox_focus_check = function(event) {
 
-		let driver = this.info_handler.driver_from_click(event);
+		let sm = this.info_handler.searchmove_from_click(event);
 
-		if (!driver) {
+		if (!sm) {
 			return;
 		}
 
-		if (ArrayIncludes(this.searchmoves, driver)) {
-			this.searchmoves = this.searchmoves.filter(move => move !== driver);
+		if (ArrayIncludes(this.searchmoves, sm)) {
+			this.searchmoves = this.searchmoves.filter(move => move !== sm);
 		} else {
-			this.searchmoves.push(driver);
+			this.searchmoves.push(sm);
 		}
 
 		this.info_handler.must_draw_infobox();

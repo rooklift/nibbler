@@ -255,13 +255,13 @@ function NewInfoHandler() {
 					new_elements.push({
 						class: "yellow",
 						text: "focused: ",
-						drive: info.move,
+						searchmove: info.move,
 					});
 				} else {
 					new_elements.push({
 						class: "gray",
 						text: "focus? ",
-						drive: info.move,
+						searchmove: info.move,
 					});
 				}
 			}
@@ -384,7 +384,7 @@ function NewInfoHandler() {
 		return move_list;
 	};
 
-	ih.driver_from_click = function(event) {
+	ih.searchmove_from_click = function(event) {
 
 		let n;
 
@@ -403,8 +403,8 @@ function NewInfoHandler() {
 			return null;
 		}
 
-		if (this.info_clickers[n].drive) {
-			return this.info_clickers[n].drive;
+		if (this.info_clickers[n].searchmove) {
+			return this.info_clickers[n].searchmove;
 		}
 
 		return null;
