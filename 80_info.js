@@ -131,6 +131,11 @@ function NewInfoHandler() {
 				move_info.u = tmp;
 			}
 
+			tmp = parseFloat(InfoVal(s, "(Q+U:"));
+			if (Number.isNaN(tmp) === false) {
+				move_info.q_plus_u = tmp;
+			}
+
 			move_info.p = InfoVal(s, "(P:");			// Worst case here is just empty string, which is OK.
 
 			tmp = parseFloat(InfoVal(s, "(Q:"));
@@ -289,6 +294,10 @@ function NewInfoHandler() {
 
 			if (config.show_u) {
 				extra_stat_strings.push(`U: ${info.u.toFixed(3)}`);
+			}
+
+			if (config.show_q_plus_u) {
+				extra_stat_strings.push(`Q+U: ${info.q_plus_u.toFixed(5)}`);
 			}
 
 			if (extra_stat_strings.length > 0) {
@@ -584,6 +593,7 @@ function new_info(board, move) {
 	info.pv = [];
 	info.nice_pv_cache = null;
 	info.q = -1;
+	info.q_plus_u = -1;
 	info.u = 2;				// Is this a sane default? Values above 1 are possible, so...
 	return info;
 }

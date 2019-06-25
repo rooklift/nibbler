@@ -700,6 +700,17 @@ function menu_build() {
 								});
 							}
 						},
+						{
+							label: "Show Q+U",
+							type: "checkbox",
+							checked: config.show_q_plus_u,
+							click: () => {
+								win.webContents.send("call", {
+									fn: "toggle",
+									args: ["show_q_plus_u"],
+								});
+							}
+						},
 					]
 				},
 				{

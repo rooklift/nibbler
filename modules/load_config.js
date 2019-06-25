@@ -30,6 +30,7 @@ function apply_defaults(o) {
 		"show_n": true,
 		"show_p": true,
 		"show_u": true,
+		"show_q_plus_u": false,
 		"winrate_as_q": false,
 		"serious_analysis_mode": false,
 		"max_info_lines": 10,
