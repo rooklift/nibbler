@@ -65,6 +65,14 @@ td {
 	user-select: none;
 }
 
+#statusbox {
+	background-color: #080808;
+	border: none;
+	display: block;
+	font-family: monospace, monospace;
+	width: 100%;
+}
+
 #fenbox {
 	background-color: #080808;
 	border: none;

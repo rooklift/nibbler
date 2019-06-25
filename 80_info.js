@@ -187,6 +187,17 @@ function NewInfoHandler() {
 
 	ih.draw_infobox = function(mouse_point, active_square, leela_should_go, active_colour, searchmoves) {
 
+		// We can afford to draw the status bar each time...
+
+		let status_string = "";
+		if (leela_should_go === false) {
+			status_string += `<span class="yellow">${config.versus === "" ? "HALTED " : "YOUR MOVE "}</span>`;
+		}
+		status_string += `<span class="gray">Nodes: ${this.nodes}, N/s: ${this.nps}</span>`;
+		statusbox.innerHTML = status_string;
+
+		// Display stderr and return if we've never seen any info...
+
 		if (!this.ever_received_info) {
 			if (this.stderr_log.length > 0) {
 				infobox.innerHTML += this.stderr_log;
@@ -221,18 +232,6 @@ function NewInfoHandler() {
 
 		let info_list = this.sorted();
 		let elements = [];									// Not HTML elements, just our own objects.
-
-		if (leela_should_go === false) {
-			elements.push({
-				class: "yellow",
-				text: config.versus === "" ? "HALTED " : "YOUR MOVE ",
-			});
-		}
-
-		elements.push({
-			class: "gray",
-			text: `Nodes: ${this.nodes}, N/s: ${this.nps}<br><br>`
-		});
 
 		for (let i = 0; i < info_list.length; i++) {
 

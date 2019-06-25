@@ -53,7 +53,6 @@ function NewRenderer() {
 
 	renderer.set_versus = function(s) {					// config.versus should not be directly set, call this function instead.
 		config.versus = s;
-		this.info_handler.must_draw_infobox();
 		this.__go_or_halt();
 	};
 
