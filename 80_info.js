@@ -558,13 +558,13 @@ let info_prototype = {
 		return (this.q + 1) / 2;
 	},
 
-	value_string: function(dp) {
+	value_string: function(dp, force_0_100_scale) {
 
 		if (typeof this.q !== "number") {
 			return "?";
 		}
 
-		if (config.winrate_as_q) {
+		if (config.winrate_as_q && !force_0_100_scale) {
 			return (this.q * 100).toFixed(dp);
 		}
 
