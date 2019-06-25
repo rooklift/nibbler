@@ -254,13 +254,13 @@ function NewInfoHandler() {
 				if (ArrayIncludes(searchmoves, info.move)) {
 					new_elements.push({
 						class: "yellow",
-						text: "(focused) ",
+						text: "focused: ",
 						drive: info.move,
 					});
 				} else {
 					new_elements.push({
 						class: "gray",
-						text: "(focus) ",
+						text: "focus? ",
 						drive: info.move,
 					});
 				}

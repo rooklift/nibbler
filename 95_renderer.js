@@ -619,7 +619,7 @@ function NewRenderer() {
 		let moves = this.info_handler.moves_from_click(event);
 
 		if (!moves || moves.length === 0) {			// We do assume length > 0 below.
-			renderer.infobox_drive_check(event);
+			renderer.infobox_focus_check(event);
 			return;
 		}
 
@@ -663,7 +663,7 @@ function NewRenderer() {
 		this.movelist_handler.redraw_node(stats_node);		// Redraw the stats node, which might not have been drawn (if draw was lazy).
 	};
 
-	renderer.infobox_drive_check = function(event) {
+	renderer.infobox_focus_check = function(event) {
 
 		let driver = this.info_handler.driver_from_click(event);
 
@@ -678,10 +678,7 @@ function NewRenderer() {
 		}
 
 		this.info_handler.must_draw_infobox();
-
-		if (renderer.leela_should_go()) {
-			this.set_versus(config.versus);					// Causes Leela to start / restart.
-		}
+		this.__go_or_halt();								// If we're running, send a new go message with the updated searchmoves.
 	};
 
 	renderer.movelist_click = function(event) {
