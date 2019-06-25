@@ -2,9 +2,9 @@
 
 
 exports.about_move_display = `
-Leela sends a statistic U showing how uncertain it is about its evaluation
-of each move. Nibbler decides which moves to show on the board using this
-statistic. Often the U statistic remains high for most moves, when Leela
+Leela sends a statistic U showing how uncertain it is about its evaluation \
+of each move. Nibbler decides which moves to show on the board using this \
+statistic. Often the U statistic remains high for most moves, when Leela \
 thinks the right move is "obvious".`;
 
 exports.about_versus_mode = `
