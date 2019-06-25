@@ -396,7 +396,7 @@ function NewInfoHandler() {
 		}
 
 		if (n === undefined) {
-			return [];
+			return null;
 		}
 
 		if (!this.info_clickers || n < 0 || n >= this.info_clickers.length) {
