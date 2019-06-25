@@ -192,7 +192,7 @@ function NewInfoHandler() {
 		this.last_drawn_version = null;
 	};
 
-	ih.draw_infobox = function(mouse_point, active_square, leela_should_go, active_colour) {
+	ih.draw_infobox = function(mouse_point, active_square, leela_should_go, active_colour, drivers) {
 
 		if (!this.ever_received_info) {
 			if (this.stderr_log.length > 0) {
@@ -255,6 +255,23 @@ function NewInfoHandler() {
 				}
 			} else {
 				value_string = info.value_string(1);
+			}
+
+			if (config.serious_analysis_mode) {
+
+				if (ArrayIncludes(drivers, info.move)) {
+					new_elements.push({
+						class: "yellow",
+						text: "(driving) ",
+						drive: info.move,
+					});
+				} else {
+					new_elements.push({
+						class: "gray",
+						text: "(drive) ",
+						drive: info.move,
+					});
+				}
 			}
 
 			new_elements.push({
@@ -373,6 +390,32 @@ function NewInfoHandler() {
 		move_list.reverse();
 
 		return move_list;
+	};
+
+	ih.driver_from_click = function(event) {
+
+		let n;
+
+		for (let item of event.path) {
+			if (typeof item.id === "string" && item.id.startsWith("infobox_")) {
+				n = parseInt(item.id.slice(8), 10);
+				break;
+			}
+		}
+
+		if (n === undefined) {
+			return [];
+		}
+
+		if (!this.info_clickers || n < 0 || n >= this.info_clickers.length) {
+			return null;
+		}
+
+		if (this.info_clickers[n].drive) {
+			return this.info_clickers[n].drive;
+		}
+
+		return null;
 	};
 
 	ih.draw_arrows = function() {

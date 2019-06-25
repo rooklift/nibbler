@@ -21,6 +21,7 @@ function NewRenderer() {
 
 	renderer.leela_maybe_running = false;				// Whether we last sent "go" or "stop" to Leela.
 	renderer.leela_position = null;						// The position we last sent to Leela.
+	renderer.drivers = [];								// Moves that we're compelling Leela to search.
 
 	// We use both leela_position and the engine.sync() method to ensure that we are actually synced up
 	// with Lc0 when interpreting Lc0 output. Neither one on its own is really enough (future me: trust
@@ -32,6 +33,7 @@ function NewRenderer() {
 	renderer.position_changed = function(new_game_flag) {
 
 		this.info_handler.clear();
+		this.drivers = [];
 
 		if (this.leela_should_go()) {
 			this.__go(new_game_flag);
@@ -372,8 +374,23 @@ function NewRenderer() {
 		}
 	};
 
+	renderer.validate_drivers = function() {
+
+		let valid_list = [];
+		let board = this.node.get_board();
+
+		for (let move of this.drivers) {
+			if (board.illegal(move) === "") {
+				valid_list.push(move);
+			}
+		}
+
+		this.drivers = valid_list;
+	};
+
 	renderer.__go = function(new_game_flag) {
 
+		this.validate_drivers();
 		this.hide_pgn_chooser();
 
 		if (this.leela_maybe_running) {
@@ -396,20 +413,31 @@ function NewRenderer() {
 		this.engine.send(`position ${setup} moves ${this.node.history().join(" ")}`);
 		this.engine.sync();			// Disregard Leela output until "readyok" comes. Leela seems to time "readyok" correctly after "position" commands.
 
+		let s;
+
 		if (config.search_nodes === "infinite") {
-			this.engine.send("go infinite");
+			s = "go infinite";
 		} else if (typeof config.search_nodes === "number") {
-			this.engine.send(`go nodes ${config.search_nodes}`);
+			s = `go nodes ${config.search_nodes}`;
 		} else if (typeof config.search_nodes === "string") {
 			let n = parseInt(config.search_nodes, 10);
 			if (Number.isNaN(n) === false) {
-				this.engine.send(`go nodes ${n}`);
+				s = `go nodes ${n}`;
 			} else {
-				this.engine.send("go infinite");
+				s = "go infinite";
 			}
 		} else {
-			this.engine.send("go infinite");
+			s = "go infinite";
 		}
+
+		if (this.drivers.length > 0) {
+			s += " searchmoves";
+			for (let move of this.drivers) {
+				s += " " + move;
+			}
+		}
+
+		this.engine.send(s);
 
 		this.leela_maybe_running = true;
 		this.leela_position = this.node.get_board();
@@ -586,6 +614,7 @@ function NewRenderer() {
 		let moves = this.info_handler.moves_from_click(event);
 
 		if (!moves || moves.length === 0) {			// We do assume length > 0 below.
+			renderer.infobox_drive_check(event);
 			return;
 		}
 
@@ -627,6 +656,23 @@ function NewRenderer() {
 
 		this.movelist_handler.draw(this.node);				// Draw the tree with the current node (this.node) as highlight.
 		this.movelist_handler.redraw_node(stats_node);		// Redraw the stats node, which might not have been drawn (if draw was lazy).
+	};
+
+	renderer.infobox_drive_check = function(event) {
+
+		let driver = this.info_handler.driver_from_click(event);
+
+		if (!driver) {
+			return;
+		}
+
+		if (ArrayIncludes(this.drivers, driver)) {
+			this.drivers = this.drivers.filter(move => move !== driver);
+		} else {
+			this.drivers.push(driver);
+		}
+
+		this.set_versus("wb");						// Causes Leela to start / restart.
 	};
 
 	renderer.movelist_click = function(event) {
@@ -801,7 +847,8 @@ function NewRenderer() {
 			this.mouse_point(),
 			this.active_square,
 			this.leela_should_go(),
-			this.node.get_board().active);
+			this.node.get_board().active,
+			this.drivers);
 
 		context.clearRect(0, 0, canvas.width, canvas.height);
 

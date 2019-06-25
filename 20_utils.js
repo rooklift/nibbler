@@ -87,6 +87,15 @@ function ArrayStartsWith(a, b) {
 	return true;
 }
 
+function ArrayIncludes(a, b) {
+	for (let item of a) {
+		if (item === b) {
+			return true;
+		}
+	}
+	return false;
+}
+
 function OppositeColour(s) {
 	if (s === "w" || s === "W") return "b";
 	if (s === "b" || s === "B") return "w";
