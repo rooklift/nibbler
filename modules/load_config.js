@@ -35,6 +35,7 @@ function apply_defaults(o) {
 		"update_delay": 170,
 		"search_nodes": "infinite",
 		"save_enabled": false,
+		"override_piece_directory": null,
 		"logfile": null,
 		"log_info_lines": false
 	});
@@ -77,7 +78,7 @@ function debork_json(s) {
 
 	for (let n = 0; n < lines.length; n++) {
 		let line = lines[n];
-		if (line.indexOf(`"path"`) !== -1 || line.indexOf(`"WeightsFile"`) !== -1) {
+		if (line.includes(`"path"`) || line.includes(`"WeightsFile"`) || line.includes(`"override_piece_directory"`)) {
 			line = replace_all(line, "\\\\", "__nibbler__blackslash__replacement__in__progress__");
 			line = replace_all(line, "\\", "\\\\");
 			line = replace_all(line, "__nibbler__blackslash__replacement__in__progress__", "\\\\");

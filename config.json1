@@ -1,0 +1,30 @@
+{
+	"path": "C:\\Programs (self-installed)\\Lc0-cudnn\\lc0.exe",
+
+	"path_cudnn": "C:\\Programs (self-installed)\\Lc0-cudnn\\lc0.exe",
+	"path_opencl": "C:\\Programs (self-installed)\\Lc0-opencl\\lc0.exe",
+	"path_cpu": "C:\\Programs (self-installed)\\Lc0-cpu\\lc0.exe",
+	
+	"path_sf": "C:\\Programs (self-installed)\\Stockfish\\stockfish_10_x64_bmi2.exe",
+
+	"options": {
+		"Backend": "cudnn-fp16",
+		"WeightsFile": "C:\\Users\\Owner\\Documents\\Misc\\Lc0 Networks\\42606"
+	},
+
+	"args": [],
+
+	"width": 1500,
+
+	"override_piece_directory": "C:\\Users\\Owner\\Documents\\Misc\\Chess Pieces\\Chess24",
+
+	"show_n": true,
+	"show_p": true,
+	"show_u": true,
+
+	"serious_analysis_mode": false,
+	"save_enabled": true,
+	
+	"logfile": "nibbler.log",
+	"log_info_lines": true
+}

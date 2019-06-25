@@ -34,3 +34,11 @@ const decoder = new util.TextDecoder("utf8");	// https://github.com/electron/ele
 
 let config = load_config();
 let tree_version = 0;
+
+// Get the images loading...........................................
+
+if (typeof config.override_piece_directory === "string") {
+	images.load_from(config.override_piece_directory);
+} else {
+	images.load_from(path.join(__dirname, "pieces"));
+}

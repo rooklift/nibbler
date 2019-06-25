@@ -33,6 +33,7 @@
 	"update_delay": 170,
 	"search_nodes": "infinite",
 	"save_enabled": false,
+	"override_piece_directory": null,
 	"logfile": null,
 	"log_info_lines": false
 }
