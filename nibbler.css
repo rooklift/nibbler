@@ -122,6 +122,14 @@ ul {
 	list-style: none;
 }
 
+.hoveryellow:hover {
+	color: #ffff00;
+}
+
+.hoverwhite:hover {
+	color: #ffffff;
+}
+
 span.pink {
 	color: #ffaaaa;
 }
