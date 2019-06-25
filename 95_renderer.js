@@ -21,7 +21,7 @@ function NewRenderer() {
 
 	renderer.leela_maybe_running = false;				// Whether we last sent "go" or "stop" to Leela.
 	renderer.leela_position = null;						// The position we last sent to Leela.
-	renderer.drivers = [];								// Moves that we're compelling Leela to search.
+	renderer.searchmoves = [];							// Moves that we're compelling Leela to search.
 
 	// We use both leela_position and the engine.sync() method to ensure that we are actually synced up
 	// with Lc0 when interpreting Lc0 output. Neither one on its own is really enough (future me: trust
@@ -30,16 +30,20 @@ function NewRenderer() {
 
 	// --------------------------------------------------------------------------------------------
 
-	renderer.position_changed = function(new_game_flag) {
-
-		this.info_handler.clear();
-		this.drivers = [];
-
+	renderer.__go_or_halt = function() {
 		if (this.leela_should_go()) {
-			this.__go(new_game_flag);
+			this.__go();								
 		} else {
 			this.__halt();
 		}
+	};
+
+	renderer.position_changed = function(new_game_flag) {
+
+		this.info_handler.clear();
+		this.searchmoves = [];
+
+		this.__go_or_halt();
 
 		this.escape();
 		this.draw();
@@ -50,11 +54,7 @@ function NewRenderer() {
 	renderer.set_versus = function(s) {					// config.versus should not be directly set, call this function instead.
 		config.versus = s;
 		this.info_handler.must_draw_infobox();
-		if (this.leela_should_go()) {
-			this.__go();
-		} else {
-			this.__halt();
-		}
+		this.__go_or_halt();
 	};
 
 	renderer.move = function(s) {						// It is safe to call this with illegal moves.
@@ -374,23 +374,28 @@ function NewRenderer() {
 		}
 	};
 
-	renderer.validate_drivers = function() {
+	renderer.validate_searchmoves = function() {
+
+		if (!config.serious_analysis_mode) {
+			this.searchmoves = [];
+			return;
+		}
 
 		let valid_list = [];
 		let board = this.node.get_board();
 
-		for (let move of this.drivers) {
+		for (let move of this.searchmoves) {
 			if (board.illegal(move) === "") {
 				valid_list.push(move);
 			}
 		}
 
-		this.drivers = valid_list;
+		this.searchmoves = valid_list;
 	};
 
 	renderer.__go = function(new_game_flag) {
 
-		this.validate_drivers();
+		this.validate_searchmoves();			// Leela can crash on illegal searchmoves.
 		this.hide_pgn_chooser();
 
 		if (this.leela_maybe_running) {
@@ -430,9 +435,9 @@ function NewRenderer() {
 			s = "go infinite";
 		}
 
-		if (this.drivers.length > 0) {
+		if (this.searchmoves.length > 0) {
 			s += " searchmoves";
-			for (let move of this.drivers) {
+			for (let move of this.searchmoves) {
 				s += " " + move;
 			}
 		}
@@ -666,13 +671,17 @@ function NewRenderer() {
 			return;
 		}
 
-		if (ArrayIncludes(this.drivers, driver)) {
-			this.drivers = this.drivers.filter(move => move !== driver);
+		if (ArrayIncludes(this.searchmoves, driver)) {
+			this.searchmoves = this.searchmoves.filter(move => move !== driver);
 		} else {
-			this.drivers.push(driver);
+			this.searchmoves.push(driver);
 		}
 
-		this.set_versus("wb");						// Causes Leela to start / restart.
+		this.info_handler.must_draw_infobox();
+
+		if (renderer.leela_should_go()) {
+			this.set_versus(config.versus);					// Causes Leela to start / restart.
+		}
 	};
 
 	renderer.movelist_click = function(event) {
@@ -848,7 +857,7 @@ function NewRenderer() {
 			this.active_square,
 			this.leela_should_go(),
 			this.node.get_board().active,
-			this.drivers);
+			this.searchmoves);
 
 		context.clearRect(0, 0, canvas.width, canvas.height);
 

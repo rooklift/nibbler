@@ -155,15 +155,6 @@ function NewInfoHandler() {
 
 		info_list.sort((a, b) => {
 
-			// multipv ranking - lower is better...
-
-			if (a.multipv < b.multipv) {
-				return -1;
-			}
-			if (a.multipv > b.multipv) {
-				return 1;
-			}
-
 			// node count - higher is better...
 
 			if (a.n < b.n) {
@@ -182,6 +173,8 @@ function NewInfoHandler() {
 				return -1;
 			}
 
+			// We can't really use MultiPV ranking now because searchmoves corrupts it.
+
 			return 0;
 		});
 
@@ -192,7 +185,7 @@ function NewInfoHandler() {
 		this.last_drawn_version = null;
 	};
 
-	ih.draw_infobox = function(mouse_point, active_square, leela_should_go, active_colour, drivers) {
+	ih.draw_infobox = function(mouse_point, active_square, leela_should_go, active_colour, searchmoves) {
 
 		if (!this.ever_received_info) {
 			if (this.stderr_log.length > 0) {
@@ -258,17 +251,16 @@ function NewInfoHandler() {
 			}
 
 			if (config.serious_analysis_mode) {
-
-				if (ArrayIncludes(drivers, info.move)) {
+				if (ArrayIncludes(searchmoves, info.move)) {
 					new_elements.push({
 						class: "yellow",
-						text: "(driving) ",
+						text: "(focused) ",
 						drive: info.move,
 					});
 				} else {
 					new_elements.push({
 						class: "gray",
-						text: "(drive) ",
+						text: "(focus) ",
 						drive: info.move,
 					});
 				}
