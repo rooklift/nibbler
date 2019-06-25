@@ -179,6 +179,31 @@ document.addEventListener("mouseout", (event) => {
 	hub.mousey = null;
 });
 
+document.addEventListener("wheel", (event) => {
+
+	// Only if the PGN chooser is closed, and the mouse is over the board.
+
+	if (pgnchooser.style.display !== "none") {
+		return;
+	}
+
+	let allow = false;
+
+	if (event.path) {
+		for (let item of event.path) {
+			if (item.id === "boardfriends") {
+				allow = true;
+				break;
+			}
+		}
+	}
+
+	if (allow) {
+		if (event.deltaY && event.deltaY < 0) input_queue.push(hub.prev.bind(hub));
+		if (event.deltaY && event.deltaY > 0) input_queue.push(hub.next.bind(hub));
+	}
+});
+
 // Setup return key on FEN box...
 
 fenbox.addEventListener("keydown", (event) => {
