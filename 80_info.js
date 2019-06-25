@@ -234,7 +234,7 @@ function NewInfoHandler() {
 			text: `Nodes: ${this.nodes}, N/s: ${this.nps}<br><br>`
 		});
 
-		for (let i = 0; i < info_list.length && i < config.max_info_lines; i++) {
+		for (let i = 0; i < info_list.length; i++) {
 
 			let new_elements = [];
 
