@@ -165,37 +165,6 @@ document.addEventListener("mouseout", (event) => {
 	hub.mousey = null;
 });
 
-document.addEventListener("wheel", (event) => {
-
-	// Only if the PGN chooser is closed, and the move_list has no scroll bar or isn't the target.
-
-	if (pgnchooser.style.display !== "none") {
-		return;
-	}
-
-	if (movelist.scrollHeight <= movelist.clientHeight) {
-		if (event.deltaY && event.deltaY < 0) input_queue.push(hub.prev.bind(hub));
-		if (event.deltaY && event.deltaY > 0) input_queue.push(hub.next.bind(hub));
-		return;
-	}
-
-	let allow = true;
-
-	if (event.path) {
-		for (let item of event.path) {
-			if (item.id === "movelist") {
-				allow = false;
-				break;
-			}
-		}
-	}
-
-	if (allow) {
-		if (event.deltaY && event.deltaY < 0) input_queue.push(hub.prev.bind(hub));
-		if (event.deltaY && event.deltaY > 0) input_queue.push(hub.next.bind(hub));
-	}
-});
-
 // Setup return key on FEN box...
 
 fenbox.addEventListener("keydown", (event) => {

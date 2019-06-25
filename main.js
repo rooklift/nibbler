@@ -639,7 +639,7 @@ function menu_build() {
 							}
 						},
 						{
-							label: "Best move only",
+							label: "Top move only",
 							type: "checkbox",
 							checked: config.uncertainty_cutoff === -999,				// Semi-special value we use
 							click: () => {

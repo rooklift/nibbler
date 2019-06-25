@@ -83,8 +83,10 @@ input[type=text]:focus{
 
 #infobox {
 	color: #cccccc;						/* only used for Lc0 stderr output at startup */
+	flex-grow: 1;
 	font-family: monospace, monospace;
-	overflow: hidden;
+	overflow-x: hidden;
+	overflow-y: auto;
 	user-select: none;
 	white-space: pre-wrap;
 }

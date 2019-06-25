@@ -155,15 +155,6 @@ function NewInfoHandler() {
 
 		info_list.sort((a, b) => {
 
-			// multipv ranking - lower is better...
-
-			if (a.multipv < b.multipv) {
-				return -1;
-			}
-			if (a.multipv > b.multipv) {
-				return 1;
-			}
-
 			// node count - higher is better...
 
 			if (a.n < b.n) {
@@ -182,6 +173,8 @@ function NewInfoHandler() {
 				return -1;
 			}
 
+			// We can't really use MultiPV ranking now because searchmoves corrupts it.
+
 			return 0;
 		});
 
@@ -192,7 +185,7 @@ function NewInfoHandler() {
 		this.last_drawn_version = null;
 	};
 
-	ih.draw_infobox = function(mouse_point, active_square, leela_should_go, active_colour) {
+	ih.draw_infobox = function(mouse_point, active_square, leela_should_go, active_colour, searchmoves) {
 
 		if (!this.ever_received_info) {
 			if (this.stderr_log.length > 0) {
@@ -241,7 +234,7 @@ function NewInfoHandler() {
 			text: `Nodes: ${this.nodes}, N/s: ${this.nps}<br><br>`
 		});
 
-		for (let i = 0; i < info_list.length && i < config.max_info_lines; i++) {
+		for (let i = 0; i < info_list.length; i++) {
 
 			let new_elements = [];
 
@@ -255,6 +248,22 @@ function NewInfoHandler() {
 				}
 			} else {
 				value_string = info.value_string(1);
+			}
+
+			if (config.serious_analysis_mode) {
+				if (ArrayIncludes(searchmoves, info.move)) {
+					new_elements.push({
+						class: "yellow",
+						text: "focused: ",
+						searchmove: info.move,
+					});
+				} else {
+					new_elements.push({
+						class: "gray",
+						text: "focus? ",
+						searchmove: info.move,
+					});
+				}
 			}
 
 			new_elements.push({
@@ -373,6 +382,32 @@ function NewInfoHandler() {
 		move_list.reverse();
 
 		return move_list;
+	};
+
+	ih.searchmove_from_click = function(event) {
+
+		let n;
+
+		for (let item of event.path) {
+			if (typeof item.id === "string" && item.id.startsWith("infobox_")) {
+				n = parseInt(item.id.slice(8), 10);
+				break;
+			}
+		}
+
+		if (n === undefined) {
+			return null;
+		}
+
+		if (!this.info_clickers || n < 0 || n >= this.info_clickers.length) {
+			return null;
+		}
+
+		if (this.info_clickers[n].searchmove) {
+			return this.info_clickers[n].searchmove;
+		}
+
+		return null;
 	};
 
 	ih.draw_arrows = function() {
