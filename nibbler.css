@@ -8,12 +8,16 @@ body {
 	padding: 0;
 }
 
-.main {
+.margin1em {
 	margin: 1em;
 }
 
-.row {
+.displayflex {
 	display: flex;
+}
+
+.flexgrow1 {
+	flex-grow: 1;
 }
 
 #boardsquares {
@@ -91,7 +95,6 @@ input[type=text]:focus{
 
 #infobox {
 	color: #cccccc;						/* only used for Lc0 stderr output at startup */
-	flex-grow: 1;
 	font-family: monospace, monospace;
 	overflow-x: hidden;
 	overflow-y: auto;

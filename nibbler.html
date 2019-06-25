@@ -12,14 +12,14 @@
 
 	<!-- note to self, only use id for things the JS needs to see, they pollute the namespace -->
 
-	<div class="main">
-		<div class="row">
+	<div class="margin1em">
+		<div class="displayflex">
 			<div>
 				<table id="boardsquares"></table>		<!-- table for light and dark squares -->
 				<canvas id="canvas"></canvas>			<!-- canvas for enemy pieces and arrows -->
 				<table id="boardfriends"></table>		<!-- table for friendly pieces -->
 			</div>
-			<div>
+			<div class="flexgrow1">
 				<p id="statusbox">-</p>					<!-- needs to have some content so it has a height when we calculate sizes -->
 				<div id="infobox"></div>
 			</div>
