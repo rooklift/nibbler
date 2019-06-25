@@ -136,7 +136,6 @@ function NewInfoHandler() {
 			tmp = parseFloat(InfoVal(s, "(Q:"));
 			if (Number.isNaN(tmp) === false) {
 				move_info.q = tmp;
-				move_info.value = (tmp + 1) / 2;
 			}
 		}
 	};
@@ -396,8 +395,8 @@ function NewInfoHandler() {
 
 					let loss = 0;
 
-					if (typeof info_list[0].value === "number" && typeof info_list[i].value === "number") {
-						loss = info_list[0].value - info_list[i].value;
+					if (typeof info_list[0].q === "number" && typeof info_list[i].q === "number") {
+						loss = info_list[0].value() - info_list[i].value();
 					}
 
 					let colour;
@@ -542,15 +541,34 @@ let info_prototype = {
 		return Array.from(this.nice_pv_cache);
 	},
 
+	value: function() {				// Rescale Q to 0..1 range.
+
+		if (typeof this.q !== "number") {
+			return 0;
+		}
+
+		if (this.q < -1) {
+			return 0;
+		}
+
+		if (this.q > 1) {
+			return 1;
+		}
+
+		return (this.q + 1) / 2;
+	},
+
 	value_string: function(dp) {
-		if (typeof this.value !== "number") {
+
+		if (typeof this.q !== "number") {
 			return "?";
 		}
-		let pc = Math.floor(this.value * 100 * 10) / 10;
-		if (pc < 0) {
-			return "?";				// Happens when 0 nodes, I think.
+
+		if (config.winrate_as_q) {
+			return (this.q * 100).toFixed(dp);
 		}
-		return pc.toFixed(dp);
+
+		return (this.value() * 100).toFixed(dp);
 	}
 };
 
@@ -567,6 +585,5 @@ function new_info(board, move) {
 	info.nice_pv_cache = null;
 	info.q = -1;
 	info.u = 2;				// Is this a sane default? Values above 1 are possible, so...
-	info.value = 0;
 	return info;
 }

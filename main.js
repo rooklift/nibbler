@@ -703,6 +703,17 @@ function menu_build() {
 					]
 				},
 				{
+					label: "Winrate as -100 to 100",
+					type: "checkbox",
+					checked: config.winrate_as_q,
+					click: () => {
+						win.webContents.send("call", {
+							fn: "toggle",
+							args: ["winrate_as_q"],
+						});
+					}
+				},
+				{
 					type: "separator"
 				},
 				{

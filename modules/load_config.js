@@ -30,6 +30,7 @@ function apply_defaults(o) {
 		"show_n": true,
 		"show_p": true,
 		"show_u": true,
+		"winrate_as_q": false,
 		"serious_analysis_mode": false,
 		"max_info_lines": 10,
 		"update_delay": 170,
