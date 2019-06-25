@@ -13,7 +13,6 @@ function apply_defaults(o) {
 		"width": 1280,
 		"height": 835,
 		"board_size": 640,
-		"movelist_height": 110,
 		"board_font": "18px Arial",
 		"light_square": "#dadada",
 		"dark_square": "#b4b4b4",

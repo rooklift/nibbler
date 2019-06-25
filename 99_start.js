@@ -7,11 +7,6 @@ Log("");
 
 let hub = NewRenderer();
 
-// ------------------------------------------------------------------------------------------------
-
-infobox.style.height = config.board_size.toString() + "px";
-movelist.style.height = config.movelist_height.toString() + "px";		// Is there a way to avoid needing this, to get the scroll bar?
-
 // We have 3 main things that get drawn to:
 //
 //		- boardsquares, a table with the actual squares of the board.
@@ -53,6 +48,25 @@ for (let y = 0; y < 8; y++) {
 		});
 	}
 }
+
+// Resize various things...
+
+let infobox_top = infobox.getBoundingClientRect().top;
+let canvas_bottom = canvas.getBoundingClientRect().bottom;
+
+infobox.style.height = (canvas_bottom - infobox_top).toString() + "px";
+
+function set_movelist_height() {
+	let desired_height = window.innerHeight - movelist.getBoundingClientRect().top - 10;
+	if (desired_height < 60) {
+		desired_height = 60;
+	}
+	movelist.style.height = `${desired_height}px`;
+}
+
+set_movelist_height();
+
+window.addEventListener("resize", set_movelist_height);		// There must be a CSS solution. FIXME.
 
 // The promotion table pops up when needed...
 
