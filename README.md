@@ -42,5 +42,3 @@ At the moment, and possibly forever, Nibbler is more of a toy than a serious ana
 # Thanks
 
 Thanks for helpful discussions and advice from borg, brinan, Chad, ChiefPushesWood, coolchess123, crem, Faroe22, jhorthos, jjosh, KillerDucky, kiudee, lealgo, liamlim, matoototo, mooskagh, Occyroexanthub, oscardssmith, Ted Summers, Tilps, twoplan, WCP, and anyone I've missed.
-
-The piece images were taken from the TCEC website. After discussion with Aloril, we're not entirely sure where they originate - if they're yours and you object, get in touch.
