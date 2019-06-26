@@ -190,6 +190,13 @@ function NewTree(startpos) {			// arg is expected to be a position object.
 // On the theory that it might help the garbage collector, we can
 // destroy trees when we're done with them. Perhaps this is totally
 // unnecessary. I've seen it matter in Python.
+//
+// This does mean it's dangerous to ever store references to nodes
+// and expect their get_board() method to always work. At the time
+// of writing, we store no such references (not counting the
+// reference the renderer has to its current node).
+//
+// FIXME?
 
 function DestroyTree(node) {
 	__destroy_tree(node.get_root());
