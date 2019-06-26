@@ -45,8 +45,12 @@ electron.app.on("ready", () => {
 		win.focus();
 	});
 
-	win.webContents.on("crashed", () => {
+	win.webContents.once("crashed", () => {
 	    alert("The renderer process has crashed. Please tell the author how you made this happen.");
+	});
+
+	win.webContents.once("unresponsive", () => {
+	    alert("The renderer process may have hung. Please tell the author how you made this happen.");
 	});
 
 	electron.Menu.setApplicationMenu(menu);
@@ -801,11 +805,22 @@ function menu_build() {
 					type: "separator"
 				},
 				{
-					label: "Crash",
-					click: () => {
-						win.webContents.executeJavaScript("process.crash()");
-					}
-				}
+					label: "Crash Test",
+					submenu: [
+						{
+							label: "Crash",
+							click: () => {
+								win.webContents.executeJavaScript("process.crash()");
+							}
+						},
+						{
+							label: "Hang",
+							click: () => {
+								win.webContents.executeJavaScript("process.hang()");
+							}
+						}
+					]
+				},
 			]
 		}
 	];
