@@ -56,22 +56,6 @@ let canvas_bottom = canvas.getBoundingClientRect().bottom;
 
 infobox.style.height = (canvas_bottom - infobox_top).toString() + "px";
 
-/*
-
-function set_movelist_height() {
-	let desired_height = window.innerHeight - movelist.getBoundingClientRect().top - 16;
-	if (desired_height < 60) {
-		desired_height = 60;
-	}
-	movelist.style.height = `${desired_height}px`;
-}
-
-set_movelist_height();
-
-window.addEventListener("resize", set_movelist_height);		// There must be a CSS solution. FIXME.
-
-*/
-
 // The promotion table pops up when needed...
 
 promotiontable.style.left = (boardsquares.offsetLeft + config.square_size * 2).toString() + "px";

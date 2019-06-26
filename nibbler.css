@@ -21,24 +21,15 @@ body {
 	background-color: #444444;
 }
 
-.margin1em {
-	margin: 1em;
-}
-
-.displayflex {
+.main_column {
+	height: 100%;
 	display: flex;
-}
-
-.flexgrow1 {
-	flex-grow: 1;
-}
-
-.flexgrow2 {
-	flex-grow: 2;
-}
-
-.flexdirectioncolumn {
 	flex-direction: column;
+}
+
+.top_row {
+	display: flex;
+	flex-direction: row;
 }
 
 #boardsquares {
