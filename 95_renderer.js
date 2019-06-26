@@ -400,19 +400,10 @@ function NewRenderer() {
 
 		let s;
 
-		if (config.search_nodes === "infinite") {
+		if (typeof config.search_nodes !== "number") {
 			s = "go infinite";
-		} else if (typeof config.search_nodes === "number") {
-			s = `go nodes ${config.search_nodes}`;
-		} else if (typeof config.search_nodes === "string") {
-			let n = parseInt(config.search_nodes, 10);
-			if (Number.isNaN(n) === false) {
-				s = `go nodes ${n}`;
-			} else {
-				s = "go infinite";
-			}
 		} else {
-			s = "go infinite";
+			s = `go nodes ${config.search_nodes}`;
 		}
 
 		if (this.searchmoves.length > 0) {

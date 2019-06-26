@@ -53,6 +53,17 @@ function apply_defaults(o) {
 	if (o.uncertainty_cutoff >= 1) o.uncertainty_cutoff = 999;
 	if (o.uncertainty_cutoff <= 0) o.uncertainty_cutoff = -999;
 
+	// search_nodes should be in number format, unless "infinite"...
+
+	if (typeof o.search_nodes === "string" && o.search_nodes !== "infinite") {
+		let n = parseInt(o.search_nodes, 10);
+		if (Number.isNaN(n) === false) {
+			o.search_nodes = n;
+		} else {
+			o.search_nodes = "infinite";
+		}
+	}
+
 	return o;
 }
 
