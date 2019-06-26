@@ -14,6 +14,7 @@ For prebuilt binary releases, see the [Releases](https://github.com/fohristiwhir
 * Supports PGN variations of arbitrary depth.
 * FEN loading.
 * Clickable moves in the variation lists.
+* UCI searchmoves functionality.
 * Versus Mode - where Leela only analyses one side.
 * Various aesthetic adjustments are possible in the `config.json` file.
 
