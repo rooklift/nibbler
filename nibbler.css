@@ -33,6 +33,10 @@ body {
 	width: 100%;
 }
 
+.grow1 {
+	flex-grow: 1;
+}
+
 #boardsquares {
 	border-collapse: collapse;
 	margin-bottom: 1em;
@@ -122,7 +126,7 @@ input[type=text]:focus {
 	font-family: monospace, monospace;
 	margin-top: 1em;
 	overflow-x: hidden;
-	overflow-y: scroll;
+	overflow-y: auto;
 	padding-right: 10px;				/* so the text doesn't get so near the scroll bar */
 	user-select: none;
 	white-space: pre-wrap;

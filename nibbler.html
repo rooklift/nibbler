@@ -3,7 +3,7 @@
 <head>
 	<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
 	<!-- https://content-security-policy.com/ -->
-	<meta http-equiv="Content-Security-Policy" content="default-src 'self'; child-src 'none'; style-src 'self' 'unsafe-inline'; img-src 'self' data:">
+	<meta http-equiv="Content-Security-Policy" content="default-src 'self'; child-src 'none'; style-src 'self'; img-src 'self' data:">
 	<title>Nibbler</title>
 	<link rel="stylesheet" type="text/css" href="nibbler.css">
 </head>
@@ -20,7 +20,7 @@
 				<canvas id="canvas"></canvas>			<!-- canvas for enemy pieces and arrows -->
 				<table id="boardfriends"></table>		<!-- table for friendly pieces, so they can be dragged -->
 			</div>
-			<div class="flexgrow1">
+			<div class="grow1">
 				<div id="statusbox">-</div>				<!-- needs to have some content so it has a height when we calculate sizes -->
 				<div id="infobox"></div>
 			</div>
@@ -28,7 +28,7 @@
 
 		<input type="text" id="fenbox" value="">
 
-		<div id="movelist" class="flexgrow1"></div>
+		<div id="movelist"></div>
 
 	</div>
 
