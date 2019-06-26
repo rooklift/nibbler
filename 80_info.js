@@ -212,7 +212,7 @@ function NewInfoHandler() {
 
 		// But if the hovered square actually has a one-click move available, highlight its variation,
 		// unless we have an active (i.e. clicked) square...
-		if (mouse_point && this.one_click_moves[mouse_point.x][mouse_point.y] && !active_square) {
+		if (mouse_point && mouse_point !== Point(null) && this.one_click_moves[mouse_point.x][mouse_point.y] && !active_square) {
 			highlight_dest = mouse_point;
 			one_click_move = this.one_click_moves[mouse_point.x][mouse_point.y];
 		}

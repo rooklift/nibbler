@@ -16,8 +16,8 @@ let hub = NewRenderer();
 // boardsquares has its natural position, while the other two get
 // fixed position that is set to be on top of it.
 
-boardsquares.width = boardfriends.width = canvas.width = config.board_size;
-boardsquares.height = boardfriends.height = canvas.height = config.board_size;
+boardfriends.width = canvas.width = boardsquares.width = config.board_size;
+boardfriends.height = canvas.height = boardsquares.height = config.board_size;
 
 boardfriends.style.left = canvas.style.left = boardsquares.offsetLeft.toString() + "px";
 boardfriends.style.top = canvas.style.top = boardsquares.offsetTop.toString() + "px";
@@ -49,7 +49,7 @@ for (let y = 0; y < 8; y++) {
 	}
 }
 
-// Resize various things...
+// Resize other things...
 
 let infobox_top = infobox.getBoundingClientRect().top;
 let canvas_bottom = canvas.getBoundingClientRect().bottom;
