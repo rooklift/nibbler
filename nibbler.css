@@ -7,8 +7,8 @@ body {
 	border: 0;
 	color: #eeeeee;
 	cursor: default;
-	height: 100%;
-	margin: 0;
+	height: calc(100% - 32px);
+	margin: 16px;
 	overflow: hidden;
 	padding: 0;
 }
@@ -21,15 +21,16 @@ body {
 	background-color: #444444;
 }
 
-.main_column {
-	height: 100%;
+.flexible_column {
 	display: flex;
 	flex-direction: column;
+	height: 100%;
 }
 
-.top_row {
+.flexible_row {
 	display: flex;
 	flex-direction: row;
+	width: 100%;
 }
 
 #boardsquares {
