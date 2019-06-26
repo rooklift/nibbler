@@ -3,7 +3,7 @@
 <head>
 	<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
 	<!-- https://content-security-policy.com/ -->
-	<meta http-equiv="Content-Security-Policy" content="default-src 'self'; child-src 'none'; img-src 'self' data:">
+	<meta http-equiv="Content-Security-Policy" content="default-src 'self'; child-src 'none'; style-src 'self'; img-src 'self' data:">
 	<title>Nibbler</title>
 	<link rel="stylesheet" type="text/css" href="nibbler.css">
 </head>
@@ -12,24 +12,29 @@
 
 	<!-- note to self, only use id for things the JS needs to see, they pollute the namespace -->
 
-	<div class="margin1em">
-		<div class="displayflex">
+	<div class="flexible_column">
+
+		<div class="flexible_row">
 			<div>
 				<table id="boardsquares"></table>		<!-- table for light and dark squares -->
 				<canvas id="canvas"></canvas>			<!-- canvas for enemy pieces and arrows -->
 				<table id="boardfriends"></table>		<!-- table for friendly pieces, so they can be dragged -->
 			</div>
-			<div class="flexgrow1">
-				<div id="statusbox">-</div>				<!-- needs to have some content so it has a height when we calculate sizes -->
+			<div class="full_growth">
+				<div id="statusbox">??</div>			<!-- needs to have some content so it has a height when we calculate sizes -->
 				<div id="infobox"></div>
 			</div>
 		</div>
+
 		<input type="text" id="fenbox" value="">
+
 		<div id="movelist"></div>
+
 	</div>
 
-	<div id="pgnchooser"></div>
+	<!-- Special hidden items that show up when needed -->
 
+	<div id="pgnchooser"></div>
 	<table id="promotiontable"></table>
 
 	<!-- Most of our components are fairly well encapsulated and could be in

@@ -1,9 +1,14 @@
+html {
+	height: 100%;
+}
+
 body {
 	background-color: #080808;
 	border: 0;
 	color: #eeeeee;
 	cursor: default;
-	margin: 0;
+	height: calc(100% - 32px);
+	margin: 16px;
 	overflow: hidden;
 	padding: 0;
 }
@@ -16,16 +21,20 @@ body {
 	background-color: #444444;
 }
 
-.margin1em {
-	margin: 1em;
-}
-
-.displayflex {
+.flexible_column {
 	display: flex;
+	flex-direction: column;
+	height: 100%;
 }
 
-.flexgrow1 {
-	flex-grow: 1;
+.flexible_row {
+	display: flex;
+	flex-direction: row;
+	width: 100%;
+}
+
+.full_growth {
+	flex-grow: 100;			/* The actual number only matters if compared to other flex-grow havers */
 }
 
 #boardsquares {
