@@ -85,11 +85,17 @@ function CompareArrays(a, b) {
 }
 
 function ArrayIncludes(a, b) {
+
+	if (Array.isArray(a) === false) {
+		return false;
+	}
+
 	for (let item of a) {
 		if (item === b) {
 			return true;
 		}
 	}
+	
 	return false;
 }
 
