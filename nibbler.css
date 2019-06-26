@@ -1,8 +1,13 @@
+html {
+	height: 100%;
+}
+
 body {
 	background-color: #080808;
 	border: 0;
 	color: #eeeeee;
 	cursor: default;
+	height: 100%;
 	margin: 0;
 	overflow: hidden;
 	padding: 0;
@@ -26,6 +31,14 @@ body {
 
 .flexgrow1 {
 	flex-grow: 1;
+}
+
+.flexgrow2 {
+	flex-grow: 2;
+}
+
+.flexdirectioncolumn {
+	flex-direction: column;
 }
 
 #boardsquares {
@@ -117,7 +130,7 @@ input[type=text]:focus {
 	font-family: monospace, monospace;
 	margin-top: 1em;
 	overflow-x: hidden;
-	overflow-y: auto;
+	overflow-y: scroll;
 	padding-right: 10px;				/* so the text doesn't get so near the scroll bar */
 	user-select: none;
 	white-space: pre-wrap;
