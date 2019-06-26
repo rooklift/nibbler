@@ -716,17 +716,19 @@ const position_prototype = {
 	},
 
 	is_white: function(point) {
-		if (this.piece(point) === "") {
+		let piece = this.piece(point);
+		if (piece === "") {
 			return false;
 		}
-		return "KQRBNP".includes(this.piece(point));
+		return "KQRBNP".includes(piece);
 	},
 
 	is_black: function(point) {
-		if (this.piece(point) === "") {
+		let piece = this.piece(point);
+		if (piece === "") {
 			return false;
 		}
-		return "kqrbnp".includes(this.piece(point));
+		return "kqrbnp".includes(piece);
 	},
 
 	is_empty: function(point) {
