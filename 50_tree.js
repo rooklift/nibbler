@@ -111,7 +111,7 @@ const node_prototype = {
 		// The complete token when writing the move, including number string if necessary,
 		// which depends on position within variations etc...
 
-		if (!this.parent) {
+		if (!this.move || !this.parent) {
 			return "";
 		}
 
@@ -156,8 +156,8 @@ const node_prototype = {
 
 		parent.children = new_list_for_parent;
 		this.parent = null;
-
 		tree_version++;
+		DestroyTree(this);
 		return parent;
 	}
 };
@@ -175,7 +175,7 @@ function NewNode(parent, move) {		// Args are null for root only.
 	return node;
 }
 
-function NewTree(startpos) {
+function NewTree(startpos) {			// arg is expected to be a position object.
 	
 	if (!startpos) {
 		startpos = LoadFEN("rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1");
