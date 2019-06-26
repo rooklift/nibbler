@@ -15,15 +15,18 @@
 	<div class="flexible_column">
 
 		<div class="flexible_row">
-			<div>
-				<table id="boardsquares"></table>		<!-- table for light and dark squares -->
-				<canvas id="canvas"></canvas>			<!-- canvas for enemy pieces and arrows -->
-				<table id="boardfriends"></table>		<!-- table for friendly pieces, so they can be dragged -->
+
+			<div>									<!-- the JS sets the tables and canvas to be on top of each other -->
+				<table id="boardsquares"></table>
+				<canvas id="canvas"></canvas>
+				<table id="boardfriends"></table>
 			</div>
+
 			<div class="full_growth">
-				<div id="statusbox">??</div>			<!-- needs to have some content so it has a height when we calculate sizes -->
+				<div id="statusbox">??</div>		<!-- needs to have some content so it has a height when we calculate sizes -->
 				<div id="infobox"></div>
 			</div>
+
 		</div>
 
 		<input type="text" id="fenbox" value="">
