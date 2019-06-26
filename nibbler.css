@@ -33,8 +33,8 @@ body {
 	width: 100%;
 }
 
-.grow1 {
-	flex-grow: 1;
+.full_growth {
+	flex-grow: 100;			/* The actual number only matters if compared to other flex-grow havers */
 }
 
 #boardsquares {
