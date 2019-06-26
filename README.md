@@ -44,4 +44,4 @@ At the moment, and possibly forever, Nibbler is more of a toy than a serious ana
 
 # Thanks
 
-Thanks for helpful discussions and advice from AlexisOlson, borg, brinan, Chad, ChiefPushesWood, coolchess123, crem, Faroe22, jhorthos, jjosh, KillerDucky, kiudee, koedem, lealgo, liamlim, matoototo, mooskagh, Occyroexanthub, oscardssmith, Ted Summers, Tilps, twoplan, WCP, and anyone I've missed.
+Thanks to everyone in Discord and GitHub who's offered advice and suggestions; and thanks to all Lc0 devs and GPU-hours contributors!
