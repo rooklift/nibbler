@@ -17,15 +17,15 @@
 			<div>
 				<table id="boardsquares"></table>		<!-- table for light and dark squares -->
 				<canvas id="canvas"></canvas>			<!-- canvas for enemy pieces and arrows -->
-				<table id="boardfriends"></table>		<!-- table for friendly pieces -->
+				<table id="boardfriends"></table>		<!-- table for friendly pieces, so they can be dragged -->
 			</div>
 			<div class="flexgrow1">
-				<p id="statusbox">-</p>					<!-- needs to have some content so it has a height when we calculate sizes -->
+				<div id="statusbox">-</div>				<!-- needs to have some content so it has a height when we calculate sizes -->
 				<div id="infobox"></div>
 			</div>
 		</div>
 		<input type="text" id="fenbox" value="Running Nibbler in a normal browser doesn't work. For the full app, see the Releases section of the repo.">
-		<p id="movelist"></p>
+		<div id="movelist"></div>
 	</div>
 
 	<div id="pgnchooser">PGN Chooser (hidden)</div>

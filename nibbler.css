@@ -32,13 +32,13 @@ body {
 	border-collapse: collapse;
 	margin-right: 1em;
 	margin-bottom: 1em;
-	pointer-events: none;		/* likely unneeded -- mouse events don't interact */
+	pointer-events: none;
 	table-layout: fixed;
 	user-select: none;
 }
 
 #canvas {
-	pointer-events: none;		/* likely unneeded -- mouse events don't interact */
+	pointer-events: none;
 	position: fixed;
 	user-select: none;
 }
@@ -81,6 +81,7 @@ td {
 	background-color: #080808;
 	border: none;
 	display: block;
+	margin-bottom: 1em;
 	font-family: monospace, monospace;
 	width: 100%;
 }
