@@ -29,6 +29,10 @@ function InfoVal(s, key) {
 	//
 	// Since Lc0's info strings often have the value ending in ")", we strip that out.
 
+	if (typeof s !== "string" || typeof key !== "string") {
+		return "";
+	}
+
 	let tokens = s.split(" ").filter(s => s !== "");
 
 	for (let i = 0; i < tokens.length - 1; i++) {
