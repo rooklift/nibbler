@@ -111,9 +111,9 @@ function ReplaceAll(s, search, replace) {		// FIXME? No type checks...
 
 function SafeString(s) {
 	if (typeof s !== "string") {
-		return undefined;
+		return undefined;						// FIXME? Is this really the thing to do?
 	}
-	s = ReplaceAll(s, "&", "&amp;");		// This needs to be first of course.
+	s = ReplaceAll(s, "&", "&amp;");			// This needs to be first of course.
 	s = ReplaceAll(s, "<", "&lt;");
 	s = ReplaceAll(s, ">", "&gt;");
 	s = ReplaceAll(s, "'", "&apos;");
