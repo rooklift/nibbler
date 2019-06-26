@@ -30,8 +30,8 @@ body {
 
 #boardsquares {
 	border-collapse: collapse;
-	margin-right: 1em;
 	margin-bottom: 1em;
+	margin-right: 1em;
 	pointer-events: none;
 	table-layout: fixed;
 	user-select: none;
@@ -62,9 +62,9 @@ td {
 	font-family: monospace, monospace;
 	font-size: 100%;
 	height: 100%;
+	left: 0;
 	overflow-y: auto;
 	position: fixed;
-	left: 0;
 	top: 0;
 	width: 100%;
 }
@@ -81,8 +81,8 @@ td {
 	background-color: #080808;
 	border: none;
 	display: block;
-	margin-bottom: 1em;
 	font-family: monospace, monospace;
+	margin-bottom: 1em;
 	width: 100%;
 }
 
@@ -128,11 +128,6 @@ a {
 	text-decoration: inherit;
 }
 
-p {
-	margin-top: 0;
-	margin-bottom: 1em;
-}
-
 ul {
 	list-style: none;
 }
@@ -166,13 +161,13 @@ span.redback {
 }
 
 span.movelist_highlight_blue {
-	color: #6cccee;
 	background-color: #222244;
+	color: #6cccee;
 }
 
 span.movelist_highlight_yellow {
-	color: #ffff00;
 	background-color: #444422;
+	color: #ffff00;
 }
 
 span.nobr {
