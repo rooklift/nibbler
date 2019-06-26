@@ -51,6 +51,10 @@ function InfoPV(s) {
 
 	// Pull the PV out, assuming it's at the end of the string.
 
+	if (typeof s !== "string") {
+		return [];
+	}
+
 	let tokens = s.split(" ").filter(s => s !== "");
 
 	for (let i = 0; i < tokens.length - 1; i++) {
