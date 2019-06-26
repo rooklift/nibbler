@@ -810,13 +810,19 @@ function menu_build() {
 						{
 							label: "Crash",
 							click: () => {
-								win.webContents.executeJavaScript("process.crash()");
+								win.webContents.executeJavaScript("hub.engine.send('stop')");
+								setTimeout(() => {
+									win.webContents.executeJavaScript("process.crash()");
+								}, 500);
 							}
 						},
 						{
 							label: "Hang",
 							click: () => {
-								win.webContents.executeJavaScript("process.hang()");
+								win.webContents.executeJavaScript("hub.engine.send('stop')");
+								setTimeout(() => {
+									win.webContents.executeJavaScript("process.hang()");
+								}, 500);
 							}
 						}
 					]
