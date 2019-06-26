@@ -98,10 +98,6 @@ const node_prototype = {
 		tree_version++;
 	},
 
-	fen: function() {
-		return this.get_board().fen();
-	},
-
 	nice_move: function() {
 		if (!this.move || !this.parent) {
 			return "??";

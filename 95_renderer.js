@@ -40,7 +40,7 @@ function NewRenderer() {
 		this.escape();
 		this.draw();
 		this.movelist_handler.draw(this.node);
-		fenbox.value = this.node.fen();
+		fenbox.value = this.node.get_board().fen();
 	};
 
 	renderer.set_versus = function(s) {					// config.versus should not be directly set, call this function instead.
@@ -386,7 +386,7 @@ function NewRenderer() {
 			this.engine.send("ucinewgame");
 		}
 
-		let start_fen = this.node.get_root().fen();
+		let start_fen = this.node.get_root().get_board().fen();
 
 		let setup;
 		if (start_fen === "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1") {
