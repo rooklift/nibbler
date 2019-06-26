@@ -152,6 +152,10 @@ const position_prototype = {
 
 		// Returns "" if the move is legal, otherwise returns the reason it isn't.
 
+		if (typeof s !== "string") {
+			return "not a string";
+		}
+
 		let [x1, y1] = XY(s.slice(0, 2));
 		let [x2, y2] = XY(s.slice(2, 4));
 
