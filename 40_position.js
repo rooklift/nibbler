@@ -947,4 +947,4 @@ function NewPosition(state = null, active = "w", castling = "", enpassant = null
 	p.fullmove = fullmove;
 
 	return p;
-}	
+}
