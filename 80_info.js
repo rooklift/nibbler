@@ -337,7 +337,11 @@ function NewInfoHandler() {
 			new_inner_parts.push(part);
 		}
 
-		infobox.innerHTML = new_inner_parts.join("");		// Setting innerHTML is performant. Direct DOM manipulation is worse, somehow.
+		// Setting innerHTML is performant. Direct DOM manipulation is worse, somehow.
+		// This does have the disadvantage that there's possibly some flicker when
+		// using a :hover CSS selector, I find.
+
+		infobox.innerHTML = new_inner_parts.join("");
 
 		// And save our elements so that we know what clicks mean.
 

@@ -97,7 +97,8 @@ td {
 	font-size: 100%;
 	width: 100%;
 }
-input[type=text]:focus{
+
+input[type=text]:focus {
 	outline: 2px dashed gray;
 	outline-offset: 4px;
 }
@@ -134,14 +135,6 @@ p {
 
 ul {
 	list-style: none;
-}
-
-.hoveryellow:hover {
-	color: #ffff00;
-}
-
-.hoverwhite:hover {
-	color: #ffffff;
 }
 
 span.pink {
@@ -183,5 +176,5 @@ span.movelist_highlight_yellow {
 }
 
 span.nobr {
-	white-space: nowrap;		/* Used for O-O and O-O-O moves */
+	white-space: nowrap;				/* Used for O-O and O-O-O moves */
 }
