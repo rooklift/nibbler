@@ -905,6 +905,7 @@ function NewRenderer() {
 		// a lot of variations". To clarify - give me all the variations!
 
 		renderer.engine.setoption("MultiPV", 500);
+		renderer.engine.setoption("SmartPruningFactor", 0);
 		renderer.engine.send("ucinewgame");
 	}
 
