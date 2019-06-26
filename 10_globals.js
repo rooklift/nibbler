@@ -1,18 +1,5 @@
 "use strict";
 
-// Requires.........................................................
-
-const alert = require("./modules/alert");
-const child_process = require("child_process");
-const clipboard = require("electron").clipboard;
-const fs = require("fs");
-const images = require("./modules/images");
-const ipcRenderer = require("electron").ipcRenderer;
-const load_config = require("./modules/load_config");
-const path = require("path");
-const readline = require("readline");
-const util = require("util");
-
 // HTML stuff.......................................................
 //
 // All of this may be redundant since id-havers are in the global
@@ -27,6 +14,28 @@ const movelist = document.getElementById("movelist");
 const pgnchooser = document.getElementById("pgnchooser");
 const promotiontable = document.getElementById("promotiontable");
 const statusbox = document.getElementById("statusbox");
+
+// If require isn't available, we're in a browser:
+
+try {
+	require("./modules/empty.js");
+} catch (err) {
+	statusbox.innerHTML = `Running Nibbler in a normal browser doesn't work. For the full app, see the
+	<a href="https://github.com/fohristiwhirl/nibbler/releases">Releases section</a> of the repo.`;
+}
+
+// Requires.........................................................
+
+const alert = require("./modules/alert");
+const child_process = require("child_process");
+const clipboard = require("electron").clipboard;
+const fs = require("fs");
+const images = require("./modules/images");
+const ipcRenderer = require("electron").ipcRenderer;
+const load_config = require("./modules/load_config");
+const path = require("path");
+const readline = require("readline");
+const util = require("util");
 
 // Globals..........................................................
 
