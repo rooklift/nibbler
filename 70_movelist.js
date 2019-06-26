@@ -6,13 +6,13 @@
 // obviously corresponding set of operations that had to occur in the DOM. Hmm.
 
 function get_movelist_highlight() {
-	let span = document.getElementsByClassName("movelist_highlight_blue")[0];
-	if (span) {
-		return span;
+	let elements = document.getElementsByClassName("movelist_highlight_blue");
+	if (elements && elements.length > 0) {
+		return elements[0];
 	}
-	span = document.getElementsByClassName("movelist_highlight_yellow")[0];
-	if (span) {
-		return span;
+	elements = document.getElementsByClassName("movelist_highlight_yellow");
+	if (elements && elements.length > 0) {
+		return elements[0];
 	}
 	return null;
 }
