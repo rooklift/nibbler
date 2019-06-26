@@ -199,6 +199,11 @@ function NewInfoHandler() {
 			status_string += `<span class="yellow">${config.versus === "" ? "HALTED " : "YOUR MOVE "}</span>`;
 		}
 		status_string += `<span class="gray">Nodes: ${this.nodes}, N/s: ${this.nps}</span>`;
+
+		if (typeof config.search_nodes === "number" && this.nodes > config.search_nodes) {
+			status_string += ` <span class="blue">(limit exceeded)</span>`;
+		}
+
 		statusbox.innerHTML = status_string;
 
 		// Hackish warning for Lc0 issue...
