@@ -396,7 +396,7 @@ function menu_build() {
 									key: "search_nodes",
 									value: "infinite"
 								});
-								win.webContents.send("call", "reset_leela_cache");
+								win.webContents.send("call", "go_or_halt");
 							}
 						},
 						{
@@ -409,7 +409,7 @@ function menu_build() {
 									key: "search_nodes",
 									value: 1000000
 								});
-								win.webContents.send("call", "reset_leela_cache");
+								win.webContents.send("call", "go_or_halt");
 							}
 						},
 						{
@@ -422,7 +422,7 @@ function menu_build() {
 									key: "search_nodes",
 									value: 100000
 								});
-								win.webContents.send("call", "reset_leela_cache");
+								win.webContents.send("call", "go_or_halt");
 							}
 						},
 						{
@@ -435,7 +435,7 @@ function menu_build() {
 									key: "search_nodes",
 									value: 10000
 								});
-								win.webContents.send("call", "reset_leela_cache");
+								win.webContents.send("call", "go_or_halt");
 							}
 						},
 						{
@@ -448,7 +448,7 @@ function menu_build() {
 									key: "search_nodes",
 									value: 1000
 								});
-								win.webContents.send("call", "reset_leela_cache");
+								win.webContents.send("call", "go_or_halt");
 							}
 						},
 						{
@@ -461,7 +461,7 @@ function menu_build() {
 									key: "search_nodes",
 									value: 100
 								});
-								win.webContents.send("call", "reset_leela_cache");
+								win.webContents.send("call", "go_or_halt");
 							}
 						},
 						{
@@ -474,7 +474,7 @@ function menu_build() {
 									key: "search_nodes",
 									value: 2
 								});
-								win.webContents.send("call", "reset_leela_cache");
+								win.webContents.send("call", "go_or_halt");
 							}
 						},
 					]
