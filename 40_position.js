@@ -711,7 +711,7 @@ const position_prototype = {
 	},
 
 	piece: function(point) {
-		if (point === Point(null)) return "";
+		if (!point || point === Point(null)) return "";
 		return this.state[point.x][point.y];
 	},
 
