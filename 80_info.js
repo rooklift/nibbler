@@ -572,7 +572,7 @@ function NewInfoHandler() {
 
 // --------------------------------------------------------------------------------------------
 
-let info_prototype = {
+const info_prototype = {
 
 	nice_pv: function() {
 
