@@ -321,7 +321,10 @@ function menu_build() {
 					label: "Flip Board",
 					accelerator: "CommandOrControl+F",
 					click: () => {
-						win.webContents.send("call", "toggle_flip");
+						win.webContents.send("call", {
+							fn: "toggle",
+							args: ["flip"],
+						});
 					}
 				},
 			]

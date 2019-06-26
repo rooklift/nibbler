@@ -30,20 +30,12 @@ function NewRenderer() {
 
 	// --------------------------------------------------------------------------------------------
 
-	renderer.__go_or_halt = function(new_game_flag) {
-		if (this.leela_should_go()) {
-			this.__go(new_game_flag);								
-		} else {
-			this.__halt();
-		}
-	};
-
 	renderer.position_changed = function(new_game_flag) {
 
 		this.info_handler.clear();
 		this.searchmoves = [];
 
-		this.__go_or_halt(new_game_flag);
+		this.go_or_halt(new_game_flag);
 
 		this.escape();
 		this.draw();
@@ -53,7 +45,7 @@ function NewRenderer() {
 
 	renderer.set_versus = function(s) {					// config.versus should not be directly set, call this function instead.
 		config.versus = s;
-		this.__go_or_halt();
+		this.go_or_halt();
 	};
 
 	renderer.move = function(s) {						// It is safe to call this with illegal moves.
@@ -365,31 +357,20 @@ function NewRenderer() {
 
 	// The go and halt methods should generally not be called directly.
 
+	renderer.go_or_halt = function(new_game_flag) {
+		if (this.leela_should_go()) {
+			this.__go(new_game_flag);								
+		} else {
+			this.__halt();
+		}
+	};
+
 	renderer.__halt = function() {
 		if (this.leela_maybe_running) {
 			this.engine.send("stop");
 			// this.engine.sync();				// Not needed. If we're changing position, invalid data will be discarded by renderer.receive().
 			this.leela_maybe_running = false;
 		}
-	};
-
-	renderer.validate_searchmoves = function() {
-
-		if (!config.serious_analysis_mode) {
-			this.searchmoves = [];
-			return;
-		}
-
-		let valid_list = [];
-		let board = this.node.get_board();
-
-		for (let move of this.searchmoves) {
-			if (board.illegal(move) === "") {
-				valid_list.push(move);
-			}
-		}
-
-		this.searchmoves = valid_list;
 	};
 
 	renderer.__go = function(new_game_flag) {
@@ -445,6 +426,25 @@ function NewRenderer() {
 
 		this.leela_maybe_running = true;
 		this.leela_position = this.node.get_board();
+	};
+
+	renderer.validate_searchmoves = function() {
+
+		if (!config.serious_analysis_mode) {
+			this.searchmoves = [];
+			return;
+		}
+
+		let valid_list = [];
+		let board = this.node.get_board();
+
+		for (let move of this.searchmoves) {
+			if (board.illegal(move) === "") {
+				valid_list.push(move);
+			}
+		}
+
+		this.searchmoves = valid_list;
 	};
 
 	renderer.reset_leela_cache = function() {
@@ -617,8 +617,8 @@ function NewRenderer() {
 
 		let moves = this.info_handler.moves_from_click(event);
 
-		if (!moves || moves.length === 0) {			// We do assume length > 0 below.
-			renderer.infobox_focus_check(event);
+		if (!moves || moves.length === 0) {				// We do assume length > 0 below.
+			renderer.maybe_searchmove_click(event);
 			return;
 		}
 
@@ -662,7 +662,7 @@ function NewRenderer() {
 		this.movelist_handler.redraw_node(stats_node);		// Redraw the stats node, which might not have been drawn (if draw was lazy).
 	};
 
-	renderer.infobox_focus_check = function(event) {
+	renderer.maybe_searchmove_click = function(event) {
 
 		let sm = this.info_handler.searchmove_from_click(event);
 
@@ -677,7 +677,7 @@ function NewRenderer() {
 		}
 
 		this.info_handler.must_draw_infobox();
-		this.__go_or_halt();								// If we're running, send a new go message with the updated searchmoves.
+		this.go_or_halt();									// If we're running, send a new go message with the updated searchmoves.
 	};
 
 	renderer.movelist_click = function(event) {
@@ -779,8 +779,27 @@ function NewRenderer() {
 	};
 
 	renderer.toggle = function(option) {
+
+		// Cases with their own handler...
+
+		if (option === "flip") {
+			this.toggle_flip();
+			return;
+		}
+
+		// Normal cases...
+
 		config[option] = !config[option];
-		this.info_handler.must_draw_infobox();		// Because many toggle-ables affect it.
+		this.info_handler.must_draw_infobox();
+
+		// Cases that have additional actions after...
+
+		if (option === "serious_analysis_mode") {
+			if (!config.serious_analysis_mode) {		// We turned it off.
+				this.searchmoves = [];
+				this.go_or_halt();
+			}
+		}
 	};
 
 	// --------------------------------------------------------------------------------------------
