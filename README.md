@@ -4,7 +4,7 @@
 
 For prebuilt binary releases, see the [Releases](https://github.com/fohristiwhirl/nibbler/releases) section.
 
-![Screenshot](https://user-images.githubusercontent.com/16438795/60089290-10f58780-9738-11e9-828a-6ebac5366376.png)
+![Screenshot](https://user-images.githubusercontent.com/16438795/60182999-4fb13d80-981d-11e9-81ee-55193aeb6d9e.png)
 
 # Features
 
