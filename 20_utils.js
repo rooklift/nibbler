@@ -95,7 +95,7 @@ function ArrayIncludes(a, b) {
 			return true;
 		}
 	}
-	
+
 	return false;
 }
 
@@ -105,7 +105,7 @@ function OppositeColour(s) {
 	return "";
 }
 
-function ReplaceAll(s, search, replace) {
+function ReplaceAll(s, search, replace) {		// FIXME? No type checks...
 	return s.split(search).join(replace);
 }
 
