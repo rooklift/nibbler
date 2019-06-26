@@ -57,7 +57,7 @@ let canvas_bottom = canvas.getBoundingClientRect().bottom;
 infobox.style.height = (canvas_bottom - infobox_top).toString() + "px";
 
 function set_movelist_height() {
-	let desired_height = window.innerHeight - movelist.getBoundingClientRect().top - 10;
+	let desired_height = window.innerHeight - movelist.getBoundingClientRect().top - 16;
 	if (desired_height < 60) {
 		desired_height = 60;
 	}

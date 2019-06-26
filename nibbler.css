@@ -8,6 +8,14 @@ body {
 	padding: 0;
 }
 
+::-webkit-scrollbar {     
+	background-color: #080808;
+}
+
+::-webkit-scrollbar-thumb {
+	background-color: #444444;
+}
+
 .margin1em {
 	margin: 1em;
 }
@@ -98,6 +106,7 @@ input[type=text]:focus{
 	font-family: monospace, monospace;
 	overflow-x: hidden;
 	overflow-y: auto;
+	padding-right: 10px;				/* so the text doesn't get so near the scroll bar */
 	user-select: none;
 	white-space: pre-wrap;
 }
@@ -107,6 +116,7 @@ input[type=text]:focus{
 	margin-top: 1em;
 	overflow-x: hidden;
 	overflow-y: auto;
+	padding-right: 10px;				/* so the text doesn't get so near the scroll bar */
 	user-select: none;
 	white-space: pre-wrap;
 }
