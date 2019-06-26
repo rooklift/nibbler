@@ -45,6 +45,10 @@ electron.app.on("ready", () => {
 		win.focus();
 	});
 
+	win.webContents.on("crashed", () => {
+	    alert("The renderer process has crashed. Please tell the author how you made this happen.");
+	});
+
 	electron.Menu.setApplicationMenu(menu);
 });
 
@@ -791,6 +795,15 @@ function menu_build() {
 					label: "Toggle Debug CSS",
 					click: () => {
 						win.webContents.send("call", "toggle_debug_css");
+					}
+				},
+				{
+					type: "separator"
+				},
+				{
+					label: "Crash",
+					click: () => {
+						win.webContents.executeJavaScript("process.crash()");
 					}
 				}
 			]
