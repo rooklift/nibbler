@@ -165,7 +165,6 @@ document.addEventListener("mousemove", (event) => {
 document.addEventListener("mouseleave", (event) => {		// Not mouseout! Also, must be on document, not window
 	hub.mousex = null;
 	hub.mousey = null;
-	console.log(event);
 });
 
 document.addEventListener("wheel", (event) => {
