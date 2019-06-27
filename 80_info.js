@@ -161,8 +161,8 @@ function NewInfoHandler() {
 
 		let info_list = [];
 
-		for (let key of Object.keys(this.table)) {
-			info_list.push(this.table[key]);
+		for (let o of Object.values(this.table)) {
+			info_list.push(o);
 		}
 
 		info_list.sort((a, b) => {
