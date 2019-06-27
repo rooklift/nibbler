@@ -725,7 +725,8 @@ function NewRenderer() {
 	renderer.handle_drop = function(event) {
 
 		// Note to self - examining the event in the console can be misleading
-		// because the object seems to get changed after we've used it.
+		// because the object seems to get changed after it's finished firing
+		// or something.
 
 		// Just about any drop should clear the active square...
 
@@ -744,7 +745,6 @@ function NewRenderer() {
 		if (text_data.startsWith("overlay_")) {
 
 			let source = Point(text_data.slice(8, 10));
-
 			let dest = Point(null);
 
 			for (let item of event.path) {
@@ -763,9 +763,7 @@ function NewRenderer() {
 	};
 
 	renderer.console = function(...args) {
-		for (let item of args) {
-			console.log(item);
-		}
+		console.log(...args);
 	};
 
 	renderer.toggle = function(option) {
