@@ -297,16 +297,14 @@ function SavePGN(filename, node) {
 
 function PGNToClipboard(node) {
 	let connector = new_string_node_connector();
-	node = node.get_root();
-	write_tree(node, connector, false, true);
+	write_tree(node.get_root(), connector, false, true);
 	clipboard.writeText(connector.tokens.join(" "));
 }
 
 function make_movetext(node) {
 
 	let connector = new_string_node_connector();
-	node = node.get_root();
-	write_tree(node, connector, false, true);
+	write_tree(node.get_root(), connector, false, true);
 	connector.push("*", null);
 
 	// Now it's all about wrapping to 80 chars...
