@@ -44,7 +44,11 @@ function NewRenderer() {
 	};
 
 	renderer.set_versus = function(s) {					// config.versus should not be directly set, call this function instead.
-		config.versus = s;
+		if (typeof s !== "string") {
+			config.versus = "";
+		} else {
+			config.versus = s;
+		}
 		this.go_or_halt();
 	};
 
