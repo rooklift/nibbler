@@ -838,11 +838,8 @@ function NewRenderer() {
 
 		for (let x = 0; x < 8; x++) {
 			for (let y = 0; y < 8; y++) {
-				if (board.state[x][y] === "") {
-					continue;
-				}
 
-				if (board.colour(Point(x, y)) === board.active) {
+				if (board.state[x][y] === "" || board.colour(Point(x, y)) === board.active) {
 					continue;
 				}
 
