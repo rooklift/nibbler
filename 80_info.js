@@ -370,6 +370,10 @@ function NewInfoHandler() {
 
 	ih.moves_from_click = function(event) {
 
+		if (!event || Array.isArray(event.path) === false) {
+			return [];
+		}
+
 		let n;
 
 		for (let item of event.path) {
@@ -379,7 +383,7 @@ function NewInfoHandler() {
 			}
 		}
 
-		if (n === undefined) {
+		if (n === undefined || Number.isNaN(n)) {
 			return [];
 		}
 
