@@ -43,16 +43,12 @@ function NewRenderer() {
 		fenbox.value = this.node.get_board().fen();
 	};
 
-	renderer.set_versus = function(s) {					// config.versus should not be directly set, call this function instead.
-		if (typeof s !== "string") {
-			config.versus = "";
-		} else {
-			config.versus = s;
-		}
+	renderer.set_versus = function(s) {						// config.versus should not be directly set, call this function instead.
+		config.versus = typeof s === "string" ? s : "";
 		this.go_or_halt();
 	};
 
-	renderer.move = function(s) {						// It is safe to call this with illegal moves.
+	renderer.move = function(s) {							// It is safe to call this with illegal moves.
 
 		if (typeof s !== "string") {
 			console.log(`renderer.move(${s}) - bad argument`);
