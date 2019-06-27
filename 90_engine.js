@@ -65,8 +65,11 @@ function NewEngine() {
 
 		this.receive_fn = receive_fn;
 		this.err_receive_fn = err_receive_fn;
-
 		this.log_info_lines = log_info_lines;
+
+		if (Array.isArray(args) === false) {
+			args = [];
+		}
 
 		this.exe = child_process.spawn(engine_path, args, {cwd: path.dirname(engine_path)});
 		this.exe.on("error", (err) => {

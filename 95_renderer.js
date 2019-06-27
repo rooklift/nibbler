@@ -878,7 +878,7 @@ function NewRenderer() {
 	// The call to setup needs to happen after renderer.receive and .err_receive actually exist...
 	// One could argue that this stuff shouldn't be in NewRenderer() at all.
 
-	if (config && config.path) {
+	if (typeof config.path === "string") {
 
 		renderer.engine.setup(config.path, config.args, renderer.receive.bind(renderer), renderer.err_receive.bind(renderer), config.log_info_lines);
 
