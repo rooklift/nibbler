@@ -888,6 +888,7 @@ function NewRenderer() {
 
 		renderer.engine.setoption("MultiPV", 500);
 		renderer.engine.setoption("SmartPruningFactor", 0);
+		renderer.engine.setoption("ScoreType", "centipawn");			// The default, but the user can't be allowed to override this.
 		renderer.engine.send("ucinewgame");
 	}
 
