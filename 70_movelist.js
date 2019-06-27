@@ -70,7 +70,12 @@ function NewMovelistHander() {
 	handler.draw_lazy = function(node) {
 
 		// The tree hasn't changed, nor has the end node of the displayed line. Therefore very little needs
-		// to be done, except the highlight class needs to be applied to a different element.
+		// to be done, except the highlight class needs to be applied to a different element. One thing this
+		// fails to do is update stats drawn in the movelist.
+
+		if (!node || !this.connections) {
+			return;
+		}
 
 		let span = get_movelist_highlight();
 		let highlight_class = span ? span.className : "movelist_highlight_blue";	// If nothing was highlighted, old position was root.
