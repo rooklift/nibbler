@@ -567,8 +567,7 @@ const info_prototype = {
 	nice_pv: function() {
 
 		// Human readable moves. Since there's no real guarantee that our
-		// moves list is legal, we legality check them. We at least know
-		// the initial move is legal, since it's checked on receipt.
+		// moves list is legal, we legality check them.
 
 		if (this.nice_pv_cache) {
 			return Array.from(this.nice_pv_cache);
@@ -576,8 +575,8 @@ const info_prototype = {
 
 		let tmp_board = this.board;
 
-		if (!this.pv || this.pv.length === 0) {
-			return [tmp_board.nice_string(this.move)];
+		if (!this.pv || this.pv.length === 0) {		// Should be impossible.
+			this.pv = [this.move];
 		}
 
 		let ret = [];
@@ -594,7 +593,7 @@ const info_prototype = {
 		return Array.from(this.nice_pv_cache);
 	},
 
-	value: function() {				// Rescale Q to 0..1 range.
+	value: function() {								// Rescale Q to 0..1 range.
 
 		if (typeof this.q !== "number") {
 			return 0;
