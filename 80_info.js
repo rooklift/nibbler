@@ -44,11 +44,14 @@ function NewInfoHandler() {
 
 	ih.receive = function(s, board) {
 
-		// Although the renderer tries to avoid sending invalid moves by
-		// syncing with "isready" "readyok" an engine like Stockfish doesn't
-		// behave properly, IMO. So we use the board to check legality.
+		// We use the board to check legality (only of the first move in the PV,
+		// later moves are checked if we ever try to use them.)
 
-		if (s.startsWith("info") && s.indexOf(" pv ") !== -1) {
+		if (typeof s !== "string" || !board) {
+			return;
+		}
+
+		if (s.startsWith("info") && s.includes(" pv ")) {
 
 			this.ever_received_info = true;
 			this.version++;
