@@ -679,6 +679,20 @@ function menu_build() {
 					label: "Infobox stats",
 					submenu: [
 						{
+							label: "Centipawns",
+							type: "checkbox",
+							checked: config.show_cp,
+							click: () => {
+								win.webContents.send("call", {
+									fn: "toggle",
+									args: ["show_cp"],
+								});
+							}
+						},
+						{
+							type: "separator"
+						},
+						{
 							label: "Show N",
 							type: "checkbox",
 							checked: config.show_n,
