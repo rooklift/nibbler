@@ -464,6 +464,18 @@ const position_prototype = {
 
 		// Is the target square under attack via the line specified by step_x and step_y (which are both -1, 0, or 1) ?
 
+		if (!my_colour) {
+			throw "line_attack(): no colour given";
+		}
+
+		if (!target || target === Point(null)) {
+			return false;
+		}
+
+		if (step_x === 0 && step_y === 0) {
+			return false;
+		}
+
 		let x = target.x;
 		let y = target.y;
 
