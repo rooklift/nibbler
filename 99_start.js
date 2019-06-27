@@ -42,9 +42,18 @@ for (let y = 0; y < 8; y++) {
 		tr1.appendChild(td1);
 		tr2.appendChild(td2);
 
+		// Closure shizzle, we need unchanging copies of the x and y variables.
+		// Note that the fact that we used let x and let y above in our loop
+		// doesn't seem to be good enough.
+
+		let x_copy = x;
+		let y_copy = y;
+
 		td2.addEventListener("dragstart", (event) => {
-			hub.set_active_square(Point(x, y));
-			event.dataTransfer.setData("text", "overlay_" + S(x, y));
+			let actualx = config.flip ? 7 - x_copy : x_copy;
+			let actualy = config.flip ? 7 - y_copy : y_copy;
+			hub.set_active_square(Point(actualx, actualy));
+			event.dataTransfer.setData("text", "overlay_" + S(actualx, actualy));
 		});
 	}
 }
