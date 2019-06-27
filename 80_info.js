@@ -211,20 +211,19 @@ function NewInfoHandler() {
 			status_string += ` <span class="blue">(limit exceeded)</span>`;
 		}
 
-		statusbox.innerHTML = status_string;
-
 		// Hackish warning for Lc0 issue...
 
 		if (config.search_nodes !== "infinite" && (searchmoves.length === 1)) {
 			statusbox.innerHTML = `<span class="yellow">Node limit with exactly ONE searchmove might not return data.</span>`;
+		} else {
+			statusbox.innerHTML = status_string;
 		}
 
 		// Display stderr and return if we've never seen any info...
 
 		if (!this.ever_received_info) {
 			if (this.stderr_log.length > 0) {
-				infobox.innerHTML += this.stderr_log;
-				this.stderr_log = "";
+				infobox.innerHTML = this.stderr_log;
 			}
 			return;
 		}
