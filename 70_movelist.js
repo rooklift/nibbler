@@ -103,6 +103,10 @@ function NewMovelistHander() {
 
 	handler.draw_hard = function(node) {
 
+		if (!node) {
+			return;
+		}
+
 		// Flag nodes that are on the current line (including into the future).
 		// We'll undo this damage to the tree in a bit.
 
