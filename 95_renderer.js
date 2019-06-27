@@ -295,6 +295,10 @@ function NewRenderer() {
 
 	renderer.pgnchooser_click = function(event) {
 
+		if (!event || Array.isArray(event.path) === false) {
+			return;
+		}
+
 		let n;
 
 		for (let item of event.path) {
@@ -304,7 +308,7 @@ function NewRenderer() {
 			}
 		}
 
-		if (n === undefined) {
+		if (n === undefined || Number.isNaN(n)) {
 			return;
 		}
 

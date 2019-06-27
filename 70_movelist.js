@@ -201,7 +201,7 @@ function NewMovelistHander() {
 
 	handler.node_from_click = function(event) {
 
-		if (!this.connections || !event || Array.isArray(event.path) === false) {
+		if (!event || Array.isArray(event.path) === false) {
 			return null;
 		}
 
@@ -220,7 +220,7 @@ function NewMovelistHander() {
 			return null;
 		}
 
-		if (n < 0 || n >= this.connections.length) {
+		if (!this.connections || n < 0 || n >= this.connections.length) {
 			return null;
 		}
 
