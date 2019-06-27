@@ -30,8 +30,8 @@ for (let y = 0; y < 8; y++) {
 	for (let x = 0; x < 8; x++) {
 		let td1 = document.createElement("td");
 		let td2 = document.createElement("td");
-		td1.id = "underlay_" + S(x, y);
-		td2.id = "overlay_" + S(x, y);
+		td1.id = "underlay_" + S(x, y);						// Upon flips, these
+		td2.id = "overlay_" + S(x, y);						// get changed live.
 		td1.width = td2.width = config.square_size;
 		td1.height = td2.height = config.square_size;
 		if ((x + y) % 2 === 0) {
@@ -45,7 +45,7 @@ for (let y = 0; y < 8; y++) {
 			let actualx = config.flip ? 7 - x : x;
 			let actualy = config.flip ? 7 - y : y;
 			hub.set_active_square(Point(actualx, actualy));
-			event.dataTransfer.setData("text", "overlay_" + S(actualx, actualy));
+			event.dataTransfer.setData("text", "overlay_" + S(actualx, actualy));	// td2.id is something like "overlay_e4", could use that.
 		});
 	}
 }
