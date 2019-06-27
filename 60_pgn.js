@@ -82,7 +82,7 @@ function PreParsePGN(buf) {
 
 	// Returns an array of pgn_record objects which have
 	//		- a tags object
-	//		- a movebuf list which contains the movetext lines for that game, as a binary buffer.
+	//		- a movebuf list which contains the movetext lines for that game, as binary buffers.
 
 	let games = [new_pgn_record()];
 	let lines = split_buffer(buf);
@@ -280,18 +280,15 @@ function SavePGN(filename, node) {
 		`[Result "*"]`
 	];
 
-	node = node.get_root();
-
-	let startpos = node.get_board();
-	let board = startpos;
-	let start_fen = board.fen();
+	let root = node.get_root();
+	let start_fen = root.get_board().fen();
 
 	if (start_fen !== "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1") {
 		tags.push(`[FEN "${start_fen}"]`);
 		tags.push(`[SetUp "1"]`);
 	}
 
-	let movetext = make_movetext(node);
+	let movetext = make_movetext(root);
 
 	let final = tags.join("\n") + "\n\n" + movetext + "\n";
 
