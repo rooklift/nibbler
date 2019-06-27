@@ -161,7 +161,7 @@ function NewRenderer() {
 		let parent = this.node.parent;
 		this.node.detach();
 		this.node = parent;
-		
+
 		this.position_changed();
 	};
 
@@ -354,21 +354,23 @@ function NewRenderer() {
 		if (this.leela_should_go()) {
 			this.__go(new_game_flag);								
 		} else {
-			this.__halt();
+			this.__halt(new_game_flag);
 		}
 	};
 
-	renderer.__halt = function() {
+	renderer.__halt = function(new_game_flag) {		// engine.sync() is not needed. If changing position, invalid data will be discarded by renderer.receive().
 		if (this.leela_maybe_running) {
-			this.engine.send("stop");
-			// this.engine.sync();				// Not needed. If we're changing position, invalid data will be discarded by renderer.receive().
+			this.engine.send("stop");		
 			this.leela_maybe_running = false;
+		}
+		if (new_game_flag) {
+			this.engine.send("ucinewgame");
 		}
 	};
 
 	renderer.__go = function(new_game_flag) {
 
-		this.validate_searchmoves();			// Leela can crash on illegal searchmoves.
+		this.validate_searchmoves();				// Leela can crash on illegal searchmoves.
 		this.hide_pgn_chooser();
 
 		if (this.leela_maybe_running) {
