@@ -338,21 +338,20 @@ function make_movetext(node) {
 
 function TokenNodeConnections(node) {
 	let connector = new_string_node_connector();
-	node = node.get_root();
-	write_tree(node, connector, false, true);
+	write_tree(node.get_root(), connector, false, true);
 	return connector;
 }
 
 function new_string_node_connector() {
 
-	// Object will contain the tokens of a PGN string, plus
-	// what node (possibly null) we should go to if they're clicked on.
+	// Object will contain the tokens of a PGN string, plus what
+	// node (possibly null) we should go to if they're clicked on.
 
 	return {
 		tokens: [],
 		nodes: [],
 		length: 0,
-		push: function(token, node) {
+		push: function(token, node) {		// node can be null, i.e. no node matches this text
 			this.tokens.push(token);
 			this.nodes.push(node);
 			this.length++;
