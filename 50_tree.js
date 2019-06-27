@@ -73,6 +73,10 @@ const node_prototype = {
 			return this.__position;
 		}
 
+		if (!this.parent) {
+			throw "get_board(): no __position and no parent";
+		}
+
 		let ppos = this.parent.get_board();
 		this.__position = ppos.move(this.move);
 		return this.__position;
@@ -195,8 +199,6 @@ function NewTree(startpos) {			// arg is expected to be a position object.
 // and expect their get_board() method to always work. At the time
 // of writing, we store no such references (not counting the
 // reference the renderer has to its current node).
-//
-// FIXME?
 
 function DestroyTree(node) {
 	__destroy_tree(node.get_root());
