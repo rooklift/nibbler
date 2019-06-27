@@ -158,7 +158,10 @@ function NewRenderer() {
 			return;
 		}
 
-		this.node = this.node.detach();
+		let parent = this.node.parent;
+		this.node.detach();
+		this.node = parent;
+		
 		this.position_changed();
 	};
 
