@@ -27,11 +27,15 @@ function NewInfoHandler() {
 
 	ih.err_receive = function(s) {
 
+		if (typeof s !== "string") {
+			return;
+		}
+
 		if (this.stderr_log.length > 50000) {
 			return;
 		}
 
-		if (s.indexOf("WARNING") !== -1 || s.indexOf("error") !== -1) {
+		if (s.includes("WARNING") || s.includes("error")) {
 			this.stderr_log += `<span class="red">${s}</span><br>`;
 		} else {
 			this.stderr_log += `${s}<br>`;
