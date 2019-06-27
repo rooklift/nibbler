@@ -566,6 +566,10 @@ function NewRenderer() {
 
 	renderer.boardfriends_click = function(event) {
 
+		if (!event || Array.isArray(event.path) === false) {
+			return;
+		}
+
 		this.hide_promotiontable();						// Just in case it's up.
 
 		let p = Point(null);
