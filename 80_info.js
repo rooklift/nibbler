@@ -409,6 +409,10 @@ function NewInfoHandler() {
 
 	ih.searchmove_from_click = function(event) {
 
+		if (!event || Array.isArray(event.path) === false) {
+			return null;
+		}
+
 		let n;
 
 		for (let item of event.path) {
@@ -418,7 +422,7 @@ function NewInfoHandler() {
 			}
 		}
 
-		if (n === undefined) {
+		if (n === undefined || Number.isNaN(n)) {
 			return null;
 		}
 
