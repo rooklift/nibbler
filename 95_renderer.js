@@ -586,20 +586,17 @@ function NewRenderer() {
 		}
 
 		if (this.active_square) {
-
 			let move = this.active_square.s + p.s;		// e.g. "e2e4" - note promotion char is handled by renderer.move()
 			this.set_active_square(null);
 			this.move(move);
 			return;
+		}
 
-		} else {
-
-			if (board.active === "w" && board.is_white(p)) {
-				this.set_active_square(p);
-			}
-			if (board.active === "b" && board.is_black(p)) {
-				this.set_active_square(p);
-			}
+		if (board.active === "w" && board.is_white(p)) {
+			this.set_active_square(p);
+		}
+		if (board.active === "b" && board.is_black(p)) {
+			this.set_active_square(p);
 		}
 	};
 
