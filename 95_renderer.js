@@ -294,24 +294,10 @@ function NewRenderer() {
 	};
 
 	renderer.pgnchooser_click = function(event) {
-
-		if (!event || Array.isArray(event.path) === false) {
+		let n = EventPathN(event, "chooser_");
+		if (typeof n !== "number") {
 			return;
 		}
-
-		let n;
-
-		for (let item of event.path) {
-			if (typeof item.id === "string" && item.id.startsWith("chooser_")) {
-				n = parseInt(item.id.slice(8), 10);
-				break;
-			}
-		}
-
-		if (n === undefined || Number.isNaN(n)) {
-			return;
-		}
-
 		if (this.pgn_choices && n >= 0 && n < this.pgn_choices.length) {
 			this.load_pgn_object(this.pgn_choices[n]);
 		}

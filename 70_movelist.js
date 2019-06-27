@@ -201,22 +201,8 @@ function NewMovelistHander() {
 
 	handler.node_from_click = function(event) {
 
-		if (!event || Array.isArray(event.path) === false) {
-			return null;
-		}
-
-		let n;
-
-		for (let item of event.path) {
-			if (typeof item.id === "string") {
-				if (item.id.startsWith("movelist_")) {
-					n = parseInt(item.id.slice(9), 10);
-					break;
-				}
-			}
-		}
-
-		if (n === undefined || Number.isNaN(n)) {
+		let n = EventPathN(event, "movelist_");
+		if (typeof n !== "number") {
 			return null;
 		}
 

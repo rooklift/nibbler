@@ -370,20 +370,8 @@ function NewInfoHandler() {
 
 	ih.moves_from_click = function(event) {
 
-		if (!event || Array.isArray(event.path) === false) {
-			return [];
-		}
-
-		let n;
-
-		for (let item of event.path) {
-			if (typeof item.id === "string" && item.id.startsWith("infobox_")) {
-				n = parseInt(item.id.slice(8), 10);
-				break;
-			}
-		}
-
-		if (n === undefined || Number.isNaN(n)) {
+		let n = EventPathN(event, "infobox_");
+		if (typeof n !== "number") {
 			return [];
 		}
 
@@ -413,20 +401,8 @@ function NewInfoHandler() {
 
 	ih.searchmove_from_click = function(event) {
 
-		if (!event || Array.isArray(event.path) === false) {
-			return null;
-		}
-
-		let n;
-
-		for (let item of event.path) {
-			if (typeof item.id === "string" && item.id.startsWith("infobox_")) {
-				n = parseInt(item.id.slice(8), 10);
-				break;
-			}
-		}
-
-		if (n === undefined || Number.isNaN(n)) {
+		let n = EventPathN(event, "infobox_");
+		if (typeof n !== "number") {
 			return null;
 		}
 
