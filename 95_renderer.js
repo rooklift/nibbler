@@ -674,7 +674,7 @@ function NewRenderer() {
 
 		let node = this.movelist_handler.node_from_click(event);
 
-		if (!node || node.get_root() !== this.node.get_root()) {
+		if (!node || node.get_root() !== this.node.get_root() || node === this.node) {
 			return;
 		}
 
