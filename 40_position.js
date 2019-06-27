@@ -419,11 +419,11 @@ const position_prototype = {
 
 	attacked: function(target, my_colour) {
 
-		if (my_colour === undefined) {
+		if (!my_colour) {
 			throw "attacked(): no colour given";
 		}
 
-		if (target === Point(null)) {
+		if (!target || target === Point(null)) {
 			return false;
 		}
 
@@ -441,23 +441,19 @@ const position_prototype = {
 			}
 		}
 
-		// Knights... this must be the stupidest way possible...
+		// Knights...
 
-		for (let dx = -2; dx <= 2; dx++) {
-			for (let dy = -2; dy <= 2; dy++) {
+		for (let d of [[-2, -1], [-2, 1], [-1, -2], [-1, 2], [1, -2], [1, 2], [2, -1], [2, 1]]) {
 
-				if (Math.abs(dx) + Math.abs(dy) !== 3) continue;
+			let x = target.x + d[0];
+			let y = target.y + d[1];
 
-				let x = target.x + dx;
-				let y = target.y + dy;
+			if (x < 0 || x > 7 || y < 0 || y > 7) continue;
 
-				if (x < 0 || x > 7 || y < 0 || y > 7) continue;
-
-				if (this.state[x][y] === "") continue;		// Necessary, to prevent "Nn".includes() having false positives
-				if ("Nn".includes(this.state[x][y])) {
-					if (this.colour(Point(x, y)) === my_colour) continue;
-					return true;
-				}
+			if (this.state[x][y] === "") continue;		// Necessary, to prevent "Nn".includes() having false positives
+			if ("Nn".includes(this.state[x][y])) {
+				if (this.colour(Point(x, y)) === my_colour) continue;
+				return true;
 			}
 		}
 
