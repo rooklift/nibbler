@@ -40,15 +40,16 @@ function apply_defaults(o) {
 		"log_info_lines": false
 	});
 
-	o.board_size = Math.floor(o.board_size / 8) * 8;
-	o.square_size = o.board_size / 8;
-
+	o.square_size = Math.floor(o.board_size / 8);
+	o.board_size = o.square_size * 8;
+	
 	// These things should not be set naively. Rather, the correct function in the renderer must be called...
 
 	o.flip = false;
 	o.versus = "";
 
-	// Uncertainty can, counterintuitively, be above 1 or below 0. Adjust for the user's likely intention...
+	// Uncertainty can, counterintuitively, be above 1 or below 0. Adjust for the user's likely intention.
+	// Note these numbers are tested in main.js for whether the checkbox should be checked...
 
 	if (o.uncertainty_cutoff >= 1) o.uncertainty_cutoff = 999;
 	if (o.uncertainty_cutoff <= 0) o.uncertainty_cutoff = -999;
