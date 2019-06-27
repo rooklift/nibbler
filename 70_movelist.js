@@ -201,7 +201,7 @@ function NewMovelistHander() {
 
 	handler.node_from_click = function(event) {
 
-		if (!this.connections) {
+		if (!this.connections || !event || Array.isArray(event.path) === false) {
 			return null;
 		}
 
@@ -216,7 +216,7 @@ function NewMovelistHander() {
 			}
 		}
 
-		if (n === undefined) {
+		if (n === undefined || Number.isNaN(n)) {
 			return null;
 		}
 
