@@ -578,7 +578,7 @@ const position_prototype = {
 		s = ReplaceAll(s, "!", "");
 		s = ReplaceAll(s, "?", "");
 
-		// If the string contains any dots it'll be something like "1.e4"
+		// If the string contains any dots it'll be something like "1.e4" or "1...e4"
 
 		let lio = s.lastIndexOf(".");
 		if (lio !== -1) {
@@ -592,13 +592,13 @@ const position_prototype = {
 
 		if (s.toUpperCase() === "O-O") {
 			if (this.active === "w") {
-				if (this.illegal("e1g1") === "") {
+				if (this.state[4][7] === "K" && this.illegal("e1g1") === "") {
 					return ["e1g1", ""];
 				} else {
 					return ["", "illegal castling"];
 				}
 			} else {
-				if (this.illegal("e8g8") === "") {
+				if (this.state[4][0] === "k" && this.illegal("e8g8") === "") {
 					return ["e8g8", ""];
 				} else {
 					return ["", "illegal castling"];
@@ -608,13 +608,13 @@ const position_prototype = {
 
 		if (s.toUpperCase() === "O-O-O") {
 			if (this.active === "w") {
-				if (this.illegal("e1c1") === "") {
+				if (this.state[4][7] === "K" && this.illegal("e1c1") === "") {
 					return ["e1c1", ""];
 				} else {
 					return ["", "illegal castling"];
 				}
 			} else {
-				if (this.illegal("e8c8") === "") {
+				if (this.state[4][0] === "k" && this.illegal("e8c8") === "") {
 					return ["e8c8", ""];
 				} else {
 					return ["", "illegal castling"];
