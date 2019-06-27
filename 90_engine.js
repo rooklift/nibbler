@@ -59,6 +59,9 @@ function NewEngine() {
 
 		// This is slightly sketchy, the passed functions get saved to our engine
 		// object in a way that makes them look like methods of this object. Hmm.
+		//
+		// Also note, everything is stored as a reference in the object. Not sure
+		// if this is needed to stop stuff getting garbage collected...?
 
 		this.receive_fn = receive_fn;
 		this.err_receive_fn = err_receive_fn;
