@@ -28,6 +28,10 @@ Running Nibbler from source requires Electron, but has no other dependencies. If
 
 *The required Lc0 version is v0.21.0 or later*. <!-- because we need `LogLiveStats` which was introduced in that version. -->
 
+# About options
+
+Nibbler has many options in its menus, however it will not remember your choices between sessions. Everything can be made persistent in the `config.json` file, however. While I might implement real persistent preferences at some point, the current way has some merits too.
+
 # Using an lc0.config file
 
 Some people configure Leela with an `lc0.config` file in their Lc0 directory. If you do this, you should probably delete the `options` object from your Nibbler config file, as it is redundant.
