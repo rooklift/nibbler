@@ -31,7 +31,6 @@ function apply_defaults(o) {
 		"show_p": true,
 		"show_u": true,
 		"show_q_plus_u": false,
-		"winrate_as_q": false,
 		"serious_analysis_mode": false,
 		"update_delay": 170,
 		"search_nodes": "infinite",

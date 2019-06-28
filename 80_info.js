@@ -614,16 +614,14 @@ const info_prototype = {
 		return (this.q + 1) / 2;
 	},
 
-	value_string: function(dp, force_0_100_scale) {
+	value_string: function(dp) {
+
+		// Reminder: if we ever go back to supporting winrate_as_q (i.e. -100 to 100 scale) we will need
+		// to remember NOT to show it that way when putting stats into a node in "Serious" Mode.
 
 		if (typeof this.q !== "number") {
 			return "?";
 		}
-
-		if (config.winrate_as_q && !force_0_100_scale) {
-			return (this.q * 100).toFixed(dp);
-		}
-
 		return (this.value() * 100).toFixed(dp);
 	}
 };
