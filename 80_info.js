@@ -272,7 +272,7 @@ function NewInfoHandler() {
 					value_string = "+" + value_string;
 				}
 			} else {
-				value_string = info.value_string(1);
+				value_string = info.value_string(1) + "%";
 			}
 
 			if (config.serious_analysis_mode) {
