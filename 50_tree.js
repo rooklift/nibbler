@@ -67,7 +67,7 @@ const node_prototype = {
 		return node;
 	},
 
-	get_board: function() {
+	get_board: function() {		// FIXME: I'd like this to not use recursion.
 
 		if (this.__position) {
 			return this.__position;

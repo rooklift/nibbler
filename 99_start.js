@@ -66,7 +66,7 @@ promotiontable.style["background-color"] = config.active_square;
 // ------------------------------------------------------------------------------------------------
 
 if (config.warn_filename) {
-	hub.err_receive(`<span class="blue">Nibbler says: You should rename config.example.json to config.json</span>`);
+	hub.err_receive(`<span class="blue">Nibbler says: You may (optionally) rename config.example.json to config.json</span>`);
 	hub.err_receive("");
 }
 
