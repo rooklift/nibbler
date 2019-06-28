@@ -451,34 +451,22 @@ function NewRenderer() {
 
 	renderer.toggle_flip = function() {				// config.flip should not be directly set, call this function instead.
 
-		let active_square = this.active_square;		// Save and clear this for now.
-		this.set_active_square(null);
-
 		config.flip = !config.flip;
 
-		// Set all the ids to a temporary value so they can always have unique ids...
-
 		for (let x = 0; x < 8; x++) {
-			for (let y = 0; y < 8; y++) {
-				let underlay_element = document.getElementById("underlay_" + S(x, y));
-				let overlay_element = document.getElementById("overlay_" + S(x, y));
-				underlay_element.id = "underlay_tmp_" + S(x, y);
-				overlay_element.id = "overlay_tmp_" + S(x, y);
+			for (let y = 0; y < 4; y++) {
+
+				let first = document.getElementById(`overlay_${S(x, y)}`);
+				let second = document.getElementById(`overlay_${S(7 - x, 7 - y)}`);
+				SwapElements(first, second);
+
+				first = document.getElementById(`underlay_${S(x, y)}`);
+				second = document.getElementById(`underlay_${S(7 - x, 7 - y)}`);
+				SwapElements(first, second);
 			}
 		}
 
-		for (let x = 0; x < 8; x++) {
-			for (let y = 0; y < 8; y++) {
-				let underlay_element = document.getElementById("underlay_tmp_" + S(x, y));
-				let overlay_element = document.getElementById("overlay_tmp_" + S(x, y));
-				underlay_element.id = "underlay_" + S(7 - x, 7 - y);
-				overlay_element.id = "overlay_" + S(7 - x, 7 - y);
-			}
-		}
-
-		this.set_active_square(active_square);		// Put it back.
-		this.friendly_draws = New2DArray(8, 8);		// Everything needs drawn.
-		this.draw();
+		this.draw();								// For the canvas stuff.
 	};
 
 	renderer.escape = function() {					// Set things into a clean state.

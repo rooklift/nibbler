@@ -22,6 +22,10 @@ boardfriends.height = canvas.height = boardsquares.height = config.board_size;
 boardfriends.style.left = canvas.style.left = boardsquares.offsetLeft.toString() + "px";
 boardfriends.style.top = canvas.style.top = boardsquares.offsetTop.toString() + "px";
 
+// Set up the squares in both tables. Note that, upon flips, the elements
+// themselves are moved to their new position, so everything works, e.g.
+// the x and y values are still correct for the flipped view.
+
 for (let y = 0; y < 8; y++) {
 	let tr1 = document.createElement("tr");
 	let tr2 = document.createElement("tr");
@@ -30,8 +34,8 @@ for (let y = 0; y < 8; y++) {
 	for (let x = 0; x < 8; x++) {
 		let td1 = document.createElement("td");
 		let td2 = document.createElement("td");
-		td1.id = "underlay_" + S(x, y);						// Upon flips, these
-		td2.id = "overlay_" + S(x, y);						// get changed live.
+		td1.id = "underlay_" + S(x, y);
+		td2.id = "overlay_" + S(x, y);
 		td1.width = td2.width = config.square_size;
 		td1.height = td2.height = config.square_size;
 		if ((x + y) % 2 === 0) {
@@ -42,10 +46,8 @@ for (let y = 0; y < 8; y++) {
 		tr1.appendChild(td1);
 		tr2.appendChild(td2);
 		td2.addEventListener("dragstart", (event) => {
-			let actualx = config.flip ? 7 - x : x;
-			let actualy = config.flip ? 7 - y : y;
-			hub.set_active_square(Point(actualx, actualy));
-			event.dataTransfer.setData("text", "overlay_" + S(actualx, actualy));	// td2.id is something like "overlay_e4", could use that.
+			hub.set_active_square(Point(x, y));
+			event.dataTransfer.setData("text", "overlay_" + S(x, y));
 		});
 	}
 }
