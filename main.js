@@ -690,6 +690,17 @@ function menu_build() {
 							}
 						},
 						{
+							label: "...from white's POV",
+							type: "checkbox",
+							checked: config.cp_white_pov,
+							click: () => {
+								win.webContents.send("call", {
+									fn: "toggle",
+									args: ["cp_white_pov"],
+								});
+							}
+						},
+						{
 							type: "separator"
 						},
 						{

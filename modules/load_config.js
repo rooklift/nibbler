@@ -26,6 +26,7 @@ function apply_defaults(o) {
 		"uncertainty_cutoff": 0.1,
 		"arrowhead_type": 0,
 		"show_cp": false,
+		"cp_white_pov": false,
 		"show_n": true,
 		"show_p": true,
 		"show_u": true,

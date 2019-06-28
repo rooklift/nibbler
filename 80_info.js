@@ -253,7 +253,7 @@ function NewInfoHandler() {
 		// OK I guess we're drawing...
 
 		let info_list = this.sorted();
-		let elements = [];										// Not HTML elements, just our own objects.
+		let elements = [];								// Not HTML elements, just our own objects.
 
 		for (let i = 0; i < info_list.length; i++) {
 
@@ -263,8 +263,12 @@ function NewInfoHandler() {
 
 			let value_string = "?";
 			if (config.show_cp) {
-				value_string = (info.cp / 100).toFixed(2);		// This is pawns rather than centipawns, but OK.
-				if (info.cp > 0) {
+				let cp = info.cp;
+				if (config.cp_white_pov && active_colour === "b") {
+					cp = 0 - cp;
+				}
+				value_string = (cp / 100).toFixed(2);
+				if (cp > 0) {
 					value_string = "+" + value_string;
 				}
 			} else {
