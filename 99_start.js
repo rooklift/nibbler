@@ -52,7 +52,15 @@ for (let y = 0; y < 8; y++) {
 	}
 }
 
-// Resize other things...
+// Font sizes... do this before calculating sizes of stuff below.
+
+infobox.style["font-size"] = config.info_font_size;
+movelist.style["font-size"] = config.pgn_font_size;
+fenbox.style["font-size"] = config.fen_font_size;
+statusbox.style["font-size"] = config.status_font_size;
+
+// We rely on the statusbox having some text when doing these calculations,
+// so that the infobox_top has its final position.
 
 let infobox_top = infobox.getBoundingClientRect().top;
 let canvas_bottom = canvas.getBoundingClientRect().bottom;
