@@ -17,6 +17,8 @@ function apply_defaults(o) {
 		"light_square": "#dadada",
 		"dark_square": "#b4b4b4",
 		"active_square": "#66aaaa",
+		"move_colour": "#ffff00",
+		"move_colour_alpha": 0.15,
 		"best_colour": "#66aaaa",
 		"good_colour": "#66aa66",
 		"bad_colour": "#cccc66",

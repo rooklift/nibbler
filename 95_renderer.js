@@ -505,7 +505,9 @@ function NewRenderer() {
 
 	renderer.set_active_square = function(new_point) {
 
-		// Clear the old...
+		// We do things this way so it's snappy and responsive. We could do it
+		// in the canvas instead, but then we'd need a whole canvas redraw
+		// every time it changes (or accept the lag). Meh.
 
 		let old_point = this.active_square;
 
@@ -515,8 +517,6 @@ function NewRenderer() {
 		}
 
 		this.active_square = null;
-
-		// Bring the new...
 
 		if (new_point && new_point !== Point(null)) {
 			let td = document.getElementById("underlay_" + new_point.s);
@@ -829,6 +829,37 @@ function NewRenderer() {
 		}
 	};
 
+	renderer.draw_move_in_canvas = function() {
+
+		if (typeof config.move_colour_alpha !== "number" || config.move_colour_alpha <= 0) {
+			return;
+		}
+
+		let move = this.node.move;
+
+		if (typeof move !== "string") {
+			return;
+		}
+
+		let source = Point(move.slice(0, 2));
+		let dest = Point(move.slice(2, 4));
+
+		if (!source || source === Point(null) || !dest || dest === Point(null)) {
+			return;
+		}
+
+		context.fillStyle = config.move_colour;
+		context.globalAlpha = config.move_colour_alpha;
+
+		let cc = CanvasCoords(source.x, source.y);
+		context.fillRect(cc.x1, cc.y1, config.square_size, config.square_size);
+
+		cc = CanvasCoords(dest.x, dest.y);
+		context.fillRect(cc.x1, cc.y1, config.square_size, config.square_size);
+
+		context.globalAlpha = 1;
+	};
+
 	renderer.draw_enemies_in_canvas = function() {
 
 		let board = this.node.get_board();
@@ -858,6 +889,7 @@ function NewRenderer() {
 
 		context.clearRect(0, 0, canvas.width, canvas.height);
 
+		this.draw_move_in_canvas();
 		this.draw_enemies_in_canvas();
 		this.info_handler.draw_arrows();
 		this.draw_friendlies_in_table();
