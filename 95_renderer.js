@@ -44,8 +44,9 @@ function NewRenderer() {
 
 	renderer.position_changed_clear_info_handler = function(new_game_flag) {
 
-		// Clear the info handler, but preserving the relevant part
-		// of any line that we're still in.
+		// The position has changed. Maybe the new position is contained within a PV
+		// of the old info table. We want to clear the info table, but preserving the
+		// relevant part of the PV, and evals, if available.
 
 		if (new_game_flag || Object.keys(this.info_handler.table).length === 0) {	// Fail
 			this.info_handler.clear(this.node.get_board());
