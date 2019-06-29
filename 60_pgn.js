@@ -146,7 +146,7 @@ function LoadPGNRecord(o) {
 
 	let startpos;
 
-	if (o.tags.FEN && o.tags.SetUp === "1") {
+	if (o.tags.FEN) {							// && o.tags.SetUp === "1"
 		startpos = LoadFEN(o.tags.FEN);
 	} else {
 		startpos = LoadFEN("rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1");
