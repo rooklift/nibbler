@@ -42,6 +42,8 @@ An option to enable the UCI `searchmoves` feature is available in the Analysis m
 
 As of v0.6.8, moves in the PVs (on the right of the screen) can be right-clicked to show the resulting position without disturbing Leela's current search. Press escape to return to the real board.
 
+If you like a different piece set, you can create a folder of PNG files with the right names and point the `override_piece_directory` config option to it.
+
 # About other engines
 
 Various people have inquired about the possiblity of using a conventional engine with Nibbler. While such an engine will at least run, there are various problems. Firstly, we rely on custom output which only Lc0 gives. Secondly, it's in the nature of conventional engines that they usually *cannot* give an accurate value for anything except their main line, due to alpha-beta pruning.
