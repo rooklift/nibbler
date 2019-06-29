@@ -44,26 +44,77 @@ function NewRenderer() {
 
 	renderer.position_changed_clear_info_handler = function() {
 
-		// Clear the info_handler, but possibly preserve the relevant part of one PV.
+		// Clear the info handler, but preserving the relevant part
+		// of any line that we're still in.
 
-		if (this.node.parent && this.node.parent.get_board() === this.info_handler.board) {
-			let info = this.info_handler.table[this.node.move];
-			if (info) {
-				let pv = info.pv;
-				if (Array.isArray(pv) && pv.length > 1) {
-					let nextmove = pv[1];
-					pv = pv.slice(1);
-					this.info_handler.clear(this.node.get_board());
-					this.info_handler.table[nextmove] = new_info(this.node.get_board(), nextmove);
-					this.info_handler.table[nextmove].pv = pv;
-					this.info_handler.table[nextmove].q = info.q * -1;
-					this.info_handler.table[nextmove].cp = info.cp * -1;
-					this.info_handler.table[nextmove].multipv = 1;
-					return;
-				}
+		// First, find what ancestor (if any) has the old position...
+
+		let node = this.node;
+		let moves = [];
+		let found = false;
+
+		while (node.parent) {
+			moves.push(node.move);
+			if (node.parent.get_board() === this.info_handler.board) {
+				found = true;
+				break;
+			}
+			node = node.parent;
+		}
+
+		if (found === false) {
+			this.info_handler.clear(this.node.get_board());
+			return;
+		}
+
+		moves.reverse();
+
+		// moves is now the sequence of moves that gets us from 
+		// the info_handler board to our board.
+
+		let info = this.info_handler.table[moves[0]];
+
+		if (!info) {
+			this.info_handler.clear(this.node.get_board());
+			return;
+		}
+
+		let pv = info.pv;
+
+		if (Array.isArray(pv) === false || pv.length <= moves.length) {
+			this.info_handler.clear(this.node.get_board());
+			return;
+		}
+
+		// Find out if the info's PV matches our moves.
+
+		for (let n = 0; n < moves.length; n++) {
+			if (pv[n] !== moves[n]) {
+				this.info_handler.clear(this.node.get_board());
+				return;
 			}
 		}
+
+		// So, everything matches and we can use the PV...
+
 		this.info_handler.clear(this.node.get_board());
+
+		let nextmove = pv[moves.length];
+		pv = pv.slice(moves.length);
+
+		this.info_handler.table[nextmove] = new_info(this.node.get_board(), nextmove);
+
+		this.info_handler.table[nextmove].pv = pv;
+		this.info_handler.table[nextmove].q = info.q;
+		this.info_handler.table[nextmove].cp = info.cp;
+		this.info_handler.table[nextmove].multipv = 1;
+
+		// Flip our evals if the colour changes...
+
+		if (moves.length % 2 === 1) {
+			this.info_handler.table[nextmove].q *= -1;
+			this.info_handler.table[nextmove].cp *= -1;
+		}
 	};
 
 	renderer.set_versus = function(s) {						// config.versus should not be directly set, call this function instead.
