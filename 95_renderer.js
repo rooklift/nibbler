@@ -628,8 +628,8 @@ function NewRenderer() {
 
 		if (info) {
 			let divisor = this.info_handler.nodes > 0 ? this.info_handler.nodes : 1;
-			let nstr = (100 * info.n / divisor).toFixed(2);
-			let s = `EV: ${info.value_string(1)}%, N: ${nstr}% of ${this.info_handler.nodes}`;
+			let npc_string = (100 * info.n / divisor).toFixed(2);
+			let s = `EV: ${info.value_string(1)}%, N: ${npc_string}% of ${NString(this.info_handler.nodes)}`;
 			stats_node.stats = s;
 		}
 
