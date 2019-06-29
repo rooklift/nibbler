@@ -212,7 +212,7 @@ function NewInfoHandler() {
 		// Various possible status things in order of priority...
 
 		if (fantasy.style.display === "block") {
-			statusbox.innerHTML = `<span class="yellow">Hypothetical position. Press escape to clear.</span>`;
+			statusbox.innerHTML = `<span class="blue">HYPOTHETICAL POSITION. Press escape to clear.</span>`;
 		} else if (config.search_nodes !== "infinite" && (searchmoves.length === 1)) {
 			statusbox.innerHTML = `<span class="yellow">Node limit with exactly ONE searchmove might not return data.</span>`;
 		} else {

@@ -658,6 +658,10 @@ function NewRenderer() {
 			return;
 		}
 
+		if (fantasy.style.display === "block") {		// Do nothing if we're showing a fantasy position.
+			return;
+		}
+
 		this.hide_promotiontable();						// Just in case it's up.
 
 		let p = Point(null);
@@ -676,8 +680,10 @@ function NewRenderer() {
 		let ocm = this.info_handler.one_click_moves[p.x][p.y];
 		let board = this.node.get_board();
 
-		if (event.button !== 0 && ocm) {
-			this.show_from_moves([ocm]);
+		if (event.button !== 0) {
+			if (ocm) {
+				this.show_from_moves([ocm]);
+			}
 			return;
 		}
 

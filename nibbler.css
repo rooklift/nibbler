@@ -61,7 +61,8 @@ body {
 
 #fantasy {
 	display: none;
-	pointer-events: none;
+	outline: 2px dashed #6cccee;
+	outline-offset: 6px;
 	position: fixed;
 	user-select: none;
 }
