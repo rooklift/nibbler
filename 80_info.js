@@ -209,23 +209,24 @@ function NewInfoHandler() {
 
 	ih.draw_infobox = function(mouse_point, active_square, leela_should_go, active_colour, searchmoves) {
 
-		// We can afford to draw the status bar each time...
+		// Various possible status things in order of priority...
 
-		let status_string = "";
-		if (leela_should_go === false) {
-			status_string += `<span class="yellow">${config.versus === "" ? "HALTED " : "YOUR MOVE "}</span>`;
-		}
-		status_string += `<span class="gray">Nodes: ${NString(this.nodes)}, N/s: ${NString(this.nps)}</span>`;
-
-		if (typeof config.search_nodes === "number" && this.nodes > config.search_nodes) {
-			status_string += ` <span class="blue">(limit exceeded)</span>`;
-		}
-
-		// Hackish warning for Lc0 issue...
-
-		if (config.search_nodes !== "infinite" && (searchmoves.length === 1)) {
+		if (fantasy.style.display === "block") {
+			statusbox.innerHTML = `<span class="yellow">Hypothetical position. Press escape to clear.</span>`;
+		} else if (config.search_nodes !== "infinite" && (searchmoves.length === 1)) {
 			statusbox.innerHTML = `<span class="yellow">Node limit with exactly ONE searchmove might not return data.</span>`;
 		} else {
+
+			let status_string = "";
+			if (leela_should_go === false) {
+				status_string += `<span class="yellow">${config.versus === "" ? "HALTED " : "YOUR MOVE "}</span>`;
+			}
+			status_string += `<span class="gray">Nodes: ${NString(this.nodes)}, N/s: ${NString(this.nps)}</span>`;
+
+			if (typeof config.search_nodes === "number" && this.nodes > config.search_nodes) {
+				status_string += ` <span class="blue">(limit exceeded)</span>`;
+			}
+
 			statusbox.innerHTML = status_string;
 		}
 

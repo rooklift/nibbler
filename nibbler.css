@@ -59,6 +59,13 @@ body {
 	user-select: none;
 }
 
+#fantasy {
+	display: none;
+	pointer-events: none;
+	position: fixed;
+	user-select: none;
+}
+
 td {
 	border: 0;
 	margin: 0;
