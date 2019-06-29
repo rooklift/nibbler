@@ -51,6 +51,7 @@ function NewRenderer() {
 					this.info_handler.table[nextmove].pv = pv;
 					this.info_handler.table[nextmove].q = info.q * -1;
 					this.info_handler.table[nextmove].cp = info.cp * -1;
+					this.info_handler.table[nextmove].multipv = 1;
 				}
 			}
 		}
