@@ -726,49 +726,6 @@ function NewRenderer() {
 		this.movelist_handler.redraw_node(stats_node);		// Redraw the stats node, which might not have been drawn (if draw was lazy).
 	};
 
-	renderer.draw_fantasy = function(board) {
-
-		let ctx = fantasy.getContext("2d");
-
-		for (let x = 0; x < 8; x++) {
-			for (let y = 0; y < 8; y++) {
-
-				ctx.fillStyle = (x + y) % 2 === 0 ? config.light_square : config.dark_square;
-
-				let cc = CanvasCoords(x, y);
-				ctx.fillRect(cc.x1, cc.y1, config.square_size, config.square_size);
-
-				if (board.state[x][y] === "") {
-					continue;
-				}
-
-				let piece = board.state[x][y];
-				ctx.drawImage(images[piece], cc.x1, cc.y1, config.square_size, config.square_size);
-			}
-		}
-
-		fantasy.style.display = "block";
-	};
-
-	renderer.draw_fantasy_from_moves = function(moves) {
-
-		if (Array.isArray(moves) === false || moves.length === 0) {
-			return;
-		}
-
-		let board = this.node.get_board();
-
-		for (let move of moves) {
-			if (board.illegal(move) !== "") {
-				console.log("draw_fantasy_from_moves(): " + reason);
-				return;
-			}
-			board = board.move(move);
-		}
-
-		this.draw_fantasy(board);
-	};
-
 	renderer.maybe_searchmove_click = function(event) {
 
 		let sm = this.info_handler.searchmove_from_click(event);
@@ -1027,6 +984,47 @@ function NewRenderer() {
 		return false;
 	};
 
+	renderer.draw_fantasy_from_moves = function(moves) {
+
+		if (Array.isArray(moves) === false || moves.length === 0) {
+			return;
+		}
+
+		let board = this.node.get_board();
+
+		for (let move of moves) {
+			if (board.illegal(move) !== "") {
+				console.log("draw_fantasy_from_moves(): " + reason);
+				return;
+			}
+			board = board.move(move);
+		}
+
+		this.draw_fantasy(board);
+	};
+
+	renderer.draw_fantasy = function(board) {
+
+		let ctx = fantasy.getContext("2d");
+
+		for (let x = 0; x < 8; x++) {
+			for (let y = 0; y < 8; y++) {
+
+				ctx.fillStyle = (x + y) % 2 === 0 ? config.light_square : config.dark_square;
+
+				let cc = CanvasCoords(x, y);
+				ctx.fillRect(cc.x1, cc.y1, config.square_size, config.square_size);
+
+				if (board.state[x][y] === "") {
+					continue;
+				}
+
+				let piece = board.state[x][y];
+				ctx.drawImage(images[piece], cc.x1, cc.y1, config.square_size, config.square_size);
+			}
+		}
+	};
+
 	renderer.draw = function() {
 
 		this.info_handler.draw_infobox(		// The info handler needs a bit more state than I'd like, but what can you do.
@@ -1036,14 +1034,14 @@ function NewRenderer() {
 			this.node.get_board().active,
 			this.searchmoves);
 
-		context.clearRect(0, 0, canvas.width, canvas.height);
-
 		if (this.hoverdraw()) {
 			fantasy.style.display = "block";
 			return;
 		}
 
 		fantasy.style.display = "none";
+
+		context.clearRect(0, 0, canvas.width, canvas.height);
 
 		this.draw_move_in_canvas();
 		this.draw_enemies_in_canvas();
