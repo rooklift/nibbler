@@ -562,7 +562,7 @@ function NewInfoHandler() {
 			case 1:
 				if (this.nodes <= 0) {
 					s = "?";
-					break
+					break;
 				}
 				s = (100 * o.info.n / this.nodes).toFixed(0);
 				break;
