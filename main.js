@@ -15,6 +15,7 @@ if (config.failure) {				// Do this early, while console.log still works.
 
 let menu = menu_build();
 let win;
+let loaded_weights = config.options ? config.options.WeightsFile : null;
 
 electron.app.on("ready", () => {
 
@@ -94,7 +95,7 @@ function menu_build() {
 				{
 					label: "About",
 					click: () => {
-						alert(`Nibbler ${electron.app.getVersion()}, running under Electron ${process.versions.electron}`);
+						alert(`Nibbler ${electron.app.getVersion()} in Electron ${process.versions.electron}\nWeights: ${loaded_weights}`);
 					}
 				},
 				{
@@ -374,6 +375,7 @@ function menu_build() {
 								fn: "switch_weights",
 								args: [files[0]]
 							});
+							loaded_weights = files[0];
 						}
 					}
 				},
