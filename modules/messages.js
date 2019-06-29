@@ -27,15 +27,11 @@ This behaviour may change in future versions.
 To enable save, set "save_enabled" to true in the config file.`;
 
 exports.about_serious_analysis = `
-Serious Analysis Mode has three effects.
+Serious Analysis Mode has two effects.
 
 1: clicking on a move in the infobox on the right will add the \
 relevant moves to the tree, but will not actually take you there; i.e. \
 we will continue analysing the current position.
 
 2: clicking on a move in the infobox will cause some statistics \
-about the first move in the line to be displayed in the tree.
-
-3: lines in the infobox gain a clickable "focus" button which adds \
-"searchmoves" functionality - i.e. Leela can be made to examine \
-certain specific moves.`;
+about the first move in the line to be displayed in the tree.`;

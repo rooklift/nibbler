@@ -285,7 +285,7 @@ function NewInfoHandler() {
 				value_string = info.value_string(1) + "%";
 			}
 
-			if (config.serious_analysis_mode) {
+			if (config.searchmoves_buttons) {
 				if (ArrayIncludes(searchmoves, info.move)) {
 					new_elements.push({
 						class: "yellow",

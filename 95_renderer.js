@@ -502,7 +502,7 @@ function NewRenderer() {
 
 	renderer.validate_searchmoves = function() {
 
-		if (!config.serious_analysis_mode) {
+		if (!config.searchmoves_buttons) {
 			this.searchmoves = [];
 			return;
 		}
@@ -853,8 +853,8 @@ function NewRenderer() {
 
 		// Cases that have additional actions after...
 
-		if (option === "serious_analysis_mode") {
-			if (!config.serious_analysis_mode) {		// We turned it off.
+		if (option === "searchmoves_buttons") {
+			if (!config.searchmoves_buttons) {		// We turned it off.
 				this.searchmoves = [];
 				this.go_or_halt();
 			}

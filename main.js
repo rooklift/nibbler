@@ -763,6 +763,20 @@ function menu_build() {
 					type: "separator"
 				},
 				{
+					label: "Show Searchmoves Buttons",
+					type: "checkbox",
+					checked: config.searchmoves_buttons,
+					click: () => {
+						win.webContents.send("call", {
+							fn: "toggle",
+							args: ["searchmoves_buttons"],
+						});
+					}
+				},
+				{
+					type: "separator"
+				},
+				{
 					label: "Serious Analysis Mode",
 					type: "checkbox",
 					checked: config.serious_analysis_mode,
