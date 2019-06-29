@@ -239,3 +239,15 @@ function NString(n) {
 
 	return (n / 1000000).toFixed(0) + "M";
 }
+
+function DateString(dt) {
+	let y = dt.getFullYear();
+	let m = dt.getMonth() + 1;
+	let d = dt.getDate();
+	let parts = [
+		y.toString(),
+		(m > 9 ? "" : "0") + m.toString(),
+		(d > 9 ? "" : "0") + d.toString(),
+	];
+	return parts.join(".");
+};

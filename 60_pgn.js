@@ -273,7 +273,7 @@ function SavePGN(filename, node) {
 	let tags = [
 		`[Event "Nibbler Line"]`,
 		`[Site "The fevered dreams of a neural net"]`,
-		`[Date "1970.01.01"]`,
+		`[Date "${DateString(new Date())}"]`,
 		`[Round "1"]`,
 		`[White "White"]`,
 		`[Black "Black"]`,
