@@ -327,9 +327,11 @@ function NewInfoHandler() {
 			let extra_stat_strings = [];
 
 			if (config.show_n) {
-				let divisor = this.nodes > 0 ? this.nodes : 1;
-				let node_display_fraction = (100 * info.n / divisor).toFixed(2);
-				extra_stat_strings.push(`N: ${node_display_fraction}%`);
+				if (this.nodes <= 0) {
+					extra_stat_strings.push(`N: ?`);
+				} else {
+					extra_stat_strings.push(`N: ${(100 * info.n / this.nodes).toFixed(2)}%`);
+				}
 			}
 
 			if (config.show_p) {
@@ -341,11 +343,19 @@ function NewInfoHandler() {
 			}
 
 			if (config.show_u) {
-				extra_stat_strings.push(`U: ${info.u.toFixed(3)}`);
+				if (info.n <= 0) {						// U is useless if no nodes at all for this move.
+					extra_stat_strings.push(`U: ?`);
+				} else {
+					extra_stat_strings.push(`U: ${info.u.toFixed(3)}`);
+				}
 			}
 
 			if (config.show_q_plus_u) {
-				extra_stat_strings.push(`Q+U: ${info.q_plus_u.toFixed(5)}`);
+				if (info.n <= 0) {						// Q+U is useless if no nodes at all for this move.
+					extra_stat_strings.push(`Q+U: ?`);
+				} else {
+					extra_stat_strings.push(`Q+U: ${info.q_plus_u.toFixed(5)}`);
+				}
 			}
 
 			if (extra_stat_strings.length > 0) {
@@ -550,8 +560,11 @@ function NewInfoHandler() {
 				s = o.info.value_string(0);
 				break;
 			case 1:
-				let divisor = this.nodes > 0 ? this.nodes : 1;
-				s = (100 * o.info.n / divisor).toFixed(0);
+				if (this.nodes <= 0) {
+					s = "?";
+					break
+				}
+				s = (100 * o.info.n / this.nodes).toFixed(0);
 				break;
 			case 2:
 				let pstr = o.info.p;
