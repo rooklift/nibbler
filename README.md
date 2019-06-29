@@ -42,7 +42,7 @@ An option to enable the UCI `searchmoves` feature is available in the Analysis m
 
 As of v0.6.8, moves in the PVs (on the right of the screen) can be right-clicked to show the resulting position without disturbing Leela's current search. Press escape to return to the real board.
 
-If you like a different piece set, you can create a folder of PNG files with the right names and point the `override_piece_directory` config option to it.
+If you like a different piece set, you can create a folder of `.png` or `.svg` files with the right names and point the `override_piece_directory` config option to it.
 
 # About other engines
 
