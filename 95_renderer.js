@@ -85,21 +85,21 @@ function NewRenderer() {
 		// moves is now the sequence of moves that gets us from 
 		// the info_handler board to our board.
 
-		let info = this.info_handler.table[moves[0]];
+		let oldinfo = this.info_handler.table[moves[0]];
 
-		if (!info) {																// Fail
+		if (!oldinfo) {																// Fail
 			this.info_handler.clear(this.node.get_board());
 			return;
 		}
 
-		let pv = info.pv;
+		let pv = oldinfo.pv;
 
 		if (Array.isArray(pv) === false || pv.length <= moves.length) {				// Fail
 			this.info_handler.clear(this.node.get_board());
 			return;
 		}
 
-		// Find out if the info's PV matches our moves.
+		// Find out if the oldinfo's PV matches our moves.
 
 		for (let n = 0; n < moves.length; n++) {
 			if (pv[n] !== moves[n]) {												// Fail
@@ -117,13 +117,13 @@ function NewRenderer() {
 
 		this.info_handler.table[nextmove] = new_info(this.node.get_board(), nextmove);
 		this.info_handler.table[nextmove].pv = pv;
-		this.info_handler.table[nextmove].q = info.q;
-		this.info_handler.table[nextmove].cp = info.cp;
+		this.info_handler.table[nextmove].q = oldinfo.q;
+		this.info_handler.table[nextmove].cp = oldinfo.cp;
 		this.info_handler.table[nextmove].multipv = 1;
 
 		// Flip our evals if the colour changes...
 
-		if (moves.length % 2 === 1) {
+		if (oldinfo.board.active !== this.node.get_board().active) {
 			this.info_handler.table[nextmove].q *= -1;
 			this.info_handler.table[nextmove].cp *= -1;
 		}
