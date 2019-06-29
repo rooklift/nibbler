@@ -682,7 +682,7 @@ function NewRenderer() {
 
 		if (event.button !== 0) {
 			if (ocm) {
-				this.show_from_moves([ocm]);
+				this.show_fantasy_from_moves([ocm]);
 			}
 			return;
 		}
@@ -718,7 +718,7 @@ function NewRenderer() {
 		}
 
 		if (event.button !== 0) {
-			renderer.show_from_moves(moves);
+			renderer.show_fantasy_from_moves(moves);
 			return;
 		}
 
@@ -760,7 +760,7 @@ function NewRenderer() {
 		this.movelist_handler.redraw_node(stats_node);		// Redraw the stats node, which might not have been drawn (if draw was lazy).
 	};
 
-	renderer.show = function(board) {
+	renderer.show_fantasy = function(board) {
 
 		let ctx = fantasy.getContext("2d");
 
@@ -784,7 +784,7 @@ function NewRenderer() {
 		fantasy.style.display = "block";
 	};
 
-	renderer.show_from_moves = function(moves) {
+	renderer.show_fantasy_from_moves = function(moves) {
 
 		if (Array.isArray(moves) === false || moves.length === 0) {
 			return;
@@ -794,13 +794,13 @@ function NewRenderer() {
 
 		for (let move of moves) {
 			if (board.illegal(move) !== "") {
-				console.log("show_from_moves(): " + reason);
+				console.log("show_fantasy_from_moves(): " + reason);
 				return;
 			}
 			board = board.move(move);
 		}
 
-		this.show(board);
+		this.show_fantasy(board);
 	};
 
 	renderer.hide_fantasy = function() {
@@ -834,7 +834,7 @@ function NewRenderer() {
 		}
 
 		if (event.button !== 0) {
-			renderer.show(node.get_board());
+			renderer.show_fantasy(node.get_board());
 			return;
 		}
 
