@@ -1,5 +1,6 @@
 "use strict";
 
+const fs = require("fs");
 const path = require("path");
 
 let sprites = {
@@ -16,9 +17,17 @@ let sprites = {
 			sprites[c] = new Image();
 
 			if (c === c.toUpperCase()) {
-				sprites[c].src = path.join(directory, `${c}.png`);
+				if (fs.existsSync(path.join(directory, `${c}.svg`))) {
+					sprites[c].src = path.join(directory, `${c}.svg`);
+				} else {
+					sprites[c].src = path.join(directory, `${c}.png`);
+				}
 			} else {
-				sprites[c].src = path.join(directory, `_${c.toUpperCase()}.png`);
+				if (fs.existsSync(path.join(directory, `_${c.toUpperCase()}.svg`))) {
+					sprites[c].src = path.join(directory, `_${c.toUpperCase()}.svg`);
+				} else {
+					sprites[c].src = path.join(directory, `_${c.toUpperCase()}.png`);
+				}
 			}
 			sprites[c].addEventListener("load", () => {sprites.loads++;}, {once: true});
 		}
