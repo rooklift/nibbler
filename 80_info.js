@@ -366,7 +366,7 @@ function NewInfoHandler() {
 				});
 			}
 
-			if (info.move === one_click_move) {
+			if (info.move === one_click_move && fantasy.style.display !== "block") {
 				for (let e of new_elements) {
 					e.class += " redback";
 				}
