@@ -326,6 +326,10 @@ function NewInfoHandler() {
 				extra_stat_strings.push(`P: ${info.p}`);
 			}
 
+			if (config.show_q) {
+				extra_stat_strings.push(`Q: ${info.q.toFixed(3)}`);
+			}
+
 			if (config.show_u) {
 				extra_stat_strings.push(`U: ${info.u.toFixed(3)}`);
 			}

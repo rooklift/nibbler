@@ -723,6 +723,17 @@ function menu_build() {
 							}
 						},
 						{
+							label: "Show Q",
+							type: "checkbox",
+							checked: config.show_q,
+							click: () => {
+								win.webContents.send("call", {
+									fn: "toggle",
+									args: ["show_q"],
+								});
+							}
+						},
+						{
 							label: "Show U",
 							type: "checkbox",
 							checked: config.show_u,

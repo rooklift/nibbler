@@ -35,6 +35,7 @@ function apply_defaults(o) {
 		"cp_white_pov": false,
 		"show_n": true,
 		"show_p": true,
+		"show_q": false,
 		"show_u": true,
 		"show_q_plus_u": false,
 		"serious_analysis_mode": false,
