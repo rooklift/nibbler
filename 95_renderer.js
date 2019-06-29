@@ -34,7 +34,7 @@ function NewRenderer() {
 
 	renderer.position_changed = function(new_game_flag) {
 		this.searchmoves = [];
-		this.position_changed_clear_info_handler();
+		this.position_changed_clear_info_handler(new_game_flag);
 		this.go_or_halt(new_game_flag);
 		this.escape();
 		this.draw();
@@ -42,10 +42,22 @@ function NewRenderer() {
 		fenbox.value = this.node.get_board().fen();
 	};
 
-	renderer.position_changed_clear_info_handler = function() {
+	renderer.position_changed_clear_info_handler = function(new_game_flag) {
 
 		// Clear the info handler, but preserving the relevant part
 		// of any line that we're still in.
+
+		if (new_game_flag || Object.keys(this.info_handler.table).length === 0) {
+			this.info_handler.clear(this.node.get_board());
+			return;
+		}
+
+		if (config.versus === "w" || config.versus === "b") {
+			if (this.leela_should_go() === false) {
+				this.info_handler.clear(this.node.get_board());
+				return;
+			}
+		}
 
 		// First, find what ancestor (if any) has the old position...
 
