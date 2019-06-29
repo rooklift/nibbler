@@ -54,7 +54,7 @@ function NewRenderer() {
 		}
 
 		if (config.versus === "w" || config.versus === "b") {
-			if (this.leela_should_go() === false) {									// Fail
+			if (this.leela_should_go() === false) {									// Fail (conceal)
 				this.info_handler.clear(this.node.get_board());
 				return;
 			}
@@ -116,7 +116,6 @@ function NewRenderer() {
 		pv = pv.slice(moves.length);
 
 		this.info_handler.table[nextmove] = new_info(this.node.get_board(), nextmove);
-
 		this.info_handler.table[nextmove].pv = pv;
 		this.info_handler.table[nextmove].q = info.q;
 		this.info_handler.table[nextmove].cp = info.cp;
