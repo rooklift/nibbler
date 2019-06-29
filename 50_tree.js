@@ -144,11 +144,10 @@ const node_prototype = {
 	detach: function() {
 
 		// Returns the node that the renderer should point to,
-		// which is either the parent (if there is one) or
-		// this node itself (if there isn't).
+		// which is the parent unless the call is a bad one.
 
 		let parent = this.parent;
-		if (!parent) return this;
+		if (!parent) return this;		// Fail
 
 		let new_list_for_parent = [];
 

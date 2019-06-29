@@ -300,10 +300,22 @@ function menu_build() {
 					type: "separator"
 				},
 				{
-					label: "Delete move",
+					label: "Delete node",
 					accelerator: "CommandOrControl+Backspace",
 					click: () => {
-						win.webContents.send("call", "delete_move");
+						win.webContents.send("call", "delete_node");
+					}
+				},
+				{
+					label: "Delete children",
+					click: () => {
+						win.webContents.send("call", "delete_children");
+					}
+				},
+				{
+					label: "Delete siblings",
+					click: () => {
+						win.webContents.send("call", "delete_siblings");
 					}
 				},
 				{

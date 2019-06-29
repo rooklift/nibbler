@@ -238,7 +238,7 @@ function NewRenderer() {
 		this.movelist_handler.draw(this.node);
 	};
 
-	renderer.delete_move = function() {
+	renderer.delete_node = function() {
 
 		if (!this.node.parent) {
 			return;
@@ -249,6 +249,28 @@ function NewRenderer() {
 		this.node = parent;
 
 		this.position_changed();
+	};
+
+	renderer.delete_children = function() {
+		for (let child of this.node.children) {
+			child.detach();
+		}
+		this.movelist_handler.draw(this.node);
+	};
+
+	renderer.delete_siblings = function() {
+
+		if (!this.node.parent) {
+			return;
+		}
+
+		for (let sibling of this.node.parent.children) {
+			if (sibling !== this.node) {
+				sibling.detach();
+			}
+		}
+		
+		this.movelist_handler.draw(this.node);
 	};
 
 	renderer.load_fen = function(s) {
