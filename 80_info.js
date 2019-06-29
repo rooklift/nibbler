@@ -5,6 +5,7 @@ function NewInfoHandler() {
 	let ih = Object.create(null);
 
 	ih.table = Object.create(null);			// Map of move (e.g. "e2e4") --> info object.
+	ih.board = null;
 	ih.version = 0;							// Incremented on any change.
 	ih.nodes = 0;							// Stat sent by engine.
 	ih.nps = 0;								// Stat sent by engine.
@@ -18,8 +19,12 @@ function NewInfoHandler() {
 	ih.last_highlight_dest = null;			// Used to skip redraws.
 	ih.last_drawn_version = null;			// Used to skip redraws.
 
-	ih.clear = function() {
+	ih.clear = function(board) {
+		if (!board) {
+			throw "ih.clear(): need board";
+		}
 		this.table = Object.create(null);
+		this.board = board;
 		this.version++;
 		this.nodes = 0;
 		this.nps = 0;
@@ -44,10 +49,15 @@ function NewInfoHandler() {
 
 	ih.receive = function(s, board) {
 
+		if (typeof s !== "string" || !board) {
+			return;
+		}
+
 		// We use the board to check legality (only of the first move in the PV,
 		// later moves are checked if we ever try to use them.)
 
-		if (typeof s !== "string" || !board) {
+		if (this.board !== board) {
+			console.log("ih.receive(): Received unexpected board.");
 			return;
 		}
 

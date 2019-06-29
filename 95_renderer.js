@@ -4,24 +4,26 @@ function NewRenderer() {
 
 	let renderer = Object.create(null);
 
-	renderer.movelist_handler = NewMovelistHander();	// Deals with the movelist at the bottom.
-	renderer.info_handler = NewInfoHandler();			// Handles info from the engine, and drawing it.
-	renderer.node = NewTree();							// Our current place in the current tree.
-	renderer.engine = NewEngine();						// Engine connection. Needs its setup() called.
+	renderer.engine = NewEngine();								// Engine connection. Needs its setup() called.
+	renderer.node = NewTree();									// Our current place in the current tree.
+	renderer.movelist_handler = NewMovelistHander();			// Deals with the movelist at the bottom.
+
+	renderer.info_handler = NewInfoHandler();					// Handles info from the engine, and drawing it.
+	renderer.info_handler.clear(renderer.node.get_board());		// Best give it a valid board to start with.
 
 	// Various state we have to keep track of...
 
-	renderer.pgn_choices = null;						// All games found when opening a PGN file.
-	renderer.mousex = null;								// Raw mouse X on the document.
-	renderer.mousey = null;								// Raw mouse Y on the document.
-	renderer.friendly_draws = New2DArray(8, 8);			// What pieces are drawn in boardfriends. Used to skip redraws.
-	renderer.active_square = null;						// Clicked square.
+	renderer.pgn_choices = null;								// All games found when opening a PGN file.
+	renderer.mousex = null;										// Raw mouse X on the document.
+	renderer.mousey = null;										// Raw mouse Y on the document.
+	renderer.friendly_draws = New2DArray(8, 8);					// What pieces are drawn in boardfriends. Used to skip redraws.
+	renderer.active_square = null;								// Clicked square.
 
 	// Some sync stuff...
 
-	renderer.leela_maybe_running = false;				// Whether we last sent "go" or "stop" to Leela.
-	renderer.leela_position = null;						// The position we last sent to Leela.
-	renderer.searchmoves = [];							// Moves that we're compelling Leela to search.
+	renderer.leela_maybe_running = false;						// Whether we last sent "go" or "stop" to Leela.
+	renderer.leela_position = null;								// The position we last sent to Leela.
+	renderer.searchmoves = [];									// Moves that we're compelling Leela to search.
 
 	// We use both leela_position and the engine.sync() method to ensure that we are actually synced up
 	// with Lc0 when interpreting Lc0 output. Neither one on its own is really enough (future me: trust
@@ -32,7 +34,30 @@ function NewRenderer() {
 
 	renderer.position_changed = function(new_game_flag) {
 
-		this.info_handler.clear();
+		let ih_cleared = false;
+
+		// We might be able to preserve some info for the handler while entering the new node...
+
+		if (this.node.parent && this.node.parent.get_board() === this.info_handler.board) {
+			let info = this.info_handler.table[this.node.move];
+			if (info) {
+				let pv = info.pv;
+				if (Array.isArray(pv) && pv.length > 1) {
+					let nextmove = pv[1];
+					pv = pv.slice(1);
+					this.info_handler.clear(this.node.get_board());
+					ih_cleared = true;
+					this.info_handler.table[nextmove] = new_info(this.node.get_board(), nextmove);
+					this.info_handler.table[nextmove].pv = pv;
+					this.info_handler.table[nextmove].q = info.q * -1;
+					this.info_handler.table[nextmove].cp = info.cp * -1;
+				}
+			}
+		}
+
+		if (ih_cleared === false) {
+			this.info_handler.clear(this.node.get_board());
+		}
 		this.searchmoves = [];
 
 		this.go_or_halt(new_game_flag);
