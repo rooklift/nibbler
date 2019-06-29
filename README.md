@@ -36,6 +36,12 @@ Nibbler has many options in its menus, however it will not remember your choices
 
 Some people configure Leela with an `lc0.config` file in their Lc0 directory. If you do this, you should probably delete the `options` object from your Nibbler config file, as it is redundant.
 
+# Hints and tips
+
+An option to enable the UCI `"searchmoves"` feature is available in the Analysis menu. Once enabled, one or more moves can be specified as moves to focus on; Leela will ignore other moves.
+
+As of v0.6.8, moves in the PVs (on the right of the screen) can be right-clicked on to show the resulting position without disturbing Leela's current search. Press escape to return to the real board.
+
 # About other engines
 
 Various people have inquired about the possiblity of using a conventional engine with Nibbler. While such an engine will at least run, there are various problems. Firstly, we rely on custom output which only Lc0 gives. Secondly, it's in the nature of conventional engines that they usually *cannot* give an accurate value for anything except their main line, due to alpha-beta pruning.
