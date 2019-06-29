@@ -581,6 +581,7 @@ function NewRenderer() {
 		this.hide_pgn_chooser();
 		this.hide_promotiontable();
 		this.set_active_square(null);
+		this.hide_fantasy();
 	};
 
 	renderer.toggle_debug_css = function() {
@@ -657,6 +658,10 @@ function NewRenderer() {
 			return;
 		}
 
+		if (fantasy.style.display === "block") {		// Do nothing if we're showing a fantasy position.
+			return;
+		}
+
 		this.hide_promotiontable();						// Just in case it's up.
 
 		let p = Point(null);
@@ -674,6 +679,13 @@ function NewRenderer() {
 
 		let ocm = this.info_handler.one_click_moves[p.x][p.y];
 		let board = this.node.get_board();
+
+		if (event.button !== 0) {
+			if (ocm) {
+				this.show_from_moves([ocm]);
+			}
+			return;
+		}
 
 		if (!this.active_square && ocm) {
 			this.set_active_square(null);
@@ -705,7 +717,10 @@ function NewRenderer() {
 			return;
 		}
 
-		// Legality checks... best to assume nothing.
+		if (event.button !== 0) {
+			renderer.show_from_moves(moves);
+			return;
+		}
 
 		let reason = this.node.get_board().sequence_illegal(moves);
 		if (reason !== "") {
@@ -745,6 +760,53 @@ function NewRenderer() {
 		this.movelist_handler.redraw_node(stats_node);		// Redraw the stats node, which might not have been drawn (if draw was lazy).
 	};
 
+	renderer.show = function(board) {
+
+		let ctx = fantasy.getContext("2d");
+
+		for (let x = 0; x < 8; x++) {
+			for (let y = 0; y < 8; y++) {
+
+				ctx.fillStyle = (x + y) % 2 === 0 ? config.light_square : config.dark_square;
+
+				let cc = CanvasCoords(x, y);
+				ctx.fillRect(cc.x1, cc.y1, config.square_size, config.square_size);
+
+				if (board.state[x][y] === "") {
+					continue;
+				}
+
+				let piece = board.state[x][y];
+				ctx.drawImage(images[piece], cc.x1, cc.y1, config.square_size, config.square_size);
+			}
+		}
+
+		fantasy.style.display = "block";
+	};
+
+	renderer.show_from_moves = function(moves) {
+
+		if (Array.isArray(moves) === false || moves.length === 0) {
+			return;
+		}
+
+		let board = this.node.get_board();
+
+		for (let move of moves) {
+			if (board.illegal(move) !== "") {
+				console.log("show_from_moves(): " + reason);
+				return;
+			}
+			board = board.move(move);
+		}
+
+		this.show(board);
+	};
+
+	renderer.hide_fantasy = function() {
+		fantasy.style.display = "none";
+	};
+
 	renderer.maybe_searchmove_click = function(event) {
 
 		let sm = this.info_handler.searchmove_from_click(event);
@@ -767,12 +829,19 @@ function NewRenderer() {
 
 		let node = this.movelist_handler.node_from_click(event);
 
-		if (!node || node.get_root() !== this.node.get_root() || node === this.node) {
+		if (!node || node.get_root() !== this.node.get_root()) {
 			return;
 		}
 
-		this.node = node;
-		this.position_changed();
+		if (event.button !== 0) {
+			renderer.show(node.get_board());
+			return;
+		}
+
+		if (node !== this.node) {
+			this.node = node;
+			this.position_changed();
+		}
 	};
 
 	renderer.show_promotiontable = function(partial_move) {

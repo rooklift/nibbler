@@ -16,11 +16,11 @@ let hub = NewRenderer();
 // boardsquares has its natural position, while the other two get
 // fixed position that is set to be on top of it.
 
-boardfriends.width = canvas.width = boardsquares.width = config.board_size;
-boardfriends.height = canvas.height = boardsquares.height = config.board_size;
+boardfriends.width = canvas.width = fantasy.width = boardsquares.width = config.board_size;
+boardfriends.height = canvas.height = fantasy.height = boardsquares.height = config.board_size;
 
-boardfriends.style.left = canvas.style.left = boardsquares.offsetLeft.toString() + "px";
-boardfriends.style.top = canvas.style.top = boardsquares.offsetTop.toString() + "px";
+boardfriends.style.left = canvas.style.left = fantasy.style.left = boardsquares.offsetLeft.toString() + "px";
+boardfriends.style.top = canvas.style.top = fantasy.style.top = boardsquares.offsetTop.toString() + "px";
 
 // Set up the squares in both tables. Note that, upon flips, the elements
 // themselves are moved to their new position, so everything works, e.g.

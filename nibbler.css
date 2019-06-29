@@ -59,6 +59,14 @@ body {
 	user-select: none;
 }
 
+#fantasy {
+	display: none;
+	outline: 2px dashed #6cccee;
+	outline-offset: 6px;
+	position: fixed;
+	user-select: none;
+}
+
 td {
 	border: 0;
 	margin: 0;
