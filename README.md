@@ -38,9 +38,9 @@ Some people configure Leela with an `lc0.config` file in their Lc0 directory. If
 
 # Hints and tips
 
-An option to enable the UCI `"searchmoves"` feature is available in the Analysis menu. Once enabled, one or more moves can be specified as moves to focus on; Leela will ignore other moves.
+An option to enable the UCI `searchmoves` feature is available in the Analysis menu. Once enabled, one or more moves can be specified as moves to focus on; Leela will ignore other moves.
 
-As of v0.6.8, moves in the PVs (on the right of the screen) can be right-clicked on to show the resulting position without disturbing Leela's current search. Press escape to return to the real board.
+As of v0.6.8, moves in the PVs (on the right of the screen) can be right-clicked to show the resulting position without disturbing Leela's current search. Press escape to return to the real board.
 
 # About other engines
 
