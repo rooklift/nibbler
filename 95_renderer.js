@@ -14,8 +14,6 @@ function NewRenderer() {
 	// Various state we have to keep track of...
 
 	renderer.pgn_choices = null;								// All games found when opening a PGN file.
-	renderer.mousex = null;										// Raw mouse X on the document.
-	renderer.mousey = null;										// Raw mouse Y on the document.
 	renderer.friendly_draws = New2DArray(8, 8);					// What pieces are drawn in boardfriends. Used to skip redraws.
 	renderer.active_square = null;								// Clicked square.
 
@@ -623,33 +621,18 @@ function NewRenderer() {
 	};
 
 	renderer.mouse_point = function() {
-
-		let [mousex, mousey] = [this.mousex, this.mousey];
-
-		if (typeof mousex !== "number" || typeof mousey !== "number") {
-			return null;
+		let overlist = document.querySelectorAll(":hover");
+		for (let item of overlist) {
+			if (typeof item.id === "string" && item.id.startsWith("overlay_")) {
+				let p = Point(item.id.slice(8));
+				if (p !== Point(null)) {
+					return p;
+				} else {
+					return null;
+				}
+			}
 		}
-
-		// Assumes mousex and mousey are relative to the whole window.
-
-		mousex -= boardfriends.getBoundingClientRect().left;
-		mousey -= boardfriends.getBoundingClientRect().top;
-
-		let css = config.square_size;
-
-		let boardx = Math.floor(mousex / css);
-		let boardy = Math.floor(mousey / css);
-
-		if (boardx < 0 || boardy < 0 || boardx > 7 || boardy > 7) {
-			return null;
-		}
-
-		if (config.flip) {
-			boardx = 7 - boardx;
-			boardy = 7 - boardy;
-		}
-
-		return Point(boardx, boardy);
+		return null;
 	};
 
 	renderer.boardfriends_click = function(event) {

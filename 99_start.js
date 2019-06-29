@@ -165,19 +165,6 @@ movelist.addEventListener("mousedown", (event) => {
 	hub.movelist_click(event);
 });
 
-// Constantly track the mouse...
-
-document.addEventListener("mousemove", (event) => {
-	// This can fire a LOT. So don't call any more functions.
-	hub.mousex = event.x;
-	hub.mousey = event.y;
-});
-
-document.addEventListener("mouseleave", (event) => {		// Not mouseout! Also, must be on document, not window
-	hub.mousex = null;
-	hub.mousey = null;
-});
-
 document.addEventListener("wheel", (event) => {
 
 	// Only if the PGN chooser is closed, and the mouse is over the board.
