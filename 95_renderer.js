@@ -579,7 +579,6 @@ function NewRenderer() {
 		this.hide_pgn_chooser();
 		this.hide_promotiontable();
 		this.set_active_square(null);
-		this.hide_fantasy();
 	};
 
 	renderer.toggle_debug_css = function() {
@@ -641,10 +640,6 @@ function NewRenderer() {
 			return;
 		}
 
-		if (fantasy.style.display === "block") {		// Do nothing if we're showing a fantasy position.
-			return;
-		}
-
 		this.hide_promotiontable();						// Just in case it's up.
 
 		let p = Point(null);
@@ -662,13 +657,6 @@ function NewRenderer() {
 
 		let ocm = this.info_handler.one_click_moves[p.x][p.y];
 		let board = this.node.get_board();
-
-		if (event.button !== 0) {
-			if (ocm) {
-				this.show_fantasy_from_moves([ocm]);
-			}
-			return;
-		}
 
 		if (!this.active_square && ocm) {
 			this.set_active_square(null);
@@ -697,11 +685,6 @@ function NewRenderer() {
 
 		if (!moves || moves.length === 0) {				// We do assume length > 0 below.
 			renderer.maybe_searchmove_click(event);
-			return;
-		}
-
-		if (event.button !== 0) {
-			renderer.show_fantasy_from_moves(moves);
 			return;
 		}
 
@@ -743,7 +726,7 @@ function NewRenderer() {
 		this.movelist_handler.redraw_node(stats_node);		// Redraw the stats node, which might not have been drawn (if draw was lazy).
 	};
 
-	renderer.show_fantasy = function(board) {
+	renderer.draw_fantasy = function(board) {
 
 		let ctx = fantasy.getContext("2d");
 
@@ -767,7 +750,7 @@ function NewRenderer() {
 		fantasy.style.display = "block";
 	};
 
-	renderer.show_fantasy_from_moves = function(moves) {
+	renderer.draw_fantasy_from_moves = function(moves) {
 
 		if (Array.isArray(moves) === false || moves.length === 0) {
 			return;
@@ -777,17 +760,13 @@ function NewRenderer() {
 
 		for (let move of moves) {
 			if (board.illegal(move) !== "") {
-				console.log("show_fantasy_from_moves(): " + reason);
+				console.log("draw_fantasy_from_moves(): " + reason);
 				return;
 			}
 			board = board.move(move);
 		}
 
-		this.show_fantasy(board);
-	};
-
-	renderer.hide_fantasy = function() {
-		fantasy.style.display = "none";
+		this.draw_fantasy(board);
 	};
 
 	renderer.maybe_searchmove_click = function(event) {
@@ -813,11 +792,6 @@ function NewRenderer() {
 		let node = this.movelist_handler.node_from_click(event);
 
 		if (!node || node.get_root() !== this.node.get_root()) {
-			return;
-		}
-
-		if (event.button !== 0) {
-			renderer.show_fantasy(node.get_board());
 			return;
 		}
 
@@ -1026,6 +1000,33 @@ function NewRenderer() {
 		}
 	};
 
+	renderer.hoverdraw = function() {
+
+		let overlist = document.querySelectorAll(":hover");
+
+		let hover_item = null;
+
+		for (let item of overlist) {
+			if (typeof item.id === "string" && item.id.startsWith("infobox_")) {
+				hover_item = item;
+				break;
+			}
+		}
+
+		if (!hover_item) {
+			return false;
+		}
+
+		let moves = this.info_handler.moves_from_click_n(parseInt(hover_item.id.slice(8)));
+
+		if (moves.length > 0) {
+			this.draw_fantasy_from_moves(moves);
+			return true;
+		}
+
+		return false;
+	};
+
 	renderer.draw = function() {
 
 		this.info_handler.draw_infobox(		// The info handler needs a bit more state than I'd like, but what can you do.
@@ -1036,6 +1037,13 @@ function NewRenderer() {
 			this.searchmoves);
 
 		context.clearRect(0, 0, canvas.width, canvas.height);
+
+		if (this.hoverdraw()) {
+			fantasy.style.display = "block";
+			return;
+		}
+
+		fantasy.style.display = "none";
 
 		this.draw_move_in_canvas();
 		this.draw_enemies_in_canvas();

@@ -209,12 +209,10 @@ function NewInfoHandler() {
 
 	ih.draw_infobox = function(mouse_point, active_square, leela_should_go, active_colour, searchmoves) {
 
-		// Various possible status things in order of priority...
+		if (config.search_nodes !== "infinite" && (searchmoves.length === 1)) {
 
-		if (fantasy.style.display === "block") {
-			statusbox.innerHTML = `<span class="blue">HYPOTHETICAL POSITION. Press escape to clear.</span>`;
-		} else if (config.search_nodes !== "infinite" && (searchmoves.length === 1)) {
 			statusbox.innerHTML = `<span class="yellow">Node limit with exactly ONE searchmove might not return data.</span>`;
+
 		} else {
 
 			let status_string = "";
@@ -366,7 +364,7 @@ function NewInfoHandler() {
 				});
 			}
 
-			if (info.move === one_click_move && fantasy.style.display !== "block") {
+			if (info.move === one_click_move) {
 				for (let e of new_elements) {
 					e.class += " redback";
 				}
@@ -399,9 +397,8 @@ function NewInfoHandler() {
 		this.info_clickers = elements;						// We actually only need the move or its absence in each object. Meh.
 	};
 
-	ih.moves_from_click = function(event) {
+	ih.moves_from_click_n = function(n) {
 
-		let n = EventPathN(event, "infobox_");
 		if (typeof n !== "number") {
 			return [];
 		}
@@ -428,6 +425,11 @@ function NewInfoHandler() {
 		move_list.reverse();
 
 		return move_list;
+	};
+
+	ih.moves_from_click = function(event) {
+		let n = EventPathN(event, "infobox_");
+		return this.moves_from_click_n(n);
 	};
 
 	ih.searchmove_from_click = function(event) {
