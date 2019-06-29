@@ -763,7 +763,7 @@ function menu_build() {
 					type: "separator"
 				},
 				{
-					label: "Show Searchmoves Buttons",
+					label: "Show focus (searchmoves) buttons",
 					type: "checkbox",
 					checked: config.searchmoves_buttons,
 					click: () => {
