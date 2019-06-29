@@ -47,13 +47,13 @@ function NewRenderer() {
 		// Clear the info handler, but preserving the relevant part
 		// of any line that we're still in.
 
-		if (new_game_flag || Object.keys(this.info_handler.table).length === 0) {
+		if (new_game_flag || Object.keys(this.info_handler.table).length === 0) {	// Fail
 			this.info_handler.clear(this.node.get_board());
 			return;
 		}
 
 		if (config.versus === "w" || config.versus === "b") {
-			if (this.leela_should_go() === false) {
+			if (this.leela_should_go() === false) {									// Fail
 				this.info_handler.clear(this.node.get_board());
 				return;
 			}
@@ -74,7 +74,7 @@ function NewRenderer() {
 			node = node.parent;
 		}
 
-		if (found === false) {
+		if (found === false) {														// Fail
 			this.info_handler.clear(this.node.get_board());
 			return;
 		}
@@ -86,14 +86,14 @@ function NewRenderer() {
 
 		let info = this.info_handler.table[moves[0]];
 
-		if (!info) {
+		if (!info) {																// Fail
 			this.info_handler.clear(this.node.get_board());
 			return;
 		}
 
 		let pv = info.pv;
 
-		if (Array.isArray(pv) === false || pv.length <= moves.length) {
+		if (Array.isArray(pv) === false || pv.length <= moves.length) {				// Fail
 			this.info_handler.clear(this.node.get_board());
 			return;
 		}
@@ -101,7 +101,7 @@ function NewRenderer() {
 		// Find out if the info's PV matches our moves.
 
 		for (let n = 0; n < moves.length; n++) {
-			if (pv[n] !== moves[n]) {
+			if (pv[n] !== moves[n]) {												// Fail
 				this.info_handler.clear(this.node.get_board());
 				return;
 			}
