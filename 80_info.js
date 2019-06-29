@@ -205,7 +205,7 @@ function NewInfoHandler() {
 		if (leela_should_go === false) {
 			status_string += `<span class="yellow">${config.versus === "" ? "HALTED " : "YOUR MOVE "}</span>`;
 		}
-		status_string += `<span class="gray">Nodes: ${this.nodes}, N/s: ${this.nps}</span>`;
+		status_string += `<span class="gray">Nodes: ${NString(this.nodes)}, N/s: ${NString(this.nps)}</span>`;
 
 		if (typeof config.search_nodes === "number" && this.nodes > config.search_nodes) {
 			status_string += ` <span class="blue">(limit exceeded)</span>`;

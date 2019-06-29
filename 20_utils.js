@@ -214,3 +214,28 @@ function SwapElements(obj1, obj2) {
     temp.parentNode.insertBefore(obj2, temp);
     temp.parentNode.removeChild(temp);
 }
+
+function NString(n) {
+
+	if (typeof n !== "number") {
+		return "?";
+	}
+
+	if (n < 1000) {
+		return n.toString();
+	}
+
+	if (n < 100000) {
+		return (n / 1000).toFixed(1) + "k";
+	}
+
+	if (n < 1000000) {
+		return (n / 1000).toFixed(0) + "k";
+	}
+
+	if (n < 100000000) {
+		return (n / 1000000).toFixed(1) + "M";
+	}
+
+	return (n / 1000000).toFixed(0) + "M";
+}
