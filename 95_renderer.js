@@ -33,10 +33,18 @@ function NewRenderer() {
 	// --------------------------------------------------------------------------------------------
 
 	renderer.position_changed = function(new_game_flag) {
+		this.searchmoves = [];
+		this.position_changed_clear_info_handler();
+		this.go_or_halt(new_game_flag);
+		this.escape();
+		this.draw();
+		this.movelist_handler.draw(this.node);
+		fenbox.value = this.node.get_board().fen();
+	};
 
-		let ih_cleared = false;
+	renderer.position_changed_clear_info_handler = function() {
 
-		// We might be able to preserve some info for the handler while entering the new node...
+		// Clear the info_handler, but possibly preserve the relevant part of one PV.
 
 		if (this.node.parent && this.node.parent.get_board() === this.info_handler.board) {
 			let info = this.info_handler.table[this.node.move];
@@ -46,27 +54,16 @@ function NewRenderer() {
 					let nextmove = pv[1];
 					pv = pv.slice(1);
 					this.info_handler.clear(this.node.get_board());
-					ih_cleared = true;
 					this.info_handler.table[nextmove] = new_info(this.node.get_board(), nextmove);
 					this.info_handler.table[nextmove].pv = pv;
 					this.info_handler.table[nextmove].q = info.q * -1;
 					this.info_handler.table[nextmove].cp = info.cp * -1;
 					this.info_handler.table[nextmove].multipv = 1;
+					return;
 				}
 			}
 		}
-
-		if (ih_cleared === false) {
-			this.info_handler.clear(this.node.get_board());
-		}
-		this.searchmoves = [];
-
-		this.go_or_halt(new_game_flag);
-
-		this.escape();
-		this.draw();
-		this.movelist_handler.draw(this.node);
-		fenbox.value = this.node.get_board().fen();
+		this.info_handler.clear(this.node.get_board());
 	};
 
 	renderer.set_versus = function(s) {						// config.versus should not be directly set, call this function instead.
