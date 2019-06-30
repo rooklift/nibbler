@@ -977,7 +977,7 @@ function NewRenderer() {
 			return false;
 		}
 
-		let moves = this.info_handler.moves_from_click_n(parseInt(hover_item.id.slice(8)));
+		let moves = this.info_handler.moves_from_click_n(parseInt(hover_item.id.slice(8), 10));
 
 		if (moves.length > 0) {
 			return this.draw_fantasy_from_moves(moves);
