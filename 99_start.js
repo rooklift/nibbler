@@ -90,7 +90,7 @@ ipcRenderer.on("set", (event, msg) => {		// Should only be for things that don't
 });
 
 // --------------------------------------------------------------------------------------------
-// In bad cases of super-large, trees, the UI can become unresponsive. To mitigate this, we
+// In bad cases of super-large trees, the UI can become unresponsive. To mitigate this, we
 // put user input in a queue, and drop things if they build up.
 
 let input_queue = [];
