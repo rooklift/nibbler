@@ -988,7 +988,7 @@ function NewRenderer() {
 	renderer.draw_fantasy_from_moves = function(moves) {
 
 		// Because our hover detection is running a cycle behind,
-		// this will often be a series of illegal moves.
+		// this could be a series of illegal moves.
 
 		if (Array.isArray(moves) === false || moves.length === 0) {
 			return;
