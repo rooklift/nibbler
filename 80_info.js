@@ -232,13 +232,7 @@ function NewInfoHandler() {
 
 		if (!this.ever_received_info) {
 			if (this.stderr_log.length > 0) {
-				let span = document.getElementById("infobox_0");
-				if (!span) {
-					span = document.createElement("span");
-					span.id = "infobox_0";
-					infobox.appendChild(span);
-				}
-				span.innerHTML = this.stderr_log;
+				infobox.innerHTML = this.stderr_log;
 			}
 			return;
 		}
@@ -383,32 +377,20 @@ function NewInfoHandler() {
 			elements = elements.concat(new_elements);
 		}
 
-		// Generate the new innerHTML for the various spans...
+		// Generate the new innerHTML for the infobox <div>
+
+		let new_inner_parts = [];
 
 		for (let n = 0; n < elements.length; n++) {
-			let span = document.getElementById(`infobox_${n}`);
-			if (!span) {
-				span = document.createElement("span");
-				span.id = `infobox_${n}`;
-				infobox.appendChild(span);
-			}
-			if (span.className !== elements[n].class) {
-				span.className = elements[n].class;
-			}
-			if (span.innerHTML !== elements[n].text) {
-				span.innerHTML = elements[n].text;
-			}
+			let part = `<span id="infobox_${n}" class="${elements[n].class}">${elements[n].text}</span>`;
+			new_inner_parts.push(part);
 		}
 
-		// Clear any spans that exist and aren't needed now...
+		// Setting innerHTML is performant. Direct DOM manipulation is worse, somehow.
+		// This does have the disadvantage that there's possibly some flicker when
+		// using a :hover CSS selector, I find.
 
-		for (let n = elements.length; true; n++) {
-			let span = document.getElementById(`infobox_${n}`);
-			if (!span) {
-				break;
-			}
-			span.innerHTML = "";
-		}
+		infobox.innerHTML = new_inner_parts.join("");
 
 		// And save our elements so that we know what clicks mean.
 
