@@ -980,8 +980,7 @@ function NewRenderer() {
 		let moves = this.info_handler.moves_from_click_n(parseInt(hover_item.id.slice(8)));
 
 		if (moves.length > 0) {
-			this.draw_fantasy_from_moves(moves);
-			return true;
+			return this.draw_fantasy_from_moves(moves);
 		}
 
 		return false;
@@ -993,7 +992,7 @@ function NewRenderer() {
 		// this could be a series of illegal moves.
 
 		if (Array.isArray(moves) === false || moves.length === 0) {
-			return;
+			return false;
 		}
 
 		let board = this.node.get_board();
@@ -1001,12 +1000,13 @@ function NewRenderer() {
 		for (let move of moves) {
 			let illegal_reason = board.illegal(move);
 			if (illegal_reason !== "") {
-				return;
+				return false;
 			}
 			board = board.move(move);
 		}
 
 		this.draw_fantasy(board);
+		return true;
 	};
 
 	renderer.draw_fantasy = function(board) {
