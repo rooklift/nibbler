@@ -35,7 +35,7 @@ const defaults = {
 	"show_n_abs": true,
 	"show_p": true,
 	"show_q": false,
-	"show_u": true,
+	"show_u": false,
 	"show_q_plus_u": false,
 	"searchmoves_buttons": true,
 	"hover_draw": false,
