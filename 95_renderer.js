@@ -17,6 +17,7 @@ function NewRenderer() {
 	renderer.friendly_draws = New2DArray(8, 8);					// What pieces are drawn in boardfriends. Used to skip redraws.
 	renderer.active_square = null;								// Clicked square.
 	renderer.infolist_click_time = performance.now();			// When user last clicked a move in infolist. Don't draw fantasy board for a bit.
+	renderer.hoverdraw_move = null;								// Initial move of the current hoverdraw. Used for highlighting.
 
 	// Some sync stuff...
 
@@ -887,10 +888,6 @@ function NewRenderer() {
 
 	renderer.draw_friendlies_in_table = function() {
 
-		// Our strategy for avoiding redraws doesn't make so much sense any more,
-		// since only friendly pieces are drawn, moving from node to node in a
-		// normal way always means everything has to be drawn. Meh.
-
 		let position = this.node.get_board();
 
 		for (let x = 0; x < 8; x++) {
@@ -1028,6 +1025,7 @@ function NewRenderer() {
 		}
 
 		this.draw_fantasy(board);
+		this.hoverdraw_move = moves[0];
 		return true;
 	};
 
@@ -1065,6 +1063,7 @@ function NewRenderer() {
 			fantasy.style.display = "block";
 		} else {
 			fantasy.style.display = "none";
+			this.hoverdraw_move = null;
 			context.clearRect(0, 0, canvas.width, canvas.height);
 			this.draw_move_in_canvas();
 			this.draw_enemies_in_canvas();
@@ -1077,7 +1076,8 @@ function NewRenderer() {
 			this.active_square,
 			this.leela_should_go(),
 			this.node.get_board().active,
-			this.searchmoves);
+			this.searchmoves,
+			this.hoverdraw_move);
 	};
 
 	renderer.draw_loop = function() {

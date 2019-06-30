@@ -16,9 +16,6 @@ function NewInfoHandler() {
 	ih.one_click_moves = New2DArray(8, 8);	// Array of possible one-click moves. Updated by draw_arrows().
 	ih.info_clickers = [];					// Elements in the infobox. Updated by draw_infobox().
 
-	ih.last_highlight_dest = null;			// Used to skip redraws.
-	ih.last_drawn_version = null;			// Used to skip redraws.
-
 	ih.clear = function(board) {
 		if (!board) {
 			throw "ih.clear(): need board";
@@ -212,10 +209,11 @@ function NewInfoHandler() {
 	};
 
 	ih.must_draw_infobox = function() {
-		this.last_drawn_version = null;
+		// We used to skip drawing the infobox sometimes. This function was called when a draw
+		// should be forced next cycle. But now it does nothing.
 	};
 
-	ih.draw_infobox = function(mouse_point, active_square, leela_should_go, active_colour, searchmoves) {
+	ih.draw_infobox = function(mouse_point, active_square, leela_should_go, active_colour, searchmoves, hoverdraw_move) {
 
 		if (config.search_nodes !== "infinite" && (searchmoves.length === 1)) {
 
@@ -248,28 +246,17 @@ function NewInfoHandler() {
 		}
 
 		// By default we're highlighting nothing...
+
 		let highlight_dest = null;
 		let one_click_move = "__none__";
 
 		// But if the hovered square actually has a one-click move available, highlight its variation,
 		// unless we have an active (i.e. clicked) square...
+
 		if (mouse_point && mouse_point !== Point(null) && this.one_click_moves[mouse_point.x][mouse_point.y] && !active_square) {
 			highlight_dest = mouse_point;
 			one_click_move = this.one_click_moves[mouse_point.x][mouse_point.y];
 		}
-
-		// Maybe we can skip drawing the infobox, and just return...
-
-		if (this.last_drawn_version === this.version) {
-			if (this.last_highlight_dest === highlight_dest) {
-				return;
-			}
-		}
-
-		this.last_highlight_dest = highlight_dest;
-		this.last_drawn_version = this.version;
-
-		// OK I guess we're drawing...
 
 		let info_list = this.sorted();
 		let elements = [];								// Not HTML elements, just our own objects.
@@ -393,6 +380,10 @@ function NewInfoHandler() {
 			if (info.move === one_click_move) {
 				for (let e of new_elements) {
 					e.class += " redback";
+				}
+			} else if (info.move === hoverdraw_move) {
+				for (let e of new_elements) {
+					e.class += " blueback";
 				}
 			}
 
