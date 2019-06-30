@@ -393,6 +393,7 @@ function menu_build() {
 				},
 				{
 					label: "Reset Lc0 cache",
+					accelerator: "F12",
 					click: () => {
 						win.webContents.send("call", "reset_leela_cache");
 					}

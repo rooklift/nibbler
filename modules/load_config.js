@@ -4,77 +4,75 @@ const fs = require("fs");
 const get_main_folder = require("./get_main_folder");
 const path = require("path");
 
-function apply_defaults(o) {
+const defaults = {
+	"options": {},
+	"args": [],
 
-	assign_without_overwrite(o, {
-		"options": {},
-		"args": [],
+	"width": 1280,
+	"height": 835,
+	"board_size": 640,
+	"board_font": "18px Arial",
+	"info_font_size": "16px",
+	"pgn_font_size": "16px",
+	"fen_font_size": "16px",
+	"status_font_size": "16px",
+	"light_square": "#dadada",
+	"dark_square": "#b4b4b4",
+	"active_square": "#66aaaa",
+	"move_colour": "#ffff00",
+	"move_colour_alpha": 0.15,
+	"best_colour": "#66aaaa",
+	"good_colour": "#66aa66",
+	"bad_colour": "#cccc66",
+	"terrible_colour": "#cc6666",
+	"bad_move_threshold": 0.02,
+	"terrible_move_threshold": 0.04,
+	"uncertainty_cutoff": 0.1,
+	"arrowhead_type": 0,
+	"show_cp": false,
+	"cp_white_pov": false,
+	"show_n": true,
+	"show_p": true,
+	"show_q": false,
+	"show_u": true,
+	"show_q_plus_u": false,
+	"searchmoves_buttons": true,
+	"hover_draw": true,
+	"serious_analysis_mode": false,
+	"update_delay": 170,
+	"search_nodes": "infinite",
+	"save_enabled": false,
+	"override_piece_directory": null,
+	"logfile": null,
+	"log_info_lines": false
+};
 
-		"width": 1280,
-		"height": 835,
-		"board_size": 640,
-		"board_font": "18px Arial",
-		"info_font_size": "16px",
-		"pgn_font_size": "16px",
-		"fen_font_size": "16px",
-		"status_font_size": "16px",
-		"light_square": "#dadada",
-		"dark_square": "#b4b4b4",
-		"active_square": "#66aaaa",
-		"move_colour": "#ffff00",
-		"move_colour_alpha": 0.15,
-		"best_colour": "#66aaaa",
-		"good_colour": "#66aa66",
-		"bad_colour": "#cccc66",
-		"terrible_colour": "#cc6666",
-		"bad_move_threshold": 0.02,
-		"terrible_move_threshold": 0.04,
-		"uncertainty_cutoff": 0.1,
-		"arrowhead_type": 0,
-		"show_cp": false,
-		"cp_white_pov": false,
-		"show_n": true,
-		"show_p": true,
-		"show_q": false,
-		"show_u": true,
-		"show_q_plus_u": false,
-		"searchmoves_buttons": true,
-		"hover_draw": true,
-		"serious_analysis_mode": false,
-		"update_delay": 170,
-		"search_nodes": "infinite",
-		"save_enabled": false,
-		"override_piece_directory": null,
-		"logfile": null,
-		"log_info_lines": false
-	});
+function fix(cfg) {
 
-	o.square_size = Math.floor(o.board_size / 8);
-	o.board_size = o.square_size * 8;
+	cfg.square_size = Math.floor(cfg.board_size / 8);
+	cfg.board_size = cfg.square_size * 8;
 	
 	// These things should not be set naively. Rather, the correct function in the renderer must be called...
 
-	o.flip = false;
-	o.versus = "";
+	cfg.flip = false;
+	cfg.versus = "";
 
 	// Uncertainty can, counterintuitively, be above 1 or below 0. Adjust for the user's likely intention.
 	// Note these numbers are tested in main.js for whether the checkbox should be checked...
 
-	if (o.uncertainty_cutoff >= 1) o.uncertainty_cutoff = 999;
-	if (o.uncertainty_cutoff <= 0) o.uncertainty_cutoff = -999;
+	if (cfg.uncertainty_cutoff >= 1) cfg.uncertainty_cutoff = 999;
+	if (cfg.uncertainty_cutoff <= 0) cfg.uncertainty_cutoff = -999;
 
 	// search_nodes should be in number format, unless "infinite"...
 
-	if (typeof o.search_nodes === "string" && o.search_nodes !== "infinite") {
-		let n = parseInt(o.search_nodes, 10);
+	if (typeof cfg.search_nodes === "string" && cfg.search_nodes !== "infinite") {
+		let n = parseInt(cfg.search_nodes, 10);
 		if (Number.isNaN(n) === false) {
-			o.search_nodes = n;
+			cfg.search_nodes = n;
 		} else {
-			o.search_nodes = "infinite";
+			cfg.search_nodes = "infinite";
 		}
 	}
-
-	return o;
 }
 
 function assign_without_overwrite(target, source) {
@@ -136,7 +134,8 @@ module.exports = () => {
 		cfg.failure = `Failed to parse config file ${config_filename} - make sure it is valid JSON, and in particular, if on Windows, use \\\\ instead of \\ as a path separator.`;
 	}
 
-	apply_defaults(cfg);
+	assign_without_overwrite(cfg, defaults);
+	fix(cfg);
 
 	return cfg;
 }
