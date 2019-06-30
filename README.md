@@ -28,10 +28,6 @@ Running Nibbler from source requires Electron, but has no other dependencies. If
 
 *The required Lc0 version is v0.21.0 or later*. <!-- because we need `LogLiveStats` which was introduced in that version. -->
 
-# About options
-
-Nibbler has many options in its menus, however it will not remember your choices between sessions. Everything can be made persistent in the `config.json` file, however. While I might implement real persistent preferences at some point, the current way has some merits too.
-
 # Using an lc0.config file
 
 Some people configure Leela with an `lc0.config` file in their Lc0 directory. If you do this, you should probably delete the `options` object from your Nibbler config file, as it is redundant.
@@ -43,12 +39,6 @@ An option to enable the UCI `searchmoves` feature is available in the Analysis m
 Leela forgets much of the evaluation if the position changes. To mitigate this, an option in the Analysis menu allows you to hover over a a move (at any depth) in any PV, upon which the resulting board will be displayed.
 
 If you like a different piece set, you can create a folder of `.png` or `.svg` files with the right names and point the `override_piece_directory` config option to it.
-
-# About other engines
-
-Various people have inquired about the possiblity of using a conventional engine with Nibbler. While such an engine will at least run, there are various problems. Firstly, we rely on custom output which only Lc0 gives. Secondly, it's in the nature of conventional engines that they usually *cannot* give an accurate value for anything except their main line, due to alpha-beta pruning.
-
-One can effectively disable alpha-beta pruning by sending `MultiPV 500` (which we do) but this drastically weakens conventional engines.
 
 # Thanks
 
