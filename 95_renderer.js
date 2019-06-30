@@ -553,7 +553,31 @@ function NewRenderer() {
 	};
 
 	// --------------------------------------------------------------------------------------------
-	// Visual stuff...
+	// Settings etc...
+
+	renderer.toggle = function(option) {
+
+		// Cases with their own handler...
+
+		if (option === "flip") {
+			this.toggle_flip();
+			return;
+		}
+
+		// Normal cases...
+
+		config[option] = !config[option];
+		this.info_handler.must_draw_infobox();
+
+		// Cases that have additional actions after...
+
+		if (option === "searchmoves_buttons") {
+			if (!config.searchmoves_buttons) {		// We turned it off.
+				this.searchmoves = [];
+				this.go_or_halt();
+			}
+		}
+	};
 
 	renderer.toggle_flip = function() {				// config.flip should not be directly set, call this function instead.
 
@@ -594,8 +618,12 @@ function NewRenderer() {
 		ss.insertRule("* {outline: 1px dotted red;}");
 	};
 
+	renderer.console = function(...args) {
+		console.log(...args);
+	};
+
 	// --------------------------------------------------------------------------------------------
-	// Clickers... (except the PGN clicker, which is in the PGN section).
+	// Clicks, drops, mouse stuff...
 
 	renderer.set_active_square = function(new_point) {
 
@@ -617,21 +645,6 @@ function NewRenderer() {
 			td.style["background-color"] = config.active_square;
 			this.active_square = new_point;
 		}
-	};
-
-	renderer.mouse_point = function() {
-		let overlist = document.querySelectorAll(":hover");
-		for (let item of overlist) {
-			if (typeof item.id === "string" && item.id.startsWith("overlay_")) {
-				let p = Point(item.id.slice(8));
-				if (p !== Point(null)) {
-					return p;
-				} else {
-					return null;
-				}
-			}
-		}
-		return null;
 	};
 
 	renderer.boardfriends_click = function(event) {
@@ -796,8 +809,6 @@ function NewRenderer() {
 		promotiontable.style.display = "none";
 	};
 
-	// --------------------------------------------------------------------------------------------
-
 	renderer.handle_drop = function(event) {
 
 		// Note to self - examining the event in the console can be misleading
@@ -838,35 +849,79 @@ function NewRenderer() {
 		}
 	};
 
-	renderer.console = function(...args) {
-		console.log(...args);
-	};
-
-	renderer.toggle = function(option) {
-
-		// Cases with their own handler...
-
-		if (option === "flip") {
-			this.toggle_flip();
-			return;
-		}
-
-		// Normal cases...
-
-		config[option] = !config[option];
-		this.info_handler.must_draw_infobox();
-
-		// Cases that have additional actions after...
-
-		if (option === "searchmoves_buttons") {
-			if (!config.searchmoves_buttons) {		// We turned it off.
-				this.searchmoves = [];
-				this.go_or_halt();
+	renderer.mouse_point = function() {
+		let overlist = document.querySelectorAll(":hover");
+		for (let item of overlist) {
+			if (typeof item.id === "string" && item.id.startsWith("overlay_")) {
+				let p = Point(item.id.slice(8));
+				if (p !== Point(null)) {
+					return p;
+				} else {
+					return null;
+				}
 			}
 		}
+		return null;
 	};
 
 	// --------------------------------------------------------------------------------------------
+	// Hypothetical position drawing...
+
+	renderer.show_fantasy = function(board) {
+
+		if (!board) {
+			return;
+		}
+
+		this.hide_promotiontable();
+
+		let ctx = fantasy.getContext("2d");
+
+		for (let x = 0; x < 8; x++) {
+			for (let y = 0; y < 8; y++) {
+
+				ctx.fillStyle = (x + y) % 2 === 0 ? config.light_square : config.dark_square;
+
+				let cc = CanvasCoords(x, y);
+				ctx.fillRect(cc.x1, cc.y1, config.square_size, config.square_size);
+
+				if (board.state[x][y] === "") {
+					continue;
+				}
+
+				let piece = board.state[x][y];
+				ctx.drawImage(images[piece], cc.x1, cc.y1, config.square_size, config.square_size);
+			}
+		}
+
+		fantasy.style.display = "block";
+	};
+
+	renderer.show_fantasy_from_moves = function(moves) {
+
+		if (Array.isArray(moves) === false || moves.length === 0) {
+			return;
+		}
+
+		let board = this.node.get_board();
+
+		for (let move of moves) {
+			let illegal_reason = board.illegal(move);
+			if (illegal_reason !== "") {
+				return;
+			}
+			board = board.move(move);
+		}
+
+		this.show_fantasy(board);
+	};
+
+	renderer.hide_fantasy = function() {
+		fantasy.style.display = "none";
+	};
+
+	// --------------------------------------------------------------------------------------------
+	// General draw code...
 
 	renderer.draw_friendlies_in_table = function() {
 
