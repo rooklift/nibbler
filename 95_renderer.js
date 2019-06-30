@@ -603,7 +603,6 @@ function NewRenderer() {
 		this.hide_pgn_chooser();
 		this.hide_promotiontable();
 		this.set_active_square(null);
-		this.hide_fantasy();
 	};
 
 	renderer.toggle_debug_css = function() {
@@ -654,10 +653,6 @@ function NewRenderer() {
 			return;
 		}
 
-		if (fantasy.style.display === "block") {		// Do nothing if we're showing a fantasy position.
-			return;
-		}
-
 		this.hide_promotiontable();						// Just in case it's up.
 
 		let p = Point(null);
@@ -675,13 +670,6 @@ function NewRenderer() {
 
 		let ocm = this.info_handler.one_click_moves[p.x][p.y];
 		let board = this.node.get_board();
-
-		if (event.button !== 0) {
-			if (ocm) {
-				this.show_fantasy_from_moves([ocm]);
-			}
-			return;
-		}
 
 		if (!this.active_square && ocm) {
 			this.set_active_square(null);
@@ -713,14 +701,9 @@ function NewRenderer() {
 			return;
 		}
 
-		if (event.button !== 0) {
-			renderer.show_fantasy_from_moves(moves);
-			return;
-		}
-
-		let reason = this.node.get_board().sequence_illegal(moves);
-		if (reason !== "") {
-			console.log("infobox_click(): " + reason);
+		let illegal_reason = this.node.get_board().sequence_illegal(moves);
+		if (illegal_reason !== "") {
+			console.log("infobox_click(): " + illegal_reason);
 			return;
 		}
 
@@ -779,11 +762,6 @@ function NewRenderer() {
 		let node = this.movelist_handler.node_from_click(event);
 
 		if (!node || node.get_root() !== this.node.get_root()) {
-			return;
-		}
-
-		if (event.button !== 0) {
-			renderer.show_fantasy(node.get_board());
 			return;
 		}
 
@@ -1034,7 +1012,99 @@ function NewRenderer() {
 		}
 	};
 
+	renderer.hoverdraw = function() {
+
+		if (!config.hover_draw) {
+			return false;
+		}
+
+		let overlist = document.querySelectorAll(":hover");
+
+		let hover_item = null;
+
+		for (let item of overlist) {
+			if (typeof item.id === "string" && item.id.startsWith("infobox_")) {
+				hover_item = item;
+				break;
+			}
+		}
+
+		if (!hover_item) {
+			return false;
+		}
+
+		let moves = this.info_handler.moves_from_click_n(parseInt(hover_item.id.slice(8)));
+
+		if (moves.length > 0) {
+			this.draw_fantasy_from_moves(moves);
+			return true;
+		}
+
+		return false;
+	};
+
+	renderer.draw_fantasy_from_moves = function(moves) {
+
+		// Because our hover detection is running a cycle behind,
+		// this could be a series of illegal moves.
+
+		if (Array.isArray(moves) === false || moves.length === 0) {
+			return;
+		}
+
+		let board = this.node.get_board();
+
+		for (let move of moves) {
+			let illegal_reason = board.illegal(move);
+			if (illegal_reason !== "") {
+				return;
+			}
+			board = board.move(move);
+		}
+
+		this.draw_fantasy(board);
+	};
+
+	renderer.draw_fantasy = function(board) {
+
+		let ctx = fantasy.getContext("2d");
+
+		for (let x = 0; x < 8; x++) {
+			for (let y = 0; y < 8; y++) {
+
+				ctx.fillStyle = (x + y) % 2 === 0 ? config.light_square : config.dark_square;
+
+				let cc = CanvasCoords(x, y);
+				ctx.fillRect(cc.x1, cc.y1, config.square_size, config.square_size);
+
+				if (board.state[x][y] === "") {
+					continue;
+				}
+
+				let piece = board.state[x][y];
+				ctx.drawImage(images[piece], cc.x1, cc.y1, config.square_size, config.square_size);
+			}
+		}
+	};
+
 	renderer.draw = function() {
+
+		// We do the :hover reaction first. This way, we are detecting hover based on the previous cycle's state.
+		// This should prevent the sort of flicker that can occur if we try to detect hover based on changes we
+		// just made (i.e. if we drew then detected hover instantly).
+
+		let did_hoverdraw = this.hoverdraw();
+
+		if (did_hoverdraw) {
+			fantasy.style.display = "block";
+		} else {
+			fantasy.style.display = "none";
+			context.clearRect(0, 0, canvas.width, canvas.height);
+			this.draw_move_in_canvas();
+			this.draw_enemies_in_canvas();
+			this.info_handler.draw_arrows();
+			this.draw_friendlies_in_table();
+		}
 
 		this.info_handler.draw_infobox(		// The info handler needs a bit more state than I'd like, but what can you do.
 			this.mouse_point(),
@@ -1042,13 +1112,6 @@ function NewRenderer() {
 			this.leela_should_go(),
 			this.node.get_board().active,
 			this.searchmoves);
-
-		context.clearRect(0, 0, canvas.width, canvas.height);
-
-		this.draw_move_in_canvas();
-		this.draw_enemies_in_canvas();
-		this.info_handler.draw_arrows();
-		this.draw_friendlies_in_table();
 	};
 
 	renderer.draw_loop = function() {

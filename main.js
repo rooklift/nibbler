@@ -786,6 +786,17 @@ function menu_build() {
 					}
 				},
 				{
+					label: "Hovering over PV shows position",
+					type: "checkbox",
+					checked: config.hover_draw,
+					click: () => {
+						win.webContents.send("call", {
+							fn: "toggle",
+							args: ["hover_draw"],
+						});
+					}
+				},
+				{
 					type: "separator"
 				},
 				{
