@@ -335,9 +335,21 @@ function NewInfoHandler() {
 
 			let extra_stat_strings = [];
 
-			if (config.show_n) {
+			if (config.show_n && config.show_n_abs) {
+				if (typeof info.n === "number" && typeof this.nodes === "number" && this.nodes > 0) {
+					extra_stat_strings.push(`N: ${(100 * info.n / this.nodes).toFixed(2)}% [${NString(info.n)}]`);
+				} else {
+					extra_stat_strings.push(`N: ?`);
+				}
+			} else if (config.show_n) {
 				if (typeof info.n === "number" && typeof this.nodes === "number" && this.nodes > 0) {
 					extra_stat_strings.push(`N: ${(100 * info.n / this.nodes).toFixed(2)}%`);
+				} else {
+					extra_stat_strings.push(`N: ?`);
+				}
+			} else if (config.show_n_abs) {
+				if (typeof info.n === "number") {
+					extra_stat_strings.push(`N: ${NString(info.n)}`);
 				} else {
 					extra_stat_strings.push(`N: ?`);
 				}

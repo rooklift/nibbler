@@ -731,13 +731,24 @@ function menu_build() {
 							type: "separator"
 						},
 						{
-							label: "Show N",
+							label: "Show N (%)",
 							type: "checkbox",
 							checked: config.show_n,
 							click: () => {
 								win.webContents.send("call", {
 									fn: "toggle",
 									args: ["show_n"],
+								});
+							}
+						},
+						{
+							label: "Show N (absolute)",
+							type: "checkbox",
+							checked: config.show_n_abs,
+							click: () => {
+								win.webContents.send("call", {
+									fn: "toggle",
+									args: ["show_n_abs"],
 								});
 							}
 						},
