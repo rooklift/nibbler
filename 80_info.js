@@ -336,10 +336,10 @@ function NewInfoHandler() {
 			let extra_stat_strings = [];
 
 			if (config.show_n) {
-				if (this.nodes <= 0) {
-					extra_stat_strings.push(`N: ?`);
-				} else {
+				if (typeof info.n === "number" && typeof this.nodes === "number" && this.nodes > 0) {
 					extra_stat_strings.push(`N: ${(100 * info.n / this.nodes).toFixed(2)}%`);
+				} else {
+					extra_stat_strings.push(`N: ?`);
 				}
 			}
 
@@ -348,22 +348,26 @@ function NewInfoHandler() {
 			}
 
 			if (config.show_q) {
-				extra_stat_strings.push(`Q: ${info.q.toFixed(3)}`);
+				if (typeof info.q === "number") {
+					extra_stat_strings.push(`Q: ${info.q.toFixed(3)}`);
+				} else {
+					extra_stat_strings.push(`Q: ?`);
+				}
 			}
 
 			if (config.show_u) {
-				if (info.n <= 0) {						// U is useless if no nodes at all for this move.
-					extra_stat_strings.push(`U: ?`);
-				} else {
+				if (typeof info.u === "number" && info.n > 0) {						// Checking n is correct.
 					extra_stat_strings.push(`U: ${info.u.toFixed(3)}`);
+				} else {
+					extra_stat_strings.push(`U: ?`);
 				}
 			}
 
 			if (config.show_q_plus_u) {
-				if (info.n <= 0) {						// Q+U is useless if no nodes at all for this move.
-					extra_stat_strings.push(`Q+U: ?`);
-				} else {
+				if (typeof info.q_plus_u === "number" && info.n > 0) {				// Checking n is correct.
 					extra_stat_strings.push(`Q+U: ${info.q_plus_u.toFixed(5)}`);
+				} else {
+					extra_stat_strings.push(`Q+U: ?`);
 				}
 			}
 
@@ -668,8 +672,8 @@ const info_prototype = {
 
 function new_info(board, move) {
 
-	// In some places elsewhere we've kind of assumed these things will have sensible values,
-	// so better not initialise most things to null. Best to use neutral-ish values, especially
+	// In some places elsewhere we might assume these things will have sensible values, so
+	// better not initialise most things to null. Best to use neutral-ish values, especially
 	// since some info (cp and q) can be carried (inverted) into the next step of a line...
 
 	let info = Object.create(info_prototype);

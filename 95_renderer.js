@@ -122,8 +122,12 @@ function NewRenderer() {
 		// Flip our evals if the colour changes...
 
 		if (oldinfo.board.active !== this.node.get_board().active) {
-			this.info_handler.table[nextmove].q *= -1;
-			this.info_handler.table[nextmove].cp *= -1;
+			if (typeof this.info_handler.table[nextmove].q === "number") {
+				this.info_handler.table[nextmove].q *= -1;
+			}
+			if (typeof this.info_handler.table[nextmove].cp === "number") {
+				this.info_handler.table[nextmove].cp *= -1;
+			}
 		}
 	};
 
