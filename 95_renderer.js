@@ -704,8 +704,9 @@ function NewRenderer() {
 		// Maybe we're done...
 
 		if (!config.serious_analysis_mode) {
-			this.node = node;
-			this.position_changed();
+			// this.node = node;
+			// this.position_changed();
+			this.movelist_handler.draw(this.node);
 			return;
 		}
 
