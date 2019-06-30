@@ -209,8 +209,6 @@ function NewInfoHandler() {
 
 	ih.draw_infobox = function(mouse_point, active_square, leela_should_go, active_colour, searchmoves) {
 
-		if (config.search_nodes !== "infinite" && (searchmoves.length === 1)) {
-
 		if (fantasy.style.display === "block") {
 			if (leela_should_go === false) {
 				statusbox.innerHTML = `<span class="yellow">HALTED</span> <span class="blue">HYPOTHETICAL POSITION. Press escape to clear.</span>`;
