@@ -959,6 +959,10 @@ function NewRenderer() {
 
 	renderer.hoverdraw = function() {
 
+		if (!config.hover_draw) {
+			return false;
+		}
+
 		let overlist = document.querySelectorAll(":hover");
 
 		let hover_item = null;
