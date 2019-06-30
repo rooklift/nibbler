@@ -16,6 +16,7 @@ function NewRenderer() {
 	renderer.pgn_choices = null;								// All games found when opening a PGN file.
 	renderer.friendly_draws = New2DArray(8, 8);					// What pieces are drawn in boardfriends. Used to skip redraws.
 	renderer.active_square = null;								// Clicked square.
+	renderer.infolist_click_time = performance.now();			// When user last clicked a move in infolist. Don't draw fantasy board for a bit.
 
 	// Some sync stuff...
 
@@ -729,6 +730,8 @@ function NewRenderer() {
 			node = node.make_move(move);
 		}
 
+		this.infolist_click_time = performance.now();
+
 		// Maybe we're done...
 
 		if (!config.serious_analysis_mode) {
@@ -972,6 +975,10 @@ function NewRenderer() {
 	};
 
 	renderer.hoverdraw = function() {
+
+		if (performance.now() - this.infolist_click_time < 1000) {
+			return false;
+		}
 
 		if (!config.hover_draw) {
 			return false;
