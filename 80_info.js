@@ -667,18 +667,23 @@ const info_prototype = {
 };
 
 function new_info(board, move) {
+
+	// In some places elsewhere we've kind of assumed these things will have sensible values,
+	// so better not initialise most things to null. Best to use neutral-ish values, especially
+	// since some info (cp and q) can be carried (inverted) into the next step of a line...
+
 	let info = Object.create(info_prototype);
 	info.board = board;
-	info.cp = -99999;
-	info.d = 0;				// Although wrong, this is the value Leela sends if WDL not supported.
+	info.cp = 0;
+	info.d = 0;
 	info.move = move;
-	info.multipv = 999;
+	info.multipv = 1;
 	info.n = 0;
-	info.p = "?";			// Note we receive P as a string, unlike the other stuff.
+	info.p = "?";					// Note we receive P as a string, unlike the other stuff.
 	info.pv = [];
 	info.nice_pv_cache = null;
-	info.q = -1;
-	info.q_plus_u = -1;
-	info.u = 2;				// Is this a sane default? Values above 1 are possible, so...
+	info.q = 0;
+	info.q_plus_u = 1;
+	info.u = 1;
 	return info;
 }
