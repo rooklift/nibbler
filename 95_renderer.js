@@ -998,7 +998,6 @@ function NewRenderer() {
 		for (let move of moves) {
 			let illegal_reason = board.illegal(move);
 			if (illegal_reason !== "") {
-				console.log(`draw_fantasy_from_moves() - ${illegal_reason}`);
 				return;
 			}
 			board = board.move(move);
