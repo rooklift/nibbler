@@ -1027,6 +1027,16 @@ function NewRenderer() {
 
 	renderer.draw = function() {
 
+		// We do the :hover detection first so there's the maximum amount of time between the painting and
+		// the :hover detection, which might (?) help it work. i.e. it detects based on last cycle's state.
+
+		let did_hoverdraw = false;
+
+		if (this.hoverdraw()) {
+			fantasy.style.display = "block";
+			did_hoverdraw = true;
+		}
+
 		this.info_handler.draw_infobox(		// The info handler needs a bit more state than I'd like, but what can you do.
 			this.mouse_point(),
 			this.active_square,
@@ -1034,19 +1044,14 @@ function NewRenderer() {
 			this.node.get_board().active,
 			this.searchmoves);
 
-		if (this.hoverdraw()) {
-			fantasy.style.display = "block";
-			return;
+		if (!did_hoverdraw) {
+			fantasy.style.display = "none";
+			context.clearRect(0, 0, canvas.width, canvas.height);
+			this.draw_move_in_canvas();
+			this.draw_enemies_in_canvas();
+			this.info_handler.draw_arrows();
+			this.draw_friendlies_in_table();
 		}
-
-		fantasy.style.display = "none";
-
-		context.clearRect(0, 0, canvas.width, canvas.height);
-
-		this.draw_move_in_canvas();
-		this.draw_enemies_in_canvas();
-		this.info_handler.draw_arrows();
-		this.draw_friendlies_in_table();
 	};
 
 	renderer.draw_loop = function() {
