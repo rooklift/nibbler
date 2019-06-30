@@ -622,6 +622,17 @@ function NewRenderer() {
 		console.log(...args);
 	};
 
+	renderer.save_config = function(filename) {
+
+		let copy = JSON.parse(JSON.stringify(config));
+
+		delete copy.flip;
+		delete copy.versus;
+		delete copy.square_size;
+
+		fs.writeFileSync(filename, JSON.stringify(copy, null, "\t"));
+	};
+
 	// --------------------------------------------------------------------------------------------
 	// Clicks, drops, mouse stuff...
 

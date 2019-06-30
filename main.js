@@ -198,6 +198,21 @@ function menu_build() {
 					type: "separator"
 				},
 				{
+					label: "Save config.json...",
+					click: () => {
+						let file = electron.dialog.showSaveDialog();
+						if (file && file.length > 0) {
+							win.webContents.send("call", {
+								fn: "save_config",
+								args: [file]
+							});
+						}
+					}
+				},
+				{
+					type: "separator"
+				},
+				{
 					role: "quit",
 					label: "Quit",
 					accelerator: "CommandOrControl+Q"
