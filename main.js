@@ -786,7 +786,8 @@ function menu_build() {
 					}
 				},
 				{
-					label: "Hovering over PV shows position",
+					label: "Draw when mouse over PV",
+					accelerator: "CommandOrControl+D",
 					type: "checkbox",
 					checked: config.hover_draw,
 					click: () => {
