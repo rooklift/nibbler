@@ -688,9 +688,9 @@ function NewRenderer() {
 			return;
 		}
 
-		let reason = this.node.get_board().sequence_illegal(moves);
-		if (reason !== "") {
-			console.log("infobox_click(): " + reason);
+		let illegal_reason = this.node.get_board().sequence_illegal(moves);
+		if (illegal_reason !== "") {
+			console.log("infobox_click(): " + illegal_reason);
 			return;
 		}
 
@@ -986,6 +986,9 @@ function NewRenderer() {
 
 	renderer.draw_fantasy_from_moves = function(moves) {
 
+		// Because our hover detection is running a cycle behind,
+		// this will often be a series of illegal moves.
+
 		if (Array.isArray(moves) === false || moves.length === 0) {
 			return;
 		}
@@ -993,8 +996,8 @@ function NewRenderer() {
 		let board = this.node.get_board();
 
 		for (let move of moves) {
-			if (board.illegal(move) !== "") {
-				console.log("draw_fantasy_from_moves(): " + reason);
+			let reason = board.illegal(move);
+			if (reason !== "") {
 				return;
 			}
 			board = board.move(move);
@@ -1027,14 +1030,21 @@ function NewRenderer() {
 
 	renderer.draw = function() {
 
-		// We do the :hover detection first so there's the maximum amount of time between the painting and
-		// the :hover detection, which might (?) help it work. i.e. it detects based on last cycle's state.
+		// We do the :hover reaction first. This way, we are detecting hover based on the previous cycle's state.
+		// This should prevent the sort of flicker that can occur if we try to detect hover based on changes we
+		// just made (i.e. if we drew then detected hover instantly).
 
-		let did_hoverdraw = false;
+		let did_hoverdraw = this.hoverdraw();
 
-		if (this.hoverdraw()) {
+		if (did_hoverdraw) {
 			fantasy.style.display = "block";
-			did_hoverdraw = true;
+		} else {
+			fantasy.style.display = "none";
+			context.clearRect(0, 0, canvas.width, canvas.height);
+			this.draw_move_in_canvas();
+			this.draw_enemies_in_canvas();
+			this.info_handler.draw_arrows();
+			this.draw_friendlies_in_table();
 		}
 
 		this.info_handler.draw_infobox(		// The info handler needs a bit more state than I'd like, but what can you do.
@@ -1043,15 +1053,6 @@ function NewRenderer() {
 			this.leela_should_go(),
 			this.node.get_board().active,
 			this.searchmoves);
-
-		if (!did_hoverdraw) {
-			fantasy.style.display = "none";
-			context.clearRect(0, 0, canvas.width, canvas.height);
-			this.draw_move_in_canvas();
-			this.draw_enemies_in_canvas();
-			this.info_handler.draw_arrows();
-			this.draw_friendlies_in_table();
-		}
 	};
 
 	renderer.draw_loop = function() {
