@@ -212,7 +212,11 @@ function NewInfoHandler() {
 		// Various possible status things in order of priority...
 
 		if (fantasy.style.display === "block") {
-			statusbox.innerHTML = `<span class="blue">HYPOTHETICAL POSITION. Press escape to clear.</span>`;
+			if (leela_should_go === false) {
+				statusbox.innerHTML = `<span class="yellow">HALTED</span> <span class="blue">HYPOTHETICAL POSITION. Press escape to clear.</span>`;
+			} else {
+				statusbox.innerHTML = `<span class="blue">HYPOTHETICAL POSITION. Press escape to clear.</span>`;
+			}
 		} else if (config.search_nodes !== "infinite" && (searchmoves.length === 1)) {
 			statusbox.innerHTML = `<span class="yellow">Node limit with exactly ONE searchmove might not return data.</span>`;
 		} else {
