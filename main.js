@@ -480,14 +480,14 @@ function menu_build() {
 							}
 						},
 						{
-							label: "2",
+							label: "1",
 							type: "checkbox",
-							checked: config.search_nodes === 2,
+							checked: config.search_nodes === 1,
 							click: () => {
 								set_checks(["Analysis", "Node limit"], 6);
 								win.webContents.send("set", {
 									key: "search_nodes",
-									value: 2
+									value: 1
 								});
 								win.webContents.send("call", "go_or_halt");
 							}

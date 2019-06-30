@@ -195,7 +195,15 @@ function NewInfoHandler() {
 				return -1;
 			}
 
-			// We can't really use MultiPV ranking now because searchmoves corrupts it.
+			// MultiPV ranking is not reliable since we might have searchmoves,
+			// however we can at least use it as a final tie-break.
+
+			if (a.multipv < b.multipv) {
+				return -1;
+			}
+			if (a.multipv > b.multipv) {
+				return 1;
+			}
 
 			return 0;
 		});
