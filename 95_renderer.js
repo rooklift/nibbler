@@ -865,62 +865,6 @@ function NewRenderer() {
 	};
 
 	// --------------------------------------------------------------------------------------------
-	// Hypothetical position drawing...
-
-	renderer.show_fantasy = function(board) {
-
-		if (!board) {
-			return;
-		}
-
-		this.hide_promotiontable();
-
-		let ctx = fantasy.getContext("2d");
-
-		for (let x = 0; x < 8; x++) {
-			for (let y = 0; y < 8; y++) {
-
-				ctx.fillStyle = (x + y) % 2 === 0 ? config.light_square : config.dark_square;
-
-				let cc = CanvasCoords(x, y);
-				ctx.fillRect(cc.x1, cc.y1, config.square_size, config.square_size);
-
-				if (board.state[x][y] === "") {
-					continue;
-				}
-
-				let piece = board.state[x][y];
-				ctx.drawImage(images[piece], cc.x1, cc.y1, config.square_size, config.square_size);
-			}
-		}
-
-		fantasy.style.display = "block";
-	};
-
-	renderer.show_fantasy_from_moves = function(moves) {
-
-		if (Array.isArray(moves) === false || moves.length === 0) {
-			return;
-		}
-
-		let board = this.node.get_board();
-
-		for (let move of moves) {
-			let illegal_reason = board.illegal(move);
-			if (illegal_reason !== "") {
-				return;
-			}
-			board = board.move(move);
-		}
-
-		this.show_fantasy(board);
-	};
-
-	renderer.hide_fantasy = function() {
-		fantasy.style.display = "none";
-	};
-
-	// --------------------------------------------------------------------------------------------
 	// General draw code...
 
 	renderer.draw_friendlies_in_table = function() {
