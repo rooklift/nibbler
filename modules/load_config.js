@@ -36,7 +36,7 @@ const defaults = {
 	"show_q": false,
 	"show_u": true,
 	"show_q_plus_u": false,
-	"searchmoves_buttons": false,
+	"searchmoves_buttons": true,
 	"hover_draw": false,
 	"serious_analysis_mode": false,
 	"update_delay": 170,
