@@ -786,6 +786,9 @@ function menu_build() {
 					}
 				},
 				{
+					type: "separator"
+				},
+				{
 					label: "Serious Analysis Mode",
 					type: "checkbox",
 					checked: config.serious_analysis_mode,
@@ -796,6 +799,12 @@ function menu_build() {
 						});
 					}
 				},
+				{
+					label: "About Serious Analysis Mode",
+					click: () => {
+						alert(messages.about_serious_analysis);
+					}
+				}
 			]
 		},
 		{
