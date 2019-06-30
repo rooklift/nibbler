@@ -212,13 +212,15 @@ function NewInfoHandler() {
 		if (config.search_nodes !== "infinite" && (searchmoves.length === 1)) {
 
 			statusbox.innerHTML = `<span class="yellow">Node limit with exactly ONE searchmove might not return data.</span>`;
-			
+
 		} else {
 
 			let status_string = "";
+
 			if (leela_should_go === false) {
 				status_string += `<span class="yellow">${config.versus === "" ? "HALTED " : "YOUR MOVE "}</span>`;
 			}
+
 			status_string += `<span class="gray">Nodes: ${NString(this.nodes)}, N/s: ${NString(this.nps)}</span>`;
 
 			if (typeof config.search_nodes === "number" && this.nodes > config.search_nodes) {
@@ -397,6 +399,11 @@ function NewInfoHandler() {
 		this.info_clickers = elements;						// We actually only need the move or its absence in each object. Meh.
 	};
 
+	ih.moves_from_click = function(event) {
+		let n = EventPathN(event, "infobox_");
+		return this.moves_from_click_n(n);
+	};
+
 	ih.moves_from_click_n = function(n) {
 
 		if (typeof n !== "number") {
@@ -425,11 +432,6 @@ function NewInfoHandler() {
 		move_list.reverse();
 
 		return move_list;
-	};
-
-	ih.moves_from_click = function(event) {
-		let n = EventPathN(event, "infobox_");
-		return this.moves_from_click_n(n);
 	};
 
 	ih.searchmove_from_click = function(event) {
