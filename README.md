@@ -40,7 +40,7 @@ Leela forgets much of the evaluation if the position changes. To mitigate this, 
 
 If you like a different piece set, you can create a folder of `.png` or `.svg` files with the right names and point the `override_piece_directory` config option to it.
 
-We try to be considerate and not use too much CPU for mundane tasks like drawing the PVs, however if you want a snappier-feeling GUI, reduce the option `update_delay` (default 170) to something low like 25 (this is the number of milliseconds between redraws).
+We try to be considerate and not use too much CPU for mundane tasks like drawing the PVs, arrow, highlights, *et cetera*; however if you want a snappier-feeling GUI, reduce the option `update_delay` (default 170) to something low like 25 (this is the number of milliseconds between redraws).
 
 # Thanks
 
