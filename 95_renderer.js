@@ -891,6 +891,12 @@ function NewRenderer() {
 
 	renderer.show_fantasy = function(board) {
 
+		if (!board) {
+			return;
+		}
+
+		this.hide_promotiontable();
+
 		let ctx = fantasy.getContext("2d");
 
 		for (let x = 0; x < 8; x++) {
