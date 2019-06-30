@@ -486,7 +486,7 @@ function NewInfoHandler() {
 			
 			for (let i = 0; i < info_list.length; i++) {
 
-				if (info_list[i].u < config.uncertainty_cutoff || i === 0) {
+				if ((typeof info_list[i].u === "number" && info_list[i].u < config.uncertainty_cutoff) || i === 0) {
 
 					let [x1, y1] = XY(info_list[i].move.slice(0, 2));
 					let [x2, y2] = XY(info_list[i].move.slice(2, 4));
