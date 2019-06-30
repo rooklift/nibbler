@@ -996,8 +996,9 @@ function NewRenderer() {
 		let board = this.node.get_board();
 
 		for (let move of moves) {
-			let reason = board.illegal(move);
-			if (reason !== "") {
+			let illegal_reason = board.illegal(move);
+			if (illegal_reason !== "") {
+				console.log(`draw_fantasy_from_moves() - ${illegal_reason}`);
 				return;
 			}
 			board = board.move(move);
