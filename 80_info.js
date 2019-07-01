@@ -263,13 +263,6 @@ function NewInfoHandler() {
 			one_click_move = this.one_click_moves[mouse_point.x][mouse_point.y];
 		}
 
-		// What we want:
-		//
-		//   - one div for each variation, containing:
-		//   - spans with id="searchmove_${move}" for the sm buttons
-		//   - spans with id="infobox_${n}" for the moves
-		//   - corresponding clickers array with {move, is_start}
-
 		this.info_clickers = [];
 
 		let info_list = this.sorted();
@@ -277,6 +270,8 @@ function NewInfoHandler() {
 		let n = 0;
 
 		for (let info of info_list) {
+
+			// The div containing the PV etc...
 
 			let divclass = "infoline";
 			
@@ -288,6 +283,8 @@ function NewInfoHandler() {
 
 			substrings.push(`<div class="${divclass}">`);
 
+			// The "focus" button...
+
 			if (config.searchmoves_buttons) {
 				if (ArrayIncludes(searchmoves, info.move)) {
 					substrings.push(`<span id="searchmove_${info.move}" class="yellow">focused: </span>`);
@@ -295,6 +292,8 @@ function NewInfoHandler() {
 					substrings.push(`<span id="searchmove_${info.move}" class="gray">focus? </span>`);
 				}
 			}
+
+			// The value...
 
 			let value_string = "?";
 			if (config.show_cp) {
@@ -312,22 +311,22 @@ function NewInfoHandler() {
 
 			substrings.push(`<span class="blue">${value_string} </span>`);
 
-			// ---
+			// The PV...
 
 			let colour = active_colour;
 			let nice_pv = info.nice_pv();
 
 			for (let i = 0; i < nice_pv.length; i++) {
-				let cls = colour === "w" ? "white" : "pink";
+				let spanclass = colour === "w" ? "white" : "pink";
 				if (nice_pv[i].includes("O-O")) {
-					cls += " nobr";
+					spanclass += " nobr";
 				}
-				substrings.push(`<span id="infobox_${n++}" class="${cls}">${nice_pv[i]} </span>`);
+				substrings.push(`<span id="infobox_${n++}" class="${spanclass}">${nice_pv[i]} </span>`);
 				this.info_clickers.push({move: info.pv[i], is_start: i === 0});
 				colour = OppositeColour(colour);
 			}
 
-			// ---
+			// The extra stats...
 
 			let extra_stat_strings = [];
 
@@ -383,7 +382,7 @@ function NewInfoHandler() {
 				substrings.push(`<span class="gray">(${extra_stat_strings.join(', ')})</span>`);
 			}
 
-			// ---
+			// Close the whole div...
 
 			substrings.push("</div>");
 			
