@@ -993,7 +993,7 @@ function NewRenderer() {
 		let hover_item = null;
 
 		for (let item of overlist) {
-			if (typeof item.id === "string" && item.id.startsWith("infobox_")) {
+			if (typeof item.id === "string" && item.id.startsWith("infobox_")) {		// Note strlen 8 is depended no below...
 				hover_item = item;
 				break;
 			}
