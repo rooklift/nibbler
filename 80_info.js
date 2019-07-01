@@ -254,14 +254,12 @@ function NewInfoHandler() {
 
 		// By default we're highlighting nothing...
 
-		let highlight_dest = null;
 		let one_click_move = "__none__";
 
 		// But if the hovered square actually has a one-click move available, highlight its variation,
 		// unless we have an active (i.e. clicked) square...
 
 		if (mouse_point && mouse_point !== Point(null) && this.one_click_moves[mouse_point.x][mouse_point.y] && !active_square) {
-			highlight_dest = mouse_point;
 			one_click_move = this.one_click_moves[mouse_point.x][mouse_point.y];
 		}
 
@@ -280,7 +278,15 @@ function NewInfoHandler() {
 
 		for (let info of info_list) {
 
-			substrings.push(`<div class="infoline">`);
+			let divclass = "infoline";
+			
+			if (info.move === one_click_move) {
+				divclass += " redback";
+			} else if (info.move === hoverdraw_move) {
+				divclass += " blueback";
+			}
+
+			substrings.push(`<div class="${divclass}">`);
 
 			if (config.searchmoves_buttons) {
 				if (ArrayIncludes(searchmoves, info.move)) {
@@ -312,13 +318,12 @@ function NewInfoHandler() {
 			let nice_pv = info.nice_pv();
 
 			for (let i = 0; i < nice_pv.length; i++) {
-
-				let nice_move = nice_pv[i];
-
-				let s = `<span id="infobox_` + n.toString() + `" class="` + (colour === 'w' ? 'white' : 'pink') + `">` + nice_move + ` </span>`;
-				substrings.push(s);
+				let cls = colour === "w" ? "white" : "pink";
+				if (nice_pv[i].includes("O-O")) {
+					cls += " nobr";
+				}
+				substrings.push(`<span id="infobox_${n++}" class="${cls}">${nice_pv[i]} </span>`);
 				this.info_clickers.push({move: info.pv[i], is_start: i === 0});
-				n++;
 				colour = OppositeColour(colour);
 			}
 
