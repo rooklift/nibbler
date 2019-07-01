@@ -1,6 +1,8 @@
 # Nibbler
 
-*Nibbler* is intended to be somewhat like [Lizzie](https://github.com/featurecat/lizzie), but for [Leela Chess Zero](https://github.com/LeelaChessZero/lc0). In other words, it is a GUI that runs a single engine (in our case, Lc0) constantly, displaying opinions about the current position.
+"By far the best ICCF analysis tool for Leela." &mdash; *jhorthos*
+
+Nibbler is intended to be somewhat like [Lizzie](https://github.com/featurecat/lizzie), but for [Leela Chess Zero](https://github.com/LeelaChessZero/lc0). In other words, it is a GUI that runs a single engine (in our case, Lc0) constantly, displaying opinions about the current position.
 
 For prebuilt binary releases, see the [Releases](https://github.com/fohristiwhirl/nibbler/releases) section.
 
@@ -17,8 +19,6 @@ For prebuilt binary releases, see the [Releases](https://github.com/fohristiwhir
 * UCI `searchmoves` functionality.
 * Versus Mode - where Leela only analyses one side.
 * Various aesthetic adjustments are possible in the `config.json` file.
-
-Nibbler is a work-in-progress. See or comment on the [todo list](https://github.com/fohristiwhirl/nibbler/issues/10) of hoped-for features.
 
 # Installation
 
