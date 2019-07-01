@@ -276,9 +276,9 @@ function NewInfoHandler() {
 			let divclass = "infoline";
 			
 			if (info.move === one_click_move) {
-				divclass += " redback";
+				divclass += " ocm_highlight";
 			} else if (info.move === hoverdraw_move) {
-				divclass += " blueback";
+				divclass += " hover_highlight";
 			}
 
 			substrings.push(`<div class="${divclass}">`);
