@@ -173,6 +173,10 @@ span.blue {
 	color: #6cccee;
 }
 
+.infoline {
+	margin-bottom: 1em;
+}
+
 .redback {
 	background-color: #770000;
 }

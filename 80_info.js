@@ -280,7 +280,7 @@ function NewInfoHandler() {
 
 		for (let info of info_list) {
 
-			substrings.push("<div>");
+			substrings.push(`<div class="infoline">`);
 
 			if (config.searchmoves_buttons) {
 				if (ArrayIncludes(searchmoves, info.move)) {
