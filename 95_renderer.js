@@ -48,13 +48,13 @@ function NewRenderer() {
 		// of the old info table. We want to clear the info table, but preserving the
 		// relevant part of the PV, and evals, if available.
 
-		if (new_game_flag || Object.keys(this.info_handler.table).length === 0) {	// Fail
+		if (new_game_flag || Object.keys(this.info_handler.table).length === 0) {			// Fail
 			this.info_handler.clear(this.node.get_board());
 			return;
 		}
 
 		if (config.versus === "w" || config.versus === "b") {
-			if (this.leela_should_go() === false) {									// Fail (conceal)
+			if (this.leela_should_go() === false) {											// Fail (conceal)
 				this.info_handler.clear(this.node.get_board());
 				return;
 			}
@@ -75,7 +75,7 @@ function NewRenderer() {
 			node = node.parent;
 		}
 
-		if (found === false) {														// Fail
+		if (found === false) {																// Fail
 			this.info_handler.clear(this.node.get_board());
 			return;
 		}
@@ -87,22 +87,22 @@ function NewRenderer() {
 
 		let oldinfo = this.info_handler.table[moves[0]];
 
-		if (!oldinfo) {																// Fail
+		if (!oldinfo) {																		// Fail
 			this.info_handler.clear(this.node.get_board());
 			return;
 		}
 
-		let pv = oldinfo.pv;
-
-		if (Array.isArray(pv) === false || pv.length <= moves.length) {				// Fail
+		if (Array.isArray(oldinfo.pv) === false || oldinfo.pv.length <= moves.length) {		// Fail
 			this.info_handler.clear(this.node.get_board());
 			return;
 		}
+
+		let pv = Array.from(oldinfo.pv);
 
 		// Find out if the oldinfo's PV matches our moves.
 
 		for (let n = 0; n < moves.length; n++) {
-			if (pv[n] !== moves[n]) {												// Fail
+			if (pv[n] !== moves[n]) {														// Fail
 				this.info_handler.clear(this.node.get_board());
 				return;
 			}
