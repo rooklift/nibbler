@@ -454,6 +454,13 @@ function NewRenderer() {
 		if (s.startsWith("error")) {
 			this.info_handler.err_receive(s);
 		}
+		if (s.startsWith("id name")) {
+			for (let n = 10; n < 21; n++) {
+				if (s.includes(`v0.${n}`)) {
+					this.info_handler.err_receive(`<span class="blue">Nibbler says: this version of Lc0 may be too old to display most statistics.</span>`);
+				}
+			}
+		}
 	};
 
 	renderer.err_receive = function(s) {
