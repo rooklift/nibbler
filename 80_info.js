@@ -429,7 +429,7 @@ function NewInfoHandler() {
 		let move = null;
 
 		for (let item of event.path) {
-			if (typeof item.id === "string" && item.id.startsWith("searchmove_")) {
+			if (typeof item.id === "string" && item.id.startsWith("searchmove_")) {		// Note strlen 11 is depended on below.
 				move = item.id.slice(11);
 				break;
 			}
