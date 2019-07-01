@@ -265,14 +265,30 @@ function NewInfoHandler() {
 			one_click_move = this.one_click_moves[mouse_point.x][mouse_point.y];
 		}
 
+		// What we want:
+		//
+		//   - one div for each variation, containing:
+		//   - spans with id="searchmove_${move}" for the sm buttons
+		//   - spans with id="infobox_${n}" for the moves
+		//   - corresponding clickers array with {move, is_start}
+
+		this.info_clickers = [];
+
 		let info_list = this.sorted();
-		let elements = [];								// Not HTML elements, just our own objects.
+		let substrings = [];
+		let n = 0;
 
-		for (let i = 0; i < info_list.length; i++) {
+		for (let info of info_list) {
 
-			let new_elements = [];
+			// substrings.push("<div>");
 
-			let info = info_list[i];
+			if (config.searchmoves_buttons) {
+				if (ArrayIncludes(searchmoves, info.move)) {
+					substrings.push(`<span id="searchmove_${info.move}" class="yellow">focused: </span>`);
+				} else {
+					substrings.push(`<span id="searchmove_${info.move}" class="gray">focus? </span>`);
+				}
+			}
 
 			let value_string = "?";
 			if (config.show_cp) {
@@ -288,44 +304,25 @@ function NewInfoHandler() {
 				value_string = info.value_string(1) + "%";
 			}
 
-			if (config.searchmoves_buttons) {
-				if (ArrayIncludes(searchmoves, info.move)) {
-					new_elements.push({
-						class: "yellow",
-						text: "focused: ",
-						searchmove: info.move,
-					});
-				} else {
-					new_elements.push({
-						class: "gray",
-						text: "focus? ",
-						searchmove: info.move,
-					});
-				}
-			}
+			substrings.push(`<span class="blue">${value_string} </span>`);
 
-			new_elements.push({
-				class: "blue",
-				text: value_string + " ",
-			});
+			// ---
 
 			let colour = active_colour;
-
 			let nice_pv = info.nice_pv();
 
-			for (let n = 0; n < nice_pv.length; n++) {
-				let nice_move = nice_pv[n];
-				let element = {
-					class: colour === "w" ? "white" : "pink",
-					text: nice_move + " ",
-					move: info.pv[n],
-				};
-				if (nice_move.includes("O-O")) {
-					element.class += " nobr";
-				}
-				new_elements.push(element);
+			for (let i = 0; i < nice_pv.length; i++) {
+
+				let nice_move = nice_pv[i];
+
+				let s = `<span id="infobox_` + n.toString() + `" class="` + (colour === 'w' ? 'white' : 'pink') + `">` + nice_move + ` </span>`;
+				substrings.push(s);
+				this.info_clickers.push({move: info.pv[i], is_start: i === 0});
+				n++;
 				colour = OppositeColour(colour);
 			}
+
+			// ---
 
 			let extra_stat_strings = [];
 
@@ -378,47 +375,15 @@ function NewInfoHandler() {
 			}
 
 			if (extra_stat_strings.length > 0) {
-				new_elements.push({
-					class: "gray",
-					text: "(" + extra_stat_strings.join(", ") + ")"
-				});
+				substrings.push(`<span class="gray">(${extra_stat_strings.join(', ')})</span>`);
 			}
 
-			if (info.move === one_click_move) {
-				for (let e of new_elements) {
-					e.class += " redback";
-				}
-			} else if (info.move === hoverdraw_move) {
-				for (let e of new_elements) {
-					e.class += " blueback";
-				}
-			}
+			// ---
 
-			if (new_elements.length > 0) {					// Always true.
-				new_elements[new_elements.length - 1].text += "<br><br>";
-			}
-
-			elements = elements.concat(new_elements);
+			// substrings.push("</div>");
+			infobox.innerHTML = substrings.join("");
+			this.lastHTML = substrings.join("");
 		}
-
-		// Generate the new innerHTML for the infobox <div>
-
-		let new_inner_parts = [];
-
-		for (let n = 0; n < elements.length; n++) {
-			let part = `<span id="infobox_${n}" class="${elements[n].class}">${elements[n].text}</span>`;
-			new_inner_parts.push(part);
-		}
-
-		// Setting innerHTML is performant. Direct DOM manipulation is worse, somehow.
-		// This does have the disadvantage that there's possibly some flicker when
-		// using a :hover CSS selector, I find.
-
-		infobox.innerHTML = new_inner_parts.join("");
-
-		// And save our elements so that we know what clicks mean.
-
-		this.info_clickers = elements;						// We actually only need the move or its absence in each object. Meh.
 	};
 
 	ih.moves_from_click = function(event) {
@@ -432,9 +397,6 @@ function NewInfoHandler() {
 			return [];
 		}
 
-		// This is a bit icky, it relies on the fact that our clickers list
-		// has some objects that lack a move property (the blue info bits).
-
 		if (!this.info_clickers || n < 0 || n >= this.info_clickers.length) {
 			return [];
 		}
@@ -444,11 +406,11 @@ function NewInfoHandler() {
 		// Work backwards until we get to the start of the line...
 
 		for (; n >= 0; n--) {
-			let element = this.info_clickers[n];
-			if (!element || !element.move) {
+			let object = this.info_clickers[n];
+			move_list.push(object.move);
+			if (object.is_start) {
 				break;
 			}
-			move_list.push(element.move);
 		}
 
 		move_list.reverse();
@@ -458,20 +420,16 @@ function NewInfoHandler() {
 
 	ih.searchmove_from_click = function(event) {
 
-		let n = EventPathN(event, "infobox_");
-		if (typeof n !== "number") {
-			return null;
+		let move = null;
+
+		for (let item of event.path) {
+			if (typeof item.id === "string" && item.id.startsWith("searchmove_")) {
+				move = item.id.slice(11);
+				break;
+			}
 		}
 
-		if (!this.info_clickers || n < 0 || n >= this.info_clickers.length) {
-			return null;
-		}
-
-		if (this.info_clickers[n].searchmove) {
-			return this.info_clickers[n].searchmove;
-		}
-
-		return null;
+		return move;		// Possibly null
 	};
 
 	ih.draw_arrows = function() {
