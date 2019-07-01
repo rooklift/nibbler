@@ -108,11 +108,13 @@ function NewInfoHandler() {
 
 			let new_pv = InfoPV(s);
 
-			if (new_pv.length > 0) {
-				if (CompareArrays(new_pv, move_info.pv) === false) {
-					move_info.nice_pv_cache = null;
-					move_info.pv = new_pv;
-				}
+			if (new_pv.length === 0) {
+				new_pv = [move];
+			}
+
+			if (CompareArrays(new_pv, move_info.pv) === false) {
+				move_info.nice_pv_cache = null;
+				move_info.pv = new_pv;
 			}
 
 		} else if (s.startsWith("info string")) {
