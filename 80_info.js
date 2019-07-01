@@ -11,6 +11,7 @@ function NewInfoHandler() {
 	ih.nps = 0;								// Stat sent by engine.
 
 	ih.ever_received_info = false;
+	ih.ever_received_q = false;
 	ih.stderr_log = "";
 
 	ih.one_click_moves = New2DArray(8, 8);	// Array of possible one-click moves. Updated by draw_arrows().
@@ -84,7 +85,10 @@ function NewInfoHandler() {
 
 			tmp = parseInt(InfoVal(s, "cp"), 10);		// Score in centipawns
 			if (Number.isNaN(tmp) === false) {
-				move_info.cp = tmp;				
+				move_info.cp = tmp;
+				if (this.ever_received_q === false) {
+					move_info.q = QfromPawns(tmp / 100);
+				}
 			}
 
 			tmp = parseInt(InfoVal(s, "multipv"), 10);	// Leela's ranking of the move, starting at 1
@@ -159,6 +163,7 @@ function NewInfoHandler() {
 
 			tmp = parseFloat(InfoVal(s, "(Q:"));
 			if (Number.isNaN(tmp) === false) {
+				this.ever_received_q = true;
 				move_info.q = tmp;
 			}
 		}
