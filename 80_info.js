@@ -224,7 +224,7 @@ function NewInfoHandler() {
 
 		if (config.search_nodes !== "infinite" && (searchmoves.length === 1)) {
 
-			statusbox.innerHTML = `<span class="yellow">Node limit with only 1 searchmove won't return data.</span>`;
+			statusbox.innerHTML = `<span class="yellow">Node limit with only 1 focus won't run.</span>`;
 
 		} else {
 
