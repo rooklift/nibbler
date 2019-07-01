@@ -280,7 +280,7 @@ function NewInfoHandler() {
 
 		for (let info of info_list) {
 
-			// substrings.push("<div>");
+			substrings.push("<div>");
 
 			if (config.searchmoves_buttons) {
 				if (ArrayIncludes(searchmoves, info.move)) {
@@ -380,10 +380,11 @@ function NewInfoHandler() {
 
 			// ---
 
-			// substrings.push("</div>");
-			infobox.innerHTML = substrings.join("");
-			this.lastHTML = substrings.join("");
+			substrings.push("</div>");
+			
 		}
+
+		infobox.innerHTML = substrings.join("");
 	};
 
 	ih.moves_from_click = function(event) {
