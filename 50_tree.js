@@ -67,7 +67,11 @@ const node_prototype = {
 		return node;
 	},
 
-	get_board: function() {		// FIXME: I'd like this to not use recursion.
+	get_board: function() {
+
+		// Note that in various places elsewhere we assume that we can compare boards by
+		// naive identity checking, which means this needs to always return the same object
+		// for the same node, meaning that caching the position is unavoidable.
 
 		if (this.__position) {
 			return this.__position;
@@ -77,8 +81,23 @@ const node_prototype = {
 			throw "get_board(): no __position and no parent";
 		}
 
-		let ppos = this.parent.get_board();
-		this.__position = ppos.move(this.move);
+		let node_line = [];
+		let foo = this;
+
+		while (!foo.__position) {
+			node_line.push(foo);
+			foo = foo.parent;
+		}
+		node_line.reverse();
+
+		let board = node_line[0].parent.__position;
+
+		for (let node of node_line) {
+			board = board.move(node.move);
+			// node.__position = board;
+		}
+
+		this.__position = board;
 		return this.__position;
 	},
 
