@@ -50,6 +50,10 @@ const defaults = {
 
 function fix(cfg) {
 
+	if (typeof cfg.options !== "object") {
+		cfg.options = {};
+	}
+
 	cfg.square_size = Math.floor(cfg.board_size / 8);
 	cfg.board_size = cfg.square_size * 8;
 	
