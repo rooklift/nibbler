@@ -87,6 +87,10 @@ electron.ipcMain.once("renderer_ready", () => {
 	}
 });
 
+electron.ipcMain.on("set_title", (event, msg) => {
+	win.setTitle(msg);
+});
+
 function menu_build() {
 	const template = [
 		{

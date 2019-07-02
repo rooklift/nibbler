@@ -40,6 +40,15 @@ function NewRenderer() {
 		this.draw();
 		this.movelist_handler.draw(this.node);
 		fenbox.value = this.node.get_board().fen();
+
+		if (new_game_flag) {
+			let title = "Nibbler";
+			let root = this.node.get_root();
+			if (root.tags && root.tags.White && root.tags.Black) {
+				title += `: ${root.tags.White} - ${root.tags.Black}`;
+			}
+			ipcRenderer.send("set_title", title);
+		}
 	};
 
 	renderer.position_changed_clear_info_handler = function(new_game_flag) {
