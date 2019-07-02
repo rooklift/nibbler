@@ -506,7 +506,7 @@ function NewInfoHandler() {
 
 		// It looks best if the longest arrows are drawn underneath. Manhattan distance is good enough.
 		// For the sake of displaying the best pawn promotion (of the 4 possible), sort ties are broken
-		// by winrate, with lower winrates drawn first.
+		// by node counts, with lower drawn first.
 
 		arrows.sort((a, b) => {
 			if (Math.abs(a.x2 - a.x1) + Math.abs(a.y2 - a.y1) < Math.abs(b.x2 - b.x1) + Math.abs(b.y2 - b.y1)) {
