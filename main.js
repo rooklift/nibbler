@@ -817,6 +817,22 @@ function menu_build() {
 					}
 				},
 				{
+					label: "Clear searchmoves",
+					click: () => {
+						win.webContents.send("call", "clear_searchmoves");
+					}
+				},
+				{
+					label: "Invert searchmoves",
+					accelerator: "CommandOrControl+I",
+					click: () => {
+						win.webContents.send("call", "invert_searchmoves");
+					}
+				},
+				{
+					type: "separator"
+				},
+				{
 					label: "Draw when mouse over PV",
 					accelerator: "CommandOrControl+D",
 					type: "checkbox",

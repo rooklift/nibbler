@@ -621,6 +621,34 @@ function NewRenderer() {
 		this.draw();								// For the canvas stuff.
 	};
 
+	renderer.invert_searchmoves = function() {
+
+		if (!config.searchmoves_buttons) {
+			return;
+		}
+
+		// It's no disaster if the result is wrong somehow, because
+		// searchmoves are validated before being sent to Leela.
+
+		let moveset = Object.create(null);
+
+		for (let move of Object.keys(this.info_handler.table)) {
+			moveset[move] = true;
+		}
+
+		for (let move of this.searchmoves) {
+			delete moveset[move];
+		}
+
+		this.searchmoves = Object.keys(moveset);
+		this.go_or_halt();
+	};
+
+	renderer.clear_searchmoves = function() {
+		this.searchmoves = [];
+		this.go_or_halt();
+	};
+
 	renderer.escape = function() {					// Set things into a clean state.
 		this.hide_pgn_chooser();
 		this.hide_promotiontable();
