@@ -721,7 +721,7 @@ function NewRenderer() {
 		let moves = this.info_handler.moves_from_click(event);
 
 		if (!moves || moves.length === 0) {				// We do assume length > 0 below.
-			renderer.maybe_searchmove_click(event);
+			this.maybe_searchmove_click(event);
 			return;
 		}
 
@@ -806,7 +806,7 @@ function NewRenderer() {
 
 		let pieces = "QRBN";
 
-		if (renderer.node.get_board().active === "b") {
+		if (this.node.get_board().active === "b") {
 			pieces = "qrbn";
 		}
 
