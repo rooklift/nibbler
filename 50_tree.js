@@ -197,7 +197,7 @@ function NewNode(parent, move) {		// Args are null for root only.
 	return node;
 }
 
-function NewTree(startpos) {			// arg is expected to be a position object.
+function NewTree(startpos) {			// Arg is expected to be a position object, not a FEN.
 	
 	if (!startpos) {
 		startpos = LoadFEN("rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1");
@@ -205,6 +205,7 @@ function NewTree(startpos) {			// arg is expected to be a position object.
 
 	let root = NewNode(null, null);
 	root.__position = startpos;
+	root.tags = Object.create(null);	// Only root gets these.
 
 	return root;
 }
