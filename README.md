@@ -6,7 +6,7 @@ Nibbler is intended to be somewhat like [Lizzie](https://github.com/featurecat/l
 
 For prebuilt binary releases, see the [Releases](https://github.com/fohristiwhirl/nibbler/releases) section.
 
-![Screenshot](https://user-images.githubusercontent.com/16438795/60507333-d489d480-9cbf-11e9-905f-c0386fc65255.png)
+![Screenshot](https://user-images.githubusercontent.com/16438795/60531026-fef48580-9cf1-11e9-964e-723d502cfc72.png)
 
 # Features
 
