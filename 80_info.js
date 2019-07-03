@@ -657,7 +657,7 @@ function new_info(board, move) {
 	info.multipv = 1;
 	info.n = 0;
 	info.p = "?";					// Note we receive P as a string, unlike the other stuff.
-	info.pv = [];
+	info.pv = [move];
 	info.nice_pv_cache = null;
 	info.q = 0;
 	info.q_plus_u = 1;
