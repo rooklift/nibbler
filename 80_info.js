@@ -17,6 +17,10 @@ function NewInfoHandler() {
 	ih.one_click_moves = New2DArray(8, 8);	// Array of possible one-click moves. Updated by draw_arrows().
 	ih.info_clickers = [];					// Elements in the infobox. Updated by draw_infobox().
 
+	ih.last_drawn_version = null;
+	ih.last_drawn_highlight = null;
+	ih.last_drawn_highlight_class = null;
+
 	ih.clear = function(board) {
 		if (!board) {
 			throw "ih.clear(): need board";
@@ -216,11 +220,10 @@ function NewInfoHandler() {
 	};
 
 	ih.must_draw_infobox = function() {
-		// We used to skip drawing the infobox sometimes. This function was called when a draw
-		// should be forced next cycle. But now it does nothing.
+		this.last_drawn_version = null;
 	};
 
-	ih.draw_infobox = function(mouse_point, active_square, leela_should_go, active_colour, searchmoves, hoverdraw_move) {
+	ih.draw_statusbox = function(leela_should_go, searchmoves = []) {
 
 		if (config.search_nodes !== "infinite" && (searchmoves.length === 1)) {
 
@@ -242,6 +245,11 @@ function NewInfoHandler() {
 
 			statusbox.innerHTML = status_string;
 		}
+	};
+
+	ih.draw_infobox = function(mouse_point, active_square, leela_should_go, active_colour, searchmoves, hoverdraw_move) {
+
+		ih.draw_statusbox(leela_should_go, searchmoves);
 
 		// Display stderr and return if we've never seen any info...
 
@@ -252,16 +260,38 @@ function NewInfoHandler() {
 			return;
 		}
 
-		// By default we're highlighting nothing...
+		// We might be highlighting some div...
 
-		let one_click_move = "__none__";
-
-		// But if the hovered square actually has a one-click move available, highlight its variation,
-		// unless we have an active (i.e. clicked) square...
+		let highlight_move = null;
+		let highlight_class = null;
 
 		if (mouse_point && mouse_point !== Point(null) && this.one_click_moves[mouse_point.x][mouse_point.y] && !active_square) {
-			one_click_move = this.one_click_moves[mouse_point.x][mouse_point.y];
+			highlight_move = this.one_click_moves[mouse_point.x][mouse_point.y];
+			highlight_class = "ocm_highlight";
 		}
+
+		if (hoverdraw_move) {
+			highlight_move = hoverdraw_move;
+			highlight_class = "hover_highlight";
+		}
+
+		// We can skip the draw iff:
+		//
+		// - The last drawn version matches
+		// - The last drawn highlight matches
+		// - The last drawn highlight class matches
+
+		if (this.version === this.last_drawn_version) {
+			if (highlight_move === this.last_drawn_highlight_move) {
+				if (highlight_class === this.last_drawn_highlight_class) {
+					return;
+				}
+			}
+		}
+
+		this.last_drawn_version = this.version;
+		this.last_drawn_highlight_move = highlight_move;
+		this.last_drawn_highlight_class = highlight_class;
 
 		this.info_clickers = [];
 
@@ -275,10 +305,8 @@ function NewInfoHandler() {
 
 			let divclass = "infoline";
 			
-			if (info.move === one_click_move) {
-				divclass += " ocm_highlight";
-			} else if (info.move === hoverdraw_move) {
-				divclass += " hover_highlight";
+			if (info.move === highlight_move) {
+				divclass += " " + highlight_class;
 			}
 
 			substrings.push(`<div class="${divclass}">`);

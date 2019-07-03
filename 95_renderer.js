@@ -641,11 +641,13 @@ function NewRenderer() {
 		}
 
 		this.searchmoves = Object.keys(moveset);
+		this.info_handler.must_draw_infobox();
 		this.go_or_halt();
 	};
 
 	renderer.clear_searchmoves = function() {
 		this.searchmoves = [];
+		this.info_handler.must_draw_infobox();
 		this.go_or_halt();
 	};
 
@@ -653,6 +655,7 @@ function NewRenderer() {
 		this.hide_pgn_chooser();
 		this.hide_promotiontable();
 		this.set_active_square(null);
+		this.info_handler.must_draw_infobox();
 	};
 
 	renderer.toggle_debug_css = function() {
