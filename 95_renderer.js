@@ -641,13 +641,11 @@ function NewRenderer() {
 		}
 
 		this.searchmoves = Object.keys(moveset);
-		this.info_handler.must_draw_infobox();
 		this.go_or_halt();
 	};
 
 	renderer.clear_searchmoves = function() {
 		this.searchmoves = [];
-		this.info_handler.must_draw_infobox();
 		this.go_or_halt();
 	};
 
@@ -655,7 +653,6 @@ function NewRenderer() {
 		this.hide_pgn_chooser();
 		this.hide_promotiontable();
 		this.set_active_square(null);
-		this.info_handler.must_draw_infobox();
 	};
 
 	renderer.toggle_debug_css = function() {
@@ -809,7 +806,6 @@ function NewRenderer() {
 			this.searchmoves.push(sm);
 		}
 
-		this.info_handler.must_draw_infobox();
 		this.go_or_halt();									// If we're running, send a new go message with the updated searchmoves.
 	};
 

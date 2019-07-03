@@ -20,6 +20,7 @@ function NewInfoHandler() {
 	ih.last_drawn_version = null;
 	ih.last_drawn_highlight = null;
 	ih.last_drawn_highlight_class = null;
+	ih.last_drawn_searchmoves = [];
 
 	ih.clear = function(board) {
 		if (!board) {
@@ -223,7 +224,7 @@ function NewInfoHandler() {
 		this.last_drawn_version = null;
 	};
 
-	ih.draw_statusbox = function(leela_should_go, searchmoves = []) {
+	ih.draw_statusbox = function(leela_should_go, searchmoves) {
 
 		if (config.search_nodes !== "infinite" && (searchmoves.length === 1)) {
 
@@ -275,16 +276,19 @@ function NewInfoHandler() {
 			highlight_class = "hover_highlight";
 		}
 
-		// We can skip the draw iff:
+		// We can skip the draw if:
 		//
 		// - The last drawn version matches
 		// - The last drawn highlight matches
 		// - The last drawn highlight class matches
+		// - The searchmoves match (some possibility of false negatives due to re-ordering, but that's OK)
 
 		if (this.version === this.last_drawn_version) {
 			if (highlight_move === this.last_drawn_highlight_move) {
 				if (highlight_class === this.last_drawn_highlight_class) {
-					return;
+					if (CompareArrays(searchmoves, this.last_drawn_searchmoves)) {
+						return;
+					}
 				}
 			}
 		}
@@ -292,6 +296,7 @@ function NewInfoHandler() {
 		this.last_drawn_version = this.version;
 		this.last_drawn_highlight_move = highlight_move;
 		this.last_drawn_highlight_class = highlight_class;
+		this.last_drawn_searchmoves = Array.from(searchmoves);
 
 		this.info_clickers = [];
 
