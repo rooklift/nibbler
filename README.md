@@ -42,6 +42,8 @@ If you like a different piece set, you can create a folder of `.png` or `.svg` f
 
 We try to be considerate and not use too much CPU for mundane tasks like drawing the PVs, arrows, highlights, *et cetera*; however if you want a snappier-feeling GUI, reduce the option `update_delay` (default 170) to something low like 25 (this is the number of milliseconds between redraws).
 
+Leela running out of RAM can be a problem if searches go on too long. You might like to add a `RamLimitMb` to the UCI options part of your config file. See [here](https://github.com/LeelaChessZero/lc0/wiki/Lc0-options) for info about that and other UCI options.
+
 # Thanks
 
 Thanks to everyone in Discord and GitHub who's offered advice and suggestions; and thanks to all Lc0 devs and GPU-hours contributors!
