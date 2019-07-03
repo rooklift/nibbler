@@ -434,11 +434,37 @@ function menu_build() {
 							}
 						},
 						{
+							label: "100,000,000",
+							type: "checkbox",
+							checked: config.search_nodes === 100000000,
+							click: () => {
+								set_checks(["Analysis", "Node limit"], 1);
+								win.webContents.send("set", {
+									key: "search_nodes",
+									value: 100000000
+								});
+								win.webContents.send("call", "go_or_halt");
+							}
+						},
+						{
+							label: "10,000,000",
+							type: "checkbox",
+							checked: config.search_nodes === 10000000,
+							click: () => {
+								set_checks(["Analysis", "Node limit"], 2);
+								win.webContents.send("set", {
+									key: "search_nodes",
+									value: 10000000
+								});
+								win.webContents.send("call", "go_or_halt");
+							}
+						},
+						{
 							label: "1,000,000",
 							type: "checkbox",
 							checked: config.search_nodes === 1000000,
 							click: () => {
-								set_checks(["Analysis", "Node limit"], 1);
+								set_checks(["Analysis", "Node limit"], 3);
 								win.webContents.send("set", {
 									key: "search_nodes",
 									value: 1000000
@@ -451,7 +477,7 @@ function menu_build() {
 							type: "checkbox",
 							checked: config.search_nodes === 100000,
 							click: () => {
-								set_checks(["Analysis", "Node limit"], 2);
+								set_checks(["Analysis", "Node limit"], 4);
 								win.webContents.send("set", {
 									key: "search_nodes",
 									value: 100000
@@ -464,7 +490,7 @@ function menu_build() {
 							type: "checkbox",
 							checked: config.search_nodes === 10000,
 							click: () => {
-								set_checks(["Analysis", "Node limit"], 3);
+								set_checks(["Analysis", "Node limit"], 5);
 								win.webContents.send("set", {
 									key: "search_nodes",
 									value: 10000
@@ -477,7 +503,7 @@ function menu_build() {
 							type: "checkbox",
 							checked: config.search_nodes === 1000,
 							click: () => {
-								set_checks(["Analysis", "Node limit"], 4);
+								set_checks(["Analysis", "Node limit"], 6);
 								win.webContents.send("set", {
 									key: "search_nodes",
 									value: 1000
@@ -490,10 +516,23 @@ function menu_build() {
 							type: "checkbox",
 							checked: config.search_nodes === 100,
 							click: () => {
-								set_checks(["Analysis", "Node limit"], 5);
+								set_checks(["Analysis", "Node limit"], 7);
 								win.webContents.send("set", {
 									key: "search_nodes",
 									value: 100
+								});
+								win.webContents.send("call", "go_or_halt");
+							}
+						},
+						{
+							label: "10",
+							type: "checkbox",
+							checked: config.search_nodes === 10,
+							click: () => {
+								set_checks(["Analysis", "Node limit"], 8);
+								win.webContents.send("set", {
+									key: "search_nodes",
+									value: 10
 								});
 								win.webContents.send("call", "go_or_halt");
 							}
@@ -503,7 +542,7 @@ function menu_build() {
 							type: "checkbox",
 							checked: config.search_nodes === 1,
 							click: () => {
-								set_checks(["Analysis", "Node limit"], 6);
+								set_checks(["Analysis", "Node limit"], 9);
 								win.webContents.send("set", {
 									key: "search_nodes",
 									value: 1
