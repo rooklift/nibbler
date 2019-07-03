@@ -8,17 +8,21 @@ with open("package.json") as f:
 # Location of zipped electron distributions...
 
 linux_electron = "electron_zipped/electron-v5.0.6-linux-x64.zip"
+mac_electron = "electron_zipped/electron-v5.0.6-darwin-x64.zip"
 windows_electron = "electron_zipped/electron-v5.0.6-win32-x64.zip"
 
 # Setup directories...
 
 linux_dir = "dist/nibbler-{}-linux".format(version)
+mac_dir = "dist/nibbler-{}-mac".format(version)
 windows_dir = "dist/nibbler-{}-windows".format(version)
 
 linux_app_dir = os.path.join(linux_dir, "resources/app")
+mac_app_dir = os.path.join(mac_dir, "Electron.app/Contents/Resources/app")
 windows_app_dir = os.path.join(windows_dir, "resources/app")
 
 os.makedirs(linux_app_dir)
+os.makedirs(mac_app_dir)
 os.makedirs(windows_app_dir)
 
 # Source and other technical files...
@@ -27,6 +31,7 @@ useful_files = [file for file in os.listdir() if file.endswith(".js") or file.en
 
 for file in useful_files:
 	shutil.copy(file, linux_app_dir)
+	shutil.copy(file, mac_app_dir)
 	shutil.copy(file, windows_app_dir)
 
 # Folders...
@@ -35,11 +40,13 @@ folders = ["modules", "pieces"]
 
 for folder in folders:
 	shutil.copytree(folder, os.path.join(linux_app_dir, folder))
+	shutil.copytree(folder, os.path.join(mac_app_dir, folder))
 	shutil.copytree(folder, os.path.join(windows_app_dir, folder))
 
 # Copy config.example.json - to the high level dir, not the app dir...
 
 shutil.copy("config.example.json", linux_dir)
+shutil.copy("config.example.json", mac_dir)
 shutil.copy("config.example.json", windows_dir)
 
 # Extract Electron...
@@ -47,6 +54,11 @@ shutil.copy("config.example.json", windows_dir)
 print("Extracting for Linux...")
 z = zipfile.ZipFile(linux_electron, "r")
 z.extractall(linux_dir)
+z.close()
+
+print("Extracting for Mac...")
+z = zipfile.ZipFile(mac_electron, "r")
+z.extractall(mac_dir)
 z.close()
 
 print("Extracting for Windows...")
@@ -57,4 +69,5 @@ z.close()
 # Rename Electron...
 
 os.rename(os.path.join(linux_dir, "electron"), os.path.join(linux_dir, "nibbler"))
+os.rename(os.path.join(mac_dir, "Electron.app"), os.path.join(mac_dir, "Nibbler.app"))
 os.rename(os.path.join(windows_dir, "electron.exe"), os.path.join(windows_dir, "nibbler.exe"))
