@@ -177,27 +177,39 @@ function CanvasCoords(x, y) {
 	return {x1, y1, x2, y2, cx, cy};
 }
 
-function EventPathN(event, prefix) {
+function EventPathString(event, prefix) {
 
-	// Given an event with event.path like ["foo", "bar", "clicker_37", "whatever"]
-	// return the number 37, assuming the prefix matches. Else return null.
+	// Given an event with event.path like ["foo", "bar", "searchmove_e2e4", "whatever"]
+	// return the string "e2e4", assuming the prefix matches. Else return null.
 
 	if (!event || typeof prefix !== "string" || Array.isArray(event.path) === false) {
 		return null;
 	}
 
-	let n;
-
 	for (let item of event.path) {
 		if (typeof item.id === "string") {
 			if (item.id.startsWith(prefix)) {
-				n = parseInt(item.id.slice(prefix.length), 10);
-				break;
+				return item.id.slice(prefix.length);
 			}
 		}
 	}
 
-	if (n === undefined || Number.isNaN(n)) {
+	return null;
+}
+
+function EventPathN(event, prefix) {
+
+	// As above, but returning a number, or null.
+
+	let s = EventPathString(event, prefix);
+
+	if (typeof s !== "string") {
+		return null;
+	}
+
+	let n = parseInt(s, 10);
+
+	if (Number.isNaN(n)) {
 		return null;
 	}
 

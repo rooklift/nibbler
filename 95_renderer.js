@@ -710,24 +710,14 @@ function NewRenderer() {
 
 	renderer.boardfriends_click = function(event) {
 
-		if (!event || Array.isArray(event.path) === false) {
+		let s = EventPathString(event, "overlay_");
+		let p = Point(s);
+		
+		if (p === Point(null)) {
 			return;
 		}
 
 		this.hide_promotiontable();						// Just in case it's up.
-
-		let p = Point(null);
-
-		for (let item of event.path) {
-			if (typeof item.id === "string" && item.id.startsWith("overlay_")) {
-				p = Point(item.id.slice(8, 10));
-				break;
-			}
-		}
-
-		if (p === Point(null)) {
-			return;
-		}
 
 		let ocm = this.info_handler.one_click_moves[p.x][p.y];
 		let board = this.node.get_board();
@@ -1030,7 +1020,7 @@ function NewRenderer() {
 		let hover_item = null;
 
 		for (let item of overlist) {
-			if (typeof item.id === "string" && item.id.startsWith("infobox_")) {		// Note strlen 8 is depended no below...
+			if (typeof item.id === "string" && item.id.startsWith("infobox_")) {
 				hover_item = item;
 				break;
 			}
@@ -1040,7 +1030,7 @@ function NewRenderer() {
 			return false;
 		}
 
-		let moves = this.info_handler.moves_from_click_n(parseInt(hover_item.id.slice(8), 10));
+		let moves = this.info_handler.moves_from_click_n(parseInt(hover_item.id.slice("infobox_".length), 10));
 
 		if (moves.length > 0) {
 			return this.draw_fantasy_from_moves(moves);

@@ -424,17 +424,11 @@ function NewInfoHandler() {
 	};
 
 	ih.searchmove_from_click = function(event) {
-
-		let move = null;
-
-		for (let item of event.path) {
-			if (typeof item.id === "string" && item.id.startsWith("searchmove_")) {		// Note strlen 11 is depended on below.
-				move = item.id.slice(11);
-				break;
-			}
+		let s = EventPathString(event, "searchmove_");
+		if (typeof s === "string" && (s.length === 4 || s.length === 5)) {
+			return s;
 		}
-
-		return move;		// Possibly null
+		return null;
 	};
 
 	ih.draw_arrows = function() {
