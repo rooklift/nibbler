@@ -9,6 +9,7 @@ function NewInfoHandler() {
 	ih.version = 0;							// Incremented on any change.
 	ih.nodes = 0;							// Stat sent by engine.
 	ih.nps = 0;								// Stat sent by engine.
+	ih.time = 0;							// Stat sent by engine.
 
 	ih.ever_received_info = false;
 	ih.ever_received_q = false;
@@ -31,6 +32,7 @@ function NewInfoHandler() {
 		this.version++;
 		this.nodes = 0;
 		this.nps = 0;
+		this.time = 0;
 	};
 
 	ih.err_receive = function(s) {
@@ -109,6 +111,11 @@ function NewInfoHandler() {
 			tmp = parseInt(InfoVal(s, "nps"), 10);
 			if (Number.isNaN(tmp) === false) {
 				this.nps = tmp;
+			}
+
+			tmp = parseInt(InfoVal(s, "time"), 10);
+			if (Number.isNaN(tmp) === false) {
+				this.time = tmp;
 			}
 
 			let new_pv = InfoPV(s);
@@ -238,7 +245,7 @@ function NewInfoHandler() {
 				status_string += `<span class="yellow">${config.versus === "" ? "HALTED " : "YOUR MOVE "}</span>`;
 			}
 
-			status_string += `<span class="gray">Nodes: ${NString(this.nodes)}, N/s: ${NString(this.nps)}</span>`;
+			status_string += `<span class="gray">Nodes: ${NString(this.nodes)}, N/s: ${NString(this.nps)}, Time: ${Math.floor(this.time / 1000)}s</span>`;
 
 			if (typeof config.search_nodes === "number" && this.nodes >= config.search_nodes) {
 				status_string += ` <span class="blue">(limit exceeded)</span>`;
