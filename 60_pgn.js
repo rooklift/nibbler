@@ -269,6 +269,16 @@ function LoadPGNRecord(o) {
 // -------------------------------------------------------------------------
 
 function SavePGN(filename, node) {
+	let s = make_pgn_string(node);
+	fs.writeFileSync(filename, s);
+}
+
+function PGNToClipboard(node) {
+	let s = make_pgn_string(node);
+	clipboard.writeText(s);
+}
+
+function make_pgn_string(node) {
 
 	let tags = [
 		`[Event "Nibbler Line"]`,
@@ -289,16 +299,8 @@ function SavePGN(filename, node) {
 	}
 
 	let movetext = make_movetext(root);
-
 	let final = tags.join("\n") + "\n\n" + movetext + "\n";
-
-	fs.writeFileSync(filename, final);
-}
-
-function PGNToClipboard(node) {
-	let connector = new_string_node_connector();
-	write_tree(node.get_root(), connector, false, true);
-	clipboard.writeText(connector.tokens.join(" "));
+	return final
 }
 
 function make_movetext(node) {
