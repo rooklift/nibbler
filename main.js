@@ -47,7 +47,7 @@ electron.app.on("ready", () => {
 	});
 
 	win.webContents.once("crashed", () => {
-	    alert("The renderer process has crashed. Please tell the author how you made this happen.");
+	    alert("The renderer process has crashed. Experience suggests this happens when Leela runs out of RAM. If this doesn't apply, please tell the author how you made it happen.");
 	});
 
 	win.webContents.once("unresponsive", () => {
