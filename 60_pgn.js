@@ -287,7 +287,7 @@ function make_pgn_string(node) {
 	let tags = [];
 
 	for (let t of ["Event", "Site", "Date", "Round", "White", "Black", "Result"]) {
-		if (root.tags) {
+		if (root.tags && root.tags[t]) {
 			tags.push(`[${t} "${root.tags[t]}"]`);
 		} else {
 			tags.push(`[${t} "Not present (this is a Nibbler bug, please report)"]`);
