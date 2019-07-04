@@ -98,6 +98,15 @@ function NewInfoHandler() {
 				}
 			}
 
+			tmp = parseInt(InfoVal(s, "mate"), 10);		// It should be OK to infer other values from this
+			if (Number.isNaN(tmp) === false) {
+				move_info.mate = tmp;
+				if (tmp !== 0) {
+					move_info.q = tmp > 0 ? 1 : -1;
+					move_info.cp = tmp > 0 ? 12800 : -12800;
+				}
+			}
+
 			tmp = parseInt(InfoVal(s, "multipv"), 10);	// Leela's ranking of the move, starting at 1
 			if (Number.isNaN(tmp) === false) {
 				move_info.multipv = tmp;
@@ -192,6 +201,25 @@ function NewInfoHandler() {
 		}
 
 		info_list.sort((a, b) => {
+
+			// mate - positive good, negative bad.
+			// Note our info struct uses 0 when not given.
+
+			if (Sign(a.mate) !== Sign(b.mate)) {		// negative is worst, 0 is neutral, positive is best
+				if (a.mate < b.mate) {
+					return 1;
+				}
+				if (a.mate > b.mate) {
+					return -1;
+				}
+			} else {									// lower (i.e. towards -Inf) is better regardless of who's mating
+				if (a.mate < b.mate) {
+					return -1;
+				}
+				if (a.mate > b.mate) {
+					return 1;
+				}
+			} 
 
 			// node count - higher is better...
 
@@ -687,6 +715,7 @@ function new_info(board, move) {
 	info.board = board;
 	info.cp = 0;
 	info.d = 0;
+	info.mate = 0;					// 0 can be the "not present" value.
 	info.move = move;
 	info.multipv = 1;
 	info.n = 0;

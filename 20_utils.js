@@ -274,3 +274,9 @@ function QfromPawns(pawns) {
 	let winrate = 1 / (1 + Math.pow(10, -pawns / 4));
 	return winrate * 2 - 1;
 }
+
+function Sign(n) {
+	if (n < 0) return -1;
+	if (n > 0) return 1;
+	return 0;
+}
