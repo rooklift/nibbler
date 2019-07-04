@@ -205,7 +205,15 @@ function NewTree(startpos) {			// Arg is expected to be a position object, not a
 
 	let root = NewNode(null, null);
 	root.__position = startpos;
-	root.tags = Object.create(null);	// Only root gets these.
+
+	root.tags = Object.create(null);	// Only root gets these. Get overwritten by the PGN loader.
+	root.tags.Event = "Nibbler Line";
+	root.tags.Site = "The fevered dreams of a neural net";
+	root.tags.Date = DateString(new Date());
+	root.tags.Round = "1";
+	root.tags.White = "White";
+	root.tags.Black = "Black";
+	root.tags.Result = "*";
 
 	return root;
 }

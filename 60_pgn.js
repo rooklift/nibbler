@@ -255,10 +255,11 @@ function LoadPGNRecord(o) {
 		}
 	}
 
-	// Add a tags property into the root.
+	// Save all tags into the root.
 
-	root.tags = Object.create(null);
-
+	if (!root.tags) {
+		root.tags = Object.create(null);
+	}
 	for (let key of Object.keys(o.tags)) {
 		root.tags[key] = o.tags[key];
 	}
@@ -280,18 +281,14 @@ function PGNToClipboard(node) {
 
 function make_pgn_string(node) {
 
-	let tags = [
-		`[Event "Nibbler Line"]`,
-		`[Site "The fevered dreams of a neural net"]`,
-		`[Date "${DateString(new Date())}"]`,
-		`[Round "1"]`,
-		`[White "White"]`,
-		`[Black "Black"]`,
-		`[Result "*"]`
-	];
-
 	let root = node.get_root();
 	let start_fen = root.get_board().fen();
+
+	let tags = [];
+
+	for (let t of ["Event", "Site", "Date", "Round", "White", "Black", "Result"]) {
+		tags.push(`[${t} "${root.tags[t]}"]`);
+	}
 
 	if (start_fen !== "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1") {
 		tags.push(`[FEN "${start_fen}"]`);
@@ -305,9 +302,15 @@ function make_pgn_string(node) {
 
 function make_movetext(node) {
 
+	let root = node.get_root();
 	let connector = new_string_node_connector();
-	write_tree(node.get_root(), connector, false, true);
-	connector.push("*", null);
+	write_tree(root, connector, false, true);
+
+	if (root.tags.Result) {
+		connector.push(root.tags.Result, null);
+	} else {
+		connector.push("*", null);
+	}
 
 	// Now it's all about wrapping to 80 chars...
 
