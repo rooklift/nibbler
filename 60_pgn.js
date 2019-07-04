@@ -287,7 +287,11 @@ function make_pgn_string(node) {
 	let tags = [];
 
 	for (let t of ["Event", "Site", "Date", "Round", "White", "Black", "Result"]) {
-		tags.push(`[${t} "${root.tags[t]}"]`);
+		if (root.tags) {
+			tags.push(`[${t} "${root.tags[t]}"]`);
+		} else {
+			tags.push(`[${t} "Not present (this is a Nibbler bug, please report)"]`);
+		}
 	}
 
 	if (start_fen !== "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1") {
@@ -306,7 +310,7 @@ function make_movetext(node) {
 	let connector = new_string_node_connector();
 	write_tree(root, connector, false, true);
 
-	if (root.tags.Result) {
+	if (root.tags && root.tags.Result) {
 		connector.push(root.tags.Result, null);
 	} else {
 		connector.push("*", null);
