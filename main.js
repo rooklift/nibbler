@@ -856,13 +856,13 @@ function menu_build() {
 					}
 				},
 				{
-					label: "Clear searchmoves",
+					label: "Clear focus",
 					click: () => {
 						win.webContents.send("call", "clear_searchmoves");
 					}
 				},
 				{
-					label: "Invert searchmoves",
+					label: "Invert focus",
 					accelerator: "CommandOrControl+I",
 					click: () => {
 						win.webContents.send("call", "invert_searchmoves");
