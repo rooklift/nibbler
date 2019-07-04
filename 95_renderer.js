@@ -44,7 +44,7 @@ function NewRenderer() {
 		if (new_game_flag) {
 			let title = "Nibbler";
 			let root = this.node.get_root();
-			if (root.tags && root.tags.White && root.tags.Black) {
+			if (root.tags && root.tags.White && root.tags.White !== "White" && root.tags.Black && root.tags.Black !== "Black") {
 				title += `: ${root.tags.White} - ${root.tags.Black}`;
 			}
 			ipcRenderer.send("set_title", title);
