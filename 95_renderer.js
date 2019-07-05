@@ -34,10 +34,14 @@ function NewRenderer() {
 	// --------------------------------------------------------------------------------------------
 
 	renderer.position_changed = function(new_game_flag) {
+
 		this.searchmoves = [];
+		this.hoverdraw_line = null;
 		this.position_changed_clear_info_handler(new_game_flag);
-		this.go_or_halt(new_game_flag);
 		this.escape();
+
+		this.go_or_halt(new_game_flag);
+
 		this.draw();
 		this.movelist_handler.draw(this.node);
 		fenbox.value = this.node.get_board().fen();
@@ -1027,6 +1031,10 @@ function NewRenderer() {
 		}
 
 		let info = this.info_handler.table[firstmove];
+
+		// It is entirely possible that the firstmove we've detected is illegal
+		// due to the HTML being stale - because we call hoverdraw() before
+		// updating the HTML to prevent flicker.
 
 		if (!info || Array.isArray(info.pv) === false || info.pv.length === 0) {
 			this.hoverdraw_line = null;
