@@ -215,7 +215,8 @@ window.addEventListener("drop", (event) => {
 	hub.handle_drop(event);
 });
 
-// Debug...
+// Debug. The draw loop and input loop both set a variable when they start and clear it before they return.
+// Note that this won't catch everything, since some things don't involve either loop.
 
 function debug_loop() {
 	if (draw_loop_state || input_loop_state) {
