@@ -283,7 +283,7 @@ function NewInfoHandler() {
 		}
 	};
 
-	ih.draw_infobox = function(mouse_point, active_square, leela_should_go, active_colour, searchmoves, hoverdraw_move) {
+	ih.draw_infobox = function(mouse_point, active_square, leela_should_go, active_colour, searchmoves, hoverdraw_line) {
 
 		ih.draw_statusbox(leela_should_go, searchmoves);
 
@@ -306,8 +306,10 @@ function NewInfoHandler() {
 			highlight_class = "ocm_highlight";
 		}
 
-		if (hoverdraw_move) {
-			highlight_move = hoverdraw_move;
+		let hoverdraw_move = null;
+
+		if (Array.isArray(hoverdraw_line) && hoverdraw_line.length > 0) {
+			highlight_move = hoverdraw_line[0];
 			highlight_class = "hover_highlight";
 		}
 
@@ -349,7 +351,7 @@ function NewInfoHandler() {
 				divclass += " " + highlight_class;
 			}
 
-			substrings.push(`<div class="${divclass}">`);
+			substrings.push(`<div id="infoline_${info.move}" class="${divclass}">`);
 
 			// The "focus" button...
 
@@ -390,7 +392,11 @@ function NewInfoHandler() {
 					spanclass += " nobr";
 				}
 				substrings.push(`<span id="infobox_${n++}" class="${spanclass}">${nice_pv[i]} </span>`);
-				this.info_clickers.push({move: info.pv[i], is_start: i === 0});
+				this.info_clickers.push({
+					move: info.pv[i],
+					is_start: i === 0,
+					is_end: i === info.pv.length - 1,
+				});
 				colour = OppositeColour(colour);
 			}
 
@@ -466,7 +472,7 @@ function NewInfoHandler() {
 
 	ih.moves_from_click_n = function(n) {
 
-		if (typeof n !== "number") {
+		if (typeof n !== "number" || Number.isNaN(n)) {
 			return [];
 		}
 
@@ -487,6 +493,31 @@ function NewInfoHandler() {
 		}
 
 		move_list.reverse();
+
+		return move_list;
+	};
+
+	ih.entire_pv_from_click_n = function(n) {
+
+		let move_list = this.moves_from_click_n(n);		// Does all the sanity checks.
+
+		if (move_list.length === 0) {
+			return move_list;
+		}
+
+		if (this.info_clickers[n].is_end) {				// Do we already have the whole thing?
+			return move_list;
+		}
+
+		n++;
+
+		for (; n < this.info_clickers.length; n++) {
+			let object = this.info_clickers[n];
+			move_list.push(object.move);
+			if (object.is_end) {
+				break;
+			}
+		}
 
 		return move_list;
 	};

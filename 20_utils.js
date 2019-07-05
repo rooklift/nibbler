@@ -99,6 +99,25 @@ function ArrayIncludes(a, b) {
 	return false;
 }
 
+function ArrayStartsWith(a, b) {
+
+	if (Array.isArray(a) === false || Array.isArray(b) === false) {
+		return false;
+	}
+
+	if (a.length < b.length) {
+		return false;
+	}
+
+	for (let n = 0; n < b.length; n++) {
+		if (a[n] !== b[n]) {
+			return false;
+		}
+	}
+
+	return true;
+}
+
 function OppositeColour(s) {
 	if (s === "w" || s === "W") return "b";
 	if (s === "b" || s === "B") return "w";

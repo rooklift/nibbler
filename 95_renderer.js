@@ -16,8 +16,9 @@ function NewRenderer() {
 	renderer.pgn_choices = null;								// All games found when opening a PGN file.
 	renderer.friendly_draws = New2DArray(8, 8);					// What pieces are drawn in boardfriends. Used to skip redraws.
 	renderer.active_square = null;								// Clicked square.
-	renderer.infolist_click_time = performance.now();			// When user last clicked a move in infolist. Don't draw fantasy board for a bit.
-	renderer.hoverdraw_move = null;								// Initial move of the current hoverdraw. Used for highlighting.
+	renderer.hoverdraw_line = [];								// The fantasy line drawn so far.
+	renderer.tick = 0;											// How many draw loops we've been through.
+	renderer.position_change_time = performance.now();			// Time of the last position change. Used for cooldown on hover draw.
 
 	// Some sync stuff...
 
@@ -33,10 +34,16 @@ function NewRenderer() {
 	// --------------------------------------------------------------------------------------------
 
 	renderer.position_changed = function(new_game_flag) {
+
+		this.position_change_time = performance.now();
+
 		this.searchmoves = [];
+		this.hoverdraw_line = [];
 		this.position_changed_clear_info_handler(new_game_flag);
-		this.go_or_halt(new_game_flag);
 		this.escape();
+
+		this.go_or_halt(new_game_flag);
+
 		this.draw();
 		this.movelist_handler.draw(this.node);
 		fenbox.value = this.node.get_board().fen();
@@ -765,8 +772,6 @@ function NewRenderer() {
 			node = node.make_move(move);
 		}
 
-		this.infolist_click_time = performance.now();
-
 		// Maybe we're done...
 
 		if (!config.serious_analysis_mode) {
@@ -1006,44 +1011,67 @@ function NewRenderer() {
 
 	renderer.hoverdraw = function() {
 
-		if (performance.now() - this.infolist_click_time < 1000) {
+		if (!config.hover_draw) {
+			this.hoverdraw_line = [];
 			return false;
 		}
 
-		if (!config.hover_draw) {
+		if (performance.now() - this.position_change_time < 1000) {
+			this.hoverdraw_line = [];
 			return false;
 		}
 
 		let overlist = document.querySelectorAll(":hover");
 
-		let hover_item = null;
+		let firstmove = null;
 
 		for (let item of overlist) {
-			if (typeof item.id === "string" && item.id.startsWith("infobox_")) {
-				hover_item = item;
+			if (typeof item.id === "string" && item.id.startsWith("infoline_")) {
+				firstmove = item.id.slice("infoline_".length);
 				break;
 			}
 		}
 
-		if (!hover_item) {
+		if (!firstmove) {
+			this.hoverdraw_line = [];
 			return false;
 		}
 
-		let moves = this.info_handler.moves_from_click_n(parseInt(hover_item.id.slice("infobox_".length), 10));
+		let info = this.info_handler.table[firstmove];
 
-		if (moves.length > 0) {
-			return this.draw_fantasy_from_moves(moves);
+		// It is entirely possible that the firstmove we've detected is illegal
+		// due to the HTML being stale - because we call hoverdraw() before
+		// updating the HTML to prevent flicker.
+
+		if (!info || Array.isArray(info.pv) === false || info.pv.length === 0) {
+			this.hoverdraw_line = [];
+			return false;
 		}
 
-		return false;
+		// At this point, info.pv represents the full line to animate. We need
+		// to check if it's compatible with the moves we've already drawn, if
+		// there are any...
+
+		if (ArrayStartsWith(info.pv, this.hoverdraw_line) === false) {
+			this.hoverdraw_line = [];
+		}
+
+		// And now, sometimes add a move to the drawn line...
+
+		if (this.tick % config.animate_delay_multiplier === 0) {
+			if (this.hoverdraw_line.length < info.pv.length) {
+				this.hoverdraw_line.push(info.pv[this.hoverdraw_line.length]);
+			}
+		}
+
+		return this.draw_fantasy_from_moves(this.hoverdraw_line);
 	};
 
 	renderer.draw_fantasy_from_moves = function(moves) {
 
-		// Because our hover detection is running a cycle behind,
-		// this could be a series of illegal moves.
+		// Don't assume moves is an array of legal moves, or even an array.
 
-		if (Array.isArray(moves) === false || moves.length === 0) {
+		if (Array.isArray(moves) === false) {
 			return false;
 		}
 
@@ -1058,7 +1086,6 @@ function NewRenderer() {
 		}
 
 		this.draw_fantasy(board);
-		this.hoverdraw_move = moves[0];
 		return true;
 	};
 
@@ -1096,7 +1123,6 @@ function NewRenderer() {
 			fantasy.style.display = "block";
 		} else {
 			fantasy.style.display = "none";
-			this.hoverdraw_move = null;
 			context.clearRect(0, 0, canvas.width, canvas.height);
 			this.draw_move_in_canvas();
 			this.draw_enemies_in_canvas();
@@ -1110,10 +1136,11 @@ function NewRenderer() {
 			this.leela_should_go(),
 			this.node.get_board().active,
 			this.searchmoves,
-			this.hoverdraw_move);
+			this.hoverdraw_line);
 	};
 
 	renderer.draw_loop = function() {
+		this.tick++;
 		this.draw();	// We could wrap this in a try, but for dev purposes it's best to break hard.
 		setTimeout(this.draw_loop.bind(this), config.update_delay);
 	};
