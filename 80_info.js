@@ -283,7 +283,7 @@ function NewInfoHandler() {
 		}
 	};
 
-	ih.draw_infobox = function(mouse_point, active_square, leela_should_go, active_colour, searchmoves, hoverdraw_line) {
+	ih.draw_infobox = function(mouse_point, active_square, leela_should_go, active_colour, searchmoves, hoverdraw_index) {
 
 		ih.draw_statusbox(leela_should_go, searchmoves);
 
@@ -296,6 +296,8 @@ function NewInfoHandler() {
 			return;
 		}
 
+		let info_list = this.sorted();
+
 		// We might be highlighting some div...
 
 		let highlight_move = null;
@@ -306,10 +308,8 @@ function NewInfoHandler() {
 			highlight_class = "ocm_highlight";
 		}
 
-		let hoverdraw_move = null;
-
-		if (Array.isArray(hoverdraw_line) && hoverdraw_line.length > 0) {
-			highlight_move = hoverdraw_line[0];
+		if (typeof hoverdraw_index === "number" && hoverdraw_index >= 0 && hoverdraw_index < info_list.length) {
+			highlight_move = info_list[hoverdraw_index].move;
 			highlight_class = "hover_highlight";
 		}
 
@@ -337,9 +337,9 @@ function NewInfoHandler() {
 
 		this.info_clickers = [];
 
-		let info_list = this.sorted();
 		let substrings = [];
-		let n = 0;
+		let clicker_index = 0;
+		let div_index = 0;
 
 		for (let info of info_list) {
 
@@ -351,7 +351,7 @@ function NewInfoHandler() {
 				divclass += " " + highlight_class;
 			}
 
-			substrings.push(`<div id="infoline_${info.move}" class="${divclass}">`);
+			substrings.push(`<div id="infoline_${div_index++}" class="${divclass}">`);
 
 			// The "focus" button...
 
@@ -391,7 +391,7 @@ function NewInfoHandler() {
 				if (nice_pv[i].includes("O-O")) {
 					spanclass += " nobr";
 				}
-				substrings.push(`<span id="infobox_${n++}" class="${spanclass}">${nice_pv[i]} </span>`);
+				substrings.push(`<span id="infobox_${clicker_index++}" class="${spanclass}">${nice_pv[i]} </span>`);
 				this.info_clickers.push({
 					move: info.pv[i],
 					is_start: i === 0,

@@ -16,7 +16,8 @@ function NewRenderer() {
 	renderer.pgn_choices = null;								// All games found when opening a PGN file.
 	renderer.friendly_draws = New2DArray(8, 8);					// What pieces are drawn in boardfriends. Used to skip redraws.
 	renderer.active_square = null;								// Clicked square.
-	renderer.hoverdraw_line = [];								// The fantasy line drawn so far.
+	renderer.hoverdraw_index = -1;
+	renderer.hoverdraw_depth = 0;
 	renderer.tick = 0;											// How many draw loops we've been through.
 	renderer.position_change_time = performance.now();			// Time of the last position change. Used for cooldown on hover draw.
 
@@ -38,7 +39,7 @@ function NewRenderer() {
 		this.position_change_time = performance.now();
 
 		this.searchmoves = [];
-		this.hoverdraw_line = [];
+		this.hoverdraw_index = -1;
 		this.position_changed_clear_info_handler(new_game_flag);
 		this.escape();
 
@@ -1012,59 +1013,52 @@ function NewRenderer() {
 	renderer.hoverdraw = function() {
 
 		if (!config.hover_draw) {
-			this.hoverdraw_line = [];
+			this.hoverdraw_index = -1;
 			return false;
 		}
 
 		if (performance.now() - this.position_change_time < 1000) {
-			this.hoverdraw_line = [];
+			this.hoverdraw_index = -1;
 			return false;
 		}
 
 		let overlist = document.querySelectorAll(":hover");
 
-		let firstmove = null;
+		let sorted_index = null;
 
 		for (let item of overlist) {
 			if (typeof item.id === "string" && item.id.startsWith("infoline_")) {
-				firstmove = item.id.slice("infoline_".length);
+				sorted_index = parseInt(item.id.slice("infoline_".length), 10);
 				break;
 			}
 		}
 
-		if (!firstmove) {
-			this.hoverdraw_line = [];
+		if (typeof sorted_index !== "number" || Number.isNaN(sorted_index)) {
+			this.hoverdraw_index = -1;
 			return false;
 		}
 
-		let info = this.info_handler.table[firstmove];
-
-		// It is entirely possible that the firstmove we've detected is illegal
-		// due to the HTML being stale - because we call hoverdraw() before
-		// updating the HTML to prevent flicker.
+		let info = this.info_handler.sorted()[sorted_index];							// Possibly undefined
 
 		if (!info || Array.isArray(info.pv) === false || info.pv.length === 0) {
-			this.hoverdraw_line = [];
+			this.hoverdraw_index = -1;
 			return false;
 		}
 
-		// At this point, info.pv represents the full line to animate. We need
-		// to check if it's compatible with the moves we've already drawn, if
-		// there are any...
+		// If the user is hovering over a different div index in the infobox, reset depth...
 
-		if (ArrayStartsWith(info.pv, this.hoverdraw_line) === false) {
-			this.hoverdraw_line = [];
+		if (sorted_index !== this.hoverdraw_index) {
+			this.hoverdraw_index = sorted_index;
+			this.hoverdraw_depth = 0;
 		}
 
-		// And now, sometimes add a move to the drawn line...
+		// Sometimes increase depth...
 
 		if (this.tick % config.animate_delay_multiplier === 0) {
-			if (this.hoverdraw_line.length < info.pv.length) {
-				this.hoverdraw_line.push(info.pv[this.hoverdraw_line.length]);
-			}
+			this.hoverdraw_depth++;
 		}
 
-		return this.draw_fantasy_from_moves(this.hoverdraw_line);
+		return this.draw_fantasy_from_moves(info.pv.slice(0, this.hoverdraw_depth));	// Relies on slice() being safe if depth > length
 	};
 
 	renderer.draw_fantasy_from_moves = function(moves) {
@@ -1136,7 +1130,7 @@ function NewRenderer() {
 			this.leela_should_go(),
 			this.node.get_board().active,
 			this.searchmoves,
-			this.hoverdraw_line);
+			this.hoverdraw_index);
 	};
 
 	renderer.draw_loop = function() {
