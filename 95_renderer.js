@@ -1168,9 +1168,11 @@ function NewRenderer() {
 	};
 
 	renderer.draw_loop = function() {
+		draw_loop_state = 1;				// For debug.
 		this.tick++;
-		this.draw();	// We could wrap this in a try, but for dev purposes it's best to break hard.
+		this.draw();
 		setTimeout(this.draw_loop.bind(this), config.update_delay);
+		draw_loop_state = 0;				// If we don't get here, it will remain 1, which we can check.
 	};
 
 	// --------------------------------------------------------------------------------------------

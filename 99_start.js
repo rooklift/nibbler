@@ -118,6 +118,8 @@ ipcRenderer.on("call", (event, msg) => {
 
 function input_loop() {
 
+	input_loop_state = 1;			// For debug.
+
 	let fn;
 
 	let length = input_queue.length;
@@ -133,10 +135,11 @@ function input_loop() {
 	input_queue = [];
 
 	if (fn) {
-		fn();		// We could wrap this in a try, but for dev purposes it's best to break hard.
+		fn();
 	}
 
 	setTimeout(input_loop, 10);
+	input_loop_state = 0;			// If we don't get here, it will remain 1, which we can check.
 }
 
 input_loop();
@@ -211,6 +214,18 @@ window.addEventListener("dragover", (event) => {		// Necessary to prevent always
 window.addEventListener("drop", (event) => {
 	hub.handle_drop(event);
 });
+
+// Debug...
+
+function debug_loop() {
+	if (draw_loop_state || input_loop_state) {
+		alert("There may have been an uncaught exception. If you could open the dev tools and the console tab therein, and report the contents to the author, that would be cool.");
+		return;		// Return before setTimeout, thus no more warnings.
+	}
+	setTimeout(debug_loop, 5000);
+}
+
+debug_loop();
 
 // Go...
 
