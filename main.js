@@ -872,7 +872,7 @@ function menu_build() {
 					type: "separator"
 				},
 				{
-					label: "Draw when mouse over PV",
+					label: "Draw PV on mouseover",
 					accelerator: "CommandOrControl+D",
 					type: "checkbox",
 					checked: config.hover_draw,
@@ -882,6 +882,35 @@ function menu_build() {
 							args: ["hover_draw"],
 						});
 					}
+				},
+				{
+					label: "Draw PV method",
+					submenu: [
+						{
+							label: "Animate",
+							type: "checkbox",
+							checked: config.hover_method === 0,
+							click: () => {
+								set_checks(["Analysis", "Hover draw type"], 0);
+								win.webContents.send("set", {
+									key: "hover_method",
+									value: 0
+								});
+							}
+						},
+						{
+							label: "Single move",
+							type: "checkbox",
+							checked: config.hover_method === 1,
+							click: () => {
+								set_checks(["Analysis", "Hover draw type"], 1);
+								win.webContents.send("set", {
+									key: "hover_method",
+									value: 1
+								});
+							}
+						},
+					]
 				},
 				{
 					type: "separator"

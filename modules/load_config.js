@@ -39,6 +39,7 @@ const defaults = {
 	"show_q_plus_u": false,
 	"searchmoves_buttons": true,
 	"hover_draw": false,
+	"hover_method": 0,
 	"serious_analysis_mode": false,
 	"update_delay": 170,
 	"animate_delay_multiplier": 4,
