@@ -1041,7 +1041,7 @@ function NewRenderer() {
 			return false;
 		}
 
-		if (!config.hover_method || config.hover_method === 0) {
+		if (config.hover_method === 0) {
 			return this.hoverdraw_animate(div_index, info);			// Sets this.hoverdraw_div
 		} else if (config.hover_method === 1) {
 			return this.hoverdraw_single(div_index, overlist);		// Sets this.hoverdraw_div
