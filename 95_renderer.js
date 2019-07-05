@@ -1035,18 +1035,18 @@ function NewRenderer() {
 			return false;
 		}
 
-		let info = this.info_handler.sorted()[div_index];							// Possibly undefined
+		let info = this.info_handler.sorted()[div_index];			// Possibly undefined
 
 		if (!info || Array.isArray(info.pv) === false || info.pv.length === 0) {
 			return false;
 		}
 
 		if (!config.hover_method || config.hover_method === 0) {
-			return this.hoverdraw_animate(div_index, info);		// Sets this.hoverdraw_div
+			return this.hoverdraw_animate(div_index, info);			// Sets this.hoverdraw_div
 		} else if (config.hover_method === 1) {
-			return this.hoverdraw_single(div_index, overlist);	// Sets this.hoverdraw_div
+			return this.hoverdraw_single(div_index, overlist);		// Sets this.hoverdraw_div
 		} else {
-			return false;										// Caller must set this.hoverdraw_div to -1
+			return false;											// Caller must set this.hoverdraw_div to -1
 		}
 	};
 
