@@ -16,8 +16,7 @@ function NewRenderer() {
 	renderer.pgn_choices = null;								// All games found when opening a PGN file.
 	renderer.friendly_draws = New2DArray(8, 8);					// What pieces are drawn in boardfriends. Used to skip redraws.
 	renderer.active_square = null;								// Clicked square.
-	renderer.infolist_click_time = performance.now();			// When user last clicked a move in infolist. Don't draw fantasy board for a bit.
-	renderer.hoverdraw_move = null;								// Initial move of the current hoverdraw. Used for highlighting.
+	renderer.hoverdraw_line = null;
 
 	// Some sync stuff...
 
@@ -765,8 +764,6 @@ function NewRenderer() {
 			node = node.make_move(move);
 		}
 
-		this.infolist_click_time = performance.now();
-
 		// Maybe we're done...
 
 		if (!config.serious_analysis_mode) {
@@ -1006,33 +1003,33 @@ function NewRenderer() {
 
 	renderer.hoverdraw = function() {
 
-		if (performance.now() - this.infolist_click_time < 1000) {
-			return false;
-		}
-
 		if (!config.hover_draw) {
 			return false;
 		}
 
 		let overlist = document.querySelectorAll(":hover");
 
-		let hover_item = null;
+		let firstmove = null;
 
 		for (let item of overlist) {
-			if (typeof item.id === "string" && item.id.startsWith("infobox_")) {
-				hover_item = item;
+			if (typeof item.id === "string" && item.id.startsWith("infoline_")) {
+				firstmove = item.id.slice("infoline_".length);
 				break;
 			}
 		}
 
-		if (!hover_item) {
+		if (!firstmove) {
 			return false;
 		}
 
-		let moves = this.info_handler.moves_from_click_n(parseInt(hover_item.id.slice("infobox_".length), 10));
+		let info = this.info_handler.table[firstmove];
 
-		if (moves.length > 0) {
-			return this.draw_fantasy_from_moves(moves);
+		if (!info) {
+			return false;
+		}
+
+		if (Array.isArray(info.pv) && info.pv.length > 0) {
+			return this.draw_fantasy_from_moves(info.pv);
 		}
 
 		return false;
@@ -1058,7 +1055,6 @@ function NewRenderer() {
 		}
 
 		this.draw_fantasy(board);
-		this.hoverdraw_move = moves[0];
 		return true;
 	};
 
@@ -1096,7 +1092,6 @@ function NewRenderer() {
 			fantasy.style.display = "block";
 		} else {
 			fantasy.style.display = "none";
-			this.hoverdraw_move = null;
 			context.clearRect(0, 0, canvas.width, canvas.height);
 			this.draw_move_in_canvas();
 			this.draw_enemies_in_canvas();
@@ -1110,7 +1105,7 @@ function NewRenderer() {
 			this.leela_should_go(),
 			this.node.get_board().active,
 			this.searchmoves,
-			this.hoverdraw_move);
+			this.hoverdraw_line);
 	};
 
 	renderer.draw_loop = function() {
