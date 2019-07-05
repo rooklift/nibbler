@@ -16,8 +16,9 @@ function NewRenderer() {
 	renderer.pgn_choices = null;								// All games found when opening a PGN file.
 	renderer.friendly_draws = New2DArray(8, 8);					// What pieces are drawn in boardfriends. Used to skip redraws.
 	renderer.active_square = null;								// Clicked square.
-	renderer.hoverdraw_line = [];								
+	renderer.hoverdraw_line = [];								// The fantasy line drawn so far.
 	renderer.tick = 0;											// How many draw loops we've been through.
+	renderer.position_change_time = performance.now();			// Time of the last position change. Used for cooldown on hover draw.
 
 	// Some sync stuff...
 
@@ -33,6 +34,8 @@ function NewRenderer() {
 	// --------------------------------------------------------------------------------------------
 
 	renderer.position_changed = function(new_game_flag) {
+
+		this.position_change_time = performance.now();
 
 		this.searchmoves = [];
 		this.hoverdraw_line = [];
@@ -1009,6 +1012,11 @@ function NewRenderer() {
 	renderer.hoverdraw = function() {
 
 		if (!config.hover_draw) {
+			this.hoverdraw_line = [];
+			return false;
+		}
+
+		if (performance.now() - this.position_change_time < 1000) {
 			this.hoverdraw_line = [];
 			return false;
 		}
