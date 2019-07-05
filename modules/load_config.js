@@ -82,6 +82,8 @@ function fix(cfg) {
 
 	// This can't be 0 because we divide by it.
 
+	cfg.animate_delay_multiplier = Math.floor(cfg.animate_delay_multiplier);
+
 	if (cfg.animate_delay_multiplier <= 0) {
 		cfg.animate_delay_multiplier = 1;
 	}

@@ -16,9 +16,8 @@ function NewRenderer() {
 	renderer.pgn_choices = null;								// All games found when opening a PGN file.
 	renderer.friendly_draws = New2DArray(8, 8);					// What pieces are drawn in boardfriends. Used to skip redraws.
 	renderer.active_square = null;								// Clicked square.
-	renderer.hoverdraw_line = null;								// The moves in the PV being hovered.
+	renderer.hoverdraw_line = [];								
 	renderer.tick = 0;											// How many draw loops we've been through.
-	renderer.hover_start = 0;									// The tick when we started hovering. OK to be stale.
 
 	// Some sync stuff...
 
@@ -36,7 +35,7 @@ function NewRenderer() {
 	renderer.position_changed = function(new_game_flag) {
 
 		this.searchmoves = [];
-		this.hoverdraw_line = null;
+		this.hoverdraw_line = [];
 		this.position_changed_clear_info_handler(new_game_flag);
 		this.escape();
 
@@ -1010,7 +1009,7 @@ function NewRenderer() {
 	renderer.hoverdraw = function() {
 
 		if (!config.hover_draw) {
-			this.hoverdraw_line = null;
+			this.hoverdraw_line = [];
 			return false;
 		}
 
@@ -1026,7 +1025,7 @@ function NewRenderer() {
 		}
 
 		if (!firstmove) {
-			this.hoverdraw_line = null;
+			this.hoverdraw_line = [];
 			return false;
 		}
 
@@ -1037,25 +1036,34 @@ function NewRenderer() {
 		// updating the HTML to prevent flicker.
 
 		if (!info || Array.isArray(info.pv) === false || info.pv.length === 0) {
-			this.hoverdraw_line = null;
+			this.hoverdraw_line = [];
 			return false;
 		}
 
-		if (!this.hoverdraw_line || this.hoverdraw_line[0] !== firstmove) {
-			this.hover_start = this.tick;
+		// At this point, info.pv represents the full line to animate. We need
+		// to check if it's compatible with the moves we've already drawn, if
+		// there are any...
+
+		if (ArrayStartsWith(info.pv, this.hoverdraw_line) === false) {
+			this.hoverdraw_line = [];
 		}
 
-		this.hoverdraw_line = Array.from(info.pv);
+		// And now, sometimes add a move to the drawn line...
 
-		let count = Math.floor((this.tick - this.hover_start) / config.animate_delay_multiplier);	
-		return this.draw_fantasy_from_moves(this.hoverdraw_line.slice(0, count));						// Relies on slice() being safe when count > length
+		if (this.tick % config.animate_delay_multiplier === 0) {
+			if (this.hoverdraw_line.length < info.pv.length) {
+				this.hoverdraw_line.push(info.pv[this.hoverdraw_line.length]);
+			}
+		}
+
+		return this.draw_fantasy_from_moves(this.hoverdraw_line);
 	};
 
 	renderer.draw_fantasy_from_moves = function(moves) {
 
 		// Don't assume moves is an array of legal moves, or even an array.
 
-		if (Array.isArray(moves) === false || moves.length === 0) {
+		if (Array.isArray(moves) === false) {
 			return false;
 		}
 
