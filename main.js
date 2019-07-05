@@ -891,7 +891,7 @@ function menu_build() {
 							type: "checkbox",
 							checked: config.hover_method === 0,
 							click: () => {
-								set_checks(["Analysis", "Hover draw type"], 0);
+								set_checks(["Analysis", "Draw PV method"], 0);
 								win.webContents.send("set", {
 									key: "hover_method",
 									value: 0
@@ -903,7 +903,7 @@ function menu_build() {
 							type: "checkbox",
 							checked: config.hover_method === 1,
 							click: () => {
-								set_checks(["Analysis", "Hover draw type"], 1);
+								set_checks(["Analysis", "Draw PV method"], 1);
 								win.webContents.send("set", {
 									key: "hover_method",
 									value: 1
