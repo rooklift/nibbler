@@ -16,7 +16,7 @@ function NewRenderer() {
 	renderer.pgn_choices = null;								// All games found when opening a PGN file.
 	renderer.friendly_draws = New2DArray(8, 8);					// What pieces are drawn in boardfriends. Used to skip redraws.
 	renderer.active_square = null;								// Clicked square.
-	renderer.hoverdraw_index = -1;
+	renderer.hoverdraw_div = -1;
 	renderer.hoverdraw_depth = 0;
 	renderer.tick = 0;											// How many draw loops we've been through.
 	renderer.position_change_time = performance.now();			// Time of the last position change. Used for cooldown on hover draw.
@@ -39,7 +39,7 @@ function NewRenderer() {
 		this.position_change_time = performance.now();
 
 		this.searchmoves = [];
-		this.hoverdraw_index = -1;
+		this.hoverdraw_div = -1;
 		this.position_changed_clear_info_handler(new_game_flag);
 		this.escape();
 
@@ -1013,42 +1013,49 @@ function NewRenderer() {
 	renderer.hoverdraw = function() {
 
 		if (!config.hover_draw) {
-			this.hoverdraw_index = -1;
 			return false;
 		}
 
 		if (performance.now() - this.position_change_time < 1000) {
-			this.hoverdraw_index = -1;
 			return false;
 		}
 
 		let overlist = document.querySelectorAll(":hover");
 
-		let sorted_index = null;
+		let div_index = null;
 
 		for (let item of overlist) {
 			if (typeof item.id === "string" && item.id.startsWith("infoline_")) {
-				sorted_index = parseInt(item.id.slice("infoline_".length), 10);
+				div_index = parseInt(item.id.slice("infoline_".length), 10);
 				break;
 			}
 		}
 
-		if (typeof sorted_index !== "number" || Number.isNaN(sorted_index)) {
-			this.hoverdraw_index = -1;
+		if (typeof div_index !== "number" || Number.isNaN(div_index)) {
 			return false;
 		}
 
-		let info = this.info_handler.sorted()[sorted_index];							// Possibly undefined
+		let info = this.info_handler.sorted()[div_index];							// Possibly undefined
 
 		if (!info || Array.isArray(info.pv) === false || info.pv.length === 0) {
-			this.hoverdraw_index = -1;
 			return false;
 		}
 
-		// If the user is hovering over a different div index in the infobox, reset depth...
+		if (!config.hover_type || config.hover_type === 0) {
+			return this.hoverdraw_animate(div_index, info);		// Sets this.hoverdraw_div
+		} else if (config.hover_type === 1) {
+			return this.hoverdraw_single(div_index, overlist);	// Sets this.hoverdraw_div
+		} else {
+			return false;										// Caller must set this.hoverdraw_div to -1
+		}
+	};
 
-		if (sorted_index !== this.hoverdraw_index) {
-			this.hoverdraw_index = sorted_index;
+	renderer.hoverdraw_animate = function(div_index, info) {
+
+		// If the user is hovering over an unexpected div index in the infobox, reset depth...
+
+		if (div_index !== this.hoverdraw_div) {
+			this.hoverdraw_div = div_index;
 			this.hoverdraw_depth = 0;
 		}
 
@@ -1059,6 +1066,32 @@ function NewRenderer() {
 		}
 
 		return this.draw_fantasy_from_moves(info.pv.slice(0, this.hoverdraw_depth));	// Relies on slice() being safe if depth > length
+	};
+
+	renderer.hoverdraw_single = function(div_index, overlist) {
+
+		this.hoverdraw_div = div_index;
+
+		let hover_item = null;
+
+		for (let item of overlist) {
+			if (typeof item.id === "string" && item.id.startsWith("infobox_")) {
+				hover_item = item;
+				break;
+			}
+		}
+
+		if (!hover_item) {
+			return false;
+		}
+
+		let moves = this.info_handler.moves_from_click_n(parseInt(hover_item.id.slice("infobox_".length), 10));
+
+		if (Array.isArray(moves) === false || moves.length === 0) {
+			return false;
+		}
+
+		return this.draw_fantasy_from_moves(moves);
 	};
 
 	renderer.draw_fantasy_from_moves = function(moves) {
@@ -1116,6 +1149,7 @@ function NewRenderer() {
 		if (did_hoverdraw) {
 			fantasy.style.display = "block";
 		} else {
+			this.hoverdraw_div = -1;
 			fantasy.style.display = "none";
 			context.clearRect(0, 0, canvas.width, canvas.height);
 			this.draw_move_in_canvas();
@@ -1130,7 +1164,7 @@ function NewRenderer() {
 			this.leela_should_go(),
 			this.node.get_board().active,
 			this.searchmoves,
-			this.hoverdraw_index);
+			this.hoverdraw_div);
 	};
 
 	renderer.draw_loop = function() {

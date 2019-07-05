@@ -283,7 +283,7 @@ function NewInfoHandler() {
 		}
 	};
 
-	ih.draw_infobox = function(mouse_point, active_square, leela_should_go, active_colour, searchmoves, hoverdraw_index) {
+	ih.draw_infobox = function(mouse_point, active_square, leela_should_go, active_colour, searchmoves, hoverdraw_div) {
 
 		ih.draw_statusbox(leela_should_go, searchmoves);
 
@@ -308,8 +308,8 @@ function NewInfoHandler() {
 			highlight_class = "ocm_highlight";
 		}
 
-		if (typeof hoverdraw_index === "number" && hoverdraw_index >= 0 && hoverdraw_index < info_list.length) {
-			highlight_move = info_list[hoverdraw_index].move;
+		if (typeof hoverdraw_div === "number" && hoverdraw_div >= 0 && hoverdraw_div < info_list.length) {
+			highlight_move = info_list[hoverdraw_div].move;
 			highlight_class = "hover_highlight";
 		}
 
