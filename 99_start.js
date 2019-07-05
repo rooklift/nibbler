@@ -221,7 +221,9 @@ window.addEventListener("drop", (event) => {
 function debug_loop() {
 	for (let key of Object.keys(debug)) {
 		if (debug[key]) {
-			alert("There may have been an uncaught exception. If you could open the dev tools and the console tab therein, and report the contents to the author, that would be grand.");
+			alert(
+"There may have been an uncaught exception. If you could open the dev tools and the console tab \
+therein, and report the contents to the author (ideally with a screenshot) that would be grand.");
 			return;		// Return before setTimeout, thus no more warnings.
 		}
 	}
