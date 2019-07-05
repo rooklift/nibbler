@@ -220,7 +220,7 @@ window.addEventListener("drop", (event) => {
 
 function debug_loop() {
 	if (draw_loop_state || input_loop_state) {
-		alert("There may have been an uncaught exception. If you could open the dev tools and the console tab therein, and report the contents to the author, that would be cool.");
+		alert("There may have been an uncaught exception. If you could open the dev tools and the console tab therein, and report the contents to the author, that would be grand.");
 		return;		// Return before setTimeout, thus no more warnings.
 	}
 	setTimeout(debug_loop, 5000);
