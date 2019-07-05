@@ -46,10 +46,9 @@ const decoder = new util.TextDecoder("utf8");	// https://github.com/electron/ele
 let config = load_config();
 let tree_version = 0;
 
-// Debug............................................................
+// Debug (see start.js).............................................
 
-let draw_loop_state = 0;
-let input_loop_state = 0;
+let debug = Object.create(null);
 
 // Get the images loading...........................................
 

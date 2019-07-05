@@ -1140,6 +1140,8 @@ function NewRenderer() {
 
 	renderer.draw = function() {
 
+		debug.draw = true;
+
 		// We do the :hover reaction first. This way, we are detecting hover based on the previous cycle's state.
 		// This should prevent the sort of flicker that can occur if we try to detect hover based on changes we
 		// just made (i.e. if we drew then detected hover instantly).
@@ -1165,14 +1167,14 @@ function NewRenderer() {
 			this.node.get_board().active,
 			this.searchmoves,
 			this.hoverdraw_div);
+
+		debug.draw = false;
 	};
 
 	renderer.draw_loop = function() {
-		draw_loop_state = 1;				// For debug.
 		this.tick++;
 		this.draw();
 		setTimeout(this.draw_loop.bind(this), config.update_delay);
-		draw_loop_state = 0;				// If we don't get here, it will remain 1, which we can check.
 	};
 
 	// --------------------------------------------------------------------------------------------

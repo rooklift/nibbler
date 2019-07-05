@@ -118,7 +118,7 @@ ipcRenderer.on("call", (event, msg) => {
 
 function input_loop() {
 
-	input_loop_state = 1;			// For debug.
+	debug.input_loop = true;
 
 	let fn;
 
@@ -139,7 +139,7 @@ function input_loop() {
 	}
 
 	setTimeout(input_loop, 10);
-	input_loop_state = 0;			// If we don't get here, it will remain 1, which we can check.
+	debug.input_loop = false;
 }
 
 input_loop();
@@ -215,13 +215,15 @@ window.addEventListener("drop", (event) => {
 	hub.handle_drop(event);
 });
 
-// Debug. The draw loop and input loop both set a variable when they start and clear it before they return.
-// Note that this won't catch everything, since some things don't involve either loop.
+// Debug. Various functions set a key in the debug object when they start, and clear it when they return.
+// So if we ever find such a key with a non-false value, it means a function failed to return.
 
 function debug_loop() {
-	if (draw_loop_state || input_loop_state) {
-		alert("There may have been an uncaught exception. If you could open the dev tools and the console tab therein, and report the contents to the author, that would be grand.");
-		return;		// Return before setTimeout, thus no more warnings.
+	for (let key of Object.keys(debug)) {
+		if (debug[key]) {
+			alert("There may have been an uncaught exception. If you could open the dev tools and the console tab therein, and report the contents to the author, that would be grand.");
+			return;		// Return before setTimeout, thus no more warnings.
+		}
 	}
 	setTimeout(debug_loop, 5000);
 }
