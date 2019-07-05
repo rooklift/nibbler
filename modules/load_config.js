@@ -41,7 +41,7 @@ const defaults = {
 	"hover_draw": false,
 	"serious_analysis_mode": false,
 	"update_delay": 170,
-	"animate_delay_multiplier": 3,
+	"animate_delay_multiplier": 4,
 	"search_nodes": "infinite",
 	"save_enabled": false,
 	"override_piece_directory": null,
