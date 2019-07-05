@@ -36,7 +36,7 @@ Some people configure Leela with an `lc0.config` file in their Lc0 directory. If
 
 An option to enable the UCI `searchmoves` feature is available in the Analysis menu. Once enabled, one or more moves can be specified as moves to focus on; Leela will ignore other moves. This is useful when you think Leela isn't giving a certain move enough attention.
 
-Leela forgets much of the evaluation if the position changes. To mitigate this, an option in the Analysis menu allows you to hover over a a move (at any depth) in any PV, upon which the resulting board will be displayed (without actually going there).
+Leela forgets much of the evaluation if the position changes. To mitigate this, an option in the Analysis menu allows you to hover over a PV (on the right) and see it play out on the board, without changing the position we're actually analysing. You might prefer to halt Leela while doing this, so that the PVs don't change while you're looking at them.
 
 If you like a different piece set, you can create a folder of `.png` or `.svg` files with the right names and point the `override_piece_directory` config option to it.
 
