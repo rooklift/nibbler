@@ -16,7 +16,9 @@ function NewRenderer() {
 	renderer.pgn_choices = null;								// All games found when opening a PGN file.
 	renderer.friendly_draws = New2DArray(8, 8);					// What pieces are drawn in boardfriends. Used to skip redraws.
 	renderer.active_square = null;								// Clicked square.
-	renderer.hoverdraw_line = null;
+	renderer.hoverdraw_line = null;								// The moves in the PV being hovered.
+	renderer.tick = 0;											// How many draw loops we've been through.
+	renderer.hover_start = 0;									// The tick when we started hovering. OK to be stale.
 
 	// Some sync stuff...
 
@@ -1004,6 +1006,7 @@ function NewRenderer() {
 	renderer.hoverdraw = function() {
 
 		if (!config.hover_draw) {
+			this.hoverdraw_line = null;
 			return false;
 		}
 
@@ -1019,26 +1022,30 @@ function NewRenderer() {
 		}
 
 		if (!firstmove) {
+			this.hoverdraw_line = null;
 			return false;
 		}
 
 		let info = this.info_handler.table[firstmove];
 
-		if (!info) {
+		if (!info || Array.isArray(info.pv) === false || info.pv.length === 0) {
+			this.hoverdraw_line = null;
 			return false;
 		}
 
-		if (Array.isArray(info.pv) && info.pv.length > 0) {
-			return this.draw_fantasy_from_moves(info.pv);
+		if (!this.hoverdraw_line || this.hoverdraw_line[0] !== firstmove) {
+			this.hover_start = this.tick;
 		}
 
-		return false;
+		this.hoverdraw_line = Array.from(info.pv);
+
+		let count = Math.floor((this.tick - this.hover_start) / config.animate_delay_multiplier);	
+		return this.draw_fantasy_from_moves(this.hoverdraw_line.slice(0, count));						// Relies on slice() being safe when count > length
 	};
 
 	renderer.draw_fantasy_from_moves = function(moves) {
 
-		// Because our hover detection is running a cycle behind,
-		// this could be a series of illegal moves.
+		// Don't assume moves is an array of legal moves, or even an array.
 
 		if (Array.isArray(moves) === false || moves.length === 0) {
 			return false;
@@ -1109,6 +1116,7 @@ function NewRenderer() {
 	};
 
 	renderer.draw_loop = function() {
+		this.tick++;
 		this.draw();	// We could wrap this in a try, but for dev purposes it's best to break hard.
 		setTimeout(this.draw_loop.bind(this), config.update_delay);
 	};

@@ -41,6 +41,7 @@ const defaults = {
 	"hover_draw": false,
 	"serious_analysis_mode": false,
 	"update_delay": 170,
+	"animate_delay_multiplier": 2,
 	"search_nodes": "infinite",
 	"save_enabled": false,
 	"override_piece_directory": null,
@@ -77,6 +78,12 @@ function fix(cfg) {
 		} else {
 			cfg.search_nodes = "infinite";
 		}
+	}
+
+	// This can't be 0 because we divide by it.
+
+	if (cfg.animate_delay_multiplier <= 0) {
+		cfg.animate_delay_multiplier = 1;
 	}
 }
 
