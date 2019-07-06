@@ -12,6 +12,7 @@ For prebuilt binary releases, see the [Releases](https://github.com/fohristiwhir
 
 * Display Leela's top choices graphically.
 * Choice of winrate, node %, or policy display.
+* Optionally shows Leela statistics N, P, Q, U, and/or Q+U for each move.
 * UCI `searchmoves` functionality.
 * PGN loading via menu, clipboard, or drag-and-drop.
 * Supports PGN variations of arbitrary depth.
