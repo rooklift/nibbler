@@ -12,11 +12,10 @@ For prebuilt binary releases, see the [Releases](https://github.com/fohristiwhir
 
 * Display Leela's top choices graphically.
 * Choice of winrate, node %, or policy display.
+* UCI `searchmoves` functionality.
 * PGN loading via menu, clipboard, or drag-and-drop.
 * Supports PGN variations of arbitrary depth.
 * FEN loading.
-* Clickable moves in the variation lists.
-* UCI `searchmoves` functionality.
 * Versus Mode - where Leela only analyses one side.
 * Various aesthetic adjustments are possible in the `config.json` file.
 
