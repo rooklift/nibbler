@@ -771,9 +771,9 @@ const position_prototype = {
 						let dest = Point(i, j);
 						let move = source.s + dest.s;
 						if ((this.piece(source) === "P" && dest.y === 0) || (this.piece(source) === "p" && dest.y === 7)) {
-							for (let pr of ["q", "r", "b", "n"]) {
-								if (this.illegal(move + pr) === "") {
-									moves.push(move + pr);
+							for (let c of "qrbn") {
+								if (this.illegal(move + c) === "") {
+									moves.push(move + c);
 								}
 							}
 						}
