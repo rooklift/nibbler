@@ -753,6 +753,45 @@ const position_prototype = {
 		return this.colour(point1) === this.colour(point2);
 	},
 
+	movegen: function() {
+
+		// Super-crude brute-force, but it does work.
+		// Probably best to never use this, but it might be useful in debugging.
+
+		let moves = [];
+
+		for (let x = 0; x < 8; x++) {
+			for (let y = 0; y < 8; y++) {
+				let source = Point(x, y);
+				if (this.colour(source) !== this.active) {
+					continue;
+				}
+				for (let i = 0; i < 8; i++) {
+					for (let j = 0; j < 8; j++) {
+						let dest = Point(i, j);
+						let move = source.s + dest.s;
+						if ((this.piece(source) === "P" && dest.y === 0) || (this.piece(source) === "p" && dest.y === 7)) {
+							for (let pr of ["q", "r", "b", "n"]) {
+								if (this.illegal(move + pr) === "") {
+									moves.push(move + pr);
+								}
+							}
+						}
+						if (this.illegal(move) === "") {
+							moves.push(move);
+						}
+					}
+				}
+			}
+		}
+
+		return moves;
+	},
+
+	nice_movegen: function() {
+		return this.movegen().map(s => this.nice_string(s));
+	},
+
 	nice_string: function(s) {
 
 		// Given some raw (but valid) UCI move string, return a nice human-readable
