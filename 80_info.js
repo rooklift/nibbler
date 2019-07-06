@@ -273,7 +273,7 @@ function NewInfoHandler() {
 				status_string += `<span class="yellow">${config.versus === "" ? "HALTED " : "YOUR MOVE "}</span>`;
 			}
 
-			status_string += `<span class="gray">Nodes: ${NString(this.nodes)}, N/s: ${NString(this.nps)}, Time: ${Math.floor(this.time / 1000)}s</span>`;
+			status_string += `<span class="gray">Nodes: ${NString(this.nodes)}, N/s: ${NString(this.nps)}, Time: ${DurationString(this.time)}</span>`;
 
 			if (typeof config.search_nodes === "number" && this.nodes >= config.search_nodes) {
 				status_string += ` <span class="blue">(limit exceeded)</span>`;

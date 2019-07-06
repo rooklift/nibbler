@@ -299,3 +299,24 @@ function Sign(n) {
 	if (n > 0) return 1;
 	return 0;
 }
+
+function DurationString(ms) {
+
+	let hours = Math.floor(ms / 3600000);
+	ms -= hours * 3600000;
+
+	let minutes = Math.floor(ms / 60000);
+	ms -= minutes * 60000;
+
+	let seconds = Math.floor(ms / 1000);
+
+	if (hours > 0) {
+		return `${hours}h ${minutes}m`;
+	}
+
+	if (minutes > 0) {
+		return `${minutes}m ${seconds}s`;
+	}
+
+	return `${seconds}s`;
+}
