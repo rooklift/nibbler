@@ -657,6 +657,11 @@ function NewRenderer() {
 		this.go_or_halt();
 	};
 
+	renderer.set_cpuct = function(val) {
+		this.engine.setoption("CPuct", val);
+		this.go_or_halt();
+	};
+
 	renderer.escape = function() {					// Set things into a clean state.
 		this.hide_pgn_chooser();
 		this.hide_promotiontable();

@@ -418,6 +418,9 @@ function menu_build() {
 					}
 				},
 				{
+					type: "separator"
+				},
+				{
 					label: "Node limit",
 					submenu: [
 						{
@@ -548,6 +551,119 @@ function menu_build() {
 									value: 1
 								});
 								win.webContents.send("call", "go_or_halt");
+							}
+						},
+					]
+				},
+				{
+					label: "CPuct",
+					submenu: [
+					{
+							label: "4.0",
+							type: "checkbox",
+							checked: config.options.CPuct === 4.0,
+							click: () => {
+								set_checks(["Analysis", "CPuct"], 0);
+								win.webContents.send("call", {
+									fn: "set_cpuct",
+									args: [4.0],
+								});
+							}
+						},
+						{
+							label: "3.8",
+							type: "checkbox",
+							checked: config.options.CPuct === 3.8,
+							click: () => {
+								set_checks(["Analysis", "CPuct"], 1);
+								win.webContents.send("call", {
+									fn: "set_cpuct",
+									args: [3.8],
+								});
+							}
+						},
+						{
+							label: "3.6",
+							type: "checkbox",
+							checked: config.options.CPuct === 3.6,
+							click: () => {
+								set_checks(["Analysis", "CPuct"], 2);
+								win.webContents.send("call", {
+									fn: "set_cpuct",
+									args: [3.6],
+								});
+							}
+						},
+						{
+							label: "3.4",
+							type: "checkbox",
+							checked: config.options.CPuct === 3.4,
+							click: () => {
+								set_checks(["Analysis", "CPuct"], 3);
+								win.webContents.send("call", {
+									fn: "set_cpuct",
+									args: [3.4],
+								});
+							}
+						},
+						{
+							label: "3.2",
+							type: "checkbox",
+							checked: config.options.CPuct === 3.2,
+							click: () => {
+								set_checks(["Analysis", "CPuct"], 4);
+								win.webContents.send("call", {
+									fn: "set_cpuct",
+									args: [3.2],
+								});
+							}
+						},
+						{
+							label: "3.0",
+							type: "checkbox",
+							checked: config.options.CPuct === 3.0,
+							click: () => {
+								set_checks(["Analysis", "CPuct"], 5);
+								win.webContents.send("call", {
+									fn: "set_cpuct",
+									args: [3.0],
+								});
+							}
+						},
+						{
+							label: "2.8",
+							type: "checkbox",
+							checked: config.options.CPuct === 2.8,
+							click: () => {
+								set_checks(["Analysis", "CPuct"], 6);
+								win.webContents.send("call", {
+									fn: "set_cpuct",
+									args: [2.8],
+								});
+							}
+						},
+						{
+							label: "2.6",
+							type: "checkbox",
+							checked: config.options.CPuct === 2.6,
+							click: () => {
+								set_checks(["Analysis", "CPuct"], 7);
+								win.webContents.send("call", {
+									fn: "set_cpuct",
+									args: [2.6],
+								});
+							}
+						},
+						{
+							label: "2.4",
+							type: "checkbox",
+							checked: config.options.CPuct === 2.4,
+							click: () => {
+								set_checks(["Analysis", "CPuct"], 8);
+								win.webContents.send("call", {
+									fn: "set_cpuct",
+									args: [2.4],
+								});
 							}
 						},
 					]
