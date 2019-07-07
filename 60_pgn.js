@@ -8,7 +8,7 @@ function split_buffer(buf) {
 
 	let push = (arr) => {
 		if (arr.length > 0 && arr[arr.length - 1] === 13) {		// Discard \r
-			lines.push(Buffer.from(arr.slice(0, arr.length - 1)));
+			lines.push(Buffer.from(arr.slice(0, -1)));
 		} else {
 			lines.push(Buffer.from(arr));
 		}
@@ -115,7 +115,7 @@ function PreParsePGN(buf) {
 
 			// Parse the tag line...
 
-			tagline = tagline.slice(1, tagline.length - 1);				// So now it's like:		Foo "bar etc"
+			tagline = tagline.slice(1, -1);								// So now it's like:		Foo "bar etc"
 
 			let quote_i = tagline.indexOf(`"`);
 
@@ -127,7 +127,7 @@ function PreParsePGN(buf) {
 			let value = tagline.slice(quote_i + 1).trim();
 
 			if (value.endsWith(`"`)) {
-				value = value.slice(0, value.length - 1);
+				value = value.slice(0, -1);
 			}
 
 			games[games.length - 1].tags[key] = SafeString(value);		// Escape evil characters. IMPORTANT!
@@ -201,7 +201,7 @@ function LoadPGNRecord(o) {
 
 			if (c === 41) {										// The closing parenthesis )
 				node = callstack[callstack.length - 1];
-				callstack = callstack.slice(0, callstack.length - 1);
+				callstack = callstack.slice(0, -1);
 				continue;
 			}
 

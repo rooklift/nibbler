@@ -38,7 +38,7 @@ function InfoVal(s, key) {
 	for (let i = 0; i < tokens.length - 1; i++) {
 		if (tokens[i] === key) {
 			if (tokens[i + 1].endsWith(")")) {
-				return tokens[i + 1].slice(0, tokens[i + 1].length - 1);
+				return tokens[i + 1].slice(0, -1);
 			} else {
 				return tokens[i + 1];
 			}

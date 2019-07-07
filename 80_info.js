@@ -652,7 +652,7 @@ function NewInfoHandler() {
 			case 2:
 				let pstr = o.info.p;
 				if (pstr.endsWith("%")) {
-					pstr = pstr.slice(0, pstr.length - 1);
+					pstr = pstr.slice(0, -1);
 				}
 				let p = parseFloat(pstr);
 				if (Number.isNaN(p) === false) {

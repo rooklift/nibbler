@@ -632,7 +632,7 @@ const position_prototype = {
 
 		if (s[s.length - 2] === "=") {
 			promotion = s[s.length - 1].toLowerCase();
-			s = s.slice(0, s.length - 2);
+			s = s.slice(0, -2);
 		}
 
 		let piece;
@@ -657,7 +657,7 @@ const position_prototype = {
 
 		// Any characters between the piece and target should be disambiguators...
 
-		let disambig = s.slice(1, s.length - 2);
+		let disambig = s.slice(1, -2);
 
 		let startx = 0;
 		let endx = 7;

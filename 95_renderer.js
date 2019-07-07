@@ -395,7 +395,7 @@ function NewRenderer() {
 		for (let n = 0; n < this.pgn_choices.length; n++) {
 
 			if (n === 9 || n === 99 || n === 999 || n === 9999 || n === 99999 || n === 999999) {
-				padding = padding.slice(0, padding.length - 6);
+				padding = padding.slice(0, -6);
 			}
 
 			let p = this.pgn_choices[n];
