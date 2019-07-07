@@ -324,7 +324,7 @@ function NewRenderer() {
 		let s = infobox.innerText;
 		s = ReplaceAll(s, "focus? ", "");
 		s = ReplaceAll(s, "focused: ", "");
-		clipboard.writeText(s);
+		clipboard.writeText(statusbox.innerText + "\n\n" + s);
 	};
 
 	// --------------------------------------------------------------------------------------------
