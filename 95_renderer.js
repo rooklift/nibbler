@@ -689,10 +689,11 @@ function NewRenderer() {
 
 		let copy = JSON.parse(JSON.stringify(config));
 
+		// Delete all properties that are created in the config loader...
+
 		delete copy.flip;
 		delete copy.versus;
 		delete copy.square_size;
-		delete copy.NOTE;
 
 		fs.writeFileSync(filename, JSON.stringify(copy, null, "\t"));
 	};
