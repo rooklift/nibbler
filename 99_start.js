@@ -232,6 +232,22 @@ therein, and report the contents to the author (ideally with a screenshot) that 
 
 debug_loop();
 
+// Forced garbage collection. For reasons I can't begin to fathom, Node isn't
+// garbage collecting everything, and the heaps seems to grow and grow. It's
+// not what you would call a memory leak, since manually triggering the GC
+// does clear everything...
+
+function force_gc() {
+	if (!global || !global.gc) {
+		console.log("Triggered GC not enabled.");
+		return;
+	}
+	global.gc();
+	setTimeout(force_gc, 300000);		// Once every 5 minutes or so?
+}
+
+setTimeout(force_gc, 300000)
+
 // Go...
 
 function enter_loop() {
