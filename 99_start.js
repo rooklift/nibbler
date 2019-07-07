@@ -235,7 +235,7 @@ debug_loop();
 // Forced garbage collection. For reasons I can't begin to fathom, Node isn't
 // garbage collecting everything, and the heaps seems to grow and grow. It's
 // not what you would call a memory leak, since manually triggering the GC
-// does clear everything...
+// does clear everything... note --max-old-space-size is another option.
 
 function force_gc() {
 	if (!global || !global.gc) {
