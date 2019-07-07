@@ -147,6 +147,18 @@ function menu_build() {
 					}
 				},
 				{
+					label: "Load PGN from clipboard",
+					click: () => {
+						win.webContents.send("call", {
+							fn: "load_pgn_from_string",
+							args: [electron.clipboard.readText()]
+						});
+					}
+				},
+				{
+					type: "separator"
+				},
+				{
 					label: "Save this game...",
 					accelerator: "CommandOrControl+S",
 					click: () => {
@@ -164,22 +176,19 @@ function menu_build() {
 					}
 				},
 				{
-					type: "separator"
-				},
-				{
-					label: "Load PGN from clipboard",
-					click: () => {
-						win.webContents.send("call", {
-							fn: "load_pgn_from_string",
-							args: [electron.clipboard.readText()]
-						});
-					}
-				},
-				{
 					label: "Write PGN to clipboard",
 					accelerator: "CommandOrControl+K",
 					click: () => {
 						win.webContents.send("call", "pgn_to_clipboard");
+					}
+				},
+				{
+					type: "separator"
+				},
+				{
+					label: "Write infobox to clipboard",
+					click: () => {
+						win.webContents.send("call", "infobox_to_clipboard");
 					}
 				},
 				{
@@ -1097,7 +1106,10 @@ function menu_build() {
 					}
 				},
 				{
-					type: "separator"
+					label: "Fire GC",
+					click: () => {
+						win.webContents.send("call", "fire_gc");
+					}
 				},
 				{
 					label: "Crash Test",

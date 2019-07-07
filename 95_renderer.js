@@ -320,6 +320,13 @@ function NewRenderer() {
 		this.position_changed(true);
 	};
 
+	renderer.infobox_to_clipboard = function() {
+		let s = infobox.innerText;
+		s = ReplaceAll(s, "focus? ", "");
+		s = ReplaceAll(s, "focused: ", "");
+		clipboard.writeText(s);
+	};
+
 	// --------------------------------------------------------------------------------------------
 	// PGN...
 
@@ -696,6 +703,17 @@ function NewRenderer() {
 		delete copy.square_size;
 
 		fs.writeFileSync(filename, JSON.stringify(copy, null, "\t"));
+	};
+
+	renderer.fire_gc = function() {
+
+		if (!global || !global.gc) {
+			alert("Unable.");
+			return;
+		}
+
+		alert("Firing GC in 5 seconds.");
+		setTimeout(global.gc, 5000);
 	};
 
 	// --------------------------------------------------------------------------------------------
