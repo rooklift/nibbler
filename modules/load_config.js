@@ -5,6 +5,7 @@ const get_main_folder = require("./get_main_folder");
 const path = require("path");
 
 const defaults = {
+	"path": null,		// Not undefined, we delete keys with undefined values below
 	"options": {},
 	"args": [],
 
@@ -55,17 +56,32 @@ const defaults = {
 
 function fix(cfg) {
 
-	if (typeof cfg.options !== "object") {
-		cfg.options = {};
+	// Any key not in the defaults shouldn't be there...
+
+	for (let key of Object.keys(cfg)) {
+		if (defaults[key] === undefined) {
+			delete cfg[key];
+		}
 	}
 
-	cfg.square_size = Math.floor(cfg.board_size / 8);
-	cfg.board_size = cfg.square_size * 8;
-	
-	// These things should not be set naively. Rather, the correct function in the renderer must be called...
+	// Except that we want to create a few things...
 
 	cfg.flip = false;
 	cfg.versus = "";
+	cfg.square_size = Math.floor(cfg.board_size / 8);
+
+	// Make sure options and args at least exist...
+
+	if (typeof cfg.options !== "object") {
+		cfg.options = {};
+	}
+	if (Array.isArray(cfg.args) === false) {
+		cfg.args = [];
+	}
+
+	// Fix the board size...
+
+	cfg.board_size = cfg.square_size * 8;
 
 	// Uncertainty can, counterintuitively, be above 1 or below 0. Adjust for the user's likely intention.
 	// Note these numbers are tested in main.js for whether the checkbox should be checked...
@@ -84,7 +100,7 @@ function fix(cfg) {
 		}
 	}
 
-	// This can't be 0 because we divide by it.
+	// This can't be 0 because we divide by it...
 
 	cfg.animate_delay_multiplier = Math.floor(cfg.animate_delay_multiplier);
 
@@ -92,7 +108,7 @@ function fix(cfg) {
 		cfg.animate_delay_multiplier = 1;
 	}
 
-	// We used to expect font sizes to be strings with "px".
+	// We used to expect font sizes to be strings with "px"...
 
 	for (let key of ["info_font_size", "pgn_font_size", "fen_font_size", "status_font_size"]) {
 		if (typeof cfg[key] === "string" && cfg[key].endsWith("px")) {
