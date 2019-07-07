@@ -41,6 +41,7 @@ const defaults = {
 	"show_q": false,
 	"show_u": false,
 	"show_q_plus_u": false,
+	"show_v": false,
 	"searchmoves_buttons": true,
 	"hover_draw": false,
 	"hover_method": 0,

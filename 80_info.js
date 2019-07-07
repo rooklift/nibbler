@@ -189,6 +189,11 @@ function NewInfoHandler() {
 				this.ever_received_q = true;
 				move_info.q = tmp;
 			}
+
+			tmp = parseFloat(InfoVal(s, "(V:"));
+			if (Number.isNaN(tmp) === false) {
+				move_info.v = tmp;
+			}
 		}
 	};
 
@@ -449,6 +454,14 @@ function NewInfoHandler() {
 					extra_stat_strings.push(`Q+U: ${info.q_plus_u.toFixed(5)}`);
 				} else {
 					extra_stat_strings.push(`Q+U: ?`);
+				}
+			}
+
+			if (config.show_v) {
+				if (typeof info.v === "number") {
+					extra_stat_strings.push(`V: ${info.v.toFixed(3)}`);
+				} else {
+					extra_stat_strings.push(`V: ?`);
 				}
 			}
 
@@ -756,5 +769,6 @@ function new_info(board, move) {
 	info.q = 0;
 	info.q_plus_u = 1;
 	info.u = 1;
+	info.v = null;					// Warning: v is allowed to be null if not known.
 	return info;
 }

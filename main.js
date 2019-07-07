@@ -966,6 +966,17 @@ function menu_build() {
 								});
 							}
 						},
+						{
+							label: "Show V",
+							type: "checkbox",
+							checked: config.show_v,
+							click: () => {
+								win.webContents.send("call", {
+									fn: "toggle",
+									args: ["show_v"],
+								});
+							}
+						},
 					]
 				},
 				{
