@@ -39,8 +39,8 @@ for folder in folders:
 
 # Copy config.example.json - to the high level dir, not the app dir...
 
-shutil.copy("config.example.json", os.path.join(linux_dir, "config.json"))
-shutil.copy("config.example.json", os.path.join(windows_dir, "config.json"))
+shutil.copy("config.example.json", linux_dir)
+shutil.copy("config.example.json", windows_dir)
 
 # Extract Electron...
 
