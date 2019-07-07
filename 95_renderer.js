@@ -692,6 +692,7 @@ function NewRenderer() {
 		delete copy.flip;
 		delete copy.versus;
 		delete copy.square_size;
+		delete copy.NOTE;
 
 		fs.writeFileSync(filename, JSON.stringify(copy, null, "\t"));
 	};
