@@ -54,10 +54,10 @@ for (let y = 0; y < 8; y++) {
 
 // Font sizes... do this before calculating sizes of stuff below.
 
-infobox.style["font-size"] = config.info_font_size;
-movelist.style["font-size"] = config.pgn_font_size;
-fenbox.style["font-size"] = config.fen_font_size;
-statusbox.style["font-size"] = config.status_font_size;
+infobox.style["font-size"] = config.info_font_size.toString() + "px";
+movelist.style["font-size"] = config.pgn_font_size.toString() + "px";
+fenbox.style["font-size"] = config.fen_font_size.toString() + "px";
+statusbox.style["font-size"] = config.status_font_size.toString() + "px";
 
 // We rely on the statusbox having some text when doing these calculations,
 // so that the infobox_top has its final position.
