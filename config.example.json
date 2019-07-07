@@ -1,6 +1,6 @@
 {
 	"path": "C:\\Programs (self-installed)\\Lc0-cudnn\\lc0.exe",
-	
+
 	"options": {
 		"Backend": "cudnn",
 		"WeightsFile": "C:\\Users\\Owner\\Documents\\Misc\\Lc0 Networks\\42482"
@@ -8,14 +8,19 @@
 
 	"args": [],
 
+	"NOTE": "Users with high resolution monitors may want to increase these sizes.",
+
 	"width": 1280,
 	"height": 835,
 	"board_size": 640,
-	"board_font": "18px Arial",
 	"info_font_size": "16px",
 	"pgn_font_size": "16px",
 	"fen_font_size": "16px",
 	"status_font_size": "16px",
+	"board_font": "18px Arial",
+	"arrow_width": 8,
+	"arrowhead_radius": 12,
+
 	"light_square": "#dadada",
 	"dark_square": "#b4b4b4",
 	"active_square": "#66aaaa",

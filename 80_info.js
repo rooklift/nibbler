@@ -532,7 +532,7 @@ function NewInfoHandler() {
 
 	ih.draw_arrows = function() {
 
-		context.lineWidth = 8;
+		context.lineWidth = config.arrow_width;
 		context.textAlign = "center";
 		context.textBaseline = "middle";
 		context.font = config.board_font;
@@ -632,7 +632,7 @@ function NewInfoHandler() {
 			let cc2 = CanvasCoords(o.x2, o.y2);
 			context.fillStyle = o.colour;
 			context.beginPath();
-			context.arc(cc2.cx, cc2.cy, 12, 0, 2 * Math.PI);
+			context.arc(cc2.cx, cc2.cy, config.arrowhead_radius, 0, 2 * Math.PI);
 			context.fill();
 			context.fillStyle = "black";
 
