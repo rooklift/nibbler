@@ -11,13 +11,13 @@ const defaults = {
 	"width": 1280,
 	"height": 835,
 	"board_size": 640,
-	"info_font_size": "16px",
-	"pgn_font_size": "16px",
-	"fen_font_size": "16px",
-	"status_font_size": "16px",
-	"board_font": "18px Arial",
+	"info_font_size": 16,
+	"pgn_font_size": 16,
+	"fen_font_size": 16,
+	"status_font_size": 16,
 	"arrow_width": 8,
 	"arrowhead_radius": 12,
+	"board_font": "18px Arial",
 
 	"light_square": "#dadada",
 	"dark_square": "#b4b4b4",
@@ -90,6 +90,17 @@ function fix(cfg) {
 
 	if (cfg.animate_delay_multiplier <= 0) {
 		cfg.animate_delay_multiplier = 1;
+	}
+
+	// We used to expect font sizes to be strings with "px".
+
+	for (let key of ["info_font_size", "pgn_font_size", "fen_font_size", "status_font_size"]) {
+		if (typeof cfg[key] === "string" && cfg[key].endsWith("px")) {
+			cfg[key] = parseInt(cfg[key].slice(0, -2), 10);
+			if (Number.isNaN(cfg[key])) {
+				cfg[key] = defaults[key];
+			}
+		}
 	}
 }
 
