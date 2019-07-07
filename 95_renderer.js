@@ -1170,7 +1170,7 @@ function NewRenderer() {
 		this.info_handler.draw_infobox(		// The info handler needs a bit more state than I'd like, but what can you do.
 			this.mouse_point(),
 			this.active_square,
-			this.leela_should_go(),
+			this.leela_maybe_running,
 			this.node.get_board().active,
 			this.searchmoves,
 			this.hoverdraw_div);

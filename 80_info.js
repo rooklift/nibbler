@@ -259,7 +259,7 @@ function NewInfoHandler() {
 		this.last_drawn_version = null;
 	};
 
-	ih.draw_statusbox = function(leela_should_go, searchmoves) {
+	ih.draw_statusbox = function(leela_maybe_running, searchmoves) {
 
 		if (config.search_nodes !== "infinite" && (searchmoves.length === 1)) {
 
@@ -269,7 +269,7 @@ function NewInfoHandler() {
 
 			let status_string = "";
 
-			if (leela_should_go === false) {
+			if (leela_maybe_running === false) {
 				status_string += `<span class="yellow">${config.versus === "" ? "HALTED " : "YOUR MOVE "}</span>`;
 			}
 
@@ -283,9 +283,9 @@ function NewInfoHandler() {
 		}
 	};
 
-	ih.draw_infobox = function(mouse_point, active_square, leela_should_go, active_colour, searchmoves, hoverdraw_div) {
+	ih.draw_infobox = function(mouse_point, active_square, leela_maybe_running, active_colour, searchmoves, hoverdraw_div) {
 
-		ih.draw_statusbox(leela_should_go, searchmoves);
+		ih.draw_statusbox(leela_maybe_running, searchmoves);
 
 		// Display stderr and return if we've never seen any info...
 
