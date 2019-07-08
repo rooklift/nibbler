@@ -665,6 +665,7 @@ function NewRenderer() {
 	};
 
 	renderer.set_cpuct = function(val) {
+		this.__halt();
 		this.engine.setoption("CPuct", val);
 		this.go_or_halt();
 	};
