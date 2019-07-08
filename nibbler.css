@@ -44,12 +44,14 @@ body {
 	pointer-events: none;
 	table-layout: fixed;
 	user-select: none;
+	z-index: 1;
 }
 
 #canvas {
 	pointer-events: none;
 	position: fixed;
 	user-select: none;
+	z-index: 2;
 }
 
 #boardfriends {
@@ -57,6 +59,16 @@ body {
 	position: fixed;
 	table-layout: fixed;
 	user-select: none;
+	z-index: 3;
+}
+
+#promotiontable {
+	border-collapse: collapse;
+	display: none;
+	position: fixed;
+	table-layout: fixed;
+	user-select: none;
+	z-index: 4;
 }
 
 #fantasy {
@@ -65,12 +77,7 @@ body {
 	outline-offset: 6px;
 	position: fixed;
 	user-select: none;
-}
-
-td {
-	border: 0;
-	margin: 0;
-	padding: 0;
+	z-index: 5;
 }
 
 #pgnchooser {
@@ -84,14 +91,13 @@ td {
 	position: fixed;
 	top: 0;
 	width: 100%;
+	z-index: 6;
 }
 
-#promotiontable {
-	border-collapse: collapse;
-	display: none;
-	position: fixed;
-	table-layout: fixed;
-	user-select: none;
+td {
+	border: 0;
+	margin: 0;
+	padding: 0;
 }
 
 #statusbox {
