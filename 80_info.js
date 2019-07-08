@@ -13,6 +13,8 @@ function NewInfoHandler() {
 
 	ih.ever_received_info = false;
 	ih.ever_received_q = false;
+	ih.ever_received_multipv_2 = false;
+
 	ih.stderr_log = "";
 
 	ih.one_click_moves = New2DArray(8, 8);	// Array of possible one-click moves. Updated by draw_arrows().
@@ -88,6 +90,8 @@ function NewInfoHandler() {
 				this.table[move] = move_info;
 			}
 
+			move_info.version = this.version;
+
 			let tmp;
 
 			tmp = parseInt(InfoVal(s, "cp"), 10);		// Score in centipawns
@@ -110,6 +114,9 @@ function NewInfoHandler() {
 			tmp = parseInt(InfoVal(s, "multipv"), 10);	// Leela's ranking of the move, starting at 1
 			if (Number.isNaN(tmp) === false) {
 				move_info.multipv = tmp;
+				if (tmp > 1) {
+					this.ever_received_multipv_2 = true;
+				}
 			}
 
 			tmp = parseInt(InfoVal(s, "nodes"), 10);
@@ -146,7 +153,6 @@ function NewInfoHandler() {
 			// info string d2d4  (293 ) N:   12845 (+121) (P: 20.10%) (Q:  0.09001) (D:  0.000) (U: 0.02410) (Q+U:  0.11411) (V:  0.1006)
 
 			let move = InfoVal(s, "string");
-
 			let move_info;
 
 			if (this.table[move]) {						// We already have move info for this move.
@@ -159,6 +165,8 @@ function NewInfoHandler() {
 				move_info = new_info(board, move);
 				this.table[move] = move_info;
 			}
+
+			move_info.version = this.version;
 
 			let tmp;
 
@@ -207,7 +215,7 @@ function NewInfoHandler() {
 
 		info_list.sort((a, b) => {
 
-			// mate - positive good, negative bad.
+			// Mate - positive good, negative bad.
 			// Note our info struct uses 0 when not given.
 
 			if (Sign(a.mate) !== Sign(b.mate)) {		// negative is worst, 0 is neutral, positive is best
@@ -226,7 +234,7 @@ function NewInfoHandler() {
 				}
 			} 
 
-			// node count - higher is better...
+			// Node count - higher is better...
 
 			if (a.n < b.n) {
 				return 1;
@@ -235,23 +243,37 @@ function NewInfoHandler() {
 				return -1;
 			}
 
-			// centipawn score - higher is better...
+			// If it's some engine other than Leela, and it isn't respecting MultiPV,
+			// that means its most recently sent message should be its best move...
 
-			if (a.cp < b.cp) {
-				return 1;
-			}
-			if (a.cp > b.cp) {
-				return -1;
+			if (this.ever_received_multipv_2 === false) {
+				if (a.version < b.version) {
+					return 1;
+				}
+				if (a.version > b.version) {
+					return -1;
+				}
 			}
 
-			// MultiPV ranking is not reliable since we might have searchmoves,
-			// however we can at least use it as a final tie-break.
+			// If we get here, MultiPV is being respected.
 
 			if (a.multipv < b.multipv) {
 				return -1;
 			}
 			if (a.multipv > b.multipv) {
 				return 1;
+			}
+
+			// We might get here if two moves have the same MultiPV due to one of them
+			// being currently turned off with searchmoves. Centipawn score is sometimes
+			// unreliable since we might compare an old low depth score with a new high
+			// depth score.
+
+			if (a.cp < b.cp) {
+				return 1;
+			}
+			if (a.cp > b.cp) {
+				return -1;
 			}
 
 			return 0;
@@ -770,5 +792,6 @@ function new_info(board, move) {
 	info.q_plus_u = 1;
 	info.u = 1;
 	info.v = null;					// Warning: v is allowed to be null if not known.
+	info.version = 0;
 	return info;
 }
