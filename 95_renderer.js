@@ -699,6 +699,8 @@ function NewRenderer() {
 
 		// Delete all properties that are created in the config loader...
 
+		delete copy.failure;
+		delete copy.warn_filename;
 		delete copy.flip;
 		delete copy.versus;
 		delete copy.square_size;
