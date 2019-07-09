@@ -4,7 +4,7 @@
 
 Nibbler is intended to be somewhat like [Lizzie](https://github.com/featurecat/lizzie), but for [Leela Chess Zero](https://github.com/LeelaChessZero/lc0). In other words, it is a GUI that runs a single engine (in our case, Lc0) constantly, displaying opinions about the current position.
 
-For prebuilt binary releases, see the [Releases](https://github.com/fohristiwhirl/nibbler/releases) section.
+For prebuilt binary releases, see the [Releases](https://github.com/fohristiwhirl/nibbler/releases) section. For help, the [Discord](https://discordapp.com/invite/pKujYxD) may be your best bet, or open an issue here.
 
 ![Screenshot](https://user-images.githubusercontent.com/16438795/60531026-fef48580-9cf1-11e9-964e-723d502cfc72.png)
 
