@@ -57,9 +57,12 @@ const defaults = {
 
 function fix(cfg) {
 
-	// Any key not in the defaults shouldn't be there...
+	// Almost any key not in the defaults shouldn't be there...
 
 	for (let key of Object.keys(cfg)) {
+
+		if (key === "failure" || key === "warn_filename") continue;
+
 		if (defaults[key] === undefined) {
 			delete cfg[key];
 		}
