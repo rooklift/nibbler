@@ -57,12 +57,9 @@ const defaults = {
 
 function fix(cfg) {
 
-	// Almost any key not in the defaults shouldn't be there...
+	// Any key not in the defaults shouldn't be there...
 
 	for (let key of Object.keys(cfg)) {
-
-		if (key === "failure" || key === "warn_filename") continue;
-
 		if (defaults[key] === undefined) {
 			delete cfg[key];
 		}
@@ -167,6 +164,9 @@ module.exports = () => {
 	let config_filename;
 	let config_example_filename;
 
+	let failure;
+	let warn_filename;
+
 	try {
 		config_filename = path.join(get_main_folder(), "config.json");
 		config_example_filename = path.join(get_main_folder(), "config.example.json");
@@ -175,16 +175,21 @@ module.exports = () => {
 			cfg = JSON.parse(debork_json(fs.readFileSync(config_filename, "utf8")));
 		} else if (fs.existsSync(config_example_filename)) {
 			cfg = JSON.parse(debork_json(fs.readFileSync(config_example_filename, "utf8")));
-			cfg.warn_filename = true;
+			warn_filename = true;
 		} else {
-			cfg.failure = `Couldn't find config file. Looked at:\n${config_filename}`;
+			failure = `Couldn't find config file. Looked at:\n${config_filename}`;
 		}
 	} catch (err) {
-		cfg.failure = `Failed to parse config file ${config_filename} - make sure it is valid JSON, and in particular, if on Windows, use \\\\ instead of \\ as a path separator.`;
+		failure = `Failed to parse config file ${config_filename} - make sure it is valid JSON, and in particular, if on Windows, use \\\\ instead of \\ as a path separator.`;
 	}
 
 	assign_without_overwrite(cfg, defaults);
 	fix(cfg);
+
+	// Add this stuff after fix(), since it would delete non-standard keys...
+
+	if (failure) cfg.failure = failure;
+	if (warn_filename) cfg.warn_filename = warn_filename;
 
 	return cfg;
 }
