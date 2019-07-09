@@ -6,10 +6,11 @@ function NewEngine() {
 
 	eng.exe = null;
 	eng.readyok_required = 0;
-	eng.warned = false;
 	eng.scanner = null;
 	eng.err_scanner = null;
 	eng.log_info_lines = false;
+	eng.ever_sent = false;
+	eng.warned = false;
 
 	eng.send = function(msg) {
 
@@ -22,9 +23,10 @@ function NewEngine() {
 			this.exe.stdin.write(msg);
 			this.exe.stdin.write("\n");
 			Log("--> " + msg);
+			this.ever_sent = true;
 		} catch (err) {
 			Log("(failed) --> " + msg);
-			if (this.exe.connected === false && !this.warned) {
+			if (this.ever_sent && !this.warned) {
 				this.warned = true;
 				alert("The engine appears to have crashed.");
 			}
@@ -73,7 +75,7 @@ function NewEngine() {
 
 		this.exe = child_process.spawn(engine_path, args, {cwd: path.dirname(engine_path)});
 		this.exe.on("error", (err) => {
-			alert("Couldn't spawn process - check the path in the config file");	// Note that this alert will come some time in the future, not instantly.
+			alert("Couldn't spawn process - check the paths in the config file, and use absolute paths");	// This alert will come some time in the future.
 		});
 
 		this.scanner = readline.createInterface({
