@@ -73,7 +73,13 @@ function NewEngine() {
 			args = [];
 		}
 
-		this.exe = child_process.spawn(engine_path, args, {cwd: path.dirname(engine_path)});
+		try {
+			this.exe = child_process.spawn(engine_path, args, {cwd: path.dirname(engine_path)});
+		} catch (err) {
+			alert(err);
+			return;
+		}
+		
 		this.exe.on("error", (err) => {
 			alert("Couldn't spawn process - check the paths in the config file, and use absolute paths.");	// This alert will come some time in the future.
 		});
