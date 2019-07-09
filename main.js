@@ -934,6 +934,17 @@ function menu_build() {
 							}
 						},
 						{
+							label: "Show V",
+							type: "checkbox",
+							checked: config.show_v,
+							click: () => {
+								win.webContents.send("call", {
+									fn: "toggle",
+									args: ["show_v"],
+								});
+							}
+						},
+						{
 							label: "Show Q",
 							type: "checkbox",
 							checked: config.show_q,
@@ -941,6 +952,17 @@ function menu_build() {
 								win.webContents.send("call", {
 									fn: "toggle",
 									args: ["show_q"],
+								});
+							}
+						},
+						{
+							label: "Show D",
+							type: "checkbox",
+							checked: config.show_d,
+							click: () => {
+								win.webContents.send("call", {
+									fn: "toggle",
+									args: ["show_d"],
 								});
 							}
 						},
@@ -963,17 +985,6 @@ function menu_build() {
 								win.webContents.send("call", {
 									fn: "toggle",
 									args: ["show_q_plus_u"],
-								});
-							}
-						},
-						{
-							label: "Show V",
-							type: "checkbox",
-							checked: config.show_v,
-							click: () => {
-								win.webContents.send("call", {
-									fn: "toggle",
-									args: ["show_v"],
 								});
 							}
 						},

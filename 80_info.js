@@ -455,11 +455,27 @@ function NewInfoHandler() {
 				extra_stat_strings.push(`P: ${info.p}`);
 			}
 
+			if (config.show_v) {
+				if (typeof info.v === "number") {
+					extra_stat_strings.push(`V: ${info.v.toFixed(3)}`);
+				} else {
+					extra_stat_strings.push(`V: ?`);
+				}
+			}
+
 			if (config.show_q) {
 				if (typeof info.q === "number") {
 					extra_stat_strings.push(`Q: ${info.q.toFixed(3)}`);
 				} else {
 					extra_stat_strings.push(`Q: ?`);
+				}
+			}
+
+			if (config.show_d) {
+				if (typeof info.d === "number") {
+					extra_stat_strings.push(`D: ${info.d.toFixed(3)}`);
+				} else {
+					extra_stat_strings.push(`D: ?`);
 				}
 			}
 
@@ -476,14 +492,6 @@ function NewInfoHandler() {
 					extra_stat_strings.push(`Q+U: ${info.q_plus_u.toFixed(5)}`);
 				} else {
 					extra_stat_strings.push(`Q+U: ?`);
-				}
-			}
-
-			if (config.show_v) {
-				if (typeof info.v === "number") {
-					extra_stat_strings.push(`V: ${info.v.toFixed(3)}`);
-				} else {
-					extra_stat_strings.push(`V: ?`);
 				}
 			}
 
