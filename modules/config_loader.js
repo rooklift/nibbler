@@ -4,8 +4,8 @@ const fs = require("fs");
 const get_main_folder = require("./get_main_folder");
 const path = require("path");
 
-const defaults = {
-	"path": null,		// Not undefined, we delete keys with undefined values below
+exports.defaults = {
+	"path": null,		// Not undefined, all normal keys should have an actual value.
 	"options": {},
 	"args": [],
 
@@ -58,15 +58,7 @@ const defaults = {
 
 function fix(cfg) {
 
-	// Any key not in the defaults shouldn't be there...
-
-	for (let key of Object.keys(cfg)) {
-		if (defaults[key] === undefined) {
-			delete cfg[key];
-		}
-	}
-
-	// Except that we want to create a few things...
+	// We want to create a few things...
 
 	cfg.flip = false;
 	cfg.versus = "";
@@ -116,7 +108,7 @@ function fix(cfg) {
 		if (typeof cfg[key] === "string" && cfg[key].endsWith("px")) {
 			cfg[key] = parseInt(cfg[key].slice(0, -2), 10);
 			if (Number.isNaN(cfg[key])) {
-				cfg[key] = defaults[key];
+				cfg[key] = exports.defaults[key];
 			}
 		}
 	}
@@ -155,7 +147,7 @@ function debork_json(s) {
 	return lines.join("\n");
 }
 
-module.exports = () => {
+exports.load = () => {
 
 	// On failure, writes a failure string as cfg.failure. A bit lame, but we can't rely on alert working here.
 	// On loading the alternate (example) config file, sets cfg.warn_filename to true.
@@ -165,9 +157,6 @@ module.exports = () => {
 	let config_filename;
 	let config_example_filename;
 
-	let failure;
-	let warn_filename;
-
 	try {
 		config_filename = path.join(get_main_folder(), "config.json");
 		config_example_filename = path.join(get_main_folder(), "config.example.json");
@@ -176,21 +165,15 @@ module.exports = () => {
 			cfg = JSON.parse(debork_json(fs.readFileSync(config_filename, "utf8")));
 		} else if (fs.existsSync(config_example_filename)) {
 			cfg = JSON.parse(debork_json(fs.readFileSync(config_example_filename, "utf8")));
-			warn_filename = true;
+			cfg.warn_filename = true;
 		} else {
-			failure = `Couldn't find config file. Looked at:\n${config_filename}`;
+			cfg.failure = `Couldn't find config file. Looked at:\n${config_filename}`;
 		}
 	} catch (err) {
-		failure = `Failed to parse config file ${config_filename} - make sure it is valid JSON, and in particular, if on Windows, use \\\\ instead of \\ as a path separator.`;
+		cfg.failure = `Failed to parse config file ${config_filename} - make sure it is valid JSON, and in particular, if on Windows, use \\\\ instead of \\ as a path separator.`;
 	}
 
-	assign_without_overwrite(cfg, defaults);
+	assign_without_overwrite(cfg, exports.defaults);
 	fix(cfg);
-
-	// Add this stuff after fix(), since it would delete non-standard keys...
-
-	if (failure) cfg.failure = failure;
-	if (warn_filename) cfg.warn_filename = warn_filename;
-
 	return cfg;
 }

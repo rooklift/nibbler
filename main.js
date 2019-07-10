@@ -2,7 +2,7 @@
 
 const alert = require("./modules/alert");
 const electron = require("electron");
-const load_config = require("./modules/load_config");
+const config_loader = require("./modules/config_loader");
 const messages = require("./modules/messages");
 const path = require("path");
 const running_as_electron = require("./modules/running_as_electron");
@@ -10,7 +10,7 @@ const url = require("url");
 
 electron.app.commandLine.appendSwitch("js-flags", "--expose_gc");
 
-let config = load_config();			// Do this first, it's a needed global.
+let config = config_loader.load();	// Do this first, it's a needed global.
 if (config.failure) {				// Do this early, while console.log still works.
 	console.log(config.failure);
 }

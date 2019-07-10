@@ -30,10 +30,10 @@ try {
 const alert = require("./modules/alert");
 const child_process = require("child_process");
 const clipboard = require("electron").clipboard;
+const config_loader = require("./modules/config_loader");
 const fs = require("fs");
 const images = require("./modules/images");
 const ipcRenderer = require("electron").ipcRenderer;
-const load_config = require("./modules/load_config");
 const path = require("path");
 const readline = require("readline");
 const util = require("util");
@@ -43,7 +43,7 @@ const util = require("util");
 const context = canvas.getContext("2d");
 const decoder = new util.TextDecoder("utf8");	// https://github.com/electron/electron/issues/18733
 
-let config = load_config();
+let config = config_loader.load();
 let tree_version = 0;
 
 // Debug (see start.js).............................................
