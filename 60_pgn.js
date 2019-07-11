@@ -301,7 +301,7 @@ function make_pgn_string(node) {
 
 	let movetext = make_movetext(root);
 	let final = tags.join("\n") + "\n\n" + movetext + "\n";
-	return final
+	return final;
 }
 
 function make_movetext(node) {
