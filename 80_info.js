@@ -100,9 +100,10 @@ function NewInfoHandler() {
 				if (this.ever_received_q === false) {
 					move_info.q = QfromPawns(tmp / 100);
 				}
+				move_info.mate = 0;						// Engines will send one of cp or mate, so mate gets reset when receiving cp
 			}
 
-			tmp = parseInt(InfoVal(s, "mate"), 10);		// It should be OK to infer other values from this
+			tmp = parseInt(InfoVal(s, "mate"), 10);
 			if (Number.isNaN(tmp) === false) {
 				move_info.mate = tmp;
 				if (tmp !== 0) {
