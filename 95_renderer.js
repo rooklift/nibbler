@@ -811,10 +811,25 @@ function NewRenderer() {
 		let info = this.info_handler.table[moves[0]];		// info for the first move in our clicked line.
 
 		if (info) {
-			let divisor = this.info_handler.nodes > 0 ? this.info_handler.nodes : 1;
-			let npc_string = (100 * info.n / divisor).toFixed(2);
-			let s = `EV: ${info.value_string(1)}%, N: ${npc_string}% of ${NString(this.info_handler.nodes)}`;
-			stats_node.stats = s;
+
+			let sl = info.stats_list(
+				{
+					ev: config.sam_ev,
+					n: config.sam_n,
+					n_abs: config.sam_n_abs,
+					of_n: config.sam_of_n,
+					p: config.sam_p,
+					v: config.sam_v,
+					q: config.sam_q,
+					d: config.sam_d,
+					u: config.sam_u,
+					q_plus_u: config.sam_q_plus_u,
+				},
+				this.info_handler.nodes);
+
+			if (sl.length > 0) {
+				stats_node.stats = sl.join(", ");
+			}
 		}
 
 		this.movelist_handler.draw(this.node);				// Draw the tree with the current node (this.node) as highlight.

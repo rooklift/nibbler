@@ -430,71 +430,18 @@ function NewInfoHandler() {
 
 			// The extra stats...
 
-			let extra_stat_strings = [];
-
-			if (config.show_n && config.show_n_abs) {
-				if (typeof info.n === "number" && typeof this.nodes === "number" && this.nodes > 0) {
-					extra_stat_strings.push(`N: ${(100 * info.n / this.nodes).toFixed(2)}% [${NString(info.n)}]`);
-				} else {
-					extra_stat_strings.push(`N: ?`);
-				}
-			} else if (config.show_n) {
-				if (typeof info.n === "number" && typeof this.nodes === "number" && this.nodes > 0) {
-					extra_stat_strings.push(`N: ${(100 * info.n / this.nodes).toFixed(2)}%`);
-				} else {
-					extra_stat_strings.push(`N: ?`);
-				}
-			} else if (config.show_n_abs) {
-				if (typeof info.n === "number") {
-					extra_stat_strings.push(`N: ${NString(info.n)}`);
-				} else {
-					extra_stat_strings.push(`N: ?`);
-				}
-			}
-
-			if (config.show_p) {
-				extra_stat_strings.push(`P: ${info.p}`);
-			}
-
-			if (config.show_v) {
-				if (typeof info.v === "number") {
-					extra_stat_strings.push(`V: ${info.v.toFixed(3)}`);
-				} else {
-					extra_stat_strings.push(`V: ?`);
-				}
-			}
-
-			if (config.show_q) {
-				if (typeof info.q === "number") {
-					extra_stat_strings.push(`Q: ${info.q.toFixed(3)}`);
-				} else {
-					extra_stat_strings.push(`Q: ?`);
-				}
-			}
-
-			if (config.show_d) {
-				if (typeof info.d === "number") {
-					extra_stat_strings.push(`D: ${info.d.toFixed(3)}`);
-				} else {
-					extra_stat_strings.push(`D: ?`);
-				}
-			}
-
-			if (config.show_u) {
-				if (typeof info.u === "number" && info.n > 0) {						// Checking n is correct.
-					extra_stat_strings.push(`U: ${info.u.toFixed(3)}`);
-				} else {
-					extra_stat_strings.push(`U: ?`);
-				}
-			}
-
-			if (config.show_q_plus_u) {
-				if (typeof info.q_plus_u === "number" && info.n > 0) {				// Checking n is correct.
-					extra_stat_strings.push(`Q+U: ${info.q_plus_u.toFixed(5)}`);
-				} else {
-					extra_stat_strings.push(`Q+U: ?`);
-				}
-			}
+			let extra_stat_strings = info.stats_list(
+				{
+					n: config.show_n,
+					n_abs: config.show_n_abs,
+					p: config.show_p,
+					v: config.show_v,
+					q: config.show_q,
+					d: config.show_d,
+					u: config.show_u,
+					q_plus_u: config.show_q_plus_u,
+				},
+				this.nodes);
 
 			if (extra_stat_strings.length > 0) {
 				substrings.push(`<span class="gray">(${extra_stat_strings.join(', ')})</span>`);
@@ -777,6 +724,97 @@ const info_prototype = {
 			return "?";
 		}
 		return (this.value() * 100).toFixed(dp);
+	},
+
+	stats_list: function(opts, nodes_total) {
+
+		let ret = [];
+
+		if (opts.ev) {
+			ret.push(`EV: ${this.value_string(1)}%`);
+		}
+
+		// N is fairly complicated...
+
+		if (typeof this.n === "number" && nodes_total) {		// i.e. nodes_total is not zero or undefined
+
+			let n_string = "";
+
+			if (opts.n) {
+				n_string += ` N: ${(100 * this.n / nodes_total).toFixed(2)}%`;
+			}
+
+			if (opts.n_abs) {
+				if (opts.n) {
+					n_string += ` [${NString(this.n)}]`;
+				} else {
+					n_string += ` ${NString(this.n)}`;
+				}
+			}
+
+			if (opts.of_n) {
+				n_string += ` of ${NString(nodes_total)}`;
+			}
+
+			if (n_string !== "") {
+				ret.push(n_string.trim());
+			}
+
+		} else {
+
+			if (opts.n || opts.n_abs || opts.of_n) {
+				ret.push("N: ?");
+			}
+			
+		}
+
+		// Everything else...
+
+		if (opts.p) {
+			ret.push(`P: ${this.p}`);
+		}
+
+		if (opts.v) {
+			if (typeof this.v === "number") {
+				ret.push(`V: ${this.v.toFixed(3)}`);
+			} else {
+				ret.push(`V: ?`);
+			}
+		}
+
+		if (opts.q) {
+			if (typeof this.q === "number") {
+				ret.push(`Q: ${this.q.toFixed(3)}`);
+			} else {
+				ret.push(`Q: ?`);
+			}
+		}
+
+		if (opts.d) {
+			if (typeof this.d === "number") {
+				ret.push(`D: ${this.d.toFixed(3)}`);
+			} else {
+				ret.push(`D: ?`);
+			}
+		}
+
+		if (opts.u) {
+			if (typeof this.u === "number" && this.n > 0) {						// Checking n is correct.
+				ret.push(`U: ${this.u.toFixed(3)}`);
+			} else {
+				ret.push(`U: ?`);
+			}
+		}
+
+		if (opts.q_plus_u) {
+			if (typeof this.q_plus_u === "number" && this.n > 0) {				// Checking n is correct.
+				ret.push(`Q+U: ${this.q_plus_u.toFixed(5)}`);
+			} else {
+				ret.push(`Q+U: ?`);
+			}
+		}
+
+		return ret;
 	}
 };
 

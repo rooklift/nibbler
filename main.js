@@ -1076,6 +1076,121 @@ function menu_build() {
 					}
 				},
 				{
+					label: "Serious Analysis saved stats",
+					submenu: [
+						{
+							label: "Show EV",
+							type: "checkbox",
+							checked: config.sam_ev,
+							click: () => {
+								win.webContents.send("call", {
+									fn: "toggle",
+									args: ["sam_ev"],
+								});
+							}
+						},
+						{
+							label: "Show N (%)",
+							type: "checkbox",
+							checked: config.sam_n,
+							click: () => {
+								win.webContents.send("call", {
+									fn: "toggle",
+									args: ["sam_n"],
+								});
+							}
+						},
+						{
+							label: "Show N (absolute)",
+							type: "checkbox",
+							checked: config.sam_n_abs,
+							click: () => {
+								win.webContents.send("call", {
+									fn: "toggle",
+									args: ["sam_n_abs"],
+								});
+							}
+						},
+						{
+							label: "Show Total Nodes",
+							type: "checkbox",
+							checked: config.sam_of_n,
+							click: () => {
+								win.webContents.send("call", {
+									fn: "toggle",
+									args: ["sam_of_n"],
+								});
+							}
+						},
+						{
+							label: "Show P",
+							type: "checkbox",
+							checked: config.sam_p,
+							click: () => {
+								win.webContents.send("call", {
+									fn: "toggle",
+									args: ["sam_p"],
+								});
+							}
+						},
+						{
+							label: "Show V",
+							type: "checkbox",
+							checked: config.sam_v,
+							click: () => {
+								win.webContents.send("call", {
+									fn: "toggle",
+									args: ["sam_v"],
+								});
+							}
+						},
+						{
+							label: "Show Q",
+							type: "checkbox",
+							checked: config.sam_q,
+							click: () => {
+								win.webContents.send("call", {
+									fn: "toggle",
+									args: ["sam_q"],
+								});
+							}
+						},
+						{
+							label: "Show D",
+							type: "checkbox",
+							checked: config.sam_d,
+							click: () => {
+								win.webContents.send("call", {
+									fn: "toggle",
+									args: ["sam_d"],
+								});
+							}
+						},
+						{
+							label: "Show U",
+							type: "checkbox",
+							checked: config.sam_u,
+							click: () => {
+								win.webContents.send("call", {
+									fn: "toggle",
+									args: ["sam_u"],
+								});
+							}
+						},
+						{
+							label: "Show Q+U",
+							type: "checkbox",
+							checked: config.sam_q_plus_u,
+							click: () => {
+								win.webContents.send("call", {
+									fn: "toggle",
+									args: ["sam_q_plus_u"],
+								});
+							}
+						},
+					]
+				},
+				{
 					label: "About Serious Analysis Mode",
 					click: () => {
 						alert(messages.about_serious_analysis);
