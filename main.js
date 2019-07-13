@@ -926,7 +926,7 @@ function menu_build() {
 			label: "Engine",
 			submenu: [
 				{
-					label: "Leela plays White",
+					label: "Only play White",
 					click: () => {
 						win.webContents.send("call", {
 							fn: "set_versus",
@@ -935,7 +935,7 @@ function menu_build() {
 					}
 				},
 				{
-					label: "Leela plays Black",
+					label: "Only play Black",
 					click: () => {
 						win.webContents.send("call", {
 							fn: "set_versus",
