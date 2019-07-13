@@ -716,10 +716,6 @@ const info_prototype = {
 	},
 
 	value_string: function(dp) {
-
-		// Reminder: if we ever go back to supporting winrate_as_q (i.e. -100 to 100 scale) we will need
-		// to remember NOT to show it that way when putting stats into a node in "Serious" Mode.
-
 		if (typeof this.q !== "number") {
 			return "?";
 		}
