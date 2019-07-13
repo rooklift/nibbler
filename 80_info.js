@@ -744,7 +744,7 @@ const info_prototype = {
 				if (opts.n) {
 					n_string += ` [${NString(this.n)}]`;
 				} else {
-					n_string += ` ${NString(this.n)}`;
+					n_string += ` N: ${NString(this.n)}`;
 				}
 			}
 
