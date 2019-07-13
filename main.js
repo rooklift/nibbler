@@ -238,7 +238,7 @@ function menu_build() {
 			label: "Navigation",
 			submenu: [
 				{
-					label: "Play Choice",
+					label: "Play choice",
 					submenu: [
 						{
 						label: "1st",
@@ -369,7 +369,7 @@ function menu_build() {
 					type: "separator"
 				},
 				{
-					label: "Flip Board",
+					label: "Flip board",
 					accelerator: "CommandOrControl+F",
 					click: () => {
 						win.webContents.send("call", {
@@ -402,282 +402,6 @@ function menu_build() {
 							args: [""],
 						});
 					}
-				},
-				{
-					type: "separator"
-				},
-				{
-					label: "Switch weights file...",
-					click: () => {
-						let files = electron.dialog.showOpenDialog({
-							properties: ["openFile"]
-						});
-						if (files && files.length > 0) {
-							win.webContents.send("call", {
-								fn: "switch_weights",
-								args: [files[0]]
-							});
-							loaded_weights = files[0];
-						}
-					}
-				},
-				{
-					label: "Reset Lc0 cache",
-					accelerator: "F12",
-					click: () => {
-						win.webContents.send("call", "reset_leela_cache");
-					}
-				},
-				{
-					type: "separator"
-				},
-				{
-					label: "Node limit",
-					submenu: [
-						{
-							label: "Infinite",
-							type: "checkbox",
-							checked: config.search_nodes === "infinite",
-							click: () => {
-								set_checks(["Analysis", "Node limit"], 0);
-								win.webContents.send("set", {
-									key: "search_nodes",
-									value: "infinite"
-								});
-								win.webContents.send("call", "go_or_halt");
-							}
-						},
-						{
-							label: "100,000,000",
-							type: "checkbox",
-							checked: config.search_nodes === 100000000,
-							click: () => {
-								set_checks(["Analysis", "Node limit"], 1);
-								win.webContents.send("set", {
-									key: "search_nodes",
-									value: 100000000
-								});
-								win.webContents.send("call", "go_or_halt");
-							}
-						},
-						{
-							label: "10,000,000",
-							type: "checkbox",
-							checked: config.search_nodes === 10000000,
-							click: () => {
-								set_checks(["Analysis", "Node limit"], 2);
-								win.webContents.send("set", {
-									key: "search_nodes",
-									value: 10000000
-								});
-								win.webContents.send("call", "go_or_halt");
-							}
-						},
-						{
-							label: "1,000,000",
-							type: "checkbox",
-							checked: config.search_nodes === 1000000,
-							click: () => {
-								set_checks(["Analysis", "Node limit"], 3);
-								win.webContents.send("set", {
-									key: "search_nodes",
-									value: 1000000
-								});
-								win.webContents.send("call", "go_or_halt");
-							}
-						},
-						{
-							label: "100,000",
-							type: "checkbox",
-							checked: config.search_nodes === 100000,
-							click: () => {
-								set_checks(["Analysis", "Node limit"], 4);
-								win.webContents.send("set", {
-									key: "search_nodes",
-									value: 100000
-								});
-								win.webContents.send("call", "go_or_halt");
-							}
-						},
-						{
-							label: "10,000",
-							type: "checkbox",
-							checked: config.search_nodes === 10000,
-							click: () => {
-								set_checks(["Analysis", "Node limit"], 5);
-								win.webContents.send("set", {
-									key: "search_nodes",
-									value: 10000
-								});
-								win.webContents.send("call", "go_or_halt");
-							}
-						},
-						{
-							label: "1,000",
-							type: "checkbox",
-							checked: config.search_nodes === 1000,
-							click: () => {
-								set_checks(["Analysis", "Node limit"], 6);
-								win.webContents.send("set", {
-									key: "search_nodes",
-									value: 1000
-								});
-								win.webContents.send("call", "go_or_halt");
-							}
-						},
-						{
-							label: "100",
-							type: "checkbox",
-							checked: config.search_nodes === 100,
-							click: () => {
-								set_checks(["Analysis", "Node limit"], 7);
-								win.webContents.send("set", {
-									key: "search_nodes",
-									value: 100
-								});
-								win.webContents.send("call", "go_or_halt");
-							}
-						},
-						{
-							label: "10",
-							type: "checkbox",
-							checked: config.search_nodes === 10,
-							click: () => {
-								set_checks(["Analysis", "Node limit"], 8);
-								win.webContents.send("set", {
-									key: "search_nodes",
-									value: 10
-								});
-								win.webContents.send("call", "go_or_halt");
-							}
-						},
-						{
-							label: "1",
-							type: "checkbox",
-							checked: config.search_nodes === 1,
-							click: () => {
-								set_checks(["Analysis", "Node limit"], 9);
-								win.webContents.send("set", {
-									key: "search_nodes",
-									value: 1
-								});
-								win.webContents.send("call", "go_or_halt");
-							}
-						},
-					]
-				},
-				{
-					label: "CPuct",
-					submenu: [
-					{
-							label: "4.0",
-							type: "checkbox",
-							checked: config.options.CPuct === 4.0,
-							click: () => {
-								set_checks(["Analysis", "CPuct"], 0);
-								win.webContents.send("call", {
-									fn: "set_cpuct",
-									args: [4.0],
-								});
-							}
-						},
-						{
-							label: "3.8",
-							type: "checkbox",
-							checked: config.options.CPuct === 3.8,
-							click: () => {
-								set_checks(["Analysis", "CPuct"], 1);
-								win.webContents.send("call", {
-									fn: "set_cpuct",
-									args: [3.8],
-								});
-							}
-						},
-						{
-							label: "3.6",
-							type: "checkbox",
-							checked: config.options.CPuct === 3.6,
-							click: () => {
-								set_checks(["Analysis", "CPuct"], 2);
-								win.webContents.send("call", {
-									fn: "set_cpuct",
-									args: [3.6],
-								});
-							}
-						},
-						{
-							label: "3.4",
-							type: "checkbox",
-							checked: config.options.CPuct === 3.4,
-							click: () => {
-								set_checks(["Analysis", "CPuct"], 3);
-								win.webContents.send("call", {
-									fn: "set_cpuct",
-									args: [3.4],
-								});
-							}
-						},
-						{
-							label: "3.2",
-							type: "checkbox",
-							checked: config.options.CPuct === 3.2,
-							click: () => {
-								set_checks(["Analysis", "CPuct"], 4);
-								win.webContents.send("call", {
-									fn: "set_cpuct",
-									args: [3.2],
-								});
-							}
-						},
-						{
-							label: "3.0",
-							type: "checkbox",
-							checked: config.options.CPuct === 3.0,
-							click: () => {
-								set_checks(["Analysis", "CPuct"], 5);
-								win.webContents.send("call", {
-									fn: "set_cpuct",
-									args: [3.0],
-								});
-							}
-						},
-						{
-							label: "2.8",
-							type: "checkbox",
-							checked: config.options.CPuct === 2.8,
-							click: () => {
-								set_checks(["Analysis", "CPuct"], 6);
-								win.webContents.send("call", {
-									fn: "set_cpuct",
-									args: [2.8],
-								});
-							}
-						},
-						{
-							label: "2.6",
-							type: "checkbox",
-							checked: config.options.CPuct === 2.6,
-							click: () => {
-								set_checks(["Analysis", "CPuct"], 7);
-								win.webContents.send("call", {
-									fn: "set_cpuct",
-									args: [2.6],
-								});
-							}
-						},
-						{
-							label: "2.4",
-							type: "checkbox",
-							checked: config.options.CPuct === 2.4,
-							click: () => {
-								set_checks(["Analysis", "CPuct"], 8);
-								win.webContents.send("call", {
-									fn: "set_cpuct",
-									args: [2.4],
-								});
-							}
-						},
-					]
 				},
 				{
 					type: "separator"
@@ -1199,7 +923,7 @@ function menu_build() {
 			]
 		},
 		{
-			label: "Versus",
+			label: "Engine",
 			submenu: [
 				{
 					label: "Leela plays White",
@@ -1220,13 +944,286 @@ function menu_build() {
 					}
 				},
 				{
-					type: "separator"
-				},
-				{
-					label: "About Versus Mode",
+					label: "About single colour modes",
 					click: () => {
 						alert(messages.about_versus_mode);
 					}
+				},
+				{
+					type: "separator"
+				},
+				{
+					label: "Switch weights file...",
+					click: () => {
+						let files = electron.dialog.showOpenDialog({
+							properties: ["openFile"]
+						});
+						if (files && files.length > 0) {
+							win.webContents.send("call", {
+								fn: "switch_weights",
+								args: [files[0]]
+							});
+							loaded_weights = files[0];
+						}
+					}
+				},
+				{
+					label: "Reset Lc0 cache",
+					accelerator: "F12",
+					click: () => {
+						win.webContents.send("call", "reset_leela_cache");
+					}
+				},
+				{
+					type: "separator"
+				},
+				{
+					label: "Node limit",
+					submenu: [
+						{
+							label: "Infinite",
+							type: "checkbox",
+							checked: config.search_nodes === "infinite",
+							click: () => {
+								set_checks(["Engine", "Node limit"], 0);
+								win.webContents.send("set", {
+									key: "search_nodes",
+									value: "infinite"
+								});
+								win.webContents.send("call", "go_or_halt");
+							}
+						},
+						{
+							label: "100,000,000",
+							type: "checkbox",
+							checked: config.search_nodes === 100000000,
+							click: () => {
+								set_checks(["Engine", "Node limit"], 1);
+								win.webContents.send("set", {
+									key: "search_nodes",
+									value: 100000000
+								});
+								win.webContents.send("call", "go_or_halt");
+							}
+						},
+						{
+							label: "10,000,000",
+							type: "checkbox",
+							checked: config.search_nodes === 10000000,
+							click: () => {
+								set_checks(["Engine", "Node limit"], 2);
+								win.webContents.send("set", {
+									key: "search_nodes",
+									value: 10000000
+								});
+								win.webContents.send("call", "go_or_halt");
+							}
+						},
+						{
+							label: "1,000,000",
+							type: "checkbox",
+							checked: config.search_nodes === 1000000,
+							click: () => {
+								set_checks(["Engine", "Node limit"], 3);
+								win.webContents.send("set", {
+									key: "search_nodes",
+									value: 1000000
+								});
+								win.webContents.send("call", "go_or_halt");
+							}
+						},
+						{
+							label: "100,000",
+							type: "checkbox",
+							checked: config.search_nodes === 100000,
+							click: () => {
+								set_checks(["Engine", "Node limit"], 4);
+								win.webContents.send("set", {
+									key: "search_nodes",
+									value: 100000
+								});
+								win.webContents.send("call", "go_or_halt");
+							}
+						},
+						{
+							label: "10,000",
+							type: "checkbox",
+							checked: config.search_nodes === 10000,
+							click: () => {
+								set_checks(["Engine", "Node limit"], 5);
+								win.webContents.send("set", {
+									key: "search_nodes",
+									value: 10000
+								});
+								win.webContents.send("call", "go_or_halt");
+							}
+						},
+						{
+							label: "1,000",
+							type: "checkbox",
+							checked: config.search_nodes === 1000,
+							click: () => {
+								set_checks(["Engine", "Node limit"], 6);
+								win.webContents.send("set", {
+									key: "search_nodes",
+									value: 1000
+								});
+								win.webContents.send("call", "go_or_halt");
+							}
+						},
+						{
+							label: "100",
+							type: "checkbox",
+							checked: config.search_nodes === 100,
+							click: () => {
+								set_checks(["Engine", "Node limit"], 7);
+								win.webContents.send("set", {
+									key: "search_nodes",
+									value: 100
+								});
+								win.webContents.send("call", "go_or_halt");
+							}
+						},
+						{
+							label: "10",
+							type: "checkbox",
+							checked: config.search_nodes === 10,
+							click: () => {
+								set_checks(["Engine", "Node limit"], 8);
+								win.webContents.send("set", {
+									key: "search_nodes",
+									value: 10
+								});
+								win.webContents.send("call", "go_or_halt");
+							}
+						},
+						{
+							label: "1",
+							type: "checkbox",
+							checked: config.search_nodes === 1,
+							click: () => {
+								set_checks(["Engine", "Node limit"], 9);
+								win.webContents.send("set", {
+									key: "search_nodes",
+									value: 1
+								});
+								win.webContents.send("call", "go_or_halt");
+							}
+						},
+					]
+				},
+				{
+					label: "CPuct",
+					submenu: [
+					{
+							label: "4.0",
+							type: "checkbox",
+							checked: config.options.CPuct === 4.0,
+							click: () => {
+								set_checks(["Engine", "CPuct"], 0);
+								win.webContents.send("call", {
+									fn: "set_cpuct",
+									args: [4.0],
+								});
+							}
+						},
+						{
+							label: "3.8",
+							type: "checkbox",
+							checked: config.options.CPuct === 3.8,
+							click: () => {
+								set_checks(["Engine", "CPuct"], 1);
+								win.webContents.send("call", {
+									fn: "set_cpuct",
+									args: [3.8],
+								});
+							}
+						},
+						{
+							label: "3.6",
+							type: "checkbox",
+							checked: config.options.CPuct === 3.6,
+							click: () => {
+								set_checks(["Engine", "CPuct"], 2);
+								win.webContents.send("call", {
+									fn: "set_cpuct",
+									args: [3.6],
+								});
+							}
+						},
+						{
+							label: "3.4",
+							type: "checkbox",
+							checked: config.options.CPuct === 3.4,
+							click: () => {
+								set_checks(["Engine", "CPuct"], 3);
+								win.webContents.send("call", {
+									fn: "set_cpuct",
+									args: [3.4],
+								});
+							}
+						},
+						{
+							label: "3.2",
+							type: "checkbox",
+							checked: config.options.CPuct === 3.2,
+							click: () => {
+								set_checks(["Engine", "CPuct"], 4);
+								win.webContents.send("call", {
+									fn: "set_cpuct",
+									args: [3.2],
+								});
+							}
+						},
+						{
+							label: "3.0",
+							type: "checkbox",
+							checked: config.options.CPuct === 3.0,
+							click: () => {
+								set_checks(["Engine", "CPuct"], 5);
+								win.webContents.send("call", {
+									fn: "set_cpuct",
+									args: [3.0],
+								});
+							}
+						},
+						{
+							label: "2.8",
+							type: "checkbox",
+							checked: config.options.CPuct === 2.8,
+							click: () => {
+								set_checks(["Engine", "CPuct"], 6);
+								win.webContents.send("call", {
+									fn: "set_cpuct",
+									args: [2.8],
+								});
+							}
+						},
+						{
+							label: "2.6",
+							type: "checkbox",
+							checked: config.options.CPuct === 2.6,
+							click: () => {
+								set_checks(["Engine", "CPuct"], 7);
+								win.webContents.send("call", {
+									fn: "set_cpuct",
+									args: [2.6],
+								});
+							}
+						},
+						{
+							label: "2.4",
+							type: "checkbox",
+							checked: config.options.CPuct === 2.4,
+							click: () => {
+								set_checks(["Engine", "CPuct"], 8);
+								win.webContents.send("call", {
+									fn: "set_cpuct",
+									args: [2.4],
+								});
+							}
+						},
+					]
 				}
 			]
 		},

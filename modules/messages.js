@@ -8,10 +8,10 @@ statistic. Often the U statistic remains high for most moves, when Leela \
 thinks the right move is "obvious".`;
 
 exports.about_versus_mode = `
-Versus Mode causes Leela to evaluate one side of the position only. \
+These options cause Leela to evaluate one side of the position only. \
 You must still manually decide which of Leela's suggestions to play. \
-You can exit Versus Mode with the Go or Halt commands in the Analysis \
-menu.`;
+You can return things to normal with the Go or Halt commands in the \
+Analysis menu.`;
 
 exports.save_not_enabled = `
 Save is disabled until you read the following warning.
