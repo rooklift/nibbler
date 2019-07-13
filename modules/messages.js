@@ -34,4 +34,7 @@ relevant moves to the tree, but will not actually take you there; i.e. \
 we will continue analysing the current position.
 
 2: clicking on a move in the infobox will cause some statistics \
-about the first move in the line to be displayed in the tree.`;
+about the first move in the line to be displayed in the tree.
+
+These features were made due to specific requests, but most users can safely \
+ignore them.`;
