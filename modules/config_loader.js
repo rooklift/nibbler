@@ -186,4 +186,4 @@ exports.load = () => {
 	assign_without_overwrite(cfg, exports.defaults);
 	fix(cfg);
 	return cfg;
-}
+};
