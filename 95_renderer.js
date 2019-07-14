@@ -1221,7 +1221,7 @@ function NewRenderer() {
 
 	if (typeof config.path === "string") {
 
-		renderer.engine.setup(config.path, config.args, renderer.receive.bind(renderer), renderer.err_receive.bind(renderer), config.log_info_lines);
+		renderer.engine.setup(renderer.receive.bind(renderer), renderer.err_receive.bind(renderer));
 
 		renderer.engine.send("uci");
 		for (let key of Object.keys(config.options)) {

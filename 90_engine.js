@@ -8,7 +8,6 @@ function NewEngine() {
 	eng.readyok_required = 0;
 	eng.scanner = null;
 	eng.err_scanner = null;
-	eng.log_info_lines = false;
 	eng.ever_sent = false;
 	eng.warned = false;
 
@@ -57,7 +56,7 @@ function NewEngine() {
 		this.readyok_required++;
 	};
 
-	eng.setup = function(engine_path, args, receive_fn, err_receive_fn, log_info_lines) {
+	eng.setup = function(receive_fn, err_receive_fn) {
 
 		// This is slightly sketchy, the passed functions get saved to our engine
 		// object in a way that makes them look like methods of this object. Hmm.
@@ -67,14 +66,9 @@ function NewEngine() {
 
 		this.receive_fn = receive_fn;
 		this.err_receive_fn = err_receive_fn;
-		this.log_info_lines = log_info_lines;
-
-		if (Array.isArray(args) === false) {
-			args = [];
-		}
 
 		try {
-			this.exe = child_process.spawn(engine_path, args, {cwd: path.dirname(engine_path)});
+			this.exe = child_process.spawn(config.path, config.args, {cwd: path.dirname(config.path)});
 		} catch (err) {
 			alert(err);
 			return;
@@ -110,13 +104,13 @@ function NewEngine() {
 			}
 
 			if (this.readyok_required > 0) {
-				if (this.log_info_lines || line.includes("info") === false) {
+				if (config.log_info_lines || line.includes("info") === false) {
 					Log("(ignored) < " + line);
 				}
 				return;
 			}
 
-			if (this.log_info_lines || line.includes("info") === false) {
+			if (config.log_info_lines || line.includes("info") === false) {
 				Log("< " + line);
 			}
 			this.receive_fn(line);
