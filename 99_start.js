@@ -178,8 +178,10 @@ document.addEventListener("wheel", (event) => {
 
 	let allow = false;
 
-	if (event.path) {
-		for (let item of event.path) {
+	let path = event.path || (event.composedPath && event.composedPath());
+
+	if (path) {
+		for (let item of path) {
 			if (item.id === "boardfriends") {
 				allow = true;
 				break;

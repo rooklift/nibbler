@@ -201,11 +201,17 @@ function EventPathString(event, prefix) {
 	// Given an event with event.path like ["foo", "bar", "searchmove_e2e4", "whatever"]
 	// return the string "e2e4", assuming the prefix matches. Else return null.
 
-	if (!event || typeof prefix !== "string" || Array.isArray(event.path) === false) {
+	if (!event || typeof prefix !== "string") {
 		return null;
 	}
 
-	for (let item of event.path) {
+	let path = event.path || (event.composedPath && event.composedPath());
+
+	if (Array.isArray(path) === false) {
+		return null;
+	}
+
+	for (let item of path) {
 		if (typeof item.id === "string") {
 			if (item.id.startsWith(prefix)) {
 				return item.id.slice(prefix.length);

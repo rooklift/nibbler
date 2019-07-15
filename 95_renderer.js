@@ -930,10 +930,14 @@ function NewRenderer() {
 			let source = Point(text_data.slice(8, 10));
 			let dest = Point(null);
 
-			for (let item of event.path) {
-				if (typeof item.id === "string" && item.id.startsWith("overlay_")) {
-					dest = Point(item.id.slice(8, 10));
-					break;
+			let path = event.path || (event.composedPath && event.composedPath());
+
+			if (path) {
+				for (let item of path) {
+					if (typeof item.id === "string" && item.id.startsWith("overlay_")) {
+						dest = Point(item.id.slice(8, 10));
+						break;
+					}
 				}
 			}
 
