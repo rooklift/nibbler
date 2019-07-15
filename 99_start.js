@@ -214,6 +214,7 @@ window.addEventListener("dragover", (event) => {		// Necessary to prevent always
 });
 
 window.addEventListener("drop", (event) => {
+	event.preventDefault();
 	hub.handle_drop(event);
 });
 
