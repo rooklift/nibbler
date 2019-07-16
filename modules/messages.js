@@ -38,3 +38,8 @@ about the first move in the line to be displayed in the tree.
 
 These features were added due to specific requests, but most users can \
 safely ignore them.`;
+
+exports.engine_not_present = `
+Engine not found. Please edit config.json, or find the engine via the \
+Engine menu. You might also need to locate the weights (neural network) \
+file. Afterwards, you may like to save a valid config.json via the App menu.`;

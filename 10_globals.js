@@ -34,6 +34,7 @@ const config_io = require("./modules/config_io");
 const fs = require("fs");
 const images = require("./modules/images");
 const ipcRenderer = require("electron").ipcRenderer;
+const messages = require("./modules/messages");
 const path = require("path");
 const readline = require("readline");
 const util = require("util");

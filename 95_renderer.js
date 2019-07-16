@@ -586,6 +586,7 @@ function NewRenderer() {
 
 	renderer.switch_weights = function(filename) {
 		this.__halt();
+		config.options.WeightsFile = filename;
 		this.engine.setoption("WeightsFile", filename);
 		this.go_or_halt();
 	};
@@ -603,25 +604,27 @@ function NewRenderer() {
 			this.engine = NewEngine();
 		}
 
-		if (typeof config.path === "string") {
-
-			renderer.engine.setup(renderer.receive.bind(renderer), renderer.err_receive.bind(renderer));
-
-			renderer.engine.send("uci");
-			for (let key of Object.keys(config.options)) {
-				renderer.engine.setoption(key, config.options[key]);
-			}
-			renderer.engine.setoption("VerboseMoveStats", true);			// Required for LogLiveStats to work.
-			renderer.engine.setoption("LogLiveStats", true);				// "Secret" Lc0 command.
-
-			// Give me all the variations. Wait. Wait! I'm worried that what you heard was "give me
-			// a lot of variations". To clarify - give me all the variations!
-
-			renderer.engine.setoption("MultiPV", 500);
-			renderer.engine.setoption("SmartPruningFactor", 0);
-			renderer.engine.setoption("ScoreType", "centipawn");			// The default, but the user can't be allowed to override this.
-			renderer.engine.send("ucinewgame");
+		if (typeof config.path !== "string" || fs.existsSync(config.path) === false) {
+			alert(messages.engine_not_present);
+			return;
 		}
+
+		renderer.engine.setup(renderer.receive.bind(renderer), renderer.err_receive.bind(renderer));
+
+		renderer.engine.send("uci");
+		for (let key of Object.keys(config.options)) {
+			renderer.engine.setoption(key, config.options[key]);
+		}
+		renderer.engine.setoption("VerboseMoveStats", true);			// Required for LogLiveStats to work.
+		renderer.engine.setoption("LogLiveStats", true);				// "Secret" Lc0 command.
+
+		// Give me all the variations. Wait. Wait! I'm worried that what you heard was "give me
+		// a lot of variations". To clarify - give me all the variations!
+
+		renderer.engine.setoption("MultiPV", 500);
+		renderer.engine.setoption("SmartPruningFactor", 0);
+		renderer.engine.setoption("ScoreType", "centipawn");			// The default, but the user can't be allowed to override this.
+		renderer.engine.send("ucinewgame");
 	};
 
 	// --------------------------------------------------------------------------------------------

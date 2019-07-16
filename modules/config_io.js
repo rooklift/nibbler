@@ -177,7 +177,9 @@ exports.load = () => {
 			cfg = JSON.parse(debork_json(fs.readFileSync(config_example_filename, "utf8")));
 			cfg.warn_filename = true;
 		} else {
-			cfg.failure = `Couldn't find config file. Looked at:\n${config_filename}`;
+			if (process && process.type !== "renderer") {			// Don't bother telling the renderer.
+				cfg.failure = `Couldn't find config file. Looked at:\n${config_filename}`;
+			}
 		}
 	} catch (err) {
 		cfg.failure = `Failed to parse config file ${config_filename} - make sure it is valid JSON, and in particular, if on Windows, use \\\\ instead of \\ as a path separator.`;
