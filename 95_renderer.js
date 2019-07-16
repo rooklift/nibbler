@@ -605,6 +605,9 @@ function NewRenderer() {
 			this.engine = NewEngine();
 		}
 
+		this.info_handler.clear(this.node.get_board());
+		this.info_handler.reset_engine_info();
+
 		if (typeof config.path !== "string" || fs.existsSync(config.path) === false) {
 			alert(messages.engine_not_present);
 			return;

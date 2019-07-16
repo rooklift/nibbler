@@ -14,7 +14,6 @@ function NewInfoHandler() {
 	ih.ever_received_info = false;
 	ih.ever_received_q = false;
 	ih.ever_received_multipv_2 = false;
-
 	ih.stderr_log = "";
 
 	ih.one_click_moves = New2DArray(8, 8);	// Array of possible one-click moves. Updated by draw_arrows().
@@ -24,6 +23,13 @@ function NewInfoHandler() {
 	ih.last_drawn_highlight = null;
 	ih.last_drawn_highlight_class = null;
 	ih.last_drawn_searchmoves = [];
+
+	ih.reset_engine_info = function() {
+		this.ever_received_info = false;
+		this.ever_received_q = false;
+		this.ever_received_multipv_2 = false;
+		this.stderr_log = "";
+	};
 
 	ih.clear = function(board) {
 		if (!board) {
