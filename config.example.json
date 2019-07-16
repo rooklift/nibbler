@@ -8,7 +8,8 @@
 
 	"args": [],
 
-	"NOTE": "Users with high resolution monitors may want to increase the sizes below.",
+	"NOTE1": "The things above really matter, everything below is optional / aesthetic.",
+	"NOTE2": "Users with high resolution monitors may want to increase the sizes here.",
 
 	"width": 1280,
 	"height": 835,
