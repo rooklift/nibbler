@@ -116,6 +116,12 @@ function NewEngine() {
 			this.receive_fn(line);
 		});
 	};
+
+	eng.shutdown = function() {				// Note: Don't reuse the engine object.
+		this.receive_fn = () => {};
+		this.err_receive_fn = () => {};
+		this.send("quit");
+	};
 	
 	return eng;
 }

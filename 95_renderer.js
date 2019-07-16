@@ -585,8 +585,43 @@ function NewRenderer() {
 	};
 
 	renderer.switch_weights = function(filename) {
-		this.set_versus("");
+		this.__halt();
 		this.engine.setoption("WeightsFile", filename);
+		this.go_or_halt();
+	};
+
+	renderer.switch_engine = function(filename) {
+		this.set_versus("");
+		config.path = filename;
+		this.engine_start();
+	};
+
+	renderer.engine_start = function() {
+
+		if (this.engine.exe) {				// We already have an engine connection (possibly non-functioning, but still...)
+			this.engine.shutdown();
+			this.engine = NewEngine();
+		}
+
+		if (typeof config.path === "string") {
+
+			renderer.engine.setup(renderer.receive.bind(renderer), renderer.err_receive.bind(renderer));
+
+			renderer.engine.send("uci");
+			for (let key of Object.keys(config.options)) {
+				renderer.engine.setoption(key, config.options[key]);
+			}
+			renderer.engine.setoption("VerboseMoveStats", true);			// Required for LogLiveStats to work.
+			renderer.engine.setoption("LogLiveStats", true);				// "Secret" Lc0 command.
+
+			// Give me all the variations. Wait. Wait! I'm worried that what you heard was "give me
+			// a lot of variations". To clarify - give me all the variations!
+
+			renderer.engine.setoption("MultiPV", 500);
+			renderer.engine.setoption("SmartPruningFactor", 0);
+			renderer.engine.setoption("ScoreType", "centipawn");			// The default, but the user can't be allowed to override this.
+			renderer.engine.send("ucinewgame");
+		}
 	};
 
 	// --------------------------------------------------------------------------------------------
@@ -1212,34 +1247,6 @@ function NewRenderer() {
 		this.draw();
 		setTimeout(this.draw_loop.bind(this), config.update_delay);
 	};
-
-	// --------------------------------------------------------------------------------------------
-	// The call to setup needs to happen after renderer.receive and .err_receive actually exist...
-	// One could argue that this stuff shouldn't be in NewRenderer() at all.
-
-	if (typeof config.path === "string") {
-
-		renderer.engine.setup(renderer.receive.bind(renderer), renderer.err_receive.bind(renderer));
-
-		renderer.engine.send("uci");
-		for (let key of Object.keys(config.options)) {
-			renderer.engine.setoption(key, config.options[key]);
-		}
-		renderer.engine.setoption("VerboseMoveStats", true);			// Required for LogLiveStats to work.
-		renderer.engine.setoption("LogLiveStats", true);				// "Secret" Lc0 command.
-
-		// Give me all the variations. Wait. Wait! I'm worried that what you heard was "give me
-		// a lot of variations". To clarify - give me all the variations!
-
-		renderer.engine.setoption("MultiPV", 500);
-		renderer.engine.setoption("SmartPruningFactor", 0);
-		renderer.engine.setoption("ScoreType", "centipawn");			// The default, but the user can't be allowed to override this.
-		renderer.engine.send("ucinewgame");
-	}
-
-	// Another thing that needs to happen somewhere...
-
-	fenbox.value = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1";
 
 	return renderer;
 }

@@ -6,6 +6,8 @@ Log(`Nibbler startup at ${new Date().toUTCString()}`);
 Log("");
 
 let hub = NewRenderer();
+hub.engine_start();
+fenbox.value = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1";
 
 // We have 3 main things that get drawn to:
 //

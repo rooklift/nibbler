@@ -953,6 +953,20 @@ function menu_build() {
 					type: "separator"
 				},
 				{
+					label: "Find engine...",
+					click: () => {
+						let files = electron.dialog.showOpenDialog({
+							properties: ["openFile"]
+						});
+						if (files && files.length > 0) {
+							win.webContents.send("call", {
+								fn: "switch_engine",
+								args: [files[0]]
+							});
+						}
+					}
+				},
+				{
 					label: "Switch weights file...",
 					click: () => {
 						let files = electron.dialog.showOpenDialog({
