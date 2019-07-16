@@ -204,4 +204,4 @@ exports.save = (filename, cfg) => {
 	}
 
 	fs.writeFileSync(filename, JSON.stringify(out, null, "\t"));
-}
+};
