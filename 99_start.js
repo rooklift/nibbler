@@ -86,17 +86,17 @@ if (config.failure) {
 	alert(config.failure);
 }
 
-ipcRenderer.on("set", (event, msg) => {		// Should only be for things that don't need immediate action.
-	config[msg.key] = msg.value;
-	hub.draw();
-});
-
 // --------------------------------------------------------------------------------------------
 // In bad cases of super-large trees, the UI can become unresponsive. To mitigate this, we
 // put user input in a queue, and drop things if they build up.
 
 let input_queue = [];
 let total_dropped_inputs = 0;
+
+ipcRenderer.on("set", (event, msg) => {		// Should only be for things that don't need immediate action.
+	config[msg.key] = msg.value;
+	hub.draw();
+});
 
 ipcRenderer.on("call", (event, msg) => {
 
