@@ -1,9 +1,9 @@
 {
-	"path": "C:\\Programs (self-installed)\\Lc0-cudnn\\lc0.exe",
+	"path": "C:\\absolute\\path\\for\\lc0.exe",
 
 	"options": {
 		"Backend": "cudnn",
-		"WeightsFile": "C:\\Users\\Owner\\Documents\\Misc\\Lc0 Networks\\42482"
+		"WeightsFile": "C:\\absolute\\path\\for\\the_weights"
 	},
 
 	"args": [],
