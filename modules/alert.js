@@ -42,4 +42,4 @@ module.exports = (msg) => {
 	} else {
 		alert_main(msg);
 	}
-}
+};
