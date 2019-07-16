@@ -471,7 +471,7 @@ function NewRenderer() {
 
 	renderer.receive = function(s) {
 
-		debug.receive = true;
+		debug.receive = true;			// Not foolproof since future receive calls might reach the bottom and clear this.
 
 		if (s.startsWith("info")) {
 			if (this.leela_position === this.node.get_board()) {		// Note leela_position is a misleading name - it's the last position we
