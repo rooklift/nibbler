@@ -470,6 +470,9 @@ function NewRenderer() {
 	};
 
 	renderer.receive = function(s) {
+
+		debug.receive = true;
+
 		if (s.startsWith("info")) {
 			if (this.leela_position === this.node.get_board()) {		// Note leela_position is a misleading name - it's the last position we
 				this.info_handler.receive(s, this.node.get_board());	// sent, but Leela could be sending info about the previous position.
@@ -485,6 +488,8 @@ function NewRenderer() {
 				}
 			}
 		}
+
+		debug.receive = false;
 	};
 
 	renderer.err_receive = function(s) {

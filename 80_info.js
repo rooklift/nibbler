@@ -67,11 +67,11 @@ function NewInfoHandler() {
 		}
 
 		// We use the board to check legality (only of the first move in the PV,
-		// later moves are checked if we ever try to use them.)
+		// later moves are checked if we ever try to use them) and also to check
+		// we are in sync with the renderer.
 
 		if (this.board !== board) {
-			console.log("ih.receive(): Received unexpected board.");
-			return;
+			throw "ih.receive(): Received unexpected board.";
 		}
 
 		if (s.startsWith("info") && s.includes(" pv ")) {
