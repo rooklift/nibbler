@@ -471,7 +471,7 @@ function NewRenderer() {
 
 	renderer.receive = function(s) {
 
-		debug.receive = true;			// Not foolproof since future receive calls might reach the bottom and clear this.
+		debug.receive = debug.receive ? debug.receive + 1 : 1;
 
 		if (s.startsWith("info")) {
 			if (this.leela_position === this.node.get_board()) {		// Note leela_position is a misleading name - it's the last position we
@@ -489,7 +489,7 @@ function NewRenderer() {
 			}
 		}
 
-		debug.receive = false;
+		debug.receive -= 1;
 	};
 
 	renderer.err_receive = function(s) {
@@ -1223,7 +1223,7 @@ function NewRenderer() {
 
 	renderer.draw = function() {
 
-		debug.draw = true;
+		debug.draw = debug.draw ? debug.draw + 1 : 1;
 
 		// We do the :hover reaction first. This way, we are detecting hover based on the previous cycle's state.
 		// This should prevent the sort of flicker that can occur if we try to detect hover based on changes we
@@ -1251,7 +1251,7 @@ function NewRenderer() {
 			this.searchmoves,
 			this.hoverdraw_div);
 
-		debug.draw = false;
+		debug.draw -= 1;
 	};
 
 	renderer.draw_loop = function() {

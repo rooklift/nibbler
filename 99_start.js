@@ -120,7 +120,7 @@ ipcRenderer.on("call", (event, msg) => {
 
 function input_loop() {
 
-	debug.input_loop = true;
+	debug.input_loop = debug.input_loop ? debug.input_loop + 1 : 1;
 
 	let fn;
 
@@ -141,7 +141,7 @@ function input_loop() {
 	}
 
 	setTimeout(input_loop, 10);
-	debug.input_loop = false;
+	debug.input_loop -= 1;
 }
 
 input_loop();
@@ -220,12 +220,12 @@ window.addEventListener("drop", (event) => {
 	hub.handle_drop(event);
 });
 
-// Debug. Various functions set a key in the debug object when they start, and clear it when they return.
-// So if we ever find such a key with a non-false value, it means a function failed to return.
+// Debug. Various functions increment a counter when starting, and decrement it before returning,
+// so if we find a property that is non-zero, an exception has occurred.
 
 function debug_loop() {
-	for (let key of Object.keys(debug)) {
-		if (debug[key]) {
+	for (let value of Object.values(debug)) {
+		if (value) {
 			alert(
 `There may have been an uncaught exception. If you could open the dev tools and the console tab \
 therein, and report the contents to the author (ideally with a screenshot) that would be grand.`);
