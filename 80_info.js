@@ -318,9 +318,7 @@ function NewInfoHandler() {
 		// Display stderr and return if we've never seen any info...
 
 		if (!this.ever_received_info) {
-			if (this.stderr_log.length > 0) {
-				infobox.innerHTML = this.stderr_log;
-			}
+			infobox.innerHTML = this.stderr_log;
 			return;
 		}
 

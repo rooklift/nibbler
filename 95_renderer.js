@@ -586,6 +586,7 @@ function NewRenderer() {
 
 	renderer.switch_weights = function(filename) {
 		this.__halt();
+		this.info_handler.stderr_log = "";					// Avoids having confusing stale messages.
 		config.options.WeightsFile = filename;
 		this.engine.setoption("WeightsFile", filename);
 		this.go_or_halt();
