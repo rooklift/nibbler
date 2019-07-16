@@ -694,13 +694,7 @@ function NewRenderer() {
 	};
 
 	renderer.save_config = function(filename) {
-		let copy = JSON.parse(JSON.stringify(config));
-		for (let key of Object.keys(copy)) {
-			if (config_loader.defaults[key] === undefined) {
-				delete copy[key];
-			}
-		}
-		fs.writeFileSync(filename, JSON.stringify(copy, null, "\t"));
+		config_io.save(filename, config);
 	};
 
 	renderer.fire_gc = function() {

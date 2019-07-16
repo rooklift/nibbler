@@ -187,3 +187,21 @@ exports.load = () => {
 	fix(cfg);
 	return cfg;
 };
+
+exports.save = (filename, cfg) => {
+
+	// Make a copy of the defaults. Doing it this way seems to
+	// ensure the final JSON string has the same ordering...
+
+	let out = JSON.parse(JSON.stringify(exports.defaults));
+
+	// Adjust that copy, but only for keys it already has...
+
+	for (let key of Object.keys(cfg)) {
+		if (out[key] !== undefined) {
+			out[key] = cfg[key];
+		}
+	}
+
+	fs.writeFileSync(filename, JSON.stringify(out, null, "\t"));
+}
