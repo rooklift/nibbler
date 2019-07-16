@@ -64,6 +64,7 @@ function NewEngine() {
 		// Also note, everything is stored as a reference in the object. Not sure
 		// if this is needed to stop stuff getting garbage collected...?
 
+		this.readyok_required = 0;			// In case sync() has been called.
 		this.receive_fn = receive_fn;
 		this.err_receive_fn = err_receive_fn;
 
