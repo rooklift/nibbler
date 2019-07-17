@@ -50,6 +50,7 @@ function NewInfoHandler() {
 		}
 
 		if (this.stderr_log.length > 50000) {
+			console.log(s);
 			return;
 		}
 
@@ -57,6 +58,10 @@ function NewInfoHandler() {
 			this.stderr_log += `<span class="red">${s}</span><br>`;
 		} else {
 			this.stderr_log += `${s}<br>`;
+		}
+
+		if (this.ever_received_info) {		// Means we won't see the err message on screen.
+			console.log(s);
 		}
 	};
 
