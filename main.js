@@ -1120,11 +1120,10 @@ function menu_build() {
 							checked: config.search_nodes === "infinite",
 							click: () => {
 								set_checks("Engine", "Node limit", "Infinite");
-								win.webContents.send("set", {
-									key: "search_nodes",
-									value: "infinite"
+								win.webContents.send("call", {
+									fn: "set_node_limit",
+									args: ["infinite"]
 								});
-								win.webContents.send("call", "go_or_halt");
 							}
 						},
 						{
@@ -1133,11 +1132,10 @@ function menu_build() {
 							checked: config.search_nodes === 100000000,
 							click: () => {
 								set_checks("Engine", "Node limit", "100,000,000");
-								win.webContents.send("set", {
-									key: "search_nodes",
-									value: 100000000
+								win.webContents.send("call", {
+									fn: "set_node_limit",
+									args: [100000000]
 								});
-								win.webContents.send("call", "go_or_halt");
 							}
 						},
 						{
@@ -1146,11 +1144,10 @@ function menu_build() {
 							checked: config.search_nodes === 10000000,
 							click: () => {
 								set_checks("Engine", "Node limit", "10,000,000");
-								win.webContents.send("set", {
-									key: "search_nodes",
-									value: 10000000
+								win.webContents.send("call", {
+									fn: "set_node_limit",
+									args: [10000000]
 								});
-								win.webContents.send("call", "go_or_halt");
 							}
 						},
 						{
@@ -1159,11 +1156,10 @@ function menu_build() {
 							checked: config.search_nodes === 1000000,
 							click: () => {
 								set_checks("Engine", "Node limit", "1,000,000");
-								win.webContents.send("set", {
-									key: "search_nodes",
-									value: 1000000
+								win.webContents.send("call", {
+									fn: "set_node_limit",
+									args: [1000000]
 								});
-								win.webContents.send("call", "go_or_halt");
 							}
 						},
 						{
@@ -1172,11 +1168,10 @@ function menu_build() {
 							checked: config.search_nodes === 100000,
 							click: () => {
 								set_checks("Engine", "Node limit", "100,000");
-								win.webContents.send("set", {
-									key: "search_nodes",
-									value: 100000
+								win.webContents.send("call", {
+									fn: "set_node_limit",
+									args: [100000]
 								});
-								win.webContents.send("call", "go_or_halt");
 							}
 						},
 						{
@@ -1185,11 +1180,10 @@ function menu_build() {
 							checked: config.search_nodes === 10000,
 							click: () => {
 								set_checks("Engine", "Node limit", "10,000");
-								win.webContents.send("set", {
-									key: "search_nodes",
-									value: 10000
+								win.webContents.send("call", {
+									fn: "set_node_limit",
+									args: [10000]
 								});
-								win.webContents.send("call", "go_or_halt");
 							}
 						},
 						{
@@ -1198,11 +1192,10 @@ function menu_build() {
 							checked: config.search_nodes === 1000,
 							click: () => {
 								set_checks("Engine", "Node limit", "1,000");
-								win.webContents.send("set", {
-									key: "search_nodes",
-									value: 1000
+								win.webContents.send("call", {
+									fn: "set_node_limit",
+									args: [1000]
 								});
-								win.webContents.send("call", "go_or_halt");
 							}
 						},
 						{
@@ -1211,11 +1204,10 @@ function menu_build() {
 							checked: config.search_nodes === 100,
 							click: () => {
 								set_checks("Engine", "Node limit", "100");
-								win.webContents.send("set", {
-									key: "search_nodes",
-									value: 100
+								win.webContents.send("call", {
+									fn: "set_node_limit",
+									args: [100]
 								});
-								win.webContents.send("call", "go_or_halt");
 							}
 						},
 						{
@@ -1224,11 +1216,10 @@ function menu_build() {
 							checked: config.search_nodes === 10,
 							click: () => {
 								set_checks("Engine", "Node limit", "10");
-								win.webContents.send("set", {
-									key: "search_nodes",
-									value: 10
+								win.webContents.send("call", {
+									fn: "set_node_limit",
+									args: [10]
 								});
-								win.webContents.send("call", "go_or_halt");
 							}
 						},
 						{
@@ -1237,11 +1228,10 @@ function menu_build() {
 							checked: config.search_nodes === 1,
 							click: () => {
 								set_checks("Engine", "Node limit", "1");
-								win.webContents.send("set", {
-									key: "search_nodes",
-									value: 1
+								win.webContents.send("call", {
+									fn: "set_node_limit",
+									args: [1]
 								});
-								win.webContents.send("call", "go_or_halt");
 							}
 						},
 					]

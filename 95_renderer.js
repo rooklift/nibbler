@@ -595,6 +595,11 @@ function NewRenderer() {
 		this.go_or_halt();
 	};
 
+	renderer.set_node_limit = function(val) {
+		config.search_nodes = val;
+		this.go_or_halt();
+	};
+
 	renderer.switch_weights = function(filename) {
 		this.__halt();
 		this.info_handler.stderr_log = "";					// Avoids having confusing stale messages.
