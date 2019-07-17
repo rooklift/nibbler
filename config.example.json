@@ -8,8 +8,9 @@
 
 	"args": [],
 
-	"NOTE1": "The things above really matter, everything below is optional / aesthetic.",
-	"NOTE2": "Users with high resolution monitors may want to increase the sizes here.",
+	"NOTE1": "If you use an lc0.config file you can delete the 'options' section above.",
+	"NOTE2": "The things above really matter, everything below is optional / aesthetic.",
+	"NOTE3": "Users with high resolution monitors may want to increase the sizes below.",
 
 	"width": 1280,
 	"height": 835,
