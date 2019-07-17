@@ -16,6 +16,10 @@ if (config.failure) {				// Do this early, while console.log still works.
 	console.log(config.failure);
 }
 
+// Note that as the user adjusts menu items, our copy of the config
+// will become out of date. The renderer is responsible for having
+// an up-to-date copy.
+
 let menu = menu_build();
 let win;
 let loaded_weights = config.options ? config.options.WeightsFile : null;
@@ -956,7 +960,7 @@ function menu_build() {
 					type: "separator"
 				},
 				{
-					label: "Find engine...",
+					label: "Choose engine...",
 					click: () => {
 						let files = electron.dialog.showOpenDialog({
 							properties: ["openFile"]
@@ -970,7 +974,7 @@ function menu_build() {
 					}
 				},
 				{
-					label: "Switch weights file...",
+					label: "Choose weights file...",
 					click: () => {
 						let files = electron.dialog.showOpenDialog({
 							properties: ["openFile"]
@@ -983,6 +987,119 @@ function menu_build() {
 							loaded_weights = files[0];
 						}
 					}
+				},
+				{
+					label: "Backend",
+					submenu: [
+						{
+							label: "cudnn",
+							type: "checkbox",
+							checked: config.options.Backend === "cudnn",
+							click: () => {
+								set_checks(["Engine", "Backend"], 0);
+								win.webContents.send("call", {
+									fn: "switch_backend",
+									args: ["cudnn"]
+								});
+							}
+						},
+						{
+							label: "cudnn-fp16",
+							type: "checkbox",
+							checked: config.options.Backend === "cudnn-fp16",
+							click: () => {
+								set_checks(["Engine", "Backend"], 1);
+								win.webContents.send("call", {
+									fn: "switch_backend",
+									args: ["cudnn-fp16"]
+								});
+							}
+						},
+						{
+							label: "opencl",
+							type: "checkbox",
+							checked: config.options.Backend === "opencl",
+							click: () => {
+								set_checks(["Engine", "Backend"], 2);
+								win.webContents.send("call", {
+									fn: "switch_backend",
+									args: ["opencl"]
+								});
+							}
+						},
+						{
+							label: "blas",
+							type: "checkbox",
+							checked: config.options.Backend === "blas",
+							click: () => {
+								set_checks(["Engine", "Backend"], 3);
+								win.webContents.send("call", {
+									fn: "switch_backend",
+									args: ["blas"]
+								});
+							}
+						},
+						{
+							label: "check",
+							type: "checkbox",
+							checked: config.options.Backend === "check",
+							click: () => {
+								set_checks(["Engine", "Backend"], 4);
+								win.webContents.send("call", {
+									fn: "switch_backend",
+									args: ["check"]
+								});
+							}
+						},
+						{
+							label: "random",
+							type: "checkbox",
+							checked: config.options.Backend === "random",
+							click: () => {
+								set_checks(["Engine", "Backend"], 5);
+								win.webContents.send("call", {
+									fn: "switch_backend",
+									args: ["random"]
+								});
+							}
+						},
+						{
+							label: "roundrobin",
+							type: "checkbox",
+							checked: config.options.Backend === "roundrobin",
+							click: () => {
+								set_checks(["Engine", "Backend"], 6);
+								win.webContents.send("call", {
+									fn: "switch_backend",
+									args: ["roundrobin"]
+								});
+							}
+						},
+						{
+							label: "multiplexing",
+							type: "checkbox",
+							checked: config.options.Backend === "multiplexing",
+							click: () => {
+								set_checks(["Engine", "Backend"], 7);
+								win.webContents.send("call", {
+									fn: "switch_backend",
+									args: ["multiplexing"]
+								});
+							}
+						},
+						{
+							label: "demux",
+							type: "checkbox",
+							checked: config.options.Backend === "demux",
+							click: () => {
+								set_checks(["Engine", "Backend"], 8);
+								win.webContents.send("call", {
+									fn: "switch_backend",
+									args: ["demux"]
+								});
+							}
+						}
+					]
 				},
 				{
 					label: "Reset Lc0 cache",

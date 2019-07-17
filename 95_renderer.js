@@ -589,6 +589,12 @@ function NewRenderer() {
 		}
 	};
 
+	renderer.set_cpuct = function(val) {
+		this.__halt();
+		this.engine.setoption("CPuct", val);
+		this.go_or_halt();
+	};
+
 	renderer.switch_weights = function(filename) {
 		this.__halt();
 		this.info_handler.stderr_log = "";					// Avoids having confusing stale messages.
@@ -601,6 +607,13 @@ function NewRenderer() {
 		this.set_versus("");
 		config.path = filename;
 		this.engine_start();
+	};
+
+	renderer.switch_backend = function(s) {
+		this.__halt();
+		config.options.Backend = s;
+		this.engine.setoption("Backend", s);
+		this.go_or_halt();
 	};
 
 	renderer.engine_start = function() {
@@ -708,12 +721,6 @@ function NewRenderer() {
 
 	renderer.clear_searchmoves = function() {
 		this.searchmoves = [];
-		this.go_or_halt();
-	};
-
-	renderer.set_cpuct = function(val) {
-		this.__halt();
-		this.engine.setoption("CPuct", val);
 		this.go_or_halt();
 	};
 
