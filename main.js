@@ -24,7 +24,7 @@ let menu = menu_build();
 let win;
 let loaded_weights = config.options ? config.options.WeightsFile : null;
 
-electron.app.on("ready", () => {
+electron.app.once("ready", () => {
 
 	win = new electron.BrowserWindow({
 		width: config.width,
