@@ -631,10 +631,10 @@ function NewRenderer() {
 		this.info_handler.clear(this.node.get_board());
 		this.info_handler.reset_engine_info();
 
-		//if (typeof config.path !== "string" || fs.existsSync(config.path) === false) {
-		//	alert(messages.engine_not_present);
-		//	return;
-		//}
+		if (typeof config.path !== "string" || fs.existsSync(config.path) === false) {
+			alert(messages.engine_not_present);
+			return;
+		}
 
 		renderer.engine.setup(renderer.receive.bind(renderer), renderer.err_receive.bind(renderer));
 
