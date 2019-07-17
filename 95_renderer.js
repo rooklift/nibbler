@@ -339,7 +339,13 @@ function NewRenderer() {
 	};
 
 	renderer.open = function(filename) {
-		let buf = fs.readFileSync(filename);
+		let buf;
+		try {
+			buf = fs.readFileSync(filename);
+		} catch (err) {
+			alert(err);
+			return;
+		}
 		this.load_pgn_buffer(buf);
 	};
 
@@ -443,7 +449,15 @@ function NewRenderer() {
 	};
 
 	renderer.validate_pgn = function(filename) {
-		let buf = fs.readFileSync(filename);		// i.e. binary buffer object
+		
+		let buf;
+		try {
+			buf = fs.readFileSync(filename);		// i.e. binary buffer object
+		} catch (err) {
+			alert(err);
+			return;
+		}
+
 		let pgn_list = PreParsePGN(buf);
 
 		for (let n = 0; n < pgn_list.length; n++) {

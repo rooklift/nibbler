@@ -271,7 +271,11 @@ function LoadPGNRecord(o) {
 
 function SavePGN(filename, node) {
 	let s = make_pgn_string(node);
-	fs.writeFileSync(filename, s);
+	try {
+		fs.writeFileSync(filename, s);
+	} catch (err) {
+		alert(err);
+	}
 }
 
 function PGNToClipboard(node) {

@@ -1,5 +1,6 @@
 "use strict";
 
+const alert = require("./alert");
 const fs = require("fs");
 const get_main_folder = require("./get_main_folder");
 const path = require("path");
@@ -205,5 +206,9 @@ exports.save = (filename, cfg) => {
 		}
 	}
 
-	fs.writeFileSync(filename, JSON.stringify(out, null, "\t"));
+	try {
+		fs.writeFileSync(filename, JSON.stringify(out, null, "\t"));
+	} catch (err) {
+		alert(err);
+	}
 };
