@@ -1102,6 +1102,9 @@ function menu_build() {
 					]
 				},
 				{
+					type: "separator"
+				},
+				{
 					label: "Reset Lc0 cache",
 					accelerator: "F12",
 					click: () => {
