@@ -75,8 +75,8 @@ function NewEngine() {
 			return;
 		}
 		
-		this.exe.on("error", (err) => {
-			alert("Couldn't spawn process - check the paths in the config file, and use absolute paths.");	// This alert will come some time in the future.
+		this.exe.once("error", (err) => {
+			alert(err);
 		});
 
 		this.scanner = readline.createInterface({
