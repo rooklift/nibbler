@@ -3,6 +3,7 @@
 const alert = require("./modules/alert");
 const electron = require("electron");
 const config_io = require("./modules/config_io");
+const get_main_folder = require("./modules/get_main_folder");
 const messages = require("./modules/messages");
 const path = require("path");
 const running_as_electron = require("./modules/running_as_electron");
@@ -215,7 +216,9 @@ function menu_build() {
 				{
 					label: "Save config.json...",
 					click: () => {
-						let file = electron.dialog.showSaveDialog();
+						let file = electron.dialog.showSaveDialog({
+							defaultPath: path.join(get_main_folder(), "config.json")
+						});
 						if (file && file.length > 0) {
 							win.webContents.send("call", {
 								fn: "save_config",
