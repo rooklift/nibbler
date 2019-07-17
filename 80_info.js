@@ -310,7 +310,7 @@ function NewInfoHandler() {
 			status_string += `<span class="gray">Nodes: ${NString(this.nodes)}, N/s: ${NString(this.nps)}, Time: ${DurationString(this.time)}</span>`;
 
 			if (typeof config.search_nodes === "number" && this.nodes >= config.search_nodes) {
-				status_string += ` <span class="blue">(limit exceeded)</span>`;
+				status_string += ` <span class="blue">(limit met)</span>`;
 			}
 
 			statusbox.innerHTML = status_string;
