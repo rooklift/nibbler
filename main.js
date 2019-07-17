@@ -422,7 +422,7 @@ function menu_build() {
 							checked: config.arrowhead_type === 0,
 							accelerator: "F5",
 							click: () => {
-								set_checks(["Analysis", "Arrowhead type"], 0);
+								set_checks("Analysis", "Arrowhead type", "Winrate");
 								win.webContents.send("set", {
 									key: "arrowhead_type",
 									value: 0,
@@ -435,7 +435,7 @@ function menu_build() {
 							checked: config.arrowhead_type === 1,
 							accelerator: "F6",
 							click: () => {
-								set_checks(["Analysis", "Arrowhead type"], 1);
+								set_checks("Analysis", "Arrowhead type", "Node %");
 								win.webContents.send("set", {
 									key: "arrowhead_type",
 									value: 1,
@@ -448,7 +448,7 @@ function menu_build() {
 							checked: config.arrowhead_type === 2,
 							accelerator: "F7",
 							click: () => {
-								set_checks(["Analysis", "Arrowhead type"], 2);
+								set_checks("Analysis", "Arrowhead type", "Policy");
 								win.webContents.send("set", {
 									key: "arrowhead_type",
 									value: 2,
@@ -461,7 +461,7 @@ function menu_build() {
 							checked: config.arrowhead_type === 3,
 							accelerator: "F8",
 							click: () => {
-								set_checks(["Analysis", "Arrowhead type"], 3);
+								set_checks("Analysis", "Arrowhead type", "MultiPV rank");
 								win.webContents.send("set", {
 									key: "arrowhead_type",
 									value: 3,
@@ -478,7 +478,7 @@ function menu_build() {
 							type: "checkbox",
 							checked: config.uncertainty_cutoff === 999,				// Semi-special value we use
 							click: () => {
-								set_checks(["Analysis", "Moves to show"], 0);
+								set_checks("Analysis", "Moves to show", "All moves");
 								win.webContents.send("set", {
 									key: "uncertainty_cutoff",
 									value: 999
@@ -490,7 +490,7 @@ function menu_build() {
 							type: "checkbox",
 							checked: config.uncertainty_cutoff === 0.2,
 							click: () => {
-								set_checks(["Analysis", "Moves to show"], 1);
+								set_checks("Analysis", "Moves to show", "U < 0.2");
 								win.webContents.send("set", {
 									key: "uncertainty_cutoff",
 									value: 0.2
@@ -502,7 +502,7 @@ function menu_build() {
 							type: "checkbox",
 							checked: config.uncertainty_cutoff === 0.175,
 							click: () => {
-								set_checks(["Analysis", "Moves to show"], 2);
+								set_checks("Analysis", "Moves to show", "U < 0.175");
 								win.webContents.send("set", {
 									key: "uncertainty_cutoff",
 									value: 0.175
@@ -514,7 +514,7 @@ function menu_build() {
 							type: "checkbox",
 							checked: config.uncertainty_cutoff === 0.15,
 							click: () => {
-								set_checks(["Analysis", "Moves to show"], 3);
+								set_checks("Analysis", "Moves to show", "U < 0.15");
 								win.webContents.send("set", {
 									key: "uncertainty_cutoff",
 									value: 0.15
@@ -526,7 +526,7 @@ function menu_build() {
 							type: "checkbox",
 							checked: config.uncertainty_cutoff === 0.125,
 							click: () => {
-								set_checks(["Analysis", "Moves to show"], 4);
+								set_checks("Analysis", "Moves to show", "U < 0.125");
 								win.webContents.send("set", {
 									key: "uncertainty_cutoff",
 									value: 0.125
@@ -538,7 +538,7 @@ function menu_build() {
 							type: "checkbox",
 							checked: config.uncertainty_cutoff === 0.1,
 							click: () => {
-								set_checks(["Analysis", "Moves to show"], 5);
+								set_checks("Analysis", "Moves to show", "U < 0.1");
 								win.webContents.send("set", {
 									key: "uncertainty_cutoff",
 									value: 0.1
@@ -549,7 +549,7 @@ function menu_build() {
 							type: "checkbox",
 							checked: config.uncertainty_cutoff === 0.075,
 							click: () => {
-								set_checks(["Analysis", "Moves to show"], 6);
+								set_checks("Analysis", "Moves to show", "U < 0.075");
 								win.webContents.send("set", {
 									key: "uncertainty_cutoff",
 									value: 0.075
@@ -561,7 +561,7 @@ function menu_build() {
 							type: "checkbox",
 							checked: config.uncertainty_cutoff === 0.05,
 							click: () => {
-								set_checks(["Analysis", "Moves to show"], 7);
+								set_checks("Analysis", "Moves to show", "U < 0.05");
 								win.webContents.send("set", {
 									key: "uncertainty_cutoff",
 									value: 0.05
@@ -573,7 +573,7 @@ function menu_build() {
 							type: "checkbox",
 							checked: config.uncertainty_cutoff === 0.025,
 							click: () => {
-								set_checks(["Analysis", "Moves to show"], 8);
+								set_checks("Analysis", "Moves to show", "U < 0.025");
 								win.webContents.send("set", {
 									key: "uncertainty_cutoff",
 									value: 0.025
@@ -585,7 +585,7 @@ function menu_build() {
 							type: "checkbox",
 							checked: config.uncertainty_cutoff === -999,				// Semi-special value we use
 							click: () => {
-								set_checks(["Analysis", "Moves to show"], 9);
+								set_checks("Analysis", "Moves to show", "Top move only");
 								win.webContents.send("set", {
 									key: "uncertainty_cutoff",
 									value: -999
@@ -771,7 +771,7 @@ function menu_build() {
 							type: "checkbox",
 							checked: config.hover_method === 0,
 							click: () => {
-								set_checks(["Analysis", "Draw PV method"], 0);
+								set_checks("Analysis", "Draw PV method", "Animate");
 								win.webContents.send("set", {
 									key: "hover_method",
 									value: 0
@@ -783,7 +783,7 @@ function menu_build() {
 							type: "checkbox",
 							checked: config.hover_method === 1,
 							click: () => {
-								set_checks(["Analysis", "Draw PV method"], 1);
+								set_checks("Analysis", "Draw PV method", "Single move");
 								win.webContents.send("set", {
 									key: "hover_method",
 									value: 1
@@ -996,7 +996,7 @@ function menu_build() {
 							type: "checkbox",
 							checked: config.options.Backend === "cudnn",
 							click: () => {
-								set_checks(["Engine", "Backend"], 0);
+								set_checks("Engine", "Backend", "cudnn");
 								win.webContents.send("call", {
 									fn: "switch_backend",
 									args: ["cudnn"]
@@ -1008,7 +1008,7 @@ function menu_build() {
 							type: "checkbox",
 							checked: config.options.Backend === "cudnn-fp16",
 							click: () => {
-								set_checks(["Engine", "Backend"], 1);
+								set_checks("Engine", "Backend", "cudnn-fp16");
 								win.webContents.send("call", {
 									fn: "switch_backend",
 									args: ["cudnn-fp16"]
@@ -1020,7 +1020,7 @@ function menu_build() {
 							type: "checkbox",
 							checked: config.options.Backend === "opencl",
 							click: () => {
-								set_checks(["Engine", "Backend"], 2);
+								set_checks("Engine", "Backend", "opencl");
 								win.webContents.send("call", {
 									fn: "switch_backend",
 									args: ["opencl"]
@@ -1032,7 +1032,7 @@ function menu_build() {
 							type: "checkbox",
 							checked: config.options.Backend === "blas",
 							click: () => {
-								set_checks(["Engine", "Backend"], 3);
+								set_checks("Engine", "Backend", "blas");
 								win.webContents.send("call", {
 									fn: "switch_backend",
 									args: ["blas"]
@@ -1044,7 +1044,7 @@ function menu_build() {
 							type: "checkbox",
 							checked: config.options.Backend === "check",
 							click: () => {
-								set_checks(["Engine", "Backend"], 4);
+								set_checks("Engine", "Backend", "check");
 								win.webContents.send("call", {
 									fn: "switch_backend",
 									args: ["check"]
@@ -1056,7 +1056,7 @@ function menu_build() {
 							type: "checkbox",
 							checked: config.options.Backend === "random",
 							click: () => {
-								set_checks(["Engine", "Backend"], 5);
+								set_checks("Engine", "Backend", "random");
 								win.webContents.send("call", {
 									fn: "switch_backend",
 									args: ["random"]
@@ -1068,7 +1068,7 @@ function menu_build() {
 							type: "checkbox",
 							checked: config.options.Backend === "roundrobin",
 							click: () => {
-								set_checks(["Engine", "Backend"], 6);
+								set_checks("Engine", "Backend", "roundrobin");
 								win.webContents.send("call", {
 									fn: "switch_backend",
 									args: ["roundrobin"]
@@ -1080,7 +1080,7 @@ function menu_build() {
 							type: "checkbox",
 							checked: config.options.Backend === "multiplexing",
 							click: () => {
-								set_checks(["Engine", "Backend"], 7);
+								set_checks("Engine", "Backend", "multiplexing");
 								win.webContents.send("call", {
 									fn: "switch_backend",
 									args: ["multiplexing"]
@@ -1092,7 +1092,7 @@ function menu_build() {
 							type: "checkbox",
 							checked: config.options.Backend === "demux",
 							click: () => {
-								set_checks(["Engine", "Backend"], 8);
+								set_checks("Engine", "Backend", "demux");
 								win.webContents.send("call", {
 									fn: "switch_backend",
 									args: ["demux"]
@@ -1119,7 +1119,7 @@ function menu_build() {
 							type: "checkbox",
 							checked: config.search_nodes === "infinite",
 							click: () => {
-								set_checks(["Engine", "Node limit"], 0);
+								set_checks("Engine", "Node limit", "Infinite");
 								win.webContents.send("set", {
 									key: "search_nodes",
 									value: "infinite"
@@ -1132,7 +1132,7 @@ function menu_build() {
 							type: "checkbox",
 							checked: config.search_nodes === 100000000,
 							click: () => {
-								set_checks(["Engine", "Node limit"], 1);
+								set_checks("Engine", "Node limit", "100,000,000");
 								win.webContents.send("set", {
 									key: "search_nodes",
 									value: 100000000
@@ -1145,7 +1145,7 @@ function menu_build() {
 							type: "checkbox",
 							checked: config.search_nodes === 10000000,
 							click: () => {
-								set_checks(["Engine", "Node limit"], 2);
+								set_checks("Engine", "Node limit", "10,000,000");
 								win.webContents.send("set", {
 									key: "search_nodes",
 									value: 10000000
@@ -1158,7 +1158,7 @@ function menu_build() {
 							type: "checkbox",
 							checked: config.search_nodes === 1000000,
 							click: () => {
-								set_checks(["Engine", "Node limit"], 3);
+								set_checks("Engine", "Node limit", "1,000,000");
 								win.webContents.send("set", {
 									key: "search_nodes",
 									value: 1000000
@@ -1171,7 +1171,7 @@ function menu_build() {
 							type: "checkbox",
 							checked: config.search_nodes === 100000,
 							click: () => {
-								set_checks(["Engine", "Node limit"], 4);
+								set_checks("Engine", "Node limit", "100,000");
 								win.webContents.send("set", {
 									key: "search_nodes",
 									value: 100000
@@ -1184,7 +1184,7 @@ function menu_build() {
 							type: "checkbox",
 							checked: config.search_nodes === 10000,
 							click: () => {
-								set_checks(["Engine", "Node limit"], 5);
+								set_checks("Engine", "Node limit", "10,000");
 								win.webContents.send("set", {
 									key: "search_nodes",
 									value: 10000
@@ -1197,7 +1197,7 @@ function menu_build() {
 							type: "checkbox",
 							checked: config.search_nodes === 1000,
 							click: () => {
-								set_checks(["Engine", "Node limit"], 6);
+								set_checks("Engine", "Node limit", "1,000");
 								win.webContents.send("set", {
 									key: "search_nodes",
 									value: 1000
@@ -1210,7 +1210,7 @@ function menu_build() {
 							type: "checkbox",
 							checked: config.search_nodes === 100,
 							click: () => {
-								set_checks(["Engine", "Node limit"], 7);
+								set_checks("Engine", "Node limit", "100");
 								win.webContents.send("set", {
 									key: "search_nodes",
 									value: 100
@@ -1223,7 +1223,7 @@ function menu_build() {
 							type: "checkbox",
 							checked: config.search_nodes === 10,
 							click: () => {
-								set_checks(["Engine", "Node limit"], 8);
+								set_checks("Engine", "Node limit", "10");
 								win.webContents.send("set", {
 									key: "search_nodes",
 									value: 10
@@ -1236,7 +1236,7 @@ function menu_build() {
 							type: "checkbox",
 							checked: config.search_nodes === 1,
 							click: () => {
-								set_checks(["Engine", "Node limit"], 9);
+								set_checks("Engine", "Node limit", "1");
 								win.webContents.send("set", {
 									key: "search_nodes",
 									value: 1
@@ -1254,7 +1254,7 @@ function menu_build() {
 							type: "checkbox",
 							checked: config.options.CPuct === 4.0,
 							click: () => {
-								set_checks(["Engine", "CPuct"], 0);
+								set_checks("Engine", "CPuct", "4.0");
 								win.webContents.send("call", {
 									fn: "set_cpuct",
 									args: [4.0],
@@ -1266,7 +1266,7 @@ function menu_build() {
 							type: "checkbox",
 							checked: config.options.CPuct === 3.8,
 							click: () => {
-								set_checks(["Engine", "CPuct"], 1);
+								set_checks("Engine", "CPuct", "3.8");
 								win.webContents.send("call", {
 									fn: "set_cpuct",
 									args: [3.8],
@@ -1278,7 +1278,7 @@ function menu_build() {
 							type: "checkbox",
 							checked: config.options.CPuct === 3.6,
 							click: () => {
-								set_checks(["Engine", "CPuct"], 2);
+								set_checks("Engine", "CPuct", "3.6");
 								win.webContents.send("call", {
 									fn: "set_cpuct",
 									args: [3.6],
@@ -1290,7 +1290,7 @@ function menu_build() {
 							type: "checkbox",
 							checked: config.options.CPuct === 3.4,
 							click: () => {
-								set_checks(["Engine", "CPuct"], 3);
+								set_checks("Engine", "CPuct", "3.4");
 								win.webContents.send("call", {
 									fn: "set_cpuct",
 									args: [3.4],
@@ -1302,7 +1302,7 @@ function menu_build() {
 							type: "checkbox",
 							checked: config.options.CPuct === 3.2,
 							click: () => {
-								set_checks(["Engine", "CPuct"], 4);
+								set_checks("Engine", "CPuct", "3.2");
 								win.webContents.send("call", {
 									fn: "set_cpuct",
 									args: [3.2],
@@ -1314,7 +1314,7 @@ function menu_build() {
 							type: "checkbox",
 							checked: config.options.CPuct === 3.0,
 							click: () => {
-								set_checks(["Engine", "CPuct"], 5);
+								set_checks("Engine", "CPuct", "3.0");
 								win.webContents.send("call", {
 									fn: "set_cpuct",
 									args: [3.0],
@@ -1326,7 +1326,7 @@ function menu_build() {
 							type: "checkbox",
 							checked: config.options.CPuct === 2.8,
 							click: () => {
-								set_checks(["Engine", "CPuct"], 6);
+								set_checks("Engine", "CPuct", "2.8");
 								win.webContents.send("call", {
 									fn: "set_cpuct",
 									args: [2.8],
@@ -1338,7 +1338,7 @@ function menu_build() {
 							type: "checkbox",
 							checked: config.options.CPuct === 2.6,
 							click: () => {
-								set_checks(["Engine", "CPuct"], 7);
+								set_checks("Engine", "CPuct", "2.6");
 								win.webContents.send("call", {
 									fn: "set_cpuct",
 									args: [2.6],
@@ -1350,7 +1350,7 @@ function menu_build() {
 							type: "checkbox",
 							checked: config.options.CPuct === 2.4,
 							click: () => {
-								set_checks(["Engine", "CPuct"], 8);
+								set_checks("Engine", "CPuct", "2.4");
 								win.webContents.send("call", {
 									fn: "set_cpuct",
 									args: [2.4],
@@ -1410,9 +1410,7 @@ function menu_build() {
 }
 
 function get_submenu_items(menupath) {
-
 	let o = menu.items;
-
 	for (let p of menupath) {
 		for (let item of o) {
 			if (item.label === p) {
@@ -1421,20 +1419,19 @@ function get_submenu_items(menupath) {
 			}
 		}
 	}
-
 	return o;
 }
 
-function set_checks(menupath, except) {
+function set_checks(...menupath) {
 
 	// Since I don't know precisely how the menu works behind the scenes,
 	// give a little time for the original click to go through first.
 
 	setTimeout(() => {
-		let items = get_submenu_items(menupath);
+		let items = get_submenu_items(menupath.slice(0, -1));
 		for (let n = 0; n < items.length; n++) {
 			if (items[n].checked !== undefined) {
-				items[n].checked = n === except;
+				items[n].checked = items[n].label === menupath[menupath.length - 1];
 			}
 		}
 	}, 50);
