@@ -933,33 +933,6 @@ function menu_build() {
 			label: "Engine",
 			submenu: [
 				{
-					label: "Only play White",
-					click: () => {
-						win.webContents.send("call", {
-							fn: "set_versus",
-							args: ["w"],
-						});
-					}
-				},
-				{
-					label: "Only play Black",
-					click: () => {
-						win.webContents.send("call", {
-							fn: "set_versus",
-							args: ["b"],
-						});
-					}
-				},
-				{
-					label: "About single colour modes",
-					click: () => {
-						alert(messages.about_versus_mode);
-					}
-				},
-				{
-					type: "separator"
-				},
-				{
 					label: "Choose engine...",
 					click: () => {
 						let files = electron.dialog.showOpenDialog({
@@ -1351,7 +1324,34 @@ function menu_build() {
 							}
 						},
 					]
-				}
+				},
+				{
+					type: "separator"
+				},
+				{
+					label: "Only play White",
+					click: () => {
+						win.webContents.send("call", {
+							fn: "set_versus",
+							args: ["w"],
+						});
+					}
+				},
+				{
+					label: "Only play Black",
+					click: () => {
+						win.webContents.send("call", {
+							fn: "set_versus",
+							args: ["b"],
+						});
+					}
+				},
+				{
+					label: "About single colour modes",
+					click: () => {
+						alert(messages.about_versus_mode);
+					}
+				},
 			]
 		},
 		{
