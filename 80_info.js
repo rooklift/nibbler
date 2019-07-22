@@ -17,7 +17,9 @@ function NewInfoHandler() {
 	ih.stderr_log = "";
 
 	ih.one_click_moves = New2DArray(8, 8);	// Array of possible one-click moves. Updated by draw_arrows().
+
 	ih.info_clickers = [];					// Elements in the infobox. Updated by draw_infobox().
+	ih.recycled_clickers = [];				// Prevent needless allocations. Not sure if worthwhile.
 
 	ih.last_drawn_version = null;
 	ih.last_drawn_highlight = null;
@@ -372,6 +374,7 @@ function NewInfoHandler() {
 		this.last_drawn_highlight_class = highlight_class;
 		this.last_drawn_searchmoves = Array.from(searchmoves);
 
+		this.recycled_clickers = this.recycled_clickers.concat(this.info_clickers);
 		this.info_clickers = [];
 
 		let substrings = [];
@@ -429,11 +432,21 @@ function NewInfoHandler() {
 					spanclass += " nobr";
 				}
 				substrings.push(`<span id="infobox_${clicker_index++}" class="${spanclass}">${nice_pv[i]} </span>`);
-				this.info_clickers.push({
-					move: info.pv[i],
-					is_start: i === 0,
-					is_end: i === nice_pv.length - 1,
-				});
+
+				let clicker;
+
+				if (this.recycled_clickers.length > 0) {
+					clicker = this.recycled_clickers.pop();
+				} else {
+					clicker = Object.create(null);
+				}
+
+				clicker.move = info.pv[i];
+				clicker.is_start = i === 0;
+				clicker.is_end = i === nice_pv.length - 1;
+
+				this.info_clickers.push(clicker);
+
 				colour = OppositeColour(colour);
 			}
 
