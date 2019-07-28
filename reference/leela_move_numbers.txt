@@ -1,4 +1,5 @@
 Note: Are knight promotions expressed as the basic moves?
+This is also not the system as of T60...
 
 0: a1b1
 1: a1c1
