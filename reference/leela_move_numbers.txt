@@ -1,4 +1,4 @@
-This list isn't correct, it misses knight promotions at least.
+Note: Are knight promotions expressed as the basic moves?
 
 0: a1b1
 1: a1c1
