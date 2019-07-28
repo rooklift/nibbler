@@ -1,3 +1,5 @@
+This list isn't correct, it misses knight promotions at least.
+
 0: a1b1
 1: a1c1
 2: a1d1
