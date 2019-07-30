@@ -45,6 +45,7 @@ exports.defaults = {
 	"show_u": false,
 	"show_q_plus_u": false,
 	"searchmoves_buttons": true,
+	"infobox_stats_newline": false,
 	"hover_draw": false,
 	"hover_method": 0,
 	"serious_analysis_mode": false,

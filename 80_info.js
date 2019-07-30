@@ -453,6 +453,9 @@ function NewInfoHandler() {
 				this.nodes);
 
 			if (extra_stat_strings.length > 0) {
+				if (config.infobox_stats_newline) {		// Hidden option, request of jhorthos
+					substrings.push("<br>");
+				}
 				substrings.push(`<span class="gray">(${extra_stat_strings.join(', ')})</span>`);
 			}
 
