@@ -15,11 +15,11 @@ function Point(a, b) {
 		for (let x = 0; x < 8; x++) {
 			for (let y = 0; y < 8; y++) {
 				let s = S(x, y);
-				Point.all_points[s] = {x, y, s};
+				Point.all_points[s] = Object.freeze({x, y, s});
 			}
 		}
 
-		Point.null_point = {x: -1, y: -1, s: "??"};
+		Point.null_point = Object.freeze({x: -1, y: -1, s: "??"});
 	}
 
 	// Point("a8") or Point(0, 0) are both valid.
