@@ -134,7 +134,7 @@ function menu_build() {
 					type: "separator"
 				},
 				{
-					label: "New Game",
+					label: "New game",
 					accelerator: "CommandOrControl+N",
 					click: () => {
 						win.webContents.send("call", "new_game");
@@ -239,7 +239,7 @@ function menu_build() {
 					type: "separator"
 				},
 				{
-					label: "Show config.json...",
+					label: "Show config.json",
 					click: () => {
 						let filename = config_io.get_filename();
 						electron.shell.showItemInFolder(filename);
@@ -1475,7 +1475,7 @@ function menu_build() {
 					type: "separator"
 				},
 				{
-					label: "Other size options...",
+					label: "Other size options",
 					click: () => {
 						alert(messages.about_sizes);
 					}
