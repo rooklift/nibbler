@@ -75,12 +75,7 @@ promotiontable.style.left = (boardsquares.offsetLeft + config.square_size * 2).t
 promotiontable.style.top = (boardsquares.offsetTop + config.square_size * 3.5).toString() + "px";
 promotiontable.style["background-color"] = config.active_square;
 
-// ------------------------------------------------------------------------------------------------
-
-if (config.warn_filename) {
-	hub.err_receive(`<span class="blue">Nibbler says: You may (optionally) rename config.example.json to config.json</span>`);
-	hub.err_receive("");
-}
+// --------------------------------------------------------------------------------------------
 
 if (config.failure) {
 	alert(config.failure);

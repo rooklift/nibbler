@@ -650,7 +650,13 @@ function NewRenderer() {
 		this.info_handler.reset_engine_info();
 
 		if (typeof config.path !== "string" || fs.existsSync(config.path) === false) {
-			alert(messages.engine_not_present);
+
+			// Display alert. Give a little time for the browser window to open at startup...
+
+			setTimeout(() => {
+				alert(messages.engine_not_present);
+			}, 500);
+
 			return;
 		}
 
