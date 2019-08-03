@@ -6,13 +6,19 @@ Log(`Nibbler startup at ${new Date().toUTCString()}`);
 Log("");
 
 let hub = NewRenderer();
-hub.engine_start();
-fenbox.value = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1";
+hub.engine_start();			// Note that this oblirates any error log, so this must come before the following...
 
 if (fs.existsSync(path.join(get_main_folder(), "config.json"))) {
 	hub.err_receive(`<span class="blue">${messages.new_config_location}</span>`);
 	hub.err_receive("");
 }
+
+if (config.failure) {
+	hub.err_receive(`<span class="blue">While loading config.json: ${config.failure}</span>`);
+	hub.err_receive("");
+}
+
+fenbox.value = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1";
 
 // We have 3 main things that get drawn to:
 //
@@ -79,13 +85,6 @@ infobox.style.height = (canvas_bottom - infobox_top).toString() + "px";
 promotiontable.style.left = (boardsquares.offsetLeft + config.square_size * 2).toString() + "px";
 promotiontable.style.top = (boardsquares.offsetTop + config.square_size * 3.5).toString() + "px";
 promotiontable.style["background-color"] = config.active_square;
-
-// --------------------------------------------------------------------------------------------
-
-if (config.failure) {
-	hub.err_receive(`<span class="blue">While loading config.json: ${config.failure}</span>`);
-	hub.err_receive("");
-}
 
 // --------------------------------------------------------------------------------------------
 // In bad cases of super-large trees, the UI can become unresponsive. To mitigate this, we
