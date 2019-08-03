@@ -67,3 +67,9 @@ exports.renderer_hang =
 exports.about_sizes = 
 `You can get more fine-grained font and board size control using Nibbler's \
 config file (which can be shown via the App menu).`;
+
+
+exports.new_config_location =
+`WARNING: Nibbler now looks for config.json in a new location and also saves to it \
+automatically. You can delete the file in your app's folder. If you want to manually \
+edit config.json, you can find it via the App menu.`;
