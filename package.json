@@ -1,6 +1,6 @@
 {
 	"name": "Nibbler",
-	"version": "0.8.0",
+	"version": "1.0.0",
 	"author": "Fohristiwhirl",
 	"description": "Leela Chess Zero (Lc0) interface",
 	"main": "main.js",
