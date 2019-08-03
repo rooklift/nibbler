@@ -32,7 +32,7 @@ let menu = menu_build();
 let win;
 let loaded_weights = config.options ? config.options.WeightsFile : null;
 
-electron.app.once("ready", () => {
+function startup() {
 
 	win = new electron.BrowserWindow({
 		width: config.width,
@@ -56,7 +56,7 @@ electron.app.once("ready", () => {
 		slashes: true
 	}));
 
-	win.once("ready-to-show", () => {		// Thankfully, fires even after exception during renderer startup.
+	win.once("ready-to-show", () => {		// Event will come even if there's an exception in renderer.
 		win.show();
 		win.focus();
 	});
@@ -70,7 +70,18 @@ electron.app.once("ready", () => {
 	});
 
 	electron.Menu.setApplicationMenu(menu);
-});
+}
+
+// Avoid a theoretical race by checking whether the ready event has already occurred,
+// otherwise set an event listener for it...
+
+if (electron.app.isReady()) {
+	startup();
+} else {
+	electron.app.once("ready", () => {
+		startup();
+	});
+}
 
 electron.app.on("window-all-closed", () => {
 	electron.app.quit();
