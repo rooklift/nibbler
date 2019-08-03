@@ -1,6 +1,5 @@
 "use strict";
 
-const alert = require("./alert");
 const electron = require("electron");
 const fs = require("fs");
 const get_main_folder = require("./get_main_folder");
