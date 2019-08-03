@@ -6,7 +6,7 @@ Log(`Nibbler startup at ${new Date().toUTCString()}`);
 Log("");
 
 let hub = NewRenderer();
-hub.engine_start();			// Note that this oblirates any error log, so this must come before the following...
+hub.engine_start();			// Note that this obliterates any error log, so this must come before the following...
 
 if (fs.existsSync(path.join(get_main_folder(), "config.json"))) {
 	hub.err_receive(`<span class="blue">${messages.new_config_location}</span>`);
