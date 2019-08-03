@@ -30,7 +30,8 @@ if (config.failure) {				// Do this early, while console.log still works.
 
 let win;
 let menu = menu_build();
-let loaded_weights = config.options ? config.options.WeightsFile : null;
+let loaded_weights = (config.options && config.options.WeightsFile) ? config.options.WeightsFile : null;
+let loaded_engine = config.path;
 
 // Avoid a theoretical race by checking whether the ready event has already occurred,
 // otherwise set an event listener for it...
@@ -127,7 +128,7 @@ function menu_build() {
 				{
 					label: "About",
 					click: () => {
-						alert(`Nibbler ${electron.app.getVersion()} in Electron ${process.versions.electron}\nWeights: ${loaded_weights}`);
+						alert(`Nibbler ${electron.app.getVersion()} in Electron ${process.versions.electron}\n\nEngine: ${loaded_engine}\nWeights: ${loaded_weights}`);
 					}
 				},
 				{
@@ -957,6 +958,7 @@ function menu_build() {
 								fn: "switch_engine",
 								args: [files[0]]
 							});
+							loaded_engine = files[0];
 						}
 					}
 				},
