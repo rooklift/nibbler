@@ -9,16 +9,25 @@ const path = require("path");
 const running_as_electron = require("./modules/running_as_electron");
 const url = require("url");
 
+// In Electron prior to 6.0.0, we had the choice to use dialog.showSaveDialog
+// and dialog.showOpenDialog in async or sync mode by providing a callback, or
+// not. But in 6.0.0, these are different functions. We want sync mode, so check
+// whether the sync-specific function exists (as it does since 6.0.0)...
+
+const save_dialog = electron.dialog.showSaveDialogSync || electron.dialog.showSaveDialog;
+const open_dialog = electron.dialog.showOpenDialogSync || electron.dialog.showOpenDialog;
+
+// We do manual GC firing sometimes...
+
 electron.app.commandLine.appendSwitch("js-flags", "--expose_gc");
+
+// Note that as the user adjusts menu items, our copy of the config will become
+// out of date. The renderer is responsible for having an up-to-date copy.
 
 let config = config_io.load();		// Do this first, it's a needed global.
 if (config.failure) {				// Do this early, while console.log still works.
 	console.log(config.failure);
 }
-
-// Note that as the user adjusts menu items, our copy of the config
-// will become out of date. The renderer is responsible for having
-// an up-to-date copy.
 
 let menu = menu_build();
 let win;
@@ -126,7 +135,7 @@ function menu_build() {
 					label: "Open PGN...",
 					accelerator: "CommandOrControl+O",
 					click: () => {
-						let files = electron.dialog.showOpenDialog({
+						let files = open_dialog({
 							properties: ["openFile"]
 						});
 						if (files && files.length > 0) {
@@ -140,7 +149,7 @@ function menu_build() {
 				{
 					label: "Validate PGN...",
 					click: () => {
-						let files = electron.dialog.showOpenDialog({
+						let files = open_dialog({
 							properties: ["openFile"]
 						});
 						if (files && files.length > 0) {
@@ -171,7 +180,7 @@ function menu_build() {
 							alert(messages.save_not_enabled);
 							return;
 						}
-						let file = electron.dialog.showSaveDialog();
+						let file = save_dialog();
 						if (file && file.length > 0) {
 							win.webContents.send("call", {
 								fn: "save",
@@ -220,7 +229,7 @@ function menu_build() {
 				{
 					label: "Save config.json...",
 					click: () => {
-						let file = electron.dialog.showSaveDialog({
+						let file = save_dialog({
 							defaultPath: path.join(get_main_folder(), "config.json")
 						});
 						if (file && file.length > 0) {
@@ -935,7 +944,7 @@ function menu_build() {
 				{
 					label: "Choose engine...",
 					click: () => {
-						let files = electron.dialog.showOpenDialog({
+						let files = open_dialog({
 							properties: ["openFile"]
 						});
 						if (files && files.length > 0) {
@@ -949,7 +958,7 @@ function menu_build() {
 				{
 					label: "Choose weights file...",
 					click: () => {
-						let files = electron.dialog.showOpenDialog({
+						let files = open_dialog({
 							properties: ["openFile"]
 						});
 						if (files && files.length > 0) {
