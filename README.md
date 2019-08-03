@@ -22,19 +22,15 @@ For prebuilt binary releases, see the [Releases](https://github.com/fohristiwhir
 
 # Installation
 
-Some Windows and Linux standalone releases are uploaded to the [Releases](https://github.com/fohristiwhirl/nibbler/releases) section from time to time. Just edit `config.json` to point to your copy of Lc0 and your weightsfile (and possibly change your backend, e.g. to `cudnn-fp16`) then run the Nibbler binary. Alternatively, you can find those things from within the app.
+Some Windows and Linux standalone releases are uploaded to the [Releases](https://github.com/fohristiwhirl/nibbler/releases) section from time to time.
 
 Running Nibbler from source requires Electron, but has no other dependencies. If you have Electron installed (e.g. `npm install -g electron`) you can likely enter the Nibbler directory, then do `electron .` to run it. This is mostly tested with Electron 5, but older versions may work too.
 
 The required Lc0 version is *v0.21.0 or later*. <!-- because we need `LogLiveStats` which was introduced in that version. --> Note that other UCI engines might run, but the results will be poor.
 
-# Using an lc0.config file
-
-Some people configure Leela with an `lc0.config` file in their Lc0 directory. If you do this, you should probably delete the `options` object from your Nibbler config file, as it is redundant.
-
 # Using high resolution monitors
 
-For high resolution monitors, various sizes can be upped in the config file to use more space and be more readable.
+For high resolution monitors, various sizes can be upped in the config file to use more space and be more readable. The config file can be found via the App menu.
 
 # Hints and tips
 
