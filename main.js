@@ -1375,45 +1375,60 @@ function menu_build() {
 					submenu: [
 						{
 							label: "16",
+							type: "checkbox",
+							checked: config.info_font_size === 16,
 							click: () => {
+								set_checks("Sizes", "Infobox", "16");
 								win.webContents.send("call", {
-									fn: "set_infobox_font_size",
+									fn: "set_info_font_size",
 									args: [16],
 								});
 							}
 						},
 						{
 							label: "20",
+							type: "checkbox",
+							checked: config.info_font_size === 20,
 							click: () => {
+								set_checks("Sizes", "Infobox", "20");
 								win.webContents.send("call", {
-									fn: "set_infobox_font_size",
+									fn: "set_info_font_size",
 									args: [20],
 								});
 							}
 						},
 						{
 							label: "24",
+							type: "checkbox",
+							checked: config.info_font_size === 24,
 							click: () => {
+								set_checks("Sizes", "Infobox", "24");
 								win.webContents.send("call", {
-									fn: "set_infobox_font_size",
+									fn: "set_info_font_size",
 									args: [24],
 								});
 							}
 						},
 						{
 							label: "28",
+							type: "checkbox",
+							checked: config.info_font_size === 28,
 							click: () => {
+								set_checks("Sizes", "Infobox", "28");
 								win.webContents.send("call", {
-									fn: "set_infobox_font_size",
+									fn: "set_info_font_size",
 									args: [28],
 								});
 							}
 						},
 						{
 							label: "32",
+							type: "checkbox",
+							checked: config.info_font_size === 32,
 							click: () => {
+								set_checks("Sizes", "Infobox", "32");
 								win.webContents.send("call", {
-									fn: "set_infobox_font_size",
+									fn: "set_info_font_size",
 									args: [32],
 								});
 							}
@@ -1425,45 +1440,60 @@ function menu_build() {
 					submenu: [
 						{
 							label: "16",
+							type: "checkbox",
+							checked: config.pgn_font_size === 16,
 							click: () => {
+								set_checks("Sizes", "Move list", "16");
 								win.webContents.send("call", {
-									fn: "set_movelist_font_size",
+									fn: "set_pgn_font_size",
 									args: [16],
 								});
 							}
 						},
 						{
 							label: "20",
+							type: "checkbox",
+							checked: config.pgn_font_size === 20,
 							click: () => {
+								set_checks("Sizes", "Move list", "20");
 								win.webContents.send("call", {
-									fn: "set_movelist_font_size",
+									fn: "set_pgn_font_size",
 									args: [20],
 								});
 							}
 						},
 						{
 							label: "24",
+							type: "checkbox",
+							checked: config.pgn_font_size === 24,
 							click: () => {
+								set_checks("Sizes", "Move list", "24");
 								win.webContents.send("call", {
-									fn: "set_movelist_font_size",
+									fn: "set_pgn_font_size",
 									args: [24],
 								});
 							}
 						},
 						{
 							label: "28",
+							type: "checkbox",
+							checked: config.pgn_font_size === 28,
 							click: () => {
+								set_checks("Sizes", "Move list", "28");
 								win.webContents.send("call", {
-									fn: "set_movelist_font_size",
+									fn: "set_pgn_font_size",
 									args: [28],
 								});
 							}
 						},
 						{
 							label: "32",
+							type: "checkbox",
+							checked: config.pgn_font_size === 32,
 							click: () => {
+								set_checks("Sizes", "Move list", "32");
 								win.webContents.send("call", {
-									fn: "set_movelist_font_size",
+									fn: "set_pgn_font_size",
 									args: [32],
 								});
 							}

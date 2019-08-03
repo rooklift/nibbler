@@ -772,13 +772,13 @@ function NewRenderer() {
 		ss.insertRule("* {outline: 1px dotted red;}");
 	};
 
-	renderer.set_infobox_font_size = function(n) {
+	renderer.set_info_font_size = function(n) {
 		infobox.style["font-size"] = n.toString() + "px";
 		config.info_font_size = n;
 		config_io.save(config);
 	};
 
-	renderer.set_movelist_font_size = function(n) {
+	renderer.set_pgn_font_size = function(n) {
 		movelist.style["font-size"] = n.toString() + "px";
 		config.pgn_font_size = n;
 		config_io.save(config);
