@@ -28,9 +28,22 @@ if (config.failure) {				// Do this early, while console.log still works.
 	console.log(config.failure);
 }
 
-let menu = menu_build();
 let win;
+let menu = menu_build();
 let loaded_weights = config.options ? config.options.WeightsFile : null;
+
+// Avoid a theoretical race by checking whether the ready event has already occurred,
+// otherwise set an event listener for it...
+
+if (electron.app.isReady()) {
+	startup();
+} else {
+	electron.app.once("ready", () => {
+		startup();
+	});
+}
+
+// ----------------------------------------------------------------------------------
 
 function startup() {
 
@@ -70,52 +83,41 @@ function startup() {
 	});
 
 	electron.Menu.setApplicationMenu(menu);
-}
 
-// Avoid a theoretical race by checking whether the ready event has already occurred,
-// otherwise set an event listener for it...
+	electron.app.on("window-all-closed", () => {
+		electron.app.quit();
+	});
 
-if (electron.app.isReady()) {
-	startup();
-} else {
-	electron.app.once("ready", () => {
-		startup();
+	electron.ipcMain.once("renderer_ready", () => {
+
+		// Open a file via command line. We must wait until the renderer has properly loaded before we do this.
+		// While it might seem like we could do this after "ready-to-show" I'm not 100% sure that the renderer
+		// will have fully loaded when that fires.
+
+		let filename = "";
+
+		if (running_as_electron()) {
+			if (process.argv.length > 2) {
+				filename = process.argv[process.argv.length - 1];
+			}
+		} else {
+			if (process.argv.length > 1) {
+				filename = process.argv[process.argv.length - 1];
+			}
+		}
+
+		if (filename !== "") {
+			win.webContents.send("call", {
+				fn: "open",
+				args: [filename]
+			});
+		}
+	});
+
+	electron.ipcMain.on("set_title", (event, msg) => {
+		win.setTitle(msg);
 	});
 }
-
-electron.app.on("window-all-closed", () => {
-	electron.app.quit();
-});
-
-electron.ipcMain.once("renderer_ready", () => {
-
-	// Open a file via command line. We must wait until the renderer has properly loaded before we do this.
-	// While it might seem like we could do this after "ready-to-show" I'm not 100% sure that the renderer
-	// will have fully loaded when that fires.
-
-	let filename = "";
-
-	if (running_as_electron()) {
-		if (process.argv.length > 2) {
-			filename = process.argv[process.argv.length - 1];
-		}
-	} else {
-		if (process.argv.length > 1) {
-			filename = process.argv[process.argv.length - 1];
-		}
-	}
-
-	if (filename !== "") {
-		win.webContents.send("call", {
-			fn: "open",
-			args: [filename]
-		});
-	}
-});
-
-electron.ipcMain.on("set_title", (event, msg) => {
-	win.setTitle(msg);
-});
 
 function menu_build() {
 	const template = [
