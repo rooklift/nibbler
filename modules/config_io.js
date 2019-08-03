@@ -167,7 +167,7 @@ exports.get_filename = () => {
    	}
 }
 
-exports.load = () => {
+exports.load = (save_if_new) => {
 
 	let cfg = {};
 	let filename = exports.get_filename();
@@ -183,8 +183,10 @@ exports.load = () => {
 	assign_without_overwrite(cfg, exports.defaults);
 	fix(cfg);
 
-	if (fs.existsSync(filename) === false) {
-		exports.save(cfg);
+	if (save_if_new) {
+		if (fs.existsSync(filename) === false) {
+			exports.save(cfg);
+		}
 	}
 
 	return cfg;

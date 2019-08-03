@@ -45,7 +45,7 @@ const util = require("util");
 const context = canvas.getContext("2d");
 const decoder = new util.TextDecoder("utf8");	// https://github.com/electron/electron/issues/18733
 
-let config = config_io.load();
+let config = config_io.load(true);
 let tree_version = 0;
 
 // Debug (see start.js).............................................
