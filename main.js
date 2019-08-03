@@ -239,17 +239,10 @@ function menu_build() {
 					type: "separator"
 				},
 				{
-					label: "Save config.json...",
+					label: "Show config.json...",
 					click: () => {
-						let file = save_dialog({
-							defaultPath: path.join(get_main_folder(), "config.json")
-						});
-						if (file && file.length > 0) {
-							win.webContents.send("call", {
-								fn: "save_config",
-								args: [file]
-							});
-						}
+						let filename = config_io.get_filename();
+						electron.shell.showItemInFolder(filename);
 					}
 				},
 				{

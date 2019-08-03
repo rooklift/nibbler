@@ -44,9 +44,8 @@ safely ignore them.`;
 
 
 exports.engine_not_present =
-`Engine not found. Please edit config.json, or find the engine via the \
-Engine menu. You might also need to locate the weights (neural network) \
-file. Afterwards, you may like to save a valid config.json via the App menu.`;
+`Engine not found. Please find the engine via the Engine menu. You might also \
+need to locate the weights (neural network) file.`;
 
 
 exports.uncaught_exception =
@@ -64,6 +63,7 @@ you made it happen.`;
 exports.renderer_hang =
 `The renderer process may have hung. Please tell the author how you made this happen.`;
 
+
 exports.about_sizes = 
 `You can get more fine-grained font and board size control using Nibbler's \
-config file. See the example config file for examples.`;
+config file (which can be shown via the App menu).`;

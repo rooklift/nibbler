@@ -1,6 +1,7 @@
 "use strict";
 
 const alert = require("./alert");
+const electron = require("electron");
 const fs = require("fs");
 const get_main_folder = require("./get_main_folder");
 const path = require("path");
@@ -159,40 +160,44 @@ function debork_json(s) {
 	return lines.join("\n");
 }
 
+exports.get_filename = () => {
+	if (electron.app) {
+   		return path.join(electron.app.getPath("userData"), "config.json");
+   	} else {
+   		return path.join(electron.remote.app.getPath("userData"), "config.json");
+   	}
+}
+
 exports.load = () => {
 
-	// On failure, writes a failure string as cfg.failure. A bit lame, but we can't rely on alert working here.
-	// On loading the alternate (example) config file, sets cfg.warn_filename to true.
-
 	let cfg = {};
-
-	let config_filename;
-	let config_example_filename;
+	let filename = exports.get_filename();
 
 	try {
-		config_filename = path.join(get_main_folder(), "config.json");
-		config_example_filename = path.join(get_main_folder(), "config.example.json");
-
-		if (fs.existsSync(config_filename)) {
-			cfg = JSON.parse(debork_json(fs.readFileSync(config_filename, "utf8")));
-		} else if (fs.existsSync(config_example_filename)) {
-			cfg = JSON.parse(debork_json(fs.readFileSync(config_example_filename, "utf8")));
-			cfg.warn_filename = true;
-		} else {
-			if (process && process.type !== "renderer") {			// Don't bother telling the renderer.
-				cfg.failure = `Couldn't find config file. Looked at:\n${config_filename}`;
-			}
+		if (fs.existsSync(filename)) {
+			cfg = JSON.parse(debork_json(fs.readFileSync(filename, "utf8")));
 		}
 	} catch (err) {
-		cfg.failure = `Failed to parse config file ${config_filename} - make sure it is valid JSON, and in particular, if on Windows, use \\\\ instead of \\ as a path separator.`;
+		console.log(err);		// alert() might not be available.
 	}
 
 	assign_without_overwrite(cfg, exports.defaults);
 	fix(cfg);
+
+	if (fs.existsSync(filename) === false) {
+		exports.save(cfg);
+	}
+
 	return cfg;
 };
 
-exports.save = (filename, cfg) => {
+exports.save = (cfg) => {
+
+	if (!cfg) {
+		throw "save() needs an argument";
+	}
+
+	let filename = exports.get_filename();
 
 	// Make a copy of the defaults. Doing it this way seems to
 	// ensure the final JSON string has the same ordering...
@@ -210,6 +215,6 @@ exports.save = (filename, cfg) => {
 	try {
 		fs.writeFileSync(filename, JSON.stringify(out, null, "\t"));
 	} catch (err) {
-		alert(err);
+		console.log(err);		// alert() might not be available.
 	}
 };

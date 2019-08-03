@@ -37,11 +37,6 @@ for folder in folders:
 	shutil.copytree(folder, os.path.join(linux_app_dir, folder))
 	shutil.copytree(folder, os.path.join(windows_app_dir, folder))
 
-# Copy config.example.json - to the high level dir, not the app dir...
-
-shutil.copy("config.example.json", os.path.join(linux_dir, "config.json"))
-shutil.copy("config.example.json", os.path.join(windows_dir, "config.json"))
-
 # Extract Electron...
 
 print("Extracting for Linux...")

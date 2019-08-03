@@ -603,7 +603,7 @@ function NewRenderer() {
 		}
 	};
 
-	renderer.set_cpuct = function(val) {
+	renderer.set_cpuct = function(val) {					// We don't save this in the config.
 		this.__halt();
 		this.engine.setoption("CPuct", val);
 		this.go_or_halt();
@@ -611,6 +611,7 @@ function NewRenderer() {
 
 	renderer.set_node_limit = function(val) {
 		config.search_nodes = val;
+		config_io.save(config);
 		this.go_or_halt();
 	};
 
@@ -618,6 +619,7 @@ function NewRenderer() {
 		this.__halt();
 		this.info_handler.stderr_log = "";					// Avoids having confusing stale messages.
 		config.options.WeightsFile = filename;
+		config_io.save(config);
 		this.engine.setoption("WeightsFile", filename);
 		this.go_or_halt();
 	};
@@ -625,12 +627,14 @@ function NewRenderer() {
 	renderer.switch_engine = function(filename) {
 		this.set_versus("");
 		config.path = filename;
+		config_io.save(config);
 		this.engine_start();
 	};
 
 	renderer.switch_backend = function(s) {
 		this.__halt();
 		config.options.Backend = s;
+		config_io.save(config);
 		this.engine.setoption("Backend", s);
 		this.go_or_halt();
 	};
@@ -683,6 +687,8 @@ function NewRenderer() {
 		// Normal cases...
 
 		config[option] = !config[option];
+		config_io.save(config);
+
 		this.info_handler.must_draw_infobox();
 
 		// Cases that have additional actions after...
@@ -765,19 +771,17 @@ function NewRenderer() {
 	renderer.set_infobox_font_size = function(n) {
 		infobox.style["font-size"] = n.toString() + "px";
 		config.info_font_size = n;
+		config_io.save(config);
 	};
 
 	renderer.set_movelist_font_size = function(n) {
 		movelist.style["font-size"] = n.toString() + "px";
 		config.pgn_font_size = n;
+		config_io.save(config);
 	};
 
 	renderer.console = function(...args) {
 		console.log(...args);
-	};
-
-	renderer.save_config = function(filename) {
-		config_io.save(filename, config);
 	};
 
 	renderer.fire_gc = function() {
