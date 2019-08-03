@@ -9,10 +9,9 @@ const path = require("path");
 const running_as_electron = require("./modules/running_as_electron");
 const url = require("url");
 
-// In Electron prior to 6.0.0, we had the choice to use dialog.showSaveDialog
-// and dialog.showOpenDialog in async or sync mode by providing a callback, or
-// not. But in 6.0.0, these are different functions. We want sync mode, so check
-// whether the sync-specific function exists (as it does since 6.0.0)...
+// We want sync save and open dialogs. In Electron 5 we could get these by calling
+// showSaveDialog or showOpenDialog without a callback, but in Electron 6 this no
+// longer works and we must call new functions. So find out if they exist...
 
 const save_dialog = electron.dialog.showSaveDialogSync || electron.dialog.showSaveDialog;
 const open_dialog = electron.dialog.showOpenDialogSync || electron.dialog.showOpenDialog;
