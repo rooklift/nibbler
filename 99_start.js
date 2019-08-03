@@ -93,7 +93,7 @@ if (config.failure) {
 let input_queue = [];
 let total_dropped_inputs = 0;
 
-ipcRenderer.on("set", (event, msg) => {		// Should only be for things that don't need immediate action.
+ipcRenderer.on("set", (event, msg) => {		// Should only be for things that don't need any other action.
 	config[msg.key] = msg.value;
 	hub.draw();
 });

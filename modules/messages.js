@@ -63,3 +63,7 @@ you made it happen.`;
 
 exports.renderer_hang =
 `The renderer process may have hung. Please tell the author how you made this happen.`;
+
+exports.about_sizes = 
+`You can get more fine-grained font and board size control using Nibbler's \
+config file. See the example config file for examples.`;

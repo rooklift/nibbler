@@ -1376,6 +1376,84 @@ function menu_build() {
 			]
 		},
 		{
+			label: "Sizes",
+			submenu: [
+				{
+					label: "Infobox",
+					submenu: [
+						{
+							label: "16",
+							click: () => {
+								win.webContents.send("call", {
+									fn: "set_infobox_font_size",
+									args: [16],
+								});
+							}
+						},
+						{
+							label: "20",
+							click: () => {
+								win.webContents.send("call", {
+									fn: "set_infobox_font_size",
+									args: [20],
+								});
+							}
+						},
+						{
+							label: "24",
+							click: () => {
+								win.webContents.send("call", {
+									fn: "set_infobox_font_size",
+									args: [24],
+								});
+							}
+						},
+					]
+				},
+				{
+					label: "Move list",
+					submenu: [
+						{
+							label: "16",
+							click: () => {
+								win.webContents.send("call", {
+									fn: "set_movelist_font_size",
+									args: [16],
+								});
+							}
+						},
+						{
+							label: "20",
+							click: () => {
+								win.webContents.send("call", {
+									fn: "set_movelist_font_size",
+									args: [20],
+								});
+							}
+						},
+						{
+							label: "24",
+							click: () => {
+								win.webContents.send("call", {
+									fn: "set_movelist_font_size",
+									args: [24],
+								});
+							}
+						},
+					]
+				},
+				{
+					type: "separator"
+				},
+				{
+					label: "Other size options...",
+					click: () => {
+						alert(messages.about_sizes);
+					}
+				},
+			]
+		},
+		{
 			label: "Dev",
 			submenu: [
 				{
