@@ -117,8 +117,8 @@ function fix(cfg) {
 	// We used to expect font sizes to be strings with "px"...
 
 	for (let key of ["info_font_size", "pgn_font_size", "fen_font_size", "status_font_size"]) {
-		if (typeof cfg[key] === "string" && cfg[key].endsWith("px")) {
-			cfg[key] = parseInt(cfg[key].slice(0, -2), 10);
+		if (typeof cfg[key] === "string") {
+			cfg[key] = parseInt(cfg[key], 10);		// Works even if string ends with "px"
 			if (Number.isNaN(cfg[key])) {
 				cfg[key] = exports.defaults[key];
 			}
