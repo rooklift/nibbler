@@ -1408,6 +1408,24 @@ function menu_build() {
 								});
 							}
 						},
+						{
+							label: "28",
+							click: () => {
+								win.webContents.send("call", {
+									fn: "set_infobox_font_size",
+									args: [28],
+								});
+							}
+						},
+						{
+							label: "32",
+							click: () => {
+								win.webContents.send("call", {
+									fn: "set_infobox_font_size",
+									args: [32],
+								});
+							}
+						},
 					]
 				},
 				{
@@ -1437,6 +1455,24 @@ function menu_build() {
 								win.webContents.send("call", {
 									fn: "set_movelist_font_size",
 									args: [24],
+								});
+							}
+						},
+						{
+							label: "28",
+							click: () => {
+								win.webContents.send("call", {
+									fn: "set_movelist_font_size",
+									args: [28],
+								});
+							}
+						},
+						{
+							label: "32",
+							click: () => {
+								win.webContents.send("call", {
+									fn: "set_movelist_font_size",
+									args: [32],
 								});
 							}
 						},
