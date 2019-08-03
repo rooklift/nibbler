@@ -14,24 +14,31 @@ let sprites = {
 	load_from: function(directory) {
 
 		for (let c of Array.from("KkQqRrBbNnPp")) {
+
 			sprites[c] = new Image();
+			sprites[c].addEventListener("load", () => {sprites.loads++;}, {once: true});
 
 			if (c === c.toUpperCase()) {
+
+				sprites[c].addEventListener("error", () => {console.log(`Failed to load image ${c}.svg or ${c}.png`);}, {once: true});
+				
 				if (fs.existsSync(path.join(directory, `${c}.svg`))) {
 					sprites[c].src = path.join(directory, `${c}.svg`);
 				} else {
 					sprites[c].src = path.join(directory, `${c}.png`);
 				}
-				sprites[c].addEventListener("error", () => {console.log(`Failed to load image ${c}.svg or ${c}.png`);}, {once: true});
+
 			} else {
+
+				sprites[c].addEventListener("error", () => {console.log(`Failed to load image _${c.toUpperCase()}.svg or _${c.toUpperCase()}.png`);}, {once: true});
+
 				if (fs.existsSync(path.join(directory, `_${c.toUpperCase()}.svg`))) {
 					sprites[c].src = path.join(directory, `_${c.toUpperCase()}.svg`);
 				} else {
 					sprites[c].src = path.join(directory, `_${c.toUpperCase()}.png`);
 				}
-				sprites[c].addEventListener("error", () => {console.log(`Failed to load image _${c.toUpperCase()}.svg or _${c.toUpperCase()}.png`);}, {once: true});
+
 			}
-			sprites[c].addEventListener("load", () => {sprites.loads++;}, {once: true});
 		}
 	},
 };
