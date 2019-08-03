@@ -650,8 +650,11 @@ function NewRenderer() {
 		this.info_handler.reset_engine_info();
 
 		if (typeof config.path !== "string" || fs.existsSync(config.path) === false) {
-			this.err_receive(`<span class="blue">${messages.engine_not_present}</span>`);
-			this.err_receive("");
+
+			if (!config.failure) {			// Only show the following if there isn't a bigger problem...
+				this.err_receive(`<span class="blue">${messages.engine_not_present}</span>`);
+				this.err_receive("");
+			}
 			return;
 		}
 
