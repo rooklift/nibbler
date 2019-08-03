@@ -61,14 +61,6 @@ function startup() {
 		}
 	});
 
-	let pagepath = path.join(__dirname, "nibbler.html");
-
-	win.loadURL(url.format({
-		protocol: "file:",
-		pathname: pagepath,
-		slashes: true
-	}));
-
 	win.once("ready-to-show", () => {		// Event will come even if there's an exception in renderer.
 		win.show();
 		win.focus();
@@ -81,8 +73,6 @@ function startup() {
 	win.webContents.once("unresponsive", () => {
 	    alert(messages.renderer_hang);
 	});
-
-	electron.Menu.setApplicationMenu(menu);
 
 	electron.app.on("window-all-closed", () => {
 		electron.app.quit();
@@ -117,6 +107,16 @@ function startup() {
 	electron.ipcMain.on("set_title", (event, msg) => {
 		win.setTitle(msg);
 	});
+
+	// Actually load the page last, I guess, so the event handlers above are already set up...
+
+	win.loadURL(url.format({
+		protocol: "file:",
+		pathname: path.join(__dirname, "nibbler.html"),
+		slashes: true
+	}));
+
+	electron.Menu.setApplicationMenu(menu);
 }
 
 function menu_build() {
