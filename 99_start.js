@@ -9,6 +9,11 @@ let hub = NewRenderer();
 hub.engine_start();
 fenbox.value = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1";
 
+if (fs.existsSync(path.join(get_main_folder(), "config.json"))) {
+	hub.err_receive(`<span class="blue">WARNING: Nibbler now looks for config.json in a new location. We also save to it automatically.</span>`);
+	hub.err_receive("");
+}
+
 // We have 3 main things that get drawn to:
 //
 //		- boardsquares, a table with the actual squares of the board.
