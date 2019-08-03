@@ -177,7 +177,7 @@ exports.load = (save_if_new) => {
 			cfg = JSON.parse(debork_json(fs.readFileSync(filename, "utf8")));
 		}
 	} catch (err) {
-		console.log(err);		// alert() might not be available.
+		cfg.failure = err.toString();		// alert() might not be available.
 	}
 
 	assign_without_overwrite(cfg, exports.defaults);
@@ -216,6 +216,6 @@ exports.save = (cfg) => {
 	try {
 		fs.writeFileSync(filename, JSON.stringify(out, null, "\t"));
 	} catch (err) {
-		console.log(err);		// alert() might not be available.
+		console.log(err.toString());		// alert() might not be available.
 	}
 };

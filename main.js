@@ -24,9 +24,6 @@ electron.app.commandLine.appendSwitch("js-flags", "--expose_gc");
 // out of date. The renderer is responsible for having an up-to-date copy.
 
 let config = config_io.load();		// Do this first, it's a needed global.
-if (config.failure) {				// Do this early, while console.log still works.
-	console.log(config.failure);
-}
 
 let win;
 let menu = menu_build();

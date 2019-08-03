@@ -83,7 +83,8 @@ promotiontable.style["background-color"] = config.active_square;
 // --------------------------------------------------------------------------------------------
 
 if (config.failure) {
-	alert(config.failure);
+	hub.err_receive(`<span class="blue">While loading config.json: ${config.failure}</span>`);
+	hub.err_receive("");
 }
 
 // --------------------------------------------------------------------------------------------
