@@ -222,7 +222,7 @@ exports.save = (cfg) => {
 	// Adjust that copy, but only for keys it already has...
 
 	for (let key of Object.keys(cfg)) {
-		if (out[key] !== undefined) {
+		if (out.hasOwnProperty(key)) {
 			out[key] = cfg[key];
 		}
 	}
