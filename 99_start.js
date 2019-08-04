@@ -20,13 +20,14 @@ if (config.failure) {
 
 fenbox.value = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1";
 
-// We have 3 main things that get drawn to:
+// We have 4 main things that get drawn to:
 //
 //		- boardsquares, a table with the actual squares of the board.
 //		- canvas, which gets enemy pieces and arrows drawn on it.
 //		- boardfriends, a table with friendly pieces.
+//		- fantasy, a canvas which gets fictional variations drawn on it.
 //
-// boardsquares has its natural position, while the other two get
+// boardsquares has its natural position, while the other three get
 // fixed position that is set to be on top of it.
 
 boardfriends.width = canvas.width = fantasy.width = boardsquares.width = config.board_size;
