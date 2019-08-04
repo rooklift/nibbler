@@ -772,6 +772,10 @@ function NewRenderer() {
 		ss.insertRule("* {outline: 1px dotted red;}");
 	};
 
+	renderer.console = function(...args) {
+		console.log(...args);
+	};
+
 	renderer.set_info_font_size = function(n) {
 
 		// While this should probably set the statusbox font size as well,
@@ -791,8 +795,32 @@ function NewRenderer() {
 		config_io.save(config);
 	};
 
-	renderer.console = function(...args) {
-		console.log(...args);
+	renderer.small_arrows = function() {
+		config.arrow_width = 8;
+		config.arrowhead_radius = 12;
+		config.board_font = "18px Arial";
+		config_io.save(config);
+	};
+
+	renderer.medium_arrows = function() {
+		config.arrow_width = 12;
+		config.arrowhead_radius = 18;
+		config.board_font = "24px Arial";
+		config_io.save(config);
+	};
+
+	renderer.large_arrows = function() {
+		config.arrow_width = 16;
+		config.arrowhead_radius = 24;
+		config.board_font = "32px Arial";
+		config_io.save(config);
+	};
+
+	renderer.giant_arrows = function() {
+		config.arrow_width = 24;
+		config.arrowhead_radius = 32;
+		config.board_font = "40px Arial";
+		config_io.save(config);
 	};
 
 	renderer.set_board_size = function(sz) {

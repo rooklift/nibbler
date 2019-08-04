@@ -1582,6 +1582,38 @@ function menu_build() {
 					]
 				},
 				{
+					label: "Arrows",
+					submenu: [
+						{
+							label: "Small",
+							click: () => {
+								win.webContents.send("call", "small_arrows");
+							}
+						},
+						{
+							label: "Medium",
+							click: () => {
+								win.webContents.send("call", "medium_arrows");
+							}
+						},
+						{
+							label: "Large",
+							click: () => {
+								win.webContents.send("call", "large_arrows");
+							}
+						},
+						{
+							label: "Giant",
+							click: () => {
+								win.webContents.send("call", "giant_arrows");
+							}
+						},
+					]
+				},
+				{
+					type: "separator"
+				},
+				{
 					label: "Save window size",
 					click: () => {
 						win.webContents.send("call", "save_window_size");
