@@ -773,6 +773,11 @@ function NewRenderer() {
 	};
 
 	renderer.set_info_font_size = function(n) {
+
+		// While this should probably set the statusbox font size as well,
+		// this would cause a need to recalculate infobox.style.height as
+		// well as causing other issues if the statusbox gets wide.
+
 		infobox.style["font-size"] = n.toString() + "px";
 		config.info_font_size = n;
 		config_io.save(config);
@@ -780,7 +785,9 @@ function NewRenderer() {
 
 	renderer.set_pgn_font_size = function(n) {
 		movelist.style["font-size"] = n.toString() + "px";
+		fenbox.style["font-size"] = n.toString() + "px";
 		config.pgn_font_size = n;
+		config.fen_font_size = n;
 		config_io.save(config);
 	};
 
@@ -790,11 +797,14 @@ function NewRenderer() {
 
 	renderer.set_board_size = function(sz) {
 
-		// This assumes everything already exists. Not to be called from start.js.
-		// Derived from the longer version in start.js.
+		// This assumes everything already exists.
+		// Derived from the longer version in start.js, which it does not replace.
+		// Can be called without sz to simply recalculate everything and save (but this flickers).
 
-		config.square_size = Math.floor(sz / 8);
-		config.board_size = config.square_size * 8;
+		if (sz) {
+			config.square_size = Math.floor(sz / 8);
+			config.board_size = config.square_size * 8;
+		}
 		config_io.save(config);
 
 		boardfriends.width = canvas.width = fantasy.width = boardsquares.width = config.board_size;
@@ -814,7 +824,6 @@ function NewRenderer() {
 
 		let infobox_top = infobox.getBoundingClientRect().top;
 		let canvas_bottom = canvas.getBoundingClientRect().bottom;
-
 		infobox.style.height = (canvas_bottom - infobox_top).toString() + "px";
 
 		promotiontable.style.left = (boardsquares.offsetLeft + config.square_size * 2).toString() + "px";
