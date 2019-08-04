@@ -1505,7 +1505,93 @@ function menu_build() {
 					type: "separator"
 				},
 				{
-					label: "Other size options",
+					label: "Board",
+					submenu: [
+						{
+							label: "480",
+							type: "checkbox",
+							checked: config.board_size === 480,
+							click: () => {
+								set_checks("Sizes", "Board", "480");
+								win.webContents.send("call", {
+									fn: "set_board_size",
+									args: [480],
+								});
+							}
+						},
+						{
+							label: "640",
+							type: "checkbox",
+							checked: config.board_size === 640,
+							click: () => {
+								set_checks("Sizes", "Board", "640");
+								win.webContents.send("call", {
+									fn: "set_board_size",
+									args: [640],
+								});
+							}
+						},
+						{
+							label: "800",
+							type: "checkbox",
+							checked: config.board_size === 800,
+							click: () => {
+								set_checks("Sizes", "Board", "800");
+								win.webContents.send("call", {
+									fn: "set_board_size",
+									args: [800],
+								});
+							}
+						},
+						{
+							label: "960",
+							type: "checkbox",
+							checked: config.board_size === 960,
+							click: () => {
+								set_checks("Sizes", "Board", "960");
+								win.webContents.send("call", {
+									fn: "set_board_size",
+									args: [960],
+								});
+							}
+						},
+						{
+							label: "1120",
+							type: "checkbox",
+							checked: config.board_size === 1120,
+							click: () => {
+								set_checks("Sizes", "Board", "1120");
+								win.webContents.send("call", {
+									fn: "set_board_size",
+									args: [1120],
+								});
+							}
+						},
+						{
+							label: "1280",
+							type: "checkbox",
+							checked: config.board_size === 1280,
+							click: () => {
+								set_checks("Sizes", "Board", "1280");
+								win.webContents.send("call", {
+									fn: "set_board_size",
+									args: [1280],
+								});
+							}
+						},
+					]
+				},
+				{
+					label: "Save window size",
+					click: () => {
+						win.webContents.send("call", "save_window_size");
+					}
+				},
+				{
+					type: "separator"
+				},
+				{
+					label: "I want other size options!",
 					click: () => {
 						alert(messages.about_sizes);
 					}

@@ -65,8 +65,8 @@ exports.renderer_hang =
 
 
 exports.about_sizes = 
-`You can get more fine-grained font and board size control using Nibbler's \
-config file (which can be shown via the App menu).`;
+`You can get more fine-grained control of font, board, and window sizes via \
+Nibbler's config file (which can be found via the App menu).`;
 
 
 exports.new_config_location =

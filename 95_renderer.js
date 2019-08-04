@@ -788,6 +788,46 @@ function NewRenderer() {
 		console.log(...args);
 	};
 
+	renderer.set_board_size = function(sz) {
+
+		// This assumes everything already exists. Not to be called from start.js.
+		// Derived from the longer version in start.js.
+
+		config.square_size = Math.floor(sz / 8);
+		config.board_size = config.square_size * 8;
+		config_io.save(config);
+
+		boardfriends.width = canvas.width = fantasy.width = boardsquares.width = config.board_size;
+		boardfriends.height = canvas.height = fantasy.height = boardsquares.height = config.board_size;
+
+		boardfriends.style.left = canvas.style.left = fantasy.style.left = boardsquares.offsetLeft.toString() + "px";
+		boardfriends.style.top = canvas.style.top = fantasy.style.top = boardsquares.offsetTop.toString() + "px";
+
+		for (let y = 0; y < 8; y++) {
+			for (let x = 0; x < 8; x++) {
+				let td1 = document.getElementById("underlay_" + S(x, y));
+				let td2 = document.getElementById("overlay_" + S(x, y));
+				td1.width = td2.width = config.square_size;
+				td1.height = td2.height = config.square_size;
+			}
+		}
+
+		let infobox_top = infobox.getBoundingClientRect().top;
+		let canvas_bottom = canvas.getBoundingClientRect().bottom;
+
+		infobox.style.height = (canvas_bottom - infobox_top).toString() + "px";
+
+		promotiontable.style.left = (boardsquares.offsetLeft + config.square_size * 2).toString() + "px";
+		promotiontable.style.top = (boardsquares.offsetTop + config.square_size * 3.5).toString() + "px";
+		promotiontable.style["background-color"] = config.active_square;
+	};
+
+	renderer.save_window_size = function() {
+		config.width = window.innerWidth;
+		config.height = window.innerHeight;
+		config_io.save(config);
+	};
+
 	renderer.fire_gc = function() {
 
 		if (!global || !global.gc) {
