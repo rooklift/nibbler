@@ -6,7 +6,7 @@ Nibbler is a real-time analysis GUI for [Leela Chess Zero](https://github.com/Le
 
 For prebuilt binary releases, see the [Releases](https://github.com/fohristiwhirl/nibbler/releases) section. For help, the [Discord](https://discordapp.com/invite/pKujYxD) may be your best bet, or open an issue here.
 
-![Screenshot](https://user-images.githubusercontent.com/16438795/62428006-b0247c00-b6f3-11e9-875b-d8f4ce9a3707.png)
+![Screenshot](https://user-images.githubusercontent.com/16438795/62428191-a7817500-b6f6-11e9-991e-3084e163cf4f.png)
 
 # Features
 
