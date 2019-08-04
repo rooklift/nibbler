@@ -124,6 +124,20 @@ function fix(cfg) {
 			}
 		}
 	}
+
+	// Convert any strings of "false", "true" and "null"...
+
+	for (let key of Object.keys(cfg)) {
+		if (typeof cfg[key] === "string") {
+			if (cfg[key].toLowerCase() === "true") {
+				cfg[key] = true;
+			} else if (cfg[key].toLowerCase() === "false") {
+				cfg[key] = false;
+			} else if (cfg[key].toLowerCase() === "null") {
+				cfg[key] = null;
+			}
+		}
+	}
 }
 
 function assign_without_overwrite(target, source) {
