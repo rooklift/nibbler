@@ -219,7 +219,7 @@ exports.save = (cfg) => {
 
 	let out = JSON.parse(JSON.stringify(exports.defaults));
 
-	// Adjust that copy, but only for keys it already has...
+	// Adjust that copy, but only for keys present in both.
 
 	for (let key of Object.keys(cfg)) {
 		if (out.hasOwnProperty(key)) {
