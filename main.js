@@ -27,7 +27,7 @@ let config = config_io.load();		// Do this first, it's a needed global.
 
 let win;
 let menu = menu_build();
-let loaded_weights = (config.options && config.options.WeightsFile) ? config.options.WeightsFile : null;
+let loaded_weights = config.options.WeightsFile || null;
 let loaded_engine = config.path;
 
 // Avoid a theoretical race by checking whether the ready event has already occurred,
