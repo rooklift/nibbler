@@ -41,7 +41,7 @@ Leela forgets much of the evaluation if the position changes. To mitigate this, 
 
 We try to be considerate and not use too much CPU for mundane tasks like drawing the PVs, arrows, highlights, *et cetera*; however if you want a snappier-feeling GUI, reduce the `config.json` option `update_delay` (default 170) to something low like 25 (this is the number of milliseconds between redraws).
 
-Leela running out of RAM can be a problem if searches go on too long. You might like to add a `RamLimitMb` to the UCI options part of your config file. See [here](https://github.com/LeelaChessZero/lc0/wiki/Lc0-options) for info about that and other UCI options.
+Leela running out of RAM can be a problem if searches go on too long. You might like to add a `RamLimitMb` to the options part of your `config.json` file. See [here](https://github.com/LeelaChessZero/lc0/wiki/Lc0-options) for info about that and other UCI options.
 
 # Thanks
 
