@@ -31,7 +31,7 @@ The required Lc0 version is *v0.21.0 or later*. <!-- because we need `LogLiveSta
 
 As well as the menu options, various aesthetic adjustments are possible in the `config.json` file, which can be found via the App menu. For example, board colour can be changed.
 
-If you like a different piece set, you can create a folder of `.png` or `.svg` files with the right names and point the `override_piece_directory` config option to it.
+If you like a different piece set, you can create a folder of `.png` or `.svg` files with [the right names](https://github.com/fohristiwhirl/nibbler/tree/master/pieces) and point the `override_piece_directory` config option to it.
 
 # Hints and tips
 
