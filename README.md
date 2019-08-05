@@ -21,7 +21,7 @@ For prebuilt binary releases, see the [Releases](https://github.com/fohristiwhir
 
 # Installation
 
-Some Windows and Linux standalone releases are uploaded to the [Releases](https://github.com/fohristiwhirl/nibbler/releases) section from time to time. Mac builds are harder to make but @twoplan is experimenting with it in [this repo](https://github.com/twoplan/Nibbler-for-macOS).
+Some Windows and Linux standalone releases are uploaded to the [Releases](https://github.com/fohristiwhirl/nibbler/releases) section from time to time. Mac builds are harder to make but [@twoplan](https://github.com/twoplan) is experimenting with it in [this repo](https://github.com/twoplan/Nibbler-for-macOS).
 
 Running Nibbler from source requires Electron, but has no other dependencies. If you have Electron installed (e.g. `npm install -g electron`) you can likely enter the Nibbler directory, then do `electron .` to run it. This is mostly tested with Electron 5, but older versions may work too.
 
