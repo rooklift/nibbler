@@ -335,6 +335,10 @@ function NewInfoHandler() {
 
 		let info_list = this.sorted();
 
+		if (typeof config.max_info_lines === "number" && config.max_info_lines > 0) {		// Hidden option, request of rwbc
+			info_list = info_list.slice(0, config.max_info_lines);
+		}
+
 		// We might be highlighting some div...
 
 		let highlight_move = null;
