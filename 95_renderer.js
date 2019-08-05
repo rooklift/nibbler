@@ -878,6 +878,10 @@ function NewRenderer() {
 		setTimeout(global.gc, 5000);
 	};
 
+	renderer.save_config = function() {			// Just for the dev menu - everything else can just call config_io.save(config) directly.
+		config_io.save(config);
+	};
+
 	// --------------------------------------------------------------------------------------------
 	// Clicks, drops, mouse stuff...
 

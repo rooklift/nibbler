@@ -1643,6 +1643,12 @@ function menu_build() {
 					}
 				},
 				{
+					label: "Resave config.json",
+					click: () => {
+						win.webContents.send("call", "save_config");
+					}
+				},
+				{
 					label: "Fire GC",
 					click: () => {
 						win.webContents.send("call", "fire_gc");
