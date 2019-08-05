@@ -142,15 +142,22 @@ function SafeString(s) {
 
 function Log(s) {
 
-	if (!config || typeof config.logfile !== "string" || config.logfile === "") {
+	if (typeof config.logfile !== "string" || config.logfile === "") {
 		return;
 	}
 
-	if (Log.logfile === undefined) {
-		Log.logfile = fs.createWriteStream(config.logfile, {flags: "a"});
+	// Log.logfilename - name of currently open log file (undefined if none)
+	// Log.stream      - actual write stream
+
+	if (Log.logfilename !== config.logfile) {
+		if (Log.logfilename) {
+			Log.stream.end();
+		}
+		Log.logfilename = config.logfile;
+		Log.stream = fs.createWriteStream(config.logfile, {flags: "a"});
 	}
 
-	Log.logfile.write(s + "\n");
+	Log.stream.write(s + "\n");
 }
 
 function New2DArray(width, height) {
