@@ -3,6 +3,7 @@
 	"version": "1.0.3",
 	"author": "Fohristiwhirl",
 	"description": "Leela Chess Zero (Lc0) interface",
+	"license": "GPL-3.0",
 	"main": "main.js",
 	"repository": {
 		"type": "git",
