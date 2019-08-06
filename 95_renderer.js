@@ -658,22 +658,22 @@ function NewRenderer() {
 			return;
 		}
 
-		renderer.engine.setup(renderer.receive.bind(renderer), renderer.err_receive.bind(renderer));
+		this.engine.setup(this.receive.bind(this), this.err_receive.bind(this));
 
-		renderer.engine.send("uci");
+		this.engine.send("uci");
 		for (let key of Object.keys(config.options)) {
-			renderer.engine.setoption(key, config.options[key]);
+			this.engine.setoption(key, config.options[key]);
 		}
-		renderer.engine.setoption("VerboseMoveStats", true);			// Required for LogLiveStats to work.
-		renderer.engine.setoption("LogLiveStats", true);				// "Secret" Lc0 command.
+		this.engine.setoption("VerboseMoveStats", true);			// Required for LogLiveStats to work.
+		this.engine.setoption("LogLiveStats", true);				// "Secret" Lc0 command.
 
 		// Give me all the variations. Wait. Wait! I'm worried that what you heard was "give me
 		// a lot of variations". To clarify - give me all the variations!
 
-		renderer.engine.setoption("MultiPV", 500);
-		renderer.engine.setoption("SmartPruningFactor", 0);
-		renderer.engine.setoption("ScoreType", "centipawn");			// The default, but the user can't be allowed to override this.
-		renderer.engine.send("ucinewgame");
+		this.engine.setoption("MultiPV", 500);
+		this.engine.setoption("SmartPruningFactor", 0);
+		this.engine.setoption("ScoreType", "centipawn");			// The default, but the user can't be allowed to override this.
+		this.engine.send("ucinewgame");
 	};
 
 	// --------------------------------------------------------------------------------------------
