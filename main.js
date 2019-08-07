@@ -211,6 +211,16 @@ function menu_build() {
 					type: "separator"
 				},
 				{
+					label: "Flip board",
+					accelerator: "CommandOrControl+F",
+					click: () => {
+						win.webContents.send("call", {
+							fn: "toggle",
+							args: ["flip"],
+						});
+					}
+				},
+				{
 					label: "Write infobox to clipboard",
 					click: () => {
 						win.webContents.send("call", "infobox_to_clipboard");
@@ -219,7 +229,7 @@ function menu_build() {
 				{
 					type: "separator"
 				},
-					{
+				{
 					label: "Cut",
 					accelerator: "CommandOrControl+X",
 					role: "cut",
@@ -392,19 +402,6 @@ function menu_build() {
 					accelerator: "Escape",
 					click: () => {
 						win.webContents.send("call", "escape");
-					}
-				},
-				{
-					type: "separator"
-				},
-				{
-					label: "Flip board",
-					accelerator: "CommandOrControl+F",
-					click: () => {
-						win.webContents.send("call", {
-							fn: "toggle",
-							args: ["flip"],
-						});
 					}
 				},
 			]
