@@ -705,7 +705,7 @@ function NewRenderer() {
 		if (option === "searchmoves_buttons") {
 			if (!config.searchmoves_buttons) {		// We turned it off.
 				this.searchmoves = [];
-				this.go_or_halt();
+				this.go_or_halt();					// If running, we resend the engine the new "go" command without searchmoves.
 			}
 		}
 	};
