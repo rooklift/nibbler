@@ -5,6 +5,7 @@
 //
 //		- NewNode()
 //		- promote_to_main_line()
+//		- delete_other_lines()
 //		- detach()
 
 const node_prototype = {
@@ -116,6 +117,20 @@ const node_prototype = {
 				}
 			}
 			node = node.parent;
+		}
+
+		tree_version++;
+	},
+
+	delete_other_lines: function() {
+
+		this.promote_to_main_line();
+
+		let node = this.get_root();
+
+		while (node.children.length > 0) {
+			node.children = node.children.slice(0, 1);
+			node = node.children[0];
 		}
 
 		tree_version++;

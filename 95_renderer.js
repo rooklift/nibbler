@@ -259,6 +259,11 @@ function NewRenderer() {
 		this.movelist_handler.draw(this.node);
 	};
 
+	renderer.delete_other_lines = function() {
+		this.node.delete_other_lines();
+		this.movelist_handler.draw(this.node);
+	};
+
 	renderer.delete_node = function() {
 
 		if (!this.node.parent) {

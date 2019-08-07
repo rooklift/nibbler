@@ -255,7 +255,7 @@ function menu_build() {
 			]
 		},
 		{
-			label: "Navigation",
+			label: "Tree",
 			submenu: [
 				{
 					label: "Play choice",
@@ -366,6 +366,15 @@ function menu_build() {
 					label: "Delete siblings",
 					click: () => {
 						win.webContents.send("call", "delete_siblings");
+					}
+				},
+				{
+					type: "separator"
+				},
+				{
+					label: "Delete ALL other lines",
+					click: () => {
+						win.webContents.send("call", "delete_other_lines");
 					}
 				},
 				{
