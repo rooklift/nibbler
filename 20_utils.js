@@ -84,22 +84,7 @@ function CompareArrays(a, b) {
 	return true;
 }
 
-function ArrayIncludes(a, b) {
-
-	if (Array.isArray(a) === false) {
-		return false;
-	}
-
-	for (let item of a) {
-		if (item === b) {
-			return true;
-		}
-	}
-
-	return false;
-}
-
-function ArrayStartsWith(a, b) {
+function ArrayStartsWith(a, b) {		// where b is itself an array
 
 	if (Array.isArray(a) === false || Array.isArray(b) === false) {
 		return false;

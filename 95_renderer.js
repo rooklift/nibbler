@@ -1017,7 +1017,7 @@ function NewRenderer() {
 			return;
 		}
 
-		if (ArrayIncludes(this.searchmoves, sm)) {
+		if (this.searchmoves.includes(sm)) {
 			this.searchmoves = this.searchmoves.filter(move => move !== sm);
 		} else {
 			this.searchmoves.push(sm);

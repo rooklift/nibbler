@@ -397,7 +397,7 @@ function NewInfoHandler() {
 			// The "focus" button...
 
 			if (config.searchmoves_buttons) {
-				if (ArrayIncludes(searchmoves, info.move)) {
+				if (searchmoves.includes(info.move)) {
 					substrings.push(`<span id="searchmove_${info.move}" class="yellow">focused: </span>`);		// Note: infobox_to_clipboard() expects...
 				} else {
 					substrings.push(`<span id="searchmove_${info.move}" class="gray">focus? </span>`);			// ...these exact strings.
