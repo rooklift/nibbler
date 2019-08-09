@@ -47,9 +47,9 @@ function NewEngine() {
 			this.readyok_required++;
 		}
 
-//		if (msg.startsWith("go")) {
-//			this.bestmove_required++;
-//		}
+		if (msg.startsWith("go")) {
+			this.bestmove_required++;
+		}
 
 		try {
 			msg = msg.trim();
@@ -120,27 +120,19 @@ function NewEngine() {
 		});
 
 		this.scanner.on("line", (line) => {
-/*
+
 			if (line.startsWith("bestmove")) {
-				
 				if (this.bestmove_required > 0) {
 					this.bestmove_required--;
 				}
+			}
+/*
+			if (this.bestmove_required > 1 || (line.startsWith("bestmove") && this.bestmove_required > 0)) {
 
-				if (this.bestmove_required > 0) {
-					Log("(bestmove desync) < " + line);
-					return;
-				}
+				// Output is obviously old, assuming our bestmove_required var is correct! DANGER!
 
-			} else {
-
-				if (this.bestmove_required > 1) {
-
-					// Output is obviously old, assuming our bestmove_required var is correct! DANGER!
-
-					Log("(bestmove desync) < " + line);
-					return;
-				}
+				Log("(bestmove desync) < " + line);
+				return;
 			}
 */
 			// We want to ignore all output when waiting for readyok
