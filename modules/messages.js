@@ -10,9 +10,9 @@ thinks the right move is "obvious".`;
 
 exports.about_versus_mode =
 `These options cause Leela to evaluate one side of the position only. \
-You must still manually decide which of Leela's suggestions to play. \
-You can return things to normal with the Go or Halt commands in the \
-Analysis menu.`;
+Optionally, you can have the top move automatically happen on the board \
+upon reaching the node limit (assuming there is one). You can return things \
+to normal with the Go or Halt commands in the Analysis menu.`;
 
 
 exports.save_not_enabled =

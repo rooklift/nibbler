@@ -257,7 +257,7 @@ setTimeout(force_gc, 300000);
 
 function enter_loop() {
 	if (images.fully_loaded()) {
-		hub.draw_loop();
+		hub.spin();
 		ipcRenderer.send("renderer_ready", null);
 	} else {
 		setTimeout(enter_loop, 25);

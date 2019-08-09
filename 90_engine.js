@@ -1,11 +1,31 @@
 "use strict";
 
+/* SYNCHRONISATION NOTES
+
+We need to know whether the data we're receiving relates to the current position, or is obsolete.
+
+We have two different systems:
+
+	- Sometimes we send isready, and ignore all output until receiving readyok
+	- We expect each "go" command to eventually be followed by a "bestmove" message
+
+Sadly, some engines, including Lc0, send readyok at dubious times, meaning we have to always assume
+the info could be about the wrong position. Bah! Still, Leela seems to send readyok at roughly the
+correct time if it is after a position command. But not after a mere stop command.
+
+The bestmove tracker should be OK, as long as the assumption holds. Note that "ucinewgame" causes
+Leela to halt its analysis without sending "bestmove", so we must always send "stop" before
+sending "ucinewgame".
+
+*/
+
 function NewEngine() {
 
 	let eng = Object.create(null);
 
 	eng.exe = null;
 	eng.readyok_required = 0;
+	eng.bestmove_required = 0;
 	eng.scanner = null;
 	eng.err_scanner = null;
 	eng.ever_sent = false;
@@ -15,6 +35,14 @@ function NewEngine() {
 
 		if (!this.exe) {
 			return;
+		}
+
+		if (msg === "isready") {
+			this.readyok_required++;
+		}
+
+		if (msg.startsWith("go")) {
+			this.bestmove_required++;
 		}
 
 		try {
@@ -36,24 +64,8 @@ function NewEngine() {
 		this.send(`setoption name ${name} value ${value}`);
 	};
 
-	// The sync function exists so that we can disregard all output until a certain point.
-	// Basically we use it after sending a position, so that we can ignore all analysis
-	// that comes until LZ sends "readyok" in response to our "isready". All output before
-	// that moment would refer to the obsolete position.
-	//
-	// Sadly this doesn't always work, because engines - including Lc0 - often send readyok
-	// too early, i.e. before they've finished sending info about the position they were
-	// just analysing, meaning we have to always assume the info could be about the wrong
-	// position. Bah!
-	//
-	// Observations:
-	//
-	// Leela seems to send readyok at roughly the correct time if it is after a position
-	// command. But not after a mere stop command.
-
 	eng.sync = function() {
 		this.send("isready");
-		this.readyok_required++;
 	};
 
 	eng.setup = function(receive_fn, err_receive_fn) {
@@ -64,9 +76,14 @@ function NewEngine() {
 		// Also note, everything is stored as a reference in the object. Not sure
 		// if this is needed to stop stuff getting garbage collected...?
 
-		this.readyok_required = 0;			// In case sync() has been called.
 		this.receive_fn = receive_fn;
 		this.err_receive_fn = err_receive_fn;
+
+		// Precautionary / defensive coding, in case these somehow got changed
+		// before setup() is called (impossible at time of writing)...
+
+		this.readyok_required = 0;
+		this.bestmove_required = 0;
 
 		try {
 			this.exe = child_process.spawn(config.path, config.args, {cwd: path.dirname(config.path)});
@@ -98,6 +115,28 @@ function NewEngine() {
 
 		this.scanner.on("line", (line) => {
 
+			if (line.startsWith("bestmove")) {
+				
+				if (this.bestmove_required > 0) {
+					this.bestmove_required--;
+				}
+
+				if (this.bestmove_required > 0) {
+					Log("(bestmove desync) < " + line);
+					return;
+				}
+
+			} else {
+
+				if (this.bestmove_required > 1) {
+
+					// Output is obviously old, assuming our bestmove_required var is correct! DANGER!
+
+					Log("(bestmove desync) < " + line);
+					return;
+				}
+			}
+
 			// We want to ignore all output when waiting for readyok
 
 			if (line.includes("readyok") && this.readyok_required > 0) {
@@ -106,7 +145,7 @@ function NewEngine() {
 
 			if (this.readyok_required > 0) {
 				if (config.log_info_lines || line.includes("info") === false) {
-					Log("(ignored) < " + line);
+					Log("(readyok desync) < " + line);
 				}
 				return;
 			}
@@ -114,6 +153,7 @@ function NewEngine() {
 			if (config.log_info_lines || line.includes("info") === false) {
 				Log("< " + line);
 			}
+
 			this.receive_fn(line);
 		});
 	};

@@ -1379,6 +1379,17 @@ function menu_build() {
 					}
 				},
 				{
+					label: "...and play move at node limit",
+					type: "checkbox",
+					checked: config.autoplay,
+					click: () => {
+						win.webContents.send("call", {
+							fn: "toggle",
+							args: ["autoplay"],
+						});
+					}
+				},
+				{
 					label: "About single colour modes",
 					click: () => {
 						alert(messages.about_versus_mode);

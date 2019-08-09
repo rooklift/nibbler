@@ -508,6 +508,17 @@ function NewRenderer() {
 			}
 		}
 
+		// When in autoplay mode, use "bestmove" to detect that analysis is finished. There are synchronisation
+		// worries here. Partially this is mitigated by the isready / readyok system, but in addition, the engine.js
+		// code only sends us "bestmove" strings if the number received equals the number of "go" commands sent.
+
+		if (s.startsWith("bestmove") && config.autoplay && config.versus === this.node.get_board().active) {
+			if (this.leela_position === this.node.get_board()) {		// See notes on leela_position above.
+				let tokens = s.split(" ");
+				this.move(tokens[1]);
+			}
+		}
+
 		debug.receive -= 1;
 	};
 
@@ -531,7 +542,7 @@ function NewRenderer() {
 			this.leela_maybe_running = false;
 		}
 		if (new_game_flag) {
-			this.engine.send("ucinewgame");
+			this.engine.send("ucinewgame");			// MUST NEVER BE SENT WHEN ENGINE IS RUNNING - can desync the bestmove count as "bestmove" won't be sent by Leela.
 		}
 	};
 
@@ -545,7 +556,7 @@ function NewRenderer() {
 		}
 
 		if (new_game_flag) {
-			this.engine.send("ucinewgame");
+			this.engine.send("ucinewgame");			// MUST NEVER BE SENT WHEN ENGINE IS RUNNING - can desync the bestmove count as "bestmove" won't be sent by Leela.
 		}
 
 		let start_fen = this.node.get_root().get_board().fen();
@@ -601,11 +612,7 @@ function NewRenderer() {
 	};
 
 	renderer.reset_leela_cache = function() {
-		if (this.leela_should_go()) {
-			this.__go(true);
-		} else {
-			this.engine.send("ucinewgame");
-		}
+		this.go_or_halt(true);
 	};
 
 	renderer.set_cpuct = function(val) {					// We don't save this in the config.
@@ -1386,10 +1393,10 @@ function NewRenderer() {
 		debug.draw -= 1;
 	};
 
-	renderer.draw_loop = function() {
+	renderer.spin = function() {
 		this.tick++;
 		this.draw();
-		setTimeout(this.draw_loop.bind(this), config.update_delay);
+		setTimeout(this.spin.bind(this), config.update_delay);
 	};
 
 	return renderer;

@@ -63,6 +63,7 @@ exports.defaults = {
 	"update_delay": 170,
 	"animate_delay_multiplier": 4,
 	"search_nodes": "infinite",
+	"autoplay": true,
 	"save_enabled": false,
 	"override_piece_directory": null,
 	"logfile": null,
