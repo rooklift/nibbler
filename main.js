@@ -184,6 +184,18 @@ function menu_build() {
 					type: "separator"
 				},
 				{
+					label: "Load FEN from clipboard",
+					click: () => {
+						win.webContents.send("call", {
+							fn: "load_fen",
+							args: [electron.clipboard.readText()]
+						});
+					}
+				},
+				{
+					type: "separator"
+				},
+				{
 					label: "Save this game...",
 					accelerator: "CommandOrControl+S",
 					click: () => {

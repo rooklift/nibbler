@@ -99,6 +99,8 @@ function LoadFEN(fen) {
 		throw "Invalid FEN - fullmoves";
 	}
 
+	// Some more validity checks...
+
 	let white_kings = 0;
 	let black_kings = 0;
 
@@ -111,6 +113,14 @@ function LoadFEN(fen) {
 
 	if (white_kings !== 1 || black_kings !== 1) {
 		throw "Invalid FEN - number of kings";
+	}
+
+	for (let x = 0; x < 8; x++) {
+		for (let y of [0, 7]) {
+			if (ret.state[x][y] === "P" || ret.state[x][y] === "p") {
+				throw "Invalid FEN - pawn position";
+			}
+		}
 	}
 
 	let opponent_king_char = ret.active === "w" ? "k" : "K";
