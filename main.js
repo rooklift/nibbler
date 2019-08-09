@@ -119,6 +119,9 @@ function startup() {
 }
 
 function menu_build() {
+
+	const million = 1000000;
+
 	const template = [
 		{
 			label: "App",
@@ -1135,62 +1138,116 @@ function menu_build() {
 							}
 						},
 						{
-							label: "100,000,000",
+							type: "separator"
+						},
+						{
+							label: "256,000,000",
 							type: "checkbox",
-							checked: config.search_nodes === 100000000,
+							checked: config.search_nodes === 256 * million,
 							click: () => {
-								set_checks("Engine", "Node limit", "100,000,000");
+								set_checks("Engine", "Node limit", "256,000,000");
 								win.webContents.send("call", {
 									fn: "set_node_limit",
-									args: [100000000]
+									args: [256 * million]
 								});
 							}
 						},
 						{
-							label: "10,000,000",
+							label: "64,000,000",
 							type: "checkbox",
-							checked: config.search_nodes === 10000000,
+							checked: config.search_nodes === 64 * million,
 							click: () => {
-								set_checks("Engine", "Node limit", "10,000,000");
+								set_checks("Engine", "Node limit", "64,000,000");
 								win.webContents.send("call", {
 									fn: "set_node_limit",
-									args: [10000000]
+									args: [64 * million]
+								});
+							}
+						},
+						{
+							label: "16,000,000",
+							type: "checkbox",
+							checked: config.search_nodes === 16 * million,
+							click: () => {
+								set_checks("Engine", "Node limit", "16,000,000");
+								win.webContents.send("call", {
+									fn: "set_node_limit",
+									args: [16 * million]
+								});
+							}
+						},
+						{
+							label: "4,000,000",
+							type: "checkbox",
+							checked: config.search_nodes === 4 * million,
+							click: () => {
+								set_checks("Engine", "Node limit", "4,000,000");
+								win.webContents.send("call", {
+									fn: "set_node_limit",
+									args: [4 * million]
 								});
 							}
 						},
 						{
 							label: "1,000,000",
 							type: "checkbox",
-							checked: config.search_nodes === 1000000,
+							checked: config.search_nodes === 1 * million,
 							click: () => {
 								set_checks("Engine", "Node limit", "1,000,000");
 								win.webContents.send("call", {
 									fn: "set_node_limit",
-									args: [1000000]
+									args: [1 * million]
 								});
 							}
 						},
 						{
-							label: "100,000",
+							type: "separator"
+						},
+						{
+							label: "256,000",
 							type: "checkbox",
-							checked: config.search_nodes === 100000,
+							checked: config.search_nodes === 256000,
 							click: () => {
-								set_checks("Engine", "Node limit", "100,000");
+								set_checks("Engine", "Node limit", "256,000");
 								win.webContents.send("call", {
 									fn: "set_node_limit",
-									args: [100000]
+									args: [256000]
 								});
 							}
 						},
 						{
-							label: "10,000",
+							label: "64,000",
 							type: "checkbox",
-							checked: config.search_nodes === 10000,
+							checked: config.search_nodes === 64000,
 							click: () => {
-								set_checks("Engine", "Node limit", "10,000");
+								set_checks("Engine", "Node limit", "64,000");
 								win.webContents.send("call", {
 									fn: "set_node_limit",
-									args: [10000]
+									args: [64000]
+								});
+							}
+						},
+						{
+							label: "16,000",
+							type: "checkbox",
+							checked: config.search_nodes === 16000,
+							click: () => {
+								set_checks("Engine", "Node limit", "16,000");
+								win.webContents.send("call", {
+									fn: "set_node_limit",
+									args: [16000]
+								});
+							}
+						},
+						{
+							label: "4,000",
+							type: "checkbox",
+							checked: config.search_nodes === 4000,
+							click: () => {
+								set_checks("Engine", "Node limit", "4,000");
+								win.webContents.send("call", {
+									fn: "set_node_limit",
+									args: [4000]
 								});
 							}
 						},
@@ -1207,26 +1264,53 @@ function menu_build() {
 							}
 						},
 						{
-							label: "100",
+							type: "separator"
+						},
+						{
+							label: "256",
 							type: "checkbox",
-							checked: config.search_nodes === 100,
+							checked: config.search_nodes === 256,
 							click: () => {
-								set_checks("Engine", "Node limit", "100");
+								set_checks("Engine", "Node limit", "256");
 								win.webContents.send("call", {
 									fn: "set_node_limit",
-									args: [100]
+									args: [256]
 								});
 							}
 						},
 						{
-							label: "10",
+							label: "64",
 							type: "checkbox",
-							checked: config.search_nodes === 10,
+							checked: config.search_nodes === 64,
 							click: () => {
-								set_checks("Engine", "Node limit", "10");
+								set_checks("Engine", "Node limit", "64");
 								win.webContents.send("call", {
 									fn: "set_node_limit",
-									args: [10]
+									args: [64]
+								});
+							}
+						},
+						{
+							label: "16",
+							type: "checkbox",
+							checked: config.search_nodes === 16,
+							click: () => {
+								set_checks("Engine", "Node limit", "16");
+								win.webContents.send("call", {
+									fn: "set_node_limit",
+									args: [16]
+								});
+							}
+						},
+						{
+							label: "4",
+							type: "checkbox",
+							checked: config.search_nodes === 4,
+							click: () => {
+								set_checks("Engine", "Node limit", "4");
+								win.webContents.send("call", {
+									fn: "set_node_limit",
+									args: [4]
 								});
 							}
 						},
