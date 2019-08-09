@@ -18,7 +18,9 @@ Leela to halt its analysis without sending "bestmove", so we must always send "s
 "ucinewgame".
 
 It's quite dangerous having these 2 systems; if either is wrong we can get in a bad state. In the
-event of problems, it is probably OK to remove the bestmove tracker. (COMMENTED OUT FOR NOW.)
+event of problems, it is probably OK to remove the bestmove tracker.
+
+(BESTMOVE TRACKER COMMENTED OUT FOR NOW, THOUGH NO REASON TO THINK IT'S BROKEN.)
 
 */
 
