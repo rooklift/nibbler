@@ -496,22 +496,19 @@ function NewRenderer() {
 			if (this.leela_position === this.node.get_board()) {		// Note leela_position is a misleading name - it's the last position we
 				this.info_handler.receive(s, this.node.get_board());	// sent, but Leela could be sending info about the previous position.
 			}															// So the above condition doesn't prove the info is current.
-		}
-		if (s.startsWith("error")) {
+		} else if (s.startsWith("error")) {
 			this.info_handler.err_receive(s);
-		}
-		if (s.startsWith("id name")) {
+		} else if (s.startsWith("id name")) {
 			for (let n = 10; n < 21; n++) {
 				if (s.includes(`v0.${n}`)) {
 					this.info_handler.err_receive(`<span class="blue">Nibbler says: this version of Lc0 may be too old to display most statistics.</span>`);
 				}
 			}
-		}
+		} else if (s.startsWith("bestmove") && config.autoplay && config.versus === this.node.get_board().active) {
 
-		// When in autoplay mode, use "bestmove" to detect that analysis is finished. There are
-		// synchronisation worries here, though it seems the isready / readyok system is good enough.
+			// When in autoplay mode, use "bestmove" to detect that analysis is finished. There are
+			// synchronisation worries here, though it seems the isready / readyok system is good enough.
 
-		if (s.startsWith("bestmove") && config.autoplay && config.versus === this.node.get_board().active) {
 			if (this.leela_position === this.node.get_board()) {		// See notes on leela_position above.
 				let tokens = s.split(" ");
 				this.move(tokens[1]);
