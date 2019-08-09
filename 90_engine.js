@@ -130,6 +130,7 @@ function NewEngine() {
 			if (this.bestmove_required > 1 || (line.startsWith("bestmove") && this.bestmove_required > 0)) {
 
 				// Output is obviously old, assuming our bestmove_required var is correct! DANGER!
+				// I don't entirely trust the assumptions so this is commented out.
 
 				Log("(bestmove desync) < " + line);
 				return;
