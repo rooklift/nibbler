@@ -508,9 +508,8 @@ function NewRenderer() {
 			}
 		}
 
-		// When in autoplay mode, use "bestmove" to detect that analysis is finished. There are synchronisation
-		// worries here. Partially this is mitigated by the isready / readyok system, but in addition, the engine.js
-		// code only sends us "bestmove" strings if the number received equals the number of "go" commands sent.
+		// When in autoplay mode, use "bestmove" to detect that analysis is finished. There are
+		// synchronisation worries here, though it seems the isready / readyok system is good enough.
 
 		if (s.startsWith("bestmove") && config.autoplay && config.versus === this.node.get_board().active) {
 			if (this.leela_position === this.node.get_board()) {		// See notes on leela_position above.
