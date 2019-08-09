@@ -31,7 +31,7 @@ function NewEngine() {
 
 	eng.exe = null;
 	eng.readyok_required = 0;
-	eng.bestmove_required = 0;				// Currently unused (relevant code commented out)
+	eng.bestmove_required = 0;
 	eng.scanner = null;
 	eng.err_scanner = null;
 	eng.ever_sent = false;
