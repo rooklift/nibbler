@@ -17,8 +17,8 @@ The bestmove tracker should be OK, as long as the assumption holds. Note that "u
 Leela to halt its analysis without sending "bestmove", so we must always send "stop" before sending
 "ucinewgame".
 
-It's quite dangerous having these 2 systems, if either is wrong we can get in a bad state. In the
-event of problems, it is probably OK to remove the bestmove tracker.
+It's quite dangerous having these 2 systems; if either is wrong we can get in a bad state. In the
+event of problems, it is probably OK to remove the bestmove tracker. (COMMENTED OUT FOR NOW.)
 
 */
 
@@ -28,7 +28,7 @@ function NewEngine() {
 
 	eng.exe = null;
 	eng.readyok_required = 0;
-	eng.bestmove_required = 0;
+	eng.bestmove_required = 0;				// Currently unused (relevant code commented out)
 	eng.scanner = null;
 	eng.err_scanner = null;
 	eng.ever_sent = false;
@@ -44,9 +44,9 @@ function NewEngine() {
 			this.readyok_required++;
 		}
 
-		if (msg.startsWith("go")) {
-			this.bestmove_required++;
-		}
+//		if (msg.startsWith("go")) {
+//			this.bestmove_required++;
+//		}
 
 		try {
 			msg = msg.trim();
@@ -117,7 +117,7 @@ function NewEngine() {
 		});
 
 		this.scanner.on("line", (line) => {
-
+/*
 			if (line.startsWith("bestmove")) {
 				
 				if (this.bestmove_required > 0) {
@@ -139,7 +139,7 @@ function NewEngine() {
 					return;
 				}
 			}
-
+*/
 			// We want to ignore all output when waiting for readyok
 
 			if (line.includes("readyok") && this.readyok_required > 0) {
