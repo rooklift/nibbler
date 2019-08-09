@@ -714,6 +714,12 @@ function NewRenderer() {
 				this.go_or_halt();					// If running, we resend the engine the new "go" command without searchmoves.
 			}
 		}
+
+		if (option === "autoplay") {
+			if (config.autoplay) {					// We turned it on.
+				this.go_or_halt();					// Since autoplay requires a "bestmove" message, give the engine a chance to send one.
+			}
+		}
 	};
 
 	renderer.toggle_flip = function() {				// config.flip should not be directly set, call this function instead.
