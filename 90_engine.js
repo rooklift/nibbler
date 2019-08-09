@@ -14,8 +14,11 @@ the info could be about the wrong position. Bah! Still, Leela seems to send read
 correct time if it is after a position command. But not after a mere stop command.
 
 The bestmove tracker should be OK, as long as the assumption holds. Note that "ucinewgame" causes
-Leela to halt its analysis without sending "bestmove", so we must always send "stop" before
-sending "ucinewgame".
+Leela to halt its analysis without sending "bestmove", so we must always send "stop" before sending
+"ucinewgame".
+
+It's quite dangerous having these 2 systems, if either is wrong we can get in a bad state. In the
+event of problems, it is probably OK to remove the bestmove tracker.
 
 */
 
