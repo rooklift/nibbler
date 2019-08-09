@@ -538,7 +538,7 @@ function NewRenderer() {
 			this.leela_maybe_running = false;
 		}
 		if (new_game_flag) {
-			this.engine.send("ucinewgame");			// MUST NEVER BE SENT WHEN ENGINE IS RUNNING - can desync the bestmove count as "bestmove" won't be sent by Leela.
+			this.engine.send("ucinewgame");			// Shouldn't be sent when engine is running.
 		}
 	};
 
@@ -552,7 +552,7 @@ function NewRenderer() {
 		}
 
 		if (new_game_flag) {
-			this.engine.send("ucinewgame");			// MUST NEVER BE SENT WHEN ENGINE IS RUNNING - can desync the bestmove count as "bestmove" won't be sent by Leela.
+			this.engine.send("ucinewgame");			// Shouldn't be sent when engine is running.
 		}
 
 		let start_fen = this.node.get_root().get_board().fen();
