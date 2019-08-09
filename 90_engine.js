@@ -2,26 +2,27 @@
 
 /* SYNCHRONISATION NOTES
 
-We need to know whether the data we're receiving relates to the current position, or is obsolete.
+We need to know whether the data we're receiving relates to the current position,
+or is obsolete.
 
-We have two different systems:
+We have considered two possible systems:
 
-	- Sometimes we send isready, and ignore all output until receiving readyok
-	- We expect each "go" command to eventually be followed by a "bestmove" message
+-- Sometimes we send "isready", and ignore all output until receiving "readyok"
+-- We expect each "go" command to eventually be followed by a "bestmove" message
 
-Sadly, some engines, including Lc0, send readyok at dubious times, meaning we have to always assume
-the info could be about the wrong position. Bah! Still, Leela seems to send readyok at roughly the
-correct time if it is after a position command. But not after a mere stop command.
+Sadly, some engines, including Lc0, send "readyok" at dubious times, meaning we
+have to always assume the info could be about the wrong position. Bah! Still,
+Leela seems to send "readyok" at roughly the correct time if it is after a
+"position" command. But not after a mere "stop" command.
 
-The bestmove tracker should be OK, as long as the assumption holds. Note that "ucinewgame" causes
-Leela to halt its analysis without sending "bestmove", so we must always send "stop" before sending
-"ucinewgame".
+The bestmove tracker should be OK, as long as Leela really does send a
+"bestmove" for every "go". assumption holds. Note that "ucinewgame" causes Leela
+to halt its analysis without sending "bestmove", so we must always send "stop"
+before sending "ucinewgame". I think I saw the bestmove tracker cause a real
+desync once, though I wasn't logging at the time. Curses! Anyway, I deleted it.
 
-It's quite dangerous having these 2 systems; if either is wrong we can get in a bad state. In the
-event of problems, it is probably OK to remove the bestmove tracker.
-
-I think I saw the bestmove tracker cause a real desync once, though I wasn't logging at the
-time. Curses! Anyway, I don't trust it and it's commented out for now.
+Last version with the bestmove tracker:
+https://github.com/fohristiwhirl/nibbler/tree/c6071782f65ce7cbf69384e0e402af2e6239a3d6
 
 */
 
@@ -31,7 +32,6 @@ function NewEngine() {
 
 	eng.exe = null;
 	eng.readyok_required = 0;
-	eng.bestmove_required = 0;
 	eng.scanner = null;
 	eng.err_scanner = null;
 	eng.ever_sent = false;
@@ -45,10 +45,6 @@ function NewEngine() {
 
 		if (msg === "isready") {
 			this.readyok_required++;
-		}
-
-		if (msg.startsWith("go")) {
-			this.bestmove_required++;
 		}
 
 		try {
@@ -89,7 +85,6 @@ function NewEngine() {
 		// before setup() is called (impossible at time of writing)...
 
 		this.readyok_required = 0;
-		this.bestmove_required = 0;
 
 		try {
 			this.exe = child_process.spawn(config.path, config.args, {cwd: path.dirname(config.path)});
@@ -121,22 +116,7 @@ function NewEngine() {
 
 		this.scanner.on("line", (line) => {
 
-			if (line.startsWith("bestmove")) {
-				if (this.bestmove_required > 0) {
-					this.bestmove_required--;
-				}
-			}
-/*
-			if (this.bestmove_required > 1 || (line.startsWith("bestmove") && this.bestmove_required > 0)) {
-
-				// Output is obviously old, assuming our bestmove_required var is correct! DANGER!
-				// I don't entirely trust the assumptions so this is commented out.
-
-				Log("(bestmove desync) < " + line);
-				return;
-			}
-*/
-			// We want to ignore all output when waiting for readyok
+			// We want to ignore all output when waiting for "readyok"
 
 			if (line.includes("readyok") && this.readyok_required > 0) {
 				this.readyok_required--;
