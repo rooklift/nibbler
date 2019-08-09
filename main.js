@@ -1128,12 +1128,12 @@ function menu_build() {
 						{
 							label: "Infinite",
 							type: "checkbox",
-							checked: config.search_nodes === "infinite",
+							checked: typeof config.search_nodes !== "number",
 							click: () => {
 								set_checks("Engine", "Node limit", "Infinite");
 								win.webContents.send("call", {
 									fn: "set_node_limit",
-									args: ["infinite"]
+									args: [null]
 								});
 							}
 						},

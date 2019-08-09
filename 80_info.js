@@ -300,7 +300,7 @@ function NewInfoHandler() {
 
 	ih.draw_statusbox = function(leela_maybe_running, searchmoves) {
 
-		if (config.search_nodes !== "infinite" && (searchmoves.length === 1)) {
+		if (typeof config.search_nodes === "number" && (searchmoves.length === 1)) {
 
 			statusbox.innerHTML = `<span class="yellow">Node limit with only 1 focus won't run.</span>`;
 

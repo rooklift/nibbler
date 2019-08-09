@@ -572,7 +572,7 @@ function NewRenderer() {
 
 		let s;
 
-		if (typeof config.search_nodes !== "number") {
+		if (typeof config.search_nodes !== "number" || config.search_nodes < 1) {
 			s = "go infinite";
 		} else {
 			s = `go nodes ${config.search_nodes}`;

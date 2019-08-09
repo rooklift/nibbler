@@ -62,7 +62,7 @@ exports.defaults = {
 	"sam_q_plus_u": false,
 	"update_delay": 170,
 	"animate_delay_multiplier": 4,
-	"search_nodes": "infinite",
+	"search_nodes": null,
 	"autoplay": true,
 	"save_enabled": false,
 	"override_piece_directory": null,
@@ -96,17 +96,6 @@ function fix(cfg) {
 
 	if (cfg.uncertainty_cutoff >= 1) cfg.uncertainty_cutoff = 999;
 	if (cfg.uncertainty_cutoff <= 0) cfg.uncertainty_cutoff = -999;
-
-	// search_nodes should be in number format, unless "infinite"...
-
-	if (typeof cfg.search_nodes === "string" && cfg.search_nodes !== "infinite") {
-		let n = parseInt(cfg.search_nodes, 10);
-		if (Number.isNaN(n) === false) {
-			cfg.search_nodes = n;
-		} else {
-			cfg.search_nodes = "infinite";
-		}
-	}
 
 	// This can't be 0 because we divide by it...
 
