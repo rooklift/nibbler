@@ -20,7 +20,8 @@ Leela to halt its analysis without sending "bestmove", so we must always send "s
 It's quite dangerous having these 2 systems; if either is wrong we can get in a bad state. In the
 event of problems, it is probably OK to remove the bestmove tracker.
 
-(BESTMOVE TRACKER COMMENTED OUT FOR NOW, THOUGH NO REASON TO THINK IT'S BROKEN.)
+I think I saw the bestmove tracker cause a real desync once, though I wasn't logging at the
+time. Curses! Anyway, I don't trust it and it's commented out for now.
 
 */
 
