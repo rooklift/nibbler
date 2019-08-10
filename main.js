@@ -1329,6 +1329,227 @@ function menu_build() {
 					]
 				},
 				{
+					label: "Threads",
+					submenu: [
+						{
+							label: "1",
+							type: "checkbox",
+							checked: config.options.Threads === 1,
+							click: () => {
+								set_checks("Engine", "Threads", "1");
+								win.webContents.send("call", {
+									fn: "set_threads",
+									args: [1],
+								});
+							}
+						},
+						{
+							label: "2",
+							type: "checkbox",
+							checked: config.options.Threads === 2,
+							click: () => {
+								set_checks("Engine", "Threads", "2");
+								win.webContents.send("call", {
+									fn: "set_threads",
+									args: [2],
+								});
+							}
+						},
+						{
+							label: "3",
+							type: "checkbox",
+							checked: config.options.Threads === 3,
+							click: () => {
+								set_checks("Engine", "Threads", "3");
+								win.webContents.send("call", {
+									fn: "set_threads",
+									args: [3],
+								});
+							}
+						},
+						{
+							label: "4",
+							type: "checkbox",
+							checked: config.options.Threads === 4,
+							click: () => {
+								set_checks("Engine", "Threads", "4");
+								win.webContents.send("call", {
+									fn: "set_threads",
+									args: [4],
+								});
+							}
+						},
+						{
+							label: "5",
+							type: "checkbox",
+							checked: config.options.Threads === 5,
+							click: () => {
+								set_checks("Engine", "Threads", "5");
+								win.webContents.send("call", {
+									fn: "set_threads",
+									args: [5],
+								});
+							}
+						},
+						{
+							label: "6",
+							type: "checkbox",
+							checked: config.options.Threads === 6,
+							click: () => {
+								set_checks("Engine", "Threads", "6");
+								win.webContents.send("call", {
+									fn: "set_threads",
+									args: [6],
+								});
+							}
+						},
+						{
+							label: "7",
+							type: "checkbox",
+							checked: config.options.Threads === 7,
+							click: () => {
+								set_checks("Engine", "Threads", "7");
+								win.webContents.send("call", {
+									fn: "set_threads",
+									args: [7],
+								});
+							}
+						},
+						{
+							label: "8",
+							type: "checkbox",
+							checked: config.options.Threads === 8,
+							click: () => {
+								set_checks("Engine", "Threads", "8");
+								win.webContents.send("call", {
+									fn: "set_threads",
+									args: [8],
+								});
+							}
+						},
+						{
+							label: "10",
+							type: "checkbox",
+							checked: config.options.Threads === 10,
+							click: () => {
+								set_checks("Engine", "Threads", "10");
+								win.webContents.send("call", {
+									fn: "set_threads",
+									args: [10],
+								});
+							}
+						},
+						{
+							label: "12",
+							type: "checkbox",
+							checked: config.options.Threads === 12,
+							click: () => {
+								set_checks("Engine", "Threads", "12");
+								win.webContents.send("call", {
+									fn: "set_threads",
+									args: [12],
+								});
+							}
+						},
+						{
+							label: "14",
+							type: "checkbox",
+							checked: config.options.Threads === 14,
+							click: () => {
+								set_checks("Engine", "Threads", "14");
+								win.webContents.send("call", {
+									fn: "set_threads",
+									args: [14],
+								});
+							}
+						},
+						{
+							label: "16",
+							type: "checkbox",
+							checked: config.options.Threads === 16,
+							click: () => {
+								set_checks("Engine", "Threads", "16");
+								win.webContents.send("call", {
+									fn: "set_threads",
+									args: [16],
+								});
+							}
+						},
+						{
+							label: "24",
+							type: "checkbox",
+							checked: config.options.Threads === 24,
+							click: () => {
+								set_checks("Engine", "Threads", "24");
+								win.webContents.send("call", {
+									fn: "set_threads",
+									args: [24],
+								});
+							}
+						},
+						{
+							label: "32",
+							type: "checkbox",
+							checked: config.options.Threads === 32,
+							click: () => {
+								set_checks("Engine", "Threads", "32");
+								win.webContents.send("call", {
+									fn: "set_threads",
+									args: [32],
+								});
+							}
+						},
+						{
+							label: "48",
+							type: "checkbox",
+							checked: config.options.Threads === 48,
+							click: () => {
+								set_checks("Engine", "Threads", "48");
+								win.webContents.send("call", {
+									fn: "set_threads",
+									args: [48],
+								});
+							}
+						},
+						{
+							label: "64",
+							type: "checkbox",
+							checked: config.options.Threads === 64,
+							click: () => {
+								set_checks("Engine", "Threads", "64");
+								win.webContents.send("call", {
+									fn: "set_threads",
+									args: [64],
+								});
+							}
+						},
+						{
+							label: "96",
+							type: "checkbox",
+							checked: config.options.Threads === 96,
+							click: () => {
+								set_checks("Engine", "Threads", "96");
+								win.webContents.send("call", {
+									fn: "set_threads",
+									args: [96],
+								});
+							}
+						},
+						{
+							label: "128",
+							type: "checkbox",
+							checked: config.options.Threads === 128,
+							click: () => {
+								set_checks("Engine", "Threads", "128");
+								win.webContents.send("call", {
+									fn: "set_threads",
+									args: [128],
+								});
+							}
+						},
+					]
+				},
+				{
 					label: "CPuct",
 					submenu: [
 					{

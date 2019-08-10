@@ -620,6 +620,14 @@ function NewRenderer() {
 		this.go_or_halt();
 	};
 
+	renderer.set_threads = function(val) {
+		this.__halt();
+		config.options.Threads = val;
+		config_io.save(config);
+		this.engine.setoption("Threads", val);
+		this.go_or_halt();
+	};
+
 	renderer.set_node_limit = function(val) {
 		config.search_nodes = val;
 		config_io.save(config);
