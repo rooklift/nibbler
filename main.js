@@ -630,7 +630,7 @@ function menu_build() {
 							type: "separator"
 						},
 						{
-							label: "About this option",
+							label: "About U",
 							click: () => {
 								alert(messages.about_move_display);
 							}
@@ -1669,6 +1669,15 @@ function menu_build() {
 								});
 							}
 						},
+						{
+							type: "separator"
+						},
+						{
+							label: "About CPuct",
+							click: () => {
+								alert(messages.about_cpuct);
+							}
+						}
 					]
 				},
 				{

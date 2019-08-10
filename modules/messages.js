@@ -82,3 +82,12 @@ on CPU-only systems, if at all.
 
 If no tick is present in this menu, the default is being used, which is probably what \
 you want.`;
+
+
+exports.about_cpuct =
+`This is a technical option that should generally be ignored. Note that Nibbler never \
+remembers your choice here after closing down, although it can be permanently set in \
+the config.json file.
+
+If no tick is present in this menu, the default is being used, which is probably what \
+you want.`;
