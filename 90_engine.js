@@ -120,7 +120,7 @@ function NewEngine() {
 			// Firstly, make sure we correct our sync counters...
 			// Do both these things before anything else.
 
-			if (line.startsWith("bestmove") && this.bestmove_required > 0) {
+			if (line.includes("bestmove") && this.bestmove_required > 0) {
 				this.bestmove_required--;
 			}
 
@@ -130,7 +130,7 @@ function NewEngine() {
 
 			// We want to ignore output that is clearly obsolete...
 
-			if (this.bestmove_required > 1 || (line.startsWith("bestmove") && this.bestmove_required > 0)) {
+			if (this.bestmove_required > 1 || (line.includes("bestmove") && this.bestmove_required > 0)) {
 				if (config.log_info_lines || line.includes("info") === false) {
 					Log("(bestmove desync) < " + line);
 				}
