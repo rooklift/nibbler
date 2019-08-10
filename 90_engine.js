@@ -16,9 +16,10 @@ Leela seems to send "readyok" at roughly the correct time if it is after a
 "position" command. But not after a mere "stop" command.
 
 The bestmove tracker should be OK, as long as Leela really does send a
-"bestmove" for every "go". Note that "ucinewgame" causes Leela to halt its
-analysis without sending "bestmove", so we must always send "stop" before
-sending "ucinewgame".
+"bestmove" for every "go", and as long as the "bestmove" message is the very
+last message it sends about a position. Note that "ucinewgame" causes Leela to
+halt its analysis without sending "bestmove", so we must always send "stop"
+before sending "ucinewgame".
 
 It seems in practice either one of these is enough.
 
