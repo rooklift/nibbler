@@ -119,10 +119,8 @@ function NewEngine() {
 			// Firstly, make sure we correct our sync counters...
 			// Do both these things before anything else.
 
-			if (line.startsWith("bestmove")) {
-				if (this.bestmove_required > 0) {
-					this.bestmove_required--;
-				}
+			if (line.startsWith("bestmove") && this.bestmove_required > 0) {
+				this.bestmove_required--;
 			}
 
 			if (line.includes("readyok") && this.readyok_required > 0) {
