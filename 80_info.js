@@ -298,9 +298,13 @@ function NewInfoHandler() {
 		this.last_drawn_version = null;
 	};
 
-	ih.draw_statusbox = function(leela_maybe_running, searchmoves) {
+	ih.draw_statusbox = function(leela_maybe_running, searchmoves, readyok_required) {
 
-		if (typeof config.search_nodes === "number" && (searchmoves.length === 1)) {
+		if (typeof readyok_required === "number" && readyok_required > 2) {
+
+			statusbox.innerHTML = `<span class="yellow">Out of sync: ${readyok_required}</span>`;
+
+		} else if (typeof config.search_nodes === "number" && (searchmoves.length === 1)) {
 
 			statusbox.innerHTML = `<span class="yellow">Node limit with only 1 focus won't run.</span>`;
 
@@ -322,9 +326,9 @@ function NewInfoHandler() {
 		}
 	};
 
-	ih.draw_infobox = function(mouse_point, active_square, leela_maybe_running, active_colour, searchmoves, hoverdraw_div) {
+	ih.draw_infobox = function(mouse_point, active_square, leela_maybe_running, active_colour, searchmoves, hoverdraw_div, readyok_required) {
 
-		ih.draw_statusbox(leela_maybe_running, searchmoves);
+		ih.draw_statusbox(leela_maybe_running, searchmoves, readyok_required);
 
 		// Display stderr and return if we've never seen any info...
 

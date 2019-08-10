@@ -565,7 +565,7 @@ function NewRenderer() {
 		}
 
 		// Leela seems to time "readyok" correctly after "position" commands.
-		// After sending "isready" We'll ignore Leela output until "readyok" comes.
+		// After sending "isready" we'll ignore Leela output until "readyok" comes.
 
 		this.engine.send(`position ${setup} moves ${this.node.history().join(" ")}`);
 		this.engine.send("isready");
@@ -1397,7 +1397,8 @@ function NewRenderer() {
 			this.leela_maybe_running,
 			this.node.get_board().active,
 			this.searchmoves,
-			this.hoverdraw_div);
+			this.hoverdraw_div,
+			this.engine.readyok_required);
 
 		debug.draw -= 1;
 	};
