@@ -1408,6 +1408,7 @@ function NewRenderer() {
 		this.draw();
 
 		// Stop the engine if we get too far out of sync. See issue #57.
+		// Despite what GitHub says, this change is in fact in the 1.0.6 build.
 
 		if (config.versus !== "" && Math.max(this.engine.readyok_required, this.engine.bestmove_required) > 10) {
 			this.set_versus("");
