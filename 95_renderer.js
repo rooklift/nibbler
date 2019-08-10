@@ -685,10 +685,6 @@ function NewRenderer() {
 		}
 		this.engine.setoption("VerboseMoveStats", true);			// Required for LogLiveStats to work.
 		this.engine.setoption("LogLiveStats", true);				// "Secret" Lc0 command.
-
-		// Give me all the variations. Wait. Wait! I'm worried that what you heard was "give me
-		// a lot of variations". To clarify - give me all the variations!
-
 		this.engine.setoption("MultiPV", 500);
 		this.engine.setoption("SmartPruningFactor", 0);
 		this.engine.setoption("ScoreType", "centipawn");			// The default, but the user can't be allowed to override this.
