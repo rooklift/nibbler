@@ -66,10 +66,6 @@ function NewEngine() {
 		this.send(`setoption name ${name} value ${value}`);
 	};
 
-	eng.sync = function() {
-		this.send("isready");
-	};
-
 	eng.setup = function(receive_fn, err_receive_fn) {
 
 		// This is slightly sketchy, the passed functions get saved to our engine

@@ -532,7 +532,7 @@ function NewRenderer() {
 		}
 	};
 
-	renderer.__halt = function(new_game_flag) {		// engine.sync() is not needed. If changing position, invalid data will be discarded by renderer.receive().
+	renderer.__halt = function(new_game_flag) {		// "isready" is not needed. If changing position, invalid data will be discarded by renderer.receive().
 		if (this.leela_maybe_running) {
 			this.engine.send("stop");		
 			this.leela_maybe_running = false;
@@ -564,8 +564,11 @@ function NewRenderer() {
 			setup = `fen ${start_fen}`;
 		}
 
+		// Leela seems to time "readyok" correctly after "position" commands.
+		// After sending "isready" We'll ignore Leela output until "readyok" comes.
+
 		this.engine.send(`position ${setup} moves ${this.node.history().join(" ")}`);
-		this.engine.sync();			// Disregard Leela output until "readyok" comes. Leela seems to time "readyok" correctly after "position" commands.
+		this.engine.send("isready");
 
 		let s;
 
