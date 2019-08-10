@@ -33,6 +33,12 @@ As well as the menu options, various aesthetic adjustments are possible in the `
 
 If you like a different piece set, you can create a folder of `.png` or `.svg` files with [the right names](https://github.com/fohristiwhirl/nibbler/tree/master/pieces) and point the `override_piece_directory` config option to it.
 
+# Advanced engine options
+
+All Leela's UCI engine options can be set in two ways: in the options part of Nibbler's own `config.json` file (which you can find via the App menu) or in a file called `lc0.config` in the same folder as Leela - for info about how to use that, see [here](https://github.com/LeelaChessZero/lc0/blob/master/FLAGS.md).
+
+See also [this list of UCI options](https://github.com/LeelaChessZero/lc0/wiki/Lc0-options) supported by Leela.
+
 # Hints and tips
 
 An option to enable the UCI `searchmoves` feature is available in the Analysis menu. Once enabled, one or more moves can be specified as moves to focus on; Leela will ignore other moves. This is useful when you think Leela isn't giving a certain move enough attention.
@@ -41,7 +47,7 @@ Leela forgets much of the evaluation if the position changes. To mitigate this, 
 
 We try to be considerate and not use too much CPU for mundane tasks like drawing the PVs, arrows, highlights, *et cetera*; however if you want a snappier-feeling GUI, reduce the `config.json` option `update_delay` (default 170) to something low like 25 (this is the number of milliseconds between redraws).
 
-Leela running out of RAM can be a problem if searches go on too long. You might like to add a `RamLimitMb` to the options part of your `config.json` file, or via an [`lc0.config`](https://github.com/LeelaChessZero/lc0/blob/master/FLAGS.md) file in your Leela directory. See [here](https://github.com/LeelaChessZero/lc0/wiki/Lc0-options) for info about `RamLimitMb` and other UCI options.
+Leela running out of RAM can be a problem if searches go on too long. You might like to use the UCI option `RamLimitMb` (see *advanced engine options*, above).
 
 # Thanks
 
