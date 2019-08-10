@@ -16,13 +16,10 @@ Leela seems to send "readyok" at roughly the correct time if it is after a
 "position" command. But not after a mere "stop" command.
 
 The bestmove tracker should be OK, as long as Leela really does send a
-"bestmove" for every "go". assumption holds. Note that "ucinewgame" causes Leela
-to halt its analysis without sending "bestmove", so we must always send "stop"
-before sending "ucinewgame". I think I saw the bestmove tracker cause a real
-desync once, though I wasn't logging at the time. Curses! Anyway, I deleted it.
-
-Last version with the bestmove tracker:
-https://github.com/fohristiwhirl/nibbler/tree/c6071782f65ce7cbf69384e0e402af2e6239a3d6
+"bestmove" for every "go". Note that "ucinewgame" causes Leela to halt its
+analysis without sending "bestmove", so we must always send "stop" before
+sending "ucinewgame". I think I saw the bestmove tracker cause a real desync
+once, though I wasn't logging at the time. Curses!
 
 */
 
@@ -32,6 +29,7 @@ function NewEngine() {
 
 	eng.exe = null;
 	eng.readyok_required = 0;
+	eng.bestmove_required = 0;
 	eng.scanner = null;
 	eng.err_scanner = null;
 	eng.ever_sent = false;
@@ -41,6 +39,10 @@ function NewEngine() {
 
 		if (!this.exe) {
 			return;
+		}
+
+		if (msg.startsWith("go")) {
+			this.bestmove_required++;
 		}
 
 		if (msg === "isready") {
@@ -81,6 +83,7 @@ function NewEngine() {
 		// before setup() is called (impossible at time of writing)...
 
 		this.readyok_required = 0;
+		this.bestmove_required = 0;
 
 		try {
 			this.exe = child_process.spawn(config.path, config.args, {cwd: path.dirname(config.path)});
@@ -111,6 +114,22 @@ function NewEngine() {
 		});
 
 		this.scanner.on("line", (line) => {
+
+			if (line.startsWith("bestmove")) {
+				if (this.bestmove_required > 0) {
+					this.bestmove_required--;
+				}
+			}
+
+			// Since I don't fully trust that "go" is always followed by "bestmove" eventually,
+			// actually using this sync method is behind a config option...
+
+			if (config.unsafe_bestmove_sync) {
+				if (this.bestmove_required > 1 || (line.startsWith("bestmove") && this.bestmove_required > 0)) {
+					Log("(bestmove desync) < " + line);
+					return;
+				}
+			}
 
 			// We want to ignore all output when waiting for "readyok"
 
