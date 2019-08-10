@@ -298,11 +298,11 @@ function NewInfoHandler() {
 		this.last_drawn_version = null;
 	};
 
-	ih.draw_statusbox = function(leela_maybe_running, searchmoves, readyok_required) {
+	ih.draw_statusbox = function(leela_maybe_running, searchmoves, syncs_needed) {
 
-		if (typeof readyok_required === "number" && readyok_required > 2) {
+		if (typeof syncs_needed === "number" && syncs_needed > 1) {
 
-			statusbox.innerHTML = `<span class="yellow">Out of sync: ${readyok_required}</span>`;
+			statusbox.innerHTML = `<span class="gray">Out of sync: ${syncs_needed}</span>`;
 
 		} else if (typeof config.search_nodes === "number" && (searchmoves.length === 1)) {
 
@@ -326,9 +326,9 @@ function NewInfoHandler() {
 		}
 	};
 
-	ih.draw_infobox = function(mouse_point, active_square, leela_maybe_running, active_colour, searchmoves, hoverdraw_div, readyok_required) {
+	ih.draw_infobox = function(mouse_point, active_square, leela_maybe_running, active_colour, searchmoves, hoverdraw_div, syncs_needed) {
 
-		ih.draw_statusbox(leela_maybe_running, searchmoves, readyok_required);
+		ih.draw_statusbox(leela_maybe_running, searchmoves, syncs_needed);
 
 		// Display stderr and return if we've never seen any info...
 

@@ -1398,7 +1398,7 @@ function NewRenderer() {
 			this.node.get_board().active,
 			this.searchmoves,
 			this.hoverdraw_div,
-			this.engine.readyok_required);
+			Math.max(this.engine.readyok_required, this.engine.bestmove_required));
 
 		debug.draw -= 1;
 	};
