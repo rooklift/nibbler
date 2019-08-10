@@ -1547,6 +1547,15 @@ function menu_build() {
 								});
 							}
 						},
+						{
+							type: "separator"
+						},
+						{
+							label: "Warning about threads",
+							click: () => {
+								alert(messages.thread_warning);
+							}
+						},
 					]
 				},
 				{
