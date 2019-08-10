@@ -126,7 +126,9 @@ function NewEngine() {
 
 			if (config.unsafe_bestmove_sync) {
 				if (this.bestmove_required > 1 || (line.startsWith("bestmove") && this.bestmove_required > 0)) {
-					Log("(bestmove desync) < " + line);
+					if (config.log_info_lines || line.includes("info") === false) {
+						Log("(bestmove desync) < " + line);
+					}
 					return;
 				}
 			}
