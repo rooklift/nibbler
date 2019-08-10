@@ -611,6 +611,7 @@ function NewRenderer() {
 	};
 
 	renderer.reset_leela_cache = function() {
+		this.info_handler.clear(this.node.get_board());
 		this.go_or_halt(true);
 	};
 
