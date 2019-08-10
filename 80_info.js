@@ -202,7 +202,10 @@ function NewInfoHandler() {
 				move_info.q_plus_u = tmp;
 			}
 
-			move_info.p = InfoVal(s, "(P:");			// Worst case here is just empty string, which is OK.
+			tmp = parseFloat(InfoVal(s, "(P:"));		// parseFloat will ignore the trailing %
+			if (Number.isNaN(tmp) === false) {
+				move_info.p = tmp;
+			}
 
 			tmp = parseFloat(InfoVal(s, "(Q:"));
 			if (Number.isNaN(tmp) === false) {
@@ -277,9 +280,17 @@ function NewInfoHandler() {
 			}
 
 			// We might get here if two moves have the same MultiPV due to one of them
-			// being currently turned off with searchmoves. Centipawn score is sometimes
-			// unreliable since we might compare an old low depth score with a new high
-			// depth score.
+			// being currently turned off with searchmoves.
+
+			if (a.p < b.p) {
+				return 1;
+			}
+			if (a.p > b.p) {
+				return -1;
+			}
+
+			// Centipawn score is sometimes unreliable since we might compare an old low
+			// depth score with a new high depth score.
 
 			if (a.cp < b.cp) {
 				return 1;
@@ -654,20 +665,13 @@ function NewInfoHandler() {
 				s = o.info.value_string(0);
 				break;
 			case 1:
-				if (this.nodes <= 0) {
-					s = "?";
-					break;
+				if (this.nodes > 0) {
+					s = (100 * o.info.n / this.nodes).toFixed(0);
 				}
-				s = (100 * o.info.n / this.nodes).toFixed(0);
 				break;
 			case 2:
-				let pstr = o.info.p;
-				if (pstr.endsWith("%")) {
-					pstr = pstr.slice(0, -1);
-				}
-				let p = parseFloat(pstr);
-				if (Number.isNaN(p) === false) {
-					s = p.toFixed(0);
+				if (o.info.p > 0) {
+					s = o.info.p.toFixed(0);
 				}
 				break;
 			case 3:
@@ -787,7 +791,11 @@ const info_prototype = {
 		// Everything else...
 
 		if (opts.p) {
-			ret.push(`P: ${this.p}`);
+			if (typeof this.p === "number" && this.p > 0) {
+				ret.push(`P: ${this.p}%`);
+			} else {
+				ret.push(`P: ?`);
+			}
 		}
 
 		if (opts.v) {
@@ -848,7 +856,7 @@ function new_info(board, move) {
 	info.move = move;
 	info.multipv = 1;
 	info.n = 0;
-	info.p = "?";					// Note we receive P as a string, unlike the other stuff.
+	info.p = 0;						// Note P is received and stored as a percent, e.g. 31.76 is a reasonable P.
 	info.pv = [move];				// Warning: never assume this is a legal sequence.
 	info.nice_pv_cache = null;
 	info.q = 0;
