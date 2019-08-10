@@ -64,7 +64,6 @@ exports.defaults = {
 	"animate_delay_multiplier": 4,
 	"search_nodes": null,
 	"autoplay": true,
-	"unsafe_bestmove_sync": false,				// Feature in testing.
 	"save_enabled": false,
 	"override_piece_directory": null,
 	"logfile": null,

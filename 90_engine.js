@@ -5,7 +5,7 @@
 We need to know whether the data we're receiving relates to the current position,
 or is obsolete.
 
-We have considered two possible systems:
+We have two systems...
 
 -- Sometimes we send "isready", and ignore all output until receiving "readyok"
 -- We expect each "go" command to eventually be followed by a "bestmove" message
@@ -18,8 +18,9 @@ Leela seems to send "readyok" at roughly the correct time if it is after a
 The bestmove tracker should be OK, as long as Leela really does send a
 "bestmove" for every "go". Note that "ucinewgame" causes Leela to halt its
 analysis without sending "bestmove", so we must always send "stop" before
-sending "ucinewgame". I think I saw the bestmove tracker cause a real desync
-once, though I wasn't logging at the time. Curses!
+sending "ucinewgame".
+
+It seems in practice either one of these is enough.
 
 */
 
@@ -115,29 +116,29 @@ function NewEngine() {
 
 		this.scanner.on("line", (line) => {
 
+			// Firstly, make sure we correct our sync counters...
+			// Do both these things before anything else.
+
 			if (line.startsWith("bestmove")) {
 				if (this.bestmove_required > 0) {
 					this.bestmove_required--;
 				}
 			}
 
-			// Since I don't fully trust that "go" is always followed by "bestmove" eventually,
-			// actually using this sync method is behind a config option...
-
-			if (config.unsafe_bestmove_sync) {
-				if (this.bestmove_required > 1 || (line.startsWith("bestmove") && this.bestmove_required > 0)) {
-					if (config.log_info_lines || line.includes("info") === false) {
-						Log("(bestmove desync) < " + line);
-					}
-					return;
-				}
-			}
-
-			// We want to ignore all output when waiting for "readyok"
-
 			if (line.includes("readyok") && this.readyok_required > 0) {
 				this.readyok_required--;
 			}
+
+			// We want to ignore output that is clearly obsolete...
+
+			if (this.bestmove_required > 1 || (line.startsWith("bestmove") && this.bestmove_required > 0)) {
+				if (config.log_info_lines || line.includes("info") === false) {
+					Log("(bestmove desync) < " + line);
+				}
+				return;
+			}
+
+			// We want to ignore all output when waiting for "readyok"...
 
 			if (this.readyok_required > 0) {
 				if (config.log_info_lines || line.includes("info") === false) {
