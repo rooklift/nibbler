@@ -1685,6 +1685,7 @@ function menu_build() {
 				},
 				{
 					label: "Only play White",
+					accelerator: "F9",
 					click: () => {
 						win.webContents.send("call", {
 							fn: "set_versus",
@@ -1694,6 +1695,7 @@ function menu_build() {
 				},
 				{
 					label: "Only play Black",
+					accelerator: "F10",
 					click: () => {
 						win.webContents.send("call", {
 							fn: "set_versus",
