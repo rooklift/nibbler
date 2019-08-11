@@ -574,7 +574,10 @@ function NewInfoHandler() {
 			
 			for (let i = 0; i < info_list.length; i++) {
 
-				if ((typeof info_list[i].u === "number" && info_list[i].u < config.uncertainty_cutoff) || i === 0) {
+				let good_u = typeof info_list[i].u === "number" && info_list[i].u < config.uncertainty_cutoff;
+				let good_n = typeof info_list[i].n === "number" && info_list[i].n > 0;
+
+				if (i === 0 || (good_u && good_n)) {
 
 					let [x1, y1] = XY(info_list[i].move.slice(0, 2));
 					let [x2, y2] = XY(info_list[i].move.slice(2, 4));
