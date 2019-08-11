@@ -1995,16 +1995,31 @@ function menu_build() {
 					}
 				},
 				{
+					type: "separator"
+				},
+				{
 					label: "Resave config.json",
 					click: () => {
 						win.webContents.send("call", "save_config");
 					}
 				},
 				{
+					type: "separator"
+				},
+				{
 					label: "Fire GC",
 					click: () => {
 						win.webContents.send("call", "fire_gc");
 					}
+				},
+				{
+					label: "Show sync status",
+					click: () => {
+						win.webContents.executeJavaScript("alert(`rok: ${hub.engine.readyok_required}, bm: ${hub.engine.bestmove_required}`)");
+					}
+				},
+				{
+					type: "separator"
 				},
 				{
 					label: "Crash Test",
