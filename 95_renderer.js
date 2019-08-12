@@ -525,6 +525,8 @@ function NewRenderer() {
 
 		if (config.options.MaxPrefetch === undefined && s.startsWith("Creating backend [blas]")) {
 			this.engine.setoption("MaxPrefetch", 0);
+			this.info_handler.err_receive(s);
+			this.info_handler.err_receive(`<span class="blue">Nibbler says: setting MaxPrefetch to 0 for BLAS. If you don't want this, explicitly set a MaxPrefetch value in config.json (options section).</span>`);
 		}
 
 		this.info_handler.err_receive(s);
