@@ -519,6 +519,14 @@ function NewRenderer() {
 	};
 
 	renderer.err_receive = function(s) {
+
+		// If Leela announces it's using BLAS, adjust MaxPrefetch from its abysmally non-performant default.
+		// This is pretty crude.
+
+		if (config.options.MaxPrefetch === undefined && s.startsWith("Creating backend [blas]")) {
+			this.engine.setoption("MaxPrefetch", 0);
+		}
+
 		this.info_handler.err_receive(s);
 	};
 
