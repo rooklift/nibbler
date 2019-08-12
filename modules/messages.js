@@ -98,6 +98,5 @@ exports.obsolete_leela =
 
 
 exports.setting_maxprefetch_for_blas = 
-`Nibbler says: setting MaxPrefetch to 0 for BLAS. If you don't want this, explicitly set \
-a MaxPrefetch value in config.json (options section).`;
-
+`Nibbler says: setting [MaxPrefetch = 0, MinibatchSize = 8] for BLAS. If you don't want \
+this, explicitly set either value in config.json (options section).`;

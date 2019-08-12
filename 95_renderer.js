@@ -520,13 +520,14 @@ function NewRenderer() {
 
 	renderer.err_receive = function(s) {
 
-		// If Leela announces it's using BLAS, adjust MaxPrefetch from its abysmally non-performant default.
+		// If Leela announces it's using BLAS, adjust some UCI settings that can drastically improve performance.
 		// This is pretty crude.
 
-		if (config.options.MaxPrefetch === undefined && s.startsWith("Creating backend [blas]")) {
+		if (config.options.MaxPrefetch === undefined && config.options.MinibatchSize === undefined && s.startsWith("Creating backend [blas]")) {
 			this.engine.setoption("MaxPrefetch", 0);
+			this.engine.setoption("MinibatchSize", 8);
 			this.info_handler.err_receive(s);
-			this.info_handler.err_receive(`<span class="blue">${messages.setting_maxprefetch_for_blas}</span>`);
+			this.info_handler.err_receive(`<span class="blue">${messages.settings_for_blas}</span>`);
 			return;
 		}
 
