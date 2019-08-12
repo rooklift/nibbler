@@ -527,7 +527,7 @@ function NewRenderer() {
 			this.engine.setoption("MaxPrefetch", 0);
 			this.engine.setoption("MinibatchSize", 8);
 			this.info_handler.err_receive(s);
-			this.info_handler.err_receive(`<span class="blue">${messages.settings_for_blas}</span>`);
+			this.info_handler.err_receive(`<span class="blue">${messages.settings_for_blas}</span>`);	// Announces [MaxPrefetch = 0, MinibatchSize = 8]
 			return;
 		}
 
