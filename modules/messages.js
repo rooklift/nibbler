@@ -91,3 +91,13 @@ the config.json file.
 
 If no tick is present in this menu, the default is being used, which is probably what \
 you want.`;
+
+
+exports.obsolete_leela = 
+`Nibbler says: this version of Lc0 may be too old to display most statistics.`;
+
+
+exports.setting_maxprefetch_for_blas = 
+`Nibbler says: setting MaxPrefetch to 0 for BLAS. If you don't want this, explicitly set \
+a MaxPrefetch value in config.json (options section).`;
+

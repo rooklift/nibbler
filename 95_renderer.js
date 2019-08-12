@@ -501,7 +501,7 @@ function NewRenderer() {
 		} else if (s.startsWith("id name")) {
 			for (let n = 10; n < 21; n++) {
 				if (s.includes(`v0.${n}`)) {
-					this.info_handler.err_receive(`<span class="blue">Nibbler says: this version of Lc0 may be too old to display most statistics.</span>`);
+					this.info_handler.err_receive(`<span class="blue">${messages.obsolete_leela}</span>`);
 				}
 			}
 		} else if (s.startsWith("bestmove") && config.autoplay && config.versus === this.node.get_board().active) {
@@ -526,7 +526,7 @@ function NewRenderer() {
 		if (config.options.MaxPrefetch === undefined && s.startsWith("Creating backend [blas]")) {
 			this.engine.setoption("MaxPrefetch", 0);
 			this.info_handler.err_receive(s);
-			this.info_handler.err_receive(`<span class="blue">Nibbler says: setting MaxPrefetch to 0 for BLAS. If you don't want this, explicitly set a MaxPrefetch value in config.json (options section).</span>`);
+			this.info_handler.err_receive(`<span class="blue">${messages.setting_maxprefetch_for_blas}</span>`);
 		}
 
 		this.info_handler.err_receive(s);
