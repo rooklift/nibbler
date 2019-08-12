@@ -527,6 +527,7 @@ function NewRenderer() {
 			this.engine.setoption("MaxPrefetch", 0);
 			this.info_handler.err_receive(s);
 			this.info_handler.err_receive(`<span class="blue">${messages.setting_maxprefetch_for_blas}</span>`);
+			return;
 		}
 
 		this.info_handler.err_receive(s);
