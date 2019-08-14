@@ -290,6 +290,12 @@ const position_prototype = {
 					return "White lost the right to castle queenside";
 				}
 
+				// Check that the king destination isn't occupied by an enemy...
+
+				if (this.state[x2][y2] !== "") {
+					return "Castling cannot capture";
+				}
+
 				// For queenside castling, check that the rook isn't blocked by a piece on the B file...
 
 				if (x2 === 2 && this.piece(Point(1, y2)) !== "") {
