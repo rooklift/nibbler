@@ -19,6 +19,7 @@ function Perft(fen, depth) {
 	}
 	let val = perft(LoadFEN(fen), depth, true);
 	console.log("Total..........", val);
+	return val;
 }
 
 function perft(pos, depth, print_moves) {
