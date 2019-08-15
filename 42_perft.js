@@ -4,7 +4,7 @@ function Perft(fen, depth) {
 	if (!fen || !depth) {
 		throw "Need FEN and depth";
 	}
-	let val = perft(LoadFEN(fen), depth, true)
+	let val = perft(LoadFEN(fen), depth, true);
 	console.log("Total..........", val);
 }
 
