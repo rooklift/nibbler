@@ -1,5 +1,18 @@
 "use strict";
 
+/* Perft notes:
+
+The correct perft value for a position and depth is the number of leaf nodes at
+that depth (or equivalently, the number of legal move sequences of that length).
+
+Some important points:
+
+- Rules about "Triple Repetition" and "Insufficient Material" are ignored.
+- Terminal nodes (mates) at a shallower depth are not counted.
+- But they are counted if they are at the correct depth.
+
+*/
+
 function Perft(fen, depth) {
 	if (!fen || !depth) {
 		throw "Need FEN and depth";
