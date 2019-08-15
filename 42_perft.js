@@ -1,9 +1,11 @@
-function Perft(depth) {
-	console.log(perft(LoadFEN("rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1"), depth, true));
-}
+"use strict";
 
-function PerftKiwi(depth) {
-	console.log(perft(LoadFEN("r3k2r/p1ppqpb1/bn2pnp1/3PN3/1p2P3/2N2Q1p/PPPBBPPP/R3K2R w KQkq - 0 1"), depth, true));
+function Perft(fen, depth) {
+	if (!fen || !depth) {
+		throw "Need FEN and depth";
+	}
+	let val = perft(LoadFEN(fen), depth, true)
+	console.log("Perft output...", val);
 }
 
 function perft(pos, depth, print_moves) {
