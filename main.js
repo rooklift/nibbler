@@ -56,11 +56,12 @@ function startup() {
 		webPreferences: {
 			backgroundThrottling: false,
 			nodeIntegration: true,
-			zoomFactor: 1 / electron.screen.getPrimaryDisplay().scaleFactor
+			// zoomFactor: 1 / electron.screen.getPrimaryDisplay().scaleFactor		// Buggy, see https://github.com/electron/electron/issues/10572
 		}
 	});
 
-	win.once("ready-to-show", () => {		// Event will come even if there's an exception in renderer.
+	win.once("ready-to-show", () => {
+		win.webContents.setZoomFactor(1 / electron.screen.getPrimaryDisplay().scaleFactor);		// This seems to work, note issue 10572 above.
 		win.show();
 		win.focus();
 	});
