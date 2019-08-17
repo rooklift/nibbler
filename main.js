@@ -56,7 +56,7 @@ function startup() {
 		webPreferences: {
 			backgroundThrottling: false,
 			nodeIntegration: true,
-			// zoomFactor: 1 / electron.screen.getPrimaryDisplay().scaleFactor		// Buggy, see https://github.com/electron/electron/issues/10572
+			zoomFactor: 1 / electron.screen.getPrimaryDisplay().scaleFactor		// Unreliable, see https://github.com/electron/electron/issues/10572
 		}
 	});
 
