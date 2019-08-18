@@ -19,7 +19,7 @@ const statusbox = document.getElementById("statusbox");
 // If require isn't available, we're in a browser:
 
 try {
-	require("./modules/empty.js");
+	require("./modules/empty");
 } catch (err) {
 	statusbox.innerHTML = `Running Nibbler in a normal browser doesn't work. For the full app, see the
 	<a href="https://github.com/fohristiwhirl/nibbler/releases">Releases section</a> of the repo.<br><br>
