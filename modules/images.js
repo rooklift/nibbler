@@ -43,7 +43,7 @@ let sprites = {
 				}
 			}
 
-			sprites[c].nibbler_string = "url('" + ReplaceAll(sprites[c].src, "'", "%27") + "')";
+			sprites[c].nibbler_string = `url("${sprites[c].src}")`;		// Since the src path won't contain " this should be safe.
 		}
 	},
 };
