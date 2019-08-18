@@ -48,6 +48,7 @@ body {
 }
 
 #canvas {
+	outline-offset: 6px;
 	pointer-events: none;
 	position: fixed;
 	user-select: none;
@@ -69,15 +70,6 @@ body {
 	table-layout: fixed;
 	user-select: none;
 	z-index: 4;
-}
-
-#fantasy {
-	display: none;
-	outline: 2px dashed #6cccee;
-	outline-offset: 6px;
-	position: fixed;
-	user-select: none;
-	z-index: 5;
 }
 
 #pgnchooser {

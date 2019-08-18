@@ -8,7 +8,6 @@
 const boardfriends = document.getElementById("boardfriends");
 const boardsquares = document.getElementById("boardsquares");
 const canvas = document.getElementById("canvas");
-const fantasy = document.getElementById("fantasy");
 const fenbox = document.getElementById("fenbox");
 const infobox = document.getElementById("infobox");
 const movelist = document.getElementById("movelist");

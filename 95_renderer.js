@@ -869,11 +869,11 @@ function NewRenderer() {
 		}
 		config_io.save(config);
 
-		boardfriends.width = canvas.width = fantasy.width = boardsquares.width = config.board_size;
-		boardfriends.height = canvas.height = fantasy.height = boardsquares.height = config.board_size;
+		boardfriends.width = canvas.width = boardsquares.width = config.board_size;
+		boardfriends.height = canvas.height = boardsquares.height = config.board_size;
 
-		boardfriends.style.left = canvas.style.left = fantasy.style.left = boardsquares.offsetLeft.toString() + "px";
-		boardfriends.style.top = canvas.style.top = fantasy.style.top = boardsquares.offsetTop.toString() + "px";
+		boardfriends.style.left = canvas.style.left = boardsquares.offsetLeft.toString() + "px";
+		boardfriends.style.top = canvas.style.top = boardsquares.offsetTop.toString() + "px";
 
 		for (let y = 0; y < 8; y++) {
 			for (let x = 0; x < 8; x++) {
@@ -1362,22 +1362,22 @@ function NewRenderer() {
 
 	renderer.draw_fantasy = function(board) {
 
-		let ctx = fantasy.getContext("2d");
+		context.clearRect(0, 0, canvas.width, canvas.height);
 
 		for (let x = 0; x < 8; x++) {
 			for (let y = 0; y < 8; y++) {
 
-				ctx.fillStyle = (x + y) % 2 === 0 ? config.light_square : config.dark_square;
+				context.fillStyle = (x + y) % 2 === 0 ? config.light_square : config.dark_square;
 
 				let cc = CanvasCoords(x, y);
-				ctx.fillRect(cc.x1, cc.y1, config.square_size, config.square_size);
+				context.fillRect(cc.x1, cc.y1, config.square_size, config.square_size);
 
 				if (board.state[x][y] === "") {
 					continue;
 				}
 
 				let piece = board.state[x][y];
-				ctx.drawImage(images[piece], cc.x1, cc.y1, config.square_size, config.square_size);
+				context.drawImage(images[piece], cc.x1, cc.y1, config.square_size, config.square_size);
 			}
 		}
 	};
@@ -1393,10 +1393,12 @@ function NewRenderer() {
 		let did_hoverdraw = this.hoverdraw();
 
 		if (did_hoverdraw) {
-			fantasy.style.display = "block";
+			boardfriends.style.display = "none";
+			canvas.style.outline = "2px dashed #6cccee";
 		} else {
 			this.hoverdraw_div = -1;
-			fantasy.style.display = "none";
+			boardfriends.style.display = "block";
+			canvas.style.outline = "none";
 			context.clearRect(0, 0, canvas.width, canvas.height);
 			this.draw_move_in_canvas();
 			this.draw_enemies_in_canvas();
