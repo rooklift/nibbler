@@ -1197,7 +1197,7 @@ function NewRenderer() {
 					td.style["background-image"] = "none";
 					td.draggable = false;
 				} else {
-					td.style["background-image"] = images[piece_to_draw].nibbler_string;
+					td.style["background-image"] = images[piece_to_draw].string_for_bg_style;
 					td.style["background-size"] = "contain";
 					td.draggable = true;
 				}

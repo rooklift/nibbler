@@ -43,7 +43,7 @@ let sprites = {
 				}
 			}
 
-			sprites[c].nibbler_string = `url("${sprites[c].src}")`;		// Since the src path won't contain " this should be safe.
+			sprites[c].string_for_bg_style = `url("${sprites[c].src}")`;		// Since the src path won't contain " this should be safe.
 		}
 	},
 };
