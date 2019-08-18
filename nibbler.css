@@ -11,13 +11,17 @@ body {
 	margin: 16px;
 	overflow: hidden;
 	padding: 0;
+	pointer-events: none;
+	user-select: none;
 }
 
-::-webkit-scrollbar {     
+::-webkit-scrollbar {
+	pointer-events: auto;
 	background-color: #181818;
 }
 
 ::-webkit-scrollbar-thumb {
+	pointer-events: auto;
 	background-color: #444444;
 }
 
@@ -41,43 +45,31 @@ body {
 	border-collapse: collapse;
 	margin-bottom: 1em;
 	margin-right: 1em;
-	pointer-events: none;
 	table-layout: fixed;
-	user-select: none;
 	z-index: 1;
 }
 
 #canvas {
-	pointer-events: none;
+	outline-offset: 6px;
 	position: fixed;
-	user-select: none;
 	z-index: 2;
 }
 
 #boardfriends {
 	border-collapse: collapse;
+	pointer-events: auto;
 	position: fixed;
 	table-layout: fixed;
-	user-select: none;
 	z-index: 3;
 }
 
 #promotiontable {
 	border-collapse: collapse;
 	display: none;
+	pointer-events: auto;
 	position: fixed;
 	table-layout: fixed;
-	user-select: none;
 	z-index: 4;
-}
-
-#fantasy {
-	display: none;
-	outline: 2px dashed #6cccee;
-	outline-offset: 6px;
-	position: fixed;
-	user-select: none;
-	z-index: 5;
 }
 
 #pgnchooser {
@@ -88,6 +80,7 @@ body {
 	height: 100%;
 	left: 0;
 	overflow-y: auto;
+	pointer-events: auto;
 	position: fixed;
 	top: 0;
 	width: 100%;
@@ -105,7 +98,6 @@ td {
 	display: block;
 	font-family: monospace, monospace;
 	margin-bottom: 1em;
-	user-select: none;
 	width: 100%;
 }
 
@@ -118,6 +110,8 @@ td {
 	float: bottom;
 	font-family: monospace, monospace;
 	font-size: 100%;
+	pointer-events: auto;
+	user-select: auto;
 	width: 100%;
 }
 
@@ -132,7 +126,7 @@ input[type=text]:focus {
 	overflow-x: hidden;
 	overflow-y: auto;
 	padding-right: 10px;				/* so the text doesn't get so near the scroll bar */
-	user-select: none;
+	pointer-events: auto;
 	white-space: pre-wrap;
 }
 
@@ -142,11 +136,11 @@ input[type=text]:focus {
 	overflow-x: hidden;
 	overflow-y: auto;
 	padding-right: 10px;				/* so the text doesn't get so near the scroll bar */
-	user-select: none;
+	pointer-events: auto;
 	white-space: pre-wrap;
 }
 
-a {
+a {										/* is this even used anywhere? */
 	color: inherit;
 	text-decoration: inherit;
 }
