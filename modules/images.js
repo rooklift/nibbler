@@ -3,6 +3,10 @@
 const fs = require("fs");
 const path = require("path");
 
+function ReplaceAll(s, search, replace) {
+	return s.split(search).join(replace);
+}
+
 let sprites = {
 
 	loads: 0,
@@ -37,8 +41,9 @@ let sprites = {
 				} else {
 					sprites[c].src = path.join(directory, `_${c.toUpperCase()}.png`);
 				}
-
 			}
+
+			sprites[c].nibbler_string = "url('" + ReplaceAll(sprites[c].src, "'", "%27") + "')";
 		}
 	},
 };

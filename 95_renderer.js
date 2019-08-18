@@ -1197,7 +1197,7 @@ function NewRenderer() {
 					td.style["background-image"] = "none";
 					td.draggable = false;
 				} else {
-					td.style["background-image"] = "url('" + images[piece_to_draw].src + "')";
+					td.style["background-image"] = images[piece_to_draw].nibbler_string;
 					td.style["background-size"] = "contain";
 					td.draggable = true;
 				}
@@ -1419,14 +1419,9 @@ function NewRenderer() {
 	renderer.spin = function() {
 		this.tick++;
 		this.draw();
-
-		// Stop the engine if we get too far out of sync. See issue #57.
-		// Despite what GitHub says, this change is in fact in the 1.0.6 build.
-
 		if (config.versus !== "" && Math.max(this.engine.readyok_required, this.engine.bestmove_required) > 10) {
-			this.set_versus("");
+			this.set_versus("");		// Stop the engine if we get too far out of sync. See issue #57.
 		}
-
 		setTimeout(this.spin.bind(this), config.update_delay);
 	};
 
