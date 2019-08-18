@@ -1362,8 +1362,6 @@ function NewRenderer() {
 
 	renderer.draw_fantasy = function(board) {
 
-		context.clearRect(0, 0, canvas.width, canvas.height);
-
 		for (let x = 0; x < 8; x++) {
 			for (let y = 0; y < 8; y++) {
 
@@ -1390,6 +1388,7 @@ function NewRenderer() {
 		// This should prevent the sort of flicker that can occur if we try to detect hover based on changes we
 		// just made (i.e. if we drew then detected hover instantly).
 
+		context.clearRect(0, 0, canvas.width, canvas.height);
 		let did_hoverdraw = this.hoverdraw();
 
 		if (did_hoverdraw) {
@@ -1399,7 +1398,6 @@ function NewRenderer() {
 			this.hoverdraw_div = -1;
 			boardfriends.style.display = "block";
 			canvas.style.outline = "none";
-			context.clearRect(0, 0, canvas.width, canvas.height);
 			this.draw_move_in_canvas();
 			this.draw_enemies_in_canvas();
 			this.info_handler.draw_arrows();
