@@ -11,8 +11,8 @@ body {
 	margin: 16px;
 	overflow: hidden;
 	padding: 0;
-	pointer-events: none;
-	user-select: none;
+	pointer-events: none;		/* These must be overriden for things that need pointer / select */
+	user-select: none;			/* These must be overriden for things that need pointer / select */
 }
 
 ::-webkit-scrollbar {
