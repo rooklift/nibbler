@@ -1087,7 +1087,7 @@ function NewRenderer() {
 			let td = document.createElement("td");
 			td.width = config.square_size;
 			td.height = config.square_size;
-			td.style["background-image"] = "url('" + images[piece].src + "')";
+			td.style["background-image"] = images[piece].string_for_bg_style;
 			td.style["background-size"] = "contain";
 
 			// This isn't a memory leak is it? The handlers are deleted when the element is deleted, right?
