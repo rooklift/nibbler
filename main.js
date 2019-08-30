@@ -449,6 +449,17 @@ function menu_build() {
 					type: "separator"
 				},
 				{
+					label: "Arrows",
+					type: "checkbox",
+					checked: config.arrows_enabled,
+					click: () => {
+						win.webContents.send("call", {
+							fn: "toggle",
+							args: ["arrows_enabled"],
+						});
+					}
+				},
+				{
 					label: "Arrowhead type",
 					submenu: [
 						{

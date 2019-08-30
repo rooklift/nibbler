@@ -554,6 +554,16 @@ function NewInfoHandler() {
 
 	ih.draw_arrows = function() {
 
+		for (let x = 0; x < 8; x++) {
+			for (let y = 0; y < 8; y++) {
+				this.one_click_moves[x][y] = null;
+			}
+		}
+
+		if (!config.arrows_enabled) {
+			return;
+		}
+
 		context.lineWidth = config.arrow_width;
 		context.textAlign = "center";
 		context.textBaseline = "middle";
@@ -561,12 +571,6 @@ function NewInfoHandler() {
 
 		let arrows = [];
 		let heads = [];
-
-		for (let x = 0; x < 8; x++) {
-			for (let y = 0; y < 8; y++) {
-				this.one_click_moves[x][y] = null;
-			}
-		}
 
 		let info_list = this.sorted();
 
