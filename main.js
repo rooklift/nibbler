@@ -700,6 +700,17 @@ function menu_build() {
 							}
 						},
 						{
+							label: "Show WDL",
+							type: "checkbox",
+							checked: config.show_wdl,
+							click: () => {
+								win.webContents.send("call", {
+									fn: "toggle",
+									args: ["show_wdl"],
+								});
+							}
+						},
+						{
 							label: "Show P",
 							type: "checkbox",
 							checked: config.show_p,
@@ -896,6 +907,17 @@ function menu_build() {
 								win.webContents.send("call", {
 									fn: "toggle",
 									args: ["sam_of_n"],
+								});
+							}
+						},
+						{
+							label: "Show WDL",
+							type: "checkbox",
+							checked: config.sam_wdl,
+							click: () => {
+								win.webContents.send("call", {
+									fn: "toggle",
+									args: ["sam_wdl"],
 								});
 							}
 						},

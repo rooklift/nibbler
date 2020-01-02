@@ -103,6 +103,8 @@ function NewInfoHandler() {
 
 			move_info.version = this.version;
 
+			move_info.wdl = InfoWDL(s);
+
 			let tmp;
 
 			tmp = parseInt(InfoVal(s, "cp"), 10);		// Score in centipawns
@@ -470,6 +472,7 @@ function NewInfoHandler() {
 				{
 					n: config.show_n,
 					n_abs: config.show_n_abs,
+					wdl: config.show_wdl,
 					p: config.show_p,
 					v: config.show_v,
 					q: config.show_q,
@@ -805,6 +808,10 @@ const info_prototype = {
 
 		// Everything else...
 
+		if (opts.wdl) {
+			ret.push(`WDL: ${this.wdl}`);
+		}
+
 		if (opts.p) {
 			if (typeof this.p === "number" && this.p > 0) {
 				ret.push(`P: ${this.p}%`);
@@ -879,5 +886,6 @@ function new_info(board, move) {
 	info.u = 1;
 	info.v = null;					// Warning: v is allowed to be null if not known.
 	info.version = 0;
+	info.wdl = "??";
 	return info;
 }

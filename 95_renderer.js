@@ -701,6 +701,7 @@ function NewRenderer() {
 		this.engine.setoption("MultiPV", 500);
 		this.engine.setoption("SmartPruningFactor", 0);
 		this.engine.setoption("ScoreType", "centipawn");			// The default, but the user can't be allowed to override this.
+		this.engine.setoption("UCI_ShowWDL", true);
 		this.engine.send("ucinewgame");
 	};
 
@@ -1020,6 +1021,7 @@ function NewRenderer() {
 					n: config.sam_n,
 					n_abs: config.sam_n_abs,
 					of_n: config.sam_of_n,
+					wdl: config.sam_wdl,
 					p: config.sam_p,
 					v: config.sam_v,
 					q: config.sam_q,

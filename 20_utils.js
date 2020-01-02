@@ -65,6 +65,25 @@ function InfoPV(s) {
 	return [];
 }
 
+function InfoWDL(s) {
+
+	// Pull the WDL out as a string.
+
+	if (typeof s !== "string") {
+		return "??";
+	}
+
+	let tokens = s.split(" ").filter(s => s !== "");
+
+	for (let i = 0; i < tokens.length - 1; i++) {
+		if (tokens[i] === "wdl") {
+			return tokens.slice(i + 1, i + 4).join(" ");
+		}
+	}
+
+	return "??";
+}
+
 function CompareArrays(a, b) {
 
 	if (Array.isArray(a) === false || Array.isArray(b) === false) {
