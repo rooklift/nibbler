@@ -62,6 +62,7 @@ function startup() {
 
 	win.once("ready-to-show", () => {
 		win.webContents.setZoomFactor(1 / electron.screen.getPrimaryDisplay().scaleFactor);		// This seems to work, note issue 10572 above.
+		// win.webContents.zoomFactor = 1 / electron.screen.getPrimaryDisplay().scaleFactor;	// The method above is deprecated. This line will be best in future.
 		win.show();
 		win.focus();
 	});
