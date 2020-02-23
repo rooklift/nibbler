@@ -1071,6 +1071,18 @@ function menu_build() {
 							}
 						},
 						{
+							label: "dx12",
+							type: "checkbox",
+							checked: config.options.Backend === "dx12",
+							click: () => {
+								set_checks("Engine", "Backend", "dx12");
+								win.webContents.send("call", {
+									fn: "switch_backend",
+									args: ["dx12"]
+								});
+							}
+						},
+						{
 							label: "blas",
 							type: "checkbox",
 							checked: config.options.Backend === "blas",
