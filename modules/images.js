@@ -3,10 +3,6 @@
 const fs = require("fs");
 const path = require("path");
 
-function ReplaceAll(s, search, replace) {
-	return s.split(search).join(replace);
-}
-
 let sprites = {
 
 	loads: 0,
