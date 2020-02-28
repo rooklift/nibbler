@@ -1007,7 +1007,7 @@ function menu_build() {
 						let files = open_dialog({
 							properties: ["openFile"]
 						});
-						if (files && files.length > 0) {
+						if (files && files.length > 0 && files[0] !== process.argv[0]) {
 							win.webContents.send("call", {
 								fn: "switch_engine",
 								args: [files[0]]
