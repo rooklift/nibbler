@@ -29,9 +29,28 @@ exports.load = () => {
 	let command_list = [];
 
 	for (let line of lines) {
-		let commands = line.trim().split(/\s+/);
-		if (commands.length === 2) {
-			command_list.push(commands);
+
+		line = line.trim();
+
+		if (line.length === 0) {
+			continue;
+		}
+
+		let val_index = line.indexOf(" ");
+
+		if (val_index === -1) {
+			val_index = line.indexOf("\t");
+		}
+
+		if (val_index === -1) {
+			command_list.push({
+				name: line,
+				val: ""
+			});
+		} else {
+			let name = line.slice(0, val_index).trim();
+			let val = line.slice(val_index).trim();
+			command_list.push({name, val});
 		}
 	}
 

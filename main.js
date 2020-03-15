@@ -1988,13 +1988,13 @@ function menu_build() {
 
 	let cclist = custom_commands.load();
 
-	for (let item of cclist) {
+	for (let command of cclist) {
 		cclist_in_menu.push({
-			label: item.join("  "),
+			label: command.name + " " + command.val,
 			click: () => {
 				win.webContents.send("call", {
 					fn: "send_custom",
-					args: [item[0], item[1]]
+					args: [command.name, command.val]
 				})
 			}
 		});
