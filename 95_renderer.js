@@ -633,6 +633,12 @@ function NewRenderer() {
 		this.go_or_halt();
 	};
 
+	renderer.send_custom = function(name, val) {
+		this.__halt();
+		this.engine.setoption(name, val);
+		this.go_or_halt();
+	};
+
 	renderer.set_threads = function(val) {
 		this.__halt();
 		config.options.Threads = val;

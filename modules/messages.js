@@ -100,3 +100,8 @@ exports.obsolete_leela =
 exports.settings_for_blas = 
 `Nibbler says: setting [MaxPrefetch = 0, MinibatchSize = 8] for BLAS. If you don't want \
 this, explicitly set either value in config.json (options section).`;
+
+
+exports.adding_uci_options = 
+`You can add arbitrary UCI settings to this menu by editing the file custom.cfg - \
+the format is fairly self-explanatory.`;

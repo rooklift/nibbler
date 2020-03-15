@@ -3,7 +3,7 @@
 const alert = require("./modules/alert");
 const electron = require("electron");
 const config_io = require("./modules/config_io");
-const get_main_folder = require("./modules/get_main_folder");
+const custom_commands = require("./modules/custom_commands");
 const messages = require("./modules/messages");
 const path = require("path");
 const running_as_electron = require("./modules/running_as_electron");
@@ -124,7 +124,9 @@ function menu_build() {
 
 	const million = 1000000;
 
-	const template = [
+	let cclist_in_menu = [];
+
+	let template = [
 		{
 			label: "App",
 			submenu: [
@@ -1606,126 +1608,11 @@ function menu_build() {
 					]
 				},
 				{
-					label: "CPuct",
-					submenu: [
-					{
-							label: "4.0",
-							type: "checkbox",
-							checked: config.options.CPuct === 4.0,
-							click: () => {
-								set_checks("Engine", "CPuct", "4.0");
-								win.webContents.send("call", {
-									fn: "set_cpuct",
-									args: [4.0],
-								});
-							}
-						},
-						{
-							label: "3.8",
-							type: "checkbox",
-							checked: config.options.CPuct === 3.8,
-							click: () => {
-								set_checks("Engine", "CPuct", "3.8");
-								win.webContents.send("call", {
-									fn: "set_cpuct",
-									args: [3.8],
-								});
-							}
-						},
-						{
-							label: "3.6",
-							type: "checkbox",
-							checked: config.options.CPuct === 3.6,
-							click: () => {
-								set_checks("Engine", "CPuct", "3.6");
-								win.webContents.send("call", {
-									fn: "set_cpuct",
-									args: [3.6],
-								});
-							}
-						},
-						{
-							label: "3.4",
-							type: "checkbox",
-							checked: config.options.CPuct === 3.4,
-							click: () => {
-								set_checks("Engine", "CPuct", "3.4");
-								win.webContents.send("call", {
-									fn: "set_cpuct",
-									args: [3.4],
-								});
-							}
-						},
-						{
-							label: "3.2",
-							type: "checkbox",
-							checked: config.options.CPuct === 3.2,
-							click: () => {
-								set_checks("Engine", "CPuct", "3.2");
-								win.webContents.send("call", {
-									fn: "set_cpuct",
-									args: [3.2],
-								});
-							}
-						},
-						{
-							label: "3.0",
-							type: "checkbox",
-							checked: config.options.CPuct === 3.0,
-							click: () => {
-								set_checks("Engine", "CPuct", "3.0");
-								win.webContents.send("call", {
-									fn: "set_cpuct",
-									args: [3.0],
-								});
-							}
-						},
-						{
-							label: "2.8",
-							type: "checkbox",
-							checked: config.options.CPuct === 2.8,
-							click: () => {
-								set_checks("Engine", "CPuct", "2.8");
-								win.webContents.send("call", {
-									fn: "set_cpuct",
-									args: [2.8],
-								});
-							}
-						},
-						{
-							label: "2.6",
-							type: "checkbox",
-							checked: config.options.CPuct === 2.6,
-							click: () => {
-								set_checks("Engine", "CPuct", "2.6");
-								win.webContents.send("call", {
-									fn: "set_cpuct",
-									args: [2.6],
-								});
-							}
-						},
-						{
-							label: "2.4",
-							type: "checkbox",
-							checked: config.options.CPuct === 2.4,
-							click: () => {
-								set_checks("Engine", "CPuct", "2.4");
-								win.webContents.send("call", {
-									fn: "set_cpuct",
-									args: [2.4],
-								});
-							}
-						},
-						{
-							type: "separator"
-						},
-						{
-							label: "About CPuct",
-							click: () => {
-								alert(messages.about_cpuct);
-							}
-						}
-					]
+					type: "separator"
+				},
+				{
+					label: "Custom UCI options",
+					submenu: cclist_in_menu			// Will be filled at the end, see below.
 				},
 				{
 					type: "separator"
@@ -2097,6 +1984,39 @@ function menu_build() {
 		}
 	];
 
+	// Some special shennanigans to build the custom options menu...
+
+	let cclist = custom_commands.load();
+
+	for (let item of cclist) {
+		cclist_in_menu.push({
+			label: item.join("  "),
+			click: () => {
+				win.webContents.send("call", {
+					fn: "send_custom",
+					args: [item[0], item[1]]
+				})
+			}
+		});
+	}
+
+	cclist_in_menu.push({type: "separator"});
+	cclist_in_menu.push({
+		label: "How to add UCI options",
+		click: () => {
+			alert(messages.adding_uci_options);
+		}
+	});
+	cclist_in_menu.push({
+		label: "Show custom.cfg",
+		click: () => {
+			let filename = custom_commands.get_filename();
+			electron.shell.showItemInFolder(filename);
+		}
+	});
+
+	// Actually build the menu...
+
 	return electron.Menu.buildFromTemplate(template);
 }
 
@@ -2127,3 +2047,4 @@ function set_checks(...menupath) {
 		}
 	}, 50);
 }
+
