@@ -2000,7 +2000,9 @@ function menu_build() {
 		});
 	}
 
-	cclist_in_menu.push({type: "separator"});
+	if (cclist_in_menu.length > 0) {
+		cclist_in_menu.push({type: "separator"});
+	}
 	cclist_in_menu.push({
 		label: "How to add UCI options",
 		click: () => {

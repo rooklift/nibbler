@@ -103,5 +103,5 @@ this, explicitly set either value in config.json (options section).`;
 
 
 exports.adding_uci_options = 
-`You can add arbitrary UCI settings to this menu by editing the file custom.cfg - \
-the format is fairly self-explanatory.`;
+`You can add any simple UCI setting to this menu by editing the file custom.cfg - \
+the format is fairly self-explanatory. Restart Nibbler for this to take effect.`;
