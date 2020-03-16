@@ -1114,18 +1114,6 @@ function menu_build() {
 							type: "separator"
 						},
 						{
-							label: "check",
-							type: "checkbox",
-							checked: config.options.Backend === "check",
-							click: () => {
-								set_checks("Engine", "Backend", "check");
-								win.webContents.send("call", {
-									fn: "switch_backend",
-									args: ["check"]
-								});
-							}
-						},
-						{
 							label: "random",
 							type: "checkbox",
 							checked: config.options.Backend === "random",
@@ -1134,6 +1122,18 @@ function menu_build() {
 								win.webContents.send("call", {
 									fn: "switch_backend",
 									args: ["random"]
+								});
+							}
+						},
+						{
+							label: "check",
+							type: "checkbox",
+							checked: config.options.Backend === "check",
+							click: () => {
+								set_checks("Engine", "Backend", "check");
+								win.webContents.send("call", {
+									fn: "switch_backend",
+									args: ["check"]
 								});
 							}
 						},
