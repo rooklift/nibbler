@@ -100,4 +100,4 @@ exports.adding_uci_options =
 `You can add arbitrary UCI settings to this menu by editing the file ${custom_uci.filename}. \
 The format is fairly self-explanatory. Restart Nibbler for this to take effect. \
 Note that these custom settings are never remembered between runs; for permanent \
-custom options, edit config.cfg (options section) instead.`;
+custom options, edit ${config_io.filename} (options section) instead.`;
