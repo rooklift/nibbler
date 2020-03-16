@@ -1,5 +1,8 @@
 "use strict";
 
+config_io.create_if_needed(config);
+custom_uci.create_if_needed();
+
 Log("");
 Log("======================================================================================================================================");
 Log(`Nibbler startup at ${new Date().toUTCString()}`);

@@ -172,7 +172,7 @@ function debork_json(s) {
 	return lines.join("\n");
 }
 
-exports.load = (save_if_new) => {
+exports.load = () => {
 
 	let cfg = {};
 
@@ -186,12 +186,6 @@ exports.load = (save_if_new) => {
 
 	assign_without_overwrite(cfg, exports.defaults);
 	fix(cfg);
-
-	if (save_if_new) {
-		if (fs.existsSync(exports.filepath) === false) {
-			exports.save(cfg);
-		}
-	}
 
 	return cfg;
 };
@@ -220,4 +214,17 @@ exports.save = (cfg) => {
 	} catch (err) {
 		console.log(err.toString());		// alert() might not be available.
 	}
+};
+
+exports.create_if_needed = (cfg) => {
+
+	if (!cfg) {
+		throw "create_if_needed() needs an argument";
+	}
+
+	if (fs.existsSync(exports.filepath)) {
+		return;
+	}
+
+	exports.save(cfg);
 };

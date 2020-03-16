@@ -32,6 +32,7 @@ const alert = require("./modules/alert");
 const child_process = require("child_process");
 const clipboard = require("electron").clipboard;
 const config_io = require("./modules/config_io");
+const custom_uci = require("./modules/custom_uci");
 const fs = require("fs");
 const get_main_folder = require("./modules/get_main_folder");
 const images = require("./modules/images");
@@ -46,7 +47,7 @@ const util = require("util");
 const context = canvas.getContext("2d");
 const decoder = new util.TextDecoder("utf8");	// https://github.com/electron/electron/issues/18733
 
-let config = config_io.load(true);
+let config = config_io.load();
 let tree_version = 0;
 
 // Debug (see start.js).............................................

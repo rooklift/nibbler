@@ -23,11 +23,15 @@ exports.filepath = electron.app ?
 
 exports.load = () => {
 
-	if (fs.existsSync(exports.filepath) === false) {
-		fs.writeFileSync(exports.filepath, default_file_contents);
-	}
+	let contents = default_file_contents;
 
-	let contents = fs.readFileSync(exports.filepath).toString();
+	try {
+		if (fs.existsSync(exports.filepath)) {
+			contents = fs.readFileSync(exports.filepath).toString();
+		}
+	} catch (err) {
+		console.log(err.toString());
+	}
 
 	let lines = contents.split("\n");
 	let command_list = [];
@@ -59,4 +63,17 @@ exports.load = () => {
 	}
 
 	return command_list;
+}
+
+exports.create_if_needed = () => {
+
+	if (fs.existsSync(exports.filepath)) {
+		return;
+	}
+	
+	try {
+		fs.writeFileSync(exports.filepath, default_file_contents);
+	} catch (err) {
+		console.log(err.toString());
+	}
 }
