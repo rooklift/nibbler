@@ -1036,6 +1036,18 @@ function menu_build() {
 					label: "Backend",
 					submenu: [
 						{
+							label: "cudnn-auto",
+							type: "checkbox",
+							checked: config.options.Backend === "cudnn-auto",
+							click: () => {
+								set_checks("Engine", "Backend", "cudnn-auto");
+								win.webContents.send("call", {
+									fn: "switch_backend",
+									args: ["cudnn-auto"]
+								});
+							}
+						},
+						{
 							label: "cudnn",
 							type: "checkbox",
 							checked: config.options.Backend === "cudnn",
@@ -1058,6 +1070,9 @@ function menu_build() {
 									args: ["cudnn-fp16"]
 								});
 							}
+						},
+						{
+							type: "separator"
 						},
 						{
 							label: "opencl",
@@ -1094,6 +1109,9 @@ function menu_build() {
 									args: ["blas"]
 								});
 							}
+						},
+						{
+							type: "separator"
 						},
 						{
 							label: "check",
