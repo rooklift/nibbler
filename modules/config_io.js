@@ -4,6 +4,12 @@ const electron = require("electron");
 const fs = require("fs");
 const path = require("path");
 
+exports.filename = "config.json";
+
+exports.filepath = electron.app ?
+                   path.join(electron.app.getPath("userData"), exports.filename) :
+                   path.join(electron.remote.app.getPath("userData"), exports.filename);
+
 exports.defaults = {
 	"path": null,		// Not undefined, all normal keys should have an actual value.
 	"options": {},
@@ -166,22 +172,13 @@ function debork_json(s) {
 	return lines.join("\n");
 }
 
-exports.get_filename = () => {
-	if (electron.app) {
-   		return path.join(electron.app.getPath("userData"), "config.json");
-   	} else {
-   		return path.join(electron.remote.app.getPath("userData"), "config.json");
-   	}
-}
-
 exports.load = (save_if_new) => {
 
 	let cfg = {};
-	let filename = exports.get_filename();
 
 	try {
-		if (fs.existsSync(filename)) {
-			cfg = JSON.parse(debork_json(fs.readFileSync(filename, "utf8")));
+		if (fs.existsSync(exports.filepath)) {
+			cfg = JSON.parse(debork_json(fs.readFileSync(exports.filepath, "utf8")));
 		}
 	} catch (err) {
 		cfg.failure = err.toString();		// alert() might not be available.
@@ -191,7 +188,7 @@ exports.load = (save_if_new) => {
 	fix(cfg);
 
 	if (save_if_new) {
-		if (fs.existsSync(filename) === false) {
+		if (fs.existsSync(exports.filepath) === false) {
 			exports.save(cfg);
 		}
 	}
@@ -204,8 +201,6 @@ exports.save = (cfg) => {
 	if (!cfg) {
 		throw "save() needs an argument";
 	}
-
-	let filename = exports.get_filename();
 
 	// Make a copy of the defaults. Doing it this way seems to
 	// ensure the final JSON string has the same ordering...
@@ -221,7 +216,7 @@ exports.save = (cfg) => {
 	}
 
 	try {
-		fs.writeFileSync(filename, JSON.stringify(out, null, "\t"));
+		fs.writeFileSync(exports.filepath, JSON.stringify(out, null, "\t"));
 	} catch (err) {
 		console.log(err.toString());		// alert() might not be available.
 	}

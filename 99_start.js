@@ -14,7 +14,7 @@ if (fs.existsSync(path.join(get_main_folder(), "config.json"))) {
 }
 
 if (config.failure) {
-	hub.err_receive(`<span class="blue">While loading config.json: ${config.failure}</span>`);
+	hub.err_receive(`<span class="blue">While loading config file: ${config.failure}</span>`);
 	hub.err_receive("");
 }
 

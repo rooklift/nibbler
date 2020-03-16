@@ -1,5 +1,8 @@
 "use strict";
 
+const config_io = require("./config_io");
+const custom_uci = require("./custom_uci");
+
 
 exports.about_move_display =
 `Leela sends a statistic U showing how uncertain it is about its evaluation \
@@ -70,9 +73,9 @@ Nibbler's config file (which can be found via the App menu).`;
 
 
 exports.new_config_location =
-`WARNING: Nibbler now looks for config.json in a new location and also saves to it \
-automatically. You can delete the file in your app's folder. If you want to manually \
-edit config.json, you can find it via the App menu.`;
+`WARNING: Nibbler now looks for ${config_io.filename} in a new location and also \
+saves to it automatically. You can delete the file in your app's folder. If you want to \
+manually edit ${config_io.filename}, you can find it via the App menu.`;
 
 
 exports.thread_warning =
@@ -84,26 +87,17 @@ If no tick is present in this menu, the default is being used, which is probably
 you want.`;
 
 
-exports.about_cpuct =
-`This is a technical option that should generally be ignored. Note that Nibbler never \
-remembers your choice here after closing down, although it can be permanently set in \
-the config.json file.
-
-If no tick is present in this menu, the default is being used, which is probably what \
-you want.`;
-
-
 exports.obsolete_leela = 
 `Nibbler says: this version of Lc0 may be too old to display most statistics.`;
 
 
 exports.settings_for_blas = 
 `Nibbler says: setting [MaxPrefetch = 0, MinibatchSize = 8] for BLAS. If you don't want \
-this, explicitly set either value in config.json (options section).`;
+this, explicitly set either value in ${config_io.filename} (options section).`;
 
 
 exports.adding_uci_options = 
-`You can add arbitrary UCI settings to this menu by editing the file custom.cfg - \
-the format is fairly self-explanatory. Restart Nibbler for this to take effect. \
+`You can add arbitrary UCI settings to this menu by editing the file ${custom_uci.filename} \
+The format is fairly self-explanatory. Restart Nibbler for this to take effect. \
 Note that these custom settings are never remembered between runs; for permanent \
 custom options, edit config.cfg (options section) instead.`;

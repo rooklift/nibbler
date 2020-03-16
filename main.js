@@ -3,7 +3,7 @@
 const alert = require("./modules/alert");
 const electron = require("electron");
 const config_io = require("./modules/config_io");
-const custom_commands = require("./modules/custom_commands");
+const custom_uci = require("./modules/custom_uci");
 const messages = require("./modules/messages");
 const path = require("path");
 const running_as_electron = require("./modules/running_as_electron");
@@ -267,10 +267,9 @@ function menu_build() {
 					type: "separator"
 				},
 				{
-					label: "Show config.json",
+					label: `Show ${config_io.filename}`,
 					click: () => {
-						let filename = config_io.get_filename();
-						electron.shell.showItemInFolder(filename);
+						electron.shell.showItemInFolder(config_io.filepath);
 					}
 				},
 				{
@@ -1934,7 +1933,7 @@ function menu_build() {
 					type: "separator"
 				},
 				{
-					label: "Resave config.json",
+					label: `Resave ${config_io.filename}`,
 					click: () => {
 						win.webContents.send("call", "save_config");
 					}
@@ -1986,7 +1985,7 @@ function menu_build() {
 
 	// Some special shennanigans to build the custom options menu...
 
-	let cclist = custom_commands.load();
+	let cclist = custom_uci.load();
 
 	for (let command of cclist) {
 		cclist_in_menu.push({
@@ -2010,10 +2009,9 @@ function menu_build() {
 		}
 	});
 	cclist_in_menu.push({
-		label: "Show custom.cfg",
+		label: `Show ${custom_uci.filename}`,
 		click: () => {
-			let filename = custom_commands.get_filename();
-			electron.shell.showItemInFolder(filename);
+			electron.shell.showItemInFolder(custom_uci.filepath);
 		}
 	});
 

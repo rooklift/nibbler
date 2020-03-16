@@ -15,15 +15,19 @@ CPuct 2.8
 CPuct 2.6
 CPuct 2.4`;
 
+exports.filename = "custom_uci.cfg";
+
+exports.filepath = electron.app ?
+                   path.join(electron.app.getPath("userData"), exports.filename) :
+                   path.join(electron.remote.app.getPath("userData"), exports.filename);
+
 exports.load = () => {
 
-	let filename = exports.get_filename();
-
-	if (fs.existsSync(filename) === false) {
-		fs.writeFileSync(filename, default_file_contents);
+	if (fs.existsSync(exports.filepath) === false) {
+		fs.writeFileSync(exports.filepath, default_file_contents);
 	}
 
-	let contents = fs.readFileSync(filename).toString();
+	let contents = fs.readFileSync(exports.filepath).toString();
 
 	let lines = contents.split("\n");
 	let command_list = [];
@@ -55,12 +59,4 @@ exports.load = () => {
 	}
 
 	return command_list;
-}
-
-exports.get_filename = () => {
-	if (electron.app) {
-   		return path.join(electron.app.getPath("userData"), "custom.cfg");
-   	} else {
-   		return path.join(electron.remote.app.getPath("userData"), "custom.cfg");
-   	}
 }
