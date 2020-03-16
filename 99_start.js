@@ -1,5 +1,8 @@
 "use strict";
 
+// Upon first run, hopefully the prefs directory exists by now
+// (I think the main process makes it...)
+
 config_io.create_if_needed(config);
 custom_uci.create_if_needed();
 
