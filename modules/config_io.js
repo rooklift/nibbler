@@ -88,7 +88,7 @@ function fix(cfg) {
 
 	// Make sure options and args at least exist...
 
-	if (typeof cfg.options !== "object") {
+	if (typeof cfg.options !== "object" || cfg.options === null) {
 		cfg.options = {};
 	}
 	if (Array.isArray(cfg.args) === false) {
