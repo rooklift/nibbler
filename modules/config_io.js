@@ -35,6 +35,8 @@ exports.defaults = {
 	"good_colour": "#66aa66",
 	"bad_colour": "#cccc66",
 	"terrible_colour": "#cc6666",
+	"focus_on_text": "focused:",
+	"focus_off_text": "focus?",
 	"bad_move_threshold": 0.02,
 	"terrible_move_threshold": 0.04,
 	"uncertainty_cutoff": 0.1,

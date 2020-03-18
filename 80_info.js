@@ -423,9 +423,9 @@ function NewInfoHandler() {
 
 			if (config.searchmoves_buttons) {
 				if (searchmoves.includes(info.move)) {
-					substrings.push(`<span id="searchmove_${info.move}" class="yellow">focused: </span>`);		// Note: infobox_to_clipboard() expects...
+					substrings.push(`<span id="searchmove_${info.move}" class="yellow">${config.focus_on_text} </span>`);
 				} else {
-					substrings.push(`<span id="searchmove_${info.move}" class="gray">focus? </span>`);			// ...these exact strings.
+					substrings.push(`<span id="searchmove_${info.move}" class="gray">${config.focus_off_text} </span>`);
 				}
 			}
 

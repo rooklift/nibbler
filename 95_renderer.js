@@ -327,8 +327,8 @@ function NewRenderer() {
 
 	renderer.infobox_to_clipboard = function() {
 		let s = infobox.innerText;
-		s = ReplaceAll(s, "focus? ", "");
-		s = ReplaceAll(s, "focused: ", "");
+		s = ReplaceAll(s, `${config.focus_on_text} `, "");
+		s = ReplaceAll(s, `${config.focus_off_text} `, "");
 		clipboard.writeText(statusbox.innerText + "\n\n" + s);
 	};
 
