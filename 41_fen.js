@@ -57,6 +57,9 @@ function LoadFEN(fen) {
 	}
 	ret.active = tokens[1];
 
+	// CHESS960 - FIXME
+	// Need to deal with the special FEN format for castling rights.
+
 	ret.castling = "";
 	if (tokens[2].includes("K")) ret.castling += "K";
 	if (tokens[2].includes("Q")) ret.castling += "Q";

@@ -8,7 +8,10 @@ const position_prototype = {
 
 	move: function(s) {
 
-		// s is something like "d1f3" or "e7e8q".
+		// CHESS960 - FIXME
+		// Need to accept Chess960 castling moves, and use alternate pos.castling format.
+
+		// s is some valid UCI move like "d1f3" or "e7e8q".
 		// Assumes move is legal - all sorts of weird things can happen if this isn't so.
 
 		// Basic sanity checks only:
@@ -149,6 +152,9 @@ const position_prototype = {
 	},
 
 	illegal: function(s) {
+
+		// CHESS960 - FIXME
+		// Need to adjust castling logic and use alternate pos.castling format.
 
 		// Returns "" if the move is legal, otherwise returns the reason it isn't.
 
@@ -800,6 +806,9 @@ const position_prototype = {
 
 	nice_string: function(s) {
 
+		// CHESS960 - FIXME
+		// Castling logic.
+
 		// Given some raw (but valid) UCI move string, return a nice human-readable
 		// string for display in the browser window. This string should never be
 		// examined by the caller, merely displayed.
@@ -925,6 +934,9 @@ const position_prototype = {
 	},
 
 	fen: function() {
+
+		// CHESS960 - FIXME
+		// Need to deal with the special FEN format for castling rights.
 
 		let s = "";
 

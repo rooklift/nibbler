@@ -172,6 +172,9 @@ function NewInfoHandler() {
 			// Crude hack to fix funky castling notation...
 			// At the moment Nibbler doesn't support anything except normal chess.
 
+			// CHESS960 - FIXME
+			// This hack should likely be deleted and the move handler deal with these moves instead.
+
 			if (move === "e1h1" && board.state[4][7] === "K") move = "e1g1";
 			if (move === "e1a1" && board.state[4][7] === "K") move = "e1c1";
 			if (move === "e8h8" && board.state[4][0] === "k") move = "e8g8";
