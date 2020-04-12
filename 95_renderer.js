@@ -499,9 +499,11 @@ function NewRenderer() {
 		} else if (s.startsWith("error")) {
 			this.info_handler.err_receive(s);
 		} else if (s.startsWith("id name")) {
-			for (let n = 10; n < 21; n++) {
+			for (let n = 10; n < messages.min_version; n++) {
 				if (s.includes(`v0.${n}`)) {
+					this.info_handler.err_receive("");
 					this.info_handler.err_receive(`<span class="blue">${messages.obsolete_leela}</span>`);
+					this.info_handler.err_receive("");
 				}
 			}
 		} else if (s.startsWith("bestmove") && config.autoplay && config.versus === this.node.get_board().active) {
@@ -708,6 +710,7 @@ function NewRenderer() {
 		this.engine.setoption("SmartPruningFactor", 0);
 		this.engine.setoption("ScoreType", "centipawn");			// The default, but the user can't be allowed to override this.
 		this.engine.setoption("UCI_ShowWDL", true);
+		this.engine.setoption("UCI_Chess960", true);				// We always use Chess 960 mode now, for consistency.
 		this.engine.send("ucinewgame");
 	};
 
