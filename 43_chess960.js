@@ -1,6 +1,8 @@
 function c960_insertion(arr, index, piece) {
 
-	// index here is the piece's position considering only empty spots in the array.
+	// Given an array of pieces (with blanks indicated as ".") insert another
+	// piece at an "index" which considers only empty spots in the array. This
+	// is a helper function for c960_arrangement().
 
 	let skips = 0;
 
@@ -18,7 +20,8 @@ function c960_insertion(arr, index, piece) {
 
 function c960_arrangement(n) {
 
-	// AFAIK, does match the scheme of Reinhard Scharnagl.
+	// Given n, generate a string like "RNBQKBNR".
+	// AFAIK, matches the scheme of Reinhard Scharnagl.
 
 	let pieces = [".", ".", ".", ".", ".", ".", ".", "."];
 
@@ -52,6 +55,8 @@ function c960_arrangement(n) {
 }
 
 function c960_fen(n) {
+
+	// Given n, produce a full FEN.
 
 	if (n < 0) {
 		n *= -1;
