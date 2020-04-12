@@ -325,6 +325,13 @@ function NewRenderer() {
 		this.position_changed(true);
 	};
 
+	renderer.new_960 = function() {
+		DestroyTree(this.node);			// Optional, but might help the GC.
+		let newpos = LoadFEN(c960_fen(RandInt(0, 960)));
+		this.node = NewTree(newpos);
+		this.position_changed(true);
+	};
+
 	renderer.infobox_to_clipboard = function() {
 		let s = infobox.innerText;
 		s = ReplaceAll(s, `${config.focus_on_text} `, "");
