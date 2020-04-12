@@ -51,6 +51,11 @@ function c960_arrangement(n) {
 
 function c960_fen(n) {
 
+	if (n < 0) {
+		n *= -1;
+	}
+	n = Math.floor(n) % 960;
+
 	let pieces = c960_arrangement(n);	// The uppercase version.
 
 	let s = `${pieces.toLowerCase()}/pppppppp/8/8/8/8/PPPPPPPP/${pieces}`;
