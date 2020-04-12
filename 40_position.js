@@ -121,8 +121,8 @@ const position_prototype = {
 
 				ret.state[x1][y1] = "";
 				ret.state[x2][y2] = "";
-				ret.state[3][y1] = k_ch;
-				ret.state[2][y1] = r_ch;
+				ret.state[2][y1] = k_ch;
+				ret.state[3][y1] = r_ch;
 
 			}
 		}
