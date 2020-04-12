@@ -18,6 +18,8 @@ function c960_insertion(arr, index, piece) {
 
 function c960_arrangement(n) {
 
+	// AFAIK, does match the scheme of Reinhard Scharnagl.
+
 	let pieces = [".", ".", ".", ".", ".", ".", ".", "."];
 
 	// Place bishops in final positions...
