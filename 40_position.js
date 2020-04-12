@@ -401,14 +401,14 @@ const position_prototype = {
 		// Check for blockers and checks...
 
 		for (let x of king_path) {
+			if (this.attacked(Point(x, y1), this.active)) {
+				return "cannot castle [out of / through / into] check";
+			}
 			if (x === x1 || x === x2) {
-				continue;
+				continue;					// After checking for checks
 			}
 			if (this.state[x][y1] !== "") {
 				return "castling blocked for king movement";
-			}
-			if (this.attacked(Point(x, y1), this.active)) {
-				return "cannot castle [out of / through / into] check";
 			}
 		}
 
