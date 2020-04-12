@@ -570,13 +570,7 @@ function NewRenderer() {
 		}
 
 		let start_fen = this.node.get_root().get_board().fen();
-
-		let setup;
-		if (start_fen === "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1") {
-			setup = "startpos";
-		} else {
-			setup = `fen ${start_fen}`;
-		}
+		let setup = `fen ${start_fen}`;
 
 		// Leela seems to time "readyok" correctly after "position" commands.
 		// After sending "isready" we'll ignore Leela output until "readyok" comes.
@@ -961,6 +955,9 @@ function NewRenderer() {
 		}
 
 		this.hide_promotiontable();						// Just in case it's up.
+
+		// CHESS960 - FIXME
+		// One click moves likely incompatible with castling.
 
 		let ocm = this.info_handler.one_click_moves[p.x][p.y];
 		let board = this.node.get_board();
