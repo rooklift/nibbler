@@ -48,3 +48,29 @@ function c960_arrangement(n) {
 
 	return pieces.join("");
 }
+
+function c960_fen(n) {
+
+	let pieces = c960_arrangement(n);	// The uppercase version.
+
+	let s = `${pieces.toLowerCase()}/pppppppp/8/8/8/8/PPPPPPPP/${pieces}`;
+
+	let castling_rights = "";
+
+	for (let i = 0; i < 8; i++) {
+		if (pieces[i] === "R") {
+			castling_rights += String.fromCharCode(i + 65);
+			for (let j = i + 1; j < 8; j++) {
+				if (pieces[j] === "R") {
+					castling_rights += String.fromCharCode(j + 65);
+					break;
+				}
+			}
+			break;
+		}
+	}
+
+	castling_rights += castling_rights.toLowerCase();
+
+	return `${s} w ${castling_rights} - 0 1`;
+}
