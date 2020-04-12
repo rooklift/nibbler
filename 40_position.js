@@ -977,6 +977,86 @@ const position_prototype = {
 		return s + ` ${this.active} ${castling_string} ${ep_string} ${this.halfmove} ${this.fullmove}`;
 	},
 
+	set_castling_rights(s) {				// s is likely the castling string from a FEN
+
+		this.castling = "";
+
+		let dict = Object.create(null);		// Will contain keys like "A" to "H" and "a" to "h"
+
+		// WHITE
+
+		let wk_location = this.find("K", 1, 7, 6, 7)[0];		// Possibly undefined...
+
+		if (wk_location) {					// White king OK to castle if it's between b1 and g1 inclusive...
+											// Note that on a1 or h1, it must have moved.
+
+			for (let ch of s) {
+				if ("ABCDEFGH".includes(ch)) {
+					let point = Point(ch.toLowerCase() + "1");
+					if (this.piece(point) === "R") {
+						dict[ch] = true;
+					}
+				}
+			}
+
+			for (let ch of s) {
+				if (ch === "Q") {
+					let left_rooks = this.find("R", 0, 7, wk_location.x - 1, 7);
+					for (let rook of left_rooks) {
+						dict[rook.s[0].toUpperCase()] = true;
+					}
+				}
+
+				if (ch === "K") {
+					let right_rooks = this.find("R", wk_location.x + 1, 7, 7, 7);
+					for (let rook of right_rooks) {
+						dict[rook.s[0].toUpperCase()] = true;
+					}
+				}
+			}
+		}
+
+		// BLACK
+
+		let bk_location = this.find("k", 1, 0, 6, 0)[0];
+
+		if (bk_location) {
+
+			for (let ch of s) {
+				if ("abcdefgh".includes(ch)) {
+					let point = Point(ch + "8");
+					if (this.piece(point) === "r") {
+						dict[ch] = true;
+					}
+				}
+			}
+
+			for (let ch of s) {
+				if (ch === "q") {
+					let left_rooks = this.find("r", 0, 0, bk_location.x - 1, 0);
+					for (let rook of left_rooks) {
+						dict[rook.s[0]] = true;
+					}
+				}
+
+				if (ch === "k") {
+					let right_rooks = this.find("r", bk_location.x + 1, 0, 7, 0);
+					for (let rook of right_rooks) {
+						dict[rook.s[0]] = true;
+					}
+				}
+			}
+		}
+
+		for (let ch of "ABCDEFGHabcdefgh") {
+			if (dict[ch]) {
+				this.castling += ch;
+			}
+		}
+
+		// FIXME: check at most 1 castling possibility on left and right of each king.
+	},
+
 	copy: function() {
 		return NewPosition(this.state, this.active, this.castling, this.enpassant, this.halfmove, this.fullmove);
 	},

@@ -24,7 +24,7 @@ if (config.failure) {
 	hub.err_receive("");
 }
 
-fenbox.value = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1";
+fenbox.value = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w AHah - 0 1";
 
 // We have 3 main things that get drawn to:
 //
