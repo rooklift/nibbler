@@ -39,8 +39,9 @@ const position_prototype = {
 		let promotion_char = s.length > 4 ? s[4].toLowerCase() : "q";
 		
 		let white_flag = this.is_white(Point(x1, y1));
-		let pawn_flag = "Pp".includes(ret.state[x1][y1]);
-		let capture_flag = ret.state[x2][y2] !== "";
+		let pawn_flag = ret.state[x1][y1] === "P" || ret.state[x1][y1] === "p";
+		let castle_flag = (ret.state[x2][y2] === "R" && white_flag) || (ret.state[x2][y2] === "r" && white_flag === false);
+		let capture_flag = castle_flag === false && ret.state[x2][y2] !== "";
 
 		if (pawn_flag && x1 !== x2) {		// Make sure capture_flag is set even for enpassant captures
 			capture_flag = true;
@@ -187,7 +188,7 @@ const position_prototype = {
 			}
 		}
 
-		if ("Nn".includes(this.state[x1][y1])) {
+		if (["N", "n"].includes(this.state[x1][y1])) {
 			if (Math.abs(x2 - x1) + Math.abs(y2 - y1) !== 3) {
 				return "illegal knight movement";
 			}
@@ -196,19 +197,19 @@ const position_prototype = {
 			}
 		}
 
-		if ("Bb".includes(this.state[x1][y1])) {
+		if (["B", "b"].includes(this.state[x1][y1])) {
 			if (Math.abs(x2 - x1) !== Math.abs(y2 - y1)) {
 				return "illegal bishop movement";
 			}
 		}
 
-		if ("Rr".includes(this.state[x1][y1])) {
+		if (["R", "r"].includes(this.state[x1][y1])) {
 			if (Math.abs(x2 - x1) > 0 && Math.abs(y2 - y1) > 0) {
 				return "illegal rook movement";
 			}
 		}
 
-		if ("Qq".includes(this.state[x1][y1])) {
+		if (["Q", "q"].includes(this.state[x1][y1])) {
 			if (Math.abs(x2 - x1) !== Math.abs(y2 - y1)) {
 				if (Math.abs(x2 - x1) > 0 && Math.abs(y2 - y1) > 0) {
 					return "illegal queen movement";
@@ -218,7 +219,7 @@ const position_prototype = {
 
 		// Pawns...
 
-		if ("Pp".includes(this.state[x1][y1])) {
+		if (["P", "p"].includes(this.state[x1][y1])) {
 
 			if (Math.abs(x2 - x1) === 0) {
 				if (this.state[x2][y2] !== "") {
@@ -270,7 +271,7 @@ const position_prototype = {
 
 		// Kings...
 
-		if ("Kk".includes(this.state[x1][y1])) {
+		if (["K", "k"].includes(this.state[x1][y1])) {
 
 			if (Math.abs(y2 - y1) > 1) {
 				return "illegal king movement";
@@ -283,7 +284,7 @@ const position_prototype = {
 
 		// Check for blockers (pieces between source and dest).
 
-		if ("KQRBPkqrbp".includes(this.state[x1][y1])) {
+		if (["K", "Q", "R", "B", "P", "k", "q", "r", "b", "p"].includes(this.state[x1][y1])) {
 			if (this.los(x1, y1, x2, y2) === false) {
 				return "movement blocked";
 			}
@@ -493,8 +494,7 @@ const position_prototype = {
 
 			if (x < 0 || x > 7 || y < 0 || y > 7) continue;
 
-			if (this.state[x][y] === "") continue;		// Necessary, to prevent "Nn".includes() having false positives
-			if ("Nn".includes(this.state[x][y])) {
+			if (["N", "n"].includes(this.state[x][y])) {
 				if (this.colour(Point(x, y)) === my_colour) continue;
 				return true;
 			}
@@ -522,9 +522,9 @@ const position_prototype = {
 		let x = target.x;
 		let y = target.y;
 
-		let ranged_attackers = "QqRr";					// Ranged attackers that can go in a cardinal direction.
+		let ranged_attackers = ["Q", "q", "R", "r"];	// Ranged attackers that can go in a cardinal direction.
 		if (step_x !== 0 && step_y !== 0) {
-			ranged_attackers = "QqBb";					// Ranged attackers that can go in a diagonal direction.
+			ranged_attackers = ["Q", "q", "B", "b"];	// Ranged attackers that can go in a diagonal direction.
 		}
 
 		let iteration = 0;
@@ -563,7 +563,7 @@ const position_prototype = {
 
 			if (iteration === 1) {
 
-				if ("Kk".includes(this.state[x][y])) {
+				if (["K", "k"].includes(this.state[x][y])) {
 					return true;
 				}
 
@@ -683,7 +683,7 @@ const position_prototype = {
 		// If the piece isn't specified (with an uppercase letter) then it's a pawn move.
 		// Let's add P to the start of the string to keep the string format consistent.
 
-		if ("KQRBNP".includes(s[0]) === false) {
+		if (["K", "Q", "R", "B", "N", "P"].includes(s[0]) === false) {
 			s = "P" + s;
 		}
 
@@ -771,7 +771,7 @@ const position_prototype = {
 		if (piece === "") {
 			return false;
 		}
-		return "KQRBNP".includes(piece);
+		return ["K", "Q", "R", "B", "N", "P"].includes(piece);
 	},
 
 	is_black: function(point) {
@@ -779,7 +779,7 @@ const position_prototype = {
 		if (piece === "") {
 			return false;
 		}
-		return "kqrbnp".includes(piece);
+		return ["k", "q", "r", "b", "n", "p"].includes(piece);
 	},
 
 	is_empty: function(point) {
@@ -866,9 +866,9 @@ const position_prototype = {
 			check = "+";
 		}
 
-		if ("KkQqRrBbNn".includes(piece)) {
+		if (["K", "k", "Q", "q", "R", "r", "B", "b", "N", "n"].includes(piece)) {
 
-			if ("Kk".includes(piece)) {
+			if (["K", "k"].includes(piece)) {
 				if (this.colour(dest) === this.colour(source)) {
 					if (dest.x > source.x) {
 						return `O-O${check}`;
@@ -1023,7 +1023,7 @@ const position_prototype = {
 											// Note that on a1 or h1, it must have moved.
 
 			for (let ch of s) {
-				if ("ABCDEFGH".includes(ch)) {
+				if (["A", "B", "C", "D", "E", "F", "G", "H"].includes(ch)) {
 					let point = Point(ch.toLowerCase() + "1");
 					if (this.piece(point) === "R") {
 						dict[ch] = true;
@@ -1055,7 +1055,7 @@ const position_prototype = {
 		if (bk_location) {
 
 			for (let ch of s) {
-				if ("abcdefgh".includes(ch)) {
+				if (["a", "b", "c", "d", "e", "f", "g", "h"].includes(ch)) {
 					let point = Point(ch + "8");
 					if (this.piece(point) === "r") {
 						dict[ch] = true;
