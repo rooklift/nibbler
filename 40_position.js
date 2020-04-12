@@ -837,12 +837,12 @@ const position_prototype = {
 
 	nice_string: function(s) {
 
-		// CHESS960 - FIXME
-		// Castling logic.
-
 		// Given some raw (but valid) UCI move string, return a nice human-readable
 		// string for display in the browser window. This string should never be
 		// examined by the caller, merely displayed.
+		// 
+		// Note that as of 1.1.6, all castling moves are expected to be king-onto-rook,
+		// that is, Chess960 format.
 
 		let source = Point(s.slice(0, 2));
 		let dest = Point(s.slice(2, 4));
@@ -869,11 +869,12 @@ const position_prototype = {
 		if ("KkQqRrBbNn".includes(piece)) {
 
 			if ("Kk".includes(piece)) {
-				if (s === "e1g1" || s === "e8g8") {
-					return `O-O${check}`;
-				}
-				if (s === "e1c1" || s === "e8c8") {
-					return `O-O-O${check}`;
+				if (this.colour(dest) === this.colour(source)) {
+					if (dest.x > source.x) {
+						return `O-O${check}`;
+					} else {
+						return `O-O-O${check}`;
+					}
 				}
 			}
 
