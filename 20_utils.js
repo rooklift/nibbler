@@ -128,13 +128,13 @@ function OppositeColour(s) {
 	return "";
 }
 
-function ReplaceAll(s, search, replace) {		// FIXME? No type checks...
+function ReplaceAll(s, search, replace) {
 	return s.split(search).join(replace);
 }
 
 function SafeString(s) {
 	if (typeof s !== "string") {
-		return undefined;						// FIXME? Is this really the thing to do?
+		return undefined;
 	}
 	s = ReplaceAll(s, "&", "&amp;");			// This needs to be first of course.
 	s = ReplaceAll(s, "<", "&lt;");
