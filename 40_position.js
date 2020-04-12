@@ -38,7 +38,7 @@ const position_prototype = {
 
 		let promotion_char = s.length > 4 ? s[4].toLowerCase() : "q";
 		
-		let white_flag = this.is_white(Point(x1, y1));
+		let white_flag = ret.is_white(Point(x1, y1));
 		let pawn_flag = ret.state[x1][y1] === "P" || ret.state[x1][y1] === "p";
 		let castle_flag = (ret.state[x2][y2] === "R" && white_flag) || (ret.state[x2][y2] === "r" && white_flag === false);
 		let capture_flag = castle_flag === false && ret.state[x2][y2] !== "";
@@ -50,29 +50,45 @@ const position_prototype = {
 		// Update castling info...
 
 		if (ret.state[x1][y1] === "K") {
-			ret.castling = ReplaceAll(ret.castling, "K", "");
-			ret.castling = ReplaceAll(ret.castling, "Q", "");
+			ret.castling = ReplaceAll(ret.castling, "A", "");
+			ret.castling = ReplaceAll(ret.castling, "B", "");
+			ret.castling = ReplaceAll(ret.castling, "C", "");
+			ret.castling = ReplaceAll(ret.castling, "D", "");
+			ret.castling = ReplaceAll(ret.castling, "E", "");
+			ret.castling = ReplaceAll(ret.castling, "F", "");
+			ret.castling = ReplaceAll(ret.castling, "G", "");
+			ret.castling = ReplaceAll(ret.castling, "H", "");
 		}
 
 		if (ret.state[x1][y1] === "k") {
-			ret.castling = ReplaceAll(ret.castling, "k", "");
-			ret.castling = ReplaceAll(ret.castling, "q", "");
+			ret.castling = ReplaceAll(ret.castling, "a", "");
+			ret.castling = ReplaceAll(ret.castling, "b", "");
+			ret.castling = ReplaceAll(ret.castling, "c", "");
+			ret.castling = ReplaceAll(ret.castling, "d", "");
+			ret.castling = ReplaceAll(ret.castling, "e", "");
+			ret.castling = ReplaceAll(ret.castling, "f", "");
+			ret.castling = ReplaceAll(ret.castling, "g", "");
+			ret.castling = ReplaceAll(ret.castling, "h", "");
 		}
 
-		if ((x1 == 0 && y1 == 0) || (x2 == 0 && y2 == 0)) {
-			ret.castling = ReplaceAll(ret.castling, "q", "");
+		if (y1 === 7 && ret.state[x1][y1] === "R") {
+			let ch = String.fromCharCode(x1 + 65);
+			ret.castling = ReplaceAll(ret.castling, ch, "");
 		}
 
-		if ((x1 == 7 && y1 == 0) || (x2 == 7 && y2 == 0)) {
-			ret.castling = ReplaceAll(ret.castling, "k", "");
+		if (y2 === 7 && ret.state[x2][y2] === "R") {
+			let ch = String.fromCharCode(x2 + 65);
+			ret.castling = ReplaceAll(ret.castling, ch, "");
 		}
 
-		if ((x1 == 0 && y1 == 7) || (x2 == 0 && y2 == 7)) {
-			ret.castling = ReplaceAll(ret.castling, "Q", "");
+		if (y1 === 0 && ret.state[x1][y1] === "r") {
+			let ch = String.fromCharCode(x1 + 97);
+			ret.castling = ReplaceAll(ret.castling, ch, "");
 		}
 
-		if ((x1 == 7 && y1 == 7) || (x2 == 7 && y2 == 7)) {
-			ret.castling = ReplaceAll(ret.castling, "K", "");
+		if (y2 === 0 && ret.state[x2][y2] === "r") {
+			let ch = String.fromCharCode(x2 + 97);
+			ret.castling = ReplaceAll(ret.castling, ch, "");
 		}
 
 		// Update halfmove and fullmove...
@@ -87,28 +103,27 @@ const position_prototype = {
 			ret.halfmove++;
 		}
 
-		// Handle the rook moves of castling...
+		// Handle the moves of castling...
 
-		if (ret.state[x1][y1] === "K" || ret.state[x1][y1] === "k") {
+		if (castle_flag) {
 
-			if (s === "e1g1") {
-				ret.state[5][7] = "R";
-				ret.state[7][7] = "";
-			}
+			let k_ch = ret.state[x1][y1];
+			let r_ch = ret.state[x2][y2];
 
-			if (s === "e1c1") {
-				ret.state[3][7] = "R";
-				ret.state[0][7] = "";
-			}
+			if (x2 > x1) {		// Kingside castling
 
-			if (s === "e8g8") {
-				ret.state[5][0] = "r";
-				ret.state[7][0] = "";
-			}
+				ret.state[x1][y1] = "";
+				ret.state[x2][y2] = "";
+				ret.state[6][y1] = k_ch;
+				ret.state[5][y1] = r_ch;
 
-			if (s === "e8c8") {
-				ret.state[3][0] = "r";
-				ret.state[0][0] = "";
+			} else {			// Queenside castling
+
+				ret.state[x1][y1] = "";
+				ret.state[x2][y2] = "";
+				ret.state[3][y1] = k_ch;
+				ret.state[2][y1] = r_ch;
+
 			}
 		}
 
@@ -130,10 +145,12 @@ const position_prototype = {
 			ret.enpassant = Point(x1, 2);
 		}
 
-		// Actually make the move...
+		// Actually make the move (except we already did castling)...
 
-		ret.state[x2][y2] = ret.state[x1][y1];
-		ret.state[x1][y1] = "";
+		if (castle_flag === false) {
+			ret.state[x2][y2] = ret.state[x1][y1];
+			ret.state[x1][y1] = "";
+		}
 
 		// Handle promotions...
 
