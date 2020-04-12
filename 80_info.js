@@ -169,16 +169,13 @@ function NewInfoHandler() {
 			let move = InfoVal(s, "string");
 			let move_info;
 
-			// Crude hack to fix funky castling notation...
-			// At the moment Nibbler doesn't support anything except normal chess.
+			// We now (as of 1.1.6) expect castling moves to be in Chess960 format.
+			// Crude compatibility hack to ensure we can at least vaguely comprehend old-fashioned castling format...
 
-			// CHESS960 - FIXME
-			// This hack should likely be deleted and the move handler deal with these moves instead.
-
-			if (move === "e1h1" && board.state[4][7] === "K") move = "e1g1";
-			if (move === "e1a1" && board.state[4][7] === "K") move = "e1c1";
-			if (move === "e8h8" && board.state[4][0] === "k") move = "e8g8";
-			if (move === "e8a8" && board.state[4][0] === "k") move = "e8c8";
+			if (move === "e1g1" && board.state[4][7] === "K" && board.state[7][7] === "R") move = "e1h1";
+			if (move === "e1c1" && board.state[4][7] === "K" && board.state[0][7] === "R") move = "e1a1";
+			if (move === "e8g8" && board.state[4][0] === "k" && board.state[7][0] === "r") move = "e8h8";
+			if (move === "e8c8" && board.state[4][0] === "k" && board.state[0][0] === "r") move = "e8a8";
 
 			if (this.table[move]) {						// We already have move info for this move.
 				move_info = this.table[move];
