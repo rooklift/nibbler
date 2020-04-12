@@ -153,9 +153,6 @@ const position_prototype = {
 
 	illegal: function(s) {
 
-		// CHESS960 - FIXME
-		// Need to adjust castling logic and use alternate pos.castling format.
-
 		// Returns "" if the move is legal, otherwise returns the reason it isn't.
 
 		if (typeof s !== "string") {
@@ -177,8 +174,17 @@ const position_prototype = {
 			return "wrong colour source";
 		}
 
+		// Colours must not be the same, except for castling.
+		// Note that king-onto-rook is the only valid castling move...
+
 		if (this.same_colour(Point(x1, y1), Point(x2, y2))) {
-			return "source and destination have same colour";
+			if (this.state[x1][y1] === "K" && this.state[x2][y2] === "R") {
+				return this.illegal_castling(x1, y1, x2, y2);
+			} else if (this.state[x1][y1] === "k" && this.state[x2][y2] === "r") {
+				return this.illegal_castling(x1, y1, x2, y2);
+			} else {
+				return "source and destination have same colour";
+			}
 		}
 
 		if ("Nn".includes(this.state[x1][y1])) {
@@ -271,58 +277,11 @@ const position_prototype = {
 			}
 
 			if (Math.abs(x2 - x1) > 1) {
-
-				// This should be an attempt to castle...
-
-				if (s !== "e1g1" && s !== "e1c1" && s !== "e8g8" && s !== "e8c8") {
-					return "illegal king movement";
-				}
-
-				// So it is an attempt to castle. But is it allowed?
-
-				if (s === "e1g1" && this.castling.includes("K") === false) {
-					return "White lost the right to castle kingside";
-				}
-
-				if (s === "e1c1" && this.castling.includes("Q") === false) {
-					return "White lost the right to castle queenside";
-				}
-
-				if (s === "e8g8" && this.castling.includes("k") === false) {
-					return "Black lost the right to castle kingside";
-				}
-
-				if (s === "e8c8" && this.castling.includes("q") === false) {
-					return "White lost the right to castle queenside";
-				}
-
-				// Check that the king destination isn't occupied by an enemy...
-
-				if (this.state[x2][y2] !== "") {
-					return "Castling cannot capture";
-				}
-
-				// For queenside castling, check that the rook isn't blocked by a piece on the B file...
-
-				if (x2 === 2 && this.piece(Point(1, y2)) !== "") {
-					return "queenside castling blocked on B-file";
-				}
-
-				// Check that king source square and the pass-through square aren't under attack.
-				// Destination will be handled by the general in-check test later.
-				
-				if (this.attacked(Point(x1, y1), this.active)) {
-					return "cannot castle under check";
-				}
-
-				if (this.attacked(Point((x1 + x2) / 2, y1), this.active)) {
-					return "cannot castle through check";
-				}
+				return "illegal king movement";
 			}
 		}
 
 		// Check for blockers (pieces between source and dest).
-		// K and k are included to spot castling blockers.
 
 		if ("KQRBPkqrbp".includes(this.state[x1][y1])) {
 			if (this.los(x1, y1, x2, y2) === false) {
@@ -369,6 +328,78 @@ const position_prototype = {
 						return "king in check";
 					}
 				}
+			}
+		}
+
+		return "";
+	},
+
+	illegal_castling: function(x1, y1, x2, y2) {
+
+		// We can assume a king is on [x1, y1] and a same-colour rook is on [x2, y2]
+
+		if (y1 !== y2) {
+			return "cannot castle vertically";
+		}
+
+		let colour = this.colour(Point(x1, y1));
+
+		if (colour === "w" && y1 !== 7) {
+			return "cannot castle off the back rank"
+		}
+
+		if (colour === "b" && y1 !== 0) {
+			return "cannot castle off the back rank"
+		}
+
+		// Check for the required castling rights character...
+
+		let required_ch;
+
+		if (colour === "w") {
+			required_ch = Point(x2, y2).s[0].toUpperCase();
+		} else {
+			required_ch = Point(x2, y2).s[0];
+		}
+
+		if (this.castling.includes(required_ch) === false) {
+			return `lost the right to castle - needed ${required_ch}`;
+		}
+
+		let king_target_x;
+		let rook_target_x;
+
+		if (x1 < x2) {				// Castling kingside
+			king_target_x = 6;
+			rook_target_x = 5;
+		} else {					// Castling queenside
+			king_target_x = 2;
+			rook_target_x = 3;
+		}
+
+		let king_path = NumbersBetween(x1, king_target_x);
+		let rook_path = NumbersBetween(x2, rook_target_x);
+
+		// Check for blockers and checks...
+
+		for (let x of king_path) {
+			if (x === x1 || x === x2) {
+				continue;
+			}
+			if (this.state[x][y1] !== "") {
+				return "castling blocked for king movement";
+			}
+			if (this.attacked(Point(x, y1), this.active)) {
+				return "cannot castle [out of / through / into] check";
+			}
+		}
+
+		for (let x of rook_path) {
+			if (x === x1 || x === x2) {
+				continue;
+			}
+			if (this.state[x][y1] !== "") {
+				return "castling blocked for rook movement";
 			}
 		}
 
