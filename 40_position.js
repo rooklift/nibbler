@@ -8,9 +8,6 @@ const position_prototype = {
 
 	move: function(s) {
 
-		// CHESS960 - FIXME
-		// Need to accept Chess960 castling moves, and use alternate pos.castling format.
-
 		// s is some valid UCI move like "d1f3" or "e7e8q".
 		// Assumes move is legal - all sorts of weird things can happen if this isn't so.
 
@@ -983,9 +980,6 @@ const position_prototype = {
 	},
 
 	fen: function() {
-
-		// CHESS960 - FIXME
-		// Need to deal with the special FEN format for castling rights.
 
 		let s = "";
 
