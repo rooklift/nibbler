@@ -68,22 +68,22 @@ const position_prototype = {
 			ret.castling = ReplaceAll(ret.castling, "h", "");
 		}
 
-		if (y1 === 7 && ret.state[x1][y1] === "R") {
+		if (y1 === 7 && ret.state[x1][y1] === "R") {			// White rook moved.
 			let ch = String.fromCharCode(x1 + 65);
 			ret.castling = ReplaceAll(ret.castling, ch, "");
 		}
 
-		if (y2 === 7 && ret.state[x2][y2] === "R") {
+		if (y2 === 7 && ret.state[x2][y2] === "R") {			// White rook was captured (or castled onto).
 			let ch = String.fromCharCode(x2 + 65);
 			ret.castling = ReplaceAll(ret.castling, ch, "");
 		}
 
-		if (y1 === 0 && ret.state[x1][y1] === "r") {
+		if (y1 === 0 && ret.state[x1][y1] === "r") {			// Black rook moved.
 			let ch = String.fromCharCode(x1 + 97);
 			ret.castling = ReplaceAll(ret.castling, ch, "");
 		}
 
-		if (y2 === 0 && ret.state[x2][y2] === "r") {
+		if (y2 === 0 && ret.state[x2][y2] === "r") {			// Black rook was captured (or castled onto).
 			let ch = String.fromCharCode(x2 + 97);
 			ret.castling = ReplaceAll(ret.castling, ch, "");
 		}
