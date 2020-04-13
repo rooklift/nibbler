@@ -963,13 +963,10 @@ function NewRenderer() {
 
 		this.hide_promotiontable();						// Just in case it's up.
 
-		// CHESS960 - FIXME
-		// One click moves likely incompatible with castling.
-
 		let ocm = this.info_handler.one_click_moves[p.x][p.y];
 		let board = this.node.get_board();
 
-		if (!this.active_square && ocm) {
+		if (!this.active_square && ocm && board.colour(p) === "") {
 			this.set_active_square(null);
 			this.move(ocm);
 			return;
