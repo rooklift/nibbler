@@ -623,13 +623,13 @@ function NewInfoHandler() {
 						colour = config.good_colour;
 					}
 
-					let castling_arrowhead_adjustment = 0;
+					let x_head_adjustment = 0;		// Adjust head of arrow for castling moves.
 
 					if (this.board && this.board.colour(Point(x1, y1)) === this.board.colour(Point(x2, y2))) {
 						if (x2 > x1) {
-							castling_arrowhead_adjustment = -0.5;
+							x_head_adjustment = -0.5;
 						} else {
-							castling_arrowhead_adjustment = 0.5;
+							x_head_adjustment = 0.5;
 						}
 					}
 
@@ -637,17 +637,22 @@ function NewInfoHandler() {
 						colour: colour,
 						x1: x1,
 						y1: y1,
-						x2: x2 + castling_arrowhead_adjustment,
+						x2: x2,
 						y2: y2,
+						x_head_adjustment: x_head_adjustment,
 						info: info_list[i]
 					});
+
+					// If there is no one_click_move set for the target square, then set it
+					// and also set an arrowhead to be drawn later.
 
 					if (!this.one_click_moves[x2][y2]) {
 						this.one_click_moves[x2][y2] = info_list[i].move;
 						heads.push({
 							colour: colour,
-							x2: x2 + castling_arrowhead_adjustment,
+							x2: x2,
 							y2: y2,
+							x_head_adjustment: x_head_adjustment,
 							info: info_list[i]
 						});
 					}
@@ -677,7 +682,7 @@ function NewInfoHandler() {
 
 		for (let o of arrows) {
 			let cc1 = CanvasCoords(o.x1, o.y1);
-			let cc2 = CanvasCoords(o.x2, o.y2);
+			let cc2 = CanvasCoords(o.x2 + o.x_head_adjustment, o.y2);
 			context.strokeStyle = o.colour;
 			context.fillStyle = o.colour;
 			context.beginPath();
@@ -687,7 +692,7 @@ function NewInfoHandler() {
 		}
 
 		for (let o of heads) {
-			let cc2 = CanvasCoords(o.x2, o.y2);
+			let cc2 = CanvasCoords(o.x2 + o.x_head_adjustment, o.y2);
 			context.fillStyle = o.colour;
 			context.beginPath();
 			context.arc(cc2.cx, cc2.cy, config.arrowhead_radius, 0, 2 * Math.PI);
