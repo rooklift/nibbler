@@ -1,31 +1,25 @@
 "use strict";
 
-function c960_insertion(arr, index, piece) {
-
-	// Given an array of pieces (with blanks indicated as ".") insert another
-	// piece at an "index" which considers only empty spots in the array. This
-	// is a helper function for c960_arrangement().
-
-	let skips = 0;
-
-	for (let i = 0; i < 8; i++) {
-		if (arr[i] === ".") {
-			if (skips === index) {
-				arr[i] = piece;
-				return;
-			} else {
-				skips++;
-			}
-		}
-	}
-}
-
 function c960_arrangement(n) {
 
 	// Given n, generate a string like "RNBQKBNR".
 	// AFAIK, matches the scheme of Reinhard Scharnagl.
 
 	let pieces = [".", ".", ".", ".", ".", ".", ".", "."];
+
+	let insert = (index, piece) => {
+		let skips = 0;
+		for (let i = 0; i < 8; i++) {
+			if (pieces[i] === ".") {
+				if (skips === index) {
+					pieces[i] = piece;
+					return;
+				} else {
+					skips++;
+				}
+			}
+		}
+	}
 
 	// Place bishops in final positions...
 
@@ -35,23 +29,23 @@ function c960_arrangement(n) {
 	// Place queen in one of 6 remaining spots...
 
 	let i = Math.floor(n / 16) % 6;
-	c960_insertion(pieces, i, "Q");
+	insert(i, "Q");
 
 	// Place first knight in one of 5 spots, never actually using index 4...
 
 	i = [0, 0, 0, 0, 1, 1, 1, 2, 2, 3][Math.floor(n / 96)];
-	c960_insertion(pieces, i, "N");
+	insert(i, "N");
 
 	// Place second knight in one of 4 spots...
 
 	i = [0, 1, 2, 3, 1, 2, 3, 2, 3, 3][Math.floor(n / 96)];
-	c960_insertion(pieces, i, "N");
+	insert(i, "N");
 
 	// Place left rook, king, right rook in first available spots...
 
-	c960_insertion(pieces, 0, "R");
-	c960_insertion(pieces, 0, "K");
-	c960_insertion(pieces, 0, "R");
+	insert(0, "R");
+	insert(0, "K");
+	insert(0, "R");
 
 	return pieces.join("");
 }
