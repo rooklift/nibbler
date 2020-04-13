@@ -600,17 +600,24 @@ const position_prototype = {
 	find: function(piece, startx, starty, endx, endy) {
 
 		// Find all pieces of the specified type (colour-specific).
-		// Returned as a list of points.
+		// Search range is INCLUSIVE. Result returned as a list of points.
+		// You can call this function with just a piece to search the whole board.
 
-		for (let val of [startx, starty, endx, endy]) {
-			if (typeof val !== "number" || val < 0 || val > 7) {
-				startx = 0;
-				starty = 0;
-				endx = 7;
-				endy = 7;
-				break;
-			}
-		}
+		if (startx === undefined) startx = 0;
+		if (starty === undefined) starty = 0;
+		if (endx === undefined) endx = 7;
+		if (endy === undefined) endy = 7;
+
+		// Calling with out of bounds args should also work...
+
+		if (startx < 0) startx = 0;
+		if (startx > 7) startx = 7;
+		if (starty < 0) starty = 0;
+		if (starty > 7) starty = 7;
+		if (endx < 0) endx = 0;
+		if (endx > 7) endx = 7;
+		if (endy < 0) endy = 0;
+		if (endy > 7) endy = 7;
 
 		let ret = [];
 
@@ -623,6 +630,47 @@ const position_prototype = {
 		}
 
 		return ret;
+	},
+
+	find_castling_move: function(long_flag) {		// Returns a (possibly illegal) "O-O" or "O-O-O" or ""
+
+		let king_loc;
+
+		if (this.active === "w") {
+			king_loc = this.find("K", 0, 7, 7, 7)[0];
+		} else {
+			king_loc = this.find("k", 0, 0, 7, 0)[0];
+		}
+
+		if (king_loc === undefined) {
+			return "";
+		}
+
+		let possible_rights_chars;
+
+		if (this.active === "w") {
+			possible_rights_chars = ["A", "B", "C", "D", "E", "F", "G", "H"];
+		} else {
+			possible_rights_chars = ["a", "b", "c", "d", "e", "f", "g", "h"];
+		}
+
+		if (long_flag) {
+			possible_rights_chars = possible_rights_chars.slice(0, king_loc.x);
+		} else {
+			possible_rights_chars = possible_rights_chars.slice(king_loc.x + 1);
+		}
+
+		for (let ch of possible_rights_chars) {
+			if (this.castling.includes(ch)) {
+				if (this.active === "w") {
+					return king_loc.s + ch.toLowerCase() + "1";
+				} else {
+					return king_loc.s + ch + "8";
+				}
+			}
+		}
+
+		return "";
 	},
 
 	parse_pgn: function(s) {		// Returns a move and an error message.
@@ -644,38 +692,28 @@ const position_prototype = {
 
 		// Fix castling with zeroes...
 
-		s = ReplaceAll(s, "0-0", "O-O");
 		s = ReplaceAll(s, "0-0-0", "O-O-O");
+		s = ReplaceAll(s, "0-0", "O-O");
 
 		if (s.toUpperCase() === "O-O") {
-			if (this.active === "w") {
-				if (this.state[4][7] === "K" && this.illegal("e1g1") === "") {
-					return ["e1g1", ""];
-				} else {
-					return ["", "illegal castling"];
-				}
+
+			let mv = this.find_castling_move(false);
+
+			if (mv !== "" && this.illegal(mv) === "") {
+				return [mv, ""];
 			} else {
-				if (this.state[4][0] === "k" && this.illegal("e8g8") === "") {
-					return ["e8g8", ""];
-				} else {
-					return ["", "illegal castling"];
-				}
+				return ["", "illegal castling"];
 			}
 		}
 
 		if (s.toUpperCase() === "O-O-O") {
-			if (this.active === "w") {
-				if (this.state[4][7] === "K" && this.illegal("e1c1") === "") {
-					return ["e1c1", ""];
-				} else {
-					return ["", "illegal castling"];
-				}
+
+			let mv = this.find_castling_move(true);
+			
+			if (mv !== "" && this.illegal(mv) === "") {
+				return [mv, ""];
 			} else {
-				if (this.state[4][0] === "k" && this.illegal("e8c8") === "") {
-					return ["e8c8", ""];
-				} else {
-					return ["", "illegal castling"];
-				}
+				return ["", "illegal castling"];
 			}
 		}
 
@@ -1028,11 +1066,10 @@ const position_prototype = {
 
 		// WHITE
 
-		let wk_location = this.find("K", 1, 7, 6, 7)[0];		// Possibly undefined...
+		let wk_location = this.find("K", 0, 7, 7, 7)[0];		// Possibly undefined...
 
-		if (wk_location) {					// White king OK to castle if it's between b1 and g1 inclusive...
-											// Note that on a1 or h1, it must have moved.
-
+		if (wk_location) {					// White king OK to castle if it's on the back rank. 
+											// We'll accept it being on A or H file (impossible in actual Chess 960).
 			for (let ch of s) {
 				if (["A", "B", "C", "D", "E", "F", "G", "H"].includes(ch)) {
 					let point = Point(ch.toLowerCase() + "1");
@@ -1061,7 +1098,7 @@ const position_prototype = {
 
 		// BLACK
 
-		let bk_location = this.find("k", 1, 0, 6, 0)[0];
+		let bk_location = this.find("k", 0, 0, 7, 0)[0];
 
 		if (bk_location) {
 
