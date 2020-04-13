@@ -1186,7 +1186,7 @@ function NewPosition(state = null, active = "w", castling = "", enpassant = null
 	p.halfmove = halfmove;
 	p.fullmove = fullmove;
 
-	p.normalchess = normalchess;	// FIXME: unused at present.
+	p.normalchess = normalchess;
 
 	return p;
 }
