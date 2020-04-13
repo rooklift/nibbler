@@ -1060,6 +1060,9 @@ const position_prototype = {
 
 	set_castling_rights(s) {				// s is likely the castling string from a FEN
 
+		// FIXME: logic of KQkq strings not correct as it stands;
+		// must prioritise rooks on A or H files.
+
 		this.castling = "";
 
 		let dict = Object.create(null);		// Will contain keys like "A" to "H" and "a" to "h"
