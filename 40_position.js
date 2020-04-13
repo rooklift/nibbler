@@ -1066,10 +1066,10 @@ const position_prototype = {
 
 		// WHITE
 
-		let wk_location = this.find("K", 0, 7, 7, 7)[0];		// Possibly undefined...
+		let wk_location = this.find("K", 0, 7, 7, 7)[0];		// Will be undefined if not on back rank.
 
-		if (wk_location) {					// White king OK to castle if it's on the back rank. 
-											// We'll accept it being on A or H file (impossible in actual Chess 960).
+		if (wk_location) {
+
 			for (let ch of s) {
 				if (["A", "B", "C", "D", "E", "F", "G", "H"].includes(ch)) {
 					let point = Point(ch.toLowerCase() + "1");
@@ -1081,21 +1081,23 @@ const position_prototype = {
 
 			for (let ch of s) {
 				if (ch === "Q") {
-					let left_rooks = this.find("R", 0, 7, wk_location.x, 7);
-					for (let rook of left_rooks) {
-						dict[rook.s[0].toUpperCase()] = true;
-						break;
+					if (this.state[0][7] === "R") {				// Compatibility with regular Chess FEN.
+						dict["A"] = true;
+					} else {
+						let left_rooks = this.find("R", 0, 7, wk_location.x, 7);
+						for (let rook of left_rooks) {
+							dict[rook.s[0].toUpperCase()] = true;
+						}
 					}
 				}
-
-				// Note that we want to prioritise rooks on the A and H file;
-				// to do this for Kingside castling, reverse the list...
-
 				if (ch === "K") {
-					let right_rooks = this.find("R", wk_location.x, 7, 7, 7).reverse();
-					for (let rook of right_rooks) {
-						dict[rook.s[0].toUpperCase()] = true;
-						break;
+					if (this.state[7][7] === "R") {
+						dict["H"] = true;
+					} else {
+						let right_rooks = this.find("R", wk_location.x, 7, 7, 7);
+						for (let rook of right_rooks) {
+							dict[rook.s[0].toUpperCase()] = true;
+						}
 					}
 				}
 			}
@@ -1117,11 +1119,15 @@ const position_prototype = {
 			}
 
 			for (let ch of s) {
+
 				if (ch === "q") {
-					let left_rooks = this.find("r", 0, 0, bk_location.x, 0);
-					for (let rook of left_rooks) {
-						dict[rook.s[0]] = true;
-						break;
+					if (this.state[0][0] === "r") {
+						dict["a"] = true;
+					} else {
+						let left_rooks = this.find("r", 0, 0, bk_location.x, 0);
+						for (let rook of left_rooks) {
+							dict[rook.s[0]] = true;
+						}
 					}
 				}
 
@@ -1129,10 +1135,13 @@ const position_prototype = {
 				// to do this for Kingside castling, reverse the list...
 
 				if (ch === "k") {
-					let right_rooks = this.find("r", bk_location.x, 0, 7, 0).reverse();
-					for (let rook of right_rooks) {
-						dict[rook.s[0]] = true;
-						break;
+					if (this.state[7][0] === "r") {
+						dict["h"] = true;
+					} else {
+						let right_rooks = this.find("r", bk_location.x, 0, 7, 0);
+						for (let rook of right_rooks) {
+							dict[rook.s[0]] = true;
+						}
 					}
 				}
 			}
