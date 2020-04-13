@@ -147,6 +147,13 @@ function menu_build() {
 					}
 				},
 				{
+					label: "New 960 game",
+					accelerator: "CommandOrControl+Shift+N",
+					click: () => {
+						win.webContents.send("call", "new_960");
+					}
+				},
+				{
 					type: "separator"
 				},
 				{

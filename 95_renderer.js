@@ -163,12 +163,27 @@ function NewRenderer() {
 		}
 
 		let board = this.node.get_board();
+		let source = Point(s.slice(0, 2));
+
+		// First deal with old-school castling in Standard Chess...
+
+		if (s === "e1g1" && board.state[4][7] === "K" && board.castling.includes("G") === false) {
+			s  =  "e1h1";
+		}
+		if (s === "e1c1" && board.state[4][7] === "K" && board.castling.includes("C") === false) {
+			s  =  "e1a1";
+		}
+		if (s === "e8g8" && board.state[4][0] === "k" && board.castling.includes("g") === false) {
+			s  =  "e8h8";
+		}
+		if (s === "e8c8" && board.state[4][0] === "k" && board.castling.includes("c") === false) {
+			s  =  "e8a8";
+		}
 
 		// If a promotion character is required and not present, show the promotion chooser and return
 		// without committing to anything.
 
 		if (s.length === 4) {
-			let source = Point(s.slice(0, 2));
 			if ((board.piece(source) === "P" && source.y === 1) || (board.piece(source) === "p" && source.y === 6)) {
 				let illegal_reason = board.illegal(s + "q");
 				if (illegal_reason !== "") {
@@ -301,8 +316,20 @@ function NewRenderer() {
 
 	renderer.load_fen = function(s) {
 
-		if (s.trim() === this.node.get_board().fen()) {
+		s = s.trim();
+
+		if (s === this.node.get_board().fen()) {
 			return;
+		}
+
+		// Allow loading a Chess 960 position by giving its ID:
+
+		if (s.length <= 3) {
+			let n = Number.parseInt(s, 10);
+			if (Number.isNaN(n) === false) {
+				this.new_960(n);
+				return;
+			}
 		}
 
 		let newpos;
@@ -322,6 +349,19 @@ function NewRenderer() {
 	renderer.new_game = function() {
 		DestroyTree(this.node);			// Optional, but might help the GC.
 		this.node = NewTree();
+		this.position_changed(true);
+	};
+
+	renderer.new_960 = function(n) {
+
+		if (n === undefined) {
+			n = RandInt(0, 960);
+		}
+
+		DestroyTree(this.node);			// Optional, but might help the GC.
+
+		let newpos = LoadFEN(c960_fen(n));
+		this.node = NewTree(newpos);
 		this.position_changed(true);
 	};
 
@@ -499,9 +539,11 @@ function NewRenderer() {
 		} else if (s.startsWith("error")) {
 			this.info_handler.err_receive(s);
 		} else if (s.startsWith("id name")) {
-			for (let n = 10; n < 21; n++) {
+			for (let n = 10; n < messages.min_version; n++) {
 				if (s.includes(`v0.${n}`)) {
+					this.info_handler.err_receive("");
 					this.info_handler.err_receive(`<span class="blue">${messages.obsolete_leela}</span>`);
+					this.info_handler.err_receive("");
 				}
 			}
 		} else if (s.startsWith("bestmove") && config.autoplay && config.versus === this.node.get_board().active) {
@@ -568,13 +610,7 @@ function NewRenderer() {
 		}
 
 		let start_fen = this.node.get_root().get_board().fen();
-
-		let setup;
-		if (start_fen === "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1") {
-			setup = "startpos";
-		} else {
-			setup = `fen ${start_fen}`;
-		}
+		let setup = `fen ${start_fen}`;
 
 		// Leela seems to time "readyok" correctly after "position" commands.
 		// After sending "isready" we'll ignore Leela output until "readyok" comes.
@@ -708,6 +744,7 @@ function NewRenderer() {
 		this.engine.setoption("SmartPruningFactor", 0);
 		this.engine.setoption("ScoreType", "centipawn");			// The default, but the user can't be allowed to override this.
 		this.engine.setoption("UCI_ShowWDL", true);
+		this.engine.setoption("UCI_Chess960", true);				// We always use Chess 960 mode now, for consistency.
 		this.engine.send("ucinewgame");
 	};
 
@@ -957,15 +994,15 @@ function NewRenderer() {
 			return;
 		}
 
-		this.hide_promotiontable();						// Just in case it's up.
+		this.hide_promotiontable();		// Just in case it's up.
 
 		let ocm = this.info_handler.one_click_moves[p.x][p.y];
 		let board = this.node.get_board();
 
-		if (!this.active_square && ocm) {
-			this.set_active_square(null);
-			this.move(ocm);
-			return;
+		if (!this.active_square && ocm && board.colour(p) !== board.active) {		// Note that we test colour difference
+			this.set_active_square(null);											// to disallow castling moves from OCM
+			this.move(ocm);															// since the dest is the rook (which
+			return;																	// the user might want to click on.)
 		}
 
 		if (this.active_square) {

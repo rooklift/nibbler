@@ -169,13 +169,21 @@ function NewInfoHandler() {
 			let move = InfoVal(s, "string");
 			let move_info;
 
-			// Crude hack to fix funky castling notation...
-			// At the moment Nibbler doesn't support anything except normal chess.
+			// We now (as of 1.1.6) expect castling moves to be in Chess960 format.
+			// Crude compatibility hack to ensure we can at least vaguely comprehend old-fashioned castling format...
 
-			if (move === "e1h1" && board.state[4][7] === "K") move = "e1g1";
-			if (move === "e1a1" && board.state[4][7] === "K") move = "e1c1";
-			if (move === "e8h8" && board.state[4][0] === "k") move = "e8g8";
-			if (move === "e8a8" && board.state[4][0] === "k") move = "e8c8";
+			if (move === "e1g1" && board.state[4][7] === "K" && board.castling.includes("G") === false) {
+				move  =  "e1h1";
+			}
+			if (move === "e1c1" && board.state[4][7] === "K" && board.castling.includes("C") === false) {
+				move  =  "e1a1";
+			}
+			if (move === "e8g8" && board.state[4][0] === "k" && board.castling.includes("g") === false) {
+				move  =  "e8h8";
+			}
+			if (move === "e8c8" && board.state[4][0] === "k" && board.castling.includes("c") === false) {
+				move  =  "e8a8";
+			}
 
 			if (this.table[move]) {						// We already have move info for this move.
 				move_info = this.table[move];
@@ -565,6 +573,8 @@ function NewInfoHandler() {
 
 	ih.draw_arrows = function() {
 
+		// This function also sets up the one_click_moves array.
+
 		for (let x = 0; x < 8; x++) {
 			for (let y = 0; y < 8; y++) {
 				this.one_click_moves[x][y] = null;
@@ -615,14 +625,28 @@ function NewInfoHandler() {
 						colour = config.good_colour;
 					}
 
+					let x_head_adjustment = 0;		// Adjust head of arrow for castling moves.
+
+					if (this.board && this.board.colour(Point(x1, y1)) === this.board.colour(Point(x2, y2))) {
+						if (x2 > x1) {
+							x_head_adjustment = -0.5;
+						} else {
+							x_head_adjustment = 0.5;
+						}
+					}
+
 					arrows.push({
 						colour: colour,
 						x1: x1,
 						y1: y1,
 						x2: x2,
 						y2: y2,
+						x_head_adjustment: x_head_adjustment,
 						info: info_list[i]
 					});
+
+					// If there is no one_click_move set for the target square, then set it
+					// and also set an arrowhead to be drawn later.
 
 					if (!this.one_click_moves[x2][y2]) {
 						this.one_click_moves[x2][y2] = info_list[i].move;
@@ -630,6 +654,7 @@ function NewInfoHandler() {
 							colour: colour,
 							x2: x2,
 							y2: y2,
+							x_head_adjustment: x_head_adjustment,
 							info: info_list[i]
 						});
 					}
@@ -659,7 +684,7 @@ function NewInfoHandler() {
 
 		for (let o of arrows) {
 			let cc1 = CanvasCoords(o.x1, o.y1);
-			let cc2 = CanvasCoords(o.x2, o.y2);
+			let cc2 = CanvasCoords(o.x2 + o.x_head_adjustment, o.y2);
 			context.strokeStyle = o.colour;
 			context.fillStyle = o.colour;
 			context.beginPath();
@@ -669,7 +694,7 @@ function NewInfoHandler() {
 		}
 
 		for (let o of heads) {
-			let cc2 = CanvasCoords(o.x2, o.y2);
+			let cc2 = CanvasCoords(o.x2 + o.x_head_adjustment, o.y2);
 			context.fillStyle = o.colour;
 			context.beginPath();
 			context.arc(cc2.cx, cc2.cy, config.arrowhead_radius, 0, 2 * Math.PI);

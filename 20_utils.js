@@ -128,13 +128,13 @@ function OppositeColour(s) {
 	return "";
 }
 
-function ReplaceAll(s, search, replace) {		// FIXME? No type checks...
+function ReplaceAll(s, search, replace) {
 	return s.split(search).join(replace);
 }
 
 function SafeString(s) {
 	if (typeof s !== "string") {
-		return undefined;						// FIXME? Is this really the thing to do?
+		return undefined;
 	}
 	s = ReplaceAll(s, "&", "&amp;");			// This needs to be first of course.
 	s = ReplaceAll(s, "<", "&lt;");
@@ -336,4 +336,25 @@ function DurationString(ms) {
 	}
 
 	return `${seconds}s`;
+}
+
+function NumbersBetween(a, b) {
+
+	// Given integers a and b, return a list of integers between the two, inclusive.
+
+	let add = a < b ? 1 : -1;
+
+	let ret = [];
+
+	for (let x = a; x !== b; x += add) {
+		ret.push(x);
+	}
+
+	ret.push(b);
+
+	return ret;
+}
+
+function RandInt(min, max) {
+	return Math.floor(Math.random() * (max - min)) + min;
 }

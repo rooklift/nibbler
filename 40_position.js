@@ -8,7 +8,7 @@ const position_prototype = {
 
 	move: function(s) {
 
-		// s is something like "d1f3" or "e7e8q".
+		// s is some valid UCI move like "d1f3" or "e7e8q".
 		// Assumes move is legal - all sorts of weird things can happen if this isn't so.
 
 		// Basic sanity checks only:
@@ -35,9 +35,10 @@ const position_prototype = {
 
 		let promotion_char = s.length > 4 ? s[4].toLowerCase() : "q";
 		
-		let white_flag = this.is_white(Point(x1, y1));
-		let pawn_flag = "Pp".includes(ret.state[x1][y1]);
-		let capture_flag = ret.state[x2][y2] !== "";
+		let white_flag = ret.is_white(Point(x1, y1));
+		let pawn_flag = ret.state[x1][y1] === "P" || ret.state[x1][y1] === "p";
+		let castle_flag = (ret.state[x2][y2] === "R" && white_flag) || (ret.state[x2][y2] === "r" && white_flag === false);
+		let capture_flag = castle_flag === false && ret.state[x2][y2] !== "";
 
 		if (pawn_flag && x1 !== x2) {		// Make sure capture_flag is set even for enpassant captures
 			capture_flag = true;
@@ -46,29 +47,45 @@ const position_prototype = {
 		// Update castling info...
 
 		if (ret.state[x1][y1] === "K") {
-			ret.castling = ReplaceAll(ret.castling, "K", "");
-			ret.castling = ReplaceAll(ret.castling, "Q", "");
+			ret.castling = ReplaceAll(ret.castling, "A", "");
+			ret.castling = ReplaceAll(ret.castling, "B", "");
+			ret.castling = ReplaceAll(ret.castling, "C", "");
+			ret.castling = ReplaceAll(ret.castling, "D", "");
+			ret.castling = ReplaceAll(ret.castling, "E", "");
+			ret.castling = ReplaceAll(ret.castling, "F", "");
+			ret.castling = ReplaceAll(ret.castling, "G", "");
+			ret.castling = ReplaceAll(ret.castling, "H", "");
 		}
 
 		if (ret.state[x1][y1] === "k") {
-			ret.castling = ReplaceAll(ret.castling, "k", "");
-			ret.castling = ReplaceAll(ret.castling, "q", "");
+			ret.castling = ReplaceAll(ret.castling, "a", "");
+			ret.castling = ReplaceAll(ret.castling, "b", "");
+			ret.castling = ReplaceAll(ret.castling, "c", "");
+			ret.castling = ReplaceAll(ret.castling, "d", "");
+			ret.castling = ReplaceAll(ret.castling, "e", "");
+			ret.castling = ReplaceAll(ret.castling, "f", "");
+			ret.castling = ReplaceAll(ret.castling, "g", "");
+			ret.castling = ReplaceAll(ret.castling, "h", "");
 		}
 
-		if ((x1 == 0 && y1 == 0) || (x2 == 0 && y2 == 0)) {
-			ret.castling = ReplaceAll(ret.castling, "q", "");
+		if (y1 === 7 && ret.state[x1][y1] === "R") {			// White rook moved.
+			let ch = String.fromCharCode(x1 + 65);
+			ret.castling = ReplaceAll(ret.castling, ch, "");
 		}
 
-		if ((x1 == 7 && y1 == 0) || (x2 == 7 && y2 == 0)) {
-			ret.castling = ReplaceAll(ret.castling, "k", "");
+		if (y2 === 7 && ret.state[x2][y2] === "R") {			// White rook was captured (or castled onto).
+			let ch = String.fromCharCode(x2 + 65);
+			ret.castling = ReplaceAll(ret.castling, ch, "");
 		}
 
-		if ((x1 == 0 && y1 == 7) || (x2 == 0 && y2 == 7)) {
-			ret.castling = ReplaceAll(ret.castling, "Q", "");
+		if (y1 === 0 && ret.state[x1][y1] === "r") {			// Black rook moved.
+			let ch = String.fromCharCode(x1 + 97);
+			ret.castling = ReplaceAll(ret.castling, ch, "");
 		}
 
-		if ((x1 == 7 && y1 == 7) || (x2 == 7 && y2 == 7)) {
-			ret.castling = ReplaceAll(ret.castling, "K", "");
+		if (y2 === 0 && ret.state[x2][y2] === "r") {			// Black rook was captured (or castled onto).
+			let ch = String.fromCharCode(x2 + 97);
+			ret.castling = ReplaceAll(ret.castling, ch, "");
 		}
 
 		// Update halfmove and fullmove...
@@ -83,28 +100,27 @@ const position_prototype = {
 			ret.halfmove++;
 		}
 
-		// Handle the rook moves of castling...
+		// Handle the moves of castling...
 
-		if (ret.state[x1][y1] === "K" || ret.state[x1][y1] === "k") {
+		if (castle_flag) {
 
-			if (s === "e1g1") {
-				ret.state[5][7] = "R";
-				ret.state[7][7] = "";
-			}
+			let k_ch = ret.state[x1][y1];
+			let r_ch = ret.state[x2][y2];
 
-			if (s === "e1c1") {
-				ret.state[3][7] = "R";
-				ret.state[0][7] = "";
-			}
+			if (x2 > x1) {		// Kingside castling
 
-			if (s === "e8g8") {
-				ret.state[5][0] = "r";
-				ret.state[7][0] = "";
-			}
+				ret.state[x1][y1] = "";
+				ret.state[x2][y2] = "";
+				ret.state[6][y1] = k_ch;
+				ret.state[5][y1] = r_ch;
 
-			if (s === "e8c8") {
-				ret.state[3][0] = "r";
-				ret.state[0][0] = "";
+			} else {			// Queenside castling
+
+				ret.state[x1][y1] = "";
+				ret.state[x2][y2] = "";
+				ret.state[2][y1] = k_ch;
+				ret.state[3][y1] = r_ch;
+
 			}
 		}
 
@@ -126,10 +142,12 @@ const position_prototype = {
 			ret.enpassant = Point(x1, 2);
 		}
 
-		// Actually make the move...
+		// Actually make the move (except we already did castling)...
 
-		ret.state[x2][y2] = ret.state[x1][y1];
-		ret.state[x1][y1] = "";
+		if (castle_flag === false) {
+			ret.state[x2][y2] = ret.state[x1][y1];
+			ret.state[x1][y1] = "";
+		}
 
 		// Handle promotions...
 
@@ -171,11 +189,20 @@ const position_prototype = {
 			return "wrong colour source";
 		}
 
+		// Colours must not be the same, except for castling.
+		// Note that king-onto-rook is the only valid castling move...
+
 		if (this.same_colour(Point(x1, y1), Point(x2, y2))) {
-			return "source and destination have same colour";
+			if (this.state[x1][y1] === "K" && this.state[x2][y2] === "R") {
+				return this.illegal_castling(x1, y1, x2, y2);
+			} else if (this.state[x1][y1] === "k" && this.state[x2][y2] === "r") {
+				return this.illegal_castling(x1, y1, x2, y2);
+			} else {
+				return "source and destination have same colour";
+			}
 		}
 
-		if ("Nn".includes(this.state[x1][y1])) {
+		if (["N", "n"].includes(this.state[x1][y1])) {
 			if (Math.abs(x2 - x1) + Math.abs(y2 - y1) !== 3) {
 				return "illegal knight movement";
 			}
@@ -184,19 +211,19 @@ const position_prototype = {
 			}
 		}
 
-		if ("Bb".includes(this.state[x1][y1])) {
+		if (["B", "b"].includes(this.state[x1][y1])) {
 			if (Math.abs(x2 - x1) !== Math.abs(y2 - y1)) {
 				return "illegal bishop movement";
 			}
 		}
 
-		if ("Rr".includes(this.state[x1][y1])) {
+		if (["R", "r"].includes(this.state[x1][y1])) {
 			if (Math.abs(x2 - x1) > 0 && Math.abs(y2 - y1) > 0) {
 				return "illegal rook movement";
 			}
 		}
 
-		if ("Qq".includes(this.state[x1][y1])) {
+		if (["Q", "q"].includes(this.state[x1][y1])) {
 			if (Math.abs(x2 - x1) !== Math.abs(y2 - y1)) {
 				if (Math.abs(x2 - x1) > 0 && Math.abs(y2 - y1) > 0) {
 					return "illegal queen movement";
@@ -206,7 +233,7 @@ const position_prototype = {
 
 		// Pawns...
 
-		if ("Pp".includes(this.state[x1][y1])) {
+		if (["P", "p"].includes(this.state[x1][y1])) {
 
 			if (Math.abs(x2 - x1) === 0) {
 				if (this.state[x2][y2] !== "") {
@@ -258,67 +285,20 @@ const position_prototype = {
 
 		// Kings...
 
-		if ("Kk".includes(this.state[x1][y1])) {
+		if (["K", "k"].includes(this.state[x1][y1])) {
 
 			if (Math.abs(y2 - y1) > 1) {
 				return "illegal king movement";
 			}
 
 			if (Math.abs(x2 - x1) > 1) {
-
-				// This should be an attempt to castle...
-
-				if (s !== "e1g1" && s !== "e1c1" && s !== "e8g8" && s !== "e8c8") {
-					return "illegal king movement";
-				}
-
-				// So it is an attempt to castle. But is it allowed?
-
-				if (s === "e1g1" && this.castling.includes("K") === false) {
-					return "White lost the right to castle kingside";
-				}
-
-				if (s === "e1c1" && this.castling.includes("Q") === false) {
-					return "White lost the right to castle queenside";
-				}
-
-				if (s === "e8g8" && this.castling.includes("k") === false) {
-					return "Black lost the right to castle kingside";
-				}
-
-				if (s === "e8c8" && this.castling.includes("q") === false) {
-					return "White lost the right to castle queenside";
-				}
-
-				// Check that the king destination isn't occupied by an enemy...
-
-				if (this.state[x2][y2] !== "") {
-					return "Castling cannot capture";
-				}
-
-				// For queenside castling, check that the rook isn't blocked by a piece on the B file...
-
-				if (x2 === 2 && this.piece(Point(1, y2)) !== "") {
-					return "queenside castling blocked on B-file";
-				}
-
-				// Check that king source square and the pass-through square aren't under attack.
-				// Destination will be handled by the general in-check test later.
-				
-				if (this.attacked(Point(x1, y1), this.active)) {
-					return "cannot castle under check";
-				}
-
-				if (this.attacked(Point((x1 + x2) / 2, y1), this.active)) {
-					return "cannot castle through check";
-				}
+				return "illegal king movement";
 			}
 		}
 
 		// Check for blockers (pieces between source and dest).
-		// K and k are included to spot castling blockers.
 
-		if ("KQRBPkqrbp".includes(this.state[x1][y1])) {
+		if (["K", "Q", "R", "B", "P", "k", "q", "r", "b", "p"].includes(this.state[x1][y1])) {
 			if (this.los(x1, y1, x2, y2) === false) {
 				return "movement blocked";
 			}
@@ -363,6 +343,78 @@ const position_prototype = {
 						return "king in check";
 					}
 				}
+			}
+		}
+
+		return "";
+	},
+
+	illegal_castling: function(x1, y1, x2, y2) {
+
+		// We can assume a king is on [x1, y1] and a same-colour rook is on [x2, y2]
+
+		if (y1 !== y2) {
+			return "cannot castle vertically";
+		}
+
+		let colour = this.colour(Point(x1, y1));
+
+		if (colour === "w" && y1 !== 7) {
+			return "cannot castle off the back rank";
+		}
+
+		if (colour === "b" && y1 !== 0) {
+			return "cannot castle off the back rank";
+		}
+
+		// Check for the required castling rights character...
+
+		let required_ch;
+
+		if (colour === "w") {
+			required_ch = Point(x2, y2).s[0].toUpperCase();
+		} else {
+			required_ch = Point(x2, y2).s[0];
+		}
+
+		if (this.castling.includes(required_ch) === false) {
+			return `lost the right to castle - needed ${required_ch}`;
+		}
+
+		let king_target_x;
+		let rook_target_x;
+
+		if (x1 < x2) {				// Castling kingside
+			king_target_x = 6;
+			rook_target_x = 5;
+		} else {					// Castling queenside
+			king_target_x = 2;
+			rook_target_x = 3;
+		}
+
+		let king_path = NumbersBetween(x1, king_target_x);
+		let rook_path = NumbersBetween(x2, rook_target_x);
+
+		// Check for blockers and checks...
+
+		for (let x of king_path) {
+			if (this.attacked(Point(x, y1), this.active)) {
+				return "cannot castle [out of / through / into] check";
+			}
+			if (x === x1 || x === x2) {
+				continue;					// After checking for checks
+			}
+			if (this.state[x][y1] !== "") {
+				return "castling blocked for king movement";
+			}
+		}
+
+		for (let x of rook_path) {
+			if (x === x1 || x === x2) {
+				continue;
+			}
+			if (this.state[x][y1] !== "") {
+				return "castling blocked for rook movement";
 			}
 		}
 
@@ -456,8 +508,7 @@ const position_prototype = {
 
 			if (x < 0 || x > 7 || y < 0 || y > 7) continue;
 
-			if (this.state[x][y] === "") continue;		// Necessary, to prevent "Nn".includes() having false positives
-			if ("Nn".includes(this.state[x][y])) {
+			if (["N", "n"].includes(this.state[x][y])) {
 				if (this.colour(Point(x, y)) === my_colour) continue;
 				return true;
 			}
@@ -485,9 +536,9 @@ const position_prototype = {
 		let x = target.x;
 		let y = target.y;
 
-		let ranged_attackers = "QqRr";					// Ranged attackers that can go in a cardinal direction.
+		let ranged_attackers = ["Q", "q", "R", "r"];	// Ranged attackers that can go in a cardinal direction.
 		if (step_x !== 0 && step_y !== 0) {
-			ranged_attackers = "QqBb";					// Ranged attackers that can go in a diagonal direction.
+			ranged_attackers = ["Q", "q", "B", "b"];	// Ranged attackers that can go in a diagonal direction.
 		}
 
 		let iteration = 0;
@@ -526,7 +577,7 @@ const position_prototype = {
 
 			if (iteration === 1) {
 
-				if ("Kk".includes(this.state[x][y])) {
+				if (["K", "k"].includes(this.state[x][y])) {
 					return true;
 				}
 
@@ -549,17 +600,24 @@ const position_prototype = {
 	find: function(piece, startx, starty, endx, endy) {
 
 		// Find all pieces of the specified type (colour-specific).
-		// Returned as a list of points.
+		// Search range is INCLUSIVE. Result returned as a list of points.
+		// You can call this function with just a piece to search the whole board.
 
-		for (let val of [startx, starty, endx, endy]) {
-			if (typeof val !== "number" || val < 0 || val > 7) {
-				startx = 0;
-				starty = 0;
-				endx = 7;
-				endy = 7;
-				break;
-			}
-		}
+		if (startx === undefined) startx = 0;
+		if (starty === undefined) starty = 0;
+		if (endx === undefined) endx = 7;
+		if (endy === undefined) endy = 7;
+
+		// Calling with out of bounds args should also work...
+
+		if (startx < 0) startx = 0;
+		if (startx > 7) startx = 7;
+		if (starty < 0) starty = 0;
+		if (starty > 7) starty = 7;
+		if (endx < 0) endx = 0;
+		if (endx > 7) endx = 7;
+		if (endy < 0) endy = 0;
+		if (endy > 7) endy = 7;
 
 		let ret = [];
 
@@ -572,6 +630,47 @@ const position_prototype = {
 		}
 
 		return ret;
+	},
+
+	find_castling_move: function(long_flag) {		// Returns a (possibly illegal) castling move (e.g. "e1h1") or ""
+
+		let king_loc;
+
+		if (this.active === "w") {
+			king_loc = this.find("K", 0, 7, 7, 7)[0];
+		} else {
+			king_loc = this.find("k", 0, 0, 7, 0)[0];
+		}
+
+		if (king_loc === undefined) {
+			return "";
+		}
+
+		let possible_rights_chars;
+
+		if (this.active === "w") {
+			possible_rights_chars = ["A", "B", "C", "D", "E", "F", "G", "H"];
+		} else {
+			possible_rights_chars = ["a", "b", "c", "d", "e", "f", "g", "h"];
+		}
+
+		if (long_flag) {
+			possible_rights_chars = possible_rights_chars.slice(0, king_loc.x);
+		} else {
+			possible_rights_chars = possible_rights_chars.slice(king_loc.x + 1);
+		}
+
+		for (let ch of possible_rights_chars) {
+			if (this.castling.includes(ch)) {
+				if (this.active === "w") {
+					return king_loc.s + ch.toLowerCase() + "1";
+				} else {
+					return king_loc.s + ch + "8";
+				}
+			}
+		}
+
+		return "";
 	},
 
 	parse_pgn: function(s) {		// Returns a move and an error message.
@@ -593,38 +692,28 @@ const position_prototype = {
 
 		// Fix castling with zeroes...
 
-		s = ReplaceAll(s, "0-0", "O-O");
 		s = ReplaceAll(s, "0-0-0", "O-O-O");
+		s = ReplaceAll(s, "0-0", "O-O");
 
 		if (s.toUpperCase() === "O-O") {
-			if (this.active === "w") {
-				if (this.state[4][7] === "K" && this.illegal("e1g1") === "") {
-					return ["e1g1", ""];
-				} else {
-					return ["", "illegal castling"];
-				}
+
+			let mv = this.find_castling_move(false);
+
+			if (mv !== "" && this.illegal(mv) === "") {
+				return [mv, ""];
 			} else {
-				if (this.state[4][0] === "k" && this.illegal("e8g8") === "") {
-					return ["e8g8", ""];
-				} else {
-					return ["", "illegal castling"];
-				}
+				return ["", "illegal castling"];
 			}
 		}
 
 		if (s.toUpperCase() === "O-O-O") {
-			if (this.active === "w") {
-				if (this.state[4][7] === "K" && this.illegal("e1c1") === "") {
-					return ["e1c1", ""];
-				} else {
-					return ["", "illegal castling"];
-				}
+
+			let mv = this.find_castling_move(true);
+			
+			if (mv !== "" && this.illegal(mv) === "") {
+				return [mv, ""];
 			} else {
-				if (this.state[4][0] === "k" && this.illegal("e8c8") === "") {
-					return ["e8c8", ""];
-				} else {
-					return ["", "illegal castling"];
-				}
+				return ["", "illegal castling"];
 			}
 		}
 
@@ -646,7 +735,7 @@ const position_prototype = {
 		// If the piece isn't specified (with an uppercase letter) then it's a pawn move.
 		// Let's add P to the start of the string to keep the string format consistent.
 
-		if ("KQRBNP".includes(s[0]) === false) {
+		if (["K", "Q", "R", "B", "N", "P"].includes(s[0]) === false) {
 			s = "P" + s;
 		}
 
@@ -734,7 +823,7 @@ const position_prototype = {
 		if (piece === "") {
 			return false;
 		}
-		return "KQRBNP".includes(piece);
+		return ["K", "Q", "R", "B", "N", "P"].includes(piece);
 	},
 
 	is_black: function(point) {
@@ -742,7 +831,7 @@ const position_prototype = {
 		if (piece === "") {
 			return false;
 		}
-		return "kqrbnp".includes(piece);
+		return ["k", "q", "r", "b", "n", "p"].includes(piece);
 	},
 
 	is_empty: function(point) {
@@ -803,6 +892,9 @@ const position_prototype = {
 		// Given some raw (but valid) UCI move string, return a nice human-readable
 		// string for display in the browser window. This string should never be
 		// examined by the caller, merely displayed.
+		// 
+		// Note that as of 1.1.6, all castling moves are expected to be king-onto-rook,
+		// that is, Chess960 format.
 
 		let source = Point(s.slice(0, 2));
 		let dest = Point(s.slice(2, 4));
@@ -826,14 +918,15 @@ const position_prototype = {
 			check = "+";
 		}
 
-		if ("KkQqRrBbNn".includes(piece)) {
+		if (["K", "k", "Q", "q", "R", "r", "B", "b", "N", "n"].includes(piece)) {
 
-			if ("Kk".includes(piece)) {
-				if (s === "e1g1" || s === "e8g8") {
-					return `O-O${check}`;
-				}
-				if (s === "e1c1" || s === "e8c8") {
-					return `O-O-O${check}`;
+			if (["K", "k"].includes(piece)) {
+				if (this.colour(dest) === this.colour(source)) {
+					if (dest.x > source.x) {
+						return `O-O${check}`;
+					} else {
+						return `O-O-O${check}`;
+					}
 				}
 			}
 
@@ -965,12 +1058,106 @@ const position_prototype = {
 		return s + ` ${this.active} ${castling_string} ${ep_string} ${this.halfmove} ${this.fullmove}`;
 	},
 
+	set_castling_rights(s) {				// s is the castling string from a FEN
+
+		this.castling = "";
+
+		let dict = Object.create(null);		// Will contain keys like "A" to "H" and "a" to "h"
+
+		// WHITE
+
+		let wk_location = this.find("K", 0, 7, 7, 7)[0];		// Will be undefined if not on back rank.
+
+		if (wk_location) {
+
+			for (let ch of s) {
+				if (["A", "B", "C", "D", "E", "F", "G", "H"].includes(ch)) {
+					let point = Point(ch.toLowerCase() + "1");
+					if (this.piece(point) === "R") {
+						dict[ch] = true;
+					}
+				}
+			}
+
+			for (let ch of s) {
+				if (ch === "Q") {
+					if (this.state[0][7] === "R") {				// Compatibility with regular Chess FEN.
+						dict["A"] = true;
+					} else {
+						let left_rooks = this.find("R", 0, 7, wk_location.x, 7);
+						for (let rook of left_rooks) {
+							dict[rook.s[0].toUpperCase()] = true;
+						}
+					}
+				}
+				if (ch === "K") {
+					if (this.state[7][7] === "R") {
+						dict["H"] = true;
+					} else {
+						let right_rooks = this.find("R", wk_location.x, 7, 7, 7);
+						for (let rook of right_rooks) {
+							dict[rook.s[0].toUpperCase()] = true;
+						}
+					}
+				}
+			}
+		}
+
+		// BLACK
+
+		let bk_location = this.find("k", 0, 0, 7, 0)[0];
+
+		if (bk_location) {
+
+			for (let ch of s) {
+				if (["a", "b", "c", "d", "e", "f", "g", "h"].includes(ch)) {
+					let point = Point(ch + "8");
+					if (this.piece(point) === "r") {
+						dict[ch] = true;
+					}
+				}
+			}
+
+			for (let ch of s) {
+				if (ch === "q") {
+					if (this.state[0][0] === "r") {
+						dict["a"] = true;
+					} else {
+						let left_rooks = this.find("r", 0, 0, bk_location.x, 0);
+						for (let rook of left_rooks) {
+							dict[rook.s[0]] = true;
+						}
+					}
+				}
+
+				if (ch === "k") {
+					if (this.state[7][0] === "r") {
+						dict["h"] = true;
+					} else {
+						let right_rooks = this.find("r", bk_location.x, 0, 7, 0);
+						for (let rook of right_rooks) {
+							dict[rook.s[0]] = true;
+						}
+					}
+				}
+			}
+		}
+
+		for (let ch of "ABCDEFGHabcdefgh") {
+			if (dict[ch]) {
+				this.castling += ch;
+			}
+		}
+
+		// FIXME: check at most 1 castling possibility on left and right of each king.
+	},
+
 	copy: function() {
-		return NewPosition(this.state, this.active, this.castling, this.enpassant, this.halfmove, this.fullmove);
+		return NewPosition(this.state, this.active, this.castling, this.enpassant, this.halfmove, this.fullmove, this.normalchess);
 	},
 };
 
-function NewPosition(state = null, active = "w", castling = "", enpassant = null, halfmove = 0, fullmove = 1) {
+function NewPosition(state = null, active = "w", castling = "", enpassant = null, halfmove = 0, fullmove = 1, normalchess = false) {
 
 	let p = Object.create(position_prototype);
 
@@ -998,6 +1185,8 @@ function NewPosition(state = null, active = "w", castling = "", enpassant = null
 
 	p.halfmove = halfmove;
 	p.fullmove = fullmove;
+
+	p.normalchess = normalchess;	// FIXME: unused at present.
 
 	return p;
 }
