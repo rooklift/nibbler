@@ -632,7 +632,7 @@ const position_prototype = {
 		return ret;
 	},
 
-	find_castling_move: function(long_flag) {		// Returns a (possibly illegal) "O-O" or "O-O-O" or ""
+	find_castling_move: function(long_flag) {		// Returns a (possibly illegal) castling move (e.g. "e1h1") or ""
 
 		let king_loc;
 
