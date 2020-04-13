@@ -999,11 +999,10 @@ function NewRenderer() {
 		let ocm = this.info_handler.one_click_moves[p.x][p.y];
 		let board = this.node.get_board();
 
-										// This bit makes sure it's not a castling move (which can't use standard ocm)
-		if (!this.active_square && ocm && board.colour(p) !== board.active) {
-			this.set_active_square(null);
-			this.move(ocm);
-			return;
+		if (!this.active_square && ocm && board.colour(p) !== board.active) {		// Note that we test colour difference
+			this.set_active_square(null);											// to disallow castling moves from OCM
+			this.move(ocm);															// since the dest is the rook (which
+			return;																	// the user might want to click on.)
 		}
 
 		if (this.active_square) {
