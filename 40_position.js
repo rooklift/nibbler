@@ -1153,11 +1153,11 @@ const position_prototype = {
 	},
 
 	copy: function() {
-		return NewPosition(this.state, this.active, this.castling, this.enpassant, this.halfmove, this.fullmove);
+		return NewPosition(this.state, this.active, this.castling, this.enpassant, this.halfmove, this.fullmove, this.normalchess);
 	},
 };
 
-function NewPosition(state = null, active = "w", castling = "", enpassant = null, halfmove = 0, fullmove = 1) {
+function NewPosition(state = null, active = "w", castling = "", enpassant = null, halfmove = 0, fullmove = 1, normalchess = false) {
 
 	let p = Object.create(position_prototype);
 
@@ -1185,6 +1185,8 @@ function NewPosition(state = null, active = "w", castling = "", enpassant = null
 
 	p.halfmove = halfmove;
 	p.fullmove = fullmove;
+
+	p.normalchess = normalchess;	// FIXME: unused at present.
 
 	return p;
 }
