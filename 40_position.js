@@ -1058,10 +1058,7 @@ const position_prototype = {
 		return s + ` ${this.active} ${castling_string} ${ep_string} ${this.halfmove} ${this.fullmove}`;
 	},
 
-	set_castling_rights(s) {				// s is likely the castling string from a FEN
-
-		// FIXME: logic of KQkq strings not correct as it stands;
-		// must prioritise rooks on A or H files.
+	set_castling_rights(s) {				// s is the castling string from a FEN
 
 		this.castling = "";
 
@@ -1087,13 +1084,18 @@ const position_prototype = {
 					let left_rooks = this.find("R", 0, 7, wk_location.x, 7);
 					for (let rook of left_rooks) {
 						dict[rook.s[0].toUpperCase()] = true;
+						break;
 					}
 				}
 
+				// Note that we want to prioritise rooks on the A and H file;
+				// to do this for Kingside castling, reverse the list...
+
 				if (ch === "K") {
-					let right_rooks = this.find("R", wk_location.x, 7, 7, 7);
+					let right_rooks = this.find("R", wk_location.x, 7, 7, 7).reverse();
 					for (let rook of right_rooks) {
 						dict[rook.s[0].toUpperCase()] = true;
+						break;
 					}
 				}
 			}
@@ -1119,13 +1121,18 @@ const position_prototype = {
 					let left_rooks = this.find("r", 0, 0, bk_location.x, 0);
 					for (let rook of left_rooks) {
 						dict[rook.s[0]] = true;
+						break;
 					}
 				}
 
+				// Note that we want to prioritise rooks on the A and H file;
+				// to do this for Kingside castling, reverse the list...
+
 				if (ch === "k") {
-					let right_rooks = this.find("r", bk_location.x, 0, 7, 0);
+					let right_rooks = this.find("r", bk_location.x, 0, 7, 0).reverse();
 					for (let rook of right_rooks) {
 						dict[rook.s[0]] = true;
+						break;
 					}
 				}
 			}
