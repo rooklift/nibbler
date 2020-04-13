@@ -1081,14 +1081,14 @@ const position_prototype = {
 
 			for (let ch of s) {
 				if (ch === "Q") {
-					let left_rooks = this.find("R", 0, 7, wk_location.x - 1, 7);
+					let left_rooks = this.find("R", 0, 7, wk_location.x, 7);
 					for (let rook of left_rooks) {
 						dict[rook.s[0].toUpperCase()] = true;
 					}
 				}
 
 				if (ch === "K") {
-					let right_rooks = this.find("R", wk_location.x + 1, 7, 7, 7);
+					let right_rooks = this.find("R", wk_location.x, 7, 7, 7);
 					for (let rook of right_rooks) {
 						dict[rook.s[0].toUpperCase()] = true;
 					}
@@ -1113,14 +1113,14 @@ const position_prototype = {
 
 			for (let ch of s) {
 				if (ch === "q") {
-					let left_rooks = this.find("r", 0, 0, bk_location.x - 1, 0);
+					let left_rooks = this.find("r", 0, 0, bk_location.x, 0);
 					for (let rook of left_rooks) {
 						dict[rook.s[0]] = true;
 					}
 				}
 
 				if (ch === "k") {
-					let right_rooks = this.find("r", bk_location.x + 1, 0, 7, 0);
+					let right_rooks = this.find("r", bk_location.x, 0, 7, 0);
 					for (let rook of right_rooks) {
 						dict[rook.s[0]] = true;
 					}
