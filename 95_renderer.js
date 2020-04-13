@@ -47,7 +47,7 @@ function NewRenderer() {
 
 		this.draw();
 		this.movelist_handler.draw(this.node);
-		fenbox.value = this.node.get_board().fen();
+		fenbox.value = this.node.get_board().fen(true);
 
 		if (new_game_flag) {
 			let title = "Nibbler";
@@ -318,7 +318,7 @@ function NewRenderer() {
 
 		s = s.trim();
 
-		if (s === this.node.get_board().fen()) {
+		if (s === this.node.get_board().fen(true)) {
 			return;
 		}
 
@@ -609,7 +609,7 @@ function NewRenderer() {
 			this.engine.send("ucinewgame");			// Shouldn't be sent when engine is running.
 		}
 
-		let start_fen = this.node.get_root().get_board().fen();
+		let start_fen = this.node.get_root().get_board().fen(false);
 		let setup = `fen ${start_fen}`;
 
 		// Leela seems to time "readyok" correctly after "position" commands.

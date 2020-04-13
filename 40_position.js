@@ -1017,7 +1017,7 @@ const position_prototype = {
 		}
 	},
 
-	fen: function() {
+	fen: function(friendly_flag) {		// friendly_flag - for when the engine isn't the consumer.
 
 		let s = "";
 
@@ -1054,6 +1054,18 @@ const position_prototype = {
 
 		let ep_string = this.enpassant === Point(null) ? "-" : this.enpassant.s;
 		let castling_string = this.castling === "" ? "-" : this.castling;
+
+		// While interally (and when sending to the engine) we always use Chess960 format,
+		// we can return a more friendly FEN if asked (and if the position is normal Chess).
+
+		if (friendly_flag && this.normalchess && castling_string !== "-") {
+			let new_castling_string = "";
+			if (castling_string.includes("H")) new_castling_string += "K";
+			if (castling_string.includes("A")) new_castling_string += "Q";
+			if (castling_string.includes("h")) new_castling_string += "k";
+			if (castling_string.includes("a")) new_castling_string += "q";
+			castling_string = new_castling_string;
+		}
 
 		return s + ` ${this.active} ${castling_string} ${ep_string} ${this.halfmove} ${this.fullmove}`;
 	},

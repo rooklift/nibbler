@@ -149,7 +149,7 @@ function LoadPGNRecord(o) {
 	if (o.tags.FEN) {							// && o.tags.SetUp === "1"
 		startpos = LoadFEN(o.tags.FEN);
 	} else {
-		startpos = LoadFEN("rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w AHah - 0 1");
+		startpos = LoadFEN("rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1");
 	}
 
 	let root = NewTree(startpos);
@@ -286,7 +286,7 @@ function PGNToClipboard(node) {
 function make_pgn_string(node) {
 
 	let root = node.get_root();
-	let start_fen = root.get_board().fen();
+	let start_fen = root.get_board().fen(true);
 
 	let tags = [];
 
@@ -298,7 +298,7 @@ function make_pgn_string(node) {
 		}
 	}
 
-	if (start_fen !== "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w AHah - 0 1") {
+	if (start_fen !== "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1") {
 		tags.push(`[FEN "${start_fen}"]`);
 		tags.push(`[SetUp "1"]`);
 	}

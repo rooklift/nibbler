@@ -215,7 +215,7 @@ function NewNode(parent, move) {		// Args are null for root only.
 function NewTree(startpos) {			// Arg is expected to be a position object, not a FEN.
 	
 	if (!startpos) {
-		startpos = LoadFEN("rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w AHah - 0 1");
+		startpos = LoadFEN("rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1");
 	}
 
 	let root = NewNode(null, null);
