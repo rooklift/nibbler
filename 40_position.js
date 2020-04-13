@@ -1119,7 +1119,6 @@ const position_prototype = {
 			}
 
 			for (let ch of s) {
-
 				if (ch === "q") {
 					if (this.state[0][0] === "r") {
 						dict["a"] = true;
@@ -1130,9 +1129,6 @@ const position_prototype = {
 						}
 					}
 				}
-
-				// Note that we want to prioritise rooks on the A and H file;
-				// to do this for Kingside castling, reverse the list...
 
 				if (ch === "k") {
 					if (this.state[7][0] === "r") {
