@@ -163,12 +163,27 @@ function NewRenderer() {
 		}
 
 		let board = this.node.get_board();
+		let source = Point(s.slice(0, 2));
+
+		// First deal with old-school castling in Standard Chess...
+
+		if (s === "e1g1" && board.state[4][7] === "K" && board.castling.includes("G") === false) {
+			s  =  "e1h1";
+		}
+		if (s === "e1c1" && board.state[4][7] === "K" && board.castling.includes("C") === false) {
+			s  =  "e1a1";
+		}
+		if (s === "e8g8" && board.state[4][0] === "k" && board.castling.includes("g") === false) {
+			s  =  "e8h8";
+		}
+		if (s === "e8c8" && board.state[4][0] === "k" && board.castling.includes("c") === false) {
+			s  =  "e8a8";
+		}
 
 		// If a promotion character is required and not present, show the promotion chooser and return
 		// without committing to anything.
 
 		if (s.length === 4) {
-			let source = Point(s.slice(0, 2));
 			if ((board.piece(source) === "P" && source.y === 1) || (board.piece(source) === "p" && source.y === 6)) {
 				let illegal_reason = board.illegal(s + "q");
 				if (illegal_reason !== "") {
