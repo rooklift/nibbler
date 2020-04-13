@@ -360,11 +360,11 @@ const position_prototype = {
 		let colour = this.colour(Point(x1, y1));
 
 		if (colour === "w" && y1 !== 7) {
-			return "cannot castle off the back rank"
+			return "cannot castle off the back rank";
 		}
 
 		if (colour === "b" && y1 !== 0) {
-			return "cannot castle off the back rank"
+			return "cannot castle off the back rank";
 		}
 
 		// Check for the required castling rights character...
