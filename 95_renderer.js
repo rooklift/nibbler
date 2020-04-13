@@ -994,12 +994,13 @@ function NewRenderer() {
 			return;
 		}
 
-		this.hide_promotiontable();						// Just in case it's up.
+		this.hide_promotiontable();		// Just in case it's up.
 
 		let ocm = this.info_handler.one_click_moves[p.x][p.y];
 		let board = this.node.get_board();
 
-		if (!this.active_square && ocm && board.colour(p) === "") {
+										// This bit makes sure it's not a castling move (which can't use standard ocm)
+		if (!this.active_square && ocm && board.colour(p) !== board.active) {
 			this.set_active_square(null);
 			this.move(ocm);
 			return;
