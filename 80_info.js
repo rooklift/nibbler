@@ -172,10 +172,18 @@ function NewInfoHandler() {
 			// We now (as of 1.1.6) expect castling moves to be in Chess960 format.
 			// Crude compatibility hack to ensure we can at least vaguely comprehend old-fashioned castling format...
 
-			if (move === "e1g1" && board.state[4][7] === "K" && board.state[7][7] === "R") move = "e1h1";
-			if (move === "e1c1" && board.state[4][7] === "K" && board.state[0][7] === "R") move = "e1a1";
-			if (move === "e8g8" && board.state[4][0] === "k" && board.state[7][0] === "r") move = "e8h8";
-			if (move === "e8c8" && board.state[4][0] === "k" && board.state[0][0] === "r") move = "e8a8";
+			if (move === "e1g1" && board.state[4][7] === "K" && board.castling.includes("G") === false) {
+				move  =  "e1h1";
+			}
+			if (move === "e1c1" && board.state[4][7] === "K" && board.castling.includes("C") === false) {
+				move  =  "e1a1";
+			}
+			if (move === "e8g8" && board.state[4][0] === "k" && board.castling.includes("g") === false) {
+				move  =  "e8h8";
+			}
+			if (move === "e8c8" && board.state[4][0] === "k" && board.castling.includes("c") === false) {
+				move  =  "e8a8";
+			}
 
 			if (this.table[move]) {						// We already have move info for this move.
 				move_info = this.table[move];
