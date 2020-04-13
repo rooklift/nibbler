@@ -35,8 +35,6 @@ Lc0 is unusual in that you must select a neural net to use.
 * For fast graphics cards I recommend [42850](http://lczero.org/get_network?sha=00af53b081e80147172e6f281c01daf5ca19ada173321438914c730370aa4267)
 * For very long searches (on fast cards) I recommend [J13-410](https://github.com/jhorthos/lczero-training/wiki/Leela-Training) until the T60 nets become stronger
 
-The required Lc0 version is *v0.21.0 or later*. <!-- because we need `LogLiveStats` which was introduced in that version. --> Note that other UCI engines might run, but the results will be poor because we use `MultiPV`, which cripples traditional A/B engines.
-
 # Aesthetic adjustments
 
 As well as the menu options, various aesthetic adjustments are possible in the `config.json` file, which can be found via the App menu. For example, board colour can be changed.
@@ -58,6 +56,8 @@ Leela forgets much of the evaluation if the position changes. To mitigate this, 
 We try to be considerate and not use too much CPU for mundane tasks like drawing the PVs, arrows, highlights, *et cetera*; however if you want a snappier-feeling GUI, reduce the `config.json` option `update_delay` (default 170) to something low like 25 (this is the number of milliseconds between redraws).
 
 Leela running out of RAM can be a problem if searches go on too long. You might like to use the UCI option `RamLimitMb` (see *advanced engine options*, above).
+
+Note that other UCI engines might run, but the results will be poor because we use `MultiPV`, which cripples traditional A/B engines.
 
 # Thanks
 
