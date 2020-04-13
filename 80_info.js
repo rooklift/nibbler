@@ -573,6 +573,8 @@ function NewInfoHandler() {
 
 	ih.draw_arrows = function() {
 
+		// This function also sets up the one_click_moves array.
+
 		for (let x = 0; x < 8; x++) {
 			for (let y = 0; y < 8; y++) {
 				this.one_click_moves[x][y] = null;
