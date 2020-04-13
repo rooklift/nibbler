@@ -623,11 +623,21 @@ function NewInfoHandler() {
 						colour = config.good_colour;
 					}
 
+					let castling_arrowhead_adjustment = 0;
+
+					if (this.board && this.board.colour(Point(x1, y1)) === this.board.colour(Point(x2, y2))) {
+						if (x2 > x1) {
+							castling_arrowhead_adjustment = -0.5;
+						} else {
+							castling_arrowhead_adjustment = 0.5;
+						}
+					}
+
 					arrows.push({
 						colour: colour,
 						x1: x1,
 						y1: y1,
-						x2: x2,
+						x2: x2 + castling_arrowhead_adjustment,
 						y2: y2,
 						info: info_list[i]
 					});
@@ -636,7 +646,7 @@ function NewInfoHandler() {
 						this.one_click_moves[x2][y2] = info_list[i].move;
 						heads.push({
 							colour: colour,
-							x2: x2,
+							x2: x2 + castling_arrowhead_adjustment,
 							y2: y2,
 							info: info_list[i]
 						});
