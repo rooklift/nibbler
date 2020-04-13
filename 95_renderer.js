@@ -316,8 +316,20 @@ function NewRenderer() {
 
 	renderer.load_fen = function(s) {
 
-		if (s.trim() === this.node.get_board().fen()) {
+		s = s.trim();
+
+		if (s === this.node.get_board().fen()) {
 			return;
+		}
+
+		// Allow loading a Chess 960 position by giving its ID:
+
+		if (s.length <= 3) {
+			let n = Number.parseInt(s, 10);
+			if (Number.isNaN(n) === false) {
+				this.new_960(n);
+				return;
+			}
 		}
 
 		let newpos;
@@ -340,9 +352,15 @@ function NewRenderer() {
 		this.position_changed(true);
 	};
 
-	renderer.new_960 = function() {
+	renderer.new_960 = function(n) {
+
+		if (n === undefined) {
+			n = RandInt(0, 960);
+		}
+
 		DestroyTree(this.node);			// Optional, but might help the GC.
-		let newpos = LoadFEN(c960_fen(RandInt(0, 960)));
+
+		let newpos = LoadFEN(c960_fen(n));
 		this.node = NewTree(newpos);
 		this.position_changed(true);
 	};
