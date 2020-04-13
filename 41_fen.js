@@ -104,7 +104,7 @@ function LoadFEN(fen) {
 	// Fixing castling rights is the most complicated thing now we support Chess 960...
 
 	ret.set_castling_rights(tokens[2]);
-	ret.normalchess = IsNormalChessPosition(ret);		// After castling rights set!
+	ret.normalchess = IsNormalChessPosition(ret);		// After castling rights set! Note the renderer may change this anyway.
 
 	return ret;
 }

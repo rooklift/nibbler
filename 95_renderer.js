@@ -361,6 +361,7 @@ function NewRenderer() {
 		DestroyTree(this.node);			// Optional, but might help the GC.
 
 		let newpos = LoadFEN(c960_fen(n));
+		newpos.normalchess = false;		// Even if it looks normal to LoadFEN(), override its opinion.
 		this.node = NewTree(newpos);
 		this.position_changed(true);
 	};
