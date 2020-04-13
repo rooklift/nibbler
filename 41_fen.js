@@ -104,6 +104,35 @@ function LoadFEN(fen) {
 	// Fixing castling rights is the most complicated thing now we support Chess 960...
 
 	ret.set_castling_rights(tokens[2]);
+	ret.normalchess = IsNormalChessPosition(ret);		// After castling rights set!
 
 	return ret;
+}
+
+function IsNormalChessPosition(board) {
+
+	// Maybe this should be a position method.
+
+	for (let ch of "bcdefgBCDEFG") {
+
+		if (board.castling.includes(ch)) {
+			return false;
+		}
+
+		if (board.castling.includes("A") || board.castling.includes("H")) {
+			if (board.state[4][7] !== "K") {
+				return false;
+			}
+		}
+
+		if (board.castling.includes("a") || board.castling.includes("h")) {
+			if (board.state[4][0] !== "k") {
+				return false;
+			}
+		}
+	}
+
+	// So it can be considered a normal Chess position.
+
+	return true;
 }
