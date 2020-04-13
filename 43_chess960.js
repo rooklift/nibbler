@@ -1,3 +1,5 @@
+"use strict";
+
 function c960_insertion(arr, index, piece) {
 
 	// Given an array of pieces (with blanks indicated as ".") insert another
