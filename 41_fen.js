@@ -210,8 +210,6 @@ function CastlingRights(board, s) {						// s is the castling string from a FEN
 
 function IsNormalChessPosition(board) {
 
-	// Maybe this should be a position method.
-
 	for (let ch of "bcdefgBCDEFG") {
 
 		if (board.castling.includes(ch)) {
