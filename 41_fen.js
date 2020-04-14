@@ -14,7 +14,7 @@ function LoadFEN(fen) {
 		throw "Invalid FEN - token count";
 	}
 
-	if (tokens[0].endsWith("/")) {
+	if (tokens[0].endsWith("/")) {				// Some FEN writer does this
 		tokens[0] = tokens[0].slice(0, -1);
 	}
 
