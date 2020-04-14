@@ -299,6 +299,9 @@ function make_pgn_string(node) {
 	}
 
 	if (start_fen !== "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1") {
+		if (root.get_board().normalchess === false) {
+			tags.push(`[Variant "Chess960"]`);
+		}
 		tags.push(`[FEN "${start_fen}"]`);
 		tags.push(`[SetUp "1"]`);
 	}
