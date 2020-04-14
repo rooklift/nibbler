@@ -14,6 +14,10 @@ function LoadFEN(fen) {
 		throw "Invalid FEN - token count";
 	}
 
+	if (tokens[0].endsWith("/")) {
+		tokens[0] = tokens[0].slice(0, -1);
+	}
+
 	let rows = tokens[0].split("/");
 
 	if (rows.length !== 8) {
