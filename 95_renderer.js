@@ -610,7 +610,7 @@ function NewRenderer() {
 			this.engine.send("ucinewgame");			// Shouldn't be sent when engine is running.
 		}
 
-		let start_fen = this.node.get_root().get_board().fen(false);
+		let start_fen = this.node.get_root().get_board().fen(false);	// Send castling in AHah format.
 		let setup = `fen ${start_fen}`;
 
 		// Leela seems to time "readyok" correctly after "position" commands.
