@@ -676,12 +676,6 @@ function NewRenderer() {
 		this.go_or_halt(true);
 	};
 
-	renderer.set_cpuct = function(val) {						// We don't save this in the config.
-		this.__halt();
-		this.engine.setoption("CPuct", val);
-		this.go_or_halt();
-	};
-
 	renderer.send_custom = function(name, val) {
 		this.__halt();
 		SetSpecialMessage(this.engine.setoption(name, val));	// Note calling setoption() sends the command to engine.
