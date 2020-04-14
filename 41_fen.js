@@ -101,13 +101,111 @@ function LoadFEN(fen) {
 		throw "Invalid FEN - non-mover's king in check";
 	}
 
-	// Fixing castling rights is the most complicated thing now we support Chess 960...
+	// Some hard things. Do these in the right order!
 
-	ret.set_castling_rights(tokens[2]);
-	ret.normalchess = IsNormalChessPosition(ret);		// After castling rights set! Note the renderer may change this anyway.
+	ret.castling = CastlingRights(ret, tokens[2]);
+	ret.normalchess = IsNormalChessPosition(ret);		// Note the renderer may change this anyway.
 
 	return ret;
 }
+
+
+function CastlingRights(board, s) {						// s is the castling string from a FEN
+
+	let dict = Object.create(null);						// Will contain keys like "A" to "H" and "a" to "h"
+
+	// WHITE
+
+	let wk_location = board.find("K", 0, 7, 7, 7)[0];	// Will be undefined if not on back rank.
+
+	if (wk_location) {
+
+		for (let ch of s) {
+			if (["A", "B", "C", "D", "E", "F", "G", "H"].includes(ch)) {
+				let point = Point(ch.toLowerCase() + "1");
+				if (board.piece(point) === "R") {
+					dict[ch] = true;
+				}
+			}
+		}
+
+		for (let ch of s) {
+			if (ch === "Q") {
+				if (board.state[0][7] === "R") {		// Compatibility with regular Chess FEN.
+					dict["A"] = true;
+				} else {
+					let left_rooks = board.find("R", 0, 7, wk_location.x, 7);
+					for (let rook of left_rooks) {
+						dict[rook.s[0].toUpperCase()] = true;
+					}
+				}
+			}
+			if (ch === "K") {
+				if (board.state[7][7] === "R") {
+					dict["H"] = true;
+				} else {
+					let right_rooks = board.find("R", wk_location.x, 7, 7, 7);
+					for (let rook of right_rooks) {
+						dict[rook.s[0].toUpperCase()] = true;
+					}
+				}
+			}
+		}
+	}
+
+	// BLACK
+
+	let bk_location = board.find("k", 0, 0, 7, 0)[0];
+
+	if (bk_location) {
+
+		for (let ch of s) {
+			if (["a", "b", "c", "d", "e", "f", "g", "h"].includes(ch)) {
+				let point = Point(ch + "8");
+				if (board.piece(point) === "r") {
+					dict[ch] = true;
+				}
+			}
+		}
+
+		for (let ch of s) {
+			if (ch === "q") {
+				if (board.state[0][0] === "r") {
+					dict["a"] = true;
+				} else {
+					let left_rooks = board.find("r", 0, 0, bk_location.x, 0);
+					for (let rook of left_rooks) {
+						dict[rook.s[0]] = true;
+					}
+				}
+			}
+
+			if (ch === "k") {
+				if (board.state[7][0] === "r") {
+					dict["h"] = true;
+				} else {
+					let right_rooks = board.find("r", bk_location.x, 0, 7, 0);
+					for (let rook of right_rooks) {
+						dict[rook.s[0]] = true;
+					}
+				}
+			}
+		}
+	}
+
+	let ret = "";
+
+	for (let ch of "ABCDEFGHabcdefgh") {
+		if (dict[ch]) {
+			ret += ch;
+		}
+	}
+
+	return ret;
+
+	// FIXME: check at most 1 castling possibility on left and right of each king.
+}
+
 
 function IsNormalChessPosition(board) {
 
