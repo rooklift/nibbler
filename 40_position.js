@@ -739,16 +739,18 @@ const position_prototype = {
 			}
 		}
 
-		let piece;
-
 		// If the piece isn't specified (with an uppercase letter) then it's a pawn move.
-		// Let's add P to the start of the string to keep the string format consistent.
+		// Let's add P to the start of the string to keep the string format consistent...
 
 		if (["K", "Q", "R", "B", "N", "P"].includes(s[0]) === false) {
 			s = "P" + s;
 		}
 
-		piece = s[0];
+		// Now this works...
+
+		let piece = s[0];
+
+		// We care about the colour of the piece, so make black pieces lowercase...
 
 		if (this.active === "b") {
 			piece = piece.toLowerCase();
