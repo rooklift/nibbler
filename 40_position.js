@@ -673,7 +673,7 @@ const position_prototype = {
 		return "";
 	},
 
-	parse_pgn: function(s) {		// Returns a move and an error message.
+	parse_pgn: function(s) {		// Returns a UCI move and an error message.
 
 		// Delete things we don't need...
 
@@ -721,13 +721,22 @@ const position_prototype = {
 
 		s = ReplaceAll(s, "-", "");
 
-		// Save promotion string, if any, then delete it from s...
+		// If an = sign is present, save promotion string, then delete it from s...
 
 		let promotion = "";
 
 		if (s[s.length - 2] === "=") {
 			promotion = s[s.length - 1].toLowerCase();
 			s = s.slice(0, -2);
+		}
+
+		// A lax writer might also write the promotion string without an equals sign...
+
+		if (promotion === "") {
+			if (["Q", "R", "B", "N", "q", "r", "b", "n"].includes(s[s.length - 1])) {
+				promotion = s[s.length - 1].toLowerCase();
+				s = s.slice(0, -1);
+			}
 		}
 
 		let piece;
