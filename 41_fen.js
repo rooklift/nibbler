@@ -22,11 +22,9 @@ function LoadFEN(fen) {
 
 	for (let y = 0; y < 8; y++) {
 
-		let chars = Array.from(rows[y]);
-
 		let x = 0;
 
-		for (let c of chars) {
+		for (let c of rows[y]) {
 
 			if (x > 7) {
 				throw "Invalid FEN - row length";

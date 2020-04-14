@@ -13,7 +13,7 @@ let sprites = {
 
 	load_from: function(directory) {
 
-		for (let c of Array.from("KkQqRrBbNnPp")) {
+		for (let c of "KkQqRrBbNnPp") {
 
 			sprites[c] = new Image();
 			sprites[c].addEventListener("load", () => {sprites.loads++;}, {once: true});

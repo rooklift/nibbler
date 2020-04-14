@@ -1122,13 +1122,9 @@ function NewRenderer() {
 		let tr = document.createElement("tr");
 		promotiontable.appendChild(tr);
 
-		let pieces = "QRBN";
+		let pieces = this.node.get_board().active === "w" ? ["Q", "R", "B", "N"] : ["q", "r", "b", "n"];
 
-		if (this.node.get_board().active === "b") {
-			pieces = "qrbn";
-		}
-
-		for (let piece of Array.from(pieces)) {
+		for (let piece of pieces) {
 
 			let td = document.createElement("td");
 			td.width = config.square_size;

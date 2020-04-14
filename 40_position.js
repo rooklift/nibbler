@@ -771,7 +771,7 @@ const position_prototype = {
 		let starty = 0;
 		let endy = 7;
 
-		for (let c of Array.from(disambig)) {
+		for (let c of disambig) {
 			if (c >= "a" && c <= "h") {
 				startx = c.charCodeAt(0) - 97;
 				endx = startx;
