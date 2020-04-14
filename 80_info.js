@@ -625,13 +625,15 @@ function NewInfoHandler() {
 						colour = config.good_colour;
 					}
 
-					let x_head_adjustment = 0;			// Adjust head of arrow for castling moves.
+					let x_head_adjustment = 0;				// Adjust head of arrow for castling moves...
 					let normal_castling_flag = false;
 
 					if (this.board && this.board.colour(Point(x1, y1)) === this.board.colour(Point(x2, y2))) {
 
+						// So the move is a castling move (reminder: as of 1.1.6 castling format is king-onto-rook).
+
 						if (this.board.normalchess) {
-							normal_castling_flag = true;
+							normal_castling_flag = true;	// ...and we are playing normal Chess (not 960).
 						}
 
 						if (x2 > x1) {
