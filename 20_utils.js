@@ -358,3 +358,8 @@ function NumbersBetween(a, b) {
 function RandInt(min, max) {
 	return Math.floor(Math.random() * (max - min)) + min;
 }
+
+function SetSpecialMessage(s) {
+	special_message = s;
+	special_message_time = new Date();
+}

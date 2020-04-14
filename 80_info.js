@@ -329,7 +329,11 @@ function NewInfoHandler() {
 
 	ih.draw_statusbox = function(leela_maybe_running, searchmoves, syncs_needed) {
 
-		if (typeof syncs_needed === "number" && syncs_needed > 1) {
+		if (special_message && new Date() - special_message_time < 3000) {
+
+			statusbox.innerHTML = `<span class="yellow">${special_message}</span>`;
+
+		} else if (typeof syncs_needed === "number" && syncs_needed > 1) {
 
 			statusbox.innerHTML = `<span class="gray">Out of sync: ${syncs_needed}</span>`;
 

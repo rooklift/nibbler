@@ -67,7 +67,9 @@ function NewEngine() {
 	};
 
 	eng.setoption = function(name, value) {
-		this.send(`setoption name ${name} value ${value}`);
+		let s = `setoption name ${name} value ${value}`;
+		this.send(s);
+		return s;
 	};
 
 	eng.setup = function(receive_fn, err_receive_fn) {

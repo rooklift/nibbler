@@ -538,7 +538,7 @@ function NewRenderer() {
 				this.info_handler.receive(s, this.node.get_board());	// sent, but Leela could be sending info about the previous position.
 			}															// So the above condition doesn't prove the info is current.
 		} else if (s.startsWith("error")) {
-			this.info_handler.err_receive(s);
+			this.err_receive(s);
 		} else if (s.startsWith("id name")) {
 			for (let n = 10; n < messages.min_version; n++) {
 				if (s.includes(`v0.${n}`)) {
@@ -572,6 +572,10 @@ function NewRenderer() {
 			this.info_handler.err_receive(s);
 			this.info_handler.err_receive(`<span class="blue">${messages.settings_for_blas}</span>`);	// Announces [MaxPrefetch = 0, MinibatchSize = 8]
 			return;
+		}
+
+		if (this.info_handler.ever_received_info) {		// We started drawing the infobox, so need to display errors in the status box instead.
+			SetSpecialMessage(s);
 		}
 
 		this.info_handler.err_receive(s);
@@ -664,7 +668,7 @@ function NewRenderer() {
 		this.go_or_halt(true);
 	};
 
-	renderer.set_cpuct = function(val) {					// We don't save this in the config.
+	renderer.set_cpuct = function(val) {						// We don't save this in the config.
 		this.__halt();
 		this.engine.setoption("CPuct", val);
 		this.go_or_halt();
@@ -672,7 +676,7 @@ function NewRenderer() {
 
 	renderer.send_custom = function(name, val) {
 		this.__halt();
-		this.engine.setoption(name, val);
+		SetSpecialMessage(this.engine.setoption(name, val));	// Note calling setoption() sends the command to engine.
 		this.go_or_halt();
 	};
 
@@ -692,7 +696,7 @@ function NewRenderer() {
 
 	renderer.switch_weights = function(filename) {
 		this.__halt();
-		this.info_handler.stderr_log = "";					// Avoids having confusing stale messages.
+		this.info_handler.stderr_log = "";						// Avoids having confusing stale messages.
 		config.options.WeightsFile = filename;
 		config_io.save(config);
 		this.engine.setoption("WeightsFile", filename);
