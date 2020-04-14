@@ -534,12 +534,23 @@ function NewRenderer() {
 		debug.receive = debug.receive ? debug.receive + 1 : 1;
 
 		if (s.startsWith("info")) {
+
 			if (this.leela_position === this.node.get_board()) {		// Note leela_position is a misleading name - it's the last position we
 				this.info_handler.receive(s, this.node.get_board());	// sent, but Leela could be sending info about the previous position.
 			}															// So the above condition doesn't prove the info is current.
+
 		} else if (s.startsWith("error")) {
-			this.err_receive(s);
+
+			// If this comes at the start, we want to display it in the infobox, but if we're already
+			// drawing the infobox for real, we'll need to flash it up in the status box instead...
+
+			if (this.info_handler.ever_received_info) {
+				SetSpecialMessage(s);
+			}
+			this.info_handler.err_receive(s);
+
 		} else if (s.startsWith("id name")) {
+
 			for (let n = 10; n < messages.min_version; n++) {
 				if (s.includes(`v0.${n}`)) {
 					this.info_handler.err_receive("");
@@ -547,6 +558,7 @@ function NewRenderer() {
 					this.info_handler.err_receive("");
 				}
 			}
+
 		} else if (s.startsWith("bestmove") && config.autoplay && config.versus === this.node.get_board().active) {
 
 			// When in autoplay mode, use "bestmove" to detect that analysis is finished. There are
@@ -572,10 +584,6 @@ function NewRenderer() {
 			this.info_handler.err_receive(s);
 			this.info_handler.err_receive(`<span class="blue">${messages.settings_for_blas}</span>`);	// Announces [MaxPrefetch = 0, MinibatchSize = 8]
 			return;
-		}
-
-		if (this.info_handler.ever_received_info) {		// We started drawing the infobox, so need to display errors in the status box instead.
-			SetSpecialMessage(s);
 		}
 
 		this.info_handler.err_receive(s);
