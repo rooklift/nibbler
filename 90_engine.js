@@ -69,7 +69,7 @@ function NewEngine() {
 	eng.setoption = function(name, value) {
 		let s = `setoption name ${name} value ${value}`;
 		this.send(s);
-		return s;
+		return s;			// Just so the renderer can pop s up as a message if it wants.
 	};
 
 	eng.setup = function(receive_fn, err_receive_fn) {
