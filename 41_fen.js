@@ -141,7 +141,7 @@ function CastlingRights(board, s) {						// s is the castling string from a FEN
 				}
 			}
 			if (ch === "K") {
-				if (board.state[7][7] === "R") {
+				if (board.state[7][7] === "R") {		// Compatibility with regular Chess FEN.
 					dict["H"] = true;
 				} else {
 					let right_rooks = board.find("R", wk_location.x, 7, 7, 7);
@@ -170,7 +170,7 @@ function CastlingRights(board, s) {						// s is the castling string from a FEN
 
 		for (let ch of s) {
 			if (ch === "q") {
-				if (board.state[0][0] === "r") {
+				if (board.state[0][0] === "r") {		// Compatibility with regular Chess FEN.
 					dict["a"] = true;
 				} else {
 					let left_rooks = board.find("r", 0, 0, bk_location.x, 0);
@@ -179,9 +179,8 @@ function CastlingRights(board, s) {						// s is the castling string from a FEN
 					}
 				}
 			}
-
 			if (ch === "k") {
-				if (board.state[7][0] === "r") {
+				if (board.state[7][0] === "r") {		// Compatibility with regular Chess FEN.
 					dict["h"] = true;
 				} else {
 					let right_rooks = board.find("r", bk_location.x, 0, 7, 0);
