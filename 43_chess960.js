@@ -33,18 +33,17 @@ function c960_arrangement(n) {
 
 	// Place queen in one of 6 remaining spots...
 
-	let i = Math.floor(n / 16) % 6;
-	insert(i, "Q");
+	let qi = Math.floor(n / 16) % 6;
+	insert(qi, "Q");
 
-	// Place first knight in one of 5 spots, never actually using index 4...
+	// Knights are arranged in one of 10 possible configurations
+	// (considering only the remaining spaces)...
 
-	i = [0, 0, 0, 0, 1, 1, 1, 2, 2, 3][Math.floor(n / 96)];
-	insert(i, "N");
+	let ni1 = [0, 0, 0, 0, 1, 1, 1, 2, 2, 3][Math.floor(n / 96)];
+	let ni2 = [1, 2, 3, 4, 2, 3, 4, 3, 4, 4][Math.floor(n / 96)];
 
-	// Place second knight in one of 4 spots...
-
-	i = [0, 1, 2, 3, 1, 2, 3, 2, 3, 3][Math.floor(n / 96)];
-	insert(i, "N");
+	insert(ni2, "N");		// Must be done in this order,
+	insert(ni1, "N");		// works because ni2 > ni1
 
 	// Place left rook, king, right rook in first available spots...
 
