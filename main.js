@@ -296,40 +296,44 @@ function menu_build() {
 					label: "Play choice",
 					submenu: [
 						{
-						label: "1st",
-						accelerator: "F1",
-						click: () => {
-							win.webContents.send("call", {
-								fn: "play_info_index",
-								args: [0]
-							})}
+							label: "1st",
+							accelerator: "F1",
+							click: () => {
+								win.webContents.send("call", {
+									fn: "play_info_index",
+									args: [0]
+								});
+							}
 						},
 						{
-						label: "2nd",
-						accelerator: "F2",
-						click: () => {
-							win.webContents.send("call", {
-								fn: "play_info_index",
-								args: [1]
-							})}
+							label: "2nd",
+							accelerator: "F2",
+							click: () => {
+								win.webContents.send("call", {
+									fn: "play_info_index",
+									args: [1]
+								});
+							}
 						},
 						{
-						label: "3rd",
-						accelerator: "F3",
-						click: () => {
-							win.webContents.send("call", {
-								fn: "play_info_index",
-								args: [2]
-							})}
+							label: "3rd",
+							accelerator: "F3",
+							click: () => {
+								win.webContents.send("call", {
+									fn: "play_info_index",
+									args: [2]
+								});
+							}
 						},
 						{
-						label: "4th",
-						accelerator: "F4",
-						click: () => {
-							win.webContents.send("call", {
-								fn: "play_info_index",
-								args: [3]
-							})}
+							label: "4th",
+							accelerator: "F4",
+							click: () => {
+								win.webContents.send("call", {
+									fn: "play_info_index",
+									args: [3]
+								});
+							}
 						},
 					]
 				},
@@ -2019,7 +2023,7 @@ function menu_build() {
 				win.webContents.send("call", {
 					fn: "send_custom",
 					args: [command.name, command.val]
-				})
+				});
 			}
 		});
 	}
