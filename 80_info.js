@@ -875,7 +875,7 @@ const info_prototype = {
 
 		if (opts.m) {
 			if (typeof this.m === "number" && this.m > 0) {
-				ret.push(`M: ${this.m}`);
+				ret.push(`M: ${this.m.toFixed(1)}`);
 			} else {
 				ret.push(`M: ?`);
 			}
