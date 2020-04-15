@@ -37,7 +37,7 @@ function c960_arrangement(n) {
 	insert(qi, "Q");
 
 	// Knights are arranged in one of 10 possible configurations
-	// (considering only the remaining spaces)...
+	// (considering only the remaining spots)...
 
 	let ni1 = [0, 0, 0, 0, 1, 1, 1, 2, 2, 3][Math.floor(n / 96)];
 	let ni2 = [1, 2, 3, 4, 2, 3, 4, 3, 4, 4][Math.floor(n / 96)];
