@@ -208,7 +208,7 @@ document.addEventListener("wheel", (event) => {
 
 fenbox.addEventListener("keydown", (event) => {
 	if (event.key === "Enter") {
-		hub.load_fen(fenbox.value);
+		hub.load_from_fenbox(fenbox.value);
 	}
 });
 

@@ -314,7 +314,7 @@ function NewRenderer() {
 		this.movelist_handler.draw(this.node);
 	};
 
-	renderer.load_fen = function(s) {
+	renderer.load_from_fenbox = function(s) {
 
 		s = s.trim();
 
@@ -322,20 +322,44 @@ function NewRenderer() {
 			return;
 		}
 
+		let normalchess = true;
+
 		// Allow loading a Chess 960 position by giving its ID:
 
 		if (s.length <= 3) {
 			let n = Number.parseInt(s, 10);
 			if (Number.isNaN(n) === false) {
-				this.new_960(n);
-				return;
+				s = c960_fen(n);
+				normalchess = false;
 			}
 		}
+
+		// Allow loading a fruity start position by giving the pieces:
+
+		if (s.length === 8) {
+			let ok = true;
+			for (let c of s) {
+				if (["K", "k", "Q", "q", "R", "r", "B", "b", "N", "n"].includes(c) === false) {
+					ok = false;
+					break;
+				}
+			}
+			if (ok) {
+				s = `${s.toLowerCase()}/pppppppp/8/8/8/8/PPPPPPPP/${s.toUpperCase()} w KQkq - 0 1`;
+				normalchess = false;
+			}
+		}
+
+		this.load_fen(s, normalchess);
+	};
+
+	renderer.load_fen = function(s, normalchess = true) {
 
 		let newpos;
 
 		try {
 			newpos = LoadFEN(s);
+			newpos.normalchess = normalchess;
 		} catch (err) {
 			alert(err);
 			return;
@@ -353,17 +377,10 @@ function NewRenderer() {
 	};
 
 	renderer.new_960 = function(n) {
-
 		if (n === undefined) {
 			n = RandInt(0, 960);
 		}
-
-		DestroyTree(this.node);			// Optional, but might help the GC.
-
-		let newpos = LoadFEN(c960_fen(n));
-		newpos.normalchess = false;		// Even if it looks normal to LoadFEN(), override its opinion.
-		this.node = NewTree(newpos);
-		this.position_changed(true);
+		this.load_fen(c960_fen(n), false);
 	};
 
 	renderer.infobox_to_clipboard = function() {
