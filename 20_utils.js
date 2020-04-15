@@ -359,7 +359,8 @@ function RandInt(min, max) {
 	return Math.floor(Math.random() * (max - min)) + min;
 }
 
-function SetSpecialMessage(s) {
+function SetSpecialMessage(s, style) {		// Can leave style undefined to use a default.
 	special_message = s;
+	special_message_style = style;
 	special_message_time = new Date();
 }

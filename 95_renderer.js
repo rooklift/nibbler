@@ -678,7 +678,7 @@ function NewRenderer() {
 
 	renderer.send_custom = function(name, val) {
 		this.__halt();
-		SetSpecialMessage(this.engine.setoption(name, val));	// Note calling setoption() sends the command to engine.
+		SetSpecialMessage(this.engine.setoption(name, val), "blue");
 		this.go_or_halt();
 	};
 
