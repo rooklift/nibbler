@@ -322,7 +322,7 @@ function NewRenderer() {
 			return;
 		}
 
-		let normalchess = true;
+		let abnormal = false;
 
 		// Allow loading a Chess 960 position by giving its ID:
 
@@ -330,7 +330,7 @@ function NewRenderer() {
 			let n = Number.parseInt(s, 10);
 			if (Number.isNaN(n) === false) {
 				s = c960_fen(n);
-				normalchess = false;
+				abnormal = true;
 			}
 		}
 
@@ -346,20 +346,30 @@ function NewRenderer() {
 			}
 			if (ok) {
 				s = `${s.toLowerCase()}/pppppppp/8/8/8/8/PPPPPPPP/${s.toUpperCase()} w KQkq - 0 1`;
-				normalchess = false;
+				abnormal = true;
 			}
 		}
 
-		this.load_fen(s, normalchess);
+		this.load_fen(s, abnormal);
 	};
 
-	renderer.load_fen = function(s, normalchess = true) {
+	renderer.load_fen = function(s, abnormal) {
 
 		let newpos;
 
 		try {
+
 			newpos = LoadFEN(s);
-			newpos.normalchess = normalchess;
+
+			// If the FEN loader thought it looked like normal chess, we must
+			// override it if the caller passed the abnormal flag. Note that
+			// it is never permissible to go in the opposite direction... if
+			// the loader thought it was abnormal, we never say it's normal.
+
+			if (abnormal) {
+				newpos.normalchess = false;
+			}
+
 		} catch (err) {
 			alert(err);
 			return;
@@ -380,7 +390,7 @@ function NewRenderer() {
 		if (n === undefined) {
 			n = RandInt(0, 960);
 		}
-		this.load_fen(c960_fen(n), false);
+		this.load_fen(c960_fen(n), true);
 	};
 
 	renderer.infobox_to_clipboard = function() {
