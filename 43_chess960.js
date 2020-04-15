@@ -5,6 +5,11 @@ function c960_arrangement(n) {
 	// Given n, generate a string like "RNBQKBNR".
 	// AFAIK, matches the scheme of Reinhard Scharnagl.
 
+	if (n < 0) {
+		n *= -1;
+	}
+	n = Math.floor(n) % 960;
+
 	let pieces = [".", ".", ".", ".", ".", ".", ".", "."];
 
 	let insert = (index, piece) => {
@@ -53,11 +58,6 @@ function c960_arrangement(n) {
 function c960_fen(n) {
 
 	// Given n, produce a full FEN.
-
-	if (n < 0) {
-		n *= -1;
-	}
-	n = Math.floor(n) % 960;
 
 	let pieces = c960_arrangement(n);	// The uppercase version.
 
