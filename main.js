@@ -735,6 +735,17 @@ function menu_build() {
 							}
 						},
 						{
+							label: "Show M",
+							type: "checkbox",
+							checked: config.show_m,
+							click: () => {
+								win.webContents.send("call", {
+									fn: "toggle",
+									args: ["show_m"],
+								});
+							}
+						},
+						{
 							label: "Show V",
 							type: "checkbox",
 							checked: config.show_v,
@@ -942,6 +953,17 @@ function menu_build() {
 								win.webContents.send("call", {
 									fn: "toggle",
 									args: ["sam_p"],
+								});
+							}
+						},
+						{
+							label: "Show M",
+							type: "checkbox",
+							checked: config.sam_m,
+							click: () => {
+								win.webContents.send("call", {
+									fn: "toggle",
+									args: ["sam_m"],
 								});
 							}
 						},

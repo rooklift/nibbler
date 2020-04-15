@@ -235,6 +235,11 @@ function NewInfoHandler() {
 			if (Number.isNaN(tmp) === false) {
 				move_info.v = tmp;
 			}
+
+			tmp = parseFloat(InfoVal(s, "(M:"));
+			if (Number.isNaN(tmp) === false) {
+				move_info.m = tmp;
+			}
 		}
 	};
 
@@ -486,6 +491,7 @@ function NewInfoHandler() {
 					n_abs: config.show_n_abs,
 					wdl: config.show_wdl,
 					p: config.show_p,
+					m: config.show_m,
 					v: config.show_v,
 					q: config.show_q,
 					d: config.show_d,
@@ -867,6 +873,14 @@ const info_prototype = {
 			}
 		}
 
+		if (opts.m) {
+			if (typeof this.m === "number" && this.m > 0) {
+				ret.push(`M: ${this.m}`);
+			} else {
+				ret.push(`M: ?`);
+			}
+		}
+
 		if (opts.v) {
 			if (typeof this.v === "number") {
 				ret.push(`V: ${this.v.toFixed(3)}`);
@@ -921,6 +935,7 @@ function new_info(board, move) {
 	info.board = board;
 	info.cp = 0;
 	info.d = 0;
+	info.m = 0;
 	info.mate = 0;					// 0 can be the "not present" value.
 	info.move = move;
 	info.multipv = 1;

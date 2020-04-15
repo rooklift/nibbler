@@ -1100,6 +1100,7 @@ function NewRenderer() {
 					of_n: config.sam_of_n,
 					wdl: config.sam_wdl,
 					p: config.sam_p,
+					m: config.sam_m,
 					v: config.sam_v,
 					q: config.sam_q,
 					d: config.sam_d,
