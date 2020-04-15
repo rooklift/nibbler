@@ -12,6 +12,9 @@ function c960_arrangement(n) {
 
 	let pieces = [".", ".", ".", ".", ".", ".", ".", "."];
 
+	// Helper function to place a piece at an "index",
+	// but considering only empty spots.
+
 	let insert = (index, piece) => {
 		let skips = 0;
 		for (let i = 0; i < 8; i++) {
