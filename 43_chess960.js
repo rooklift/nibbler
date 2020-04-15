@@ -67,13 +67,6 @@ function c960_fen(n) {
 	for (let i = 0; i < 8; i++) {
 		if (pieces[i] === "R") {
 			castling_rights += String.fromCharCode(i + 65);
-			for (let j = i + 1; j < 8; j++) {
-				if (pieces[j] === "R") {
-					castling_rights += String.fromCharCode(j + 65);
-					break;
-				}
-			}
-			break;
 		}
 	}
 
