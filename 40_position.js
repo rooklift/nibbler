@@ -882,19 +882,59 @@ const position_prototype = {
 				if (this.colour(source) !== this.active) {
 					continue;
 				}
-				for (let i = 0; i < 8; i++) {
-					for (let j = 0; j < 8; j++) {
-						let dest = Point(i, j);
-						let move = source.s + dest.s;
-						if ((this.piece(source) === "P" && dest.y === 0) || (this.piece(source) === "p" && dest.y === 7)) {
-							for (let c of "qrbn") {
-								if (this.illegal(move + c) === "") {
-									moves.push(move + c);
+
+				let piece = this.piece(source);
+
+				let sliders = movegen_deltas[piece] ? movegen_deltas[piece].sliders : null;
+
+				if (sliders) {
+
+					for (let slider of sliders) {
+
+						for (let [dx, dy] of slider) {
+
+							let x2 = x + dx;
+							let y2 = y + dy;
+
+							if (x2 < 0 || x2 > 7 || y2 < 0 || y2 > 7) {
+								break;
+							}
+
+							let dest = Point(x2, y2);
+							let move = source.s + dest.s;
+
+							if ((this.piece(source) === "P" && dest.y === 0) || (this.piece(source) === "p" && dest.y === 7)) {
+								if (this.illegal(move + "q") === "") {
+									moves.push(move + "q");
+									moves.push(move + "r");
+									moves.push(move + "b");
+									moves.push(move + "n");
 								}
+								break;
+							}
+
+							if (this.illegal(move) === "") {
+								moves.push(move);
+							} else {
+								break;
 							}
 						}
-						if (this.illegal(move) === "") {
-							moves.push(move);
+					}
+				} else {
+					for (let i = 0; i < 8; i++) {
+						for (let j = 0; j < 8; j++) {
+							let dest = Point(i, j);
+							let move = source.s + dest.s;
+							if ((this.piece(source) === "P" && dest.y === 0) || (this.piece(source) === "p" && dest.y === 7)) {
+								for (let c of "qrbn") {
+									if (this.illegal(move + c) === "") {
+										moves.push(move + c);
+									}
+								}
+							}
+							if (this.illegal(move) === "") {
+								moves.push(move);
+							}
 						}
 					}
 				}
