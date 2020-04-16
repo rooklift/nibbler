@@ -46,7 +46,7 @@ const position_prototype = {
 
 		// Update castling info...
 
-		if (ret.state[x1][y1] === "K") {
+		if (y1 === 7 && ret.state[x1][y1] === "K") {
 			ret.castling = ReplaceAll(ret.castling, "A", "");
 			ret.castling = ReplaceAll(ret.castling, "B", "");
 			ret.castling = ReplaceAll(ret.castling, "C", "");
@@ -57,7 +57,7 @@ const position_prototype = {
 			ret.castling = ReplaceAll(ret.castling, "H", "");
 		}
 
-		if (ret.state[x1][y1] === "k") {
+		if (y1 === 0 && ret.state[x1][y1] === "k") {
 			ret.castling = ReplaceAll(ret.castling, "a", "");
 			ret.castling = ReplaceAll(ret.castling, "b", "");
 			ret.castling = ReplaceAll(ret.castling, "c", "");
