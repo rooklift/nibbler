@@ -50,7 +50,10 @@ Suggested test (note that depth 5 may cause Electron to break; try in Node prope
 
 	Perft("Q1r2knr/P1bp1p1p/2pn1q2/4p3/2PP2pB/1p3bP1/BP2PP1P/2R1NKNR w CHch - 0 1", 5)
 
-Expect result 29731327
+Expect results:
+
+	depth 4: 1006488
+	depth 5: 29731327
 
 In Stockfish:
 
