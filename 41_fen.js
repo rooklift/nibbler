@@ -204,7 +204,8 @@ function CastlingRights(board, s) {						// s is the castling string from a FEN
 
 	return ret;
 
-	// FIXME: check at most 1 castling possibility on left and right of each king.
+	// FIXME: check at most 1 castling possibility on left and right of each king?
+	// At the moment we support more arbitrary castling rights, maybe that's OK.
 }
 
 
