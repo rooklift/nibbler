@@ -885,9 +885,9 @@ const position_prototype = {
 
 				let piece = this.piece(source);
 
-				let sliders = movegen_deltas[piece] ? movegen_deltas[piece].sliders : null;
+				if (piece !== "K" && piece !== "k") {
 
-				if (sliders) {
+					let sliders = movegen_deltas[piece] ? movegen_deltas[piece].sliders : null;
 
 					for (let slider of sliders) {
 
@@ -901,6 +901,11 @@ const position_prototype = {
 							}
 
 							let dest = Point(x2, y2);
+
+							if (this.colour(dest) === this.active) {		// No move further along the slider will be legal.
+								break;
+							}
+
 							let move = source.s + dest.s;
 
 							if ((this.piece(source) === "P" && dest.y === 0) || (this.piece(source) === "p" && dest.y === 7)) {
@@ -910,13 +915,10 @@ const position_prototype = {
 									moves.push(move + "b");
 									moves.push(move + "n");
 								}
-								break;
-							}
-
-							if (this.illegal(move) === "") {
-								moves.push(move);
 							} else {
-								break;
+								if (this.illegal(move) === "") {
+									moves.push(move);
+								}
 							}
 						}
 					}
