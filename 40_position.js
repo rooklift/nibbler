@@ -9,10 +9,12 @@ const position_prototype = {
 
 	move: function(s) {
 
-		// s is some valid UCI move like "d1f3" or "e7e8q".
-		// Assumes move is legal - all sorts of weird things can happen if this isn't so.
-
-		// Basic sanity checks only:
+		// s is some valid UCI move like "d1f3" or "e7e8q". For the most part, this function
+		// assumes the move is legal - all sorts of weird things can happen if this isn't so.
+		//
+		// As an exception, note that position.illegal() does call this to make a temp board
+		// that can be used to test for moves that leave the king in check, so this method
+		// must "work" for such illegal moves.
 
 		if (typeof s !== "string" || s.length < 4) {
 			console.log("position_prototype.move called with arg", s);
