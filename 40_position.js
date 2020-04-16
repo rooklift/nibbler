@@ -1,8 +1,9 @@
 "use strict";
 
-// All our positions have a prototype which contains the methods needed. This is much faster than
-// creating each position with methods embedded in itself. Downside is, we have to use the "this"
-// keyword. Also note that => functions break "this" in such an object.
+
+//		Note that ALL CASTLING MOVES are expected to be in format KING-TO-ROOK
+//		That is, only Chess960 format is allowed.
+
 
 const position_prototype = {
 
