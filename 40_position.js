@@ -871,28 +871,80 @@ const position_prototype = {
 
 	movegen: function() {
 
-		// Super-crude brute-force, but it does work.
-		// Probably best to never use this, but it might be useful in debugging.
-
 		let moves = [];
 
 		for (let x = 0; x < 8; x++) {
+
 			for (let y = 0; y < 8; y++) {
+
 				let source = Point(x, y);
+
 				if (this.colour(source) !== this.active) {
 					continue;
 				}
-				for (let i = 0; i < 8; i++) {
-					for (let j = 0; j < 8; j++) {
-						let dest = Point(i, j);
-						let move = source.s + dest.s;
-						if ((this.piece(source) === "P" && dest.y === 0) || (this.piece(source) === "p" && dest.y === 7)) {
-							for (let c of "qrbn") {
-								if (this.illegal(move + c) === "") {
-									moves.push(move + c);
+
+				let piece = this.piece(source);
+
+				if (piece !== "K" && piece !== "k") {
+
+					for (let slider of movegen_sliders[piece]) {
+
+						for (let [dx, dy] of slider) {
+
+							let x2 = x + dx;
+							let y2 = y + dy;
+
+							if (x2 < 0 || x2 > 7 || y2 < 0 || y2 > 7) {		// No move further along the slider will be legal.
+								break;
+							}
+
+							let dest = Point(x2, y2);
+
+							if (this.colour(dest) === this.active) {		// No move further along the slider will be legal.
+								break;
+							}
+
+							let move = source.s + dest.s;
+
+							if ((piece === "P" && dest.y === 0) || (piece === "p" && dest.y === 7)) {
+								if (this.illegal(move + "q") === "") {
+									moves.push(move + "q");
+									moves.push(move + "r");
+									moves.push(move + "b");
+									moves.push(move + "n");
+								}
+							} else {
+								if (this.illegal(move) === "") {
+									moves.push(move);
 								}
 							}
 						}
+					}
+
+				} else {
+
+					// King moves that involve vertical direction...
+
+					for (let dx of [-1, 0, 1]) {
+						for (let dy of [-1, 1]) {
+							let x2 = x + dx;
+							let y2 = y + dy;
+							if (x2 < 0 || x2 > 7 || y2 < 0 || y2 > 7) {
+								continue;
+							}
+							let dest = Point(x2, y2);
+							let move = source.s + dest.s;
+							if (this.illegal(move) === "") {
+								moves.push(move);
+							}
+						}
+					}
+
+					// Horizontal king moves (including castling moves)...
+
+					for (let x2 = 0; x2 < 8; x2++) {
+						let dest = Point(x2, y);
+						let move = source.s + dest.s;
 						if (this.illegal(move) === "") {
 							moves.push(move);
 						}
