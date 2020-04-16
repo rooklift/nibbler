@@ -17,8 +17,9 @@ function Perft(fen, depth) {
 	if (!fen || !depth) {
 		throw "Need FEN and depth";
 	}
+	let starttime = new Date();
 	let val = perft(LoadFEN(fen), depth, true);
-	console.log("Total..........", val);
+	console.log(`Total.......... ${val} (${((new Date() - starttime) / 1000).toFixed(1)} seconds)`);
 	return val;
 }
 
