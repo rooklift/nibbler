@@ -418,6 +418,15 @@ const position_prototype = {
 			}
 		}
 
+		// Check that the king doesn't end up in check anyway...
+		// q1nnkbbr/p1pppppp/8/1P6/8/3NN3/1PPPPPPP/rR2KBBR w BHh - 0 5
+
+		let tmp = this.move(Point(x1, y1).s + Point(x2, y2).s);
+
+		if (tmp.attacked(Point(king_target_x, y1), this.active)) {
+			return "king ends in check";
+		}
+
 		return "";
 	},
 
