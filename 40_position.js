@@ -871,9 +871,6 @@ const position_prototype = {
 
 	movegen: function() {
 
-		// Super-crude brute-force, but it does work.
-		// Probably best to never use this, but it might be useful in debugging.
-
 		let moves = [];
 
 		for (let x = 0; x < 8; x++) {
@@ -896,7 +893,7 @@ const position_prototype = {
 							let x2 = x + dx;
 							let y2 = y + dy;
 
-							if (x2 < 0 || x2 > 7 || y2 < 0 || y2 > 7) {
+							if (x2 < 0 || x2 > 7 || y2 < 0 || y2 > 7) {		// No move further along the slider will be legal.
 								break;
 							}
 
@@ -922,21 +919,28 @@ const position_prototype = {
 							}
 						}
 					}
+
 				} else {
-					for (let i = 0; i < 8; i++) {
-						for (let j = 0; j < 8; j++) {
-							let dest = Point(i, j);
+
+					// King moves that involve vertical direction...
+
+					for (let dx of [-1, 0, 1]) {
+						for (let dy of [-1, 1]) {
+							let dest = Point(x + dx, y + dy);
 							let move = source.s + dest.s;
-							if ((this.piece(source) === "P" && dest.y === 0) || (this.piece(source) === "p" && dest.y === 7)) {
-								for (let c of "qrbn") {
-									if (this.illegal(move + c) === "") {
-										moves.push(move + c);
-									}
-								}
-							}
 							if (this.illegal(move) === "") {
 								moves.push(move);
 							}
+						}
+					}
+
+					// Horizontal king moves (including castling moves)...
+
+					for (let x2 = 0; x2 < 8; x2++) {
+						let dest = Point(x2, y);
+						let move = source.s + dest.s;
+						if (this.illegal(move) === "") {
+							moves.push(move);
 						}
 					}
 				}

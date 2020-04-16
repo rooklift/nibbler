@@ -2,6 +2,12 @@
 
 let movegen_deltas = {};
 
+// This is an object storing "sliders" for every piece except K and k which are special case.
+//
+// The idea is that, for every slider, if we travel along it and go offboard or hit a piece
+// of our own colour, no move further along the slider will be legal. So we can skip them
+// in the movegen.
+
 function generate_movegen_deltas() {
 
 	movegen_deltas["R"] = {sliders: []};
