@@ -1993,6 +1993,16 @@ function menu_build() {
 					type: "separator"
 				},
 				{
+					label: "Random move",
+					accelerator: "CommandOrControl+.",
+					click: () => {
+						win.webContents.send("call", "random_move");
+					}
+				},
+				{
+					type: "separator"
+				},
+				{
 					label: "Fire GC",
 					click: () => {
 						win.webContents.send("call", "fire_gc");
@@ -2008,7 +2018,7 @@ function menu_build() {
 					type: "separator"
 				},
 				{
-					label: "Crash Test",
+					label: "Crash test",
 					submenu: [
 						{
 							label: "Crash",

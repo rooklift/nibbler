@@ -208,6 +208,13 @@ function NewRenderer() {
 		return;
 	};
 
+	renderer.random_move = function() {
+		let legals = this.node.get_board().movegen();
+		if (legals.length > 0) {
+			this.move(RandChoice(legals));
+		}
+	};
+
 	renderer.play_info_index = function(n) {
 		let info_list = this.info_handler.sorted();
 		if (typeof n === "number" && n >= 0 && n < info_list.length) {

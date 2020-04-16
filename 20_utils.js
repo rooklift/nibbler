@@ -359,6 +359,13 @@ function RandInt(min, max) {
 	return Math.floor(Math.random() * (max - min)) + min;
 }
 
+function RandChoice(arr) {
+	if (Array.isArray(arr) === false || arr.length === 0) {
+		return undefined;
+	}
+	return arr[RandInt(0, arr.length)];
+}
+
 function SetSpecialMessage(s, style) {		// Can leave style undefined to use a default.
 	special_message = s;
 	special_message_style = style;
