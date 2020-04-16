@@ -31,7 +31,7 @@ function generate_movegen_sliders() {
 				dx += xstep;
 				dy += ystep;
 
-				if (dx < - 7 || dy < -7 || dx > 7 || dy > 7) {
+				if (dx < -7 || dy < -7 || dx > 7 || dy > 7) {
 
 					movegen_sliders["R"].push(slider);
 					break;
@@ -60,7 +60,7 @@ function generate_movegen_sliders() {
 				dx += xstep;
 				dy += ystep;
 
-				if (dx < - 7 || dy < -7 || dx > 7 || dy > 7) {
+				if (dx < -7 || dy < -7 || dx > 7 || dy > 7) {
 
 					movegen_sliders["B"].push(slider);
 					break;
