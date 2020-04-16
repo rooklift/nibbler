@@ -10,6 +10,8 @@ let movegen_sliders = {};
 
 function generate_movegen_sliders() {
 
+	// Rooks have 4 sliders...
+
 	movegen_sliders["R"] = [];
 
 	for (let xstep of [-1, 0, 1]) {
@@ -40,7 +42,7 @@ function generate_movegen_sliders() {
 		}
 	}
 
-	//
+	// Bishops have 4 sliders...
 
 	movegen_sliders["B"] = [];
 
@@ -69,11 +71,11 @@ function generate_movegen_sliders() {
 		}
 	}
 
-	//
+	// Queens are bishops mated with rooks...
 
 	movegen_sliders["Q"] = movegen_sliders["R"].concat(movegen_sliders["B"]);
 
-	//
+	// Knights have 8 sliders of length 1...
 
 	movegen_sliders["N"] = [];
 	movegen_sliders["N"].push([[-2, -1]]);
@@ -85,14 +87,14 @@ function generate_movegen_sliders() {
 	movegen_sliders["N"].push([[ 1,  2]]);
 	movegen_sliders["N"].push([[ 2,  1]]);
 
-	//
+	// Black and White sliders for these 4 pieces are identical...
 
 	movegen_sliders["q"] = movegen_sliders["Q"];
 	movegen_sliders["r"] = movegen_sliders["R"];
 	movegen_sliders["b"] = movegen_sliders["B"];
 	movegen_sliders["n"] = movegen_sliders["N"];
 
-	//
+	// Pawns...
 
 	movegen_sliders["P"] = [];
 	movegen_sliders["P"].push([[0, -1], [0, -2]]);
