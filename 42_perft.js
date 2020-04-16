@@ -46,7 +46,7 @@ function perft_print_move(pos, mv, val) {
 
 /*
 
-Suggested test (slow):
+Suggested test (note that depth 5 may cause Electron to break; try in Node proper):
 
 	Perft("Q1r2knr/P1bp1p1p/2pn1q2/4p3/2PP2pB/1p3bP1/BP2PP1P/2R1NKNR w CHch - 0 1", 5)
 
