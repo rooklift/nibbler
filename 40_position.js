@@ -874,8 +874,11 @@ const position_prototype = {
 		let moves = [];
 
 		for (let x = 0; x < 8; x++) {
+
 			for (let y = 0; y < 8; y++) {
+
 				let source = Point(x, y);
+
 				if (this.colour(source) !== this.active) {
 					continue;
 				}
@@ -903,7 +906,7 @@ const position_prototype = {
 
 							let move = source.s + dest.s;
 
-							if ((this.piece(source) === "P" && dest.y === 0) || (this.piece(source) === "p" && dest.y === 7)) {
+							if ((piece === "P" && dest.y === 0) || (piece === "p" && dest.y === 7)) {
 								if (this.illegal(move + "q") === "") {
 									moves.push(move + "q");
 									moves.push(move + "r");
@@ -924,7 +927,12 @@ const position_prototype = {
 
 					for (let dx of [-1, 0, 1]) {
 						for (let dy of [-1, 1]) {
-							let dest = Point(x + dx, y + dy);
+							let x2 = x + dx;
+							let y2 = y + dy;
+							if (x2 < 0 || x2 > 7 || y2 < 0 || y2 > 7) {
+								continue;
+							}
+							let dest = Point(x2, y2);
 							let move = source.s + dest.s;
 							if (this.illegal(move) === "") {
 								moves.push(move);
