@@ -1068,6 +1068,7 @@ const position_prototype = {
 
 		// While interally (and when sending to the engine) we always use Chess960 format,
 		// we can return a more friendly FEN if asked (and if the position is normal Chess).
+		// Relies on our normalchess flag being accurate... (potential for bugs there).
 
 		if (friendly_flag && this.normalchess && castling_string !== "-") {
 			let new_castling_string = "";
