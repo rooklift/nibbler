@@ -47,20 +47,21 @@ function perft_print_move(pos, mv, val) {
 
 /*
 
-Suggested test:
+Suggested tests:
 
-	Perft("Qr3knr/P1bp1p1p/2pn1q2/4p3/2PP2pB/1p1N1bP1/BP2PP1P/1R3KNR w BHbh - 0 1", 4)
+	Qr3knr/P1bp1p1p/2pn1q2/4p3/2PP2pB/1p1N1bP1/BP2PP1P/1R3KNR w BHbh - 0 1
+		depth 4: 1253934
+		depth 5: 40393041
 
-Expect results:
-
-	depth 4: 1253934
-	depth 5: 40393041
+	1nr1nk1r/1b5B/p1p1qp2/b2pp1pP/3P2P1/P3P2N/1Pp2P2/BNR2KQR w CHch g6 0 1
+		depth 4: 992438
+		depth 5: 30218648
 
 In Stockfish:
 
 	setoption name UCI_Chess960 value true
 	ucinewgame
-	position fen Q1r2knr/P1bp1p1p/2pn1q2/4p3/2PP2pB/1p3bP1/BP2PP1P/2R1NKNR w CHch - 0 1
+	position fen <whatever>
 	go perft 4
 
 */
