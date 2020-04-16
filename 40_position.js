@@ -884,9 +884,7 @@ const position_prototype = {
 
 				if (piece !== "K" && piece !== "k") {
 
-					let sliders = movegen_deltas[piece] ? movegen_deltas[piece].sliders : null;
-
-					for (let slider of sliders) {
+					for (let slider of movegen_sliders[piece]) {
 
 						for (let [dx, dy] of slider) {
 
