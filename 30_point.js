@@ -6,41 +6,37 @@
 
 function Point(a, b) {
 
-	// We store the 64+1 point objects in the function object itself,
-	// like static variables. On the first call, make them...
-
-	if (Point.all_points === undefined) {
-
-		Point.all_points = Object.create(null);
+	if (Point.null_point === undefined) {
+		Point.xy_lookup = New2DArray(8, 8);
+		Point.s_lookup = Object.create(null);
 		for (let x = 0; x < 8; x++) {
 			for (let y = 0; y < 8; y++) {
 				let s = S(x, y);
-				Point.all_points[s] = Object.freeze({x, y, s});
+				let point = Object.freeze({x, y, s});
+				Point.xy_lookup[x][y] = point;
+				Point.s_lookup[s] = point;
 			}
 		}
-
 		Point.null_point = Object.freeze({x: -1, y: -1, s: "??"});
 	}
 
 	// Point("a8") or Point(0, 0) are both valid.
 
-	let s;
-
-	if (typeof a === "string") {		// Check if string, then check if not numbers...
-		s = a;
-	} else if (typeof a !== "number" || typeof b !== "number") {
-		return Point.null_point;
-	} else {
-		s = S(a, b);
+	if (b === undefined) {
+		let ret = Point.s_lookup[a];
+		if (ret === undefined) {
+			return Point.null_point;
+		}
+		return ret;
 	}
 
-	let p = Point.all_points[s];
+	let col = Point.xy_lookup[a];
+	if (col === undefined) return Point.null_point;
 
-	if (p === undefined) {
-		return Point.null_point;
-	}
+	let ret = col[b];
+	if (ret === undefined) return Point.null_point;
 
-	return p;
+	return ret;
 }
 
 // Note: I rather regret now the existence of Point(null) - it means there's two
