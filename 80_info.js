@@ -332,7 +332,7 @@ function NewInfoHandler() {
 		this.last_drawn_version = null;
 	};
 
-	ih.draw_statusbox = function(leela_maybe_running, searchmoves, syncs_needed) {
+	ih.draw_statusbox = function(leela_maybe_running, nogo_due_to_mate, searchmoves, syncs_needed) {
 
 		if (special_message && new Date() - special_message_time < 3000) {
 
@@ -345,6 +345,10 @@ function NewInfoHandler() {
 		} else if (typeof config.search_nodes === "number" && (searchmoves.length === 1)) {
 
 			statusbox.innerHTML = `<span class="yellow">Node limit with only 1 focus won't run.</span>`;
+
+		} else if (nogo_due_to_mate) {
+
+			statusbox.innerHTML = `<span class="yellow">Terminal node!</span>`;
 
 		} else {
 
@@ -364,9 +368,9 @@ function NewInfoHandler() {
 		}
 	};
 
-	ih.draw_infobox = function(mouse_point, active_square, leela_maybe_running, active_colour, searchmoves, hoverdraw_div, syncs_needed) {
+	ih.draw_infobox = function(mouse_point, active_square, leela_maybe_running, nogo_due_to_mate, active_colour, searchmoves, hoverdraw_div, syncs_needed) {
 
-		ih.draw_statusbox(leela_maybe_running, searchmoves, syncs_needed);
+		ih.draw_statusbox(leela_maybe_running, nogo_due_to_mate, searchmoves, syncs_needed);
 
 		// Display stderr and return if we've never seen any info...
 

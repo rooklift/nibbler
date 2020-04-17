@@ -24,6 +24,7 @@ function NewRenderer() {
 	// Some sync stuff...
 
 	renderer.leela_maybe_running = false;						// Whether we last sent "go" or "stop" to Leela.
+	renderer.nogo_due_to_mate = false;							// Whether we declined to send "go" due to stalemate / checkmate.
 	renderer.leela_position = null;								// The position we last sent to Leela.
 	renderer.searchmoves = [];									// Moves that we're compelling Leela to search.
 
@@ -634,10 +635,14 @@ function NewRenderer() {
 	};
 
 	renderer.__halt = function(new_game_flag) {		// "isready" is not needed. If changing position, invalid data will be discarded by renderer.receive().
+
 		if (this.leela_maybe_running) {
 			this.engine.send("stop");		
-			this.leela_maybe_running = false;
 		}
+
+		this.leela_maybe_running = false;
+		this.nogo_due_to_mate = false;
+
 		if (new_game_flag) {
 			this.engine.send("ucinewgame");			// Shouldn't be sent when engine is running.
 		}
@@ -648,24 +653,13 @@ function NewRenderer() {
 		this.validate_searchmoves();				// Leela can crash on illegal searchmoves.
 		this.hide_pgn_chooser();
 
-		if (this.leela_maybe_running) {
-			this.engine.send("stop");
-		}
-
-		if (new_game_flag) {
-			this.engine.send("ucinewgame");			// Shouldn't be sent when engine is running.
-		}
+		this.__halt();
 
 		let board = this.node.get_board();
 
-		// We'll set leela_maybe_running even if we actually don't send anything (due to mate)
-		// for the sake of the draw_statusbox() method. It's a fairly harmless bool to be set
-		// to true, but really we should do better.
-
-		this.leela_maybe_running = true;			// BEFORE the possible return...
-
 		if (this.node.children.length === 0) {
 			if (board.movegen().length === 0) {
+				this.nogo_due_to_mate = true;
 				return;
 			}
 		}
@@ -696,6 +690,7 @@ function NewRenderer() {
 
 		this.engine.send(s);
 		this.leela_position = board;
+		this.leela_maybe_running = true;
 	};
 
 	renderer.validate_searchmoves = function() {
@@ -1503,6 +1498,7 @@ function NewRenderer() {
 			this.mouse_point(),
 			this.active_square,
 			this.leela_maybe_running,
+			this.nogo_due_to_mate,
 			this.node.get_board().active,
 			this.searchmoves,
 			this.hoverdraw_div,
