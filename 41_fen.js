@@ -34,12 +34,12 @@ function LoadFEN(fen) {
 				throw "Invalid FEN - row length";
 			}
 
-			if ("12345678".includes(c)) {
+			if (["1", "2", "3", "4", "5", "6", "7", "8"].includes(c)) {
 				x += parseInt(c, 10);
 				continue;
 			}
 
-			if ("KkQqRrBbNnPp".includes(c)) {
+			if (["K", "k", "Q", "q", "R", "r", "B", "b", "N", "n", "P", "p"].includes(c)) {
 				ret.state[x][y] = c;
 				x++;
 				continue;
