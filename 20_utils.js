@@ -34,17 +34,17 @@ function S(x, y) {				// e.g. (1, 1) --> "b7"
 		}
 	}
 
-	let a = S.cache[x];
-	if (a === undefined) {
+	let col = S.cache[x];
+	if (col === undefined) {
 		return "??";
 	}
 
-	let b = a[y];
-	if (b === undefined) {
+	let ret = col[y];
+	if (ret === undefined) {
 		return "??";
 	}
 
-	return b;
+	return ret;
 }
 
 function InfoVal(s, key) {
