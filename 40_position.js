@@ -887,9 +887,13 @@ const position_prototype = {
 
 				let piece = this.piece(source);
 
-				if (piece !== "K" && piece !== "k") {
+				if (piece !== "K" && piece !== "k") {		// We don't include kings because castling is troublesome.
 
 					for (let slider of movegen_sliders[piece]) {
+
+						// The sliders are lists where, if one move is blocked, every subsequent move in the slider is also
+						// blocked. Note that the test is "blocked / offboard". The test is not "is illegal" - sometimes one
+						// move will be illegal but a move further down the slider will be legal - e.g. if it blocks a check.
 
 						for (let [dx, dy] of slider) {
 
