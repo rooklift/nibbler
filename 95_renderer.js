@@ -656,8 +656,22 @@ function NewRenderer() {
 			this.engine.send("ucinewgame");			// Shouldn't be sent when engine is running.
 		}
 
-		let start_fen = this.node.get_root().get_board().fen(false);	// Send castling in AHah format.
-		let setup = `fen ${start_fen}`;
+		let board = this.node.get_board();
+
+		// We'll set leela_maybe_running even if we actually don't send anything (due to mate)
+		// for the sake of the draw_statusbox() method. It's a fairly harmless bool to be set
+		// to true, but really we should do better.
+
+		this.leela_maybe_running = true;			// BEFORE the possible return...
+
+		if (this.node.children.length === 0) {
+			if (board.movegen().length === 0) {
+				return;
+			}
+		}
+
+		let root_fen = this.node.get_root().get_board().fen(false);
+		let setup = `fen ${root_fen}`;
 
 		// Leela seems to time "readyok" correctly after "position" commands.
 		// After sending "isready" we'll ignore Leela output until "readyok" comes.
@@ -681,9 +695,7 @@ function NewRenderer() {
 		}
 
 		this.engine.send(s);
-
-		this.leela_maybe_running = true;
-		this.leela_position = this.node.get_board();
+		this.leela_position = board;
 	};
 
 	renderer.validate_searchmoves = function() {
