@@ -6,8 +6,8 @@ function XY(s) {				// e.g. "b7" --> [1, 1]
 		XY.cache = Object.create(null);
 		for (let x = 0; x < 8; x++) {
 			for (let y = 0; y < 8; y++) {
-				XY.cache[S(x, y).toLowerCase()] = Object.freeze([x, y]);
-				XY.cache[S(x, y).toUpperCase()] = Object.freeze([x, y]);
+				XY.cache[S(x, y).toLowerCase()] = [x, y];		// Object.freeze() on these seems
+				XY.cache[S(x, y).toUpperCase()] = [x, y];		// to carry a perf penalty, somehow.
 			}
 		}
 	}
