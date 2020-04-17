@@ -1,6 +1,6 @@
 "use strict";
 
-let movegen_sliders = {};
+let movegen_sliders = Object.create(null);
 
 // This is an object storing "sliders" for every piece except K and k which are special case.
 //

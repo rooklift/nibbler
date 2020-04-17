@@ -3,7 +3,7 @@
 function XY(s) {				// e.g. "b7" --> [1, 1]
 
 	if (XY.cache === undefined) {
-		XY.cache = {};
+		XY.cache = Object.create(null);
 		for (let x = 0; x < 8; x++) {
 			for (let y = 0; y < 8; y++) {
 				XY.cache[S(x, y).toLowerCase()] = [x, y];
