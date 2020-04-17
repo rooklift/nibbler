@@ -333,20 +333,8 @@ const position_prototype = {
 		// Check for check...
 
 		let tmp = this.move(s);
-
-		for (let x = 0; x < 8; x++) {
-			for (let y = 0; y < 8; y++) {
-				if (tmp.state[x][y] === "K" && this.active === "w") {
-					if (tmp.attacked(Point(x, y), this.active)) {
-						return "king in check";
-					}
-				}
-				if (tmp.state[x][y] === "k" && this.active === "b") {
-					if (tmp.attacked(Point(x, y), this.active)) {
-						return "king in check";
-					}
-				}
-			}
+		if (tmp.can_capture_king()) {
+			return "king in check";
 		}
 
 		return "";
@@ -425,8 +413,7 @@ const position_prototype = {
 		// q1nnkbbr/p1pppppp/8/1P6/8/3NN3/1PPPPPPP/rR2KBBR w BHh - 0 5
 
 		let tmp = this.move(Point(x1, y1).s + Point(x2, y2).s);
-
-		if (tmp.attacked(Point(king_target_x, y1), this.active)) {
+		if (tmp.can_capture_king()) {
 			return "king ends in check";
 		}
 
@@ -446,6 +433,29 @@ const position_prototype = {
 		}
 
 		return "";
+	},
+
+	can_capture_king: function() {
+
+		// Can the side to move capture the opponent's king?
+		// Helper function for illegal() etc.
+
+		let kch = this.active === "w" ? "k" : "K";			// i.e. the INACTIVE king
+		let opp_colour = this.active === "w" ? "b" : "w";
+
+		for (let x = 0; x < 8; x++) {
+			for (let y = 0; y < 8; y++) {
+				if (this.state[x][y] === kch) {
+					if (this.attacked(Point(x, y), opp_colour)) {
+						return true;
+					} else {
+						return false;
+					}
+				}
+			}
+		}
+
+		return false;		// King not actually present...
 	},
 
 	los: function(x1, y1, x2, y2) {		// Returns false if there is no "line of sight" between the 2 points.
