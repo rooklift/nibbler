@@ -1,25 +1,50 @@
 "use strict";
 
 function XY(s) {				// e.g. "b7" --> [1, 1]
-	if (typeof s !== "string" || s.length !== 2) {
+
+	if (XY.cache === undefined) {
+		XY.cache = {};
+		for (let x = 0; x < 8; x++) {
+			for (let y = 0; y < 8; y++) {
+				XY.cache[S(x, y).toLowerCase()] = [x, y];
+				XY.cache[S(x, y).toUpperCase()] = [x, y];
+			}
+		}
+	}
+
+	let ret = XY.cache[s];
+
+	if (ret === undefined) {
 		return [-1, -1];
 	}
-	s = s.toLowerCase();
-	let x = s.charCodeAt(0) - 97;
-	let y = 8 - parseInt(s[1], 10);
-	if (x < 0 || x > 7 || y < 0 || y > 7 || Number.isNaN(y)) {
-		return [-1, -1];
-	}
-	return [x, y];
+
+	return ret;
 }
 
 function S(x, y) {				// e.g. (1, 1) --> "b7"
-	if (typeof x !== "number" || typeof y !== "number" || x < 0 || x > 7 || y < 0 || y > 7) {
+
+	if (S.cache === undefined) {
+		S.cache = New2DArray(8, 8);
+		for (let x = 0; x < 8; x++) {
+			for (let y = 0; y < 8; y++) {
+				let xs = String.fromCharCode(x + 97);
+				let ys = String.fromCharCode((8 - y) + 48);
+				S.cache[x][y] = xs + ys;
+			}
+		}
+	}
+
+	let a = S.cache[x];
+	if (a === undefined) {
 		return "??";
 	}
-	let xs = String.fromCharCode(x + 97);
-	let ys = String.fromCharCode((8 - y) + 48);
-	return xs + ys;
+
+	let b = a[y];
+	if (b === undefined) {
+		return "??";
+	}
+
+	return b;
 }
 
 function InfoVal(s, key) {
