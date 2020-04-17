@@ -129,9 +129,6 @@ function CastlingRights(board, s) {						// s is the castling string from a FEN
 					dict[ch] = true;
 				}
 			}
-		}
-
-		for (let ch of s) {
 			if (ch === "Q") {
 				if (board.state[0][7] === "R") {		// Compatibility with regular Chess FEN.
 					dict["A"] = true;
@@ -168,9 +165,6 @@ function CastlingRights(board, s) {						// s is the castling string from a FEN
 					dict[ch] = true;
 				}
 			}
-		}
-
-		for (let ch of s) {
 			if (ch === "q") {
 				if (board.state[0][0] === "r") {		// Compatibility with regular Chess FEN.
 					dict["a"] = true;
