@@ -653,7 +653,7 @@ function NewRenderer() {
 		this.validate_searchmoves();				// Leela can crash on illegal searchmoves.
 		this.hide_pgn_chooser();
 
-		this.__halt();
+		this.__halt(new_game_flag);
 
 		let board = this.node.get_board();
 
