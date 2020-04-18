@@ -1267,10 +1267,10 @@ function NewRenderer() {
 			this.mouse_point = new_point;
 			this.hover_square = null;
 			this.mouse_point_hover_start = performance.now();
-		} else {
-			if (performance.now() - this.mouse_point_hover_start > config.mouse_hang_ms) {
-				this.hover_square = this.mouse_point;
-			}
+		}
+		
+		if (performance.now() - this.mouse_point_hover_start >= config.mouse_hang_ms) {
+			this.hover_square = this.mouse_point;
 		}
 
 	};
@@ -1365,7 +1365,7 @@ function NewRenderer() {
 
 	renderer.hoverdraw = function() {
 
-		if (!config.hover_draw) {
+		if (!config.hover_pv_draw) {
 			return false;
 		}
 
@@ -1394,9 +1394,9 @@ function NewRenderer() {
 			return false;
 		}
 
-		if (config.hover_method === 0) {
+		if (config.hover_pv_method === 0) {
 			return this.hoverdraw_animate(div_index, info);			// Sets this.hoverdraw_div
-		} else if (config.hover_method === 1 || config.hover_method === 2) {
+		} else if (config.hover_pv_method === 1 || config.hover_pv_method === 2) {
 			return this.hoverdraw_single(div_index, overlist);		// Sets this.hoverdraw_div
 		} else {
 			return false;											// Caller must set this.hoverdraw_div to -1
@@ -1440,9 +1440,9 @@ function NewRenderer() {
 
 		let moves;
 
-		if (config.hover_method === 1) {
+		if (config.hover_pv_method === 1) {
 			moves = this.info_handler.moves_from_click_n(parseInt(hover_item.id.slice("infobox_".length), 10));
-		} else if (config.hover_method === 2) {
+		} else if (config.hover_pv_method === 2) {
 			moves = this.info_handler.entire_pv_from_click_n(parseInt(hover_item.id.slice("infobox_".length), 10));
 		}
 
@@ -1515,7 +1515,7 @@ function NewRenderer() {
 			canvas.style.outline = "none";
 			this.draw_move_in_canvas();
 			this.draw_enemies_in_canvas();
-			this.info_handler.draw_arrows(this.hover_square);
+			this.info_handler.draw_arrows(config.hover_piece_arrows ? this.hover_square : null);
 			this.draw_friendlies_in_table();
 		}
 

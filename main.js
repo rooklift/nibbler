@@ -473,6 +473,20 @@ function menu_build() {
 					}
 				},
 				{
+					label: "...with mouseover explosion",
+					type: "checkbox",
+					checked: config.hover_piece_arrows,
+					click: () => {
+						win.webContents.send("call", {
+							fn: "toggle",
+							args: ["hover_piece_arrows"],
+						});
+					}
+				},
+				{
+					type: "separator"
+				},
+				{
 					label: "Arrowhead type",
 					submenu: [
 						{
@@ -836,11 +850,11 @@ function menu_build() {
 					label: "Draw PV on mouseover",
 					accelerator: "CommandOrControl+D",
 					type: "checkbox",
-					checked: config.hover_draw,
+					checked: config.hover_pv_draw,
 					click: () => {
 						win.webContents.send("call", {
 							fn: "toggle",
-							args: ["hover_draw"],
+							args: ["hover_pv_draw"],
 						});
 					}
 				},
@@ -850,11 +864,11 @@ function menu_build() {
 						{
 							label: "Animate",
 							type: "checkbox",
-							checked: config.hover_method === 0,
+							checked: config.hover_pv_method === 0,
 							click: () => {
 								set_checks("Analysis", "Draw PV method", "Animate");
 								win.webContents.send("set", {
-									key: "hover_method",
+									key: "hover_pv_method",
 									value: 0
 								});
 							}
@@ -862,11 +876,11 @@ function menu_build() {
 						{
 							label: "Single move",
 							type: "checkbox",
-							checked: config.hover_method === 1,
+							checked: config.hover_pv_method === 1,
 							click: () => {
 								set_checks("Analysis", "Draw PV method", "Single move");
 								win.webContents.send("set", {
-									key: "hover_method",
+									key: "hover_pv_method",
 									value: 1
 								});
 							}
@@ -874,11 +888,11 @@ function menu_build() {
 						{
 							label: "Final position",
 							type: "checkbox",
-							checked: config.hover_method === 2,
+							checked: config.hover_pv_method === 2,
 							click: () => {
 								set_checks("Analysis", "Draw PV method", "Final position");
 								win.webContents.send("set", {
-									key: "hover_method",
+									key: "hover_pv_method",
 									value: 2
 								});
 							}
