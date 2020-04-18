@@ -24,7 +24,7 @@ function NewRenderer() {
 	// Some sync stuff...
 
 	renderer.leela_maybe_running = false;						// Whether we last sent "go" or "stop" to Leela.
-	renderer.nogo_due_to_mate = false;							// Whether we declined to send "go" due to stalemate / checkmate.
+	renderer.nogo_reason = null;								// Whether we declined to send "go" due to stalemate / checkmate.
 	renderer.leela_position = null;								// The position we last sent to Leela.
 	renderer.searchmoves = [];									// Moves that we're compelling Leela to search.
 
@@ -641,7 +641,7 @@ function NewRenderer() {
 		}
 
 		this.leela_maybe_running = false;
-		this.nogo_due_to_mate = false;
+		this.nogo_reason = null;
 
 		if (new_game_flag) {
 			this.engine.send("ucinewgame");			// Shouldn't be sent when engine is running.
@@ -659,7 +659,7 @@ function NewRenderer() {
 
 		if (this.node.children.length === 0) {
 			if (board.movegen().length === 0) {
-				this.nogo_due_to_mate = true;
+				this.nogo_reason = board.king_in_check() ? "Checkmate" : "Stalemate";
 				return;
 			}
 		}
@@ -1498,7 +1498,7 @@ function NewRenderer() {
 			this.mouse_point(),
 			this.active_square,
 			this.leela_maybe_running,
-			this.nogo_due_to_mate,
+			this.nogo_reason,
 			this.node.get_board().active,
 			this.searchmoves,
 			this.hoverdraw_div,

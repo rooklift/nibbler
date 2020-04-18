@@ -458,6 +458,21 @@ const position_prototype = {
 		return false;		// King not actually present...
 	},
 
+	king_in_check: function() {
+
+		// Don't call this if the king position is already
+		// known since this method uses an expensive find().
+
+		let kch = this.active === "w" ? "K" : "k";
+		let king_loc = this.find(kch)[0];
+
+		if (king_loc === undefined) {
+			return false;
+		}
+
+		return this.attacked(king_loc, this.active);
+	},
+
 	los: function(x1, y1, x2, y2) {		// Returns false if there is no "line of sight" between the 2 points.
 
 		// Check the line is straight....
