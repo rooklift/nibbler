@@ -473,13 +473,13 @@ function menu_build() {
 					}
 				},
 				{
-					label: "...with click explosion",
+					label: "...with clickjacking",
 					type: "checkbox",
-					checked: config.arrow_explosion,
+					checked: config.clickjacking,
 					click: () => {
 						win.webContents.send("call", {
 							fn: "toggle",
-							args: ["arrow_explosion"],
+							args: ["clickjacking"],
 						});
 					}
 				},

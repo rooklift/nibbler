@@ -41,7 +41,7 @@ exports.defaults = {
 	"terrible_move_threshold": 0.04,
 	"uncertainty_cutoff": 0.1,
 	"arrows_enabled": true,
-	"arrow_explosion": true,
+	"clickjacking": true,
 	"arrowhead_type": 0,
 	"show_cp": false,
 	"cp_white_pov": false,

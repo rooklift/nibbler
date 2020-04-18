@@ -1515,7 +1515,7 @@ function NewRenderer() {
 			canvas.style.outline = "none";
 			this.draw_move_in_canvas();
 			this.draw_enemies_in_canvas();
-			this.info_handler.draw_arrows(config.arrow_explosion ? this.active_square : null);
+			this.info_handler.draw_arrows(config.clickjacking ? this.active_square : null);
 			this.draw_friendlies_in_table();
 		}
 
