@@ -137,17 +137,24 @@ const node_prototype = {
 	},
 
 	nice_move: function() {
-		if (!this.move || !this.parent) {
-			return "??";
+
+		if (this.nice_move_cache) {
+			return this.nice_move_cache;
 		}
 
-		return this.parent.get_board().nice_string(this.move);
+		if (!this.move || !this.parent) {
+			this.nice_move_cache = "??";
+		} else {
+			this.nice_move_cache = this.parent.get_board().nice_string(this.move);
+		}
+
+		return this.nice_move_cache;
 	},
 
 	token: function() {
 
 		// The complete token when writing the move, including number string if necessary,
-		// which depends on position within variations etc...
+		// which depends on position within variations etc and so cannot easily be cached.
 
 		if (!this.move || !this.parent) {
 			return "";
