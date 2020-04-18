@@ -50,25 +50,15 @@ const position_prototype = {
 		// Update castling info...
 
 		if (y1 === 7 && ret.state[x1][y1] === "K") {
-			ret.castling = ReplaceAll(ret.castling, "A", "");
-			ret.castling = ReplaceAll(ret.castling, "B", "");
-			ret.castling = ReplaceAll(ret.castling, "C", "");
-			ret.castling = ReplaceAll(ret.castling, "D", "");
-			ret.castling = ReplaceAll(ret.castling, "E", "");
-			ret.castling = ReplaceAll(ret.castling, "F", "");
-			ret.castling = ReplaceAll(ret.castling, "G", "");
-			ret.castling = ReplaceAll(ret.castling, "H", "");
+			for (let ch of "ABCDEFGH") {
+				ret.castling = ReplaceAll(ret.castling, ch, "");
+			}
 		}
 
 		if (y1 === 0 && ret.state[x1][y1] === "k") {
-			ret.castling = ReplaceAll(ret.castling, "a", "");
-			ret.castling = ReplaceAll(ret.castling, "b", "");
-			ret.castling = ReplaceAll(ret.castling, "c", "");
-			ret.castling = ReplaceAll(ret.castling, "d", "");
-			ret.castling = ReplaceAll(ret.castling, "e", "");
-			ret.castling = ReplaceAll(ret.castling, "f", "");
-			ret.castling = ReplaceAll(ret.castling, "g", "");
-			ret.castling = ReplaceAll(ret.castling, "h", "");
+			for (let ch of "abcdefgh") {
+				ret.castling = ReplaceAll(ret.castling, ch, "");
+			}
 		}
 
 		if (y1 === 7 && ret.state[x1][y1] === "R") {			// White rook moved.
