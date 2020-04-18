@@ -27,9 +27,7 @@ prompted with a standard "Save As" dialog. If you save to a file that \
 already exists, that file will be DESTROYED and REPLACED with a file \
 containing only the current game.
 
-This behaviour may change in future versions.
-
-To enable save, set "save_enabled" to true in the config file.`;
+You can permanently enable save in the dev menu.`;
 
 
 exports.about_serious_analysis =

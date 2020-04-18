@@ -2080,6 +2080,19 @@ function menu_build() {
 						}
 					]
 				},
+				{
+					type: "separator"
+				},
+				{
+					label: "Permanently enable save",
+					click: () => {
+						config.save_enabled = true;			// The main process actually uses this variable...
+						win.webContents.send("set", {		// But it's the renderer process that saves the
+							key: "save_enabled",			// config file.
+							value: true,
+						});
+					}
+				}
 			]
 		}
 	];
