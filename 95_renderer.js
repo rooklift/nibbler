@@ -1005,6 +1005,10 @@ function NewRenderer() {
 		setTimeout(global.gc, 5000);
 	};
 
+	renderer.show_sync_status = function() {
+		alert(`readyok: ${this.engine.readyok_required}, bestmove: ${this.engine.bestmove_required}`);
+	};
+
 	renderer.save_config = function() {			// Just for the dev menu - everything else can just call config_io.save(config) directly.
 		config_io.save(config);
 	};

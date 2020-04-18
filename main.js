@@ -2061,7 +2061,7 @@ function menu_build() {
 				{
 					label: "Show sync status",
 					click: () => {
-						win.webContents.executeJavaScript("alert(`rok: ${hub.engine.readyok_required}, bm: ${hub.engine.bestmove_required}`)");
+						win.webContents.send("call", "show_sync_status");
 					}
 				},
 				{
