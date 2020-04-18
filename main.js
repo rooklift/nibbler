@@ -814,6 +814,20 @@ function menu_build() {
 								});
 							}
 						},
+						{
+							type: "separator"
+						},
+						{
+							label: "Linebreak before stats",
+							type: "checkbox",
+							checked: config.infobox_stats_newline,
+							click: () => {
+								win.webContents.send("call", {
+									fn: "toggle",
+									args: ["infobox_stats_newline"],
+								});
+							}
+						}
 					]
 				},
 				{
