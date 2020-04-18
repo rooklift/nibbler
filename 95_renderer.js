@@ -658,7 +658,7 @@ function NewRenderer() {
 		let board = this.node.get_board();
 
 		if (this.node.children.length === 0) {
-			if (board.movegen().length === 0) {
+			if (board.no_moves()) {
 				this.nogo_reason = board.king_in_check() ? "Checkmate" : "Stalemate";
 				return;
 			}

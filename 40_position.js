@@ -896,7 +896,7 @@ const position_prototype = {
 		return this.colour(point1) === this.colour(point2);
 	},
 
-	movegen: function() {
+	movegen: function(one_only = false) {
 
 		let moves = [];
 
@@ -940,6 +940,9 @@ const position_prototype = {
 							if ((piece === "P" && dest.y === 0) || (piece === "p" && dest.y === 7)) {
 								if (this.illegal(move + "q") === "") {
 									moves.push(move + "q");
+									if (one_only) {
+										return moves;
+									}
 									moves.push(move + "r");
 									moves.push(move + "b");
 									moves.push(move + "n");
@@ -947,6 +950,9 @@ const position_prototype = {
 							} else {
 								if (this.illegal(move) === "") {
 									moves.push(move);
+									if (one_only) {
+										return moves;
+									}
 								}
 							}
 						}
@@ -967,6 +973,9 @@ const position_prototype = {
 							let move = source.s + dest.s;
 							if (this.illegal(move) === "") {
 								moves.push(move);
+								if (one_only) {
+									return moves;
+								}
 							}
 						}
 					}
@@ -978,6 +987,9 @@ const position_prototype = {
 						let move = source.s + dest.s;
 						if (this.illegal(move) === "") {
 							moves.push(move);
+							if (one_only) {
+								return moves;
+							}
 						}
 					}
 				}
@@ -989,6 +1001,10 @@ const position_prototype = {
 
 	nice_movegen: function() {
 		return this.movegen().map(s => this.nice_string(s));
+	},
+
+	no_moves: function() {
+		return this.movegen(true).length === 0;
 	},
 
 	nice_string: function(s) {
@@ -1019,7 +1035,11 @@ const position_prototype = {
 		let opponent_king_square = this.find(opponent_king_char)[0];	// Might be undefined on corrupt board...
 
 		if (opponent_king_square && next_board.attacked(opponent_king_square, next_board.colour(opponent_king_square))) {
-			check = "+";
+			if (next_board.no_moves()) {
+				check = "#";
+			} else {
+				check = "+";
+			}
 		}
 
 		if (["K", "k", "Q", "q", "R", "r", "B", "b", "N", "n"].includes(piece)) {
