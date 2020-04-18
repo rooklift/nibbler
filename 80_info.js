@@ -585,7 +585,7 @@ function NewInfoHandler() {
 		return null;
 	};
 
-	ih.draw_arrows = function() {
+	ih.draw_arrows = function(specific_source = null) {
 
 		// This function also sets up the one_click_moves array.
 
@@ -599,6 +599,10 @@ function NewInfoHandler() {
 			return;
 		}
 
+		if (specific_source === Point(null)) {
+			specific_source = null;
+		}
+
 		context.lineWidth = config.arrow_width;
 		context.textAlign = "center";
 		context.textBaseline = "middle";
@@ -610,26 +614,39 @@ function NewInfoHandler() {
 		let info_list = this.sorted();
 
 		if (info_list.length > 0) {
+
+			let best_move = info_list[0];		// Note that, since we may filter the list, it might not contain best_move later.
+
+			if (specific_source) {
+
+				let new_info_list = info_list.filter(o => o.move.slice(0, 2) === specific_source.s);
+
+				if (new_info_list.length > 0) {
+					info_list = new_info_list;
+				} else {
+					specific_source = null;
+				}
+			}
 			
 			for (let i = 0; i < info_list.length; i++) {
 
 				let good_u = typeof info_list[i].u === "number" && info_list[i].u < config.uncertainty_cutoff;
 				let good_n = typeof info_list[i].n === "number" && info_list[i].n > 0;
 
-				if (i === 0 || (good_u && good_n)) {
+				if (specific_source || i === 0 || (good_u && good_n)) {
 
 					let [x1, y1] = XY(info_list[i].move.slice(0, 2));
 					let [x2, y2] = XY(info_list[i].move.slice(2, 4));
 
 					let loss = 0;
 
-					if (typeof info_list[0].q === "number" && typeof info_list[i].q === "number") {
-						loss = info_list[0].value() - info_list[i].value();
+					if (typeof best_move.q === "number" && typeof info_list[i].q === "number") {
+						loss = best_move.value() - info_list[i].value();
 					}
 
 					let colour;
 
-					if (i === 0) {
+					if (info_list[i] === best_move) {
 						colour = config.best_colour;
 					} else if (loss > config.terrible_move_threshold) {
 						colour = config.terrible_colour;
@@ -671,7 +688,9 @@ function NewInfoHandler() {
 
 					if (normal_castling_flag) {
 						if (!this.one_click_moves[x2 + x_head_adjustment][y2]) {
-							this.one_click_moves[x2 + x_head_adjustment][y2] = info_list[i].move;
+							if (!specific_source) {
+								this.one_click_moves[x2 + x_head_adjustment][y2] = info_list[i].move;
+							}
 							heads.push({
 								colour: colour,
 								x2: x2 + x_head_adjustment,
@@ -681,7 +700,9 @@ function NewInfoHandler() {
 						}
 					} else {
 						if (!this.one_click_moves[x2][y2]) {
-							this.one_click_moves[x2][y2] = info_list[i].move;
+							if (!specific_source) {
+								this.one_click_moves[x2][y2] = info_list[i].move;
+							}
 							heads.push({
 								colour: colour,
 								x2: x2 + x_head_adjustment,

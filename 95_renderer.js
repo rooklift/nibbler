@@ -21,6 +21,10 @@ function NewRenderer() {
 	renderer.tick = 0;											// How many draw loops we've been through.
 	renderer.position_change_time = performance.now();			// Time of the last position change. Used for cooldown on hover draw.
 
+	renderer.mouse_point = null;
+	renderer.mouse_hang_point = null;
+	renderer.mouse_hang_start = performance.now();
+
 	// Some sync stuff...
 
 	renderer.leela_maybe_running = false;						// Whether we last sent "go" or "stop" to Leela.
@@ -1241,19 +1245,34 @@ function NewRenderer() {
 		}
 	};
 
-	renderer.mouse_point = function() {
+	renderer.set_mouse_point = function() {
+
+		let new_point = null;
+
 		let overlist = document.querySelectorAll(":hover");
 		for (let item of overlist) {
 			if (typeof item.id === "string" && item.id.startsWith("overlay_")) {
 				let p = Point(item.id.slice(8));
 				if (p !== Point(null)) {
-					return p;
+					new_point = p;
+					break;
 				} else {
-					return null;
+					new_point = null;
+					break;
 				}
 			}
 		}
-		return null;
+
+		if (new_point !== this.mouse_point) {
+			this.mouse_point = new_point;
+			this.mouse_hang_point = null;
+			this.mouse_hang_start = performance.now();
+		} else {
+			if (performance.now() - this.mouse_hang_start > 1000) {
+				this.mouse_hang_point = this.mouse_point;
+			}
+		}
+
 	};
 
 	// --------------------------------------------------------------------------------------------
@@ -1490,12 +1509,12 @@ function NewRenderer() {
 			canvas.style.outline = "none";
 			this.draw_move_in_canvas();
 			this.draw_enemies_in_canvas();
-			this.info_handler.draw_arrows();
+			this.info_handler.draw_arrows(this.mouse_hang_point);
 			this.draw_friendlies_in_table();
 		}
 
 		this.info_handler.draw_infobox(		// The info handler needs a bit more state than I'd like, but what can you do.
-			this.mouse_point(),
+			this.mouse_point,
 			this.active_square,
 			this.leela_maybe_running,
 			this.nogo_reason,
@@ -1509,6 +1528,7 @@ function NewRenderer() {
 
 	renderer.spin = function() {
 		this.tick++;
+		this.set_mouse_point();
 		this.draw();
 		if (config.versus !== "" && Math.max(this.engine.readyok_required, this.engine.bestmove_required) > 10) {
 			this.set_versus("");		// Stop the engine if we get too far out of sync. See issue #57.
