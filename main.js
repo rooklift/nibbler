@@ -871,6 +871,18 @@ function menu_build() {
 								});
 							}
 						},
+						{
+							label: "Final position",
+							type: "checkbox",
+							checked: config.hover_method === 2,
+							click: () => {
+								set_checks("Analysis", "Draw PV method", "Final position");
+								win.webContents.send("set", {
+									key: "hover_method",
+									value: 2
+								});
+							}
+						},
 					]
 				},
 				{
