@@ -1268,7 +1268,7 @@ function NewRenderer() {
 			this.mouse_hang_point = null;
 			this.mouse_hang_start = performance.now();
 		} else {
-			if (performance.now() - this.mouse_hang_start > 1000) {
+			if (performance.now() - this.mouse_hang_start > config.mouse_hang_ms) {
 				this.mouse_hang_point = this.mouse_point;
 			}
 		}

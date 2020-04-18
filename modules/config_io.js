@@ -74,6 +74,7 @@ exports.defaults = {
 	"sam_q_plus_u": false,
 	"update_delay": 170,
 	"animate_delay_multiplier": 4,
+	"mouse_hang_ms": 1000,
 	"search_nodes": null,
 	"autoplay": true,
 	"save_enabled": false,
