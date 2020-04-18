@@ -21,9 +21,9 @@ function NewRenderer() {
 	renderer.tick = 0;											// How many draw loops we've been through.
 	renderer.position_change_time = performance.now();			// Time of the last position change. Used for cooldown on hover draw.
 
-	renderer.mouse_point = null;
-	renderer.mouse_hang_point = null;
-	renderer.mouse_hang_start = performance.now();
+	renderer.mouse_point = null;								// The point the mouse is hovering over, right now.
+	renderer.mouse_point_hover_start = performance.now();		// How long the mouse has been hovering over that point.
+	renderer.hover_square = null;								// Once the mouse has been hovering over a point for long enough, this is set.
 
 	// Some sync stuff...
 
@@ -1265,11 +1265,11 @@ function NewRenderer() {
 
 		if (new_point !== this.mouse_point) {
 			this.mouse_point = new_point;
-			this.mouse_hang_point = null;
-			this.mouse_hang_start = performance.now();
+			this.hover_square = null;
+			this.mouse_point_hover_start = performance.now();
 		} else {
-			if (performance.now() - this.mouse_hang_start > config.mouse_hang_ms) {
-				this.mouse_hang_point = this.mouse_point;
+			if (performance.now() - this.mouse_point_hover_start > config.mouse_hang_ms) {
+				this.hover_square = this.mouse_point;
 			}
 		}
 
@@ -1509,7 +1509,7 @@ function NewRenderer() {
 			canvas.style.outline = "none";
 			this.draw_move_in_canvas();
 			this.draw_enemies_in_canvas();
-			this.info_handler.draw_arrows(this.mouse_hang_point);
+			this.info_handler.draw_arrows(this.hover_square);
 			this.draw_friendlies_in_table();
 		}
 
