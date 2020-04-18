@@ -473,13 +473,13 @@ function menu_build() {
 					}
 				},
 				{
-					label: "...with mouseover explosion",
+					label: "...with click explosion",
 					type: "checkbox",
-					checked: config.hover_piece_arrows,
+					checked: config.arrow_explosion,
 					click: () => {
 						win.webContents.send("call", {
 							fn: "toggle",
-							args: ["hover_piece_arrows"],
+							args: ["arrow_explosion"],
 						});
 					}
 				},
