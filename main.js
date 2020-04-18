@@ -473,13 +473,13 @@ function menu_build() {
 					}
 				},
 				{
-					label: "...with clickjacking",
+					label: "...with click spotlight",
 					type: "checkbox",
-					checked: config.clickjacking,
+					checked: config.click_spotlight,
 					click: () => {
 						win.webContents.send("call", {
 							fn: "toggle",
-							args: ["clickjacking"],
+							args: ["click_spotlight"],
 						});
 					}
 				},
