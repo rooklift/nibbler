@@ -2032,7 +2032,7 @@ function menu_build() {
 							value: true,
 						});
 					}
-				}
+				},
 				{
 					label: `Resave ${config_io.filename}`,
 					click: () => {
