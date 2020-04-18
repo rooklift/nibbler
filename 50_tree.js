@@ -138,17 +138,17 @@ const node_prototype = {
 
 	nice_move: function() {
 
-		if (this.nice_move_cache) {
-			return this.nice_move_cache;
+		if (this.__nice_move) {
+			return this.__nice_move;
 		}
 
 		if (!this.move || !this.parent) {
-			this.nice_move_cache = "??";
+			this.__nice_move = "??";
 		} else {
-			this.nice_move_cache = this.parent.get_board().nice_string(this.move);
+			this.__nice_move = this.parent.get_board().nice_string(this.move);
 		}
 
-		return this.nice_move_cache;
+		return this.__nice_move;
 	},
 
 	token: function() {
@@ -213,6 +213,7 @@ function NewNode(parent, move) {		// Args are null for root only.
 	node.__position = null;
 	node.parent = parent;
 	node.move = move;					// Think of this as the move that led to the position associated with node.
+	node.__nice_move = null;
 	node.children = [];
 
 	tree_version++;
@@ -259,6 +260,7 @@ function __destroy_tree(node) {
 		node.parent = null;
 		node.__position = null;
 		node.move = null;
+		node.__nice_move = null;
 		let child = node.children[0];
 		node.children = null;
 		node = child;
@@ -267,6 +269,7 @@ function __destroy_tree(node) {
 	node.parent = null;
 	node.__position = null;
 	node.move = null;
+	node.__nice_move = null;
 
 	for (let child of node.children) {
 		__destroy_tree(child);
