@@ -12,7 +12,7 @@ function generate_movegen_sliders() {
 
 	// Rooks have 4 sliders...
 
-	movegen_sliders["R"] = [];
+	movegen_sliders.R = [];
 
 	for (let xstep of [-1, 0, 1]) {
 
@@ -33,7 +33,7 @@ function generate_movegen_sliders() {
 
 				if (dx < -7 || dy < -7 || dx > 7 || dy > 7) {
 
-					movegen_sliders["R"].push(slider);
+					movegen_sliders.R.push(slider);
 					break;
 				}
 
@@ -44,7 +44,7 @@ function generate_movegen_sliders() {
 
 	// Bishops have 4 sliders...
 
-	movegen_sliders["B"] = [];
+	movegen_sliders.B = [];
 
 	for (let xstep of [-1, 1]) {
 
@@ -62,7 +62,7 @@ function generate_movegen_sliders() {
 
 				if (dx < -7 || dy < -7 || dx > 7 || dy > 7) {
 
-					movegen_sliders["B"].push(slider);
+					movegen_sliders.B.push(slider);
 					break;
 				}
 
@@ -73,38 +73,38 @@ function generate_movegen_sliders() {
 
 	// Queens are bishops mated with rooks...
 
-	movegen_sliders["Q"] = movegen_sliders["R"].concat(movegen_sliders["B"]);
+	movegen_sliders.Q = movegen_sliders.R.concat(movegen_sliders.B);
 
 	// Knights have 8 sliders of length 1...
 
-	movegen_sliders["N"] = [];
-	movegen_sliders["N"].push([[-2, -1]]);
-	movegen_sliders["N"].push([[-1, -2]]);
-	movegen_sliders["N"].push([[ 1, -2]]);
-	movegen_sliders["N"].push([[ 2, -1]]);
-	movegen_sliders["N"].push([[-2,  1]]);
-	movegen_sliders["N"].push([[-1,  2]]);
-	movegen_sliders["N"].push([[ 1,  2]]);
-	movegen_sliders["N"].push([[ 2,  1]]);
+	movegen_sliders.N = [];
+	movegen_sliders.N.push([[-2, -1]]);
+	movegen_sliders.N.push([[-1, -2]]);
+	movegen_sliders.N.push([[ 1, -2]]);
+	movegen_sliders.N.push([[ 2, -1]]);
+	movegen_sliders.N.push([[-2,  1]]);
+	movegen_sliders.N.push([[-1,  2]]);
+	movegen_sliders.N.push([[ 1,  2]]);
+	movegen_sliders.N.push([[ 2,  1]]);
 
 	// Black and White sliders for these 4 pieces are identical...
 
-	movegen_sliders["q"] = movegen_sliders["Q"];
-	movegen_sliders["r"] = movegen_sliders["R"];
-	movegen_sliders["b"] = movegen_sliders["B"];
-	movegen_sliders["n"] = movegen_sliders["N"];
+	movegen_sliders.q = movegen_sliders.Q;
+	movegen_sliders.r = movegen_sliders.R;
+	movegen_sliders.b = movegen_sliders.B;
+	movegen_sliders.n = movegen_sliders.N;
 
 	// Pawns...
 
-	movegen_sliders["P"] = [];
-	movegen_sliders["P"].push([[0, -1], [0, -2]]);
-	movegen_sliders["P"].push([[-1, -1]]);
-	movegen_sliders["P"].push([[1, -1]]);
+	movegen_sliders.P = [];
+	movegen_sliders.P.push([[0, -1], [0, -2]]);
+	movegen_sliders.P.push([[-1, -1]]);
+	movegen_sliders.P.push([[1, -1]]);
 
-	movegen_sliders["p"] = [];
-	movegen_sliders["p"].push([[0, 1], [0, 2]]);
-	movegen_sliders["p"].push([[-1, 1]]);
-	movegen_sliders["p"].push([[1, 1]]);
+	movegen_sliders.p = [];
+	movegen_sliders.p.push([[0, 1], [0, 2]]);
+	movegen_sliders.p.push([[-1, 1]]);
+	movegen_sliders.p.push([[1, 1]]);
 }
 
 generate_movegen_sliders();
