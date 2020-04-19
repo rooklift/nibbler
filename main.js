@@ -2144,7 +2144,16 @@ function menu_build() {
 									win.webContents.executeJavaScript("process.hang()");
 								}, 500);
 							}
-						}
+						},
+						{
+							label: "Perft",
+							click: () => {
+								win.webContents.executeJavaScript("hub.engine.send('stop')");
+								setTimeout(() => {
+									win.webContents.executeJavaScript("Perft('1nr1nk1r/1b5B/p1p1qp2/b2pp1pP/3P2P1/P3P2N/1Pp2P2/BNR2KQR w CHch g6 0 1', 5)");
+								}, 500);
+							}
+						},
 					]
 				},
 			]
