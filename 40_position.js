@@ -931,8 +931,6 @@ const position_prototype = {
 						// blocked. Note that the test is "blocked / offboard". The test is not "is illegal" - sometimes one
 						// move will be illegal but a move further down the slider will be legal - e.g. if it blocks a check.
 
-						let end_slide = false;
-
 						for (let [dx, dy] of slider) {
 
 							let x2 = x + dx;
@@ -947,8 +945,6 @@ const position_prototype = {
 
 							if (dest_colour === this.active) {				// No move further along the slider will be legal.
 								break;
-							} else if (dest_colour !== "") {				// No move further along the slider will be legal, but this one might be.
-								end_slide = true;
 							}
 
 							let move = source.s + dest.s;
@@ -972,7 +968,7 @@ const position_prototype = {
 								}
 							}
 
-							if (end_slide) {
+							if (dest_colour !== "") {						// No move further along the slider will be legal.
 								break;
 							}
 						}
