@@ -429,7 +429,8 @@ const position_prototype = {
 		// q1nnkbbr/p1pppppp/8/1P6/8/3NN3/1PPPPPPP/rR2KBBR w BHh - 0 5
 
 		let tmp = this.move(Point(x1, y1).s + Point(x2, y2).s);
-		if (tmp.can_capture_king()) {
+
+		if (tmp.attacked(Point(king_target_x, y1), this.active)) {
 			return "king ends in check";
 		}
 
@@ -453,8 +454,8 @@ const position_prototype = {
 
 	can_capture_king: function() {
 
-		// Can the side to move capture the opponent's king?
-		// Helper function for illegal() etc.
+		// Can the side to move capture the opponent's king? Helper function for illegal() etc.
+		// But this is slow, do not use when king location is known - just call attacked() instead.
 
 		let kch = this.active === "w" ? "k" : "K";			// i.e. the INACTIVE king
 		let opp_colour = this.active === "w" ? "b" : "w";
