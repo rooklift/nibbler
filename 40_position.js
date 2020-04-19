@@ -50,35 +50,31 @@ const position_prototype = {
 		// Update castling info...
 
 		if (y1 === 7 && ret.state[x1][y1] === "K") {
-			for (let ch of "ABCDEFGH") {
-				ret.castling = ReplaceAll(ret.castling, ch, "");
-			}
+			ret.__delete_white_castling();
 		}
 
 		if (y1 === 0 && ret.state[x1][y1] === "k") {
-			for (let ch of "abcdefgh") {
-				ret.castling = ReplaceAll(ret.castling, ch, "");
-			}
+			ret.__delete_black_castling();
 		}
 
 		if (y1 === 7 && ret.state[x1][y1] === "R") {			// White rook moved.
 			let ch = String.fromCharCode(x1 + 65);
-			ret.castling = ReplaceAll(ret.castling, ch, "");
+			ret.__delete_castling_char(ch);
 		}
 
 		if (y2 === 7 && ret.state[x2][y2] === "R") {			// White rook was captured (or castled onto).
 			let ch = String.fromCharCode(x2 + 65);
-			ret.castling = ReplaceAll(ret.castling, ch, "");
+			ret.__delete_castling_char(ch);
 		}
 
 		if (y1 === 0 && ret.state[x1][y1] === "r") {			// Black rook moved.
 			let ch = String.fromCharCode(x1 + 97);
-			ret.castling = ReplaceAll(ret.castling, ch, "");
+			ret.__delete_castling_char(ch);
 		}
 
 		if (y2 === 0 && ret.state[x2][y2] === "r") {			// Black rook was captured (or castled onto).
 			let ch = String.fromCharCode(x2 + 97);
-			ret.castling = ReplaceAll(ret.castling, ch, "");
+			ret.__delete_castling_char(ch);
 		}
 
 		// Update halfmove and fullmove...
@@ -157,6 +153,36 @@ const position_prototype = {
 		ret.active = white_flag ? "b" : "w";
 
 		return ret;
+	},
+
+	__delete_castling_char: function(delete_char) {
+		let new_rights = "";
+		for (let ch of this.castling) {
+			if (ch !== delete_char) {
+				new_rights += ch;
+			}
+		}
+		this.castling = new_rights;
+	},
+
+	__delete_white_castling: function() {
+		let new_rights = "";
+		for (let ch of this.castling) {
+			if ("a" <= ch && ch <= "h") {		// i.e. black survives
+				new_rights += ch;
+			}
+		}
+		this.castling = new_rights;
+	},
+
+	__delete_black_castling: function() {
+		let new_rights = "";
+		for (let ch of this.castling) {
+			if ("A" <= ch && ch <= "H") {		// i.e. white survives
+				new_rights += ch;
+			}
+		}
+		this.castling = new_rights;
 	},
 
 	illegal: function(s) {
