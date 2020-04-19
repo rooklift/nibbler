@@ -1,7 +1,15 @@
 "use strict";
 
-const alert = require("./modules/alert");
 const electron = require("electron");
+
+// The docs are a bit vague but it seems there's a limited timeframe
+// in which command line flags can be passed, so do this ASAP...
+
+electron.app.commandLine.appendSwitch("js-flags", "--expose_gc");
+
+// Other requires...
+
+const alert = require("./modules/alert");
 const config_io = require("./modules/config_io");
 const custom_uci = require("./modules/custom_uci");
 const messages = require("./modules/messages");
@@ -16,14 +24,10 @@ const url = require("url");
 const save_dialog = electron.dialog.showSaveDialogSync || electron.dialog.showSaveDialog;
 const open_dialog = electron.dialog.showOpenDialogSync || electron.dialog.showOpenDialog;
 
-// We do manual GC firing sometimes...
-
-electron.app.commandLine.appendSwitch("js-flags", "--expose_gc");
-
 // Note that as the user adjusts menu items, our copy of the config will become
 // out of date. The renderer is responsible for having an up-to-date copy.
 
-let config = config_io.load();		// Do this first, it's a needed global.
+let config = config_io.load();		// Do this early, it's a needed global.
 
 let win;
 let menu = menu_build();
