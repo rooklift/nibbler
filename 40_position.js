@@ -898,9 +898,14 @@ const position_prototype = {
 	},
 
 	colour: function(point) {
-		if (this.is_white(point)) return "w";
-		if (this.is_black(point)) return "b";
-		return "";
+		let piece = this.piece(point);
+		if (piece === "") {
+			return "";
+		}
+		if (["K", "Q", "R", "B", "N", "P"].includes(piece)) {
+			return "w";
+		}
+		return "b";
 	},
 
 	same_colour: function(point1, point2) {
@@ -921,7 +926,7 @@ const position_prototype = {
 					continue;
 				}
 
-				let piece = this.piece(source);
+				let piece = this.state[x][y];
 
 				if (piece !== "K" && piece !== "k") {		// We don't include kings because castling is troublesome.
 
@@ -1220,15 +1225,24 @@ function NewPosition(state = null, active = "w", castling = "", enpassant = null
 
 	let p = Object.create(position_prototype);
 
-	p.state = [];					// top-left is 0,0
+	p.state = [
+		["","","","","","","",""],
+		["","","","","","","",""],
+		["","","","","","","",""],
+		["","","","","","","",""],
+		["","","","","","","",""],
+		["","","","","","","",""],
+		["","","","","","","",""],
+		["","","","","","","",""],
+	]
 
-	for (let x = 0; x < 8; x++) {
-		p.state.push([]);
-		for (let y = 0; y < 8; y++) {
-			if (state) {
-				p.state[x].push(state[x][y]);
-			} else {
-				p.state[x].push("");
+	if (state) {
+		for (let x = 0; x < 8; x++) {
+			for (let y = 0; y < 8; y++) {
+				let piece = state[x][y];
+				if (piece !== "") {
+					p.state[x][y] = piece;
+				}
 			}
 		}
 	}
