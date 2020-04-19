@@ -2057,6 +2057,59 @@ function menu_build() {
 					type: "separator"
 				},
 				{
+					label: "Draw rate",
+					submenu: [
+						{
+							label: "Frenetic",
+							type: "checkbox",
+							checked: config.update_delay === 25,
+							click: () => {
+								set_checks("Dev", "Draw rate", "Frenetic");
+								win.webContents.send("set", {
+									key: "update_delay",
+									value: 25,
+								});
+							}
+						},
+						{
+							label: "Fast",
+							type: "checkbox",
+							checked: config.update_delay === 60,
+							click: () => {
+								set_checks("Dev", "Draw rate", "Fast");
+								win.webContents.send("set", {
+									key: "update_delay",
+									value: 60,
+								});
+							}
+						},
+						{
+							label: "Normal",
+							type: "checkbox",
+							checked: config.update_delay === 125,
+							click: () => {
+								set_checks("Dev", "Draw rate", "Normal");
+								win.webContents.send("set", {
+									key: "update_delay",
+									value: 125,
+								});
+							}
+						},
+						{
+							label: "Relaxed",
+							type: "checkbox",
+							checked: config.update_delay === 170,
+							click: () => {
+								set_checks("Dev", "Draw rate", "Relaxed");
+								win.webContents.send("set", {
+									key: "update_delay",
+									value: 170,
+								});
+							}
+						},
+					]
+				},
+				{
 					label: "Fire GC",
 					click: () => {
 						win.webContents.send("call", "fire_gc");
