@@ -153,7 +153,7 @@ function OppositeColour(s) {
 	return "";
 }
 
-function ReplaceAll(s, search, replace) {
+function ReplaceAll(s, search, replace) {		// Fairly slow.
 	return s.split(search).join(replace);
 }
 
