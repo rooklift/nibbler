@@ -73,7 +73,7 @@ exports.defaults = {
 	"sam_d": false,
 	"sam_u": false,
 	"sam_q_plus_u": false,
-	"update_delay": 125,
+	"update_delay": 170,
 	"animate_delay_multiplier": 4,
 	"search_nodes": null,
 	"autoplay": true,
