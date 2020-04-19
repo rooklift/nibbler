@@ -858,18 +858,12 @@ const position_prototype = {
 
 	is_white: function(point) {
 		let piece = this.piece(point);
-		if (piece === "") {
-			return false;
-		}
-		return ["K", "Q", "R", "B", "N", "P"].includes(piece);
+		return ["K", "Q", "R", "B", "N", "P"].includes(piece);		// Can't do "KQRBNP".includes() as that catches "".
 	},
 
 	is_black: function(point) {
 		let piece = this.piece(point);
-		if (piece === "") {
-			return false;
-		}
-		return ["k", "q", "r", "b", "n", "p"].includes(piece);
+		return ["k", "q", "r", "b", "n", "p"].includes(piece);		// Can't do "kqrbnp".includes() as that catches "".
 	},
 
 	is_empty: function(point) {
