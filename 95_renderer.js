@@ -1350,7 +1350,7 @@ function NewRenderer() {
 
 	renderer.hoverdraw = function() {
 
-		if (!config.hover_pv_draw) {
+		if (!config.hover_draw) {
 			return false;
 		}
 
@@ -1379,9 +1379,9 @@ function NewRenderer() {
 			return false;
 		}
 
-		if (config.hover_pv_method === 0) {
+		if (config.hover_method === 0) {
 			return this.hoverdraw_animate(div_index, info);			// Sets this.hoverdraw_div
-		} else if (config.hover_pv_method === 1 || config.hover_pv_method === 2) {
+		} else if (config.hover_method === 1 || config.hover_method === 2) {
 			return this.hoverdraw_single(div_index, overlist);		// Sets this.hoverdraw_div
 		} else {
 			return false;											// Caller must set this.hoverdraw_div to -1
@@ -1425,9 +1425,9 @@ function NewRenderer() {
 
 		let moves;
 
-		if (config.hover_pv_method === 1) {
+		if (config.hover_method === 1) {
 			moves = this.info_handler.moves_from_click_n(parseInt(hover_item.id.slice("infobox_".length), 10));
-		} else if (config.hover_pv_method === 2) {
+		} else if (config.hover_method === 2) {
 			moves = this.info_handler.entire_pv_from_click_n(parseInt(hover_item.id.slice("infobox_".length), 10));
 		}
 
