@@ -1234,7 +1234,7 @@ function NewPosition(state = null, active = "w", castling = "", enpassant = null
 		["","","","","","","",""],
 		["","","","","","","",""],
 		["","","","","","","",""],
-	]
+	];
 
 	if (state) {
 		for (let x = 0; x < 8; x++) {

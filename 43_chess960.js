@@ -27,7 +27,7 @@ function c960_arrangement(n) {
 				}
 			}
 		}
-	}
+	};
 
 	// Place bishops in final positions...
 
