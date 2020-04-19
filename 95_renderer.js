@@ -20,7 +20,6 @@ function NewRenderer() {
 	renderer.hoverdraw_depth = 0;
 	renderer.tick = 0;											// How many draw loops we've been through.
 	renderer.position_change_time = performance.now();			// Time of the last position change. Used for cooldown on hover draw.
-	renderer.mouse_point = null;								// The point the mouse is hovering over, right now.
 
 	// Some sync stuff...
 
@@ -1246,37 +1245,19 @@ function NewRenderer() {
 		}
 	};
 
-	renderer.set_mouse_point = function() {
-
-		let new_point = null;
-
+	renderer.mouse_point = function() {
 		let overlist = document.querySelectorAll(":hover");
 		for (let item of overlist) {
 			if (typeof item.id === "string" && item.id.startsWith("overlay_")) {
 				let p = Point(item.id.slice(8));
 				if (p !== Point(null)) {
-					new_point = p;
-					break;
+					return p;
 				} else {
-					new_point = null;
-					break;
+					return null;
 				}
 			}
 		}
-
-		// We used to also store some info about whether a point was 
-		// hovered over for a certain amount of time...
-
-		if (new_point !== this.mouse_point) {
-			this.mouse_point = new_point;
-		//	this.hover_square = null;
-		//	this.mouse_point_hover_start = performance.now();
-		}
-
-		//	if (performance.now() - this.mouse_point_hover_start >= 1000) {
-		//		this.hover_square = this.mouse_point;
-		//	}
-
+		return null;
 	};
 
 	// --------------------------------------------------------------------------------------------
@@ -1524,7 +1505,7 @@ function NewRenderer() {
 		}
 
 		this.info_handler.draw_infobox(		// The info handler needs a bit more state than I'd like, but what can you do.
-			this.mouse_point,
+			this.mouse_point(),
 			this.active_square,
 			this.leela_maybe_running,
 			this.nogo_reason,
@@ -1538,7 +1519,6 @@ function NewRenderer() {
 
 	renderer.spin = function() {
 		this.tick++;
-		this.set_mouse_point();
 		this.draw();
 		if (config.versus !== "" && Math.max(this.engine.readyok_required, this.engine.bestmove_required) > 10) {
 			this.set_versus("");		// Stop the engine if we get too far out of sync. See issue #57.
