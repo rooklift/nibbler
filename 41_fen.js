@@ -10,6 +10,12 @@ function LoadFEN(fen) {
 
 	let tokens = fen.split(" ").filter(s => s !== "");
 
+	if (tokens.length === 4) {
+		tokens.push("0");
+	}
+	if (tokens.length === 5) {
+		tokens.push("1");
+	}
 	if (tokens.length !== 6) {
 		throw "Invalid FEN - token count";
 	}
