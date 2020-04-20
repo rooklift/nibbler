@@ -709,7 +709,7 @@ function menu_build() {
 							type: "separator"
 						},
 						{
-							label: "Show N (%)",
+							label: "N - nodes (%)",
 							type: "checkbox",
 							checked: config.show_n,
 							click: () => {
@@ -720,7 +720,7 @@ function menu_build() {
 							}
 						},
 						{
-							label: "Show N (absolute)",
+							label: "N - nodes (absolute)",
 							type: "checkbox",
 							checked: config.show_n_abs,
 							click: () => {
@@ -731,18 +731,10 @@ function menu_build() {
 							}
 						},
 						{
-							label: "Show WDL",
-							type: "checkbox",
-							checked: config.show_wdl,
-							click: () => {
-								win.webContents.send("call", {
-									fn: "toggle",
-									args: ["show_wdl"],
-								});
-							}
+							type: "separator"
 						},
 						{
-							label: "Show P",
+							label: "P - policy",
 							type: "checkbox",
 							checked: config.show_p,
 							click: () => {
@@ -753,18 +745,7 @@ function menu_build() {
 							}
 						},
 						{
-							label: "Show M",
-							type: "checkbox",
-							checked: config.show_m,
-							click: () => {
-								win.webContents.send("call", {
-									fn: "toggle",
-									args: ["show_m"],
-								});
-							}
-						},
-						{
-							label: "Show V",
+							label: "V - static evaluation",
 							type: "checkbox",
 							checked: config.show_v,
 							click: () => {
@@ -775,7 +756,10 @@ function menu_build() {
 							}
 						},
 						{
-							label: "Show Q",
+							type: "separator"
+						},
+						{
+							label: "Q - evaluation",
 							type: "checkbox",
 							checked: config.show_q,
 							click: () => {
@@ -786,18 +770,7 @@ function menu_build() {
 							}
 						},
 						{
-							label: "Show D",
-							type: "checkbox",
-							checked: config.show_d,
-							click: () => {
-								win.webContents.send("call", {
-									fn: "toggle",
-									args: ["show_d"],
-								});
-							}
-						},
-						{
-							label: "Show U",
+							label: "U - uncertainty",
 							type: "checkbox",
 							checked: config.show_u,
 							click: () => {
@@ -808,13 +781,49 @@ function menu_build() {
 							}
 						},
 						{
-							label: "Show Q+U",
+							label: "Q+U",
 							type: "checkbox",
 							checked: config.show_q_plus_u,
 							click: () => {
 								win.webContents.send("call", {
 									fn: "toggle",
 									args: ["show_q_plus_u"],
+								});
+							}
+						},
+						{
+							type: "separator"
+						},
+						{
+							label: "M - moves left",
+							type: "checkbox",
+							checked: config.show_m,
+							click: () => {
+								win.webContents.send("call", {
+									fn: "toggle",
+									args: ["show_m"],
+								});
+							}
+						},
+						{
+							label: "D - draw chance",
+							type: "checkbox",
+							checked: config.show_d,
+							click: () => {
+								win.webContents.send("call", {
+									fn: "toggle",
+									args: ["show_d"],
+								});
+							}
+						},
+						{
+							label: "WDL - win / draw / loss",
+							type: "checkbox",
+							checked: config.show_wdl,
+							click: () => {
+								win.webContents.send("call", {
+									fn: "toggle",
+									args: ["show_wdl"],
 								});
 							}
 						},

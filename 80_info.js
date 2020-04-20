@@ -863,23 +863,11 @@ const info_prototype = {
 
 		// Everything else...
 
-		if (opts.wdl) {
-			ret.push(`WDL: ${this.wdl}`);
-		}
-
 		if (opts.p) {
 			if (typeof this.p === "number" && this.p > 0) {
 				ret.push(`P: ${this.p}%`);
 			} else {
 				ret.push(`P: ?`);
-			}
-		}
-
-		if (opts.m) {
-			if (typeof this.m === "number" && this.m > 0) {
-				ret.push(`M: ${this.m.toFixed(1)}`);
-			} else {
-				ret.push(`M: 0`);
 			}
 		}
 
@@ -899,14 +887,6 @@ const info_prototype = {
 			}
 		}
 
-		if (opts.d) {
-			if (typeof this.d === "number") {
-				ret.push(`D: ${this.d.toFixed(3)}`);
-			} else {
-				ret.push(`D: ?`);
-			}
-		}
-
 		if (opts.u) {
 			if (typeof this.u === "number" && this.n > 0) {						// Checking n is correct.
 				ret.push(`U: ${this.u.toFixed(3)}`);
@@ -921,6 +901,26 @@ const info_prototype = {
 			} else {
 				ret.push(`Q+U: ?`);
 			}
+		}
+
+		if (opts.m) {
+			if (typeof this.m === "number" && this.m > 0) {
+				ret.push(`M: ${this.m.toFixed(1)}`);
+			} else {
+				ret.push(`M: 0`);
+			}
+		}
+
+		if (opts.d) {
+			if (typeof this.d === "number") {
+				ret.push(`D: ${this.d.toFixed(3)}`);
+			} else {
+				ret.push(`D: ?`);
+			}
+		}
+
+		if (opts.wdl) {
+			ret.push(`WDL: ${this.wdl}`);
 		}
 
 		return ret;
