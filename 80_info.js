@@ -225,24 +225,6 @@ function NewInfoHandler() {
 				move_info.m = tmp;
 			}
 
-		} else if (s.startsWith("info") && s.includes(" currmove ")) {		// This branch only taken if there isn't also a "pv"
-
-			// info depth 23 currmove b3d2 currmovenumber 20
-
-			let move = InfoVal(s, "currmove");
-			move = board.c960_castling_converter(move);
-
-			if (!this.table[move]) {								// Don't care if we don't already know something about this move.
-				return;
-			}
-
-			this.ever_received_info = true;
-			this.version++;
-
-			let tmp = parseInt(InfoVal(s, "currmovenumber"));
-			if (Number.isNaN(tmp) === false) {
-				this.table[move].currmovenumber = tmp;
-			}
 		}
 	};
 
@@ -274,13 +256,6 @@ function NewInfoHandler() {
 
 			// If we're running Leela we should have an N score, so getting here probably
 			// indicates it's some other engine.
-
-			// We can use currmovenumber for SF...
-
-			if (a.currmovenumber && b.currmovenumber) {					// 0 means not present.
-				if (a.currmovenumber > b.currmovenumber) return 1;
-				if (a.currmovenumber < b.currmovenumber) return -1;
-			}
 
 			// Lets say as a rule more recent data should sort higher than old data. This
 			// works fairly well when MultiPV is some low value.
@@ -932,7 +907,6 @@ function new_info(board, move) {
 	let info = Object.create(info_prototype);
 	info.board = board;
 	info.cp = 0;
-	info.currmovenumber = 0;		// 0 can be the "not present" value.
 	info.d = 0;
 	info.m = 0;
 	info.mate = 0;					// 0 can be the "not present" value.
