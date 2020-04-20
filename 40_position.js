@@ -1028,6 +1028,17 @@ const position_prototype = {
 		return this.movegen(true).length === 0;
 	},
 
+	c960_castling_converter: function(s) {
+
+		// Given some move s, convert it to the new Chess 960 castling format if needed.
+
+		if (s === "e1g1" && this.state[4][7] === "K" && this.castling.includes("G") === false) return "e1h1";
+		if (s === "e1c1" && this.state[4][7] === "K" && this.castling.includes("C") === false) return "e1a1";
+		if (s === "e8g8" && this.state[4][0] === "k" && this.castling.includes("g") === false) return "e8h8";
+		if (s === "e8c8" && this.state[4][0] === "k" && this.castling.includes("c") === false) return "e8a8";
+		return s;
+	},
+
 	nice_string: function(s) {
 
 		// Given some raw (but valid) UCI move string, return a nice human-readable

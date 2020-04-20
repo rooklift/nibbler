@@ -87,8 +87,9 @@ function NewInfoHandler() {
 			// info depth 13 seldepth 48 time 5603 nodes 67686 score cp 40 hashfull 204 nps 12080 tbhits 0 multipv 2
 			// pv d2d4 g8f6 c2c4 e7e6 g2g3 f8b4 c1d2 b4e7 g1f3 e8g8 d1c2 a7a6 f1g2 b7b5 e1g1 c8b7 f1c1 b7e4 c2d1 b5c4 c1c4 a6a5 d2e1 h7h6 c4c1 d7d6
 
-			let move = InfoVal(s, "pv");
 			let move_info;
+			let move = InfoVal(s, "pv");
+			move = board.c960_castling_converter(move);
 
 			if (this.table[move]) {						// We already have move info for this move.
 				move_info = this.table[move];
@@ -158,6 +159,11 @@ function NewInfoHandler() {
 				move_info.pv = new_pv;
 			}
 
+		} else if (s.startsWith("info") && s.includes(" currmove ")) {
+
+			this.ever_received_info = true;
+			this.version++;
+
 		} else if (s.startsWith("info string")) {
 
 			this.ever_received_info = true;
@@ -165,24 +171,9 @@ function NewInfoHandler() {
 
 			// info string d2d4  (293 ) N:   12845 (+121) (P: 20.10%) (Q:  0.09001) (D:  0.000) (U: 0.02410) (Q+U:  0.11411) (V:  0.1006)
 
-			let move = InfoVal(s, "string");
 			let move_info;
-
-			// We now (as of 1.1.6) expect castling moves to be in Chess960 format.
-			// Crude compatibility hack to ensure we can at least vaguely comprehend old-fashioned castling format...
-
-			if (move === "e1g1" && board.state[4][7] === "K" && board.castling.includes("G") === false) {
-				move  =  "e1h1";
-			}
-			if (move === "e1c1" && board.state[4][7] === "K" && board.castling.includes("C") === false) {
-				move  =  "e1a1";
-			}
-			if (move === "e8g8" && board.state[4][0] === "k" && board.castling.includes("g") === false) {
-				move  =  "e8h8";
-			}
-			if (move === "e8c8" && board.state[4][0] === "k" && board.castling.includes("c") === false) {
-				move  =  "e8a8";
-			}
+			let move = InfoVal(s, "string");
+			move = board.c960_castling_converter(move);
 
 			if (this.table[move]) {						// We already have move info for this move.
 				move_info = this.table[move];
