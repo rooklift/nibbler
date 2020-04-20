@@ -55,7 +55,7 @@ Leela forgets much of the evaluation if the position changes. To mitigate this, 
 
 Leela running out of RAM can be a problem if searches go on too long. You might like to use the UCI option `RamLimitMb` (see *advanced engine options*, above).
 
-Note that other UCI engines might run, but the results will be poor because we use `MultiPV`, which cripples traditional A/B engines.
+Note that other UCI engines might run (though they must be able to support Chess960 castling format) but the results will be poor because we use `MultiPV`, which cripples traditional A/B engines.
 
 # Thanks
 
