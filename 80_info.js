@@ -135,6 +135,7 @@ function NewInfoHandler() {
 
 			tmp = parseInt(InfoVal(s, "nodes"), 10);
 			if (Number.isNaN(tmp) === false) {
+				move_info.total_nodes = tmp;
 				this.nodes = tmp;
 			}
 
@@ -161,15 +162,14 @@ function NewInfoHandler() {
 			// While we could work around the presence of such bad-format moves,
 			// there are many complex ramifications.
 
-			if (new_pv.length === 0) {
-				new_pv = [move];
-			} else {
-				new_pv[0] = move;		// Partial mitigation for the above.
-			}
+			if (new_pv.length > 1) {	// Ignore info with missing PV (Stockfish likes to send these). 
 
-			if (CompareArrays(new_pv, move_info.pv) === false) {
-				move_info.nice_pv_cache = null;
-				move_info.pv = new_pv;
+				new_pv[0] = move;		// Partial mitigation for wrong-format castling.
+
+				if (CompareArrays(new_pv, move_info.pv) === false) {
+					move_info.nice_pv_cache = null;
+					move_info.pv = new_pv;
+				}
 			}
 
 		} else if (s.startsWith("info string")) {
@@ -282,13 +282,16 @@ function NewInfoHandler() {
 			// its most recently sent message should be its best move...
 
 			if (this.ever_received_multipv_2 === false) {
-				if (a.version < b.version) {
-					return 1;
-				}
-				if (a.version > b.version) {
-					return -1;
-				}
+				if (a.version < b.version) return 1;
+				if (a.version > b.version) return -1;
 			}
+
+			// If version and total_nodes are both lower/higher, it's safe to say that the
+			// info for one move is more up to date, and the other move is being neglected
+			// by the engine, because it's bad...
+
+			if (a.version < b.version && a.total_nodes < b.total_nodes) return 1;
+			if (a.version > b.version && a.total_nodes > b.total_nodes) return -1;
 
 			// Finally, sort by CP if needed...
 
@@ -947,6 +950,7 @@ function new_info(board, move) {
 	info.nice_pv_cache = null;
 	info.q = 0;
 	info.q_plus_u = 1;
+	info.total_nodes = 0;
 	info.u = 1;
 	info.v = null;					// Warning: v is allowed to be null if not known.
 	info.version = 0;
