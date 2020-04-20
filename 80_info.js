@@ -150,7 +150,12 @@ function NewInfoHandler() {
 			let new_pv = InfoPV(s);
 
 			// Note: if the engine isn't respecting Chess960 castling format, the PV
-			// may contain old-fashioned castling moves.
+			// may contain old-fashioned castling moves. This is (at time of writing)
+			// the only place in the code where we might store such bad-format moves,
+			// as everywhere else they are instantly converted.
+			//
+			// Converting these at reception would be a hassle, and also would cause
+			// future CompareArrays() calls (see below) to fail.
 
 			if (new_pv.length === 0) {
 				new_pv = [move];
@@ -159,7 +164,6 @@ function NewInfoHandler() {
 			if (CompareArrays(new_pv, move_info.pv) === false) {
 				move_info.nice_pv_cache = null;
 				move_info.pv = new_pv;
-				move_info.pv[0] = move;		// In case the [0] index got replaced by an old-fashioned castling move.
 			}
 
 		} else if (s.startsWith("info string")) {
@@ -747,7 +751,9 @@ const info_prototype = {
 	nice_pv: function() {
 
 		// Human readable moves. Since there's no real guarantee that our
-		// moves list is legal, we legality check them.
+		// moves list is legal, we legality check them. Also note that
+		// our stored PV might conceivably contain old-fashioned castling
+		// moves.
 
 		if (this.nice_pv_cache) {
 			return Array.from(this.nice_pv_cache);
@@ -762,6 +768,7 @@ const info_prototype = {
 		let ret = [];
 
 		for (let move of this.pv) {
+			move = tmp_board.c960_castling_converter(move);
 			if (tmp_board.illegal(move) !== "") {
 				break;
 			}
