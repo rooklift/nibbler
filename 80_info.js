@@ -768,7 +768,6 @@ const info_prototype = {
 		let ret = [];
 
 		for (let move of this.pv) {
-			move = tmp_board.c960_castling_converter(move);
 			if (tmp_board.illegal(move) !== "") {
 				break;
 			}

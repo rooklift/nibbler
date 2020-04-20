@@ -21,6 +21,8 @@ const position_prototype = {
 			return this;
 		}
 
+		s = this.c960_castling_converter(s);
+
 		let [x1, y1] = XY(s.slice(0, 2));
 		let [x2, y2] = XY(s.slice(2, 4));
 
@@ -192,6 +194,8 @@ const position_prototype = {
 		if (typeof s !== "string") {
 			return "not a string";
 		}
+
+		s = this.c960_castling_converter(s);
 
 		let [x1, y1] = XY(s.slice(0, 2));
 		let [x2, y2] = XY(s.slice(2, 4));
@@ -1047,6 +1051,8 @@ const position_prototype = {
 		// 
 		// Note that as of 1.1.6, all castling moves are expected to be king-onto-rook,
 		// that is, Chess960 format.
+
+		s = this.c960_castling_converter(s);
 
 		let source = Point(s.slice(0, 2));
 		let dest = Point(s.slice(2, 4));

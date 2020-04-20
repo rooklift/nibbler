@@ -168,18 +168,7 @@ function NewRenderer() {
 
 		// First deal with old-school castling in Standard Chess...
 
-		if (s === "e1g1" && board.state[4][7] === "K" && board.castling.includes("G") === false) {
-			s  =  "e1h1";
-		}
-		if (s === "e1c1" && board.state[4][7] === "K" && board.castling.includes("C") === false) {
-			s  =  "e1a1";
-		}
-		if (s === "e8g8" && board.state[4][0] === "k" && board.castling.includes("g") === false) {
-			s  =  "e8h8";
-		}
-		if (s === "e8c8" && board.state[4][0] === "k" && board.castling.includes("c") === false) {
-			s  =  "e8a8";
-		}
+		s = board.c960_castling_converter(s);
 
 		// If a promotion character is required and not present, show the promotion chooser and return
 		// without committing to anything.
@@ -1441,7 +1430,6 @@ function NewRenderer() {
 	renderer.draw_fantasy_from_moves = function(moves) {
 
 		// Don't assume moves is an array of legal moves, or even an array.
-		// Note that it might contain old-fashioned castling moves.
 
 		if (Array.isArray(moves) === false) {
 			return false;
@@ -1450,7 +1438,6 @@ function NewRenderer() {
 		let board = this.node.get_board();
 
 		for (let move of moves) {
-			move = board.c960_castling_converter(move);
 			let illegal_reason = board.illegal(move);
 			if (illegal_reason !== "") {
 				return false;
