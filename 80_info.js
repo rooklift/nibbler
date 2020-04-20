@@ -102,6 +102,7 @@ function NewInfoHandler() {
 				this.table[move] = move_info;
 			}
 
+			move_info.version = this.version;
 			move_info.wdl = InfoWDL(s);
 
 			let tmp;
@@ -194,6 +195,8 @@ function NewInfoHandler() {
 				this.table[move] = move_info;
 			}
 
+			move_info.version = this.version;
+
 			let tmp;
 
 			tmp = parseInt(InfoVal(s, "N:"), 10);
@@ -275,9 +278,17 @@ function NewInfoHandler() {
 			if (a.n > b.n) return -1;
 
 			// If we're running Leela we should have an N score, so getting here probably
-			// indicates it's some other engine.
+			// indicates it's some other engine. If it isn't respecting MultiPV, that means
+			// its most recently sent message should be its best move...
 
-			// TODO - sort by age of data somehow.
+			if (this.ever_received_multipv_2 === false) {
+				if (a.version < b.version) {
+					return 1;
+				}
+				if (a.version > b.version) {
+					return -1;
+				}
+			}
 
 			// Finally, sort by CP if needed...
 
@@ -938,6 +949,7 @@ function new_info(board, move) {
 	info.q_plus_u = 1;
 	info.u = 1;
 	info.v = null;					// Warning: v is allowed to be null if not known.
+	info.version = 0;
 	info.wdl = "??";
 	return info;
 }
