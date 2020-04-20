@@ -1,12 +1,12 @@
 "use strict";
 
 
-//		Note that ALL CASTLING MOVES are expected to be in format KING-TO-ROOK
+//		Note that ALL CASTLING MOVES are expected to be in format KING-TO-ROOK (e.g. e1h1).
 //		That is, only Chess960 format is allowed.
 //
-//		There are awkward ramifications if we allowed one move to have two
-//		representations, so we don't. We either convert old-format moves to
-//		new-format as soon as we receive them, or we treat them as illegal.
+//		There are awkward ramifications if we allowed one move to have two representations,
+//		so we don't. We either convert old-format moves to new-format as soon as we receive
+//		them, or we treat them as illegal.
 
 
 const position_prototype = {
