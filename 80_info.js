@@ -134,7 +134,6 @@ function NewInfoHandler() {
 
 			tmp = parseInt(InfoVal(s, "nodes"), 10);
 			if (Number.isNaN(tmp) === false) {
-				move_info.total_nodes = tmp;
 				this.nodes = tmp;
 			}
 
@@ -257,11 +256,7 @@ function NewInfoHandler() {
 			// If we're running Leela we should have an N score, so getting here probably
 			// indicates it's some other engine.
 
-			// Lets say as a rule more recent data should sort higher than old data. This
-			// works fairly well when MultiPV is some low value.
-
-			if (a.total_nodes < b.total_nodes) return 1;
-			if (a.total_nodes > b.total_nodes) return -1;
+			// TODO - sort by age of data somehow.
 
 			// Finally, sort by CP if needed...
 
@@ -918,7 +913,6 @@ function new_info(board, move) {
 	info.nice_pv_cache = null;
 	info.q = 0;
 	info.q_plus_u = 1;
-	info.total_nodes = 0;			// Nodes of the whole search. Useful for knowing the age of the data.
 	info.u = 1;
 	info.v = null;					// Warning: v is allowed to be null if not known.
 	info.wdl = "??";
