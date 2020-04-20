@@ -89,7 +89,7 @@ function NewInfoHandler() {
 
 			let move_info;
 			let move = InfoVal(s, "pv");
-			// move = board.c960_castling_converter(move);
+			move = board.c960_castling_converter(move);
 
 			if (this.table[move]) {						// We already have move info for this move.
 				move_info = this.table[move];
@@ -164,8 +164,6 @@ function NewInfoHandler() {
 			this.ever_received_info = true;
 			this.version++;
 
-
-
 		} else if (s.startsWith("info string")) {
 
 			this.ever_received_info = true;
@@ -174,8 +172,8 @@ function NewInfoHandler() {
 			// info string d2d4  (293 ) N:   12845 (+121) (P: 20.10%) (Q:  0.09001) (D:  0.000) (U: 0.02410) (Q+U:  0.11411) (V:  0.1006)
 
 			let move_info;
-			let move = InfoVal(s, "pv");
-			// move = board.c960_castling_converter(move);
+			let move = InfoVal(s, "string");
+			move = board.c960_castling_converter(move);
 
 			if (this.table[move]) {						// We already have move info for this move.
 				move_info = this.table[move];
