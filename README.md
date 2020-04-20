@@ -27,14 +27,6 @@ Some Windows and Linux standalone releases are uploaded to the [Releases](https:
 
 Running Nibbler from source requires Electron, but has no other dependencies. If you have Electron installed (e.g. `npm install -g electron`) you can likely enter the Nibbler directory, then do `electron .` to run it. This is mostly tested with Electron 5, but older and newer versions may work too.
 
-# Net recommendations
-
-Lc0 is unusual in that you must select a neural net to use.
-
-* For CPU or slowish graphics cards I recommend [LD2](https://lc0.org/ld2)
-* For fast graphics cards I recommend [42850](http://lczero.org/get_network?sha=00af53b081e80147172e6f281c01daf5ca19ada173321438914c730370aa4267)
-* For very long searches (on fast cards) I recommend [J13-410](https://github.com/jhorthos/lczero-training/wiki/Leela-Training) until the T60 nets become stronger
-
 # Aesthetic adjustments
 
 As well as the menu options, various aesthetic adjustments are possible in the `config.json` file, which can be found via the App menu. For example, board colour can be changed.
