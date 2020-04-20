@@ -1441,6 +1441,7 @@ function NewRenderer() {
 	renderer.draw_fantasy_from_moves = function(moves) {
 
 		// Don't assume moves is an array of legal moves, or even an array.
+		// Note that it might contain old-fashioned castling moves.
 
 		if (Array.isArray(moves) === false) {
 			return false;
@@ -1449,6 +1450,7 @@ function NewRenderer() {
 		let board = this.node.get_board();
 
 		for (let move of moves) {
+			move = board.c960_castling_converter(move);
 			let illegal_reason = board.illegal(move);
 			if (illegal_reason !== "") {
 				return false;
