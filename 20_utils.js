@@ -391,8 +391,8 @@ function RandChoice(arr) {
 	return arr[RandInt(0, arr.length)];
 }
 
-function SetSpecialMessage(s, style) {		// Can leave style undefined to use a default.
+function SetSpecialMessage(s, css_class) {		// Can leave css_class undefined to use a default.
 	special_message = s;
-	special_message_style = style;
+	special_message_class = css_class;
 	special_message_time = new Date();
 }

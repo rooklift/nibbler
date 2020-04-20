@@ -580,7 +580,7 @@ function NewRenderer() {
 			// drawing the infobox for real, we'll need to flash it up in the status box instead...
 
 			if (this.info_handler.ever_received_info) {
-				SetSpecialMessage(s);
+				SetSpecialMessage(s, "red");
 			}
 			this.info_handler.err_receive(s);
 

@@ -336,7 +336,7 @@ function NewInfoHandler() {
 
 		if (special_message && new Date() - special_message_time < 3000) {
 
-			statusbox.innerHTML = `<span class="${special_message_style || "yellow"}">${special_message}</span>`;
+			statusbox.innerHTML = `<span class="${special_message_class || "yellow"}">${special_message}</span>`;
 
 		} else if (typeof syncs_needed === "number" && syncs_needed > 1) {
 

@@ -51,7 +51,7 @@ let config = config_io.load();
 let tree_version = 0;
 
 let special_message = null;
-let special_message_style = null;
+let special_message_class = null;
 let special_message_time = new Date();
 
 // Debug (see start.js).............................................
