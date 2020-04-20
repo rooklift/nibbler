@@ -229,6 +229,14 @@ function NewInfoHandler() {
 
 	ih.sorted = function() {
 
+		// There are a lot of subtleties around sorting the moves...
+		//
+		// - We want to allow other engines than Lc0.
+		// - We want to work with low MultiPV values.
+		// - Old and stale data can be left in our cache if MultiPV is low. Moves with only old
+		//   data are often inferior to moves with new data, regardless of stats.
+		// - We can try and track the age of the data by various means, but these are fallible.
+
 		let info_list = [];
 
 		for (let o of Object.values(this.table)) {
