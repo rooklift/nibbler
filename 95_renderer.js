@@ -575,12 +575,16 @@ function NewRenderer() {
 
 		} else if (s.startsWith("id name")) {
 
-			for (let n = 10; n < messages.min_version; n++) {
-				if (s.includes(`v0.${n}`)) {
-					this.info_handler.err_receive("");
-					this.info_handler.err_receive(`<span class="blue">${messages.obsolete_leela}</span>`);
-					this.info_handler.err_receive("");
+			if (s.includes("Lc0")) {
+				for (let n = 10; n < messages.min_version; n++) {
+					if (s.includes(`v0.${n}`)) {
+						this.info_handler.err_receive("");
+						this.info_handler.err_receive(`<span class="blue">${messages.obsolete_leela}</span>`);
+						this.info_handler.err_receive("");
+					}
 				}
+			} else {
+				this.info_handler.err_receive(s.slice("id name".length).trim());
 			}
 
 		} else if (s.startsWith("bestmove") && config.autoplay && config.versus === this.node.get_board().active) {
