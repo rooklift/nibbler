@@ -149,6 +149,9 @@ function NewInfoHandler() {
 
 			let new_pv = InfoPV(s);
 
+			// Note: if the engine isn't respecting Chess960 castling format, the PV
+			// may contain old-fashioned castling moves.
+
 			if (new_pv.length === 0) {
 				new_pv = [move];
 			}
@@ -156,6 +159,7 @@ function NewInfoHandler() {
 			if (CompareArrays(new_pv, move_info.pv) === false) {
 				move_info.nice_pv_cache = null;
 				move_info.pv = new_pv;
+				move_info.pv[0] = move;		// In case the [0] index got replaced by an old-fashioned castling move.
 			}
 
 		} else if (s.startsWith("info string")) {
