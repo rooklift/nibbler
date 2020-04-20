@@ -156,9 +156,14 @@ function NewInfoHandler() {
 			//
 			// Converting these at reception would be a hassle, and also would cause
 			// future CompareArrays() calls (see below) to fail.
+			//
+			// While we could work around the presence of such bad-format moves,
+			// there are many complex ramifications.
 
 			if (new_pv.length === 0) {
 				new_pv = [move];
+			} else {
+				new_pv[0] = move;		// Partial mitigation for the above.
 			}
 
 			if (CompareArrays(new_pv, move_info.pv) === false) {
