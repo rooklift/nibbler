@@ -102,3 +102,7 @@ The format is fairly self-explanatory. Restart Nibbler for this to take effect.
 
 Note that these custom settings are only sent WHEN CLICKED (not automatically). To automatically \
 send custom UCI options at startup, edit ${config_io.filename} (options section) instead.`;
+
+
+exports.stockfish_multipv =
+`Nibbler says: Setting MultiPV = 1 for Stockfish.`
