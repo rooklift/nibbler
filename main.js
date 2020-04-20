@@ -944,7 +944,7 @@ function menu_build() {
 					label: "Serious Analysis saved stats",
 					submenu: [
 						{
-							label: "Show EV",
+							label: "EV",
 							type: "checkbox",
 							checked: config.sam_ev,
 							click: () => {
@@ -955,7 +955,7 @@ function menu_build() {
 							}
 						},
 						{
-							label: "Show N (%)",
+							label: "N (%)",
 							type: "checkbox",
 							checked: config.sam_n,
 							click: () => {
@@ -966,7 +966,7 @@ function menu_build() {
 							}
 						},
 						{
-							label: "Show N (absolute)",
+							label: "N (absolute)",
 							type: "checkbox",
 							checked: config.sam_n_abs,
 							click: () => {
@@ -977,7 +977,7 @@ function menu_build() {
 							}
 						},
 						{
-							label: "Show Total Nodes",
+							label: "Total nodes",
 							type: "checkbox",
 							checked: config.sam_of_n,
 							click: () => {
@@ -988,18 +988,10 @@ function menu_build() {
 							}
 						},
 						{
-							label: "Show WDL",
-							type: "checkbox",
-							checked: config.sam_wdl,
-							click: () => {
-								win.webContents.send("call", {
-									fn: "toggle",
-									args: ["sam_wdl"],
-								});
-							}
+							type: "separator"
 						},
 						{
-							label: "Show P",
+							label: "P",
 							type: "checkbox",
 							checked: config.sam_p,
 							click: () => {
@@ -1010,18 +1002,7 @@ function menu_build() {
 							}
 						},
 						{
-							label: "Show M",
-							type: "checkbox",
-							checked: config.sam_m,
-							click: () => {
-								win.webContents.send("call", {
-									fn: "toggle",
-									args: ["sam_m"],
-								});
-							}
-						},
-						{
-							label: "Show V",
+							label: "V",
 							type: "checkbox",
 							checked: config.sam_v,
 							click: () => {
@@ -1032,7 +1013,10 @@ function menu_build() {
 							}
 						},
 						{
-							label: "Show Q",
+							type: "separator"
+						},
+						{
+							label: "Q",
 							type: "checkbox",
 							checked: config.sam_q,
 							click: () => {
@@ -1043,18 +1027,7 @@ function menu_build() {
 							}
 						},
 						{
-							label: "Show D",
-							type: "checkbox",
-							checked: config.sam_d,
-							click: () => {
-								win.webContents.send("call", {
-									fn: "toggle",
-									args: ["sam_d"],
-								});
-							}
-						},
-						{
-							label: "Show U",
+							label: "U",
 							type: "checkbox",
 							checked: config.sam_u,
 							click: () => {
@@ -1065,13 +1038,49 @@ function menu_build() {
 							}
 						},
 						{
-							label: "Show Q+U",
+							label: "Q+U",
 							type: "checkbox",
 							checked: config.sam_q_plus_u,
 							click: () => {
 								win.webContents.send("call", {
 									fn: "toggle",
 									args: ["sam_q_plus_u"],
+								});
+							}
+						},
+						{
+							type: "separator"
+						},
+						{
+							label: "M",
+							type: "checkbox",
+							checked: config.sam_m,
+							click: () => {
+								win.webContents.send("call", {
+									fn: "toggle",
+									args: ["sam_m"],
+								});
+							}
+						},
+						{
+							label: "D",
+							type: "checkbox",
+							checked: config.sam_d,
+							click: () => {
+								win.webContents.send("call", {
+									fn: "toggle",
+									args: ["sam_d"],
+								});
+							}
+						},
+						{
+							label: "WDL",
+							type: "checkbox",
+							checked: config.sam_wdl,
+							click: () => {
+								win.webContents.send("call", {
+									fn: "toggle",
+									args: ["sam_wdl"],
 								});
 							}
 						},
