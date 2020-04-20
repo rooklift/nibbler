@@ -101,8 +101,6 @@ function NewInfoHandler() {
 				this.table[move] = move_info;
 			}
 
-			move_info.version = this.version;
-
 			move_info.wdl = InfoWDL(s);
 
 			let tmp;
@@ -135,6 +133,7 @@ function NewInfoHandler() {
 
 			tmp = parseInt(InfoVal(s, "nodes"), 10);
 			if (Number.isNaN(tmp) === false) {
+				move_info.total_nodes = tmp;
 				this.nodes = tmp;
 			}
 
@@ -196,8 +195,6 @@ function NewInfoHandler() {
 				this.table[move] = move_info;
 			}
 
-			move_info.version = this.version;
-
 			let tmp;
 
 			tmp = parseInt(InfoVal(s, "N:"), 10);
@@ -257,70 +254,33 @@ function NewInfoHandler() {
 			// Note our info struct uses 0 when not given.
 
 			if (Sign(a.mate) !== Sign(b.mate)) {		// negative is worst, 0 is neutral, positive is best
-				if (a.mate < b.mate) {
-					return 1;
-				}
-				if (a.mate > b.mate) {
-					return -1;
-				}
+				if (a.mate < b.mate) return 1;
+				if (a.mate > b.mate) return -1;
 			} else {									// lower (i.e. towards -Inf) is better regardless of who's mating
-				if (a.mate < b.mate) {
-					return -1;
-				}
-				if (a.mate > b.mate) {
-					return 1;
-				}
+				if (a.mate < b.mate) return -1;
+				if (a.mate > b.mate) return 1;
 			} 
 
-			// Node count - higher is better...
+			// Leela N score (node count) - higher is better...
 
-			if (a.n < b.n) {
-				return 1;
-			}
-			if (a.n > b.n) {
-				return -1;
-			}
+			if (a.n < b.n) return 1;
+			if (a.n > b.n) return -1;
 
-			// If it's some engine other than Leela, and it isn't respecting MultiPV,
-			// that means its most recently sent message should be its best move...
+			// If we're running Leela we should have an N score, so getting here probably
+			// indicates it's some other engine.
 
-			if (this.ever_received_multipv_2 === false) {
-				if (a.version < b.version) {
-					return 1;
-				}
-				if (a.version > b.version) {
-					return -1;
-				}
-			}
+			// Lets say as a rule more recent data should sort higher than old data. This
+			// works fairly well when MultiPV is some low value.
 
-			// If we get here, MultiPV is being respected.
+			if (a.total_nodes < b.total_nodes) return 1;
+			if (a.total_nodes > b.total_nodes) return -1;
 
-			if (a.multipv < b.multipv) {
-				return -1;
-			}
-			if (a.multipv > b.multipv) {
-				return 1;
-			}
+			// Finally, sort by CP if needed...
 
-			// We might get here if two moves have the same MultiPV due to one of them
-			// being currently turned off with searchmoves.
+			if (a.cp < b.cp) return 1;
+			if (a.cp > b.cp) return -1;
 
-			if (a.p < b.p) {
-				return 1;
-			}
-			if (a.p > b.p) {
-				return -1;
-			}
-
-			// Centipawn score is sometimes unreliable since we might compare an old low
-			// depth score with a new high depth score.
-
-			if (a.cp < b.cp) {
-				return 1;
-			}
-			if (a.cp > b.cp) {
-				return -1;
-			}
+			// Who knows...
 
 			return 0;
 		});
@@ -970,9 +930,9 @@ function new_info(board, move) {
 	info.nice_pv_cache = null;
 	info.q = 0;
 	info.q_plus_u = 1;
+	info.total_nodes = 0;			// Nodes of the whole search. Useful for knowing the age of the data.
 	info.u = 1;
 	info.v = null;					// Warning: v is allowed to be null if not known.
-	info.version = 0;
 	info.wdl = "??";
 	return info;
 }
