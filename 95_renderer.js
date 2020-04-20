@@ -712,7 +712,8 @@ function NewRenderer() {
 
 	renderer.send_custom = function(name, val) {
 		this.__halt();
-		SetSpecialMessage(this.engine.setoption(name, val), "blue");
+		let sent = this.engine.setoption(name, val);
+		SetSpecialMessage(sent, "blue");
 		this.go_or_halt();
 	};
 
