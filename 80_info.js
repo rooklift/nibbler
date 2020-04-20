@@ -81,11 +81,11 @@ function NewInfoHandler() {
 
 		if (s.startsWith("info") && s.includes(" pv ")) {
 
+			// info depth 8 seldepth 31 time 3029 nodes 23672 score cp 27 wdl 384 326 290 nps 7843 tbhits 0 multipv 1
+			// pv d2d4 g8f6 c2c4 e7e6 g1f3 d7d5 b1c3 f8b4 c1g5 d5c4 e2e4 c7c5 f1c4 h7h6 g5f6 d8f6 e1h1 c5d4 e4e5 f6d8 c3e4
+
 			this.ever_received_info = true;
 			this.version++;
-
-			// info depth 13 seldepth 48 time 5603 nodes 67686 score cp 40 hashfull 204 nps 12080 tbhits 0 multipv 2
-			// pv d2d4 g8f6 c2c4 e7e6 g2g3 f8b4 c1d2 b4e7 g1f3 e8g8 d1c2 a7a6 f1g2 b7b5 e1g1 c8b7 f1c1 b7e4 c2d1 b5c4 c1c4 a6a5 d2e1 h7h6 c4c1 d7d6
 
 			let move_info;
 			let move = InfoVal(s, "pv");
@@ -159,17 +159,13 @@ function NewInfoHandler() {
 				move_info.pv = new_pv;
 			}
 
-		} else if (s.startsWith("info") && s.includes(" currmove ")) {
-
-			this.ever_received_info = true;
-			this.version++;
-
 		} else if (s.startsWith("info string")) {
 
+			// info string d2d4  (293 ) N:   12005 (+169) (P: 22.38%) (WL:  0.09480) (D:  0.326)
+			// (M:  7.4) (Q:  0.09480) (U: 0.01211) (Q+U:  0.10691) (V:  0.0898)
+
 			this.ever_received_info = true;
 			this.version++;
-
-			// info string d2d4  (293 ) N:   12845 (+121) (P: 20.10%) (Q:  0.09001) (D:  0.000) (U: 0.02410) (Q+U:  0.11411) (V:  0.1006)
 
 			let move_info;
 			let move = InfoVal(s, "string");
@@ -228,6 +224,25 @@ function NewInfoHandler() {
 			if (Number.isNaN(tmp) === false) {
 				move_info.m = tmp;
 			}
+
+		} else if (s.startsWith("info") && s.includes(" currmove ")) {		// This branch only taken if there isn't also a "pv"
+
+			// info depth 23 currmove b3d2 currmovenumber 20
+
+			let move = InfoVal(s, "currmove");
+			move = board.c960_castling_converter(move);
+
+			if (!this.table[move]) {								// Don't care if we don't already know something about this move.
+				return;
+			}
+
+			this.ever_received_info = true;
+			this.version++;
+
+			let tmp = parseInt(InfoVal(s, "currmovenumber"));
+			if (Number.isNaN(tmp) === false) {
+				this.table[move].currmovenumber = tmp;
+			}
 		}
 	};
 
@@ -259,6 +274,13 @@ function NewInfoHandler() {
 
 			// If we're running Leela we should have an N score, so getting here probably
 			// indicates it's some other engine.
+
+			// We can use currmovenumber for SF...
+
+			if (a.currmovenumber && b.currmovenumber) {					// 0 means not present.
+				if (a.currmovenumber > b.currmovenumber) return 1;
+				if (a.currmovenumber < b.currmovenumber) return -1;
+			}
 
 			// Lets say as a rule more recent data should sort higher than old data. This
 			// works fairly well when MultiPV is some low value.
@@ -910,6 +932,7 @@ function new_info(board, move) {
 	let info = Object.create(info_prototype);
 	info.board = board;
 	info.cp = 0;
+	info.currmovenumber = 0;		// 0 can be the "not present" value.
 	info.d = 0;
 	info.m = 0;
 	info.mate = 0;					// 0 can be the "not present" value.
