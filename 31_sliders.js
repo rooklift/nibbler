@@ -17,9 +17,9 @@ function generate_movegen_sliders() {
 
 	// Add 3 rotations for each...
 	for (let n = 0; n < 3; n++) {
-		ret.B.push(ret.B[ret.B.length - 1].map(rotate));
-		ret.R.push(ret.R[ret.R.length - 1].map(rotate));
-		ret.N.push(ret.N[ret.N.length - 1].map(rotate));
+		ret.B.push(ret.B[n].map(rotate));
+		ret.R.push(ret.R[n].map(rotate));
+		ret.N.push(ret.N[n].map(rotate));
 	}
 
 	// Add the knight mirrors...
