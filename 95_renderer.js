@@ -569,7 +569,7 @@ function NewRenderer() {
 			// drawing the infobox for real, we'll need to flash it up in the status box instead...
 
 			if (this.info_handler.ever_received_info) {
-				SetSpecialMessage(s, "red");
+				this.info_handler.set_special_message(s, "red");
 			}
 			this.info_handler.err_receive(s);
 
@@ -719,7 +719,7 @@ function NewRenderer() {
 	renderer.send_custom = function(name, val) {
 		this.__halt();
 		let sent = this.engine.setoption(name, val);
-		SetSpecialMessage(sent, "blue");
+		this.info_handler.set_special_message(sent, "blue");
 		this.go_or_halt();
 	};
 

@@ -50,10 +50,6 @@ const decoder = new util.TextDecoder("utf8");	// https://github.com/electron/ele
 let config = config_io.load();
 let tree_version = 0;
 
-let special_message = null;
-let special_message_class = null;
-let special_message_time = new Date();
-
 // Debug (see start.js).............................................
 
 let debug = Object.create(null);

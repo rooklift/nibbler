@@ -14,7 +14,6 @@ function NewInfoHandler() {
 	ih.ever_received_info = false;
 	ih.ever_received_q = false;
 	ih.ever_received_multipv_2 = false;
-	ih.stderr_log = "";
 
 	ih.one_click_moves = New2DArray(8, 8);	// Array of possible one-click moves. Updated by draw_arrows().
 	ih.info_clickers = [];					// Elements in the infobox. Updated by draw_infobox().
@@ -23,6 +22,11 @@ function NewInfoHandler() {
 	ih.last_drawn_highlight = null;
 	ih.last_drawn_highlight_class = null;
 	ih.last_drawn_searchmoves = [];
+
+	ih.stderr_log = "";
+	ih.special_message = null;
+	ih.special_message_class = null;
+	ih.special_message_time = new Date();
 
 	ih.reset_engine_info = function() {
 		this.ever_received_info = false;
@@ -312,9 +316,9 @@ function NewInfoHandler() {
 
 	ih.draw_statusbox = function(leela_maybe_running, nogo_reason, searchmoves, syncs_needed) {
 
-		if (special_message && new Date() - special_message_time < 3000) {
+		if (this.special_message && new Date() - this.special_message_time < 3000) {
 
-			statusbox.innerHTML = `<span class="${special_message_class || "yellow"}">${special_message}</span>`;
+			statusbox.innerHTML = `<span class="${this.special_message_class || "yellow"}">${this.special_message}</span>`;
 
 		} else if (typeof syncs_needed === "number" && syncs_needed > 1) {
 
@@ -348,7 +352,7 @@ function NewInfoHandler() {
 
 	ih.draw_infobox = function(mouse_point, active_square, leela_maybe_running, nogo_reason, active_colour, searchmoves, hoverdraw_div, syncs_needed) {
 
-		ih.draw_statusbox(leela_maybe_running, nogo_reason, searchmoves, syncs_needed);
+		this.draw_statusbox(leela_maybe_running, nogo_reason, searchmoves, syncs_needed);
 
 		// Display stderr and return if we've never seen any info...
 
@@ -758,6 +762,12 @@ function NewInfoHandler() {
 
 			context.fillText(s, cc2.cx, cc2.cy + 1);
 		}
+	};
+
+	ih.set_special_message = function(s, css_class) {		// Can leave css_class undefined to use a default.
+		this.special_message = s;
+		this.special_message_class = css_class;
+		this.special_message_time = new Date();
 	};
 
 	return ih;
