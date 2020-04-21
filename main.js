@@ -165,12 +165,20 @@ function menu_build() {
 					accelerator: "CommandOrControl+O",
 					click: () => {
 						let files = open_dialog({
+							defaultPath: config.pgn_dialog_folder,
 							properties: ["openFile"]
 						});
-						if (files && files.length > 0) {
+						if (Array.isArray(files) && files.length > 0) {
+							let file = files[0];
 							win.webContents.send("call", {
 								fn: "open",
-								args: [files[0]]
+								args: [file]
+							});
+							// Save the dir as the new default dir, in both processes.
+							config.pgn_dialog_folder = path.dirname(file);
+							win.webContents.send("set", {
+								key: "pgn_dialog_folder",
+								value: path.dirname(file)
 							});
 						}
 					}
@@ -179,12 +187,20 @@ function menu_build() {
 					label: "Validate PGN...",
 					click: () => {
 						let files = open_dialog({
+							defaultPath: config.pgn_dialog_folder,
 							properties: ["openFile"]
 						});
-						if (files && files.length > 0) {
+						if (Array.isArray(files) && files.length > 0) {
+							let file = files[0];
 							win.webContents.send("call", {
 								fn: "validate_pgn",
-								args: [files[0]]
+								args: [file]
+							});
+							// Save the dir as the new default dir, in both processes.
+							config.pgn_dialog_folder = path.dirname(file);
+							win.webContents.send("set", {
+								key: "pgn_dialog_folder",
+								value: path.dirname(file)
 							});
 						}
 					}
@@ -221,11 +237,17 @@ function menu_build() {
 							alert(messages.save_not_enabled);
 							return;
 						}
-						let file = save_dialog();
-						if (file && file.length > 0) {
+						let file = save_dialog({defaultPath: config.pgn_dialog_folder});
+						if (typeof file === "string" && file.length > 0) {
 							win.webContents.send("call", {
 								fn: "save",
 								args: [file]
+							});
+							// Save the dir as the new default dir, in both processes.
+							config.pgn_dialog_folder = path.dirname(file);
+							win.webContents.send("set", {
+								key: "pgn_dialog_folder",
+								value: path.dirname(file)
 							});
 						}
 					}
@@ -1101,14 +1123,22 @@ function menu_build() {
 					label: "Choose engine...",
 					click: () => {
 						let files = open_dialog({
+							defaultPath: config.engine_dialog_folder,
 							properties: ["openFile"]
 						});
-						if (files && files.length > 0 && files[0] !== process.argv[0]) {
+						if (Array.isArray(files) && files.length > 0 && files[0] !== process.argv[0]) {
+							let file = files[0];
 							win.webContents.send("call", {
 								fn: "switch_engine",
-								args: [files[0]]
+								args: [file]
 							});
-							loaded_engine = files[0];
+							loaded_engine = file;
+							// Save the dir as the new default dir, in both processes.
+							config.engine_dialog_folder = path.dirname(file);
+							win.webContents.send("set", {
+								key: "engine_dialog_folder",
+								value: path.dirname(file)
+							});
 						}
 					}
 				},
@@ -1116,14 +1146,22 @@ function menu_build() {
 					label: "Choose weights file...",
 					click: () => {
 						let files = open_dialog({
+							defaultPath: config.weights_dialog_folder,
 							properties: ["openFile"]
 						});
-						if (files && files.length > 0) {
+						if (Array.isArray(files) && files.length > 0) {
+							let file = files[0];
 							win.webContents.send("call", {
 								fn: "switch_weights",
-								args: [files[0]]
+								args: [file]
 							});
-							loaded_weights = files[0];
+							loaded_weights = file;
+							// Save the dir as the new default dir, in both processes.
+							config.weights_dialog_folder = path.dirname(file);
+							win.webContents.send("set", {
+								key: "weights_dialog_folder",
+								value: path.dirname(file)
+							});
 						}
 					}
 				},

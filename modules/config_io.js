@@ -15,6 +15,10 @@ exports.defaults = {
 	"options": {},
 	"args": [],
 
+	"pgn_dialog_folder": null,
+	"engine_dialog_folder": null,
+	"weights_dialog_folder": null,
+
 	"width": 1280,
 	"height": 835,
 	"board_size": 640,
