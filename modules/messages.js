@@ -105,4 +105,6 @@ send custom UCI options at startup, edit ${config_io.filename} (options section)
 
 
 exports.stockfish_multipv =
-`Nibbler says: Setting MultiPV = 1 for Stockfish.`
+`Nibbler says: Setting MultiPV = 1 for Stockfish. Nevertheless, the output you see may be \
+misleading, since stale data about discarded lines may remain in Nibbler's cache. This is \
+primarily an Lc0 GUI.`
