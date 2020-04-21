@@ -1,110 +1,43 @@
 "use strict";
 
-let movegen_sliders = Object.create(null);
-
 // This is an object storing "sliders" for every piece except K and k which are special case.
-//
-// The idea is that, for every slider, if we travel along it and go offboard or hit a piece
-// of our own colour, no move further along the slider will be legal. So we can skip them
-// in the movegen.
+// A slider is a list of vectors, which are distances from the origin.
 
 function generate_movegen_sliders() {
 
-	// Rooks have 4 sliders...
+	let rotate = xy => [-xy[1], xy[0]];		// Rotate a single vector of form [x,y]
+	let flip = xy => [-xy[0], xy[1]];		// Flip a single vector, horizontally
 
-	movegen_sliders.R = [];
+	let ret = Object.create(null);
 
-	for (let xstep of [-1, 0, 1]) {
+	// For each of B, R, N, make an initial slider and place it in a new list as item 0...
+	ret.B = [[[1,1], [2,2], [3,3], [4,4], [5,5], [6,6], [7,7]]];
+	ret.R = [[[1,0], [2,0], [3,0], [4,0], [5,0], [6,0], [7,0]]];
+	ret.N = [[[1,2]]];
 
-		for (let ystep of [-1, 0, 1]) {
-
-			if (xstep === 0 && ystep === 0) continue;
-			if (xstep !== 0 && ystep !== 0) continue;
-
-			let slider = [];
-
-			let dx = 0;
-			let dy = 0;
-
-			while (1) {
-
-				dx += xstep;
-				dy += ystep;
-
-				if (dx < -7 || dy < -7 || dx > 7 || dy > 7) {
-
-					movegen_sliders.R.push(slider);
-					break;
-				}
-
-				slider.push([dx, dy]);
-			}
-		}
+	// Add 3 rotations for each...
+	for (let n = 0; n < 3; n++) {
+		ret.B.push(ret.B[ret.B.length - 1].map(rotate));
+		ret.R.push(ret.R[ret.R.length - 1].map(rotate));
+		ret.N.push(ret.N[ret.N.length - 1].map(rotate));
 	}
 
-	// Bishops have 4 sliders...
+	// Add the knight mirrors...
+	ret.N = ret.N.concat(ret.N.map(slider => slider.map(flip)));
 
-	movegen_sliders.B = [];
+	// Make the queen from the rook and bishop...
+	ret.Q = ret.B.concat(ret.R);
 
-	for (let xstep of [-1, 1]) {
-
-		for (let ystep of [-1, 1]) {
-
-			let slider = [];
-
-			let dx = 0;
-			let dy = 0;
-
-			while (1) {
-
-				dx += xstep;
-				dy += ystep;
-
-				if (dx < -7 || dy < -7 || dx > 7 || dy > 7) {
-
-					movegen_sliders.B.push(slider);
-					break;
-				}
-
-				slider.push([dx, dy]);
-			}
-		}
+	// Make the black lowercase versions...
+	for (let key of Object.keys(ret)) {
+		ret[key.toLowerCase()] = ret[key];
 	}
 
-	// Queens are bishops mated with rooks...
+	// Make the pawns...
+	ret.P = [[[0,-1], [0,-2]], [[-1,-1]], [[1,-1]]];
+	ret.p = [[[0,1], [0,2]], [[-1,1]], [[1,1]]];
 
-	movegen_sliders.Q = movegen_sliders.R.concat(movegen_sliders.B);
-
-	// Knights have 8 sliders of length 1...
-
-	movegen_sliders.N = [];
-	movegen_sliders.N.push([[-2, -1]]);
-	movegen_sliders.N.push([[-1, -2]]);
-	movegen_sliders.N.push([[ 1, -2]]);
-	movegen_sliders.N.push([[ 2, -1]]);
-	movegen_sliders.N.push([[-2,  1]]);
-	movegen_sliders.N.push([[-1,  2]]);
-	movegen_sliders.N.push([[ 1,  2]]);
-	movegen_sliders.N.push([[ 2,  1]]);
-
-	// Black and White sliders for these 4 pieces are identical...
-
-	movegen_sliders.q = movegen_sliders.Q;
-	movegen_sliders.r = movegen_sliders.R;
-	movegen_sliders.b = movegen_sliders.B;
-	movegen_sliders.n = movegen_sliders.N;
-
-	// Pawns...
-
-	movegen_sliders.P = [];
-	movegen_sliders.P.push([[0, -1], [0, -2]]);
-	movegen_sliders.P.push([[-1, -1]]);
-	movegen_sliders.P.push([[1, -1]]);
-
-	movegen_sliders.p = [];
-	movegen_sliders.p.push([[0, 1], [0, 2]]);
-	movegen_sliders.p.push([[-1, 1]]);
-	movegen_sliders.p.push([[1, 1]]);
+	return ret;
 }
 
-generate_movegen_sliders();
+let movegen_sliders = generate_movegen_sliders();
