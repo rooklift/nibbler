@@ -17,6 +17,10 @@ function split_buffer(buf) {
 	let a = 0;
 	let b;
 
+	if (buf.length > 3 && buf[0] === 239 && buf[1] === 187 && buf[2] === 191) {
+		a = 3;			// 1st slice will skip byte order mark (BOM).
+	}
+
 	for (b = 0; b < buf.length; b++) {
 		let ch = buf[b];
 		if (ch === 10) {					// Split on \n
