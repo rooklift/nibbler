@@ -72,7 +72,7 @@ function NewEngine() {
 		return s;			// Just so the renderer can pop s up as a message if it wants.
 	};
 
-	eng.setup = function(receive_fn, err_receive_fn) {
+	eng.setup = function(filepath, args, receive_fn, err_receive_fn) {
 
 		// This is slightly sketchy, the passed functions get saved to our engine
 		// object in a way that makes them look like methods of this object. Hmm.
@@ -90,7 +90,7 @@ function NewEngine() {
 		this.bestmove_required = 0;
 
 		try {
-			this.exe = child_process.spawn(config.path, config.args, {cwd: path.dirname(config.path)});
+			this.exe = child_process.spawn(filepath, args, {cwd: path.dirname(filepath)});
 		} catch (err) {
 			alert(err);
 			return;

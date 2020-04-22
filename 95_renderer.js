@@ -774,7 +774,7 @@ function NewRenderer() {
 			return;
 		}
 
-		this.engine.setup(this.receive.bind(this), this.err_receive.bind(this));
+		this.engine.setup(config.path, config.args, this.receive.bind(this), this.err_receive.bind(this));
 
 		this.engine.send("uci");
 		for (let key of Object.keys(config.options)) {
