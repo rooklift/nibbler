@@ -672,27 +672,23 @@ function NewInfoHandler() {
 
 					if (normal_castling_flag) {
 						if (!this.one_click_moves[x2 + x_head_adjustment][y2]) {
-							if (!specific_source) {
-								this.one_click_moves[x2 + x_head_adjustment][y2] = info_list[i].move;
-							}
 							heads.push({
 								colour: colour,
 								x2: x2 + x_head_adjustment,
 								y2: y2,
 								info: info_list[i]
 							});
+							this.one_click_moves[x2 + x_head_adjustment][y2] = info_list[i].move;
 						}
 					} else {
 						if (!this.one_click_moves[x2][y2]) {
-							if (!specific_source) {
-								this.one_click_moves[x2][y2] = info_list[i].move;
-							}
 							heads.push({
 								colour: colour,
 								x2: x2 + x_head_adjustment,
 								y2: y2,
 								info: info_list[i]
 							});
+							this.one_click_moves[x2][y2] = info_list[i].move;
 						}
 					}
 				}
