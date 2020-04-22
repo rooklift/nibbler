@@ -585,12 +585,6 @@ function NewRenderer() {
 				}
 			} else {
 				this.info_handler.err_receive(s.slice("id name".length).trim());
-				if (s.includes("Stockfish")) {
-					this.engine.setoption("MultiPV", 1);
-					this.info_handler.err_receive("");
-					this.info_handler.err_receive(`<span class="blue">${messages.stockfish_multipv}</span>`);
-					this.info_handler.err_receive("");
-				}
 			}
 
 		} else if (s.startsWith("bestmove") && config.autoplay && config.versus === this.node.get_board().active) {
