@@ -1010,6 +1010,24 @@ function NewRenderer() {
 		config_io.save(config);
 	};
 
+	renderer.run_script = function(filename) {
+		let buf;
+		try {
+			buf = fs.readFileSync(filename);
+		} catch (err) {
+			alert(err);
+			return;
+		}
+		let s = buf.toString();
+		let lines = s.split("\n").map(z => z.trim());
+
+		this.set_versus("");
+		this.engine_start(lines[0], null);
+		for (let line of lines.slice(1)) {
+			this.engine.send(line);
+		}
+	};
+
 	// --------------------------------------------------------------------------------------------
 	// Clicks, drops, mouse stuff...
 
