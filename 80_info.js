@@ -374,9 +374,11 @@ function NewInfoHandler() {
 		let highlight_move = null;
 		let highlight_class = null;
 
-		if (mouse_point && mouse_point !== Point(null) && this.one_click_moves[mouse_point.x][mouse_point.y] && !active_square) {
-			highlight_move = this.one_click_moves[mouse_point.x][mouse_point.y];
-			highlight_class = "ocm_highlight";
+		if (mouse_point && mouse_point !== Point(null) && this.one_click_moves[mouse_point.x][mouse_point.y]) {
+			if (!active_square || Point(this.one_click_moves[mouse_point.x][mouse_point.y].slice(0, 2)) === active_square) {
+				highlight_move = this.one_click_moves[mouse_point.x][mouse_point.y];
+				highlight_class = "ocm_highlight";
+			}
 		}
 
 		if (typeof hoverdraw_div === "number" && hoverdraw_div >= 0 && hoverdraw_div < info_list.length) {
