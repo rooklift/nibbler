@@ -1,12 +1,13 @@
 "use strict";
 
-// This is an object storing "sliders" for every piece except K and k which are special case.
-// A slider is a list of vectors, which are distances from the origin.
+// This makes an object storing "sliders" for every piece except K and k which are handled
+// differently. A slider is a list of vectors, which are distances from the origin.
 
 function generate_movegen_sliders() {
 
-	let rotate = xy => [-xy[1], xy[0]];		// Rotate a single vector of form [x,y]
-	let flip = xy => [-xy[0], xy[1]];		// Flip a single vector, horizontally
+	let invert = n => n === 0 ? 0 : -n;							// Flip sign without introducing -0
+	let rotate = xy => [invert(xy[1]), xy[0]];					// Rotate a single vector of form [x,y]
+	let flip = xy => [invert(xy[0]), xy[1]];					// Flip a single vector, horizontally
 
 	let ret = Object.create(null);
 
@@ -22,7 +23,7 @@ function generate_movegen_sliders() {
 		ret.N.push(ret.N[n].map(rotate));
 	}
 
-	// Add the knight mirrors...
+	// Add the knight mirrors (knights have 8 sliders of length 1)...
 	ret.N = ret.N.concat(ret.N.map(slider => slider.map(flip)));
 
 	// Make the queen from the rook and bishop...
