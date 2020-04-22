@@ -822,8 +822,9 @@ const position_prototype = {
 		// garbage that could interfere with this fact.
 
 		let dest = Point(s.slice(s.length - 2, s.length));
-
-		if (!dest) return ["", "invalid destination"];
+		if (!dest) {
+			return ["", "invalid destination"];
+		}
 
 		// Any characters between the piece and target should be disambiguators...
 
