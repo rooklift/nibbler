@@ -2,11 +2,6 @@
 
 const electron = require("electron");
 
-function object_to_string(o) {
-	let msg = JSON.stringify(o);
-	return msg;
-}
-
 function alert_main(msg) {
 	electron.dialog.showMessageBox({
 		message: msg.toString(),
@@ -27,13 +22,13 @@ module.exports = (msg) => {
 	if (msg instanceof Error) {
 		msg = msg.toString();
 	}
-	if (typeof(msg) === "object") {
-		msg = object_to_string(msg);
+	if (typeof msg === "object") {
+		msg = JSON.stringify(msg);
 	}
-	if (typeof(msg) === "undefined") {
+	if (typeof msg === "undefined") {
 		msg = "undefined";
 	}
-	if (typeof(msg) === "number") {
+	if (typeof msg === "number") {
 		msg = msg.toString();
 	}
 	msg = msg.trim()
