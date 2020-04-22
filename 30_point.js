@@ -3,6 +3,9 @@
 // The point of most of this is to make each Point represented by a single object so that
 // naive equality checking works, i.e. Point(x, y) === Point(x, y) should be true. Since
 // object comparisons in JS will be false unless they are the same object, we do all this...
+//
+// Returns null on invalid input, therefore the caller should take care to ensure that the
+// value is not null before accessing .x or .y or .s!
 
 function Point(a, b) {
 
