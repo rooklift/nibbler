@@ -2,22 +2,6 @@
 
 const electron = require("electron");
 
-function alert_main(msg) {
-	electron.dialog.showMessageBox({
-		message: msg.toString(),
-		title: "Alert",
-		buttons: ["OK"]
-	}, () => {});			// Providing a callback makes the window not block the process
-}
-
-function alert_renderer(msg) {
-	electron.remote.dialog.showMessageBox({
-		message: msg.toString(),
-		title: "Alert",
-		buttons: ["OK"]
-	}, () => {});
-}
-
 module.exports = (msg) => {
 	if (msg instanceof Error) {
 		msg = msg.toString();
@@ -31,10 +15,10 @@ module.exports = (msg) => {
 	if (typeof msg === "number") {
 		msg = msg.toString();
 	}
-	msg = msg.trim()
-	if (process.type === "renderer") {
-		alert_renderer(msg);
-	} else {
-		alert_main(msg);
-	}
+	msg = msg.toString().trim();
+	let fn = process.type === "renderer" ?
+		electron.remote.dialog.showMessageBox :
+		electron.dialog.showMessageBox;
+	fn({message: msg, title: "Alert", buttons: ["OK"]}, () => {});
+	// Providing a callback makes the window not block the process.
 };
