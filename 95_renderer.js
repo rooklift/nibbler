@@ -744,7 +744,7 @@ function NewRenderer() {
 		this.set_versus("");
 		config.path = filename;
 		config_io.save(config);
-		this.engine_start(config.path, config.args);
+		this.engine_start(config.path, config.args, config.options);
 	};
 
 	renderer.switch_backend = function(s) {
@@ -755,7 +755,7 @@ function NewRenderer() {
 		this.go_or_halt();
 	};
 
-	renderer.engine_start = function(filepath, args) {
+	renderer.engine_start = function(filepath, args, options, send_normal_options = true) {
 
 		if (this.engine.exe) {				// We already have an engine connection (possibly non-functioning, but still...)
 			this.engine.shutdown();
@@ -780,17 +780,23 @@ function NewRenderer() {
 
 		this.engine.setup(filepath, args, this.receive.bind(this), this.err_receive.bind(this));
 
-		this.engine.send("uci");
-		for (let key of Object.keys(config.options)) {
-			this.engine.setoption(key, config.options[key]);
+		if (typeof options !== "object" || options === null) {
+			options = {};
 		}
-		this.engine.setoption("VerboseMoveStats", true);			// Required for LogLiveStats to work.
-		this.engine.setoption("LogLiveStats", true);				// "Secret" Lc0 command.
-		this.engine.setoption("MultiPV", 500);
-		this.engine.setoption("SmartPruningFactor", 0);
-		this.engine.setoption("ScoreType", "centipawn");			// The default, but the user can't be allowed to override this.
-		this.engine.setoption("UCI_ShowWDL", true);
-		this.engine.setoption("UCI_Chess960", true);				// We always use Chess 960 mode now, for consistency.
+
+		this.engine.send("uci");
+		for (let key of Object.keys(options)) {
+			this.engine.setoption(key, options[key]);
+		}
+
+		this.engine.setoption("UCI_Chess960", true);	// We always use Chess 960 mode now, for consistency.
+
+		if (send_normal_options) {
+			for (let key of Object.keys(leela_normal_options)) {
+				this.engine.setoption(key, leela_normal_options[key]);
+			}
+		}
+		
 		this.engine.send("ucinewgame");
 	};
 
@@ -1022,7 +1028,7 @@ function NewRenderer() {
 		let lines = s.split("\n").map(z => z.trim());
 
 		this.set_versus("");
-		this.engine_start(lines[0], null);
+		this.engine_start(lines[0], null, null, false);
 		for (let line of lines.slice(1)) {
 			this.engine.send(line);
 		}

@@ -50,10 +50,6 @@ const decoder = new util.TextDecoder("utf8");	// https://github.com/electron/ele
 let config = config_io.load();
 let tree_version = 0;
 
-// Debug (see start.js).............................................
-
-let debug = Object.create(null);
-
 // Get the images loading...........................................
 
 if (typeof config.override_piece_directory === "string") {
@@ -61,3 +57,18 @@ if (typeof config.override_piece_directory === "string") {
 } else {
 	images.load_from(path.join(__dirname, "pieces"));
 }
+
+// Debug (see start.js).............................................
+
+let debug = Object.create(null);
+
+// Options we generally want to send to Leela.......................
+
+const leela_normal_options = {
+	"VerboseMoveStats": true,
+	"LogLiveStats": true,
+	"MultiPV": 500,
+	"SmartPruningFactor": 0,
+	"ScoreType": "centipawn",
+	"UCI_ShowWDL": true,
+};
