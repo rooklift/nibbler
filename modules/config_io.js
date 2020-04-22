@@ -165,8 +165,7 @@ function debork_json(s) {
 
 	// Enough people are going to use single backslashes in their paths that we should just fix it.
 
-	let lines = s.split("\n");
-	lines = lines.map(s => s.trim());		// removing \r for no particular reason.
+	let lines = s.split("\n").map(z => z.trim());
 
 	for (let n = 0; n < lines.length; n++) {
 		let line = lines[n];

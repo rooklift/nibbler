@@ -33,12 +33,10 @@ exports.load = () => {
 		console.log(err.toString());
 	}
 
-	let lines = contents.split("\n");
+	let lines = contents.split("\n").map(z => z.trim());
 	let command_list = [];
 
 	for (let line of lines) {
-
-		line = line.trim();
 
 		if (line.length === 0) {
 			continue;
