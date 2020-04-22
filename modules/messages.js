@@ -45,7 +45,7 @@ safely ignore them.`;
 
 
 exports.engine_not_present =
-`Engine not set. Please find the engine via the Engine menu. You might also \
+`Engine not found. Please find the engine via the Engine menu. You might also \
 need to locate the weights (neural network) file.`;
 
 

@@ -744,7 +744,7 @@ function NewRenderer() {
 		this.set_versus("");
 		config.path = filename;
 		config_io.save(config);
-		this.engine_start();
+		this.engine_start(config.path, config.args);
 	};
 
 	renderer.switch_backend = function(s) {
@@ -755,7 +755,7 @@ function NewRenderer() {
 		this.go_or_halt();
 	};
 
-	renderer.engine_start = function() {
+	renderer.engine_start = function(filepath, args) {
 
 		if (this.engine.exe) {				// We already have an engine connection (possibly non-functioning, but still...)
 			this.engine.shutdown();
@@ -765,7 +765,7 @@ function NewRenderer() {
 		this.info_handler.clear(this.node.get_board());
 		this.info_handler.reset_engine_info();
 
-		if (typeof config.path !== "string" || fs.existsSync(config.path) === false) {
+		if (typeof filepath !== "string" || fs.existsSync(filepath) === false) {
 
 			if (!config.failure) {			// Only show the following if there isn't a bigger problem...
 				this.err_receive(`<span class="blue">${messages.engine_not_present}</span>`);
@@ -774,7 +774,11 @@ function NewRenderer() {
 			return;
 		}
 
-		this.engine.setup(config.path, config.args, this.receive.bind(this), this.err_receive.bind(this));
+		if (Array.isArray(args) === false) {
+			args = [];
+		}
+
+		this.engine.setup(filepath, args, this.receive.bind(this), this.err_receive.bind(this));
 
 		this.engine.send("uci");
 		for (let key of Object.keys(config.options)) {
