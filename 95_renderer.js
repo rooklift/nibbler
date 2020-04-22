@@ -166,6 +166,11 @@ function NewRenderer() {
 		let board = this.node.get_board();
 		let source = Point(s.slice(0, 2));
 
+		if (!source) {
+			console.log(`renderer.move(${s}) - invalid source`);
+			return;
+		}
+
 		// First deal with old-school castling in Standard Chess...
 
 		s = board.c960_castling_converter(s);
@@ -1045,14 +1050,14 @@ function NewRenderer() {
 
 		let old_point = this.active_square;
 
-		if (old_point && old_point !== Point(null)) {
+		if (old_point) {
 			let td = document.getElementById("underlay_" + old_point.s);
 			td.style["background-color"] = (old_point.x + old_point.y) % 2 === 0 ? config.light_square : config.dark_square;
 		}
 
 		this.active_square = null;
 
-		if (new_point && new_point !== Point(null)) {
+		if (new_point) {
 			let td = document.getElementById("underlay_" + new_point.s);
 			td.style["background-color"] = config.active_square;
 			this.active_square = new_point;
@@ -1064,7 +1069,7 @@ function NewRenderer() {
 		let s = EventPathString(event, "overlay_");
 		let p = Point(s);
 		
-		if (p === Point(null)) {
+		if (!p) {
 			return;
 		}
 
@@ -1245,8 +1250,8 @@ function NewRenderer() {
 		let text_data = event.dataTransfer.getData("text");
 		if (text_data.startsWith("overlay_")) {
 
-			let source = Point(text_data.slice(8, 10));
-			let dest = Point(null);
+			let source = Point(text_data.slice(8, 10));		// Possibly null
+			let dest = null;
 
 			let path = event.path || (event.composedPath && event.composedPath());
 
@@ -1259,7 +1264,7 @@ function NewRenderer() {
 				}
 			}
 
-			if (source !== Point(null) && dest !== Point(null)) {
+			if (source && dest) {
 				this.move(source.s + dest.s);
 			}
 
@@ -1271,12 +1276,7 @@ function NewRenderer() {
 		let overlist = document.querySelectorAll(":hover");
 		for (let item of overlist) {
 			if (typeof item.id === "string" && item.id.startsWith("overlay_")) {
-				let p = Point(item.id.slice(8));
-				if (p !== Point(null)) {
-					return p;
-				} else {
-					return null;
-				}
+				return Point(item.id.slice(8));		// Possibly null
 			}
 		}
 		return null;
@@ -1336,7 +1336,7 @@ function NewRenderer() {
 		let source = Point(move.slice(0, 2));
 		let dest = Point(move.slice(2, 4));
 
-		if (!source || source === Point(null) || !dest || dest === Point(null)) {
+		if (!source || !dest) {
 			return;
 		}
 

@@ -376,7 +376,7 @@ function NewInfoHandler() {
 
 		// We'll highlight it if it's a valid OCM *and* clicking there now would make it happen...
 
-		if (mouse_point && mouse_point !== Point(null) && this.one_click_moves[mouse_point.x][mouse_point.y]) {
+		if (mouse_point && this.one_click_moves[mouse_point.x][mouse_point.y]) {
 			if (!active_square || this.one_click_moves[mouse_point.x][mouse_point.y].slice(0, 2) === active_square.s) {
 				highlight_move = this.one_click_moves[mouse_point.x][mouse_point.y];
 				highlight_class = "ocm_highlight";
@@ -585,10 +585,6 @@ function NewInfoHandler() {
 
 		if (!config.arrows_enabled) {
 			return;
-		}
-
-		if (specific_source === Point(null)) {
-			specific_source = null;
 		}
 
 		context.lineWidth = config.arrow_width;

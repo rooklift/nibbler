@@ -17,7 +17,6 @@ function Point(a, b) {
 				Point.s_lookup[s] = point;
 			}
 		}
-		Point.null_point = Object.freeze({x: -1, y: -1, s: "??"});
 	}
 
 	// Point("a8") or Point(0, 0) are both valid.
@@ -25,20 +24,16 @@ function Point(a, b) {
 	if (b === undefined) {
 		let ret = Point.s_lookup[a];
 		if (ret === undefined) {
-			return Point.null_point;
+			return null;
 		}
 		return ret;
 	}
 
 	let col = Point.xy_lookup[a];
-	if (col === undefined) return Point.null_point;
+	if (col === undefined) return null;
 
 	let ret = col[b];
-	if (ret === undefined) return Point.null_point;
+	if (ret === undefined) return null;
 
 	return ret;
 }
-
-// Note: I rather regret now the existence of Point(null) - it means there's two
-// different ways for a variable that usually holds a Point to be null - either
-// having the actual null (or undefined) value, or the Point(null) value. Alas.
