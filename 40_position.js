@@ -127,7 +127,7 @@ const position_prototype = {
 
 		// Set enpassant square...
 
-		ret.enpassant = Point(null);
+		ret.enpassant = null;
 
 		if (pawn_flag && y1 === 6 && y2 === 4) {
 			ret.enpassant = Point(x1, 5);
@@ -543,7 +543,7 @@ const position_prototype = {
 			throw "attacked(): no colour given";
 		}
 
-		if (!target || target === Point(null)) {
+		if (!target) {		// Because it was null from Point(foo) perhaps.
 			return false;
 		}
 
@@ -587,7 +587,7 @@ const position_prototype = {
 			throw "line_attack(): no colour given";
 		}
 
-		if (!target || target === Point(null)) {
+		if (!target) {		// Because it was null from Point(foo) perhaps.
 			return false;
 		}
 
@@ -822,6 +822,9 @@ const position_prototype = {
 		// garbage that could interfere with this fact.
 
 		let dest = Point(s.slice(s.length - 2, s.length));
+		if (!dest) {
+			return ["", "invalid destination"];
+		}
 
 		// Any characters between the piece and target should be disambiguators...
 
@@ -887,7 +890,7 @@ const position_prototype = {
 	},
 
 	piece: function(point) {
-		if (!point || point === Point(null)) return "";
+		if (!point) return "";
 		return this.state[point.x][point.y];
 	},
 
@@ -1061,7 +1064,7 @@ const position_prototype = {
 		let source = Point(s.slice(0, 2));
 		let dest = Point(s.slice(2, 4));
 
-		if (source === Point(null) || dest === Point(null)) {
+		if (!source || !dest) {
 			return "??";
 		}
 
@@ -1218,8 +1221,8 @@ const position_prototype = {
 			}
 		}
 
-		let ep_string = this.enpassant === Point(null) ? "-" : this.enpassant.s;
-		let castling_string = this.castling === "" ? "-" : this.castling;
+		let ep_string = this.enpassant ? this.enpassant.s : "-";
+		let castling_string = this.castling !== "" ? this.castling : "-";
 
 		// While interally (and when sending to the engine) we always use Chess960 format,
 		// we can return a more friendly FEN if asked (and if the position is normal Chess).
@@ -1270,16 +1273,9 @@ function NewPosition(state = null, active = "w", castling = "", enpassant = null
 
 	p.active = active;
 	p.castling = castling;
-	
-	if (enpassant) {
-		p.enpassant = enpassant;
-	} else {
-		p.enpassant = Point(null);
-	}
-
+	p.enpassant = enpassant;
 	p.halfmove = halfmove;
 	p.fullmove = fullmove;
-
 	p.normalchess = normalchess;
 
 	return p;

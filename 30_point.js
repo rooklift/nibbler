@@ -3,6 +3,9 @@
 // The point of most of this is to make each Point represented by a single object so that
 // naive equality checking works, i.e. Point(x, y) === Point(x, y) should be true. Since
 // object comparisons in JS will be false unless they are the same object, we do all this...
+//
+// Returns null on invalid input, therefore the caller should take care to ensure that the
+// value is not null before accessing .x or .y or .s!
 
 function Point(a, b) {
 
@@ -17,7 +20,6 @@ function Point(a, b) {
 				Point.s_lookup[s] = point;
 			}
 		}
-		Point.null_point = Object.freeze({x: -1, y: -1, s: "??"});
 	}
 
 	// Point("a8") or Point(0, 0) are both valid.
@@ -25,20 +27,16 @@ function Point(a, b) {
 	if (b === undefined) {
 		let ret = Point.s_lookup[a];
 		if (ret === undefined) {
-			return Point.null_point;
+			return null;
 		}
 		return ret;
 	}
 
 	let col = Point.xy_lookup[a];
-	if (col === undefined) return Point.null_point;
+	if (col === undefined) return null;
 
 	let ret = col[b];
-	if (ret === undefined) return Point.null_point;
+	if (ret === undefined) return null;
 
 	return ret;
 }
-
-// Note: I rather regret now the existence of Point(null) - it means there's two
-// different ways for a variable that usually holds a Point to be null - either
-// having the actual null (or undefined) value, or the Point(null) value. Alas.
