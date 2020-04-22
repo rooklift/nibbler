@@ -6,7 +6,7 @@
 
 function Point(a, b) {
 
-	if (Point.null_point === undefined) {
+	if (Point.xy_lookup === undefined) {
 		Point.xy_lookup = New2DArray(8, 8);
 		Point.s_lookup = Object.create(null);
 		for (let x = 0; x < 8; x++) {
