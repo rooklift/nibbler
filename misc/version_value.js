@@ -8,7 +8,7 @@ module.exports = function(s) {
 		parts[0] = parts[0].slice(1);
 	}
 
-	parts = parts.map(z => Number.parseInt(z, 10));
+	parts = parts.map(z => parseInt(z, 10));
 
 	// Note that parseInt works well with trailing non-numbers,
 	// e.g. "3-rc2" correctly parses as 3.
@@ -21,7 +21,7 @@ module.exports = function(s) {
 
 	if (s.includes("rc")) {
 		let rc_string = s.slice(s.indexOf("rc") + 2);
-		val += Number.parseInt(rc_string, 10);
+		val += parseInt(rc_string, 10);
 	}
 
 	return val;

@@ -329,7 +329,7 @@ function NewRenderer() {
 		// Allow loading a Chess 960 position by giving its ID:
 
 		if (s.length <= 3) {
-			let n = Number.parseInt(s, 10);
+			let n = parseInt(s, 10);
 			if (Number.isNaN(n) === false) {
 				s = c960_fen(n);
 				abnormal = true;
