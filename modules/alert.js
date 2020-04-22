@@ -12,9 +12,6 @@ module.exports = (msg) => {
 	if (typeof msg === "undefined") {
 		msg = "undefined";
 	}
-	if (typeof msg === "number") {
-		msg = msg.toString();
-	}
 	msg = msg.toString().trim();
 	let fn = process.type === "renderer" ?
 		electron.remote.dialog.showMessageBox :
