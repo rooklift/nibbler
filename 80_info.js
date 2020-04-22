@@ -58,7 +58,9 @@ function NewInfoHandler() {
 			return;
 		}
 
-		if (s.includes("WARNING") || s.includes("error")) {
+		let s_low = s.toLowerCase();
+
+		if (s_low.includes("warning") || s_low.includes("error") || s_low.includes("unknown")) {
 			this.stderr_log += `<span class="red">${s}</span><br>`;
 		} else {
 			this.stderr_log += `${s}<br>`;
