@@ -14,12 +14,18 @@ Some important points:
 */
 
 function Perft(fen, depth) {
-	if (!fen || !depth) {
-		throw "Need FEN and depth";
-	}
+	if (!fen || !depth) throw "Need FEN and depth";
 	let starttime = new Date();
-	let val = perft(LoadFEN(fen), depth, true);
+	let board = LoadFEN(fen);
+	let val = perft(board, depth, true);
 	console.log(`Total.......... ${val} (${((new Date() - starttime) / 1000).toFixed(1)} seconds)`);
+	if (perft_known_values[fen] && perft_known_values[fen][depth]) {
+		if (perft_known_values[fen][depth] === val) {
+			console.log("Known good result");
+		} else {
+			console.log(`Known BAD result -- expected ${perft_known_values[fen][depth]}`);
+		}
+	}
 	return val;
 }
 
@@ -45,23 +51,12 @@ function perft_print_move(pos, mv, val) {
 	console.log(`${mv + (mv.length === 4 ? " " : "")}   ${nice + " ".repeat(7 - nice.length)}`, val);
 }
 
-/*
+// In Stockfish:
+//		setoption name UCI_Chess960 value true
+//		position fen <whatever>
+//		go perft 4
 
-Suggested tests:
-
-	Qr3knr/P1bp1p1p/2pn1q2/4p3/2PP2pB/1p1N1bP1/BP2PP1P/1R3KNR w BHbh - 0 1
-		depth 4: 1253934
-		depth 5: 40393041
-
-	1nr1nk1r/1b5B/p1p1qp2/b2pp1pP/3P2P1/P3P2N/1Pp2P2/BNR2KQR w CHch g6 0 1
-		depth 4: 992438
-		depth 5: 30218648
-
-In Stockfish:
-
-	setoption name UCI_Chess960 value true
-	ucinewgame
-	position fen <whatever>
-	go perft 4
-
-*/
+let perft_known_values = {
+	"Qr3knr/P1bp1p1p/2pn1q2/4p3/2PP2pB/1p1N1bP1/BP2PP1P/1R3KNR w BHbh - 0 1": [0, 31, 1122, 34613, 1253934, 40393041],
+	"1nr1nk1r/1b5B/p1p1qp2/b2pp1pP/3P2P1/P3P2N/1Pp2P2/BNR2KQR w CHch g6 0 1": [0, 28, 964, 27838, 992438, 30218648],
+};
