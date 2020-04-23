@@ -471,11 +471,7 @@ const position_prototype = {
 		for (let x = 0; x < 8; x++) {
 			for (let y = 0; y < 8; y++) {
 				if (this.state[x][y] === kch) {
-					if (this.attacked(Point(x, y), opp_colour)) {
-						return true;
-					} else {
-						return false;
-					}
+					return this.attacked(Point(x, y), opp_colour);
 				}
 			}
 		}
