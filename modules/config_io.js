@@ -147,7 +147,9 @@ function fix(cfg) {
 		}
 	}
 
-	// These things need to be strings but we defaulted them to null in 1.2.1...
+	// These things need to be strings. They are used as defaultPath parameters
+	// but versions of Electron >= 6 (I think) crash when they aren't strings.
+	// Sadly we defaulted them to null in 1.2.1 so bad config files may exist.
 
 	if (typeof cfg.pgn_dialog_folder !== "string") {
 		cfg.pgn_dialog_folder = "";
