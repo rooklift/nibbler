@@ -23,7 +23,7 @@ function Point(a, b) {
 	// Point("a8") or Point(0, 0) are both valid.
 
 	if (b === undefined) {
-		[a, b] = XY(a);
+		[a, b] = XY(a);			// Possibly [-1, -1] if invalid
 	}
 
 	let col = Point.xy_lookup[a];
