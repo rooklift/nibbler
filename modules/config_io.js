@@ -15,9 +15,9 @@ exports.defaults = {
 	"options": {},
 	"args": [],
 
-	"pgn_dialog_folder": null,
-	"engine_dialog_folder": null,
-	"weights_dialog_folder": null,
+	"pgn_dialog_folder": "",
+	"engine_dialog_folder": "",
+	"weights_dialog_folder": "",
 
 	"width": 1280,
 	"height": 835,
@@ -145,6 +145,18 @@ function fix(cfg) {
 				cfg[key] = null;
 			}
 		}
+	}
+
+	// These things need to be strings but we defaulted them to null in 1.2.1...
+
+	if (typeof cfg.pgn_dialog_folder !== "string") {
+		cfg.pgn_dialog_folder = "";
+	}
+	if (typeof cfg.engine_dialog_folder !== "string") {
+		cfg.engine_dialog_folder = "";
+	}
+	if (typeof cfg.weights_dialog_folder !== "string") {
+		cfg.weights_dialog_folder = "";
 	}
 }
 
