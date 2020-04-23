@@ -11,13 +11,11 @@ function Point(a, b) {
 
 	if (Point.xy_lookup === undefined) {
 		Point.xy_lookup = New2DArray(8, 8);
-		Point.s_lookup = Object.create(null);
 		for (let x = 0; x < 8; x++) {
 			for (let y = 0; y < 8; y++) {
 				let s = S(x, y);
 				let point = Object.freeze({x, y, s});
 				Point.xy_lookup[x][y] = point;
-				Point.s_lookup[s] = point;
 			}
 		}
 	}
@@ -25,11 +23,7 @@ function Point(a, b) {
 	// Point("a8") or Point(0, 0) are both valid.
 
 	if (b === undefined) {
-		let ret = Point.s_lookup[a];
-		if (ret === undefined) {
-			return null;
-		}
-		return ret;
+		[a, b] = XY(a);
 	}
 
 	let col = Point.xy_lookup[a];

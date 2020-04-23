@@ -1,50 +1,29 @@
 "use strict";
 
+// At some point I tried caching the results of XY() and S()
+// but for XY(), object lookups were slower than calculating,
+// and for S(), it just isn't called enough to matter.
+
 function XY(s) {				// e.g. "b7" --> [1, 1]
-
-	if (XY.cache === undefined) {
-		XY.cache = Object.create(null);
-		for (let x = 0; x < 8; x++) {
-			for (let y = 0; y < 8; y++) {
-				XY.cache[S(x, y).toLowerCase()] = [x, y];		// Object.freeze() on these seems
-				XY.cache[S(x, y).toUpperCase()] = [x, y];		// to carry a perf penalty, somehow.
-			}
-		}
-	}
-
-	let ret = XY.cache[s];
-
-	if (ret === undefined) {
+	if (typeof s !== "string" || s.length !== 2) {
 		return [-1, -1];
 	}
-
-	return ret;
+	s = s.toLowerCase();
+	let x = s.charCodeAt(0) - 97;
+	let y = 8 - parseInt(s[1], 10);
+	if (x < 0 || x > 7 || y < 0 || y > 7 || Number.isNaN(y)) {
+		return [-1, -1];
+	}
+	return [x, y];
 }
 
 function S(x, y) {				// e.g. (1, 1) --> "b7"
-
-	if (S.cache === undefined) {
-		S.cache = New2DArray(8, 8);
-		for (let x = 0; x < 8; x++) {
-			for (let y = 0; y < 8; y++) {
-				let xs = String.fromCharCode(x + 97);
-				let ys = String.fromCharCode((8 - y) + 48);
-				S.cache[x][y] = xs + ys;
-			}
-		}
-	}
-
-	let col = S.cache[x];
-	if (col === undefined) {
+	if (typeof x !== "number" || typeof y !== "number" || x < 0 || x > 7 || y < 0 || y > 7) {
 		return "??";
 	}
-
-	let ret = col[y];
-	if (ret === undefined) {
-		return "??";
-	}
-
-	return ret;
+	let xs = String.fromCharCode(x + 97);
+	let ys = String.fromCharCode((8 - y) + 48);
+	return xs + ys;
 }
 
 function InfoVal(s, key) {
