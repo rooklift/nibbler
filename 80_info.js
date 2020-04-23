@@ -26,7 +26,7 @@ function NewInfoHandler() {
 	ih.stderr_log = "";
 	ih.special_message = null;
 	ih.special_message_class = null;
-	ih.special_message_time = new Date();
+	ih.special_message_time = performance.now();
 
 	ih.reset_engine_info = function() {
 		this.ever_received_info = false;
@@ -318,7 +318,7 @@ function NewInfoHandler() {
 
 	ih.draw_statusbox = function(leela_maybe_running, nogo_reason, searchmoves, syncs_needed) {
 
-		if (this.special_message && new Date() - this.special_message_time < 3000) {
+		if (this.special_message && performance.now() - this.special_message_time < 3000) {
 
 			statusbox.innerHTML = `<span class="${this.special_message_class || "yellow"}">${this.special_message}</span>`;
 
@@ -765,7 +765,7 @@ function NewInfoHandler() {
 	ih.set_special_message = function(s, css_class) {		// Can leave css_class undefined to use a default.
 		this.special_message = s;
 		this.special_message_class = css_class;
-		this.special_message_time = new Date();
+		this.special_message_time = performance.now();
 	};
 
 	return ih;
