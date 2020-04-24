@@ -913,9 +913,9 @@ const info_prototype = {
 
 		if (opts.s) {
 			if (typeof this.s === "number" && this.n > 0) {						// Checking n is correct.
-				ret.push(`Q+U: ${this.s.toFixed(5)}`);
+				ret.push(`S: ${this.s.toFixed(5)}`);
 			} else {
-				ret.push(`Q+U: ?`);
+				ret.push(`S: ?`);
 			}
 		}
 
