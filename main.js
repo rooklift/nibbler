@@ -803,7 +803,7 @@ function menu_build() {
 							}
 						},
 						{
-							label: "Q+U",
+							label: "S - search priority",
 							type: "checkbox",
 							checked: config.show_s,
 							click: () => {
@@ -1060,7 +1060,7 @@ function menu_build() {
 							}
 						},
 						{
-							label: "Q+U",
+							label: "S",
 							type: "checkbox",
 							checked: config.sam_s,
 							click: () => {
