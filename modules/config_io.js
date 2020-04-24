@@ -15,10 +15,6 @@ exports.defaults = {
 	"options": {},
 	"args": [],
 
-	"pgn_dialog_folder": "",
-	"engine_dialog_folder": "",
-	"weights_dialog_folder": "",
-
 	"width": 1280,
 	"height": 835,
 	"board_size": 640,
@@ -39,14 +35,19 @@ exports.defaults = {
 	"good_colour": "#66aa66",
 	"bad_colour": "#cccc66",
 	"terrible_colour": "#cc6666",
+
+	"searchmoves_buttons": true,
 	"focus_on_text": "focused:",
 	"focus_off_text": "focus?",
+
 	"bad_move_threshold": 0.02,
 	"terrible_move_threshold": 0.04,
 	"uncertainty_cutoff": 0.1,
+
 	"arrows_enabled": true,
 	"click_spotlight": true,
 	"arrowhead_type": 0,
+
 	"show_cp": false,
 	"cp_white_pov": false,
 	"show_n": true,
@@ -59,11 +60,11 @@ exports.defaults = {
 	"show_m": false,
 	"show_d": false,
 	"show_wdl": true,
-	"searchmoves_buttons": true,
-	"max_info_lines": null,
 	"infobox_stats_newline": false,
+	"max_info_lines": null,
 	"hover_draw": false,
 	"hover_method": 0,
+
 	"serious_analysis_mode": false,
 	"sam_ev": true,
 	"sam_n": true,
@@ -77,12 +78,20 @@ exports.defaults = {
 	"sam_m": false,
 	"sam_d": false,
 	"sam_wdl": false,
+
+	"pgn_dialog_folder": "",
+	"engine_dialog_folder": "",
+	"weights_dialog_folder": "",
+
 	"update_delay": 170,
 	"animate_delay_multiplier": 4,
+	
 	"search_nodes": null,
 	"autoplay": true,
+
 	"save_enabled": false,
 	"override_piece_directory": null,
+
 	"logfile": null,
 	"log_info_lines": false
 };
