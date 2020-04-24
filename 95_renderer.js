@@ -1150,7 +1150,7 @@ function NewRenderer() {
 					q: config.sam_q,
 					d: config.sam_d,
 					u: config.sam_u,
-					q_plus_u: config.sam_s,
+					s: config.sam_s,
 				},
 				this.info_handler.nodes);
 
