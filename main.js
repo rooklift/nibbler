@@ -805,11 +805,11 @@ function menu_build() {
 						{
 							label: "Q+U",
 							type: "checkbox",
-							checked: config.show_q_plus_u,
+							checked: config.show_s,
 							click: () => {
 								win.webContents.send("call", {
 									fn: "toggle",
-									args: ["show_q_plus_u"],
+									args: ["show_s"],
 								});
 							}
 						},
@@ -1062,11 +1062,11 @@ function menu_build() {
 						{
 							label: "Q+U",
 							type: "checkbox",
-							checked: config.sam_q_plus_u,
+							checked: config.sam_s,
 							click: () => {
 								win.webContents.send("call", {
 									fn: "toggle",
-									args: ["sam_q_plus_u"],
+									args: ["sam_s"],
 								});
 							}
 						},

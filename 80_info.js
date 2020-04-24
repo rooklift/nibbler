@@ -488,7 +488,7 @@ function NewInfoHandler() {
 					q: config.show_q,
 					d: config.show_d,
 					u: config.show_u,
-					q_plus_u: config.show_q_plus_u,
+					q_plus_u: config.show_s,
 				},
 				this.nodes);
 
