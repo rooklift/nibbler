@@ -220,9 +220,14 @@ function NewInfoHandler() {
 				move_info.u = tmp;
 			}
 
-			tmp = parseFloat(InfoVal(s, "(Q+U:"));
+			tmp = parseFloat(InfoVal(s, "(Q+U:"));		// Old name for S
 			if (Number.isNaN(tmp) === false) {
-				move_info.q_plus_u = tmp;
+				move_info.s = tmp;
+			}
+
+			tmp = parseFloat(InfoVal(s, "(S:"));
+			if (Number.isNaN(tmp) === false) {
+				move_info.s = tmp;
 			}
 
 			tmp = parseFloat(InfoVal(s, "(P:"));		// parseFloat will ignore the trailing %
@@ -488,7 +493,7 @@ function NewInfoHandler() {
 					q: config.show_q,
 					d: config.show_d,
 					u: config.show_u,
-					q_plus_u: config.show_s,
+					s: config.show_s,
 				},
 				this.nodes);
 
@@ -906,9 +911,9 @@ const info_prototype = {
 			}
 		}
 
-		if (opts.q_plus_u) {
-			if (typeof this.q_plus_u === "number" && this.n > 0) {				// Checking n is correct.
-				ret.push(`Q+U: ${this.q_plus_u.toFixed(5)}`);
+		if (opts.s) {
+			if (typeof this.s === "number" && this.n > 0) {						// Checking n is correct.
+				ret.push(`Q+U: ${this.s.toFixed(5)}`);
 			} else {
 				ret.push(`Q+U: ?`);
 			}
@@ -957,7 +962,7 @@ function new_info(board, move) {
 	info.pv = [move];				// Warning: never assume this is a legal sequence.
 	info.nice_pv_cache = null;
 	info.q = 0;
-	info.q_plus_u = 1;
+	info.s = 1;						// Known as Q+U before Lc0 v0.25-rc2
 	info.total_nodes = 0;
 	info.u = 1;
 	info.v = null;					// Warning: v is allowed to be null if not known.
