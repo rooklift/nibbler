@@ -1559,16 +1559,22 @@ function NewRenderer() {
 			return;
 		}
 
-		let best = moves[0];
+		let best_info = moves[0];
 
-		let score = best.value();
+		// Use .total_nodes to determine whether the info is based on more analysis
+		// than what we have cached already...
 
-		if (best.board.active === "b") {
-			score = 1 - score;
+		if (!this.node.eval_nodes || best_info.total_nodes > this.node.eval_nodes) {
+
+			let score = best_info.value();
+
+			if (best_info.board.active === "b") {
+				score = 1 - score;
+			}
+
+			this.node.eval = score;
+			this.node.eval_nodes = best_info.total_nodes;
 		}
-
-		this.node.eval = score;
-		this.node.eval_nodes = best.total_nodes;
 	};
 
 	return renderer;
