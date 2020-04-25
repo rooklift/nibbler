@@ -1564,7 +1564,7 @@ function NewRenderer() {
 		// Use .total_nodes to determine whether the info is based on more analysis
 		// than what we have cached already...
 
-		if (!this.node.eval_nodes || best_info.total_nodes > this.node.eval_nodes) {
+		if (!this.node.eval_nodes || best_info.total_nodes >= this.node.eval_nodes) {
 
 			let score = best_info.value();
 
