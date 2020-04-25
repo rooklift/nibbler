@@ -26,6 +26,8 @@ function NewGrapher() {
 
 	grapher.draw = function(node, force) {
 
+		// FIXME: this is some tangled logic. Rewrite.
+
 		let boundingrect = graph.getBoundingClientRect();
 
 		let width = boundingrect.right - boundingrect.left;
@@ -90,10 +92,12 @@ function NewGrapher() {
 
 		// Vertical position line...
 
-		let depth = node.depth();
-		let colour = node.is_main_line() ? "#6cccee" : "#ffff00";
-		this.add_line(width * depth / imaginary_length, height / 2 - 3, width * depth / imaginary_length, 0, colour, 1, true, true, "graph_pos_top");
-		this.add_line(width * depth / imaginary_length, height / 2 + 2, width * depth / imaginary_length, height, colour, 1, true, true, "graph_pos_bottom");
+		if (eval_list.length >= 2) {
+			let depth = node.depth();
+			let colour = node.is_main_line() ? "#6cccee" : "#ffff00";
+			this.add_line(width * depth / imaginary_length, height / 2 - 3, width * depth / imaginary_length, 0, colour, 1, true, true, "graph_pos_top");
+			this.add_line(width * depth / imaginary_length, height / 2 + 2, width * depth / imaginary_length, height, colour, 1, true, true, "graph_pos_bottom");
+		}
 	};
 
 	grapher.add_line = function(x1, y1, x2, y2, colour, stroke_width, dashed, crisp, id) {
