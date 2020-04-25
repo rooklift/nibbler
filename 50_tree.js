@@ -30,20 +30,51 @@ const node_prototype = {
 
 	history: function() {
 
-		let moves = [];
+		let ret = [];
 		let node = this;
 
 		while (node.move) {
-			moves.push(node.move);
+			ret.push(node.move);
 			node = node.parent;
 		}
 
-		moves.reverse();
-		return moves;
+		ret.reverse();
+		return ret;
 	},
 
 	future_history: function() {
 		return this.get_end().history();
+	},
+
+	eval_history: function() {
+
+		let ret = [];
+		let node = this;
+
+		while (node) {
+			ret.push(node.eval);
+			node = node.parent;
+		}
+
+		ret.reverse();
+		return ret;
+	},
+
+	future_eval_history: function() {
+		return this.get_end().eval_history()
+	},
+
+	depth: function() {
+
+		let n = 0;
+		let node = this;
+
+		while (node.parent) {
+			n++;
+			node = node.parent;
+		}
+
+		return n;
 	},
 
 	get_root: function() {
@@ -120,6 +151,20 @@ const node_prototype = {
 		}
 
 		tree_version++;
+	},
+
+	is_main_line: function() {
+
+		let node = this;
+
+		while (node.parent) {
+			if (node.parent.children[0] !== node) {
+				return false;
+			}
+			node = node.parent;
+		}
+
+		return true;
 	},
 
 	delete_other_lines: function() {
@@ -203,6 +248,22 @@ const node_prototype = {
 		tree_version++;
 		DestroyTree(this);
 		return parent;
+	},
+
+	update_eval_from_info: function(info) {
+
+		// info should be the best info object, i.e. the top of the ih.sorted() list...
+
+		if (!info) {
+			return;
+		}
+
+		if (this.eval && this.eval_nodes > info.total_nodes) {
+			return;
+		}
+
+		this.eval = info.board.active === "w" ? info.value() : 1 - info.value();
+		this.eval_nodes = info.total_nodes;
 	}
 };
 
@@ -212,9 +273,12 @@ function NewNode(parent, move) {		// Args are null for root only.
 
 	node.__position = null;
 	node.parent = parent;
+	node.children = [];
+
 	node.move = move;					// Think of this as the move that led to the position associated with node.
 	node.__nice_move = null;
-	node.children = [];
+	node.eval = null;
+	node.eval_nodes = 0;
 
 	tree_version++;
 	return node;
@@ -259,8 +323,6 @@ function __destroy_tree(node) {
 	while (node.children.length === 1) {
 		node.parent = null;
 		node.__position = null;
-		node.move = null;
-		node.__nice_move = null;
 		let child = node.children[0];
 		node.children = null;
 		node = child;
@@ -268,8 +330,6 @@ function __destroy_tree(node) {
 
 	node.parent = null;
 	node.__position = null;
-	node.move = null;
-	node.__nice_move = null;
 
 	for (let child of node.children) {
 		__destroy_tree(child);

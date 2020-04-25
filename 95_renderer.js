@@ -7,6 +7,7 @@ function NewRenderer() {
 	renderer.engine = NewEngine();								// Engine connection. Needs its setup() called.
 	renderer.node = NewTree();									// Our current place in the current tree.
 	renderer.movelist_handler = NewMovelistHander();			// Deals with the movelist at the bottom.
+	renderer.grapher = NewGrapher();							// Deals with the SVG winrate graph.
 
 	renderer.info_handler = NewInfoHandler();					// Handles info from the engine, and drawing it.
 	renderer.info_handler.clear(renderer.node.get_board());		// Best give it a valid board to start with.
@@ -657,7 +658,13 @@ function NewRenderer() {
 
 		if (this.node.children.length === 0) {
 			if (board.no_moves()) {
-				this.nogo_reason = board.king_in_check() ? "Checkmate" : "Stalemate";
+				if (board.king_in_check()) {
+					this.nogo_reason = "Checkmate";
+					this.node.eval = board.active === "w" ? 0 : 1;
+				} else {
+					this.nogo_reason = "Stalemate";
+					this.node.eval = 0.5;
+				}
 				return;
 			}
 		}
@@ -958,17 +965,24 @@ function NewRenderer() {
 		config_io.save(config);
 	};
 
+	renderer.set_graph_height = function(sz) {
+		config.graph_height = sz;
+		config_io.save(config);
+		this.rebuild_sizes();
+	};
+
 	renderer.set_board_size = function(sz) {
+		config.square_size = Math.floor(sz / 8);
+		config.board_size = config.square_size * 8;
+		config_io.save(config);
+		this.rebuild_sizes();
+	};
+
+	renderer.rebuild_sizes = function() {
 
 		// This assumes everything already exists.
 		// Derived from the longer version in start.js, which it does not replace.
 		// Can be called without sz to simply recalculate everything and save (but this flickers).
-
-		if (sz) {
-			config.square_size = Math.floor(sz / 8);
-			config.board_size = config.square_size * 8;
-		}
-		config_io.save(config);
 
 		boardfriends.width = canvas.width = boardsquares.width = config.board_size;
 		boardfriends.height = canvas.height = boardsquares.height = config.board_size;
@@ -985,9 +999,16 @@ function NewRenderer() {
 			}
 		}
 
+		// Making the heights of the right side divs is something I never figured out with CSS...
+
+		graphbox.style.height = config.graph_height.toString() + "px";
+		graph.style.height = config.graph_height.toString() + "px";
+
 		let infobox_top = infobox.getBoundingClientRect().top;
 		let canvas_bottom = canvas.getBoundingClientRect().bottom;
-		infobox.style.height = (canvas_bottom - infobox_top).toString() + "px";
+		let graph_top = canvas_bottom - (graphbox.getBoundingClientRect().bottom - graphbox.getBoundingClientRect().top);
+
+		infobox.style.height = (graph_top - infobox_top - 10).toString() + "px";		// 10 to match CSS margin
 
 		promotiontable.style.left = (boardsquares.offsetLeft + config.square_size * 2).toString() + "px";
 		promotiontable.style.top = (boardsquares.offsetTop + config.square_size * 3.5).toString() + "px";
@@ -1513,6 +1534,9 @@ function NewRenderer() {
 		context.clearRect(0, 0, canvas.width, canvas.height);
 		let did_hoverdraw = this.hoverdraw();
 
+		let arrow_spotlight_square = config.click_spotlight ? this.active_square : null;
+		let next_move = config.next_move_arrow && this.node.children.length > 0 ? this.node.children[0].move : null;
+
 		if (did_hoverdraw) {
 			boardfriends.style.display = "none";
 			canvas.style.outline = "2px dashed #6cccee";
@@ -1522,7 +1546,7 @@ function NewRenderer() {
 			canvas.style.outline = "none";
 			this.draw_move_in_canvas();
 			this.draw_enemies_in_canvas();
-			this.info_handler.draw_arrows(config.click_spotlight ? this.active_square : null);
+			this.info_handler.draw_arrows(arrow_spotlight_square, next_move);
 			this.draw_friendlies_in_table();
 		}
 
@@ -1536,16 +1560,26 @@ function NewRenderer() {
 			this.hoverdraw_div,
 			Math.max(this.engine.readyok_required, this.engine.bestmove_required));
 
+		this.grapher.draw(this.node);
+
 		debug.draw -= 1;
 	};
 
 	renderer.spin = function() {
 		this.tick++;
 		this.draw();
+		this.update_node_eval();
 		if (config.versus !== "" && Math.max(this.engine.readyok_required, this.engine.bestmove_required) > 10) {
 			this.set_versus("");		// Stop the engine if we get too far out of sync. See issue #57.
 		}
 		setTimeout(this.spin.bind(this), config.update_delay);
+	};
+
+	renderer.update_node_eval = function() {
+		let info_list = this.info_handler.sorted();
+		if (info_list.length > 0) {
+			this.node.update_eval_from_info(info_list[0]);
+		}
 	};
 
 	return renderer;

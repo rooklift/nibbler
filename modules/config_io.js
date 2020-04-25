@@ -25,6 +25,7 @@ exports.defaults = {
 	"arrow_width": 8,
 	"arrowhead_radius": 12,
 	"board_font": "18px Arial",
+	"graph_height": 100,
 
 	"light_square": "#dadada",
 	"dark_square": "#b4b4b4",
@@ -46,6 +47,7 @@ exports.defaults = {
 
 	"arrows_enabled": true,
 	"click_spotlight": true,
+	"next_move_arrow": true,
 	"arrowhead_type": 0,
 
 	"show_cp": false,

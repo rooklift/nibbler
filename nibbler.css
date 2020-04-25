@@ -123,6 +123,7 @@ input[type=text]:focus {
 #infobox {
 	color: #cccccc;						/* only used for Lc0 stderr output at startup */
 	font-family: monospace, monospace;
+	margin-bottom: 10px;
 	overflow-x: hidden;
 	overflow-y: auto;
 	padding-right: 10px;				/* so the text doesn't get so near the scroll bar */
@@ -138,6 +139,14 @@ input[type=text]:focus {
 	padding-right: 10px;				/* so the text doesn't get so near the scroll bar */
 	pointer-events: auto;
 	white-space: pre-wrap;
+}
+
+#graphbox {
+	pointer-events: auto;
+}
+
+#graph {
+	width: 100%;
 }
 
 a {										/* is this even used anywhere? */

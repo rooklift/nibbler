@@ -510,6 +510,17 @@ function menu_build() {
 					}
 				},
 				{
+					label: "Always show next move (when known)",
+					type: "checkbox",
+					checked: config.next_move_arrow,
+					click: () => {
+						win.webContents.send("call", {
+							fn: "toggle",
+							args: ["next_move_arrow"],
+						});
+					}
+				},
+				{
 					type: "separator"
 				},
 				{
@@ -1954,6 +1965,30 @@ function menu_build() {
 								win.webContents.send("call", {
 									fn: "set_board_size",
 									args: [480],
+								});
+							}
+						},
+						{
+							label: "512",
+							type: "checkbox",
+							checked: config.board_size === 512,
+							click: () => {
+								set_checks("Sizes", "Board", "512");
+								win.webContents.send("call", {
+									fn: "set_board_size",
+									args: [512],
+								});
+							}
+						},
+						{
+							label: "576",
+							type: "checkbox",
+							checked: config.board_size === 576,
+							click: () => {
+								set_checks("Sizes", "Board", "576");
+								win.webContents.send("call", {
+									fn: "set_board_size",
+									args: [576],
 								});
 							}
 						},
