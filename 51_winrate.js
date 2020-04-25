@@ -4,6 +4,9 @@ function NewGrapher() {
 
 	let grapher = Object.create(null);
 
+	grapher.last_drawn_board = null;
+	grapher.last_draw_time = performance.now();
+
 	grapher.clear_graph = function() {
 		while (graph.lastChild) {
 			graph.removeChild(graph.lastChild);
@@ -12,7 +15,12 @@ function NewGrapher() {
 
 	grapher.draw = function(node) {
 
-		// FIXME: draw only occasionally, i.e. once a second, unless position in tree changes.
+		if (this.last_drawn_board === node.get_board() && performance.now() - grapher.last_draw_time < 500) {
+			return;
+		}
+
+		this.last_drawn_board = node.get_board();
+		this.last_draw_time = performance.now();
 
 		this.clear_graph();
 
@@ -67,8 +75,9 @@ function NewGrapher() {
 
 		// Vertical position line...
 		let depth = node.depth();
-		this.add_line(width * depth / imaginary_length, height / 2 - 3, width * depth / imaginary_length, 0, "#6cccee", 1, true, true);
-		this.add_line(width * depth / imaginary_length, height / 2 + 2, width * depth / imaginary_length, height, "#6cccee", 1, true, true);
+		let colour = node.is_main_line() ? "#6cccee" : "#ffff00";
+		this.add_line(width * depth / imaginary_length, height / 2 - 3, width * depth / imaginary_length, 0, colour, 1, true, true);
+		this.add_line(width * depth / imaginary_length, height / 2 + 2, width * depth / imaginary_length, height, colour, 1, true, true);
 	};
 
 	grapher.add_line = function(x1, y1, x2, y2, colour, stroke_width, dashed, crisp) {

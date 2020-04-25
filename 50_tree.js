@@ -153,6 +153,20 @@ const node_prototype = {
 		tree_version++;
 	},
 
+	is_main_line: function() {
+
+		let node = this;
+
+		while (node.parent) {
+			if (node.parent.children[0] !== node) {
+				return false;
+			}
+			node = node.parent;
+		}
+
+		return true;
+	},
+
 	delete_other_lines: function() {
 
 		this.promote_to_main_line();
