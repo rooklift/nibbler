@@ -5,7 +5,7 @@ function NewGrapher() {
 	let grapher = Object.create(null);
 
 	grapher.last_drawn_board = null;
-	grapher.last_draw_time = performance.now();
+	grapher.last_draw_time = -10000;
 
 	grapher.clear_graph = function() {
 		while (graph.lastChild) {
