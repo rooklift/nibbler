@@ -1535,7 +1535,7 @@ function NewRenderer() {
 		let did_hoverdraw = this.hoverdraw();
 
 		let arrow_spotlight_square = config.click_spotlight ? this.active_square : null;
-		let next_move = this.node.children.length > 0 ? this.node.children[0].move : null;
+		let next_move = config.next_move_arrow && this.node.children.length > 0 ? this.node.children[0].move : null;
 
 		if (did_hoverdraw) {
 			boardfriends.style.display = "none";

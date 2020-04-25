@@ -510,6 +510,17 @@ function menu_build() {
 					}
 				},
 				{
+					label: "Always show next move (when known)",
+					type: "checkbox",
+					checked: config.next_move_arrow,
+					click: () => {
+						win.webContents.send("call", {
+							fn: "toggle",
+							args: ["next_move_arrow"],
+						});
+					}
+				},
+				{
 					type: "separator"
 				},
 				{
