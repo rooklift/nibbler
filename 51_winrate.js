@@ -49,12 +49,13 @@ function NewGrapher() {
 
 			this.clear_graph();
 
+			// Horizontal (50%) line...
+
+			this.add_line(0, height / 2, width, height / 2, "#666666", 1, true, true, null);
+
 			if (eval_list.length < 2) {
 				return;
 			}
-
-			// Horizontal (50%) line...
-			this.add_line(0, height / 2, width, height / 2, "#666666", 1, true, true, null);
 
 			let last_x = null;
 			let last_y = null;
@@ -88,6 +89,7 @@ function NewGrapher() {
 		}
 
 		// Vertical position line...
+
 		let depth = node.depth();
 		let colour = node.is_main_line() ? "#6cccee" : "#ffff00";
 		this.add_line(width * depth / imaginary_length, height / 2 - 3, width * depth / imaginary_length, 0, colour, 1, true, true, "graph_pos_top");
@@ -95,13 +97,17 @@ function NewGrapher() {
 	};
 
 	grapher.add_line = function(x1, y1, x2, y2, colour, stroke_width, dashed, crisp, id) {
+
 		let element = document.createElementNS("http://www.w3.org/2000/svg", "line");
+
 		element.setAttributeNS(null, "x1", x1);
 		element.setAttributeNS(null, "y1", y1);
 		element.setAttributeNS(null, "x2", x2);
 		element.setAttributeNS(null, "y2", y2);
+
 		element.setAttributeNS(null, "stroke", colour);
 		element.setAttributeNS(null, "stroke-width", stroke_width);
+
 		if (dashed) {
 			element.setAttributeNS(null, "stroke-dasharray", "2");
 		}
@@ -111,6 +117,7 @@ function NewGrapher() {
 		if (id) {
 			element.setAttributeNS(null, "id", id);
 		}
+
 		graph.appendChild(element);
 	};
 
