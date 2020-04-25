@@ -25,6 +25,7 @@ exports.defaults = {
 	"arrow_width": 8,
 	"arrowhead_radius": 12,
 	"board_font": "18px Arial",
+	"graph_height": 100,
 
 	"light_square": "#dadada",
 	"dark_square": "#b4b4b4",

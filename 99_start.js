@@ -84,7 +84,17 @@ statusbox.style["font-size"] = config.status_font_size.toString() + "px";
 let infobox_top = infobox.getBoundingClientRect().top;
 let canvas_bottom = canvas.getBoundingClientRect().bottom;
 
-infobox.style.height = (canvas_bottom - infobox_top).toString() + "px";
+graphbox.style.height = config.graph_height.toString() + "px";
+graph.style.height = config.graph_height.toString() + "px";
+
+infobox.style.height = (canvas_bottom - infobox_top - config.graph_height).toString() + "px";
+
+let circle = document.createElementNS("http://www.w3.org/2000/svg", "circle");
+circle.setAttributeNS(null, "cx", 50);
+circle.setAttributeNS(null, "cy", 50);
+circle.setAttributeNS(null, "r", 70);
+circle.setAttributeNS(null, "fill", "red");
+graph.appendChild(circle);
 
 // The promotion table pops up when needed...
 
