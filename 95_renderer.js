@@ -1544,14 +1544,14 @@ function NewRenderer() {
 	renderer.spin = function() {
 		this.tick++;
 		this.draw();
-		this.set_eval();
+		this.set_node_eval();
 		if (config.versus !== "" && Math.max(this.engine.readyok_required, this.engine.bestmove_required) > 10) {
 			this.set_versus("");		// Stop the engine if we get too far out of sync. See issue #57.
 		}
 		setTimeout(this.spin.bind(this), config.update_delay);
 	};
 
-	renderer.set_eval = function() {
+	renderer.set_node_eval = function() {
 
 		let moves = this.info_handler.sorted();
 
