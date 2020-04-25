@@ -1958,6 +1958,30 @@ function menu_build() {
 							}
 						},
 						{
+							label: "512",
+							type: "checkbox",
+							checked: config.board_size === 512,
+							click: () => {
+								set_checks("Sizes", "Board", "512");
+								win.webContents.send("call", {
+									fn: "set_board_size",
+									args: [512],
+								});
+							}
+						},
+						{
+							label: "576",
+							type: "checkbox",
+							checked: config.board_size === 576,
+							click: () => {
+								set_checks("Sizes", "Board", "576");
+								win.webContents.send("call", {
+									fn: "set_board_size",
+									args: [576],
+								});
+							}
+						},
+						{
 							label: "640",
 							type: "checkbox",
 							checked: config.board_size === 640,
