@@ -959,17 +959,24 @@ function NewRenderer() {
 		config_io.save(config);
 	};
 
+	renderer.set_graph_height = function(sz) {
+		config.graph_height = sz;
+		config_io.save(config);
+		this.rebuild_sizes();
+	};
+
 	renderer.set_board_size = function(sz) {
+		config.square_size = Math.floor(sz / 8);
+		config.board_size = config.square_size * 8;
+		config_io.save(config);
+		this.rebuild_sizes();
+	};
+
+	renderer.rebuild_sizes = function() {
 
 		// This assumes everything already exists.
 		// Derived from the longer version in start.js, which it does not replace.
 		// Can be called without sz to simply recalculate everything and save (but this flickers).
-
-		if (sz) {
-			config.square_size = Math.floor(sz / 8);
-			config.board_size = config.square_size * 8;
-		}
-		config_io.save(config);
 
 		boardfriends.width = canvas.width = boardsquares.width = config.board_size;
 		boardfriends.height = canvas.height = boardsquares.height = config.board_size;
