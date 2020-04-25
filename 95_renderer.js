@@ -658,7 +658,13 @@ function NewRenderer() {
 
 		if (this.node.children.length === 0) {
 			if (board.no_moves()) {
-				this.nogo_reason = board.king_in_check() ? "Checkmate" : "Stalemate";
+				if (board.king_in_check()) {
+					this.nogo_reason = "Checkmate";
+					this.node.eval = board.active === "w" ? 0 : 1;
+				} else {
+					this.nogo_reason = "Stalemate";
+					this.node.eval = 0.5;
+				}
 				return;
 			}
 		}
