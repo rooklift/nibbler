@@ -42,7 +42,7 @@ function NewGrapher() {
 			}
 		}
 
-		if (performance.now() - grapher.last_draw_time < 500) {
+		if (performance.now() - grapher.last_draw_time > 500) {
 
 			this.last_drawn_board = node.get_board();
 			this.last_draw_time = performance.now();
