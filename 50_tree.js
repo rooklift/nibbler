@@ -73,7 +73,7 @@ const node_prototype = {
 			n++;
 			node = node.parent;
 		}
-		
+
 		return n;
 	},
 
@@ -234,6 +234,22 @@ const node_prototype = {
 		tree_version++;
 		DestroyTree(this);
 		return parent;
+	},
+
+	update_eval_from_info: function(info) {
+
+		// info should be the best info object, i.e. the top of the ih.sorted() list...
+
+		if (!info) {
+			return;
+		}
+
+		if (this.eval && this.eval_nodes > info.total_nodes) {
+			return;
+		}
+
+		this.eval = info.board.active === "w" ? info.value() : 1 - info.value();
+		this.eval_nodes = info.total_nodes;
 	}
 };
 

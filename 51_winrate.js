@@ -8,6 +8,8 @@ function clear_graph() {
 
 function draw_winrate(node) {
 
+	// FIXME: draw only occasionally, i.e. once a second, unless position in tree changes.
+
 	clear_graph();
 
 	let width = graph.getBoundingClientRect().right - graph.getBoundingClientRect().left;

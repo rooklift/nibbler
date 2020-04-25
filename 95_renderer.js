@@ -1544,36 +1544,17 @@ function NewRenderer() {
 	renderer.spin = function() {
 		this.tick++;
 		this.draw();
-		this.set_node_eval();
+		this.update_node_eval();
 		if (config.versus !== "" && Math.max(this.engine.readyok_required, this.engine.bestmove_required) > 10) {
 			this.set_versus("");		// Stop the engine if we get too far out of sync. See issue #57.
 		}
 		setTimeout(this.spin.bind(this), config.update_delay);
 	};
 
-	renderer.set_node_eval = function() {
-
-		let moves = this.info_handler.sorted();
-
-		if (moves.length === 0) {
-			return;
-		}
-
-		let best_info = moves[0];
-
-		// Use .total_nodes to determine whether the info is based on more analysis
-		// than what we have cached already...
-
-		if (!this.node.eval_nodes || best_info.total_nodes >= this.node.eval_nodes) {
-
-			let score = best_info.value();
-
-			if (best_info.board.active === "b") {
-				score = 1 - score;
-			}
-
-			this.node.eval = score;
-			this.node.eval_nodes = best_info.total_nodes;
+	renderer.update_node_eval = function() {
+		let info_list = this.info_handler.sorted();
+		if (info_list.length > 0) {
+			this.node.update_eval_from_info(info_list[0]);
 		}
 	};
 
