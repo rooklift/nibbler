@@ -64,6 +64,19 @@ const node_prototype = {
 		return this.get_end().eval_history()
 	},
 
+	depth: function() {
+
+		let n = 0;
+		let node = this;
+
+		while (node.parent) {
+			n++;
+			node = node.parent;
+		}
+		
+		return n;
+	},
+
 	get_root: function() {
 
 		let node = this;

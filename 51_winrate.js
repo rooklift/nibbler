@@ -15,7 +15,11 @@ function draw_winrate(node) {
 
 	add_line(0, height / 2, width, height / 2, "#6cccee", 1, true);
 
+	let depth = node.depth();
+
 	let eval_list = node.future_eval_history();
+
+	add_line(width * depth / eval_list.length, 0, width * depth / eval_list.length, 100, "#6cccee", 1, true);
 
 	let last_x = null;
 	let last_y = null;
