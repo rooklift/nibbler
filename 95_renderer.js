@@ -1534,6 +1534,9 @@ function NewRenderer() {
 		context.clearRect(0, 0, canvas.width, canvas.height);
 		let did_hoverdraw = this.hoverdraw();
 
+		let arrow_spotlight_square = config.click_spotlight ? this.active_square : null;
+		let next_move = this.node.children.length > 0 ? this.node.children[0].move : null;
+
 		if (did_hoverdraw) {
 			boardfriends.style.display = "none";
 			canvas.style.outline = "2px dashed #6cccee";
@@ -1543,7 +1546,7 @@ function NewRenderer() {
 			canvas.style.outline = "none";
 			this.draw_move_in_canvas();
 			this.draw_enemies_in_canvas();
-			this.info_handler.draw_arrows(config.click_spotlight ? this.active_square : null);
+			this.info_handler.draw_arrows(arrow_spotlight_square, next_move);
 			this.draw_friendlies_in_table();
 		}
 
