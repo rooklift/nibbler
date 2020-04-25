@@ -140,6 +140,10 @@ input[type=text]:focus {
 	white-space: pre-wrap;
 }
 
+#graphbox {
+	pointer-events: auto;
+}
+
 #graph {
 	width: 100%;
 }
