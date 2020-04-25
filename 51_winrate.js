@@ -26,8 +26,10 @@ function NewGrapher() {
 
 	grapher.draw = function(node) {
 
-		let width = graph.getBoundingClientRect().right - graph.getBoundingClientRect().left;
-		let height = graph.getBoundingClientRect().bottom - graph.getBoundingClientRect().top;
+		let boundingrect = graph.getBoundingClientRect();
+
+		let width = boundingrect.right - boundingrect.left;
+		let height = boundingrect.bottom - boundingrect.top;
 
 		let eval_list = node.future_eval_history();
 
@@ -64,7 +66,7 @@ function NewGrapher() {
 
 				if (e !== null) {
 
-					let x = width * n / (imaginary_length);
+					let x = width * n / imaginary_length;
 
 					let y = (1 - e) * height;
 					if (y < 1) y = 1;
