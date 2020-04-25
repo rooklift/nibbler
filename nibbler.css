@@ -140,6 +140,10 @@ input[type=text]:focus {
 	white-space: pre-wrap;
 }
 
+#graph {
+	width: 100%;
+}
+
 a {										/* is this even used anywhere? */
 	color: inherit;
 	text-decoration: inherit;

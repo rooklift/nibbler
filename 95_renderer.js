@@ -1536,16 +1536,39 @@ function NewRenderer() {
 			this.hoverdraw_div,
 			Math.max(this.engine.readyok_required, this.engine.bestmove_required));
 
+		draw_winrate(this.node);
+
 		debug.draw -= 1;
 	};
 
 	renderer.spin = function() {
 		this.tick++;
 		this.draw();
+		this.set_eval();
 		if (config.versus !== "" && Math.max(this.engine.readyok_required, this.engine.bestmove_required) > 10) {
 			this.set_versus("");		// Stop the engine if we get too far out of sync. See issue #57.
 		}
 		setTimeout(this.spin.bind(this), config.update_delay);
+	};
+
+	renderer.set_eval = function() {
+
+		let moves = this.info_handler.sorted();
+
+		if (moves.length === 0) {
+			return;
+		}
+
+		let best = moves[0];
+
+		let score = best.value();
+
+		if (best.board.active === "b") {
+			score = 1 - score;
+		}
+
+		this.node.eval = score;
+		this.node.eval_nodes = best.total_nodes;
 	};
 
 	return renderer;

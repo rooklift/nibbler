@@ -89,13 +89,6 @@ graph.style.height = config.graph_height.toString() + "px";
 
 infobox.style.height = (canvas_bottom - infobox_top - config.graph_height).toString() + "px";
 
-let circle = document.createElementNS("http://www.w3.org/2000/svg", "circle");
-circle.setAttributeNS(null, "cx", 50);
-circle.setAttributeNS(null, "cy", 50);
-circle.setAttributeNS(null, "r", 70);
-circle.setAttributeNS(null, "fill", "red");
-graph.appendChild(circle);
-
 // The promotion table pops up when needed...
 
 promotiontable.style.left = (boardsquares.offsetLeft + config.square_size * 2).toString() + "px";
