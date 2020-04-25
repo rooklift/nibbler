@@ -969,6 +969,7 @@ function NewRenderer() {
 		config.graph_height = sz;
 		config_io.save(config);
 		this.rebuild_sizes();
+		this.grapher.draw(this.node, true);
 	};
 
 	renderer.set_board_size = function(sz) {

@@ -2055,6 +2055,95 @@ function menu_build() {
 					]
 				},
 				{
+					label: "Graph",
+					submenu: [
+						{
+							label: "32",
+							type: "checkbox",
+							checked: config.graph_height === 32,
+							click: () => {
+								set_checks("Sizes", "Graph", "32");
+								win.webContents.send("call", {
+									fn: "set_graph_height",
+									args: [32],
+								});
+							}
+						},
+						{
+							label: "48",
+							type: "checkbox",
+							checked: config.graph_height === 48,
+							click: () => {
+								set_checks("Sizes", "Graph", "48");
+								win.webContents.send("call", {
+									fn: "set_graph_height",
+									args: [48],
+								});
+							}
+						},
+						{
+							label: "64",
+							type: "checkbox",
+							checked: config.graph_height === 64,
+							click: () => {
+								set_checks("Sizes", "Graph", "64");
+								win.webContents.send("call", {
+									fn: "set_graph_height",
+									args: [64],
+								});
+							}
+						},
+						{
+							label: "96",
+							type: "checkbox",
+							checked: config.graph_height === 96,
+							click: () => {
+								set_checks("Sizes", "Graph", "96");
+								win.webContents.send("call", {
+									fn: "set_graph_height",
+									args: [96],
+								});
+							}
+						},
+						{
+							label: "128",
+							type: "checkbox",
+							checked: config.graph_height === 128,
+							click: () => {
+								set_checks("Sizes", "Graph", "128");
+								win.webContents.send("call", {
+									fn: "set_graph_height",
+									args: [128],
+								});
+							}
+						},
+						{
+							label: "160",
+							type: "checkbox",
+							checked: config.graph_height === 160,
+							click: () => {
+								set_checks("Sizes", "Graph", "160");
+								win.webContents.send("call", {
+									fn: "set_graph_height",
+									args: [160],
+								});
+							}
+						},
+						{
+							label: "192",
+							type: "checkbox",
+							checked: config.graph_height === 192,
+							click: () => {
+								set_checks("Sizes", "Graph", "192");
+								win.webContents.send("call", {
+									fn: "set_graph_height",
+									args: [192],
+								});
+							}
+						},
+					]
+				},
+				{
 					label: "Arrows",
 					submenu: [
 						{
