@@ -13,16 +13,17 @@ function draw_winrate(node) {
 	let width = graph.getBoundingClientRect().right - graph.getBoundingClientRect().left;
 	let height = graph.getBoundingClientRect().bottom - graph.getBoundingClientRect().top;
 
-	add_line(0, height / 2, width, height / 2, "#6cccee", 1, true);
-
-	let depth = node.depth();
+	// add_line(0, height / 2, width, height / 2, "#6cccee", 1, true);
 
 	let eval_list = node.future_eval_history();
 
-	add_line(width * depth / eval_list.length, 0, width * depth / eval_list.length, 100, "#6cccee", 1, true);
+	if (eval_list.length < 2) {
+		return;
+	}
 
 	let last_x = null;
 	let last_y = null;
+	let last_n = null;
 
 	for (let n = 0; n < eval_list.length; n++) {
 
@@ -30,16 +31,25 @@ function draw_winrate(node) {
 
 		if (e !== null) {
 
-			let x = width * n / eval_list.length;
-			let y = (1 - e) * 100;
+			let x = width * n / (eval_list.length - 1);
+			let y = (1 - e) * height;
+
+			let interp = n - last_n !== 1;
 
 			if (last_x !== null) {
-				add_line(last_x, last_y, x, y, "white", 2, false);
+				add_line(last_x, last_y, x, y, interp ? "#666666" : "white", 2, interp);
 			}
 
 			last_x = x;
 			last_y = y;
+			last_n = n;
 		}
+	}
+
+	let depth = node.depth();
+
+	if (depth !== 0 && depth !== eval_list.length - 1) {
+		add_line(width * depth / (eval_list.length - 1), 0, width * depth / (eval_list.length - 1), height, "#6cccee", 1, true);
 	}
 }
 
