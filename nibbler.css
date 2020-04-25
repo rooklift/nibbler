@@ -142,7 +142,6 @@ input[type=text]:focus {
 }
 
 #graphbox {
-	background-color: #222222;
 	pointer-events: auto;
 }
 
