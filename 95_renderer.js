@@ -986,6 +986,8 @@ function NewRenderer() {
 			}
 		}
 
+		// Making the heights of the right side divs is something I never figured out with CSS...
+
 		graphbox.style.height = config.graph_height.toString() + "px";
 		graph.style.height = config.graph_height.toString() + "px";
 
@@ -993,9 +995,7 @@ function NewRenderer() {
 		let canvas_bottom = canvas.getBoundingClientRect().bottom;
 		let graph_top = canvas_bottom - (graphbox.getBoundingClientRect().bottom - graphbox.getBoundingClientRect().top);
 
-		// FIXME: hardcoded 10px adjustment to match the css
-
-		infobox.style.height = (graph_top - infobox_top - 10).toString() + "px";
+		infobox.style.height = (graph_top - infobox_top - 10).toString() + "px";		// 10 to match CSS margin
 
 		promotiontable.style.left = (boardsquares.offsetLeft + config.square_size * 2).toString() + "px";
 		promotiontable.style.top = (boardsquares.offsetTop + config.square_size * 3.5).toString() + "px";

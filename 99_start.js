@@ -78,20 +78,16 @@ movelist.style["font-size"] = config.pgn_font_size.toString() + "px";
 fenbox.style["font-size"] = config.fen_font_size.toString() + "px";
 statusbox.style["font-size"] = config.status_font_size.toString() + "px";
 
-// We rely on the statusbox having some text when doing these calculations,
-// so that the infobox_top has its final position.
-
-let infobox_top = infobox.getBoundingClientRect().top;
-let canvas_bottom = canvas.getBoundingClientRect().bottom;
+// Making the heights of the right side divs is something I never figured out with CSS...
 
 graphbox.style.height = config.graph_height.toString() + "px";
 graph.style.height = config.graph_height.toString() + "px";
 
+let infobox_top = infobox.getBoundingClientRect().top;
+let canvas_bottom = canvas.getBoundingClientRect().bottom;
 let graph_top = canvas_bottom - (graphbox.getBoundingClientRect().bottom - graphbox.getBoundingClientRect().top);
 
-// FIXME: hardcoded 10px adjustment to match the css
-
-infobox.style.height = (graph_top - infobox_top - 10).toString() + "px";
+infobox.style.height = (graph_top - infobox_top - 10).toString() + "px";		// 10 to match CSS margin
 
 // The promotion table pops up when needed...
 
