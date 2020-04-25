@@ -7,6 +7,7 @@ function NewRenderer() {
 	renderer.engine = NewEngine();								// Engine connection. Needs its setup() called.
 	renderer.node = NewTree();									// Our current place in the current tree.
 	renderer.movelist_handler = NewMovelistHander();			// Deals with the movelist at the bottom.
+	renderer.grapher = NewGrapher();							// Deals with the SVG winrate graph.
 
 	renderer.info_handler = NewInfoHandler();					// Handles info from the engine, and drawing it.
 	renderer.info_handler.clear(renderer.node.get_board());		// Best give it a valid board to start with.
@@ -1536,7 +1537,7 @@ function NewRenderer() {
 			this.hoverdraw_div,
 			Math.max(this.engine.readyok_required, this.engine.bestmove_required));
 
-		draw_winrate(this.node);
+		this.grapher.draw(this.node);
 
 		debug.draw -= 1;
 	};
