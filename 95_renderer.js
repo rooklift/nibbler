@@ -599,12 +599,17 @@ function NewRenderer() {
 			// synchronisation worries here, though it seems the isready / readyok system is good enough.
 
 			if (this.leela_position === this.node.get_board()) {		// See notes on leela_position above.
+
 				let tokens = s.split(" ");
-				let info = this.info_handler.table[tokens[1]];			// Update our cached eval in the tree.
+
+				let info = this.info_handler.table[tokens[1]];			// Update our cached eval in the tree while we can.
 				if (info) {
 					this.node.update_eval_from_info(info);
 				}
-				this.move(tokens[1]);
+
+				if (this.node.children.length === 0) {					// i.e. play only at leaf nodes.
+					this.move(tokens[1]);
+				}
 			}
 		}
 
