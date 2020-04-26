@@ -1216,6 +1216,20 @@ function NewRenderer() {
 		}
 	};
 
+	renderer.winrate_click = function(event) {
+
+		let node = this.grapher.node_from_click(this.node, event);
+
+		if (!node || node.get_root() !== this.node.get_root()) {
+			return;
+		}
+
+		if (node !== this.node) {
+			this.node = node;
+			this.position_changed();
+		}
+	};
+
 	renderer.show_promotiontable = function(partial_move) {
 
 		promotiontable.innerHTML = "";

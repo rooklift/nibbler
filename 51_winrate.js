@@ -40,7 +40,7 @@ function NewGrapher() {
 	};
 
 	grapher.draw = function(node, force) {
-		if (force || performance.now() - grapher.last_draw_time > 500) {
+		if (force || performance.now() - this.last_draw_time > 500) {
 			this.draw_everything(node);
 			this.draws++;
 		} else {
@@ -56,10 +56,10 @@ function NewGrapher() {
 		let width = graph.width;		// After the above.
 		let height = graph.height;
 
-		grapher.draw_50_percent_line(width, height);
+		this.draw_50_percent_line(width, height);
 
 		let eval_list = node.future_eval_history();
-		let imaginary_length = grapher.imaginary_length(eval_list.length);
+		let imaginary_length = this.imaginary_length(eval_list.length);
 
 		// We make lists of contiguous edges that can be drawn at once...
 
@@ -190,7 +190,7 @@ function NewGrapher() {
 
 		let width = graph.width;
 		let height = graph.height;
-		let imaginary_length = grapher.imaginary_length(eval_list_length);
+		let imaginary_length = this.imaginary_length(eval_list_length);
 		let depth = node.depth();
 
 		let x = Math.floor(width * depth / imaginary_length) + 0.5;
@@ -238,6 +238,40 @@ function NewGrapher() {
 		graphctx.moveTo(x, height / 2 + 2);
 		graphctx.lineTo(x, height);
 		graphctx.stroke();
+	};
+
+	grapher.node_from_click = function(node, event) {
+
+		if (!event) {
+			return null;
+		}
+
+		let mousex = event.offsetX;
+		if (typeof mousex !== "number") {
+			return null;
+		}
+
+		let width = graph.width;
+		if (typeof width !== "number" || width < 1) {
+			return null;
+		}
+
+		let node_list = node.future_node_history();
+		if (node_list.length === 0) {
+			return null;
+		}
+
+		// OK, everything is valid...
+
+		let imaginary_length = this.imaginary_length(node_list.length);
+		let click_depth = Math.round(imaginary_length * mousex / width);
+
+		if (click_depth < 0) click_depth = 0;
+		if (click_depth >= node_list.length) click_depth = node_list.length - 1;
+
+		return node_list[click_depth];
+
+		return null;
 	};
 
 	return grapher;

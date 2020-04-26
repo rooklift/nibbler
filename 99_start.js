@@ -180,6 +180,10 @@ movelist.addEventListener("mousedown", (event) => {
 	hub.movelist_click(event);
 });
 
+graph.addEventListener("mousedown", (event) => {
+	hub.winrate_click(event);
+});
+
 document.addEventListener("wheel", (event) => {
 
 	// Only if the PGN chooser is closed, and the mouse is over the board.

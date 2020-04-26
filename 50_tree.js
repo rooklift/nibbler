@@ -42,8 +42,18 @@ const node_prototype = {
 		return ret;
 	},
 
-	future_history: function() {
-		return this.get_end().history();
+	node_history: function() {
+
+		let ret = [];
+		let node = this;
+
+		while (node) {
+			ret.push(node);
+			node = node.parent;
+		}
+
+		ret.reverse();
+		return ret;
 	},
 
 	eval_history: function() {
@@ -60,8 +70,16 @@ const node_prototype = {
 		return ret;
 	},
 
+	future_history: function() {
+		return this.get_end().history();
+	},
+
+	future_node_history: function() {
+		return this.get_end().node_history();
+	},
+
 	future_eval_history: function() {
-		return this.get_end().eval_history()
+		return this.get_end().eval_history();
 	},
 
 	depth: function() {

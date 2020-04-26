@@ -146,6 +146,7 @@ input[type=text]:focus {
 }
 
 #graph {
+	pointer-events: auto;
 	width: 100%;
 }
 
