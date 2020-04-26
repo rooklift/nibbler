@@ -27,16 +27,13 @@ function NewGrapher() {
 
 	grapher.imaginary_length = function(real_length) {
 
-		// What length we'll pretend the eval list is for the sake of consistency.
-		// Everything is +1 so the root node can fit with n ply.
+		// What length we'll pretend the eval list is for the sake of aesthetics.
 
-		for (let n = 64; n < 2048; n += 64) {
-			if (real_length <= n + 1) {
-				return n + 1;
-			}
+		if (real_length < 48) {
+			return 48;
+		} else {
+			return real_length;
 		}
-
-		return 2048 + 1;
 	};
 
 	grapher.draw = function(node, force) {
