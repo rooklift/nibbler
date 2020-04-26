@@ -23,7 +23,7 @@ function NewGrapher() {
 
 		graph.width = width;
 		graph.height = height;
-	}
+	};
 
 	grapher.imaginary_length = function(real_length) {
 
@@ -45,7 +45,7 @@ function NewGrapher() {
 			this.draw_position_line(node.future_eval_history().length, node);
 			this.skips++;
 		}
-	}
+	};
 
 	grapher.draw_everything = function(node) {
 
@@ -267,8 +267,6 @@ function NewGrapher() {
 		if (click_depth >= node_list.length) click_depth = node_list.length - 1;
 
 		return node_list[click_depth];
-
-		return null;
 	};
 
 	return grapher;
