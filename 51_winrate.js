@@ -37,7 +37,7 @@ function NewGrapher() {
 
 	grapher.draw = function(node, force) {
 
-		if (config.graph_height === 0) {
+		if (config.graph_height <= 0) {
 			return;
 		} else if (force || performance.now() - this.last_draw_time > 1000) {
 			this.draw_everything(node);
@@ -241,7 +241,7 @@ function NewGrapher() {
 
 	grapher.node_from_click = function(node, event) {
 
-		if (!event || config.graph_height === 0) {
+		if (!event || config.graph_height <= 0) {
 			return null;
 		}
 
