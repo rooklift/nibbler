@@ -10,6 +10,9 @@ function NewGrapher() {
 	grapher.last_draw_time = -10000;
 	grapher.last_position_marker_x = null;
 
+	grapher.draws = 0;
+	grapher.skips = 0;
+
 	grapher.clear_graph = function() {
 
 		let boundingrect = graph.getBoundingClientRect();
@@ -36,9 +39,11 @@ function NewGrapher() {
 	grapher.draw = function(node, force) {
 		if (force || performance.now() - grapher.last_draw_time > 500) {
 			this.draw_everything(node);
+			this.draws++;
 		} else {
 			this.clear_position_line();
 			this.draw_position_line(node.future_eval_history().length, node);
+			this.skips++;
 		}
 	}
 
