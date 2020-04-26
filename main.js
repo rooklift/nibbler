@@ -59,6 +59,7 @@ function startup() {
 		useContentSize: true,
 		webPreferences: {
 			backgroundThrottling: false,
+			enableRemoteModule: true,
 			nodeIntegration: true,
 			zoomFactor: 1 / electron.screen.getPrimaryDisplay().scaleFactor		// Unreliable, see https://github.com/electron/electron/issues/10572
 		}
