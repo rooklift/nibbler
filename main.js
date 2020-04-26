@@ -1763,12 +1763,14 @@ function menu_build() {
 				{
 					label: "Custom UCI options",
 					submenu: cclist_in_menu			// Will be filled at the end, see below.
-				},
+				}
+			]
+		},
+		{
+			label: "Versus",
+			submenu: [
 				{
-					type: "separator"
-				},
-				{
-					label: "Only play White",
+					label: "Engine is White",
 					accelerator: "F9",
 					click: () => {
 						win.webContents.send("call", {
@@ -1778,7 +1780,7 @@ function menu_build() {
 					}
 				},
 				{
-					label: "Only play Black",
+					label: "Engine is Black",
 					accelerator: "F10",
 					click: () => {
 						win.webContents.send("call", {
@@ -1788,7 +1790,13 @@ function menu_build() {
 					}
 				},
 				{
-					label: "...and play move at node limit",
+					label: "Cancel versus mode",
+					click: () => {
+						win.webContents.send("call", "cancel_versus");
+					}
+				},
+				{
+					label: "Play move on board if node limit reached",
 					type: "checkbox",
 					checked: config.autoplay,
 					click: () => {
@@ -1799,7 +1807,10 @@ function menu_build() {
 					}
 				},
 				{
-					label: "About single colour modes",
+					type: "separator"
+				},
+				{
+					label: "About versus mode",
 					click: () => {
 						alert(messages.about_versus_mode);
 					}
