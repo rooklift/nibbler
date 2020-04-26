@@ -63,10 +63,6 @@ function NewGrapher() {
 
 		this.add_line(0, height / 2, width, height / 2, "#666666", 1, true, true, null);
 
-		if (eval_list.length < 2) {
-			return;
-		}
-
 		let imaginary_length = grapher.imaginary_length(eval_list.length);
 
 		let last_x = null;
@@ -101,6 +97,10 @@ function NewGrapher() {
 	};
 
 	grapher.draw_position_line = function(width, height, eval_list, node) {
+
+		if (!node.parent) {
+			return;
+		}
 
 		let imaginary_length = grapher.imaginary_length(eval_list.length);
 		let depth = node.depth();
