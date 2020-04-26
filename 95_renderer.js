@@ -1385,16 +1385,16 @@ function NewRenderer() {
 			return;
 		}
 
-		context.fillStyle = config.move_colour;
-		context.globalAlpha = config.move_colour_alpha;
+		boardctx.fillStyle = config.move_colour;
+		boardctx.globalAlpha = config.move_colour_alpha;
 
 		let cc = CanvasCoords(source.x, source.y);
-		context.fillRect(cc.x1, cc.y1, config.square_size, config.square_size);
+		boardctx.fillRect(cc.x1, cc.y1, config.square_size, config.square_size);
 
 		cc = CanvasCoords(dest.x, dest.y);
-		context.fillRect(cc.x1, cc.y1, config.square_size, config.square_size);
+		boardctx.fillRect(cc.x1, cc.y1, config.square_size, config.square_size);
 
-		context.globalAlpha = 1;
+		boardctx.globalAlpha = 1;
 	};
 
 	renderer.draw_enemies_in_canvas = function() {
@@ -1410,7 +1410,7 @@ function NewRenderer() {
 
 				let piece = board.state[x][y];
 				let cc = CanvasCoords(x, y);
-				context.drawImage(images[piece], cc.x1, cc.y1, config.square_size, config.square_size);
+				boardctx.drawImage(images[piece], cc.x1, cc.y1, config.square_size, config.square_size);
 			}
 		}
 	};
@@ -1532,17 +1532,17 @@ function NewRenderer() {
 		for (let x = 0; x < 8; x++) {
 			for (let y = 0; y < 8; y++) {
 
-				context.fillStyle = (x + y) % 2 === 0 ? config.light_square : config.dark_square;
+				boardctx.fillStyle = (x + y) % 2 === 0 ? config.light_square : config.dark_square;
 
 				let cc = CanvasCoords(x, y);
-				context.fillRect(cc.x1, cc.y1, config.square_size, config.square_size);
+				boardctx.fillRect(cc.x1, cc.y1, config.square_size, config.square_size);
 
 				if (board.state[x][y] === "") {
 					continue;
 				}
 
 				let piece = board.state[x][y];
-				context.drawImage(images[piece], cc.x1, cc.y1, config.square_size, config.square_size);
+				boardctx.drawImage(images[piece], cc.x1, cc.y1, config.square_size, config.square_size);
 			}
 		}
 	};
@@ -1555,7 +1555,7 @@ function NewRenderer() {
 		// This should prevent the sort of flicker that can occur if we try to detect hover based on changes we
 		// just made (i.e. if we drew then detected hover instantly).
 
-		context.clearRect(0, 0, canvas.width, canvas.height);
+		boardctx.clearRect(0, 0, canvas.width, canvas.height);
 		let did_hoverdraw = this.hoverdraw();
 
 		let arrow_spotlight_square = config.click_spotlight ? this.active_square : null;

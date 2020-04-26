@@ -592,10 +592,10 @@ function NewInfoHandler() {
 			return;
 		}
 
-		context.lineWidth = config.arrow_width;
-		context.textAlign = "center";
-		context.textBaseline = "middle";
-		context.font = config.board_font;
+		boardctx.lineWidth = config.arrow_width;
+		boardctx.textAlign = "center";
+		boardctx.textBaseline = "middle";
+		boardctx.font = config.board_font;
 
 		let arrows = [];
 		let heads = [];
@@ -723,21 +723,21 @@ function NewInfoHandler() {
 		for (let o of arrows) {
 			let cc1 = CanvasCoords(o.x1, o.y1);
 			let cc2 = CanvasCoords(o.x2, o.y2);
-			context.strokeStyle = o.colour;
-			context.fillStyle = o.colour;
-			context.beginPath();
-			context.moveTo(cc1.cx, cc1.cy);
-			context.lineTo(cc2.cx, cc2.cy);
-			context.stroke();
+			boardctx.strokeStyle = o.colour;
+			boardctx.fillStyle = o.colour;
+			boardctx.beginPath();
+			boardctx.moveTo(cc1.cx, cc1.cy);
+			boardctx.lineTo(cc2.cx, cc2.cy);
+			boardctx.stroke();
 		}
 
 		for (let o of heads) {
 			let cc2 = CanvasCoords(o.x2, o.y2);
-			context.fillStyle = o.colour;
-			context.beginPath();
-			context.arc(cc2.cx, cc2.cy, config.arrowhead_radius, 0, 2 * Math.PI);
-			context.fill();
-			context.fillStyle = "black";
+			boardctx.fillStyle = o.colour;
+			boardctx.beginPath();
+			boardctx.arc(cc2.cx, cc2.cy, config.arrowhead_radius, 0, 2 * Math.PI);
+			boardctx.fill();
+			boardctx.fillStyle = "black";
 
 			let s = "?";
 
@@ -763,7 +763,7 @@ function NewInfoHandler() {
 				break;
 			}
 
-			context.fillText(s, cc2.cx, cc2.cy + 1);
+			boardctx.fillText(s, cc2.cx, cc2.cy + 1);
 		}
 	};
 
