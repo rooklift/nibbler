@@ -1,7 +1,5 @@
 "use strict";
 
-// FIXME: make imaginary_length be the max of [current variation line length] and [main line length].
-
 function NewGrapher() {
 
 	let grapher = Object.create(null);
@@ -28,6 +26,7 @@ function NewGrapher() {
 	grapher.imaginary_length = function(real_length) {
 
 		// What length we'll pretend the eval list is for the sake of aesthetics.
+		// Maybe we should make this the max of [current variation line length] and [main line length]?
 
 		if (real_length < 48) {
 			return 48;
