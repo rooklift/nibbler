@@ -1,6 +1,7 @@
 "use strict";
 
 // FIXME: make imaginary_length be the max of [current variation line length] and [main line length].
+// FIXME: improve behaviour when engine in single-colour mode.
 
 function NewGrapher() {
 
