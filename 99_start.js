@@ -186,7 +186,7 @@ graph.addEventListener("mousedown", (event) => {
 
 document.addEventListener("wheel", (event) => {
 
-	// Only if the PGN chooser is closed, and the mouse is over the board.
+	// Only if the PGN chooser is closed, and the mouse is over the board or graph.
 
 	if (pgnchooser.style.display !== "none") {
 		return;
@@ -198,7 +198,7 @@ document.addEventListener("wheel", (event) => {
 
 	if (path) {
 		for (let item of path) {
-			if (item.id === "boardfriends") {
+			if (item.id === "boardfriends" || item.id === "graph") {
 				allow = true;
 				break;
 			}
