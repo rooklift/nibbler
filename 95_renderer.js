@@ -1560,7 +1560,7 @@ function NewRenderer() {
 			this.hoverdraw_div,
 			Math.max(this.engine.readyok_required, this.engine.bestmove_required));
 
-		this.grapher.draw(this.node);
+		this.grapher.draw(this.node, true);		// FIXME - turn off force mode <--------------------------------------------------------------------------------
 
 		debug.draw -= 1;
 	};
