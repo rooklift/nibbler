@@ -221,7 +221,7 @@ function NewMovelistHander() {
 
 		let node = this.connections.nodes[n];
 
-		if (!node) {
+		if (!node || node.destroyed) {		// Probably the check for .destroyed is unnecessary.
 			return null;
 		}
 

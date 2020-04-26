@@ -279,6 +279,7 @@ function NewNode(parent, move) {		// Args are null for root only.
 	node.__nice_move = null;
 	node.eval = null;
 	node.eval_nodes = 0;
+	node.destroyed = false;
 
 	tree_version++;
 	return node;
@@ -309,10 +310,9 @@ function NewTree(startpos) {			// Arg is expected to be a position object, not a
 // destroy trees when we're done with them. Perhaps this is totally
 // unnecessary. I've seen it matter in Python.
 //
-// This does mean it's dangerous to ever store references to nodes
-// and expect their get_board() method to always work. At the time
-// of writing, we store no such references (not counting the
-// reference the renderer has to its current node).
+// This does mean it's hazardous to ever store references to nodes
+// and expect their get_board() method to always work, if they could
+// be stale.
 
 function DestroyTree(node) {
 	__destroy_tree(node.get_root());
@@ -320,21 +320,30 @@ function DestroyTree(node) {
 
 function __destroy_tree(node) {
 
+	// Non-recursive when possible...
+
 	while (node.children.length === 1) {
+
+		let child = node.children[0];
+
 		node.parent = null;
 		node.__position = null;
-		let child = node.children[0];
 		node.children = null;
+		node.destroyed = true;
+
 		node = child;
 	}
 
+	// Recursive when necessary...
+
+	let children = node.children;
+
 	node.parent = null;
 	node.__position = null;
+	node.children = null;
+	node.destroyed = true;
 
-	for (let child of node.children) {
+	for (let child of children) {
 		__destroy_tree(child);
 	}
-
-	node.children = null;
-	return;
 }
