@@ -2226,14 +2226,14 @@ function menu_build() {
 					type: "separator"
 				},
 				{
-					label: "Draw rate",
+					label: "Spin rate",
 					submenu: [
 						{
 							label: "Frenetic",
 							type: "checkbox",
 							checked: config.update_delay === 25,
 							click: () => {
-								set_checks("Dev", "Draw rate", "Frenetic");
+								set_checks("Dev", "Spin rate", "Frenetic");
 								win.webContents.send("set", {
 									key: "update_delay",
 									value: 25,
@@ -2245,7 +2245,7 @@ function menu_build() {
 							type: "checkbox",
 							checked: config.update_delay === 60,
 							click: () => {
-								set_checks("Dev", "Draw rate", "Fast");
+								set_checks("Dev", "Spin rate", "Fast");
 								win.webContents.send("set", {
 									key: "update_delay",
 									value: 60,
@@ -2257,7 +2257,7 @@ function menu_build() {
 							type: "checkbox",
 							checked: config.update_delay === 125,
 							click: () => {
-								set_checks("Dev", "Draw rate", "Normal");
+								set_checks("Dev", "Spin rate", "Normal");
 								win.webContents.send("set", {
 									key: "update_delay",
 									value: 125,
@@ -2269,7 +2269,7 @@ function menu_build() {
 							type: "checkbox",
 							checked: config.update_delay === 170,
 							click: () => {
-								set_checks("Dev", "Draw rate", "Relaxed");
+								set_checks("Dev", "Spin rate", "Relaxed");
 								win.webContents.send("set", {
 									key: "update_delay",
 									value: 170,
