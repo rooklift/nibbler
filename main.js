@@ -2058,6 +2058,18 @@ function menu_build() {
 					label: "Graph",
 					submenu: [
 						{
+							label: "0",
+							type: "checkbox",
+							checked: config.graph_height === 0,
+							click: () => {
+								set_checks("Sizes", "Graph", "0");
+								win.webContents.send("call", {
+									fn: "set_graph_height",
+									args: [0],
+								});
+							}
+						},
+						{
 							label: "32",
 							type: "checkbox",
 							checked: config.graph_height === 32,

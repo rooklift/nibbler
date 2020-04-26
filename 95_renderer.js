@@ -1017,14 +1017,20 @@ function NewRenderer() {
 
 		// Making the heights of the right side divs is something I never figured out with CSS...
 
-		graphbox.style.height = config.graph_height.toString() + "px";
-		graph.style.height = config.graph_height.toString() + "px";
+		if (config.graph_height === 0) {
+			graphbox.style.display = "none";
+		} else {
+			graphbox.style.height = config.graph_height.toString() + "px";
+			graph.style.height = config.graph_height.toString() + "px";
+			graphbox.style.display = "";
+		}
 
 		let infobox_top = infobox.getBoundingClientRect().top;
 		let canvas_bottom = canvas.getBoundingClientRect().bottom;
 		let graph_top = canvas_bottom - (graphbox.getBoundingClientRect().bottom - graphbox.getBoundingClientRect().top);
 
-		infobox.style.height = (graph_top - infobox_top - 10).toString() + "px";		// 10 to match CSS margin
+		let infobox_margin_adjustment = config.graph_height === 0 ? 0 : 10;		// Bottom margin irrelevant if no graph.
+		infobox.style.height = (graph_top - infobox_top - infobox_margin_adjustment).toString() + "px";
 
 		promotiontable.style.left = (boardsquares.offsetLeft + config.square_size * 2).toString() + "px";
 		promotiontable.style.top = (boardsquares.offsetTop + config.square_size * 3.5).toString() + "px";
