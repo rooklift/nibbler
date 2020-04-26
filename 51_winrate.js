@@ -8,23 +8,19 @@ function NewGrapher() {
 
 	grapher.last_drawn_board = null;
 	grapher.last_draw_time = -10000;
+	grapher.last_position_marker_x = null;
 
 	grapher.clear_graph = function() {
-		while (graph.lastChild) {
-			graph.removeChild(graph.lastChild);
-		}
-	};
 
-	grapher.clear_position_line = function() {
+		let boundingrect = graph.getBoundingClientRect();
+		let width = boundingrect.right - boundingrect.left;
+		let height = boundingrect.bottom - boundingrect.top;
+		
+		// FIXME - check that the following lines auto-blank the canvas!
 
-		let top = document.getElementById("graph_pos_top");
-		let bottom = document.getElementById("graph_pos_bottom");
-
-		if (top && bottom) {
-			graph.removeChild(top);
-			graph.removeChild(bottom);
-		}
-	};
+		graph.width = width;
+		graph.height = height;
+	}
 
 	grapher.imaginary_length = function(real_length) {
 
@@ -38,31 +34,27 @@ function NewGrapher() {
 	};
 
 	grapher.draw = function(node, force) {
-
-		let boundingrect = graph.getBoundingClientRect();
-		let width = boundingrect.right - boundingrect.left;
-		let height = boundingrect.bottom - boundingrect.top;
-		let eval_list = node.future_eval_history();
-
 		if (force || performance.now() - grapher.last_draw_time > 500) {
-			this.draw_everything(width, height, eval_list, node);
+			this.draw_everything(node);
 		} else {
 			this.clear_position_line();
-			this.draw_position_line(width, height, eval_list, node);
+			this.draw_position_line(node.future_eval_history().length, node);
 		}
-	};
+	}
 
-	grapher.draw_everything = function(width, height, eval_list, node) {
+	grapher.draw_everything = function(node) {
 
 		this.last_drawn_board = node.get_board();
 		this.last_draw_time = performance.now();
 
 		this.clear_graph();
+		let width = graph.width;		// After the above.
+		let height = graph.height;
 
-		// Horizontal (50%) line...
+		// Horizontal (50%) line, drawn at -0.5 y to avoid anti-aliasing...
+		this.add_line(0, height / 2 - 0.5, width, height / 2 - 0.5, "#666666", 1, true);
 
-		this.add_line(0, height / 2, width, height / 2, "#666666", 1, true, true, null);
-
+		let eval_list = node.future_eval_history();
 		let imaginary_length = grapher.imaginary_length(eval_list.length);
 
 		let last_x = null;
@@ -84,7 +76,7 @@ function NewGrapher() {
 				let interp = n - last_n !== 1;
 
 				if (last_x !== null) {
-					this.add_line(last_x, last_y, x, y, interp ? "#999999" : "white", 2, interp, false, null);
+					this.add_line(last_x, last_y, x, y, interp ? "#999999" : "white", 2, interp);
 				}
 
 				last_x = x;
@@ -93,46 +85,61 @@ function NewGrapher() {
 			}
 		}
 
-		this.draw_position_line(width, height, eval_list, node);
+		this.draw_position_line(eval_list.length, node);
 	};
 
-	grapher.draw_position_line = function(width, height, eval_list, node) {
+	grapher.draw_position_line = function(eval_list_length, node) {
 
 		if (!node.parent) {
 			return;
 		}
 
-		let imaginary_length = grapher.imaginary_length(eval_list.length);
+		let width = graph.width;
+		let height = graph.height;
+		let imaginary_length = grapher.imaginary_length(eval_list_length);
 		let depth = node.depth();
 		let colour = node.is_main_line() ? "#6cccee" : "#ffff00";
 
-		this.add_line(width * depth / imaginary_length, height / 2 - 3, width * depth / imaginary_length, 0, colour, 1, true, true, "graph_pos_top");
-		this.add_line(width * depth / imaginary_length, height / 2 + 2, width * depth / imaginary_length, height, colour, 1, true, true, "graph_pos_bottom");
+		let x = Math.floor(width * depth / imaginary_length) + 0.5;
+
+		this.add_line(x, height / 2 - 3, x, 0, colour, 1, true);
+		this.add_line(x, height / 2 + 2, x, height, colour, 1, true);
+
+		this.last_position_marker_x = x;
 	};
 
-	grapher.add_line = function(x1, y1, x2, y2, colour, stroke_width, dashed, crisp, id) {
+	grapher.clear_position_line = function() {
 
-		let element = document.createElementNS("http://www.w3.org/2000/svg", "line");
+		let x = this.last_position_marker_x;
 
-		element.setAttributeNS(null, "x1", x1);
-		element.setAttributeNS(null, "y1", y1);
-		element.setAttributeNS(null, "x2", x2);
-		element.setAttributeNS(null, "y2", y2);
+		if (x === null) {
+			return;
+		}
 
-		element.setAttributeNS(null, "stroke", colour);
-		element.setAttributeNS(null, "stroke-width", stroke_width);
+		let width = graph.width;
+		let height = graph.height;
+
+		this.add_line(x, height / 2 - 3, x, 0, "black", 1, true);
+		this.add_line(x, height / 2 + 2, x, height, "black", 1, true);
+	};
+
+	grapher.add_line = function(x1, y1, x2, y2, colour, stroke_width, dashed) {
+
+		// FIXME - delete this function.
+
+		graphctx.strokeStyle = colour;
+		graphctx.lineWidth = stroke_width;
 
 		if (dashed) {
-			element.setAttributeNS(null, "stroke-dasharray", "2");
-		}
-		if (crisp) {
-			element.setAttributeNS(null, "shape-rendering", "crispEdges");
-		}
-		if (id) {
-			element.setAttributeNS(null, "id", id);
+			graphctx.setLineDash([2, 2]);
+		} else {
+			graphctx.setLineDash([]);
 		}
 
-		graph.appendChild(element);
+		graphctx.beginPath();
+		graphctx.moveTo(x1, y1);
+		graphctx.lineTo(x2, y2);
+		graphctx.stroke();
 	};
 
 	return grapher;

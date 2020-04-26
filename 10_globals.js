@@ -47,6 +47,7 @@ const util = require("util");
 // Globals..........................................................
 
 const context = canvas.getContext("2d");
+const graphctx = graph.getContext("2d");
 const decoder = new util.TextDecoder("utf8");	// https://github.com/electron/electron/issues/18733
 
 let config = config_io.load();
