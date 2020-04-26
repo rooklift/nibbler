@@ -1788,7 +1788,7 @@ function menu_build() {
 					}
 				},
 				{
-					label: "...and play move at node limit (leaf nodes only)",
+					label: "...and play move at node limit",
 					type: "checkbox",
 					checked: config.autoplay,
 					click: () => {
