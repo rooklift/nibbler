@@ -1,6 +1,6 @@
 "use strict";
 
-// FIXME: click on graph to go to the move.
+// FIXME: make imaginary_length be the max of [current variation line length] and [main line length].
 
 function NewGrapher() {
 
