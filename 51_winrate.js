@@ -30,7 +30,7 @@ function NewGrapher() {
 		// What length we'll pretend the eval list is for the sake of consistency.
 		// Everything is +1 so the root node can fit with n ply.
 
-		for (let n = 128; n < 2048; n += 64) {
+		for (let n = 64; n < 2048; n += 64) {
 			if (real_length <= n + 1) {
 				return n + 1;
 			}
