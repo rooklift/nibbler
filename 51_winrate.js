@@ -52,10 +52,18 @@ function NewGrapher() {
 		let height = graph.height;
 
 		// Horizontal (50%) line, drawn at -0.5 y to avoid anti-aliasing...
-		this.add_line(0, height / 2 - 0.5, width, height / 2 - 0.5, "#666666", 1, true);
+		graphctx.strokeStyle = "#666666";
+		graphctx.lineWidth = 1;
+		graphctx.setLineDash([2, 2]);
+		graphctx.beginPath();
+		graphctx.moveTo(0, height / 2 - 0.5);
+		graphctx.lineTo(width, height / 2 - 0.5);
+		graphctx.stroke();
 
 		let eval_list = node.future_eval_history();
 		let imaginary_length = grapher.imaginary_length(eval_list.length);
+
+		graphctx.lineWidth = 2;
 
 		let last_x = null;
 		let last_y = null;
@@ -75,8 +83,14 @@ function NewGrapher() {
 
 				let interp = n - last_n !== 1;
 
+				graphctx.strokeStyle = interp ? "#999999" : "white";
+
 				if (last_x !== null) {
-					this.add_line(last_x, last_y, x, y, interp ? "#999999" : "white", 2, interp);
+					graphctx.setLineDash(interp ? [2, 2] : []);
+					graphctx.beginPath();
+					graphctx.moveTo(last_x, last_y);
+					graphctx.lineTo(x, y);
+					graphctx.stroke();
 				}
 
 				last_x = x;
@@ -90,6 +104,8 @@ function NewGrapher() {
 
 	grapher.draw_position_line = function(eval_list_length, node) {
 
+		this.last_position_marker_x = null;
+
 		if (!node.parent) {
 			return;
 		}
@@ -98,12 +114,22 @@ function NewGrapher() {
 		let height = graph.height;
 		let imaginary_length = grapher.imaginary_length(eval_list_length);
 		let depth = node.depth();
-		let colour = node.is_main_line() ? "#6cccee" : "#ffff00";
 
 		let x = Math.floor(width * depth / imaginary_length) + 0.5;
 
-		this.add_line(x, height / 2 - 3, x, 0, colour, 1, true);
-		this.add_line(x, height / 2 + 2, x, height, colour, 1, true);
+		graphctx.strokeStyle = node.is_main_line() ? "#6cccee" : "#ffff00";
+		graphctx.lineWidth = 1;
+		graphctx.setLineDash([2, 2]);
+
+		graphctx.beginPath();
+		graphctx.moveTo(x, height / 2 - 3);
+		graphctx.lineTo(x, 0);
+		graphctx.stroke();
+
+		graphctx.beginPath();
+		graphctx.moveTo(x, height / 2 + 2);
+		graphctx.lineTo(x, height);
+		graphctx.stroke();
 
 		this.last_position_marker_x = x;
 	};
@@ -119,26 +145,18 @@ function NewGrapher() {
 		let width = graph.width;
 		let height = graph.height;
 
-		this.add_line(x, height / 2 - 3, x, 0, "black", 1, true);
-		this.add_line(x, height / 2 + 2, x, height, "black", 1, true);
-	};
-
-	grapher.add_line = function(x1, y1, x2, y2, colour, stroke_width, dashed) {
-
-		// FIXME - delete this function.
-
-		graphctx.strokeStyle = colour;
-		graphctx.lineWidth = stroke_width;
-
-		if (dashed) {
-			graphctx.setLineDash([2, 2]);
-		} else {
-			graphctx.setLineDash([]);
-		}
+		graphctx.strokeStyle = "black";
+		graphctx.lineWidth = 1;
+		graphctx.setLineDash([]);
 
 		graphctx.beginPath();
-		graphctx.moveTo(x1, y1);
-		graphctx.lineTo(x2, y2);
+		graphctx.moveTo(x, height / 2 - 3);
+		graphctx.lineTo(x, 0);
+		graphctx.stroke();
+
+		graphctx.beginPath();
+		graphctx.moveTo(x, height / 2 + 2);
+		graphctx.lineTo(x, height);
 		graphctx.stroke();
 	};
 
