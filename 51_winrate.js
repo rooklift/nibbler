@@ -39,7 +39,7 @@ function NewGrapher() {
 
 		if (config.graph_height === 0) {
 			return;
-		} else if (force || performance.now() - this.last_draw_time > 500) {
+		} else if (force || performance.now() - this.last_draw_time > 1000) {
 			this.draw_everything(node);
 			this.draws++;
 		} else {
@@ -224,9 +224,9 @@ function NewGrapher() {
 		let width = graph.width;
 		let height = graph.height;
 
-		graphctx.strokeStyle = "black";
+		graphctx.strokeStyle = "#080808";		// Match the CSS background
 		graphctx.lineWidth = 1;
-		graphctx.setLineDash([]);
+		graphctx.setLineDash([2, 2]);
 
 		graphctx.beginPath();
 		graphctx.moveTo(x, height / 2 - 3);

@@ -1595,7 +1595,7 @@ function NewRenderer() {
 			this.hoverdraw_div,
 			Math.max(this.engine.readyok_required, this.engine.bestmove_required));
 
-		this.grapher.draw(this.node, true);	// Always draw in full (alternative has some nasty artifacts).
+		this.grapher.draw(this.node, !config.ugly_graph_performance_hack);
 
 		debug.draw -= 1;
 	};

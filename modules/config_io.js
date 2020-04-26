@@ -26,6 +26,7 @@ exports.defaults = {
 	"arrowhead_radius": 12,
 	"board_font": "18px Arial",
 	"graph_height": 96,
+	"ugly_graph_performance_hack": false,
 
 	"light_square": "#dadada",
 	"dark_square": "#b4b4b4",

@@ -2302,15 +2302,26 @@ function menu_build() {
 					]
 				},
 				{
-					label: "Fire GC",
+					label: "Ugly graph performance hack",
+					type: "checkbox",
+					checked: config.ugly_graph_performance_hack,
 					click: () => {
-						win.webContents.send("call", "fire_gc");
+						win.webContents.send("call", {
+							fn: "toggle",
+							args: ["ugly_graph_performance_hack"],
+						});
 					}
 				},
 				{
 					label: "Show sync status",
 					click: () => {
 						win.webContents.send("call", "show_sync_status");
+					}
+				},
+				{
+					label: "Fire GC",
+					click: () => {
+						win.webContents.send("call", "fire_gc");
 					}
 				},
 				{
