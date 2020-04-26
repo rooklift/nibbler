@@ -145,11 +145,11 @@ function NewGrapher() {
 		let dashed_runs = [];
 
 		let run = [];
-		let current_meta_list = null;	// Will point at normal_runs or dashed_runs.
+		let current_meta_list = normal_runs;	// Will point at normal_runs or dashed_runs.
 
 		for (let edge of all_edges) {
 			if ((edge.dashed && current_meta_list !== dashed_runs) || (!edge.dashed && current_meta_list !== normal_runs)) {
-				if (current_meta_list) {
+				if (run.length > 0) {
 					current_meta_list.push(run);
 				}
 				current_meta_list = edge.dashed ? dashed_runs : normal_runs;
@@ -157,7 +157,7 @@ function NewGrapher() {
 			}
 			run.push(edge);
 		}
-		if (current_meta_list) {
+		if (run.length > 0) {
 			current_meta_list.push(run);
 		}
 
