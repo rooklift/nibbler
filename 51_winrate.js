@@ -49,30 +49,67 @@ function NewGrapher() {
 
 	grapher.draw_everything = function(node) {
 
-		this.last_drawn_board = node.get_board();
-		this.last_draw_time = performance.now();
-
 		this.clear_graph();
 		let width = graph.width;		// After the above.
 		let height = graph.height;
 
-		// Horizontal (50%) line, drawn at -0.5 y to avoid anti-aliasing...
-		graphctx.strokeStyle = "#666666";
-		graphctx.lineWidth = 1;
-		graphctx.setLineDash([2, 2]);
-		graphctx.beginPath();
-		graphctx.moveTo(0, height / 2 - 0.5);
-		graphctx.lineTo(width, height / 2 - 0.5);
-		graphctx.stroke();
+		grapher.draw_50_percent_line(width, height);
 
 		let eval_list = node.future_eval_history();
 		let imaginary_length = grapher.imaginary_length(eval_list.length);
+		let runs = this.make_runs(eval_list, width, height, imaginary_length);
 
+		// Draw our normal runs...
+
+		graphctx.strokeStyle = "white";
 		graphctx.lineWidth = 2;
+		graphctx.setLineDash([]);
+		
+		for (let run of runs.normal_runs) {
+			graphctx.beginPath();
+			graphctx.moveTo(run[0].x1, run[0].y1);
+			for (let edge of run) {
+				graphctx.lineTo(edge.x2, edge.y2);
+			}
+			graphctx.stroke();
+		}
+
+		// Draw our dashed runs...
+
+		graphctx.strokeStyle = "#999999";
+		graphctx.lineWidth = 2;
+		graphctx.setLineDash([2, 2]);
+
+		for (let run of runs.dashed_runs) {
+			graphctx.beginPath();
+			graphctx.moveTo(run[0].x1, run[0].y1);
+			for (let edge of run) {
+				graphctx.lineTo(edge.x2, edge.y2);
+			}
+			graphctx.stroke();
+		}
+
+		// Finish...
+
+		this.draw_position_line(eval_list.length, node);
+
+		this.last_drawn_board = node.get_board();
+		this.last_draw_time = performance.now();
+	};
+
+	grapher.make_runs = function(eval_list, width, height, imaginary_length) {
+
+		// Returns an object with 2 arrays (normal_runs and dashed_runs).
+		// Each of those is an array of arrays of contiguous edges that can be drawn at once.
+
+		let all_edges = [];
 
 		let last_x = null;
 		let last_y = null;
 		let last_n = null;
+
+		// This loop creates all edges that we are going to draw, and marks each
+		// edge as dashed or not...
 
 		for (let n = 0; n < eval_list.length; n++) {
 
@@ -86,16 +123,14 @@ function NewGrapher() {
 				if (y < 1) y = 1;
 				if (y > height - 2) y = height - 2;
 
-				let interp = n - last_n !== 1;
-
-				graphctx.strokeStyle = interp ? "#999999" : "white";
-
 				if (last_x !== null) {
-					graphctx.setLineDash(interp ? [2, 2] : []);
-					graphctx.beginPath();
-					graphctx.moveTo(last_x, last_y);
-					graphctx.lineTo(x, y);
-					graphctx.stroke();
+					all_edges.push({
+						x1: last_x,
+						y1: last_y,
+						x2: x,
+						y2: y,
+						dashed: n - last_n !== 1,
+					});
 				}
 
 				last_x = x;
@@ -104,7 +139,39 @@ function NewGrapher() {
 			}
 		}
 
-		this.draw_position_line(eval_list.length, node);
+		// Now we make runs of contiguous edges that share a style...
+
+		let normal_runs = [];
+		let dashed_runs = [];
+
+		let run = [];
+		let current_meta_list = null;	// Will point at normal_runs or dashed_runs.
+
+		for (let edge of all_edges) {
+			if ((edge.dashed && current_meta_list !== dashed_runs) || (!edge.dashed && current_meta_list !== normal_runs)) {
+				if (current_meta_list) {
+					current_meta_list.push(run);
+				}
+				current_meta_list = edge.dashed ? dashed_runs : normal_runs;
+				run = [];
+			}
+			run.push(edge);
+		}
+		if (current_meta_list) {
+			current_meta_list.push(run);
+		}
+
+		return {normal_runs, dashed_runs};
+	};
+
+	grapher.draw_50_percent_line = function(width, height) {
+		graphctx.strokeStyle = "#666666";
+		graphctx.lineWidth = 1;
+		graphctx.setLineDash([2, 2]);
+		graphctx.beginPath();
+		graphctx.moveTo(0, height / 2 - 0.5);
+		graphctx.lineTo(width, height / 2 - 0.5);
+		graphctx.stroke();
 	};
 
 	grapher.draw_position_line = function(eval_list_length, node) {
