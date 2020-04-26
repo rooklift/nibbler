@@ -19,7 +19,7 @@ function NewGrapher() {
 		let width = boundingrect.right - boundingrect.left;
 		let height = boundingrect.bottom - boundingrect.top;
 		
-		// FIXME - check that the following lines auto-blank the canvas!
+		// This clears the canvas...
 
 		graph.width = width;
 		graph.height = height;
@@ -140,6 +140,8 @@ function NewGrapher() {
 	};
 
 	grapher.clear_position_line = function() {
+
+		// This leaves some ugly artifacts on the canvas.
 
 		let x = this.last_position_marker_x;
 
