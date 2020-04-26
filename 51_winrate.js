@@ -27,6 +27,8 @@ function NewGrapher() {
 
 	grapher.imaginary_length = function(real_length) {
 
+		// What length we'll pretend the eval list is for the sake of consistency.
+
 		for (let n of [128, 256, 512, 1024]) {
 			if (real_length <= n) {
 				return n;
@@ -57,6 +59,9 @@ function NewGrapher() {
 
 		let eval_list = node.future_eval_history();
 		let imaginary_length = grapher.imaginary_length(eval_list.length);
+
+		// We make lists of contiguous edges that can be drawn at once...
+
 		let runs = this.make_runs(eval_list, width, height, imaginary_length);
 
 		// Draw our normal runs...
