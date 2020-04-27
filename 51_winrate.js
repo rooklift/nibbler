@@ -183,7 +183,7 @@ function NewGrapher() {
 
 		this.last_position_marker_x = null;
 
-		if (!node.parent) {
+		if (eval_list_length < 2) {
 			return;
 		}
 
@@ -217,7 +217,7 @@ function NewGrapher() {
 
 		let x = this.last_position_marker_x;
 
-		if (x === null) {
+		if (typeof x !== "number") {
 			return;
 		}
 
