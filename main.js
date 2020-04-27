@@ -1771,7 +1771,7 @@ function menu_build() {
 			label: "Versus",
 			submenu: [
 				{
-					label: "Engine is White",
+					label: "Engine plays White",
 					accelerator: "F9",
 					click: () => {
 						win.webContents.send("call", {
@@ -1781,7 +1781,7 @@ function menu_build() {
 					}
 				},
 				{
-					label: "Engine is Black",
+					label: "Engine plays Black",
 					accelerator: "F10",
 					click: () => {
 						win.webContents.send("call", {
