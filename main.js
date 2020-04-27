@@ -1771,7 +1771,7 @@ function menu_build() {
 			label: "Versus",
 			submenu: [
 				{
-					label: "Engine plays White",
+					label: "Go (white)",
 					accelerator: "F9",
 					click: () => {
 						win.webContents.send("call", {
@@ -1781,12 +1781,21 @@ function menu_build() {
 					}
 				},
 				{
-					label: "Engine plays Black",
+					label: "Go (black)",
 					accelerator: "F10",
 					click: () => {
 						win.webContents.send("call", {
 							fn: "set_versus",
 							args: ["b"],
+						});
+					}
+				},
+				{
+					label: "Halt",
+					click: () => {
+						win.webContents.send("call", {
+							fn: "set_versus",
+							args: [""],
 						});
 					}
 				},
@@ -1798,15 +1807,6 @@ function menu_build() {
 						win.webContents.send("call", {
 							fn: "toggle",
 							args: ["autoplay"],
-						});
-					}
-				},
-				{
-					label: "Halt",
-					click: () => {
-						win.webContents.send("call", {
-							fn: "set_versus",
-							args: [""],
 						});
 					}
 				},
