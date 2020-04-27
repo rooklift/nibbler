@@ -1248,7 +1248,7 @@ const position_prototype = {
 	compare: function(other) {
 		if (this.active !== other.active) return false;
 		if (this.castling !== other.castling) return false;
-		if (this.enpassant !== other.enpassant) return false;
+		if (this.enpassant !== other.enpassant) return false;		// FIXME? Issues around fake e.p. squares.
 		for (let x = 0; x < 8; x++) {
 			for (let y = 0; y < 8; y++) {
 				if (this.state[x][y] !== other.state[x][y]) {
