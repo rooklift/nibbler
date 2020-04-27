@@ -221,20 +221,30 @@ function EnPassantSquare(board, s) {	// board.active must be correct. s is the e
 		if (p.y !== 2) {
 			return null;
 		}
-		if (board.piece(Point(p.x - 1, 3)) === "P" || board.piece(Point(p.x + 1, 3)) === "P") {
-			return p;			// OK because capturer does exist.
+		// Check the takeable pawn exists...
+		if (board.piece(Point(p.x, 3)) !== "p") {
+			return null;
 		}
-		return null;
+		// Check potential capturer exists...
+		if (board.piece(Point(p.x - 1, 3)) !== "P" && board.piece(Point(p.x + 1, 3)) !== "P") {
+			return null;
+		}
+		return p;
 	}
 
 	if (board.active === "b") {
 		if (p.y !== 5) {
 			return null;
 		}
-		if (board.piece(Point(p.x - 1, 4)) === "p" || board.piece(Point(p.x + 1, 4)) === "p") {
-			return p;			// OK because capturer does exist.
+		// Check the takeable pawn exists...
+		if (board.piece(Point(p.x, 4)) !== "P") {
+			return null;
 		}
-		return null;
+		// Check potential capturer exists...
+		if (board.piece(Point(p.x - 1, 4)) !== "p" && board.piece(Point(p.x + 1, 4)) !== "p") {
+			return null;
+		}
+		return p;
 	}
 
 	return null;
