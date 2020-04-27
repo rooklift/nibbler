@@ -599,7 +599,7 @@ function NewRenderer() {
 				this.info_handler.err_receive(s.slice("id name".length).trim());
 			}
 
-		} else if (s.startsWith("bestmove") && config.autoplay && config.versus === this.node.get_board().active) {
+		} else if (s.startsWith("bestmove")) {
 
 			// When in autoplay mode, use "bestmove" to detect that analysis is finished. There are
 			// synchronisation worries here, though it seems the isready / readyok system is good enough.
