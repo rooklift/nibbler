@@ -1791,12 +1791,6 @@ function menu_build() {
 					}
 				},
 				{
-					label: "Cancel versus mode",
-					click: () => {
-						win.webContents.send("call", "cancel_versus");
-					}
-				},
-				{
 					label: "Play move at node limit",
 					submenu: [
 						{
@@ -1839,6 +1833,12 @@ function menu_build() {
 				},
 				{
 					type: "separator"
+				},
+				{
+					label: "Cancel versus mode",
+					click: () => {
+						win.webContents.send("call", "cancel_versus");
+					}
 				},
 				{
 					label: "About versus mode",
