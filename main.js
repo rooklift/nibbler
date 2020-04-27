@@ -1802,6 +1802,15 @@ function menu_build() {
 					}
 				},
 				{
+					label: "Halt",
+					click: () => {
+						win.webContents.send("call", {
+							fn: "set_versus",
+							args: [""],
+						});
+					}
+				},
+				{
 					type: "separator"
 				},
 				{
