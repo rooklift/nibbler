@@ -1820,12 +1820,12 @@ function menu_build() {
 							}
 						},
 						{
-							label: "Always!",
+							label: "When analysing",
 							type: "checkbox",
 							checked: config.autoplay === 2,
 							click: () => {
 								config.autoplay = 2;		// Because the main process uses this.
-								set_checks("Versus", "Play move at node limit", "Always!");
+								set_checks("Versus", "Play move at node limit", "When analysing");
 								win.webContents.send("set", {
 									key: "autoplay",
 									value: 2,
