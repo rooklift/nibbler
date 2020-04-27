@@ -55,6 +55,7 @@ function startup() {
 		height: config.height,
 		backgroundColor: "#000000",
 		resizable: true,
+    icon: "nibbler.png",
 		show: false,
 		useContentSize: true,
 		webPreferences: {
