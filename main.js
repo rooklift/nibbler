@@ -1797,15 +1797,45 @@ function menu_build() {
 					}
 				},
 				{
-					label: "Play move on board if node limit reached",
-					type: "checkbox",
-					checked: config.autoplay,
-					click: () => {
-						win.webContents.send("call", {
-							fn: "toggle",
-							args: ["autoplay"],
-						});
-					}
+					label: "Play move at node limit",
+					submenu: [
+						{
+							label: "Never",
+							type: "checkbox",
+							checked: config.autoplay === 0,
+							click: () => {
+								set_checks("Versus", "Play move at node limit", "Never");
+								win.webContents.send("set", {
+									key: "autoplay",
+									value: 0,
+								});
+							}
+						},
+						{
+							label: "When playing against engine",
+							type: "checkbox",
+							checked: config.autoplay === 1,
+							click: () => {
+								set_checks("Versus", "Play move at node limit", "When playing against engine");
+								win.webContents.send("set", {
+									key: "autoplay",
+									value: 1,
+								});
+							}
+						},
+						{
+							label: "Always",
+							type: "checkbox",
+							checked: config.autoplay === 2,
+							click: () => {
+								set_checks("Versus", "Play move at node limit", "Always");
+								win.webContents.send("set", {
+									key: "autoplay",
+									value: 2,
+								});
+							}
+						}
+					]
 				},
 				{
 					type: "separator"

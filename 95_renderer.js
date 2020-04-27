@@ -606,15 +606,19 @@ function NewRenderer() {
 
 			if (this.leela_position === this.node.get_board()) {		// See notes on leela_position above.
 
-				let tokens = s.split(" ");
+				if ((config.autoplay === 1 && config.versus === this.node.get_board().active) ||
+					(config.autoplay === 2 && config.versus.includes(this.node.get_board().active))) {
 
-				let info = this.info_handler.table[tokens[1]];			// Update our cached eval in the tree while we can.
-				if (info) {
-					this.node.update_eval_from_info(info);
-				}
+					let tokens = s.split(" ");
 
-				if (this.node.children.length === 0) {					// i.e. play only at leaf nodes.
-					this.move(tokens[1]);
+					let info = this.info_handler.table[tokens[1]];		// Update our cached eval in the tree while we can.
+					if (info) {
+						this.node.update_eval_from_info(info);
+					}
+
+					if (this.node.children.length === 0) {				// i.e. play only at leaf nodes.
+						this.move(tokens[1]);
+					}
 				}
 			}
 		}
@@ -862,12 +866,6 @@ function NewRenderer() {
 			if (!config.searchmoves_buttons) {		// We turned it off.
 				this.searchmoves = [];
 				this.go_or_halt();					// If running, we resend the engine the new "go" command without searchmoves.
-			}
-		}
-
-		if (option === "autoplay") {
-			if (config.autoplay) {					// We turned it on.
-				this.go_or_halt();					// Since autoplay requires a "bestmove" message, give the engine a chance to send one.
 			}
 		}
 	};

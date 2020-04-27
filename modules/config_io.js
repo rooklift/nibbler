@@ -89,7 +89,7 @@ exports.defaults = {
 	"animate_delay_multiplier": 4,
 	
 	"search_nodes": null,
-	"autoplay": true,
+	"autoplay": 1,
 
 	"save_enabled": false,
 	"override_piece_directory": null,
@@ -170,6 +170,12 @@ function fix(cfg) {
 	}
 	if (typeof cfg.weights_dialog_folder !== "string") {
 		cfg.weights_dialog_folder = "";
+	}
+
+	// We changed how this works...
+
+	if (typeof cfg.autoplay !== "number") {
+		cfg.autoplay = 1;
 	}
 }
 
