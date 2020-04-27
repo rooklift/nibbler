@@ -682,6 +682,11 @@ function NewRenderer() {
 				}
 				return;
 			}
+			if (board.halfmove >= 100) {
+				this.nogo_reason = "50 Move Rule";
+				this.node.eval = 0.5;
+				return;
+			}
 		}
 
 		let root_fen = this.node.get_root().get_board().fen(false);
