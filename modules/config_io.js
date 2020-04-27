@@ -89,7 +89,7 @@ exports.defaults = {
 	"animate_delay_multiplier": 4,
 	
 	"search_nodes": null,
-	"autoplay": 1,
+	"autoplay": true,
 
 	"save_enabled": false,
 	"override_piece_directory": null,
@@ -172,10 +172,10 @@ function fix(cfg) {
 		cfg.weights_dialog_folder = "";
 	}
 
-	// We changed how this works... also a value of 2 is too annoying possibly...
+	// We've messed around with this...
 
-	if (typeof cfg.autoplay !== "number" || cfg.autoplay === 2) {
-		cfg.autoplay = 1;
+	if (typeof cfg.autoplay !== "boolean") {
+		cfg.autoplay = true;
 	}
 }
 

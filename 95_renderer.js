@@ -157,14 +157,6 @@ function NewRenderer() {
 		this.go_or_halt();
 	};
 
-	renderer.cancel_versus = function() {					// Should match the logic in main.js
-		if (config.autoplay === 2) {
-			config.autoplay = 1;
-			config_io.save(config);
-		}
-		this.set_versus("");
-	};
-
 	renderer.move = function(s) {							// It is safe to call this with illegal moves.
 
 		if (typeof s !== "string") {
@@ -608,8 +600,7 @@ function NewRenderer() {
 
 			if (this.leela_position === this.node.get_board()) {		// See notes on leela_position above.
 
-				if ((config.autoplay === 1 && config.versus === this.node.get_board().active) ||
-					(config.autoplay === 2 && config.versus.includes(this.node.get_board().active))) {
+				if (config.autoplay && config.versus === this.node.get_board().active) {
 
 					let tokens = s.split(" ");
 
@@ -874,6 +865,12 @@ function NewRenderer() {
 			if (!config.searchmoves_buttons) {		// We turned it off.
 				this.searchmoves = [];
 				this.go_or_halt();					// If running, we resend the engine the new "go" command without searchmoves.
+			}
+		}
+
+		if (option === "autoplay") {
+			if (config.autoplay) {					// We turned it on.
+				this.go_or_halt();					// Since autoplay requires a "bestmove" message, give the engine a chance to send one.
 			}
 		}
 	};

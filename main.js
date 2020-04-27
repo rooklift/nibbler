@@ -1791,60 +1791,14 @@ function menu_build() {
 					}
 				},
 				{
-					label: "Play move at node limit",
-					submenu: [
-						{
-							label: "Never",
-							type: "checkbox",
-							checked: config.autoplay === 0,
-							click: () => {
-								config.autoplay = 0;		// Because the main process uses this.
-								set_checks("Versus", "Play move at node limit", "Never");
-								win.webContents.send("set", {
-									key: "autoplay",
-									value: 0,
-								});
-							}
-						},
-						{
-							label: "When playing against engine",
-							type: "checkbox",
-							checked: config.autoplay === 1,
-							click: () => {
-								config.autoplay = 1;		// Because the main process uses this.
-								set_checks("Versus", "Play move at node limit", "When playing against engine");
-								win.webContents.send("set", {
-									key: "autoplay",
-									value: 1,
-								});
-							}
-						},
-						{
-							label: "When analysing end of variation / line",
-							type: "checkbox",
-							checked: config.autoplay === 2,
-							click: () => {
-								config.autoplay = 2;		// Because the main process uses this.
-								set_checks("Versus", "Play move at node limit", "When analysing end of variation / line");
-								win.webContents.send("set", {
-									key: "autoplay",
-									value: 2,
-								});
-							}
-						}
-					]
-				},
-				{
-					type: "separator"
-				},
-				{
-					label: "Cancel match play",
+					label: "Play move on board if node limit reached",
+					type: "checkbox",
+					checked: config.autoplay,
 					click: () => {
-						win.webContents.send("call", "cancel_versus");
-						if (config.autoplay === 2) {
-							config.autoplay = 1;
-							set_checks("Versus", "Play move at node limit", "When playing against engine");
-						}
+						win.webContents.send("call", {
+							fn: "toggle",
+							args: ["autoplay"],
+						});
 					}
 				},
 				{
@@ -1855,13 +1809,7 @@ function menu_build() {
 					click: () => {
 						alert(messages.about_versus_mode);
 					}
-				},
-				{
-					label: "About self play",
-					click: () => {
-						alert(messages.about_self_play);
-					}
-				},
+				}
 			]
 		},
 		{
