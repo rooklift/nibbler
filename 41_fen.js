@@ -64,9 +64,6 @@ function LoadFEN(fen) {
 		throw "Invalid FEN - active player";
 	}
 	ret.active = tokens[1];
-
-	tokens[3] = tokens[3].toLowerCase();
-	ret.enpassant = Point(tokens[3]);
 	
 	ret.halfmove = parseInt(tokens[4], 10);
 	if (Number.isNaN(ret.halfmove)) {
@@ -112,7 +109,8 @@ function LoadFEN(fen) {
 	// Some hard things. Do these in the right order!
 
 	ret.castling = CastlingRights(ret, tokens[2]);
-	ret.normalchess = IsNormalChessPosition(ret);		// Note the renderer may change this anyway.
+	ret.enpassant = EnPassantSquare(ret, tokens[3]);	// Requires ret.active to be correct.
+	ret.normalchess = IsNormalChessPosition(ret);
 
 	return ret;
 }
@@ -206,6 +204,42 @@ function CastlingRights(board, s) {						// s is the castling string from a FEN
 
 	// FIXME: check at most 1 castling possibility on left and right of each king?
 	// At the moment we support more arbitrary castling rights, maybe that's OK.
+}
+
+
+function EnPassantSquare(board, s) {	// board.active must be correct. s is the en-passant string from a FEN.
+
+	// Return enpassant square... only if potential capturing pawns are
+	// present. Note there are some subtleties where the pawns could be
+	// present but the capture is illegal. We ignore this issue.
+
+	let p = Point(s.toLowerCase());
+
+	if (!p) {
+		return null;
+	}
+
+	if (board.active === "w") {
+		if (p.y !== 2) {
+			return null;
+		}
+		if (board.piece(Point(p.x - 1, 3)) === "P" || board.piece(Point(p.x + 1, 3)) === "P") {
+			return p;			// OK because capturer does exist.
+		}
+		return null;
+	}
+
+	if (board.active === "b") {
+		if (p.y !== 5) {
+			return null;
+		}
+		if (board.piece(Point(p.x - 1, 4)) === "p" || board.piece(Point(p.x + 1, 4)) === "p") {
+			return p;			// OK because capturer does exist.
+		}
+		return null;
+	}
+
+	return null;
 }
 
 

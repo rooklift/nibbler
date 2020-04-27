@@ -125,16 +125,25 @@ const position_prototype = {
 			ret.state[x2][y1] = "";
 		}
 
-		// Set enpassant square...
+		// Set the enpassant square... only if potential capturing pawns are
+		// present. Note there are some subtleties where the pawns could be
+		// present but the capture is illegal. We ignore this issue.
+
+		// Note that the code below relies on Point() generating null for
+		// offboard coordinates, and ret.piece() accepting that null.
 
 		ret.enpassant = null;
 
-		if (pawn_flag && y1 === 6 && y2 === 4) {
-			ret.enpassant = Point(x1, 5);
+		if (pawn_flag && y1 === 6 && y2 === 4) {		// White pawn advanced 2
+			if (ret.piece(Point(x1 - 1, 4)) === "p" || ret.piece(Point(x1 + 1, 4)) === "p") {
+				ret.enpassant = Point(x1, 5);
+			}
 		}
 
-		if (pawn_flag && y1 === 1 && y2 === 3) {
-			ret.enpassant = Point(x1, 2);
+		if (pawn_flag && y1 === 1 && y2 === 3) {		// Black pawn advanced 2
+			if (ret.piece(Point(x1 - 1, 3)) === "P" || ret.piece(Point(x1 + 1, 3)) === "P") {
+				ret.enpassant = Point(x1, 2);
+			}
 		}
 
 		// Actually make the move (except we already did castling)...
