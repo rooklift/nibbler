@@ -1771,7 +1771,7 @@ function menu_build() {
 			label: "Versus",
 			submenu: [
 				{
-					label: "Go (white)",
+					label: "Go (when white)",
 					accelerator: "F9",
 					click: () => {
 						win.webContents.send("call", {
@@ -1781,7 +1781,7 @@ function menu_build() {
 					}
 				},
 				{
-					label: "Go (black)",
+					label: "Go (when black)",
 					accelerator: "F10",
 					click: () => {
 						win.webContents.send("call", {
