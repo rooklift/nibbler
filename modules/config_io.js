@@ -172,9 +172,9 @@ function fix(cfg) {
 		cfg.weights_dialog_folder = "";
 	}
 
-	// We changed how this works...
+	// We changed how this works... also a value of 2 is too annoying possibly...
 
-	if (typeof cfg.autoplay !== "number") {
+	if (typeof cfg.autoplay !== "number" || cfg.autoplay === 2) {
 		cfg.autoplay = 1;
 	}
 }
