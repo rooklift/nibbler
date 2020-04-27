@@ -17,6 +17,12 @@ Optionally, you can have the top move automatically played on the board \
 upon reaching the node limit (assuming there is one; see the Engine menu).`
 
 
+exports.about_self_play =
+`You can make Leela play itself. First, choose a node limit from the \
+Engine menu. Then select "Play move at node limit : Always" from the \
+Versus menu. Then go.` 
+
+
 exports.save_not_enabled =
 `Save is disabled until you read the following warning.
 

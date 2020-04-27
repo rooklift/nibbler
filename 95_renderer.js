@@ -157,12 +157,6 @@ function NewRenderer() {
 		this.go_or_halt();
 	};
 
-	renderer.cancel_versus = function() {
-		if (config.versus === "b" || config.versus === "w") {
-			this.set_versus("");
-		}
-	};
-
 	renderer.move = function(s) {							// It is safe to call this with illegal moves.
 
 		if (typeof s !== "string") {

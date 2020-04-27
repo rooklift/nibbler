@@ -1835,15 +1835,15 @@ function menu_build() {
 					type: "separator"
 				},
 				{
-					label: "Cancel versus mode",
-					click: () => {
-						win.webContents.send("call", "cancel_versus");
-					}
-				},
-				{
 					label: "About versus mode",
 					click: () => {
 						alert(messages.about_versus_mode);
+					}
+				},
+				{
+					label: "About self play",
+					click: () => {
+						alert(messages.about_self_play);
 					}
 				},
 			]
