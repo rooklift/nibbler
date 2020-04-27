@@ -295,7 +295,7 @@ const node_prototype = {
 			return;
 		}
 
-		if (this.eval && this.eval_nodes > info.total_nodes) {
+		if (this.eval_nodes > info.total_nodes) {
 			return;
 		}
 
@@ -315,7 +315,7 @@ function NewNode(parent, move) {		// Args are null for root only.
 	node.move = move;					// Think of this as the move that led to the position associated with node.
 	node.__nice_move = null;
 	node.eval = null;
-	node.eval_nodes = 0;
+	node.eval_nodes = 0;				// Useful; some info objects get .total_nodes set to -1, and update_eval_from_info() ignores them.
 	node.destroyed = false;
 
 	tree_version++;

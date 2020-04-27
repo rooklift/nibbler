@@ -139,6 +139,8 @@ function NewRenderer() {
 		this.info_handler.table[nextmove].q = oldinfo.q;
 		this.info_handler.table[nextmove].cp = oldinfo.cp;
 		this.info_handler.table[nextmove].multipv = 1;
+		this.info_handler.table[nextmove].total_nodes = -1;		// So it won't be acceptable as an eval for a node.
+
 
 		// Flip our evals if the colour changes...
 
