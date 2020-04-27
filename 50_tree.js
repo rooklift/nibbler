@@ -187,13 +187,13 @@ const node_prototype = {
 
 	is_triple_rep: function() {
 
+		let our_board = this.get_board();
 		let ancestor = this;
-
 		let hits = 0;
 
 		while (ancestor.parent && ancestor.parent.parent) {
 			ancestor = ancestor.parent.parent;
-			if (ancestor.get_board().compare(this.get_board())) {
+			if (ancestor.get_board().compare(our_board)) {
 				hits++;
 				if (hits >= 2) {
 					return true;
