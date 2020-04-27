@@ -160,6 +160,7 @@ function NewRenderer() {
 	renderer.cancel_versus = function() {					// Should match the logic in main.js
 		if (config.autoplay === 2) {
 			config.autoplay = 1;
+			config_io.save(config);
 		}
 		this.set_versus("");
 	};
