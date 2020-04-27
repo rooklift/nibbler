@@ -185,6 +185,25 @@ const node_prototype = {
 		return true;
 	},
 
+	is_triple_rep: function() {
+
+		let ancestor = this;
+
+		let hits = 0;
+
+		while (ancestor.parent && ancestor.parent.parent) {
+			ancestor = ancestor.parent.parent;
+			if (ancestor.get_board().compare(this.get_board())) {
+				hits++;
+				if (hits >= 2) {
+					return true;
+				}
+			}
+		}
+
+		return false;
+	},
+
 	delete_other_lines: function() {
 
 		this.promote_to_main_line();

@@ -687,6 +687,11 @@ function NewRenderer() {
 				this.node.eval = 0.5;
 				return;
 			}
+			if (this.node.is_triple_rep()) {
+				this.nogo_reason = "Triple Repetition";
+				this.node.eval = 0.5;
+				return;
+			}
 		}
 
 		let root_fen = this.node.get_root().get_board().fen(false);

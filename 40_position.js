@@ -1245,6 +1245,20 @@ const position_prototype = {
 		return s + ` ${this.active} ${castling_string} ${ep_string} ${this.halfmove} ${this.fullmove}`;
 	},
 
+	compare: function(other) {
+		if (this.active !== other.active) return false;
+		if (this.castling !== other.castling) return false;
+		if (this.enpassant !== other.enpassant) return false;
+		for (let x = 0; x < 8; x++) {
+			for (let y = 0; y < 8; y++) {
+				if (this.state[x][y] !== other.state[x][y]) {
+					return false;
+				}
+			}
+		}
+		return true;
+	},
+
 	copy: function() {
 		return NewPosition(this.state, this.active, this.castling, this.enpassant, this.halfmove, this.fullmove, this.normalchess);
 	},
