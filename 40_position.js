@@ -125,12 +125,16 @@ const position_prototype = {
 			ret.state[x2][y1] = "";
 		}
 
-		// Set the enpassant square... only if potential capturing pawns are
-		// present. Note there are some subtleties where the pawns could be
-		// present but the capture is illegal. We ignore this issue.
-
-		// Note that the code below relies on Point() generating null for
-		// offboard coordinates, and ret.piece() accepting that null.
+		// Set the enpassant square... only if potential capturing pawns are present. Note
+		// there are some subtleties where the pawns could be present but the capture is
+		// illegal. We ignore this issue.
+		//
+		// The worst consequence is a false negative in the compare() method, leading to a
+		// triple repetition not being recognised (until it becomes a quadruple
+		// repetition). This seems fairly harmless.
+		//
+		// Note that the code below relies on Point() generating null for offboard
+		// coordinates, and ret.piece() accepting that null.
 
 		ret.enpassant = null;
 

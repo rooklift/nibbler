@@ -209,9 +209,7 @@ function CastlingRights(board, s) {						// s is the castling string from a FEN
 
 function EnPassantSquare(board, s) {	// board.active must be correct. s is the en-passant string from a FEN.
 
-	// Return enpassant square... only if potential capturing pawns are
-	// present. Note there are some subtleties where the pawns could be
-	// present but the capture is illegal. We ignore this issue.
+	// Suffers from the same subtleties as the enpassant setter in position.move(), see there for comments.
 
 	let p = Point(s.toLowerCase());
 
