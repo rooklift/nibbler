@@ -682,10 +682,16 @@ function NewRenderer() {
 				if (board.king_in_check()) {
 					this.nogo_reason = "Checkmate";
 					this.node.eval = board.active === "w" ? 0 : 1;
+					return;
 				} else {
 					this.nogo_reason = "Stalemate";
 					this.node.eval = 0.5;
+					return;
 				}
+			}
+			if (board.insufficient_material()) {
+				this.nogo_reason = "Insufficient Material";
+				this.node.eval = 0.5;
 				return;
 			}
 			if (board.halfmove >= 100) {

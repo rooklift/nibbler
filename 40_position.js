@@ -1245,6 +1245,39 @@ const position_prototype = {
 		return s + ` ${this.active} ${castling_string} ${ep_string} ${this.halfmove} ${this.fullmove}`;
 	},
 
+	insufficient_material() {
+
+		// There are some subtleties around help-mates and also positions where
+		// mate is forced despite there not being enough material if the pieces
+		// were elsewhere. This code below should have no false positives...
+
+		let minors = 0;
+
+		for (let x = 0; x < 8; x++) {
+			for (let y = 0; y < 8; y++) {
+				switch (this.state[x][y]) {
+				case "Q":
+				case "q":
+				case "R":
+				case "r":
+				case "P":
+				case "p":
+					return false;
+				case "B":
+				case "b":
+				case "N":
+				case "n":
+					minors++;
+					if (minors >= 2) {
+						return false;
+					}
+				}
+			}
+		}
+
+		return true;
+	},
+
 	compare: function(other) {
 		if (this.active !== other.active) return false;
 		if (this.castling !== other.castling) return false;
