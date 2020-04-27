@@ -125,6 +125,9 @@ function startup() {
 	electron.Menu.setApplicationMenu(menu);
 }
 
+// About the menu, remember that the renderer has a "queue" system (not really a queue, it drops all but 1
+// item) for calls, so only 1 "call" message can be sent at a time. The "set" message, however, is OK.
+
 function menu_build() {
 
 	const million = 1000000;

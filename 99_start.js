@@ -114,7 +114,7 @@ ipcRenderer.on("set", (event, msg) => {		// Should only be for things that don't
 	hub.draw();
 });
 
-ipcRenderer.on("call", (event, msg) => {
+ipcRenderer.on("call", (event, msg) => {	// Adds stuff to the "queue" - so main should only send one call at a time.
 
 	let fn;
 
@@ -133,6 +133,7 @@ ipcRenderer.on("call", (event, msg) => {
 });
 
 // The queue needs to be examined very regularly and acted upon.
+// We actually drop all but 1 item, so the term "queue" is a bit inaccurate.
 
 function input_loop() {
 
