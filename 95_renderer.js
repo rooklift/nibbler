@@ -157,6 +157,13 @@ function NewRenderer() {
 		this.go_or_halt();
 	};
 
+	renderer.cancel_versus = function() {					// Should match the logic in main.js
+		if (config.autoplay === 2) {
+			config.autoplay = 1;
+		}
+		this.set_versus("");
+	};
+
 	renderer.move = function(s) {							// It is safe to call this with illegal moves.
 
 		if (typeof s !== "string") {

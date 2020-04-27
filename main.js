@@ -1798,6 +1798,7 @@ function menu_build() {
 							type: "checkbox",
 							checked: config.autoplay === 0,
 							click: () => {
+								config.autoplay = 0;		// Because the main process uses this.
 								set_checks("Versus", "Play move at node limit", "Never");
 								win.webContents.send("set", {
 									key: "autoplay",
@@ -1810,6 +1811,7 @@ function menu_build() {
 							type: "checkbox",
 							checked: config.autoplay === 1,
 							click: () => {
+								config.autoplay = 1;		// Because the main process uses this.
 								set_checks("Versus", "Play move at node limit", "When playing against engine");
 								win.webContents.send("set", {
 									key: "autoplay",
@@ -1822,6 +1824,7 @@ function menu_build() {
 							type: "checkbox",
 							checked: config.autoplay === 2,
 							click: () => {
+								config.autoplay = 2;		// Because the main process uses this.
 								set_checks("Versus", "Play move at node limit", "Always");
 								win.webContents.send("set", {
 									key: "autoplay",
@@ -1830,6 +1833,19 @@ function menu_build() {
 							}
 						}
 					]
+				},
+				{
+					type: "separator"
+				},
+				{
+					label: "Cancel match play",
+					click: () => {
+						win.webContents.send("call", "cancel_versus");
+						if (config.autoplay === 2) {
+							config.autoplay = 1;
+							set_checks("Versus", "Play move at node limit", "When playing against engine");
+						}
+					}
 				},
 				{
 					type: "separator"
