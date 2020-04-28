@@ -340,9 +340,9 @@ function NewRenderer() {
 		}
 
 		let parent = this.node.parent;
-		this.node.detach();
 
-		this.maybe_stop_versus_mode();
+		this.maybe_stop_versus_mode();		// Must happen while this.node is valid, i.e. not between next 2 lines!
+		this.node.detach();
 		this.node = parent;
 		this.position_changed();
 	};
