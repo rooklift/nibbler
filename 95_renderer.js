@@ -728,31 +728,26 @@ function NewRenderer() {
 				if (board.king_in_check()) {
 					this.nogo_reason = "Checkmate";
 					this.node.eval = board.active === "w" ? 0 : 1;
-					config.selfplay = false;
 					return;
 				} else {
 					this.nogo_reason = "Stalemate";
 					this.node.eval = 0.5;
-					config.selfplay = false;
 					return;
 				}
 			}
 			if (board.insufficient_material()) {
 				this.nogo_reason = "Insufficient Material";
 				this.node.eval = 0.5;
-				config.selfplay = false;
 				return;
 			}
 			if (board.halfmove >= 100) {
 				this.nogo_reason = "50 Move Rule";
 				this.node.eval = 0.5;
-				config.selfplay = false;
 				return;
 			}
 			if (this.node.is_triple_rep()) {
 				this.nogo_reason = "Triple Repetition";
 				this.node.eval = 0.5;
-				config.selfplay = false;
 				return;
 			}
 		}
