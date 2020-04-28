@@ -36,9 +36,22 @@ function NewRenderer() {
 
 	// --------------------------------------------------------------------------------------------
 
-	renderer.position_changed = function(new_game_flag) {
+	renderer.position_changed = function(new_game_flag, maybe_stop_versus) {
 
 		this.position_change_time = performance.now();
+
+		// maybe_stop_versus is for cases where auto-played moves would be surprising to the
+		// user. Note that it's OK to directly set config.versus here because we're about to
+		// call go_or_halt().
+
+		if (maybe_stop_versus) {
+			if (config.versus.length === 1 || (config.versus === "wb" && config.selfplay)) {
+				if (this.nodes_are_infinite() === false) {
+					config.versus = "";
+					config.selfplay = false;
+				}
+			}
+		}
 
 		this.searchmoves = [];
 		this.hoverdraw_div = -1;
@@ -154,7 +167,7 @@ function NewRenderer() {
 		}
 	};
 
-	renderer.set_versus = function(s) {						// config.versus should not be directly set, call this function instead.
+	renderer.set_versus = function(s) {				// config.versus should not be directly set, as go_or_halt() needs to be called too.
 		if (typeof s !== "string") s = "";
 		config.versus = "";
 		if (s.includes("W") || s.includes("w")) config.versus += "w";
@@ -243,58 +256,33 @@ function NewRenderer() {
 		}
 	};
 
-	renderer.maybe_stop_versus_mode = function() {
-
-		// We don't care in Halted state.
-
-		if (config.versus === "") {
-			return;
-		}
-
-		// We don't care in "wb" state if selfplay is off.
-
-		if (config.versus === "wb" && config.selfplay === false) {
-			return;
-		}
-
-		// But if we get here, moves can be autoplayed, which would surprise the user.
-
-		if (this.nodes_are_infinite() === false) {
-			this.set_versus("");						// Also turns off config.selfplay.
-		}
-	};
-
 	renderer.prev = function() {
 		if (this.node.parent) {
-			this.maybe_stop_versus_mode();
 			this.node = this.node.parent;
-			this.position_changed();
+			this.position_changed(false, true);
 		}
 	};
 
 	renderer.next = function() {
 		if (this.node.children.length > 0) {
-			this.maybe_stop_versus_mode();
 			this.node = this.node.children[0];
-			this.position_changed();
+			this.position_changed(false, true);
 		}
 	};
 
 	renderer.goto_root = function() {
 		let root = this.node.get_root();
 		if (this.node !== root) {
-			this.maybe_stop_versus_mode();
 			this.node = root;
-			this.position_changed();
+			this.position_changed(false, true);
 		}
 	};
 
 	renderer.goto_end = function() {
 		let end = this.node.get_end();
 		if (this.node !== end) {
-			this.maybe_stop_versus_mode();
 			this.node = end;
-			this.position_changed();
+			this.position_changed(false, true);
 		}
 	};
 
@@ -317,9 +305,8 @@ function NewRenderer() {
 		}
 
 		if (this.node !== node) {
-			this.maybe_stop_versus_mode();
 			this.node = node;
-			this.position_changed();
+			this.position_changed(false, true);
 		}
 	};
 
@@ -340,11 +327,9 @@ function NewRenderer() {
 		}
 
 		let parent = this.node.parent;
-
-		this.maybe_stop_versus_mode();		// Must happen while this.node is valid, i.e. not between next 2 lines!
 		this.node.detach();
 		this.node = parent;
-		this.position_changed();
+		this.position_changed(false, true);
 	};
 
 	renderer.delete_children = function() {
@@ -430,17 +415,15 @@ function NewRenderer() {
 			return;
 		}
 
-		this.maybe_stop_versus_mode();			// Must happen while this.node is valid, i.e. not between next 2 lines!
 		DestroyTree(this.node);					// Optional, but might help the GC.
 		this.node = NewTree(newpos);
-		this.position_changed(true);
+		this.position_changed(true, true);
 	};
 
 	renderer.new_game = function() {
-		this.maybe_stop_versus_mode();			// Must happen while this.node is valid, i.e. not between next 2 lines!
 		DestroyTree(this.node);					// Optional, but might help the GC.
 		this.node = NewTree();
-		this.position_changed(true);
+		this.position_changed(true, true);
 	};
 
 	renderer.new_960 = function(n) {
@@ -510,10 +493,9 @@ function NewRenderer() {
 			return false;
 		}
 
-		this.maybe_stop_versus_mode();						// Must happen while this.node is valid, i.e. not between next 2 lines!
 		DestroyTree(this.node);								// Optional, but might help the GC.
 		this.node = new_root;
-		this.position_changed(true);
+		this.position_changed(true, true);
 
 		return true;
 	};
@@ -1229,9 +1211,8 @@ function NewRenderer() {
 		// Maybe we're done...
 
 		if (!config.serious_analysis_mode) {
-			this.maybe_stop_versus_mode();
 			this.node = node;
-			this.position_changed();
+			this.position_changed(false, true);
 			return;
 		}
 
@@ -1295,9 +1276,8 @@ function NewRenderer() {
 		}
 
 		if (node !== this.node) {
-			this.maybe_stop_versus_mode();
 			this.node = node;
-			this.position_changed();
+			this.position_changed(false, true);
 		}
 	};
 
@@ -1310,9 +1290,8 @@ function NewRenderer() {
 		}
 
 		if (node !== this.node) {
-			this.maybe_stop_versus_mode();
 			this.node = node;
-			this.position_changed();
+			this.position_changed(false, true);
 		}
 	};
 
