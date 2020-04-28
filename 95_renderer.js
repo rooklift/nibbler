@@ -260,7 +260,7 @@ function NewRenderer() {
 		// But if we get here, moves can be autoplayed, which would surprise the user.
 
 		if (this.nodes_are_infinite() === false) {
-			this.set_versus("");
+			this.set_versus("");						// Also turns off config.selfplay.
 		}
 	};
 
