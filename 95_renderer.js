@@ -163,7 +163,7 @@ function NewRenderer() {
 			config.selfplay = false;
 		}
 		if (config.versus.length === 1) {
-			if (typeof config.search_nodes !== "number" || config.search_nodes < 1) {
+			if (this.nodes_are_infinite()) {
 				alert(messages.versus_without_node_limit);
 			}
 		}
@@ -173,7 +173,7 @@ function NewRenderer() {
 	renderer.start_selfplay = function() {
 		config.selfplay = true;
 		this.set_versus("wb");
-		if (typeof config.search_nodes !== "number" || config.search_nodes < 1) {
+		if (this.nodes_are_infinite()) {
 			alert(messages.versus_without_node_limit);
 		}
 	};
@@ -232,6 +232,10 @@ function NewRenderer() {
 		}
 	};
 
+	renderer.nodes_are_infinite = function() {
+		return (typeof config.search_nodes !== "number" || config.search_nodes < 1);
+	}
+
 	renderer.play_info_index = function(n) {
 		let info_list = this.info_handler.sorted();
 		if (typeof n === "number" && n >= 0 && n < info_list.length) {
@@ -239,8 +243,30 @@ function NewRenderer() {
 		}
 	};
 
+	renderer.maybe_stop_versus_mode = function() {
+
+		// We don't care in Halted state.
+
+		if (config.versus === "") {
+			return;
+		}
+
+		// We don't care in "wb" state if selfplay is off.
+
+		if (config.versus === "wb" && config.selfplay === false) {
+			return;
+		}
+
+		// But if we get here, moves can be autoplayed, which would surprise the user.
+
+		if (this.nodes_are_infinite() === false) {
+			this.set_versus("");
+		}
+	};
+
 	renderer.prev = function() {
 		if (this.node.parent) {
+			this.maybe_stop_versus_mode();
 			this.node = this.node.parent;
 			this.position_changed();
 		}
@@ -248,6 +274,7 @@ function NewRenderer() {
 
 	renderer.next = function() {
 		if (this.node.children.length > 0) {
+			this.maybe_stop_versus_mode();
 			this.node = this.node.children[0];
 			this.position_changed();
 		}
@@ -256,6 +283,7 @@ function NewRenderer() {
 	renderer.goto_root = function() {
 		let root = this.node.get_root();
 		if (this.node !== root) {
+			this.maybe_stop_versus_mode();
 			this.node = root;
 			this.position_changed();
 		}
@@ -264,6 +292,7 @@ function NewRenderer() {
 	renderer.goto_end = function() {
 		let end = this.node.get_end();
 		if (this.node !== end) {
+			this.maybe_stop_versus_mode();
 			this.node = end;
 			this.position_changed();
 		}
@@ -288,6 +317,7 @@ function NewRenderer() {
 		}
 
 		if (this.node !== node) {
+			this.maybe_stop_versus_mode();
 			this.node = node;
 			this.position_changed();
 		}
@@ -311,8 +341,9 @@ function NewRenderer() {
 
 		let parent = this.node.parent;
 		this.node.detach();
-		this.node = parent;
 
+		this.maybe_stop_versus_mode();
+		this.node = parent;
 		this.position_changed();
 	};
 
@@ -400,12 +431,16 @@ function NewRenderer() {
 		}
 
 		DestroyTree(this.node);			// Optional, but might help the GC.
+
+		this.maybe_stop_versus_mode();
 		this.node = NewTree(newpos);
 		this.position_changed(true);
 	};
 
 	renderer.new_game = function() {
 		DestroyTree(this.node);			// Optional, but might help the GC.
+
+		this.maybe_stop_versus_mode();
 		this.node = NewTree();
 		this.position_changed(true);
 	};
@@ -478,6 +513,8 @@ function NewRenderer() {
 		}
 
 		DestroyTree(this.node);								// Optional, but might help the GC.
+
+		this.maybe_stop_versus_mode();
 		this.node = new_root;
 		this.position_changed(true);
 
@@ -734,7 +771,7 @@ function NewRenderer() {
 
 		let s;
 
-		if (typeof config.search_nodes !== "number" || config.search_nodes < 1) {
+		if (this.nodes_are_infinite()) {
 			s = "go infinite";
 		} else {
 			s = `go nodes ${config.search_nodes}`;
@@ -1200,6 +1237,7 @@ function NewRenderer() {
 		// Maybe we're done...
 
 		if (!config.serious_analysis_mode) {
+			this.maybe_stop_versus_mode();
 			this.node = node;
 			this.position_changed();
 			return;
@@ -1265,6 +1303,7 @@ function NewRenderer() {
 		}
 
 		if (node !== this.node) {
+			this.maybe_stop_versus_mode();
 			this.node = node;
 			this.position_changed();
 		}
@@ -1279,6 +1318,7 @@ function NewRenderer() {
 		}
 
 		if (node !== this.node) {
+			this.maybe_stop_versus_mode();
 			this.node = node;
 			this.position_changed();
 		}
