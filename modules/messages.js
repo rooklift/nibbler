@@ -20,7 +20,7 @@ The self-play option causes Leela to play itself.`;
 
 
 exports.versus_without_node_limit =
-`No node limit is selected, therefore moves will never be played.`;
+`No node limit selected; therefore moves will not be automatically played.`;
 
 
 exports.save_not_enabled =
