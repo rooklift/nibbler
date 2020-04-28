@@ -127,8 +127,12 @@ const node_prototype = {
 			return this.__position;
 		}
 
+		if (this.destroyed) {
+			throw "get_board(): node has been destroyed!";
+		}
+
 		if (!this.parent) {
-			throw "get_board(): no __position and no parent";
+			throw "get_board(): node not destroyed but no __position and no parent";
 		}
 
 		let node_line = [];
