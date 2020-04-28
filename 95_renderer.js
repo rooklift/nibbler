@@ -156,12 +156,12 @@ function NewRenderer() {
 
 	renderer.set_versus = function(s) {						// config.versus should not be directly set, call this function instead.
 		if (typeof s !== "string") s = "";
-		if (s !== "wb") {									// selfplay can only be on if "wb"
-			config.selfplay = false;
-		}
 		config.versus = "";
 		if (s.includes("W") || s.includes("w")) config.versus += "w";
 		if (s.includes("B") || s.includes("b")) config.versus += "b";
+		if (config.versus !== "wb") {									// selfplay can only be on if "wb"
+			config.selfplay = false;
+		}
 		if (config.versus.length === 1) {
 			if (typeof config.search_nodes !== "number" || config.search_nodes < 1) {
 				alert(messages.versus_without_node_limit);
