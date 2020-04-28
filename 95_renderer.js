@@ -430,17 +430,15 @@ function NewRenderer() {
 			return;
 		}
 
-		DestroyTree(this.node);			// Optional, but might help the GC.
-
-		this.maybe_stop_versus_mode();
+		this.maybe_stop_versus_mode();			// Must happen while this.node is valid, i.e. not between next 2 lines!
+		DestroyTree(this.node);					// Optional, but might help the GC.
 		this.node = NewTree(newpos);
 		this.position_changed(true);
 	};
 
 	renderer.new_game = function() {
-		DestroyTree(this.node);			// Optional, but might help the GC.
-
-		this.maybe_stop_versus_mode();
+		this.maybe_stop_versus_mode();			// Must happen while this.node is valid, i.e. not between next 2 lines!
+		DestroyTree(this.node);					// Optional, but might help the GC.
 		this.node = NewTree();
 		this.position_changed(true);
 	};
@@ -512,9 +510,8 @@ function NewRenderer() {
 			return false;
 		}
 
+		this.maybe_stop_versus_mode();						// Must happen while this.node is valid, i.e. not between next 2 lines!
 		DestroyTree(this.node);								// Optional, but might help the GC.
-
-		this.maybe_stop_versus_mode();
 		this.node = new_root;
 		this.position_changed(true);
 
