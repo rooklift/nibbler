@@ -631,6 +631,10 @@ function NewRenderer() {
 					if (info) {
 						this.node.update_eval_from_info(info);
 					}
+
+//					if (config.selfplay || this.node.children.length === 0) {		// In human v computer mode, only play at leaf
+//						this.move(tokens[1]);
+//					}
 				}
 			}
 		}
