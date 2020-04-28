@@ -327,7 +327,7 @@ function NewInfoHandler() {
 
 			statusbox.innerHTML = `<span class="${this.special_message_class || "yellow"}">${this.special_message}</span>`;
 
-		} else if (typeof syncs_needed === "number" && syncs_needed > 1) {
+		} else if (typeof syncs_needed === "number" && syncs_needed > 2) {
 
 			statusbox.innerHTML = `<span class="gray">Out of sync: ${syncs_needed}</span>`;
 
