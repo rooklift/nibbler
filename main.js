@@ -1889,6 +1889,66 @@ function menu_build() {
 								});
 							}
 						},
+						{
+							label: "0.6",
+							type: "checkbox",
+							checked: config.options.Temperature === 0.6,
+							click: () => {
+								set_checks("Versus", "Temperature", "0.6");
+								win.webContents.send("call", {
+									fn: "set_temperature",
+									args: [0.6]
+								});
+							}
+						},
+						{
+							label: "0.7",
+							type: "checkbox",
+							checked: config.options.Temperature === 0.7,
+							click: () => {
+								set_checks("Versus", "Temperature", "0.7");
+								win.webContents.send("call", {
+									fn: "set_temperature",
+									args: [0.7]
+								});
+							}
+						},
+						{
+							label: "0.8",
+							type: "checkbox",
+							checked: config.options.Temperature === 0.8,
+							click: () => {
+								set_checks("Versus", "Temperature", "0.8");
+								win.webContents.send("call", {
+									fn: "set_temperature",
+									args: [0.8]
+								});
+							}
+						},
+						{
+							label: "0.9",
+							type: "checkbox",
+							checked: config.options.Temperature === 0.9,
+							click: () => {
+								set_checks("Versus", "Temperature", "0.9");
+								win.webContents.send("call", {
+									fn: "set_temperature",
+									args: [0.9]
+								});
+							}
+						},
+						{
+							label: "1.0",
+							type: "checkbox",
+							checked: config.options.Temperature === 1.0,
+							click: () => {
+								set_checks("Versus", "Temperature", "1.0");
+								win.webContents.send("call", {
+									fn: "set_temperature",
+									args: [1.0]
+								});
+							}
+						},
 					]
 				},
 				{
