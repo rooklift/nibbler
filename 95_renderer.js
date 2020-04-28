@@ -247,7 +247,7 @@ function NewRenderer() {
 
 	renderer.nodes_are_infinite = function() {
 		return (typeof config.search_nodes !== "number" || config.search_nodes < 1);
-	}
+	};
 
 	renderer.play_info_index = function(n) {
 		let info_list = this.info_handler.sorted();
