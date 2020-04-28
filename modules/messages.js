@@ -16,7 +16,9 @@ exports.about_versus_mode =
 the position only. The top move is automatically played on the board upon \
 reaching the node limit (see the Engine menu).
 
-The self-play option causes Leela to play itself.`;
+The self-play option causes Leela to play itself.
+
+Higher temperature makes the moves less predictable.`;
 
 
 exports.versus_without_node_limit =

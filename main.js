@@ -1815,6 +1815,86 @@ function menu_build() {
 					type: "separator"
 				},
 				{
+					label: "Temperature",
+					submenu: [
+						{
+							label: "0",
+							type: "checkbox",
+							checked: config.options.Temperature === 0,
+							click: () => {
+								set_checks("Versus", "Temperature", "0");
+								win.webContents.send("call", {
+									fn: "set_temperature",
+									args: [0]
+								});
+							}
+						},
+						{
+							label: "0.1",
+							type: "checkbox",
+							checked: config.options.Temperature === 0.1,
+							click: () => {
+								set_checks("Versus", "Temperature", "0.1");
+								win.webContents.send("call", {
+									fn: "set_temperature",
+									args: [0.1]
+								});
+							}
+						},
+						{
+							label: "0.2",
+							type: "checkbox",
+							checked: config.options.Temperature === 0.2,
+							click: () => {
+								set_checks("Versus", "Temperature", "0.2");
+								win.webContents.send("call", {
+									fn: "set_temperature",
+									args: [0.2]
+								});
+							}
+						},
+						{
+							label: "0.3",
+							type: "checkbox",
+							checked: config.options.Temperature === 0.3,
+							click: () => {
+								set_checks("Versus", "Temperature", "0.3");
+								win.webContents.send("call", {
+									fn: "set_temperature",
+									args: [0.3]
+								});
+							}
+						},
+						{
+							label: "0.4",
+							type: "checkbox",
+							checked: config.options.Temperature === 0.4,
+							click: () => {
+								set_checks("Versus", "Temperature", "0.4");
+								win.webContents.send("call", {
+									fn: "set_temperature",
+									args: [0.4]
+								});
+							}
+						},
+						{
+							label: "0.5",
+							type: "checkbox",
+							checked: config.options.Temperature === 0.5,
+							click: () => {
+								set_checks("Versus", "Temperature", "0.5");
+								win.webContents.send("call", {
+									fn: "set_temperature",
+									args: [0.5]
+								});
+							}
+						},
+					]
+				},
+				{
+					type: "separator"
+				},
+				{
 					label: "About versus mode",
 					click: () => {
 						alert(messages.about_versus_mode);

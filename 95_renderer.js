@@ -808,6 +808,14 @@ function NewRenderer() {
 		this.go_or_halt();
 	};
 
+	renderer.set_temperature = function(val) {
+		this.__halt();
+		config.options.Temperature = val;
+		config_io.save(config);
+		this.engine.setoption("Temperature", val);
+		this.go_or_halt();
+	};
+
 	renderer.switch_weights = function(filename) {
 		this.__halt();
 		this.info_handler.stderr_log = "";						// Avoids having confusing stale messages.
