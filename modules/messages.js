@@ -12,9 +12,15 @@ thinks the right move is "obvious".`;
 
 
 exports.about_versus_mode =
-`These options cause Leela to evaluate one side of the position only. \
-Optionally, you can have the top move automatically played on the board \
-upon reaching the node limit (assuming there is one; see the Engine menu).`;
+`The "Go when [white|black]" options cause Leela to evaluate one side of \
+the position only. The top move is automatically played on the board upon \
+reaching the node limit (see the Engine menu).
+
+The self-play option causes Leela to play itself.`;
+
+
+exports.versus_without_node_limit =
+`No node limit is selected, therefore moves will never be played.`;
 
 
 exports.save_not_enabled =

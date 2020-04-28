@@ -89,7 +89,6 @@ exports.defaults = {
 	"animate_delay_multiplier": 4,
 	
 	"search_nodes": null,
-	"autoplay": true,
 
 	"save_enabled": false,
 	"override_piece_directory": null,
@@ -100,10 +99,11 @@ exports.defaults = {
 
 function fix(cfg) {
 
-	// We want to create a few things...
+	// We want to create a few temporary things (not saved to file)...
 
 	cfg.flip = false;
 	cfg.versus = "";
+	cfg.selfplay = false;
 	cfg.square_size = Math.floor(cfg.board_size / 8);
 
 	// Make sure options and args at least exist...
@@ -170,12 +170,6 @@ function fix(cfg) {
 	}
 	if (typeof cfg.weights_dialog_folder !== "string") {
 		cfg.weights_dialog_folder = "";
-	}
-
-	// We've messed around with this...
-
-	if (typeof cfg.autoplay !== "boolean") {
-		cfg.autoplay = true;
 	}
 }
 

@@ -1794,22 +1794,20 @@ function menu_build() {
 					}
 				},
 				{
+					type: "separator"
+				},
+				{
+					label: "Start self-play",
+					click: () => {
+						win.webContents.send("call", "start_selfplay");
+					}
+				},
+				{
 					label: "Halt",
 					click: () => {
 						win.webContents.send("call", {
 							fn: "set_versus",
 							args: [""],
-						});
-					}
-				},
-				{
-					label: "Play move on board if node limit reached",
-					type: "checkbox",
-					checked: config.autoplay,
-					click: () => {
-						win.webContents.send("call", {
-							fn: "toggle",
-							args: ["autoplay"],
 						});
 					}
 				},

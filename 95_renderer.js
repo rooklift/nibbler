@@ -155,8 +155,27 @@ function NewRenderer() {
 	};
 
 	renderer.set_versus = function(s) {						// config.versus should not be directly set, call this function instead.
-		config.versus = typeof s === "string" ? s : "";
+		if (typeof s !== "string") s = "";
+		if (s !== "wb") {									// selfplay can only be on if "wb"
+			config.selfplay = false;
+		}
+		config.versus = "";
+		if (s.includes("W") || s.includes("w")) config.versus += "w";
+		if (s.includes("B") || s.includes("b")) config.versus += "b";
+		if (config.versus.length === 1) {
+			if (typeof config.search_nodes !== "number" || config.search_nodes < 1) {
+				alert(messages.versus_without_node_limit);
+			}
+		}
 		this.go_or_halt();
+	};
+
+	renderer.start_selfplay = function() {
+		config.selfplay = true;
+		this.set_versus("wb");
+		if (typeof config.search_nodes !== "number" || config.search_nodes < 1) {
+			alert(messages.versus_without_node_limit);
+		}
 	};
 
 	renderer.move = function(s) {							// It is safe to call this with illegal moves.
@@ -597,21 +616,23 @@ function NewRenderer() {
 
 		} else if (s.startsWith("bestmove")) {
 
-			// When in autoplay mode, use "bestmove" to detect that analysis is finished. There are
-			// synchronisation worries here, though it seems the isready / readyok system is good enough.
+			// When in versus mode, use "bestmove" to detect that analysis is finished. Note about synchronisation:
+			// Any "bestmove" will be ignored by engine.js unless it's the final one due. This means that, in situations
+			// where we say "stop" then immediately say "go", the bestmove we get from the "stop" will be ignored. This
+			// works well, I think.
 
-			if (this.leela_position === this.node.get_board()) {		// See notes on leela_position above.
+			if (this.leela_position === this.node.get_board()) {					// See notes on leela_position above.
 
-				if (config.autoplay && config.versus === this.node.get_board().active) {
+				if (config.selfplay || (config.versus === this.node.get_board().active)) {
 
 					let tokens = s.split(" ");
 
-					let info = this.info_handler.table[tokens[1]];		// Update our cached eval in the tree while we can.
+					let info = this.info_handler.table[tokens[1]];					// Update our cached eval in the tree while we can.
 					if (info) {
 						this.node.update_eval_from_info(info);
 					}
 
-					if (this.node.children.length === 0) {				// i.e. play only at leaf nodes.
+					if (config.selfplay || this.node.children.length === 0) {		// In human v computer mode, only play at leaf
 						this.move(tokens[1]);
 					}
 				}
@@ -675,26 +696,31 @@ function NewRenderer() {
 				if (board.king_in_check()) {
 					this.nogo_reason = "Checkmate";
 					this.node.eval = board.active === "w" ? 0 : 1;
+					config.selfplay = false;
 					return;
 				} else {
 					this.nogo_reason = "Stalemate";
 					this.node.eval = 0.5;
+					config.selfplay = false;
 					return;
 				}
 			}
 			if (board.insufficient_material()) {
 				this.nogo_reason = "Insufficient Material";
 				this.node.eval = 0.5;
+				config.selfplay = false;
 				return;
 			}
 			if (board.halfmove >= 100) {
 				this.nogo_reason = "50 Move Rule";
 				this.node.eval = 0.5;
+				config.selfplay = false;
 				return;
 			}
 			if (this.node.is_triple_rep()) {
 				this.nogo_reason = "Triple Repetition";
 				this.node.eval = 0.5;
+				config.selfplay = false;
 				return;
 			}
 		}
@@ -867,12 +893,6 @@ function NewRenderer() {
 			if (!config.searchmoves_buttons) {		// We turned it off.
 				this.searchmoves = [];
 				this.go_or_halt();					// If running, we resend the engine the new "go" command without searchmoves.
-			}
-		}
-
-		if (option === "autoplay") {
-			if (config.autoplay) {					// We turned it on.
-				this.go_or_halt();					// Since autoplay requires a "bestmove" message, give the engine a chance to send one.
 			}
 		}
 	};
