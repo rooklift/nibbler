@@ -2095,7 +2095,7 @@ function menu_build() {
 							type: "checkbox",
 							checked: config.options.TempDecayMoves === 0,
 							click: () => {
-								set_checks("Versus", "TempDecayMoves", "0");
+								set_checks("Versus", "TempDecayMoves", "Infinite");
 								win.webContents.send("call", {
 									fn: "set_uci_option_permanent",
 									args: ["TempDecayMoves", 0]
