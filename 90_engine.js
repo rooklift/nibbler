@@ -35,6 +35,7 @@ function NewEngine() {
 	eng.scanner = null;
 	eng.err_scanner = null;
 	eng.ever_sent = false;
+	eng.ever_received_uciok = false;
 	eng.go_in_a_row = 0;
 	eng.warned_send_fail = false;
 	eng.warned_two_go = false;
@@ -50,7 +51,7 @@ function NewEngine() {
 		if (msg.startsWith("go")) {
 			this.bestmove_required++;
 			this.go_in_a_row++;
-			if (this.go_in_a_row > 1 && this.warned_two_go === false) {
+			if (this.go_in_a_row > 1 && !this.warned_two_go) {
 				alert(messages.two_go);
 				this.warned_two_go = true;
 			}
@@ -71,7 +72,7 @@ function NewEngine() {
 			this.ever_sent = true;
 		} catch (err) {
 			Log("(failed) --> " + msg);
-			if (this.ever_sent && this.warned_send_fail === false) {
+			if (this.ever_sent && !this.warned_send_fail) {
 				alert(messages.send_fail);
 				this.warned_send_fail = true;
 			}
@@ -133,6 +134,10 @@ function NewEngine() {
 
 			// Firstly, make sure we correct our sync counters...
 			// Do both these things before anything else.
+
+			if (line.includes("uciok")) {
+				this.ever_received_uciok = true;
+			}
 
 			if (line.includes("bestmove") && this.bestmove_required > 0) {
 				this.bestmove_required--;

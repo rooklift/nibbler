@@ -321,9 +321,13 @@ function NewInfoHandler() {
 		this.last_drawn_version = null;
 	};
 
-	ih.draw_statusbox = function(leela_maybe_running, nogo_reason, searchmoves, syncs_needed) {
+	ih.draw_statusbox = function(leela_maybe_running, nogo_reason, searchmoves, ever_received_uciok, syncs_needed) {
 
-		if (this.special_message && performance.now() - this.special_message_time < 3000) {
+		if (!ever_received_uciok) {
+
+			statusbox.innerHTML = `<span class="yellow">Awaiting uciok from engine</span>`;
+
+		} else if (this.special_message && performance.now() - this.special_message_time < 3000) {
 
 			statusbox.innerHTML = `<span class="${this.special_message_class || "yellow"}">${this.special_message}</span>`;
 
@@ -359,9 +363,7 @@ function NewInfoHandler() {
 		}
 	};
 
-	ih.draw_infobox = function(mouse_point, active_square, leela_maybe_running, nogo_reason, active_colour, searchmoves, hoverdraw_div, syncs_needed) {
-
-		this.draw_statusbox(leela_maybe_running, nogo_reason, searchmoves, syncs_needed);
+	ih.draw_infobox = function(mouse_point, active_square, active_colour, searchmoves, hoverdraw_div) {
 
 		// Display stderr and return if we've never seen any info...
 

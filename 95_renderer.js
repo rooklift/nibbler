@@ -1637,15 +1637,19 @@ function NewRenderer() {
 			this.draw_friendlies_in_table();
 		}
 
-		this.info_handler.draw_infobox(		// The info handler needs a bit more state than I'd like, but what can you do.
-			this.mouse_point(),
-			this.active_square,
+		this.info_handler.draw_statusbox(
 			this.leela_maybe_running,
 			this.nogo_reason,
+			this.searchmoves,
+			this.engine.ever_received_uciok,
+			Math.max(this.engine.readyok_required, this.engine.bestmove_required));
+
+		this.info_handler.draw_infobox(
+			this.mouse_point(),
+			this.active_square,
 			this.node.get_board().active,
 			this.searchmoves,
-			this.hoverdraw_div,
-			Math.max(this.engine.readyok_required, this.engine.bestmove_required));
+			this.hoverdraw_div);
 
 		this.grapher.draw(this.node, !config.ugly_graph_performance_hack);
 
