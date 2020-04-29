@@ -1183,8 +1183,8 @@ function menu_build() {
 							click: () => {
 								set_checks("Engine", "Backend", "cudnn-auto");
 								win.webContents.send("call", {
-									fn: "switch_backend",
-									args: ["cudnn-auto"]
+									fn: "set_uci_option_permanent",
+									args: ["Backend", "cudnn-auto"]
 								});
 							}
 						},
@@ -1195,8 +1195,8 @@ function menu_build() {
 							click: () => {
 								set_checks("Engine", "Backend", "cudnn");
 								win.webContents.send("call", {
-									fn: "switch_backend",
-									args: ["cudnn"]
+									fn: "set_uci_option_permanent",
+									args: ["Backend", "cudnn"]
 								});
 							}
 						},
@@ -1207,8 +1207,8 @@ function menu_build() {
 							click: () => {
 								set_checks("Engine", "Backend", "cudnn-fp16");
 								win.webContents.send("call", {
-									fn: "switch_backend",
-									args: ["cudnn-fp16"]
+									fn: "set_uci_option_permanent",
+									args: ["Backend", "cudnn-fp16"]
 								});
 							}
 						},
@@ -1222,8 +1222,8 @@ function menu_build() {
 							click: () => {
 								set_checks("Engine", "Backend", "opencl");
 								win.webContents.send("call", {
-									fn: "switch_backend",
-									args: ["opencl"]
+									fn: "set_uci_option_permanent",
+									args: ["Backend", "opencl"]
 								});
 							}
 						},
@@ -1234,8 +1234,8 @@ function menu_build() {
 							click: () => {
 								set_checks("Engine", "Backend", "dx12");
 								win.webContents.send("call", {
-									fn: "switch_backend",
-									args: ["dx12"]
+									fn: "set_uci_option_permanent",
+									args: ["Backend", "dx12"]
 								});
 							}
 						},
@@ -1246,8 +1246,8 @@ function menu_build() {
 							click: () => {
 								set_checks("Engine", "Backend", "blas");
 								win.webContents.send("call", {
-									fn: "switch_backend",
-									args: ["blas"]
+									fn: "set_uci_option_permanent",
+									args: ["Backend", "blas"]
 								});
 							}
 						},
@@ -1258,8 +1258,8 @@ function menu_build() {
 							click: () => {
 								set_checks("Engine", "Backend", "eigen");
 								win.webContents.send("call", {
-									fn: "switch_backend",
-									args: ["eigen"]
+									fn: "set_uci_option_permanent",
+									args: ["Backend", "eigen"]
 								});
 							}
 						},
@@ -1273,8 +1273,8 @@ function menu_build() {
 							click: () => {
 								set_checks("Engine", "Backend", "random");
 								win.webContents.send("call", {
-									fn: "switch_backend",
-									args: ["random"]
+									fn: "set_uci_option_permanent",
+									args: ["Backend", "random"]
 								});
 							}
 						},
@@ -1285,8 +1285,8 @@ function menu_build() {
 							click: () => {
 								set_checks("Engine", "Backend", "check");
 								win.webContents.send("call", {
-									fn: "switch_backend",
-									args: ["check"]
+									fn: "set_uci_option_permanent",
+									args: ["Backend", "check"]
 								});
 							}
 						},
@@ -1297,8 +1297,8 @@ function menu_build() {
 							click: () => {
 								set_checks("Engine", "Backend", "roundrobin");
 								win.webContents.send("call", {
-									fn: "switch_backend",
-									args: ["roundrobin"]
+									fn: "set_uci_option_permanent",
+									args: ["Backend", "roundrobin"]
 								});
 							}
 						},
@@ -1309,8 +1309,8 @@ function menu_build() {
 							click: () => {
 								set_checks("Engine", "Backend", "multiplexing");
 								win.webContents.send("call", {
-									fn: "switch_backend",
-									args: ["multiplexing"]
+									fn: "set_uci_option_permanent",
+									args: ["Backend", "multiplexing"]
 								});
 							}
 						},
@@ -1321,8 +1321,8 @@ function menu_build() {
 							click: () => {
 								set_checks("Engine", "Backend", "demux");
 								win.webContents.send("call", {
-									fn: "switch_backend",
-									args: ["demux"]
+									fn: "set_uci_option_permanent",
+									args: ["Backend", "demux"]
 								});
 							}
 						}
@@ -1556,8 +1556,8 @@ function menu_build() {
 							click: () => {
 								set_checks("Engine", "Threads", "128");
 								win.webContents.send("call", {
-									fn: "set_threads",
-									args: [128],
+									fn: "set_uci_option_permanent",
+									args: ["Threads", 128],
 								});
 							}
 						},
@@ -1568,8 +1568,8 @@ function menu_build() {
 							click: () => {
 								set_checks("Engine", "Threads", "96");
 								win.webContents.send("call", {
-									fn: "set_threads",
-									args: [96],
+									fn: "set_uci_option_permanent",
+									args: ["Threads", 96],
 								});
 							}
 						},
@@ -1580,8 +1580,8 @@ function menu_build() {
 							click: () => {
 								set_checks("Engine", "Threads", "64");
 								win.webContents.send("call", {
-									fn: "set_threads",
-									args: [64],
+									fn: "set_uci_option_permanent",
+									args: ["Threads", 64],
 								});
 							}
 						},
@@ -1592,8 +1592,8 @@ function menu_build() {
 							click: () => {
 								set_checks("Engine", "Threads", "48");
 								win.webContents.send("call", {
-									fn: "set_threads",
-									args: [48],
+									fn: "set_uci_option_permanent",
+									args: ["Threads", 48],
 								});
 							}
 						},
@@ -1604,8 +1604,8 @@ function menu_build() {
 							click: () => {
 								set_checks("Engine", "Threads", "32");
 								win.webContents.send("call", {
-									fn: "set_threads",
-									args: [32],
+									fn: "set_uci_option_permanent",
+									args: ["Threads", 32],
 								});
 							}
 						},
@@ -1616,8 +1616,8 @@ function menu_build() {
 							click: () => {
 								set_checks("Engine", "Threads", "24");
 								win.webContents.send("call", {
-									fn: "set_threads",
-									args: [24],
+									fn: "set_uci_option_permanent",
+									args: ["Threads", 24],
 								});
 							}
 						},
@@ -1628,8 +1628,8 @@ function menu_build() {
 							click: () => {
 								set_checks("Engine", "Threads", "16");
 								win.webContents.send("call", {
-									fn: "set_threads",
-									args: [16],
+									fn: "set_uci_option_permanent",
+									args: ["Threads", 16],
 								});
 							}
 						},
@@ -1640,8 +1640,8 @@ function menu_build() {
 							click: () => {
 								set_checks("Engine", "Threads", "14");
 								win.webContents.send("call", {
-									fn: "set_threads",
-									args: [14],
+									fn: "set_uci_option_permanent",
+									args: ["Threads", 14],
 								});
 							}
 						},
@@ -1652,8 +1652,8 @@ function menu_build() {
 							click: () => {
 								set_checks("Engine", "Threads", "12");
 								win.webContents.send("call", {
-									fn: "set_threads",
-									args: [12],
+									fn: "set_uci_option_permanent",
+									args: ["Threads", 12],
 								});
 							}
 						},
@@ -1664,8 +1664,8 @@ function menu_build() {
 							click: () => {
 								set_checks("Engine", "Threads", "10");
 								win.webContents.send("call", {
-									fn: "set_threads",
-									args: [10],
+									fn: "set_uci_option_permanent",
+									args: ["Threads", 10],
 								});
 							}
 						},
@@ -1676,8 +1676,8 @@ function menu_build() {
 							click: () => {
 								set_checks("Engine", "Threads", "8");
 								win.webContents.send("call", {
-									fn: "set_threads",
-									args: [8],
+									fn: "set_uci_option_permanent",
+									args: ["Threads", 8],
 								});
 							}
 						},
@@ -1688,8 +1688,8 @@ function menu_build() {
 							click: () => {
 								set_checks("Engine", "Threads", "7");
 								win.webContents.send("call", {
-									fn: "set_threads",
-									args: [7],
+									fn: "set_uci_option_permanent",
+									args: ["Threads", 7],
 								});
 							}
 						},
@@ -1700,8 +1700,8 @@ function menu_build() {
 							click: () => {
 								set_checks("Engine", "Threads", "6");
 								win.webContents.send("call", {
-									fn: "set_threads",
-									args: [6],
+									fn: "set_uci_option_permanent",
+									args: ["Threads", 6],
 								});
 							}
 						},
@@ -1712,8 +1712,8 @@ function menu_build() {
 							click: () => {
 								set_checks("Engine", "Threads", "5");
 								win.webContents.send("call", {
-									fn: "set_threads",
-									args: [5],
+									fn: "set_uci_option_permanent",
+									args: ["Threads", 5],
 								});
 							}
 						},
@@ -1724,8 +1724,8 @@ function menu_build() {
 							click: () => {
 								set_checks("Engine", "Threads", "4");
 								win.webContents.send("call", {
-									fn: "set_threads",
-									args: [4],
+									fn: "set_uci_option_permanent",
+									args: ["Threads", 4],
 								});
 							}
 						},
@@ -1736,8 +1736,8 @@ function menu_build() {
 							click: () => {
 								set_checks("Engine", "Threads", "3");
 								win.webContents.send("call", {
-									fn: "set_threads",
-									args: [3],
+									fn: "set_uci_option_permanent",
+									args: ["Threads", 3],
 								});
 							}
 						},
@@ -1748,8 +1748,8 @@ function menu_build() {
 							click: () => {
 								set_checks("Engine", "Threads", "2");
 								win.webContents.send("call", {
-									fn: "set_threads",
-									args: [2],
+									fn: "set_uci_option_permanent",
+									args: ["Threads", 2],
 								});
 							}
 						},
@@ -1760,8 +1760,8 @@ function menu_build() {
 							click: () => {
 								set_checks("Engine", "Threads", "1");
 								win.webContents.send("call", {
-									fn: "set_threads",
-									args: [1],
+									fn: "set_uci_option_permanent",
+									args: ["Threads", 1],
 								});
 							}
 						},
@@ -1840,8 +1840,8 @@ function menu_build() {
 							click: () => {
 								set_checks("Versus", "Temperature", "0");
 								win.webContents.send("call", {
-									fn: "set_temperature",
-									args: [0]
+									fn: "set_uci_option_permanent",
+									args: ["Temperature", 0]
 								});
 							}
 						},
@@ -1852,8 +1852,8 @@ function menu_build() {
 							click: () => {
 								set_checks("Versus", "Temperature", "0.1");
 								win.webContents.send("call", {
-									fn: "set_temperature",
-									args: [0.1]
+									fn: "set_uci_option_permanent",
+									args: ["Temperature", 0.1]
 								});
 							}
 						},
@@ -1864,8 +1864,8 @@ function menu_build() {
 							click: () => {
 								set_checks("Versus", "Temperature", "0.2");
 								win.webContents.send("call", {
-									fn: "set_temperature",
-									args: [0.2]
+									fn: "set_uci_option_permanent",
+									args: ["Temperature", 0.2]
 								});
 							}
 						},
@@ -1876,8 +1876,8 @@ function menu_build() {
 							click: () => {
 								set_checks("Versus", "Temperature", "0.3");
 								win.webContents.send("call", {
-									fn: "set_temperature",
-									args: [0.3]
+									fn: "set_uci_option_permanent",
+									args: ["Temperature", 0.3]
 								});
 							}
 						},
@@ -1888,8 +1888,8 @@ function menu_build() {
 							click: () => {
 								set_checks("Versus", "Temperature", "0.4");
 								win.webContents.send("call", {
-									fn: "set_temperature",
-									args: [0.4]
+									fn: "set_uci_option_permanent",
+									args: ["Temperature", 0.4]
 								});
 							}
 						},
@@ -1900,8 +1900,8 @@ function menu_build() {
 							click: () => {
 								set_checks("Versus", "Temperature", "0.5");
 								win.webContents.send("call", {
-									fn: "set_temperature",
-									args: [0.5]
+									fn: "set_uci_option_permanent",
+									args: ["Temperature", 0.5]
 								});
 							}
 						},
@@ -1912,8 +1912,8 @@ function menu_build() {
 							click: () => {
 								set_checks("Versus", "Temperature", "0.6");
 								win.webContents.send("call", {
-									fn: "set_temperature",
-									args: [0.6]
+									fn: "set_uci_option_permanent",
+									args: ["Temperature", 0.6]
 								});
 							}
 						},
@@ -1924,8 +1924,8 @@ function menu_build() {
 							click: () => {
 								set_checks("Versus", "Temperature", "0.7");
 								win.webContents.send("call", {
-									fn: "set_temperature",
-									args: [0.7]
+									fn: "set_uci_option_permanent",
+									args: ["Temperature", 0.7]
 								});
 							}
 						},
@@ -1936,8 +1936,8 @@ function menu_build() {
 							click: () => {
 								set_checks("Versus", "Temperature", "0.8");
 								win.webContents.send("call", {
-									fn: "set_temperature",
-									args: [0.8]
+									fn: "set_uci_option_permanent",
+									args: ["Temperature", 0.8]
 								});
 							}
 						},
@@ -1948,8 +1948,8 @@ function menu_build() {
 							click: () => {
 								set_checks("Versus", "Temperature", "0.9");
 								win.webContents.send("call", {
-									fn: "set_temperature",
-									args: [0.9]
+									fn: "set_uci_option_permanent",
+									args: ["Temperature", 0.9]
 								});
 							}
 						},
@@ -1960,8 +1960,8 @@ function menu_build() {
 							click: () => {
 								set_checks("Versus", "Temperature", "1.0");
 								win.webContents.send("call", {
-									fn: "set_temperature",
-									args: [1.0]
+									fn: "set_uci_option_permanent",
+									args: ["Temperature", 1.0]
 								});
 							}
 						},
@@ -2533,7 +2533,7 @@ function menu_build() {
 			label: command.name + " " + command.val,
 			click: () => {
 				win.webContents.send("call", {
-					fn: "send_custom",
+					fn: "set_uci_option",
 					args: [command.name, command.val]
 				});
 			}

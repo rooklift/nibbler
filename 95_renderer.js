@@ -785,19 +785,24 @@ function NewRenderer() {
 		this.go_or_halt(true);
 	};
 
-	renderer.send_custom = function(name, val) {
+	renderer.set_uci_option = function(name, val, save_to_cfg) {
 		this.__halt();
+		if (save_to_cfg) {
+			config.options[name] = val;
+			config_io.save(config);
+		}
 		let sent = this.engine.setoption(name, val);
 		this.info_handler.set_special_message(sent, "blue");
 		this.go_or_halt();
 	};
 
-	renderer.set_threads = function(val) {
-		this.__halt();
-		config.options.Threads = val;
-		config_io.save(config);
-		this.engine.setoption("Threads", val);
-		this.go_or_halt();
+	renderer.set_uci_option_permanent = function(name, val) {
+		this.set_uci_option(name, val, true);
+	};
+
+	renderer.switch_weights = function(filename) {
+		this.info_handler.stderr_log = "";						// Avoids having confusing stale messages.
+		this.set_uci_option("WeightsFile", filename, true);
 	};
 
 	renderer.set_node_limit = function(val) {
@@ -806,36 +811,11 @@ function NewRenderer() {
 		this.go_or_halt();
 	};
 
-	renderer.set_temperature = function(val) {
-		this.__halt();
-		config.options.Temperature = val;
-		config_io.save(config);
-		this.engine.setoption("Temperature", val);
-		this.go_or_halt();
-	};
-
-	renderer.switch_weights = function(filename) {
-		this.__halt();
-		this.info_handler.stderr_log = "";						// Avoids having confusing stale messages.
-		config.options.WeightsFile = filename;
-		config_io.save(config);
-		this.engine.setoption("WeightsFile", filename);
-		this.go_or_halt();
-	};
-
 	renderer.switch_engine = function(filename) {
 		this.set_versus("");
 		config.path = filename;
 		config_io.save(config);
 		this.engine_start(config.path, config.args, config.options);
-	};
-
-	renderer.switch_backend = function(s) {
-		this.__halt();
-		config.options.Backend = s;
-		config_io.save(config);
-		this.engine.setoption("Backend", s);
-		this.go_or_halt();
 	};
 
 	renderer.engine_start = function(filepath, args, options, send_normal_options = true) {
