@@ -1130,8 +1130,12 @@ function menu_build() {
 							defaultPath: config.engine_dialog_folder,
 							properties: ["openFile"]
 						});
-						if (Array.isArray(files) && files.length > 0 && files[0] !== process.argv[0]) {
+						if (Array.isArray(files) && files.length > 0) {
 							let file = files[0];
+							if (file === process.argv[0] || path.basename(file).includes("client")) {
+								alert(messages.wrong_engine_exe);
+								return;
+							}
 							win.webContents.send("call", {
 								fn: "switch_engine",
 								args: [file]
