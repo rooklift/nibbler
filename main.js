@@ -1968,6 +1968,143 @@ function menu_build() {
 					]
 				},
 				{
+					label: "TempDecayMoves",
+					submenu: [
+						{
+							label: "2",
+							type: "checkbox",
+							checked: config.options.TempDecayMoves === 2,
+							click: () => {
+								set_checks("Versus", "TempDecayMoves", "2");
+								win.webContents.send("call", {
+									fn: "set_uci_option_permanent",
+									args: ["TempDecayMoves", 2]
+								});
+							}
+						},
+						{
+							label: "4",
+							type: "checkbox",
+							checked: config.options.TempDecayMoves === 4,
+							click: () => {
+								set_checks("Versus", "TempDecayMoves", "4");
+								win.webContents.send("call", {
+									fn: "set_uci_option_permanent",
+									args: ["TempDecayMoves", 4]
+								});
+							}
+						},
+						{
+							label: "6",
+							type: "checkbox",
+							checked: config.options.TempDecayMoves === 6,
+							click: () => {
+								set_checks("Versus", "TempDecayMoves", "6");
+								win.webContents.send("call", {
+									fn: "set_uci_option_permanent",
+									args: ["TempDecayMoves", 6]
+								});
+							}
+						},
+						{
+							label: "8",
+							type: "checkbox",
+							checked: config.options.TempDecayMoves === 8,
+							click: () => {
+								set_checks("Versus", "TempDecayMoves", "8");
+								win.webContents.send("call", {
+									fn: "set_uci_option_permanent",
+									args: ["TempDecayMoves", 8]
+								});
+							}
+						},
+						{
+							label: "10",
+							type: "checkbox",
+							checked: config.options.TempDecayMoves === 10,
+							click: () => {
+								set_checks("Versus", "TempDecayMoves", "10");
+								win.webContents.send("call", {
+									fn: "set_uci_option_permanent",
+									args: ["TempDecayMoves", 10]
+								});
+							}
+						},
+						{
+							label: "12",
+							type: "checkbox",
+							checked: config.options.TempDecayMoves === 12,
+							click: () => {
+								set_checks("Versus", "TempDecayMoves", "12");
+								win.webContents.send("call", {
+									fn: "set_uci_option_permanent",
+									args: ["TempDecayMoves", 12]
+								});
+							}
+						},
+						{
+							label: "14",
+							type: "checkbox",
+							checked: config.options.TempDecayMoves === 14,
+							click: () => {
+								set_checks("Versus", "TempDecayMoves", "14");
+								win.webContents.send("call", {
+									fn: "set_uci_option_permanent",
+									args: ["TempDecayMoves", 14]
+								});
+							}
+						},
+						{
+							label: "16",
+							type: "checkbox",
+							checked: config.options.TempDecayMoves === 16,
+							click: () => {
+								set_checks("Versus", "TempDecayMoves", "16");
+								win.webContents.send("call", {
+									fn: "set_uci_option_permanent",
+									args: ["TempDecayMoves", 16]
+								});
+							}
+						},
+						{
+							label: "18",
+							type: "checkbox",
+							checked: config.options.TempDecayMoves === 18,
+							click: () => {
+								set_checks("Versus", "TempDecayMoves", "18");
+								win.webContents.send("call", {
+									fn: "set_uci_option_permanent",
+									args: ["TempDecayMoves", 18]
+								});
+							}
+						},
+						{
+							label: "20",
+							type: "checkbox",
+							checked: config.options.TempDecayMoves === 20,
+							click: () => {
+								set_checks("Versus", "TempDecayMoves", "20");
+								win.webContents.send("call", {
+									fn: "set_uci_option_permanent",
+									args: ["TempDecayMoves", 20]
+								});
+							}
+						},
+						{
+							label: "Infinite",
+							type: "checkbox",
+							checked: config.options.TempDecayMoves === 0,
+							click: () => {
+								set_checks("Versus", "TempDecayMoves", "0");
+								win.webContents.send("call", {
+									fn: "set_uci_option_permanent",
+									args: ["TempDecayMoves", 0]
+								});
+							}
+						},
+					]
+				},
+				{
 					type: "separator"
 				},
 				{
