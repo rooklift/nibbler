@@ -53,24 +53,27 @@ function InfoVal(s, key) {
 
 function InfoValMany(s, keys) {
 
-	let ret = new Array(keys.length).fill("");
+	// Optimised version of InfoVal for when many values can be pulled out of the same string.
+
+	let ret = Object.create(null);
 
 	let tokens = s.split(" ").filter(s => s !== "");
 
-	for (let n = 0; n < keys.length; n++) {
-
-		let key = keys[n];
-
+	for (let key of keys) {
+		let ok = false;
 		for (let i = 0; i < tokens.length - 1; i++) {
 			if (tokens[i] === key) {
 				if (tokens[i + 1].endsWith(")")) {
-					ret[n] = tokens[i + 1].slice(0, -1);
-					break;
+					ret[key] = tokens[i + 1].slice(0, -1);
 				} else {
-					ret[n] = tokens[i + 1];
-					break;
+					ret[key] = tokens[i + 1];
 				}
+				ok = true;
+				break;
 			}
+		}
+		if (!ok) {
+			ret[key] = "";
 		}
 	}
 
