@@ -21,7 +21,8 @@ last message it sends about a position. Note that "ucinewgame" causes Leela to
 halt its analysis without sending "bestmove", so we must always send "stop"
 before sending "ucinewgame".
 
-It seems in practice either one of these is enough.
+It seems in practice either one of these is enough. The "bestmove" tracker is
+probably more reliable, so we could probably remove the "readyok" tracker.
 
 */
 

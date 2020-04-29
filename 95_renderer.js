@@ -29,10 +29,8 @@ function NewRenderer() {
 	renderer.leela_position = null;								// The position we last sent to Leela.
 	renderer.searchmoves = [];									// Moves that we're compelling Leela to search.
 
-	// We use both leela_position and the engine.sync() method to ensure that we are actually synced up
-	// with Lc0 when interpreting Lc0 output. Neither one on its own is really enough (future me: trust
-	// me about this). Indeed I'm not sure if both together are foolproof, which is why we also don't
-	// trust moves to be legal.
+	// We use various and multiple means to ensure that we are actually synced up with Lc0 when
+	// interpreting Lc0 output. Regardless, we also don't trust moves to be legal.
 
 	// --------------------------------------------------------------------------------------------
 
@@ -602,9 +600,9 @@ function NewRenderer() {
 
 		if (s.startsWith("info")) {
 
-			if (this.leela_position === this.node.get_board()) {		// Note leela_position is a misleading name - it's the last position we
-				this.info_handler.receive(s, this.node.get_board());	// sent, but Leela could be sending info about the previous position.
-			}															// So the above condition doesn't prove the info is current.
+			if (this.leela_position === this.node.get_board()) {		// Test may fail if we changed position without informing
+				this.info_handler.receive(s, this.node.get_board());	// Leela - which we commonly do if we're halting Leela.
+			}
 
 		} else if (s.startsWith("error")) {
 
