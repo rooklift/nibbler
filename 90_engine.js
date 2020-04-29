@@ -35,7 +35,9 @@ function NewEngine() {
 	eng.scanner = null;
 	eng.err_scanner = null;
 	eng.ever_sent = false;
-	eng.warned = false;
+	eng.go_in_a_row = 0;
+	eng.warned_send_fail = false;
+	eng.warned_two_go = false;
 
 	eng.send = function(msg) {
 
@@ -45,6 +47,15 @@ function NewEngine() {
 
 		if (msg.startsWith("go")) {
 			this.bestmove_required++;
+			this.go_in_a_row++;
+			if (this.go_in_a_row > 1 && this.warned_two_go === false) {
+				alert(messages.two_go);
+				this.warned_two_go = true;
+			}
+		}
+
+		if (msg === "stop") {
+			this.go_in_a_row = 0;
 		}
 
 		if (msg === "isready") {
@@ -59,9 +70,9 @@ function NewEngine() {
 			this.ever_sent = true;
 		} catch (err) {
 			Log("(failed) --> " + msg);
-			if (this.ever_sent && !this.warned) {
-				this.warned = true;
-				alert("The engine appears to have crashed.");
+			if (this.ever_sent && this.warned_send_fail === false) {
+				alert(messages.send_fail);
+				this.warned_send_fail = true;
 			}
 		}
 	};

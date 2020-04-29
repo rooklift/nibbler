@@ -113,4 +113,13 @@ send custom UCI options at startup, edit ${config_io.filename} (options section)
 
 
 exports.wrong_engine_exe = 
-`That is almost certainly the wrong file. What we need is likely to be called lc0.exe or lc0.`
+`That is almost certainly the wrong file. What we need is likely to be called lc0.exe or lc0.`;
+
+
+exports.send_fail = 
+`Sending to the engine failed. This usually means it has crashed.`;
+
+
+exports.two_go = 
+`Warning: "go" command sent twice in a row. This is supposed to be impossible. If you see this, \
+Nibbler has a bug and the author would like to be informed.`;
