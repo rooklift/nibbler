@@ -51,6 +51,35 @@ function InfoVal(s, key) {
 	return "";
 }
 
+function InfoValMany(s, keys) {
+
+	// Optimised version of InfoVal for when many values can be pulled out of the same string.
+
+	let ret = Object.create(null);
+
+	let tokens = s.split(" ").filter(s => s !== "");
+
+	for (let key of keys) {
+		let ok = false;
+		for (let i = 0; i < tokens.length - 1; i++) {
+			if (tokens[i] === key) {
+				if (tokens[i + 1].endsWith(")")) {
+					ret[key] = tokens[i + 1].slice(0, -1);
+				} else {
+					ret[key] = tokens[i + 1];
+				}
+				ok = true;
+				break;
+			}
+		}
+		if (!ok) {
+			ret[key] = "";
+		}
+	}
+
+	return ret;
+}
+
 function InfoPV(s) {
 
 	// Pull the PV out, assuming it's at the end of the string.
