@@ -45,6 +45,8 @@ function NewEngine() {
 			return;
 		}
 
+		msg = msg.trim();
+
 		if (msg.startsWith("go")) {
 			this.bestmove_required++;
 			this.go_in_a_row++;
@@ -63,7 +65,6 @@ function NewEngine() {
 		}
 
 		try {
-			msg = msg.trim();
 			this.exe.stdin.write(msg);
 			this.exe.stdin.write("\n");
 			Log("--> " + msg);
