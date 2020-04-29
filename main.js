@@ -1248,6 +1248,18 @@ function menu_build() {
 							}
 						},
 						{
+							label: "eigen",
+							type: "checkbox",
+							checked: config.options.Backend === "eigen",
+							click: () => {
+								set_checks("Engine", "Backend", "eigen");
+								win.webContents.send("call", {
+									fn: "switch_backend",
+									args: ["eigen"]
+								});
+							}
+						},
+						{
 							type: "separator"
 						},
 						{
