@@ -51,6 +51,32 @@ function InfoVal(s, key) {
 	return "";
 }
 
+function InfoValMany(s, keys) {
+
+	let ret = new Array(keys.length).fill("");
+
+	let tokens = s.split(" ").filter(s => s !== "");
+
+	for (let n = 0; n < keys.length; n++) {
+
+		let key = keys[n];
+
+		for (let i = 0; i < tokens.length - 1; i++) {
+			if (tokens[i] === key) {
+				if (tokens[i + 1].endsWith(")")) {
+					ret[n] = tokens[i + 1].slice(0, -1);
+					break;
+				} else {
+					ret[n] = tokens[i + 1];
+					break;
+				}
+			}
+		}
+	}
+
+	return ret;
+}
+
 function InfoPV(s) {
 
 	// Pull the PV out, assuming it's at the end of the string.

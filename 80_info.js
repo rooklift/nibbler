@@ -93,8 +93,10 @@ function NewInfoHandler() {
 			this.ever_received_info = true;
 			this.version++;
 
+			let infovals = InfoValMany(s, ["pv", "cp", "mate", "multipv", "nodes", "nps", "time"]);
+
 			let move_info;
-			let move = InfoVal(s, "pv");
+			let move = infovals[0];
 			move = board.c960_castling_converter(move);
 
 			if (this.table[move]) {						// We already have move info for this move.
@@ -113,16 +115,16 @@ function NewInfoHandler() {
 
 			let tmp;
 
-			tmp = parseInt(InfoVal(s, "cp"), 10);		// Score in centipawns
+			tmp = parseInt(infovals[1], 10);		// Score in centipawns
 			if (Number.isNaN(tmp) === false) {
 				move_info.cp = tmp;
 				if (this.ever_received_q === false) {
 					move_info.q = QfromPawns(tmp / 100);
 				}
-				move_info.mate = 0;						// Engines will send one of cp or mate, so mate gets reset when receiving cp
+				move_info.mate = 0;					// Engines will send one of cp or mate, so mate gets reset when receiving cp
 			}
 
-			tmp = parseInt(InfoVal(s, "mate"), 10);
+			tmp = parseInt(infovals[2], 10);
 			if (Number.isNaN(tmp) === false) {
 				move_info.mate = tmp;
 				if (tmp !== 0) {
@@ -131,7 +133,7 @@ function NewInfoHandler() {
 				}
 			}
 
-			tmp = parseInt(InfoVal(s, "multipv"), 10);	// Leela's ranking of the move, starting at 1
+			tmp = parseInt(infovals[3], 10);	// Leela's ranking of the move, starting at 1
 			if (Number.isNaN(tmp) === false) {
 				move_info.multipv = tmp;
 				if (tmp > 1) {
@@ -139,18 +141,18 @@ function NewInfoHandler() {
 				}
 			}
 
-			tmp = parseInt(InfoVal(s, "nodes"), 10);
+			tmp = parseInt(infovals[4], 10);
 			if (Number.isNaN(tmp) === false) {
 				move_info.total_nodes = tmp;
 				this.nodes = tmp;
 			}
 
-			tmp = parseInt(InfoVal(s, "nps"), 10);
+			tmp = parseInt(infovals[5], 10);
 			if (Number.isNaN(tmp) === false) {
 				this.nps = tmp;
 			}
 
-			tmp = parseInt(InfoVal(s, "time"), 10);
+			tmp = parseInt(infovals[6], 10);
 			if (Number.isNaN(tmp) === false) {
 				this.time = tmp;
 			}
@@ -186,8 +188,10 @@ function NewInfoHandler() {
 			this.ever_received_info = true;
 			this.version++;
 
+			let infovals = InfoValMany("string", "N:", "(D:", "(U:", "(Q+U:", "(S:", "(P:", "(Q:", "(V:", "(M:");
+
 			let move_info;
-			let move = InfoVal(s, "string");
+			let move = infovals[0];
 			move = board.c960_castling_converter(move);
 
 			if (this.table[move]) {						// We already have move info for this move.
@@ -205,48 +209,48 @@ function NewInfoHandler() {
 
 			let tmp;
 
-			tmp = parseInt(InfoVal(s, "N:"), 10);
+			tmp = parseInt(infovals[1], 10);
 			if (Number.isNaN(tmp) === false) {
 				move_info.n = tmp;
 			}
 
-			tmp = parseFloat(InfoVal(s, "(D:"));
+			tmp = parseFloat(infovals[2]);
 			if (Number.isNaN(tmp) === false) {
 				move_info.d = tmp;
 			}
 
-			tmp = parseFloat(InfoVal(s, "(U:"));
+			tmp = parseFloat(infovals[3]);
 			if (Number.isNaN(tmp) === false) {
 				move_info.u = tmp;
 			}
 
-			tmp = parseFloat(InfoVal(s, "(Q+U:"));		// Old name for S
+			tmp = parseFloat(infovals[4]);				// Q+U, old name for S
 			if (Number.isNaN(tmp) === false) {
 				move_info.s = tmp;
 			}
 
-			tmp = parseFloat(InfoVal(s, "(S:"));
+			tmp = parseFloat(infovals[5]);
 			if (Number.isNaN(tmp) === false) {
 				move_info.s = tmp;
 			}
 
-			tmp = parseFloat(InfoVal(s, "(P:"));		// parseFloat will ignore the trailing %
+			tmp = parseFloat(infovals[6]);				// P, parseFloat will ignore the trailing %
 			if (Number.isNaN(tmp) === false) {
 				move_info.p = tmp;
 			}
 
-			tmp = parseFloat(InfoVal(s, "(Q:"));
+			tmp = parseFloat(infovals[7]);
 			if (Number.isNaN(tmp) === false) {
 				this.ever_received_q = true;
 				move_info.q = tmp;
 			}
 
-			tmp = parseFloat(InfoVal(s, "(V:"));
+			tmp = parseFloat(infovals[8]);
 			if (Number.isNaN(tmp) === false) {
 				move_info.v = tmp;
 			}
 
-			tmp = parseFloat(InfoVal(s, "(M:"));
+			tmp = parseFloat(infovals[9]);
 			if (Number.isNaN(tmp) === false) {
 				move_info.m = tmp;
 			}
