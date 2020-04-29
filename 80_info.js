@@ -101,7 +101,7 @@ function NewInfoHandler() {
 				move_info = this.table[move];
 			} else {									// We don't.
 				if (board.illegal(move) !== "") {
-					Log(`... Nibbler: invalid move received!: ${move}`);
+					Log(`INVALID MOVE RECEIVED: ${move}`);
 					return;
 				}
 				move_info = new_info(board, move);
@@ -194,7 +194,7 @@ function NewInfoHandler() {
 				move_info = this.table[move];
 			} else {									// We don't.
 				if (board.illegal(move) !== "") {
-					Log(`... Nibbler: invalid move received!: ${move}`);
+					Log(`INVALID MOVE RECEIVED: ${move}`);
 					return;
 				}
 				move_info = new_info(board, move);

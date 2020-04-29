@@ -9,7 +9,6 @@ custom_uci.create_if_needed();
 Log("");
 Log("======================================================================================================================================");
 Log(`Nibbler startup at ${new Date().toUTCString()}`);
-Log("");
 
 let hub = NewRenderer();
 hub.engine_start(config.path, config.args, config.options);		// This obliterates any error log, so this must come before the following...

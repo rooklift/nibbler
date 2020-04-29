@@ -88,6 +88,10 @@ function NewEngine() {
 
 	eng.setup = function(filepath, args, receive_fn, err_receive_fn) {
 
+		Log("");
+		Log(`Launching ${filepath}`);
+		Log("");
+
 		// This is slightly sketchy, the passed functions get saved to our engine
 		// object in a way that makes them look like methods of this object. Hmm.
 		//
@@ -127,7 +131,7 @@ function NewEngine() {
 		});
 
 		this.err_scanner.on("line", (line) => {
-			Log("! " + line);
+			Log(". " + line);
 			this.err_receive_fn(line);
 		});
 
