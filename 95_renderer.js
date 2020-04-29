@@ -785,24 +785,26 @@ function NewRenderer() {
 		this.go_or_halt(true);
 	};
 
-	renderer.set_uci_option = function(name, val, save_to_cfg) {
+	renderer.set_uci_option = function(name, val, save_to_cfg, quiet) {
 		this.__halt();
 		if (save_to_cfg) {
 			config.options[name] = val;
 			config_io.save(config);
 		}
 		let sent = this.engine.setoption(name, val);
-		this.info_handler.set_special_message(sent, "blue");
+		if (!quiet) {
+			this.info_handler.set_special_message(sent, "blue");
+		}
 		this.go_or_halt();
 	};
 
 	renderer.set_uci_option_permanent = function(name, val) {
-		this.set_uci_option(name, val, true);
+		this.set_uci_option(name, val, true, false);
 	};
 
 	renderer.switch_weights = function(filename) {
-		this.info_handler.stderr_log = "";						// Avoids having confusing stale messages.
-		this.set_uci_option("WeightsFile", filename, true);
+		this.info_handler.stderr_log = "";							// Avoids having confusing stale messages.
+		this.set_uci_option("WeightsFile", filename, true, true);
 	};
 
 	renderer.set_node_limit = function(val) {
