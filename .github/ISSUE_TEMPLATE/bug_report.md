@@ -10,7 +10,7 @@ assignees: ''
 <!--
 When writing your report, please include:
 
-Operating system
+Your operating system
 Whether you are using a prebuilt release or running from source
 Your version of Nibbler and/or Electron (App Menu -> About)
 Your version of Lc0
