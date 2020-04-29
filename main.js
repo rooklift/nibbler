@@ -1344,11 +1344,12 @@ function menu_build() {
 					label: "Node limit",
 					submenu: [
 						{
-							label: "Infinite",
+							label: "Unlimited",
+							accelerator: "CommandOrControl+U",
 							type: "checkbox",
 							checked: typeof config.search_nodes !== "number",
 							click: () => {
-								set_checks("Engine", "Node limit", "Infinite");
+								set_checks("Engine", "Node limit", "Unlimited");
 								win.webContents.send("call", {
 									fn: "set_node_limit",
 									args: [null]
