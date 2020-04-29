@@ -19,7 +19,8 @@ reaching the node limit (see the Engine menu).
 The self-play option causes Leela to play itself.
 
 Higher temperature makes the moves less predictable, but at some cost to \
-move correctness.`;
+move correctness. Meanwhile, TempDecayMoves specifies how many moves the \
+temperature effect lasts for.`;
 
 
 exports.versus_without_node_limit =
