@@ -150,8 +150,12 @@ function LoadPGNRecord(o) {				// Can throw, either by itself, or by allowing a 
 
 	let startpos;
 
-	if (o.tags.FEN) {							// && o.tags.SetUp === "1"
-		startpos = LoadFEN(o.tags.FEN);
+	if (o.tags.FEN) {					// && o.tags.SetUp === "1"  - but some writers don't do this.
+		try {
+			startpos = LoadFEN(o.tags.FEN);
+		} catch (err) {
+			throw err;					// Rethrow - the try/catch here is just to be explicit about this case.
+		}
 	} else {
 		startpos = LoadFEN("rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1");
 	}
