@@ -43,10 +43,10 @@ function NewRenderer() {
 		// call go_or_halt().
 
 		if (maybe_stop_versus) {
-			if (config.versus.length === 1 || (config.versus === "wb" && config.selfplay)) {
+			if (config.versus.length === 1 || (config.versus === "wb" && config.autoplay)) {
 				if (this.nodes_are_infinite() === false) {
 					config.versus = "";
-					config.selfplay = false;
+					config.autoplay = 0;
 				}
 			}
 		}
@@ -170,8 +170,8 @@ function NewRenderer() {
 		config.versus = "";
 		if (s.includes("W") || s.includes("w")) config.versus += "w";
 		if (s.includes("B") || s.includes("b")) config.versus += "b";
-		if (config.versus !== "wb") {									// selfplay can only be on if "wb"
-			config.selfplay = false;
+		if (config.versus !== "wb") {									// autoplay can only be on if "wb"
+			config.autoplay = 0;
 		}
 		if (config.versus.length === 1) {
 			if (this.nodes_are_infinite()) {
@@ -181,8 +181,8 @@ function NewRenderer() {
 		this.go_or_halt();
 	};
 
-	renderer.start_selfplay = function() {
-		config.selfplay = true;
+	renderer.start_autoplay = function(type = 1) {
+		config.autoplay = type;
 		this.set_versus("wb");
 		if (this.nodes_are_infinite()) {
 			alert(messages.versus_without_node_limit);
@@ -638,7 +638,7 @@ function NewRenderer() {
 
 			if (this.leela_position === this.node.get_board()) {					// See notes on leela_position above.
 
-				if (config.selfplay || (config.versus === this.node.get_board().active)) {
+				if (config.autoplay || (config.versus === this.node.get_board().active)) {
 
 					let tokens = s.split(" ");
 
@@ -647,7 +647,14 @@ function NewRenderer() {
 						this.node.update_eval_from_info(info);
 					}
 
-					this.move(tokens[1]);
+					if (config.autoplay === 1) {
+						this.move(tokens[1]);
+					} else if (config.autoplay === 2) {
+						if (this.node.children.length > 0) {
+							this.node = this.node.children[0];
+							this.position_changed(false, false);
+						}
+					}
 				}
 			}
 		}

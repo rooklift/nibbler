@@ -492,6 +492,18 @@ function menu_build() {
 					type: "separator"
 				},
 				{
+					label: "Evaluate whole line",
+					click: () => {
+						win.webContents.send("call", {
+							fn: "start_autoplay",
+							args: [2]
+						});
+					}
+				},
+				{
+					type: "separator"
+				},
+				{
 					label: "Arrows",
 					type: "checkbox",
 					checked: config.arrows_enabled,
@@ -1816,7 +1828,7 @@ function menu_build() {
 					label: "Start self-play",
 					accelerator: "F12",
 					click: () => {
-						win.webContents.send("call", "start_selfplay");
+						win.webContents.send("call", "start_autoplay");
 					}
 				},
 				{

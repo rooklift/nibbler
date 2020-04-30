@@ -353,8 +353,10 @@ function NewInfoHandler() {
 
 			if (leela_maybe_running === false) {
 				status_string += `<span class="yellow">${config.versus === "" ? "HALTED " : "YOUR MOVE "}</span>`;
-			} else if (config.selfplay) {
+			} else if (config.autoplay === 1) {
 				status_string += `<span class="yellow">Self-play! </span>`;
+			} else if (config.autoplay === 2) {
+				status_string += `<span class="yellow">Auto-eval! </span>`;
 			}
 
 			status_string += `<span class="gray">Nodes: ${NString(this.nodes)}, N/s: ${NString(this.nps)}, Time: ${DurationString(this.time)}</span>`;

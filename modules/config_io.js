@@ -103,7 +103,7 @@ function fix(cfg) {
 
 	cfg.flip = false;
 	cfg.versus = "";
-	cfg.selfplay = false;
+	cfg.autoplay = 0;
 	cfg.square_size = Math.floor(cfg.board_size / 8);
 
 	// Make sure options and args at least exist...
