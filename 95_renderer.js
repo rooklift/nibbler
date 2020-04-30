@@ -1105,7 +1105,7 @@ function NewRenderer() {
 			return;
 		}
 		let s = buf.toString();
-		let lines = s.split("\n").map(z => z.trim());
+		let lines = s.split("\n").map(z => z.trim()).filter(z => z !== "");
 
 		this.set_versus("");
 		this.engine_start(lines[0], null, null, false);
