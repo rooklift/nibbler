@@ -806,8 +806,15 @@ function NewRenderer() {
 	renderer.set_uci_option = function(name, val, save_to_cfg, quiet) {
 		this.__halt();
 		if (save_to_cfg) {
-			config.options[name] = val;
+			if (val === null || val === undefined) {
+				delete config.options[name];
+			} else {
+				config.options[name] = val;
+			}
 			config_io.save(config);
+		}
+		if (val === null || val === undefined) {
+			val = "";
 		}
 		let sent = this.engine.setoption(name, val);
 		if (!quiet) {
@@ -821,7 +828,7 @@ function NewRenderer() {
 	};
 
 	renderer.switch_weights = function(filename) {
-		this.info_handler.stderr_log = "";							// Avoids having confusing stale messages.
+		this.info_handler.stderr_log = "";							// Avoids having confusing stale messages
 		this.set_uci_option("WeightsFile", filename, true, true);
 	};
 

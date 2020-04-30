@@ -1343,6 +1343,36 @@ function menu_build() {
 					]
 				},
 				{
+					label: "Syzygy",
+					submenu: [
+						{
+							label: "Choose folder...",
+							click: () => {
+								let folders = open_dialog({
+									defaultPath: config.engine_dialog_folder,
+									properties: ["openDirectory"]
+								});
+								if (Array.isArray(folders) && folders.length > 0) {
+									let folder = folders[0];
+									win.webContents.send("call", {
+										fn: "set_uci_option_permanent",
+										args: ["SyzygyPath", folder]			// FIXME: should send all folders, separated by system separator.
+									});
+								}
+							}
+						},
+						{
+							label: "Disable",
+							click: () => {
+								win.webContents.send("call", {
+									fn: "set_uci_option_permanent",
+									args: ["SyzygyPath", null]
+								});
+							}
+						}
+					]
+				},
+				{
 					type: "separator"
 				},
 				{
