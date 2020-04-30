@@ -321,6 +321,7 @@ function NewRenderer() {
 	renderer.delete_node = function() {
 
 		if (!this.node.parent) {
+			this.delete_children();
 			return;
 		}
 
