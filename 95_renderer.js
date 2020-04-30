@@ -647,13 +647,23 @@ function NewRenderer() {
 						this.node.update_eval_from_info(info);
 					}
 
-					if (config.autoplay === 1) {
+					switch (config.autoplay) {
+
+					case 1:									// Actual self-play
+
 						this.move(tokens[1]);
-					} else if (config.autoplay === 2) {
+						break;
+
+					case 2:									// "Evaluate line" mode
+
 						if (this.node.children.length > 0) {
 							this.node = this.node.children[0];
 							this.position_changed(false, false);
+						} else {
+							config.autoplay = 0;
 						}
+						break;
+
 					}
 				}
 			}
