@@ -146,7 +146,7 @@ function PreParsePGN(buf) {
 	return games;
 }
 
-function LoadPGNRecord(o) {
+function LoadPGNRecord(o) {				// Can throw, either by itself, or by allowing a throw from LoadFEN to propagate.
 
 	let startpos;
 
