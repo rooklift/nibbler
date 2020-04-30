@@ -60,7 +60,7 @@ function NewInfoHandler() {
 
 		let s_low = s.toLowerCase();
 
-		if (s_low.includes("warning") || s_low.includes("error") || s_low.includes("unknown")) {
+		if (s_low.includes("warning") || s_low.includes("error") || s_low.includes("unknown") || s_low.includes("failed")) {
 			this.stderr_log += `<span class="red">${s}</span><br>`;
 		} else {
 			this.stderr_log += `${s}<br>`;
