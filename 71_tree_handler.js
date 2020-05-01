@@ -9,6 +9,7 @@ function NewTreeHandler() {
 
 	handler.root = NewTree();
 	handler.node = handler.root;
+	this.tree_version = 0;
 
 	// Return values of the methods are whether this.node changed.
 
@@ -16,6 +17,7 @@ function NewTreeHandler() {
 		DestroyTree(this.root);
 		this.root = NewTree(board);
 		this.node = this.root;
+		this.tree_version++;
 		return true;
 	};
 
@@ -23,6 +25,7 @@ function NewTreeHandler() {
 		DestroyTree(this.root);
 		this.root = root;
 		this.node = root;
+		this.tree_version++;
 		return true;
 	};
 
@@ -111,7 +114,7 @@ function NewTreeHandler() {
 		}
 
 		if (changed) {
-			tree_version++;
+			this.tree_version++;
 		}
 
 		return false;		// this.node never changes here.
@@ -131,7 +134,7 @@ function NewTreeHandler() {
 		}
 
 		if (changed) {
-			tree_version++;
+			this.tree_version++;
 		}
 
 		return false;		// this.node never changes here.
@@ -143,7 +146,7 @@ function NewTreeHandler() {
 			for (let child of this.node.children) {
 				child.detach();
 			}
-			tree_version++;
+			this.tree_version++;
 		}
 
 		return false;		// this.node never changes here.
@@ -158,7 +161,7 @@ function NewTreeHandler() {
 		let parent = this.node.parent;
 		this.node.detach();
 		this.node = parent;
-		tree_version++;
+		this.tree_version++;
 		return true;
 	};
 
@@ -176,7 +179,7 @@ function NewTreeHandler() {
 		}
 
 		if (changed) {
-			tree_version++;
+			this.tree_version++;
 		}
 
 		return false;		// this.node never changes here.

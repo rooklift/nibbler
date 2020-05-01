@@ -1,13 +1,5 @@
 "use strict";
 
-// EVERYTHING that changes the tree structure must increment the global counter  tree_version
-// Currently this means:
-//
-//		- NewNode()
-//		- promote_to_main_line()
-//		- delete_other_lines()
-//		- detach()
-
 const node_prototype = {
 
 	make_move: function(s, force_new_node) {
@@ -171,8 +163,6 @@ const node_prototype = {
 			}
 			node = node.parent;
 		}
-
-		tree_version++;
 	},
 
 	is_main_line: function() {
@@ -218,8 +208,6 @@ const node_prototype = {
 			node.children = node.children.slice(0, 1);
 			node = node.children[0];
 		}
-
-		tree_version++;
 	},
 
 	nice_move: function() {
@@ -286,7 +274,6 @@ const node_prototype = {
 
 		parent.children = new_list_for_parent;
 		this.parent = null;
-		tree_version++;
 		DestroyTree(this);
 		return parent;
 	},
@@ -322,7 +309,6 @@ function NewNode(parent, move) {		// Args are null for root only.
 	node.eval_nodes = 0;				// Useful; some info objects get .total_nodes set to -1, and update_eval_from_info() ignores them.
 	node.destroyed = false;
 
-	tree_version++;
 	return node;
 }
 
