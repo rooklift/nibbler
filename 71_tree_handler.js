@@ -10,6 +10,8 @@ function NewTreeHandler() {
 	handler.root = NewTree();
 	handler.node = handler.root;
 
+	// Return values of the methods are whether this.node changed.
+
 	handler.prev = function() {
 		if (this.node.parent) {
 			this.node = this.node.parent;
@@ -90,7 +92,7 @@ function NewTreeHandler() {
 			tree_version++;
 		}
 
-		return changed;
+		return false;		// this.node never changes here.
 	};
 
 	handler.delete_other_lines = function() {
@@ -110,7 +112,7 @@ function NewTreeHandler() {
 			tree_version++;
 		}
 
-		return changed;
+		return false;		// this.node never changes here.
 	};
 
 	handler.delete_children = function() {
@@ -120,10 +122,9 @@ function NewTreeHandler() {
 				child.detach();
 			}
 			tree_version++;
-			return true;
 		}
 
-		return false;
+		return false;		// this.node never changes here.
 	};
 
 	handler.delete_node = function() {
@@ -156,7 +157,29 @@ function NewTreeHandler() {
 			tree_version++;
 		}
 
-		return changed;
+		return false;		// this.node never changes here.
 	};
+
+	handler.make_move = function(s, force_new_node) {
+
+		// s must be exactly a legal move, including having promotion char iff needed (e.g. e2e1q)
+
+		if (!force_new_node) {
+			for (let child of this.node.children) {
+				if (child.move === s) {
+					this.node = child;
+					return true;
+				}
+			}
+		}
+
+		let new_node = NewNode(this.node, s);
+		this.node.children.push(new_node);
+
+		this.node = new_node;
+		return true;
+	};
+
+	return handler;
 
 }

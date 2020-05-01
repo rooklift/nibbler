@@ -4,13 +4,13 @@ function NewRenderer() {
 
 	let renderer = Object.create(null);
 
-	renderer.engine = NewEngine();								// Engine connection. Needs its setup() called.
-	renderer.node = NewTree();									// Our current place in the current tree.
-	renderer.movelist_handler = NewMovelistHander();			// Deals with the movelist at the bottom.
-	renderer.grapher = NewGrapher();							// Deals with the SVG winrate graph.
+	renderer.engine = NewEngine();								// Still needs its setup() called.
+	renderer.tree = NewTreeHandler();
+	renderer.movelist_handler = NewMovelistHander();
+	renderer.grapher = NewGrapher();
 
 	renderer.info_handler = NewInfoHandler();					// Handles info from the engine, and drawing it.
-	renderer.info_handler.clear(renderer.node.get_board());		// Best give it a valid board to start with.
+	renderer.info_handler.clear(renderer.tree.node.get_board());// Best give it a valid board to start with.
 
 	// Various state we have to keep track of...
 
@@ -59,12 +59,12 @@ function NewRenderer() {
 		this.go_or_halt(new_game_flag);
 
 		this.draw();
-		this.movelist_handler.draw(this.node);
-		fenbox.value = this.node.get_board().fen(true);
+		this.movelist_handler.draw(this.tree.node);
+		fenbox.value = this.tree.node.get_board().fen(true);
 
 		if (new_game_flag) {
 			let title = "Nibbler";
-			let root = this.node.get_root();
+			let root = this.tree.root;
 			if (root.tags && root.tags.White && root.tags.White !== "White" && root.tags.Black && root.tags.Black !== "Black") {
 				title += `: ${root.tags.White} - ${root.tags.Black}`;
 			}
@@ -79,20 +79,20 @@ function NewRenderer() {
 		// relevant part of the PV, and evals, if available.
 
 		if (new_game_flag || Object.keys(this.info_handler.table).length === 0) {			// Fail
-			this.info_handler.clear(this.node.get_board());
+			this.info_handler.clear(this.tree.node.get_board());
 			return;
 		}
 
 		if (config.versus === "w" || config.versus === "b") {
 			if (this.leela_should_go() === false) {											// Fail (conceal)
-				this.info_handler.clear(this.node.get_board());
+				this.info_handler.clear(this.tree.node.get_board());
 				return;
 			}
 		}
 
 		// First, find what ancestor (if any) has the old position...
 
-		let node = this.node;
+		let node = this.tree.node;
 		let moves = [];
 		let found = false;
 
@@ -106,7 +106,7 @@ function NewRenderer() {
 		}
 
 		if (found === false) {																// Fail
-			this.info_handler.clear(this.node.get_board());
+			this.info_handler.clear(this.tree.node.get_board());
 			return;
 		}
 
@@ -118,12 +118,12 @@ function NewRenderer() {
 		let oldinfo = this.info_handler.table[moves[0]];
 
 		if (!oldinfo) {																		// Fail
-			this.info_handler.clear(this.node.get_board());
+			this.info_handler.clear(this.tree.node.get_board());
 			return;
 		}
 
 		if (Array.isArray(oldinfo.pv) === false || oldinfo.pv.length <= moves.length) {		// Fail
-			this.info_handler.clear(this.node.get_board());
+			this.info_handler.clear(this.tree.node.get_board());
 			return;
 		}
 
@@ -133,19 +133,19 @@ function NewRenderer() {
 
 		for (let n = 0; n < moves.length; n++) {
 			if (pv[n] !== moves[n]) {														// Fail
-				this.info_handler.clear(this.node.get_board());
+				this.info_handler.clear(this.tree.node.get_board());
 				return;
 			}
 		}
 
 		// So, everything matches and we can use the PV...
 
-		this.info_handler.clear(this.node.get_board());
+		this.info_handler.clear(this.tree.node.get_board());
 
 		let nextmove = pv[moves.length];
 		pv = pv.slice(moves.length);
 
-		this.info_handler.table[nextmove] = new_info(this.node.get_board(), nextmove);
+		this.info_handler.table[nextmove] = new_info(this.tree.node.get_board(), nextmove);
 		this.info_handler.table[nextmove].pv = pv;
 		this.info_handler.table[nextmove].q = oldinfo.q;
 		this.info_handler.table[nextmove].cp = oldinfo.cp;
@@ -155,7 +155,7 @@ function NewRenderer() {
 
 		// Flip our evals if the colour changes...
 
-		if (oldinfo.board.active !== this.node.get_board().active) {
+		if (oldinfo.board.active !== this.tree.node.get_board().active) {
 			if (typeof this.info_handler.table[nextmove].q === "number") {
 				this.info_handler.table[nextmove].q *= -1;
 			}
@@ -196,7 +196,7 @@ function NewRenderer() {
 			return;
 		}
 
-		let board = this.node.get_board();
+		let board = this.tree.node.get_board();
 		let source = Point(s.slice(0, 2));
 
 		if (!source) {
@@ -231,13 +231,13 @@ function NewRenderer() {
 			return;
 		}
 
-		this.node = this.node.make_move(s);
+		this.tree.make_move(s);
 		this.position_changed();
 		return;
 	};
 
 	renderer.random_move = function() {
-		let legals = this.node.get_board().movegen();
+		let legals = this.tree.node.get_board().movegen();
 		if (legals.length > 0) {
 			this.move(RandChoice(legals));
 		}
@@ -254,110 +254,71 @@ function NewRenderer() {
 		}
 	};
 
+	// Note that the various tree.methods() return whether or not the current node changed.
+
 	renderer.prev = function() {
-		if (this.node.parent) {
-			this.node = this.node.parent;
+		if (this.tree.prev()) {
 			this.position_changed(false, true);
 		}
 	};
 
 	renderer.next = function() {
-		if (this.node.children.length > 0) {
-			this.node = this.node.children[0];
+		if (this.tree.next()) {
 			this.position_changed(false, true);
 		}
 	};
 
 	renderer.goto_root = function() {
-		let root = this.node.get_root();
-		if (this.node !== root) {
-			this.node = root;
+		if (this.tree.goto_root()) {
 			this.position_changed(false, true);
 		}
 	};
 
 	renderer.goto_end = function() {
-		let end = this.node.get_end();
-		if (this.node !== end) {
-			this.node = end;
+		if (this.tree.goto_end()) {
 			this.position_changed(false, true);
 		}
 	};
 
 	renderer.return_to_main_line = function() {
-
-		let root = this.node.get_root();
-		let main_line = root.future_history();
-		let history = this.node.history();
-
-		let node = root;
-
-		for (let n = 0; n < history.length; n++) {
-			if (main_line[n] !== history[n]) {
-				break;
-			}
-			if (node.children.length === 0) {
-				break;
-			}
-			node = node.children[0];
-		}
-
-		if (this.node !== node) {
-			this.node = node;
+		if (this.tree.return_to_main_line()) {
 			this.position_changed(false, true);
 		}
 	};
 
+	renderer.delete_node = function() {
+		if (this.tree.delete_node()) {
+			this.position_changed(false, true);
+		} else {
+			this.movelist_handler.draw(this.tree.node);
+		}
+	};
+
 	renderer.promote_to_main_line = function() {
-		this.node.promote_to_main_line();
-		this.movelist_handler.draw(this.node);
+		this.tree.promote_to_main_line();
+		this.movelist_handler.draw(this.tree.node);
 	};
 
 	renderer.delete_other_lines = function() {
-		this.node.delete_other_lines();
-		this.movelist_handler.draw(this.node);
-	};
-
-	renderer.delete_node = function() {
-
-		if (!this.node.parent) {
-			this.delete_children();
-			return;
-		}
-
-		let parent = this.node.parent;
-		this.node.detach();
-		this.node = parent;
-		this.position_changed(false, true);
+		this.tree.delete_other_lines();
+		this.movelist_handler.draw(this.tree.node);
 	};
 
 	renderer.delete_children = function() {
-		for (let child of this.node.children) {
-			child.detach();
-		}
-		this.movelist_handler.draw(this.node);
+		this.tree.delete_children();
+		this.movelist_handler.draw(this.tree.node);
 	};
 
 	renderer.delete_siblings = function() {
-
-		if (!this.node.parent) {
-			return;
-		}
-
-		for (let sibling of this.node.parent.children) {
-			if (sibling !== this.node) {
-				sibling.detach();
-			}
-		}
-		
-		this.movelist_handler.draw(this.node);
+		this.tree.delete_siblings();
+		this.movelist_handler.draw(this.tree.node);
 	};
 
 	renderer.load_from_fenbox = function(s) {
 
 		s = s.trim();
 
-		if (s === this.node.get_board().fen(true)) {
+		if (s === this.tree.node.get_board().fen(true)) {
 			return;
 		}
 
@@ -592,7 +553,7 @@ function NewRenderer() {
 	// Engine stuff...
 
 	renderer.leela_should_go = function() {
-		return config.versus.includes(this.node.get_board().active);
+		return config.versus.includes(this.tree.node.get_board().active);
 	};
 
 	renderer.receive = function(s) {
@@ -601,8 +562,8 @@ function NewRenderer() {
 
 		if (s.startsWith("info")) {
 
-			if (this.leela_position === this.node.get_board()) {		// Test may fail if we changed position without informing
-				this.info_handler.receive(s, this.node.get_board());	// Leela - which we commonly do if we're halting Leela.
+			if (this.leela_position === this.tree.node.get_board()) {		// Test may fail if we changed position without informing
+				this.info_handler.receive(s, this.tree.node.get_board());	// Leela - which we commonly do if we're halting Leela.
 			}
 
 		} else if (s.startsWith("error")) {
@@ -636,7 +597,7 @@ function NewRenderer() {
 			// where we say "stop" then immediately say "go", the bestmove we get from the "stop" will be ignored. This
 			// works well, I think.
 
-			if (this.leela_position === this.node.get_board()) {					// See notes on leela_position above.
+			if (this.leela_position === this.tree.node.get_board()) {				// See notes on leela_position above.
 
 				if (config.autoplay || (config.versus === this.node.get_board().active)) {
 
@@ -644,7 +605,7 @@ function NewRenderer() {
 
 					let info = this.info_handler.table[tokens[1]];					// Update our cached eval in the tree while we can.
 					if (info) {
-						this.node.update_eval_from_info(info);
+						this.tree.node.update_eval_from_info(info);
 					}
 
 					switch (config.autoplay) {
@@ -656,8 +617,8 @@ function NewRenderer() {
 
 					case 2:									// "Evaluate line" mode
 
-						if (this.node.children.length > 0) {
-							this.node = this.node.children[0];
+						if (this.tree.node.children.length > 0) {
+							this.tree.next();
 							this.position_changed(false, false);
 						} else {
 							config.autoplay = 0;
@@ -719,44 +680,44 @@ function NewRenderer() {
 
 		this.__halt(new_game_flag);
 
-		let board = this.node.get_board();
+		let board = this.tree.node.get_board();
 
-		if (this.node.children.length === 0) {
+		if (this.tree.node.children.length === 0) {
 			if (board.no_moves()) {
 				if (board.king_in_check()) {
 					this.nogo_reason = "Checkmate";
-					this.node.eval = board.active === "w" ? 0 : 1;
+					this.tree.node.eval = board.active === "w" ? 0 : 1;
 					return;
 				} else {
 					this.nogo_reason = "Stalemate";
-					this.node.eval = 0.5;
+					this.tree.node.eval = 0.5;
 					return;
 				}
 			}
 			if (board.insufficient_material()) {
 				this.nogo_reason = "Insufficient Material";
-				this.node.eval = 0.5;
+				this.tree.node.eval = 0.5;
 				return;
 			}
 			if (board.halfmove >= 100) {
 				this.nogo_reason = "50 Move Rule";
-				this.node.eval = 0.5;
+				this.tree.node.eval = 0.5;
 				return;
 			}
-			if (this.node.is_triple_rep()) {
-				this.nogo_reason = "Triple Repetition";
-				this.node.eval = 0.5;
+			if (this.tree.node.is_triple_rep()) {
+				this.tree.nogo_reason = "Triple Repetition";
+				this.tree.node.eval = 0.5;
 				return;
 			}
 		}
 
-		let root_fen = this.node.get_root().get_board().fen(false);
+		let root_fen = this.tree.node.get_root().get_board().fen(false);
 		let setup = `fen ${root_fen}`;
 
 		// Leela seems to time "readyok" correctly after "position" commands.
 		// After sending "isready" we'll ignore Leela output until "readyok" comes.
 
-		this.engine.send(`position ${setup} moves ${this.node.history().join(" ")}`);
+		this.engine.send(`position ${setup} moves ${this.tree.node.history().join(" ")}`);
 		this.engine.send("isready");
 
 		let s;
@@ -787,7 +748,7 @@ function NewRenderer() {
 		}
 
 		let valid_list = [];
-		let board = this.node.get_board();
+		let board = this.tree.node.get_board();
 
 		for (let move of this.searchmoves) {
 			if (board.illegal(move) === "") {
@@ -799,7 +760,7 @@ function NewRenderer() {
 	};
 
 	renderer.reset_leela_cache = function() {
-		this.info_handler.clear(this.node.get_board());
+		this.info_handler.clear(this.tree.node.get_board());
 		this.go_or_halt(true);
 	};
 
@@ -852,7 +813,7 @@ function NewRenderer() {
 			this.engine = NewEngine();
 		}
 
-		this.info_handler.clear(this.node.get_board());
+		this.info_handler.clear(this.tree.node.get_board());
 		this.info_handler.reset_engine_info();
 
 		if (typeof filepath !== "string" || fs.existsSync(filepath) === false) {
@@ -1041,7 +1002,7 @@ function NewRenderer() {
 		config.graph_height = sz;
 		config_io.save(config);
 		this.rebuild_sizes();
-		this.grapher.draw(this.node, true);
+		this.grapher.draw(this.tree.node, true);
 	};
 
 	renderer.set_board_size = function(sz) {
@@ -1176,7 +1137,7 @@ function NewRenderer() {
 		this.hide_promotiontable();		// Just in case it's up.
 
 		let ocm = this.info_handler.one_click_moves[p.x][p.y];
-		let board = this.node.get_board();
+		let board = this.tree.node.get_board();
 
 		if (!this.active_square && ocm && board.colour(p) !== board.active) {		// Note that we test colour difference
 			this.set_active_square(null);											// to disallow castling moves from OCM
@@ -1315,7 +1276,7 @@ function NewRenderer() {
 		let tr = document.createElement("tr");
 		promotiontable.appendChild(tr);
 
-		let pieces = this.node.get_board().active === "w" ? ["Q", "R", "B", "N"] : ["q", "r", "b", "n"];
+		let pieces = this.tree.node.get_board().active === "w" ? ["Q", "R", "B", "N"] : ["q", "r", "b", "n"];
 
 		for (let piece of pieces) {
 
@@ -1401,7 +1362,7 @@ function NewRenderer() {
 
 	renderer.draw_friendlies_in_table = function() {
 
-		let position = this.node.get_board();
+		let position = this.tree.node.get_board();
 
 		for (let x = 0; x < 8; x++) {
 			for (let y = 0; y < 8; y++) {
@@ -1441,7 +1402,7 @@ function NewRenderer() {
 			return;
 		}
 
-		let move = this.node.move;
+		let move = this.tree.node.move;
 
 		if (typeof move !== "string") {
 			return;
@@ -1468,7 +1429,7 @@ function NewRenderer() {
 
 	renderer.draw_enemies_in_canvas = function() {
 
-		let board = this.node.get_board();
+		let board = this.tree.node.get_board();
 
 		for (let x = 0; x < 8; x++) {
 			for (let y = 0; y < 8; y++) {
@@ -1582,7 +1543,7 @@ function NewRenderer() {
 			return false;
 		}
 
-		let board = this.node.get_board();
+		let board = this.tree.node.get_board();
 
 		for (let move of moves) {
 			let illegal_reason = board.illegal(move);
@@ -1652,11 +1613,11 @@ function NewRenderer() {
 		this.info_handler.draw_infobox(
 			this.mouse_point(),
 			this.active_square,
-			this.node.get_board().active,
+			this.tree.node.get_board().active,
 			this.searchmoves,
 			this.hoverdraw_div);
 
-		this.grapher.draw(this.node, !config.ugly_graph_performance_hack);
+		this.grapher.draw(this.tree.node, !config.ugly_graph_performance_hack);
 
 		debug.draw -= 1;
 	};
@@ -1674,7 +1635,7 @@ function NewRenderer() {
 	renderer.update_node_eval = function() {
 		let info_list = this.info_handler.sorted();
 		if (info_list.length > 0) {
-			this.node.update_eval_from_info(info_list[0]);
+			this.tree.node.update_eval_from_info(info_list[0]);
 		}
 	};
 
