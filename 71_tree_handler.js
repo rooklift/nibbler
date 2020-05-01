@@ -14,8 +14,6 @@
 // - Use CSS like ::before and ::after
 // - https://www.designcise.com/web/tutorial/how-to-add-space-before-or-after-an-element-using-css-pseudo-elements
 
-let draw_from_scratch_count = 0;
-
 function NewTreeHandler() {
 
 	let handler = Object.create(null);
@@ -308,7 +306,29 @@ function NewTreeHandler() {
 
 	handler.draw_from_scratch = function() {
 
-		draw_from_scratch_count++;
+		let ordered_nodes = [];
+		order_nodes(this.root, ordered_nodes, false);
+
+		let pseudoelements = [];		// Objects containing class, id, and text
+
+		for (let node of ordered_nodes) {
+
+			let classes = [];
+
+			// TODO - push the correct classes.
+
+			pseudoelements.push({
+				class: classes.join(" "), id: `node_${node.id}`, text: node.token()
+			});
+		}
+
+		let texts = [];
+
+		for (let p of pseudoelements) {
+			texts.push(`<span class="${p.class}" id="${p.id}">${p.text}</span>`);
+		}
+
+		movelist.innerHTML = texts.join("");
 
 	};
 
