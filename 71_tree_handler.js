@@ -306,6 +306,18 @@ function NewTreeHandler() {
 
 	handler.draw_from_scratch = function() {
 
+		// Some prep-work (we need to undo all this at the end)...
+
+		let line_end = this.node.get_end();
+
+		let foo = line_end;
+		while (foo) {
+			foo.current_line = true;
+			foo = foo.parent;
+		}
+
+		// ---
+
 		let ordered_nodes = [];
 		order_nodes(this.root, ordered_nodes, false);
 
@@ -316,7 +328,11 @@ function NewTreeHandler() {
 			let classes = [];
 
 			if (node === this.node) {
-				classes.push("movelist_highlight_blue");
+				if (node.is_main_line()) {
+					classes.push("movelist_highlight_blue");
+				} else {
+					classes.push("movelist_highlight_yellow");
+				}
 			}
 
 			if (node.parent && node.parent.children[0] !== node) {
@@ -329,7 +345,11 @@ function NewTreeHandler() {
 				classes.push("not_end");
 			}
 
-			// TODO - push the correct classes.
+			if (node.current_line) {
+				classes.push("white");
+			} else {
+				classes.push("gray");
+			}
 
 			pseudoelements.push({
 				class: classes.join(" "), id: `node_${node.id}`, text: node.token()
@@ -343,6 +363,14 @@ function NewTreeHandler() {
 		}
 
 		movelist.innerHTML = texts.join("");
+
+		// Undo the damage to our tree from the start...
+
+		foo = line_end;
+		while(foo) {
+			delete foo.current_line;
+			foo = foo.parent;
+		}
 
 	};
 
