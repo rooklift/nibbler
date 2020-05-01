@@ -3,6 +3,8 @@
 // Experimental WIP
 // Should replace movelist.js ultimately
 
+let draw_hard_count = 0;
+
 function NewTreeHandler() {
 
 	let handler = Object.create(null);
@@ -210,6 +212,9 @@ function NewTreeHandler() {
 			for (let child of this.node.children) {
 				if (child.move === s) {
 					this.node = child;
+					if (!suppress_draw) {
+						this.draw_hard();
+					}
 					return true;
 				}
 			}
@@ -283,6 +288,8 @@ function NewTreeHandler() {
 	// -------------------------------------------------------------------------------------------------------------
 
 	handler.draw_hard = function() {
+
+		draw_hard_count++;
 
 		let node = this.node;
 
@@ -368,13 +375,28 @@ function NewTreeHandler() {
 		fix_scrollbar_position();
 	};
 
-	handler.redraw_child = function(node) {
+	handler.redraw_node = function(node) {
 
 		// Given a child of the current node, redraw it.
-		// TODO - FIXME
+		// Also update the relevant connections list token.
 
+		if (!this.connections || !node) {
+			return;
+		}
+
+		for (let n = 0; n < this.connections.length; n++) {
+			if (this.connections.nodes[n] === node) {
+				let span = document.getElementById(`movelist_${n}`);
+				if (span) {
+					let space = this.connections.tokens[n + 1] === ")" ? "" : " ";
+					let text = `${node.token()}${space}`;
+					span.innerHTML = text;
+					this.connections.tokens[n] = node.token();
+					break;
+				}
+			}
+		}
 	};
 
 	return handler;
 }
-

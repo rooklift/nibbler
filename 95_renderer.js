@@ -1203,7 +1203,7 @@ function NewRenderer() {
 			}
 		}
 
-		this.tree.redraw_child(stats_node);
+		this.tree.redraw_node(stats_node);
 	};
 
 	renderer.maybe_searchmove_click = function(event) {
