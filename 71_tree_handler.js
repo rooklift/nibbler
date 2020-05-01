@@ -315,6 +315,20 @@ function NewTreeHandler() {
 
 			let classes = [];
 
+			if (node === this.node) {
+				classes.push("movelist_highlight_blue");
+			}
+
+			if (node.parent && node.parent.children[0] !== node) {
+				classes.push("var_start");
+			}
+
+			if (node.children.length === 0 && node.is_main_line() === false) {				// FIXME - remove the need for is_main_line() test
+				classes.push("var_end");
+			} else {
+				classes.push("not_end");
+			}
+
 			// TODO - push the correct classes.
 
 			pseudoelements.push({
