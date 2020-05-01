@@ -693,7 +693,7 @@ function NewRenderer() {
 				return;
 			}
 			if (this.tree.node.is_triple_rep()) {
-				this.tree.nogo_reason = "Triple Repetition";
+				this.nogo_reason = "Triple Repetition";
 				this.tree.node.eval = 0.5;
 				return;
 			}
