@@ -116,71 +116,10 @@ function NewTreeHandler() {
 		return false;
 	};
 
-	handler.promote_to_main_line = function() {
-
-		let node = this.node;
-		let changed = false;
-
-		while (node.parent) {
-			if (node.parent.children[0] !== node) {
-				for (let n = 1; n < node.parent.children.length; n++) {
-					if (node.parent.children[n] === node) {
-						node.parent.children[n] = node.parent.children[0];
-						node.parent.children[0] = node;
-						break;
-					}
-				}
-				changed = true;
-			}
-			node = node.parent;
-		}
-
-		if (changed) {
-			this.tree_version++;
-			this.draw_hard();
-		}
-
-		return false;						// this.node never changes here.
-	};
-
-	handler.delete_other_lines = function() {
-
-		let changed = this.promote_to_main_line();
-		let node = this.root;
-
-		while (node.children.length > 0) {
-			if (node.children.length > 1) {
-				node.children = node.children.slice(0, 1);
-				changed = true;
-			}
-			node = node.children[0];
-		}
-
-		if (changed) {
-			this.tree_version++;
-			this.draw_hard();
-		}
-
-		return false;						// this.node never changes here.
-	};
-
-	handler.delete_children = function() {
-
-		if (this.node.children.length > 0) {
-			for (let child of this.node.children) {
-				child.detach();
-			}
-			this.tree_version++;
-			this.draw_hard();
-		}
-
-		return false;						// this.node never changes here.
-	};
-
 	handler.delete_node = function() {
 
 		if (!this.node.parent) {
-			return this.delete_children();
+			return this.delete_children();		// So will return false in this case.
 		}
 
 		let parent = this.node.parent;
@@ -189,27 +128,6 @@ function NewTreeHandler() {
 		this.tree_version++;
 		this.draw_hard();
 		return true;
-	};
-
-	handler.delete_siblings = function() {
-
-		let changed = false;
-
-		if (this.node.parent) {
-			for (let sibling of this.node.parent.children) {
-				if (sibling !== this.node) {
-					sibling.detach();
-					changed = true;
-				}
-			}
-		}
-
-		if (changed) {
-			this.tree_version++;
-			this.draw_hard();
-		}
-
-		return false;						// this.node never changes here.
 	};
 
 	handler.make_move = function(s, force_new_node, suppress_draw) {
@@ -250,6 +168,91 @@ function NewTreeHandler() {
 		return true;
 	};
 
+	// -------------------------------------------------------------------------------------------------------------
+	// The following methods don't ever change this.node - so the caller has no action to take. All return false.
+
+	handler.promote_to_main_line = function() {
+
+		let node = this.node;
+		let changed = false;
+
+		while (node.parent) {
+			if (node.parent.children[0] !== node) {
+				for (let n = 1; n < node.parent.children.length; n++) {
+					if (node.parent.children[n] === node) {
+						node.parent.children[n] = node.parent.children[0];
+						node.parent.children[0] = node;
+						break;
+					}
+				}
+				changed = true;
+			}
+			node = node.parent;
+		}
+
+		if (changed) {
+			this.tree_version++;
+			this.draw_hard();
+		}
+
+		return false;						// this.node never changes here. Caller takes no action.
+	};
+
+	handler.delete_other_lines = function() {
+
+		let changed = this.promote_to_main_line();
+		let node = this.root;
+
+		while (node.children.length > 0) {
+			if (node.children.length > 1) {
+				node.children = node.children.slice(0, 1);
+				changed = true;
+			}
+			node = node.children[0];
+		}
+
+		if (changed) {
+			this.tree_version++;
+			this.draw_hard();
+		}
+
+		return false;						// this.node never changes here. Caller takes no action.
+	};
+
+	handler.delete_children = function() {
+
+		if (this.node.children.length > 0) {
+			for (let child of this.node.children) {
+				child.detach();
+			}
+			this.tree_version++;
+			this.draw_hard();
+		}
+
+		return false;						// this.node never changes here. Caller takes no action.
+	};
+
+	handler.delete_siblings = function() {
+
+		let changed = false;
+
+		if (this.node.parent) {
+			for (let sibling of this.node.parent.children) {
+				if (sibling !== this.node) {
+					sibling.detach();
+					changed = true;
+				}
+			}
+		}
+
+		if (changed) {
+			this.tree_version++;
+			this.draw_hard();
+		}
+
+		return false;						// this.node never changes here. Caller takes no action.
+	};
+
 	handler.add_move_sequence = function(moves) {
 
 		let node = this.node;
@@ -260,7 +263,7 @@ function NewTreeHandler() {
 
 		this.tree_version++;
 		this.draw_hard();
-		return false;						// this.node never changes here.
+		return false;						// this.node never changes here. Caller takes no action.
 	};
 
 	// -------------------------------------------------------------------------------------------------------------
