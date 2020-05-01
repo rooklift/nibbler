@@ -162,6 +162,10 @@ function NewTreeHandler() {
 
 	handler.make_move_sequence = function(moves) {
 
+		if (Array.isArray(moves) === false || moves.length === 0) {
+			return false;
+		}
+
 		for (let s of moves) {
 			this.make_move(s, false, true);
 		}
@@ -257,6 +261,10 @@ function NewTreeHandler() {
 	};
 
 	handler.add_move_sequence = function(moves) {
+
+		if (Array.isArray(moves) === false || moves.length === 0) {
+			return false;
+		}
 
 		let node = this.node;
 
