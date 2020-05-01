@@ -147,24 +147,6 @@ const node_prototype = {
 		return this.__position;
 	},
 
-	promote_to_main_line: function() {
-
-		let node = this;
-
-		while (node.parent) {
-			if (node.parent.children[0] !== node) {
-				for (let n = 1; n < node.parent.children.length; n++) {
-					if (node.parent.children[n] === node) {
-						node.parent.children[n] = node.parent.children[0];
-						node.parent.children[0] = node;
-						break;
-					}
-				}
-			}
-			node = node.parent;
-		}
-	},
-
 	is_main_line: function() {
 
 		let node = this;
@@ -196,18 +178,6 @@ const node_prototype = {
 		}
 
 		return false;
-	},
-
-	delete_other_lines: function() {
-
-		this.promote_to_main_line();
-
-		let node = this.get_root();
-
-		while (node.children.length > 0) {
-			node.children = node.children.slice(0, 1);
-			node = node.children[0];
-		}
 	},
 
 	nice_move: function() {
