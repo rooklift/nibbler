@@ -6,10 +6,9 @@ function NewRenderer() {
 
 	renderer.engine = NewEngine();								// Still needs its setup() called.
 	renderer.tree = NewTreeHandler();
-	renderer.movelist_handler = NewMovelistHander();
 	renderer.grapher = NewGrapher();
+	renderer.info_handler = NewInfoHandler();
 
-	renderer.info_handler = NewInfoHandler();					// Handles info from the engine, and drawing it.
 	renderer.info_handler.clear(renderer.tree.node.get_board());// Best give it a valid board to start with.
 
 	// Various state we have to keep track of...
@@ -1162,7 +1161,7 @@ function NewRenderer() {
 			return;
 		}
 
-		let illegal_reason = this.node.get_board().sequence_illegal(moves);
+		let illegal_reason = this.tree.node.get_board().sequence_illegal(moves);
 		if (illegal_reason !== "") {
 			console.log("infobox_click(): " + illegal_reason);
 			return;
@@ -1229,29 +1228,20 @@ function NewRenderer() {
 	};
 
 	renderer.movelist_click = function(event) {
-
-		let node = this.movelist_handler.node_from_click(event);
-
-		if (!node || node.get_root() !== this.node.get_root()) {
-			return;
-		}
-
-		if (node !== this.node) {
-			this.node = node;
+		if (this.tree.handle_click(event)) {
 			this.position_changed(false, true);
 		}
 	};
 
 	renderer.winrate_click = function(event) {
 
-		let node = this.grapher.node_from_click(this.node, event);
+		let node = this.grapher.node_from_click(this.tree.node, event);
 
-		if (!node || node.get_root() !== this.node.get_root()) {
+		if (!node) {
 			return;
 		}
 
-		if (node !== this.node) {
-			this.node = node;
+		if (this.tree.set_node(node)) {
 			this.position_changed(false, true);
 		}
 	};

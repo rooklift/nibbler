@@ -12,6 +12,14 @@ function NewTreeHandler() {
 
 	// Return values of the methods are whether this.node changed.
 
+	handler.set_node = function(node) {
+		if (node.get_root() === this.root && node !== this.node) {
+			this.node = node;
+			return true;
+		}
+		return false;
+	};	
+
 	handler.prev = function() {
 		if (this.node.parent) {
 			this.node = this.node.parent;
@@ -219,6 +227,11 @@ function NewTreeHandler() {
 		// TODO - FIXME
 
 	};
+
+	handler.handle_click = function(event) {
+		alert("TODO");		// TODO - FIXME
+		return false;		// FIXME
+	}
 
 	return handler;
 }
