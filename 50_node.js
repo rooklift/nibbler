@@ -274,7 +274,7 @@ function NewNode(parent, move) {		// Args are null for root only.
 
 	let node = Object.create(node_prototype);
 	node.id = __next_node_id++;
-	live_nodes[node.id.toString()] = node;
+	__live_nodes[node.id.toString()] = node;
 
 	node.__position = null;
 	node.parent = parent;

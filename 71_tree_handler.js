@@ -393,23 +393,23 @@ function NewTreeHandler() {
 
 
 
-dom_insert_node = function(node) {
+function dom_insert_node(node) {
 	// Insert the node. Examine it and decide where it should be in the order.
 };
 
-dom_change_highlight = function(old_highlight_node, new_highlight_node) {
+function dom_change_highlight(old_highlight_node, new_highlight_node) {
 	// If one is an ancestor of the other, the idea should be to change gray / white on the nodes between them.
 	// Otherwise, the idea should be to find the common ancestor, and change gray / white on both paths.
 };
 
-dom_advance_highlight = function(old_highlight_node) {
+function dom_advance_highlight(old_highlight_node) {
 	// Advance the highlight one node further on.
 };
 
-dom_retreat_highlight = function(old_highlight_node) {
+function dom_retreat_highlight(old_highlight_node) {
 	// Retreat the highlight one node back. Hard(ish) case is when it was at the start of a variation before it moved.
 };
 
-dom_redraw_node = function(node) {
+function dom_redraw_node(node) {
 	// Given a node, redraw it.
 };
