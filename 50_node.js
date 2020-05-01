@@ -1,13 +1,5 @@
 "use strict";
 
-// EVERYTHING that changes the tree structure must increment the global counter  tree_version
-// Currently this means:
-//
-//		- NewNode()
-//		- promote_to_main_line()
-//		- delete_other_lines()
-//		- detach()
-
 const node_prototype = {
 
 	make_move: function(s, force_new_node) {
@@ -155,26 +147,6 @@ const node_prototype = {
 		return this.__position;
 	},
 
-	promote_to_main_line: function() {
-
-		let node = this;
-
-		while (node.parent) {
-			if (node.parent.children[0] !== node) {
-				for (let n = 1; n < node.parent.children.length; n++) {
-					if (node.parent.children[n] === node) {
-						node.parent.children[n] = node.parent.children[0];
-						node.parent.children[0] = node;
-						break;
-					}
-				}
-			}
-			node = node.parent;
-		}
-
-		tree_version++;
-	},
-
 	is_main_line: function() {
 
 		let node = this;
@@ -206,20 +178,6 @@ const node_prototype = {
 		}
 
 		return false;
-	},
-
-	delete_other_lines: function() {
-
-		this.promote_to_main_line();
-
-		let node = this.get_root();
-
-		while (node.children.length > 0) {
-			node.children = node.children.slice(0, 1);
-			node = node.children[0];
-		}
-
-		tree_version++;
 	},
 
 	nice_move: function() {
@@ -286,7 +244,6 @@ const node_prototype = {
 
 		parent.children = new_list_for_parent;
 		this.parent = null;
-		tree_version++;
 		DestroyTree(this);
 		return parent;
 	},
@@ -322,7 +279,6 @@ function NewNode(parent, move) {		// Args are null for root only.
 	node.eval_nodes = 0;				// Useful; some info objects get .total_nodes set to -1, and update_eval_from_info() ignores them.
 	node.destroyed = false;
 
-	tree_version++;
 	return node;
 }
 
@@ -350,10 +306,6 @@ function NewTree(startpos) {			// Arg is expected to be a position object, not a
 // On the theory that it might help the garbage collector, we can
 // destroy trees when we're done with them. Perhaps this is totally
 // unnecessary. I've seen it matter in Python.
-//
-// This does mean it's hazardous to ever store references to nodes
-// and expect their get_board() method to always work, if they could
-// be stale.
 
 function DestroyTree(node) {
 	__destroy_tree(node.get_root());

@@ -1,6 +1,6 @@
 {
 	"name": "Nibbler",
-	"version": "1.2.5",
+	"version": "1.2.6-tree-wip",
 	"author": "Fohristiwhirl",
 	"description": "Leela Chess Zero (Lc0) interface",
 	"license": "GPL-3.0",
