@@ -321,9 +321,24 @@ function make_pgn_string(node) {
 
 function make_movetext(node) {
 
-	let root = node.get_root();
+	let ordered_nodes = [];
 	let tokens = [];
-	write_tree_tokens(root, tokens, false, true);
+
+	let root = node.get_root();
+	order_nodes(root, ordered_nodes, false);
+
+	for (let node of ordered_nodes) {
+
+		if (node.parent && node.parent.children[0] !== node) {
+			tokens.push("(");
+		}
+
+		tokens.push(node.token());
+
+		if (node.children.length === 0 && node.is_main_line() === false) {
+			tokens.push(")");
+		}
+	}
 
 	if (root.tags && root.tags.Result) {
 		tokens.push(root.tags.Result);
@@ -354,12 +369,15 @@ function make_movetext(node) {
 	return lines.join("\n");
 }
 
-function write_tree_tokens(node, tokens, skip_self_flag, force_number_string) {
+// The following is to order the nodes into the order they would be
+// written to screen or PGN.
+
+function order_nodes(node, list, skip_self_flag) {
 
 	// Write this node itself...
 
 	if (node.parent && !skip_self_flag) {
-		tokens.push(node.token());
+		list.push(node);
 	}
 
 	// Write descendents as long as there's no branching,
@@ -367,7 +385,7 @@ function write_tree_tokens(node, tokens, skip_self_flag, force_number_string) {
 
 	while (node.children.length === 1) {
 		node = node.children[0];
-		tokens.push(node.token());
+		list.push(node);
 	}
 
 	if (node.children.length === 0) {
@@ -377,13 +395,11 @@ function write_tree_tokens(node, tokens, skip_self_flag, force_number_string) {
 	// So multiple child nodes exist...
 
 	let main_child = node.children[0];
-	tokens.push(main_child.token());
+	list.push(main_child);
 
 	for (let child of node.children.slice(1)) {
-		tokens.push("(");
-		write_tree_tokens(child, tokens, false, true);
-		tokens.push(")");
+		order_nodes(child, list, false);
 	}
 
-	write_tree_tokens(main_child, tokens, true, false);
+	order_nodes(main_child, list, true);
 }
