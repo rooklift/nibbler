@@ -9,7 +9,7 @@ function NewTreeHandler() {
 
 	handler.root = NewTree();
 	handler.node = handler.root;
-	this.tree_version = 0;
+	handler.tree_version = 0;
 
 	// Return values of the methods are whether this.node changed.
 
