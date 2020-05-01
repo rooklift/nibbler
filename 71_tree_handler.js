@@ -121,7 +121,8 @@ function NewTreeHandler() {
 	handler.delete_node = function() {
 
 		if (!this.node.parent) {
-			return this.delete_children();	// Will return false.
+			this.delete_children();
+			return false;
 		}
 
 		let parent = this.node.parent;
