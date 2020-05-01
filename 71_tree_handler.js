@@ -393,8 +393,7 @@ function NewTreeHandler() {
 
 	handler.redraw_node = function(node) {
 
-		// Given a child of the current node, redraw it.
-		// Also update the relevant connections list token.
+		// Given a node, redraw it. Also update the relevant connections list token.
 
 		if (!this.connections || !node) {
 			return;
