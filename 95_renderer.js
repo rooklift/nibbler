@@ -59,7 +59,6 @@ function NewRenderer() {
 		this.go_or_halt(new_game_flag);
 
 		this.draw();
-		this.movelist_handler.draw(this.tree.node);
 		fenbox.value = this.tree.node.get_board().fen(true);
 
 		if (new_game_flag) {
@@ -289,29 +288,23 @@ function NewRenderer() {
 	renderer.delete_node = function() {
 		if (this.tree.delete_node()) {
 			this.position_changed(false, true);
-		} else {
-			this.movelist_handler.draw(this.tree.node);
 		}
 	};
 
 	renderer.promote_to_main_line = function() {
 		this.tree.promote_to_main_line();
-		this.movelist_handler.draw(this.tree.node);
 	};
 
 	renderer.delete_other_lines = function() {
 		this.tree.delete_other_lines();
-		this.movelist_handler.draw(this.tree.node);
 	};
 
 	renderer.delete_children = function() {
 		this.tree.delete_children();
-		this.movelist_handler.draw(this.tree.node);
 	};
 
 	renderer.delete_siblings = function() {
 		this.tree.delete_siblings();
-		this.movelist_handler.draw(this.tree.node);
 	};
 
 	renderer.load_from_fenbox = function(s) {
@@ -404,11 +397,11 @@ function NewRenderer() {
 	// PGN...
 
 	renderer.pgn_to_clipboard = function() {
-		PGNToClipboard(this.node);
+		PGNToClipboard(this.tree.node);
 	};
 
 	renderer.save = function(filename) {
-		SavePGN(filename, this.node);
+		SavePGN(filename, this.tree.node);
 	};
 
 	renderer.open = function(filename) {
@@ -599,7 +592,7 @@ function NewRenderer() {
 
 			if (this.leela_position === this.tree.node.get_board()) {				// See notes on leela_position above.
 
-				if (config.autoplay || (config.versus === this.node.get_board().active)) {
+				if (config.autoplay || (config.versus === this.tree.node.get_board().active)) {
 
 					let tokens = s.split(" ");
 
@@ -1175,25 +1168,20 @@ function NewRenderer() {
 			return;
 		}
 
-		// Add the moves to the tree...
-
-		let node = this.node;
-		for (let move of moves) {
-			node = node.make_move(move);
-		}
-
-		// Maybe we're done...
+		// Normal version...
 
 		if (!config.serious_analysis_mode) {
-			this.node = node;
+			this.tree.make_move_sequence(moves);
 			this.position_changed(false, true);
 			return;
 		}
 
-		// OK, so we're in Serious Analysis Mode (tm). We don't change this.node.
+		// OK, so we're in Serious Analysis Mode (tm). We don't change our place in the tree.
 		// But we do save some statistics into the node of the first move made...
 
-		let stats_node = this.node.make_move(moves[0]);
+		this.tree.add_move_sequence(moves);
+
+		let stats_node = this.tree.get_node_from_move(moves[0]);
 		let info = this.info_handler.table[moves[0]];		// info for the first move in our clicked line.
 
 		if (info) {
@@ -1220,8 +1208,7 @@ function NewRenderer() {
 			}
 		}
 
-		this.movelist_handler.draw(this.node);				// Draw the tree with the current node (this.node) as highlight.
-		this.movelist_handler.redraw_node(stats_node);		// Redraw the stats node, which might not have been drawn (if draw was lazy).
+		this.tree.redraw_child(stats_node);
 	};
 
 	renderer.maybe_searchmove_click = function(event) {

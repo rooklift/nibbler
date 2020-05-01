@@ -180,6 +180,35 @@ function NewTreeHandler() {
 		return true;
 	};
 
-	return handler;
+	handler.get_node_from_move = function(s) {
 
+		for (let child of this.node.children) {
+			if (child.move === s) {
+				return child;
+			}
+		}
+
+		throw `get_node_from_move("${s}") - not found`;
+	};
+
+	handler.make_move_sequence = function(moves) {
+
+		// TODO - FIXME
+
+	};
+
+	handler.add_move_sequence = function(moves) {
+
+		// TODO - FIXME
+
+	};
+
+	handler.redraw_child = function(node) {
+
+		// Given a child of the current node, redraw it.
+		// TODO - FIXME
+
+	};
+
+	return handler;
 }
