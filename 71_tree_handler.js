@@ -302,7 +302,7 @@ function NewTreeHandler() {
 			return false;
 		}
 
-		let node = __live_nodes[n.toString()];
+		let node = live_nodes[n.toString()];
 
 		if (!node || node.destroyed) {		// Probably the check for .destroyed is unnecessary.
 			return false;
