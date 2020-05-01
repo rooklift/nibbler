@@ -332,3 +332,41 @@ function NewTree(startpos) {			// Arg is expected to be a position object, not a
 
 	return root;
 }
+
+// On the theory that it might help the garbage collector, we can
+// destroy trees when we're done with them. Perhaps this is totally
+// unnecessary. I've seen it matter in Python.
+
+function DestroyTree(node) {
+	__destroy_tree(node.get_root());
+}
+
+function __destroy_tree(node) {
+
+	// Non-recursive when possible...
+
+	while (node.children.length === 1) {
+
+		let child = node.children[0];
+
+		node.parent = null;
+		node.__position = null;
+		node.children = null;
+		node.destroyed = true;
+
+		node = child;
+	}
+
+	// Recursive when necessary...
+
+	let children = node.children;
+
+	node.parent = null;
+	node.__position = null;
+	node.children = null;
+	node.destroyed = true;
+
+	for (let child of children) {
+		__destroy_tree(child);
+	}
+}
