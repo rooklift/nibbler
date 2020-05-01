@@ -160,7 +160,7 @@ function NewTreeHandler() {
 		return false;		// this.node never changes here.
 	};
 
-	handler.make_move = function(s, force_new_node) {
+	handler.make_move = function(s, force_new_node, suppress_draw) {
 
 		// s must be exactly a legal move, including having promotion char iff needed (e.g. e2e1q)
 
@@ -178,6 +178,28 @@ function NewTreeHandler() {
 
 		this.node = new_node;
 		return true;
+
+		// FIXME - use suppress_draw
+	};
+
+	handler.make_move_sequence = function(moves) {
+
+		for (let s of moves) {
+			this.make_move(s, false, true);
+		}
+
+		return true;
+	};
+
+	handler.add_move_sequence = function(moves) {
+
+		let node = this.node;
+
+		for (let s of moves) {
+			node = node.make_move(s);		// Calling the node's make_move() method, not handler's
+		}
+
+		return false;
 	};
 
 	handler.get_node_from_move = function(s) {
@@ -189,18 +211,6 @@ function NewTreeHandler() {
 		}
 
 		throw `get_node_from_move("${s}") - not found`;
-	};
-
-	handler.make_move_sequence = function(moves) {
-
-		// TODO - FIXME
-
-	};
-
-	handler.add_move_sequence = function(moves) {
-
-		// TODO - FIXME
-
 	};
 
 	handler.redraw_child = function(node) {
