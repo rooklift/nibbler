@@ -11,6 +11,10 @@ function NewTreeHandler() {
 	handler.node = handler.root;
 	handler.tree_version = 0;
 
+	handler.connections = null;
+	handler.connections_version = null;
+	handler.line_end = null;
+
 	// Return values of the methods are whether this.node changed.
 
 	handler.new_root_from_board = function(board) {
@@ -18,6 +22,7 @@ function NewTreeHandler() {
 		this.root = NewTree(board);
 		this.node = this.root;
 		this.tree_version++;
+		this.draw_hard();
 		return true;
 	};
 
@@ -26,12 +31,14 @@ function NewTreeHandler() {
 		this.root = root;
 		this.node = root;
 		this.tree_version++;
+		this.draw_hard();
 		return true;
 	};
 
 	handler.set_node = function(node) {									// node must be in the same tree, or this does nothing
 		if (node.get_root() === this.root && node !== this.node) {
 			this.node = node;
+			this.draw_hard();
 			return true;
 		}
 		return false;
@@ -40,6 +47,7 @@ function NewTreeHandler() {
 	handler.prev = function() {
 		if (this.node.parent) {
 			this.node = this.node.parent;
+			this.draw_hard();
 			return true;
 		}
 		return false;
@@ -48,6 +56,7 @@ function NewTreeHandler() {
 	handler.next = function() {
 		if (this.node.children.length > 0) {
 			this.node = this.node.children[0];
+			this.draw_hard();
 			return true;
 		}
 		return false;
@@ -56,6 +65,7 @@ function NewTreeHandler() {
 	handler.goto_root = function() {
 		if (this.node !== this.root) {
 			this.node = this.root;
+			this.draw_hard();
 			return true;
 		}
 		return false;
@@ -65,6 +75,7 @@ function NewTreeHandler() {
 		let end = this.node.get_end();
 		if (this.node !== end) {
 			this.node = end;
+			this.draw_hard();
 			return true;
 		}
 		return false;
@@ -89,6 +100,7 @@ function NewTreeHandler() {
 
 		if (this.node !== node) {
 			this.node = node;
+			this.draw_hard();
 			return true;
 		}
 		return false;
@@ -115,6 +127,7 @@ function NewTreeHandler() {
 
 		if (changed) {
 			this.tree_version++;
+			this.draw_hard();
 		}
 
 		return false;		// this.node never changes here.
@@ -135,6 +148,7 @@ function NewTreeHandler() {
 
 		if (changed) {
 			this.tree_version++;
+			this.draw_hard();
 		}
 
 		return false;		// this.node never changes here.
@@ -147,6 +161,7 @@ function NewTreeHandler() {
 				child.detach();
 			}
 			this.tree_version++;
+			this.draw_hard();
 		}
 
 		return false;		// this.node never changes here.
@@ -162,6 +177,7 @@ function NewTreeHandler() {
 		this.node.detach();
 		this.node = parent;
 		this.tree_version++;
+		this.draw_hard();
 		return true;
 	};
 
@@ -180,6 +196,7 @@ function NewTreeHandler() {
 
 		if (changed) {
 			this.tree_version++;
+			this.draw_hard();
 		}
 
 		return false;		// this.node never changes here.
@@ -203,9 +220,10 @@ function NewTreeHandler() {
 
 		this.node = new_node;
 		this.tree_version++;
+		if (!suppress_draw) {
+			this.draw_hard();
+		}
 		return true;
-
-		// FIXME - use suppress_draw
 	};
 
 	handler.make_move_sequence = function(moves) {
@@ -214,6 +232,7 @@ function NewTreeHandler() {
 			this.make_move(s, false, true);
 		}
 
+		this.draw_hard();
 		return true;
 	};
 
@@ -226,7 +245,7 @@ function NewTreeHandler() {
 		}
 
 		this.tree_version++;
-
+		this.draw_hard();
 		return false;
 	};
 
@@ -241,6 +260,114 @@ function NewTreeHandler() {
 		throw `get_node_from_move("${s}") - not found`;
 	};
 
+	handler.handle_click = function(event) {
+
+		let n = EventPathN(event, "movelist_");
+		if (typeof n !== "number") {
+			return false;
+		}
+
+		if (!this.connections || n < 0 || n >= this.connections.length) {
+			return false;
+		}
+
+		let node = this.connections.nodes[n];
+
+		if (!node || node.destroyed) {		// Probably the check for .destroyed is unnecessary.
+			return false;
+		}
+
+		return this.set_node(node);
+	};
+
+	// -------------------------------------------------------------------------------------------------------------
+
+	handler.draw_hard = function() {
+
+		let node = this.node;
+
+		// Flag nodes that are on the current line (including into the future).
+		// We'll undo this damage to the tree in a bit.
+
+		this.line_end = node.get_end();
+
+		let foo = this.line_end;
+		while (foo) {
+			foo.current_line = true;
+			foo = foo.parent;
+		}
+
+		// We'd also like to know if the current node is on the main line...
+
+		let on_mainline = false;
+
+		foo = node.get_root().get_end();
+		while (foo) {
+			if (foo === node) {
+				on_mainline = true;
+				break;
+			}
+			foo = foo.parent;
+		}
+
+		//
+
+		if (!this.connections || this.connections_version !== this.tree_version) {
+			this.connections = TokenNodeConnections(node);
+			this.connections_version = this.tree_version;
+		}
+
+		let elements = [];		// Objects containing class and text.
+
+		for (let n = 0; n < this.connections.length; n++) {
+
+			// Each item in the connections must have a corresponding element
+			// in our elements list. The indices must match.
+
+			let s = this.connections.tokens[n];
+
+			let next_s = this.connections.tokens[n + 1];		// possibly undefined
+			let connode = this.connections.nodes[n];			// possibly null
+
+			let space = (s === "(" || next_s === ")") ? "" : " ";
+
+			let element = {
+				text: `${s}${space}`
+			};
+
+			if (connode === node) {
+				element.class = on_mainline ? "movelist_highlight_blue" : "movelist_highlight_yellow";
+			} else if (connode && connode.current_line) {
+				element.class = "white";
+			} else {
+				element.class = "gray";
+			}
+
+			elements.push(element);
+		}
+
+		// Generate the new innerHTML for the movelist <p></p>
+
+		let new_inner_parts = [];
+
+		for (let n = 0; n < elements.length; n++) {
+			let part = `<span id="movelist_${n}" class="${elements[n].class}">${elements[n].text}</span>`;
+			new_inner_parts.push(part);
+		}
+
+		movelist.innerHTML = new_inner_parts.join("");	// Setting innerHTML is performant. Direct DOM manipulation is worse, somehow.
+
+		// Undo the damage to our tree...
+
+		foo = this.line_end;
+		while(foo) {
+			delete foo.current_line;
+			foo = foo.parent;
+		}
+
+		fix_scrollbar_position();
+	};
+
 	handler.redraw_child = function(node) {
 
 		// Given a child of the current node, redraw it.
@@ -248,10 +375,6 @@ function NewTreeHandler() {
 
 	};
 
-	handler.handle_click = function(event) {
-		alert("TODO");		// TODO - FIXME
-		return false;		// FIXME
-	};
-
 	return handler;
 }
+
