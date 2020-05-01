@@ -98,6 +98,8 @@ td {
 	display: block;
 	font-family: monospace, monospace;
 	margin-bottom: 1em;
+	overflow: hidden;
+	white-space: nowrap;
 	width: 100%;
 }
 
