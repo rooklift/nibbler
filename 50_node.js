@@ -265,13 +265,18 @@ const node_prototype = {
 	}
 };
 
+// ---------------------------------------------------------------------------------------------------------
+
 let __next_node_id = 1;
+
+let live_nodes = Object.create(null);
 
 function NewNode(parent, move) {		// Args are null for root only.
 
 	let node = Object.create(node_prototype);
-
 	node.id = __next_node_id++;
+	live_nodes[node.id.toString()] = node;
+
 	node.__position = null;
 	node.parent = parent;
 	node.children = [];
@@ -307,8 +312,9 @@ function NewTree(startpos) {			// Arg is expected to be a position object, not a
 }
 
 // On the theory that it might help the garbage collector, we can
-// destroy trees when we're done with them. Perhaps this is totally
-// unnecessary. I've seen it matter in Python.
+// destroy trees when we're done with them. Whether this is helpful
+// in general I don't know, but we also take this opportunity to
+// clear nodes from the live_list.
 
 function DestroyTree(node) {
 	__destroy_tree(node.get_root());
@@ -327,6 +333,8 @@ function __destroy_tree(node) {
 		node.children = null;
 		node.destroyed = true;
 
+		delete live_nodes[node.id.toString()];
+
 		node = child;
 	}
 
@@ -338,6 +346,8 @@ function __destroy_tree(node) {
 	node.__position = null;
 	node.children = null;
 	node.destroyed = true;
+
+	delete live_nodes[node.id.toString()];
 
 	for (let child of children) {
 		__destroy_tree(child);
