@@ -1,9 +1,10 @@
 "use strict";
 
-// Experimental WIP - replaces movelist.js
+// New in 1.2.6 - replaces movelist.js
 //
-// The point is that updating the node should trigger an immediate redraw. Ultimately,
-// this object should be able to make good decisions about how to best redraw.
+// The point is that updating the node should trigger an immediate redraw. The caller doesn't need
+// to care about redrawing. Ideally, this object should be able to make good decisions about how
+// to best redraw.
 
 let draw_hard_count = 0;
 let connections_build_count = 0;
