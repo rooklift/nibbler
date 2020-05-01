@@ -413,3 +413,5 @@ function dom_retreat_highlight(old_highlight_node) {
 function dom_redraw_node(node) {
 	// Given a node, redraw it.
 };
+
+function fix_scrollbar_position() {};
