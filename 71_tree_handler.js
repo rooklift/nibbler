@@ -138,6 +138,7 @@ function NewTreeHandler() {
 		// s must be exactly a legal move, including having promotion char iff needed (e.g. e2e1q)
 
 		let node = null;
+		let extend_flag = false;
 
 		if (!force_new_node) {
 			for (let child of this.node.children) {
@@ -150,6 +151,9 @@ function NewTreeHandler() {
 
 		if (!node) {
 			node = NewNode(this.node, s);
+			if (this.node.children.length === 0 && this.node !== this.root) {
+				extend_flag = true;			// The new node is the simplest case of extending a line.
+			}
 			this.node.children.push(node);
 		}
 
@@ -477,8 +481,6 @@ function NewTreeHandler() {
 
 	return handler;
 }
-
-
 
 // Helpers...
 
