@@ -605,8 +605,7 @@ function NewRenderer() {
 
 					case 2:									// "Evaluate line" mode
 
-						if (this.tree.node.children.length > 0) {
-							this.tree.next();
+						if (this.tree.next()) {
 							this.position_changed(false, false);
 						} else {
 							config.autoplay = 0;
