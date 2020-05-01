@@ -268,8 +268,7 @@ const node_prototype = {
 // ---------------------------------------------------------------------------------------------------------
 
 let __next_node_id = 1;
-
-let live_nodes = Object.create(null);
+let __live_nodes = Object.create(null);
 
 function NewNode(parent, move) {		// Args are null for root only.
 
@@ -333,7 +332,7 @@ function __destroy_tree(node) {
 		node.children = null;
 		node.destroyed = true;
 
-		delete live_nodes[node.id.toString()];
+		delete __live_nodes[node.id.toString()];
 
 		node = child;
 	}
@@ -347,7 +346,7 @@ function __destroy_tree(node) {
 	node.children = null;
 	node.destroyed = true;
 
-	delete live_nodes[node.id.toString()];
+	delete __live_nodes[node.id.toString()];
 
 	for (let child of children) {
 		__destroy_tree(child);
