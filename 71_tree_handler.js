@@ -121,7 +121,7 @@ function NewTreeHandler() {
 	handler.delete_node = function() {
 
 		if (!this.node.parent) {
-			return this.delete_children();		// So will return false in this case.
+			return this.delete_children();	// Will return false.
 		}
 
 		let parent = this.node.parent;
@@ -154,7 +154,7 @@ function NewTreeHandler() {
 		this.node = new_node;
 		this.tree_version++;
 		if (!suppress_draw) {
-			this.draw();
+			this.draw();					// Could potentially call something else here.
 		}
 		return true;
 	};
