@@ -84,6 +84,7 @@ exports.defaults = {
 	"pgn_dialog_folder": "",
 	"engine_dialog_folder": "",
 	"weights_dialog_folder": "",
+	"syzygy_dialog_folder": "",
 
 	"update_delay": 170,
 	"animate_delay_multiplier": 4,

@@ -1162,7 +1162,7 @@ function menu_build() {
 								value: path.dirname(file)
 							});
 						}
-					}
+					},
 				},
 				{
 					label: "Choose weights file...",
@@ -1349,7 +1349,7 @@ function menu_build() {
 							label: "Choose folder...",
 							click: () => {
 								let folders = open_dialog({
-									defaultPath: config.engine_dialog_folder,
+									defaultPath: config.syzygy_dialog_folder,
 									properties: ["openDirectory"]
 								});
 								if (Array.isArray(folders) && folders.length > 0) {
@@ -1357,6 +1357,12 @@ function menu_build() {
 									win.webContents.send("call", {
 										fn: "set_uci_option_permanent",
 										args: ["SyzygyPath", folder]			// FIXME: should send all folders, separated by system separator.
+									});
+									// Save the dir as the new default dir, in both processes.
+									config.syzygy_dialog_folder = path.dirname(folder);
+									win.webContents.send("set", {
+										key: "syzygy_dialog_folder",
+										value: path.dirname(folder)
 									});
 								}
 							}
