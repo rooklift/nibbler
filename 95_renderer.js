@@ -367,7 +367,7 @@ function NewRenderer() {
 			return;
 		}
 
-		this.tree.new_root(board);
+		this.tree.new_root_from_board(board);
 		this.position_changed(true, true);
 	};
 
@@ -433,16 +433,16 @@ function NewRenderer() {
 
 	renderer.load_pgn_object = function(o) {				// Returns true or false - whether this actually succeeded.
 
-		let new_root;
+		let root_node;
 
 		try {
-			new_root = LoadPGNRecord(o);
+			root_node = LoadPGNRecord(o);
 		} catch (err) {
 			alert(err);
 			return false;
 		}
 
-		this.tree.replace_tree(new_root);
+		this.tree.replace_tree(root_node);
 		this.position_changed(true, true);
 
 		return true;
