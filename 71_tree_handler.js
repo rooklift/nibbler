@@ -12,13 +12,20 @@ function NewTreeHandler() {
 
 	// Return values of the methods are whether this.node changed.
 
+	handler.new_root = function(board) {
+		DestroyTree(this.root);
+		this.root = NewTree(board);
+		this.node = this.root;
+		return true;
+	};
+
 	handler.set_node = function(node) {
 		if (node.get_root() === this.root && node !== this.node) {
 			this.node = node;
 			return true;
 		}
 		return false;
-	};	
+	};
 
 	handler.prev = function() {
 		if (this.node.parent) {

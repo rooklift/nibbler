@@ -347,11 +347,11 @@ function NewRenderer() {
 
 	renderer.load_fen = function(s, abnormal) {
 
-		let newpos;
+		let board;
 
 		try {
 
-			newpos = LoadFEN(s);
+			board = LoadFEN(s);
 
 			// If the FEN loader thought it looked like normal chess, we must
 			// override it if the caller passed the abnormal flag. Note that
@@ -359,7 +359,7 @@ function NewRenderer() {
 			// the loader thought it was abnormal, we never say it's normal.
 
 			if (abnormal) {
-				newpos.normalchess = false;
+				board.normalchess = false;
 			}
 
 		} catch (err) {
@@ -367,15 +367,12 @@ function NewRenderer() {
 			return;
 		}
 
-		DestroyTree(this.node);					// Optional, but might help the GC.
-		this.node = NewTree(newpos);
+		this.tree.new_root(board);
 		this.position_changed(true, true);
 	};
 
 	renderer.new_game = function() {
-		DestroyTree(this.node);					// Optional, but might help the GC.
-		this.node = NewTree();
-		this.position_changed(true, true);
+		this.load_fen("rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1");
 	};
 
 	renderer.new_960 = function(n) {
