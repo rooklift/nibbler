@@ -34,7 +34,7 @@ function NewTreeHandler() {
 		this.root = NewTree(board);
 		this.node = this.root;
 		this.tree_version++;
-		this.draw_from_scratch();
+		this.dom_from_scratch();
 		return true;
 	};
 
@@ -43,14 +43,14 @@ function NewTreeHandler() {
 		this.root = root;
 		this.node = this.root;
 		this.tree_version++;
-		this.draw_from_scratch();
+		this.dom_from_scratch();
 		return true;
 	};
 
 	handler.set_node = function(node) {									// node must be in the same tree, or this does nothing
 		if (node.get_root() === this.root && node !== this.node) {
 			this.node = node;
-			this.draw_from_scratch();
+			this.dom_from_scratch();
 			return true;
 		}
 		return false;
@@ -59,7 +59,7 @@ function NewTreeHandler() {
 	handler.prev = function() {
 		if (this.node.parent) {
 			this.node = this.node.parent;
-			this.draw_from_scratch();
+			this.dom_from_scratch();
 			return true;
 		}
 		return false;
@@ -68,7 +68,7 @@ function NewTreeHandler() {
 	handler.next = function() {
 		if (this.node.children.length > 0) {
 			this.node = this.node.children[0];
-			this.draw_from_scratch();
+			this.dom_from_scratch();
 			return true;
 		}
 		return false;
@@ -77,7 +77,7 @@ function NewTreeHandler() {
 	handler.goto_root = function() {
 		if (this.node !== this.root) {
 			this.node = this.root;
-			this.draw_from_scratch();
+			this.dom_from_scratch();
 			return true;
 		}
 		return false;
@@ -87,7 +87,7 @@ function NewTreeHandler() {
 		let end = this.node.get_end();
 		if (this.node !== end) {
 			this.node = end;
-			this.draw_from_scratch();
+			this.dom_from_scratch();
 			return true;
 		}
 		return false;
@@ -112,7 +112,7 @@ function NewTreeHandler() {
 
 		if (this.node !== node) {
 			this.node = node;
-			this.draw_from_scratch();
+			this.dom_from_scratch();
 			return true;
 		}
 		return false;
@@ -129,7 +129,7 @@ function NewTreeHandler() {
 		this.node.detach();
 		this.node = parent;
 		this.tree_version++;
-		this.draw_from_scratch();
+		this.dom_from_scratch();
 		return true;
 	};
 
@@ -160,7 +160,7 @@ function NewTreeHandler() {
 		this.node = node;
 		this.tree_version++;
 		if (!suppress_draw) {
-			this.draw_from_scratch();					// Could potentially call something else here.
+			this.dom_from_scratch();					// Could potentially call something else here.
 		}
 		return true;
 	};
@@ -176,7 +176,7 @@ function NewTreeHandler() {
 		}
 
 		this.tree_version++;				// Redundant, but future bug-proof
-		this.draw_from_scratch();
+		this.dom_from_scratch();
 		return true;
 	};
 
@@ -204,7 +204,7 @@ function NewTreeHandler() {
 
 		if (changed) {
 			this.tree_version++;
-			this.draw_from_scratch();
+			this.dom_from_scratch();
 		}
 
 		return false;						// this.node never changes here. Caller takes no action.
@@ -225,7 +225,7 @@ function NewTreeHandler() {
 
 		if (changed) {
 			this.tree_version++;
-			this.draw_from_scratch();
+			this.dom_from_scratch();
 		}
 
 		return false;						// this.node never changes here. Caller takes no action.
@@ -238,7 +238,7 @@ function NewTreeHandler() {
 				child.detach();
 			}
 			this.tree_version++;
-			this.draw_from_scratch();
+			this.dom_from_scratch();
 		}
 
 		return false;						// this.node never changes here. Caller takes no action.
@@ -259,7 +259,7 @@ function NewTreeHandler() {
 
 		if (changed) {
 			this.tree_version++;
-			this.draw_from_scratch();
+			this.dom_from_scratch();
 		}
 
 		return false;						// this.node never changes here. Caller takes no action.
@@ -278,7 +278,7 @@ function NewTreeHandler() {
 		}
 
 		this.tree_version++;
-		this.draw_from_scratch();
+		this.dom_from_scratch();
 		return false;						// this.node never changes here. Caller takes no action.
 	};
 
@@ -304,7 +304,7 @@ function NewTreeHandler() {
 
 	// -------------------------------------------------------------------------------------------------------------
 
-	handler.draw_from_scratch = function() {
+	handler.dom_from_scratch = function() {
 
 		// Some prep-work (we need to undo all this at the end)...
 
@@ -374,12 +374,28 @@ function NewTreeHandler() {
 
 	};
 
-	handler.redraw_node = function(node) {
-
-		// Given a node, redraw it. Also update any relevant bookkeeping.
-		// TODO
-
-	};
-
 	return handler;
 }
+
+
+
+dom_insert_node = function(node) {
+	// Insert the node. Examine it and decide where it should be in the order.
+};
+
+dom_change_highlight = function(old_highlight_node, new_highlight_node) {
+	// If one is an ancestor of the other, the idea should be to change gray / white on the nodes between them.
+	// Otherwise, the idea should be to find the common ancestor, and change gray / white on both paths.
+};
+
+dom_advance_highlight = function(old_highlight_node) {
+	// Advance the highlight one node further on.
+};
+
+dom_retreat_highlight = function(old_highlight_node) {
+	// Retreat the highlight one node back. Hard(ish) case is when it was at the start of a variation before it moved.
+};
+
+dom_redraw_node = function(node) {
+	// Given a node, redraw it.
+};
