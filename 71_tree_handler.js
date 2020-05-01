@@ -20,6 +20,7 @@ function NewTreeHandler() {
 
 	handler.root = NewTree();
 	handler.node = handler.root;
+	handler.highlighted = handler.root;
 	handler.tree_version = 0;				// Must increment every time the tree structure changes.
 
 	// Return values of the methods are whether this.node changed -
@@ -138,7 +139,6 @@ function NewTreeHandler() {
 		// s must be exactly a legal move, including having promotion char iff needed (e.g. e2e1q)
 
 		let node = null;
-		let extend_flag = false;
 
 		if (!force_new_node) {
 			for (let child of this.node.children) {
@@ -151,16 +151,13 @@ function NewTreeHandler() {
 
 		if (!node) {
 			node = NewNode(this.node, s);
-			if (this.node.children.length === 0 && this.node !== this.root) {
-				extend_flag = true;			// The new node is the simplest case of extending a line.
-			}
 			this.node.children.push(node);
 		}
 
 		this.node = node;
 		this.tree_version++;
 		if (!suppress_draw) {
-			this.dom_from_scratch();					// Could potentially call something else here.
+			this.dom_from_scratch();		// Could potentially call something else here.
 		}
 		return true;
 	};
@@ -169,6 +166,11 @@ function NewTreeHandler() {
 
 		if (Array.isArray(moves) === false || moves.length === 0) {
 			return false;
+		}
+
+		if (moves.length === 1) {
+			this.make_move(moves[0]);
+			return true;
 		}
 
 		for (let s of moves) {
@@ -345,6 +347,7 @@ function NewTreeHandler() {
 				} else {
 					classes.push("movelist_highlight_yellow");
 				}
+				this.highlighted = node;
 			}
 
 			if (node.parent && node.parent.children[0] !== node) {
@@ -364,7 +367,9 @@ function NewTreeHandler() {
 			}
 
 			pseudoelements.push({
-				class: classes.join(" "), id: `node_${node.id}`, text: node.token()
+				class: classes.join(" "),
+				id: `node_${node.id}`,
+				text: node.token()
 			});
 		}
 
@@ -388,19 +393,61 @@ function NewTreeHandler() {
 
 	};
 
+	handler.dom_insert_node = function(node) {
+
+		// Note that an inserted node is guaranteed to have no children.
+		// At least, if it's inserted the moment it's created.
+
+		let classes = [];
+
+		if (node.is_main_line()) {
+			classes.push("movelist_highlight_blue");
+		} else {
+			classes.push("movelist_highlight_yellow");
+		}
+
+		if (node.parent && node.parent.children[0] !== node) {
+			classes.push("var_start");
+		}
+
+		if (node.children.length === 0 && !node.is_main_line()) {
+			classes.push("var_end");
+		} else {
+			classes.push("not_end");
+		}
+
+		// TODO - the parent nodes's DOM element should have var_end removed and
+		// not_end added, I guess.
+
+		if (node.current_line) {
+			classes.push("white");
+		} else {
+			classes.push("gray");
+		}
+
+		let class_text = classes.join(" ");
+		let span_html = `<span class="${class_text}" id="node_${node.id}">${node.token()}</span>`
+
+		// TODO - find the correct DOM element to place this after.
+
+
+		// If node === this.node, it will need to be highlighted.
+		//
+		// We may want our handler object to have a .highlighted property which is
+		// updated at the moment the highlight is set, to make life easy. It will
+		// always end up being this.node, but for some short time it won't be.
+	};
+
+	handler.dom_change_highlight = function(node) {
+		// This will require some thought.
+	};
+
 	return handler;
 }
 
 
 
-function dom_insert_node(node) {
-	// Insert the node. Examine it and decide where it should be in the order.
-};
 
-function dom_change_highlight(old_highlight_node, new_highlight_node) {
-	// If one is an ancestor of the other, the idea should be to change gray / white on the nodes between them.
-	// Otherwise, the idea should be to find the common ancestor, and change gray / white on both paths.
-};
 
 function dom_advance_highlight(old_highlight_node) {
 	// Advance the highlight one node further on.
