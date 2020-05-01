@@ -2,10 +2,11 @@
 
 // Experimental WIP - replaces movelist.js
 //
-// The point is that updating the node should tirgger an immediate redraw. Ultimately,
+// The point is that updating the node should trigger an immediate redraw. Ultimately,
 // this object should be able to make good decisions about how to best redraw.
 
 let draw_hard_count = 0;
+let connections_build_count = 0;
 
 function NewTreeHandler() {
 
@@ -19,7 +20,8 @@ function NewTreeHandler() {
 	handler.connections_version = null;
 	handler.line_end = null;
 
-	// Return values of the methods are whether this.node changed.
+	// Return values of the methods are whether this.node changed -
+	// i.e. whether the renderer has to call position_changed()
 
 	handler.new_root_from_board = function(board) {
 		DestroyTree(this.root);
@@ -33,7 +35,7 @@ function NewTreeHandler() {
 	handler.replace_tree = function(root) {
 		DestroyTree(this.root);
 		this.root = root;
-		this.node = root;
+		this.node = this.root;
 		this.tree_version++;
 		this.draw_hard();
 		return true;
@@ -322,6 +324,7 @@ function NewTreeHandler() {
 		//
 
 		if (!this.connections || this.connections_version !== this.tree_version) {
+			connections_build_count++;
 			this.connections = TokenNodeConnections(node);
 			this.connections_version = this.tree_version;
 		}
