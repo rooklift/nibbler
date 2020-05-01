@@ -442,8 +442,7 @@ function NewRenderer() {
 			return false;
 		}
 
-		DestroyTree(this.node);								// Optional, but might help the GC.
-		this.node = new_root;
+		this.tree.replace_tree(new_root);
 		this.position_changed(true, true);
 
 		return true;

@@ -19,6 +19,13 @@ function NewTreeHandler() {
 		return true;
 	};
 
+	handler.replace_tree = function(root) {
+		DestroyTree(this.root);
+		this.root = root;
+		this.node = root;
+		return true;
+	};
+
 	handler.set_node = function(node) {
 		if (node.get_root() === this.root && node !== this.node) {
 			this.node = node;
@@ -238,7 +245,7 @@ function NewTreeHandler() {
 	handler.handle_click = function(event) {
 		alert("TODO");		// TODO - FIXME
 		return false;		// FIXME
-	}
+	};
 
 	return handler;
 }
