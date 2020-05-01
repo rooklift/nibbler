@@ -368,13 +368,13 @@ function NewTreeHandler() {
 			});
 		}
 
-		let texts = [];
+		let all_spans = [];
 
 		for (let p of pseudoelements) {
-			texts.push(`<span class="${p.class}" id="${p.id}">${p.text}</span>`);
+			all_spans.push(`<span class="${p.class}" id="${p.id}">${p.text}</span>`);
 		}
 
-		movelist.innerHTML = texts.join("");
+		movelist.innerHTML = all_spans.join("");
 
 		// Undo the damage to our tree from the start...
 
