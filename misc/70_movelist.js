@@ -5,8 +5,6 @@
 // that inserting a new move, or highlighting a new node, etc, would have an
 // obviously corresponding set of operations that had to occur in the DOM. Hmm.
 
-/*
-
 function NewMovelistHander() {
 
 	// Note that this stores almost no info about the tree. It's its own
@@ -205,4 +203,3 @@ function NewMovelistHander() {
 	return handler;
 }
 
-*/
