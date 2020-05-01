@@ -312,9 +312,12 @@ function NewTreeHandler() {
 
 		let foo = line_end;
 		while (foo) {
-			foo.current_line = true;
+			foo.current_line = true;	// These nodes will be coloured white, others gray
 			foo = foo.parent;
 		}
+
+		let main_line_end = this.root.get_end();
+		main_line_end.main_line_end = true;
 
 		// ---
 
@@ -339,7 +342,7 @@ function NewTreeHandler() {
 				classes.push("var_start");
 			}
 
-			if (node.children.length === 0 && node.is_main_line() === false) {				// FIXME - remove the need for is_main_line() test
+			if (node.children.length === 0 && !node.main_line_end) {
 				classes.push("var_end");
 			} else {
 				classes.push("not_end");
@@ -371,6 +374,8 @@ function NewTreeHandler() {
 			delete foo.current_line;
 			foo = foo.parent;
 		}
+
+		delete main_line_end.main_line_end;
 
 	};
 
