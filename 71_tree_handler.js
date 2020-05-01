@@ -14,7 +14,7 @@ function NewTreeHandler() {
 
 	handler.root = NewTree();
 	handler.node = handler.root;
-	handler.tree_version = 0;			// Must increment every time the tree structure changes.
+	handler.tree_version = 0;				// Must increment every time the tree structure changes.
 
 	handler.connections = null;
 	handler.connections_version = null;
@@ -22,6 +22,10 @@ function NewTreeHandler() {
 
 	// Return values of the methods are whether this.node changed -
 	// i.e. whether the renderer has to call position_changed()
+	//
+	// We need to draw if either:
+	//    - node changed
+	//    - tree changed
 
 	handler.new_root_from_board = function(board) {
 		DestroyTree(this.root);
@@ -136,7 +140,7 @@ function NewTreeHandler() {
 			this.draw_hard();
 		}
 
-		return false;		// this.node never changes here.
+		return false;						// this.node never changes here.
 	};
 
 	handler.delete_other_lines = function() {
@@ -157,7 +161,7 @@ function NewTreeHandler() {
 			this.draw_hard();
 		}
 
-		return false;		// this.node never changes here.
+		return false;						// this.node never changes here.
 	};
 
 	handler.delete_children = function() {
@@ -170,7 +174,7 @@ function NewTreeHandler() {
 			this.draw_hard();
 		}
 
-		return false;		// this.node never changes here.
+		return false;						// this.node never changes here.
 	};
 
 	handler.delete_node = function() {
@@ -205,7 +209,7 @@ function NewTreeHandler() {
 			this.draw_hard();
 		}
 
-		return false;		// this.node never changes here.
+		return false;						// this.node never changes here.
 	};
 
 	handler.make_move = function(s, force_new_node, suppress_draw) {
@@ -241,6 +245,7 @@ function NewTreeHandler() {
 			this.make_move(s, false, true);
 		}
 
+		this.tree_version++;				// Redundant, but future bug-proof
 		this.draw_hard();
 		return true;
 	};
@@ -255,8 +260,10 @@ function NewTreeHandler() {
 
 		this.tree_version++;
 		this.draw_hard();
-		return false;
+		return false;						// this.node never changes here.
 	};
+
+	// -------------------------------------------------------------------------------------------------------------
 
 	handler.get_node_from_move = function(s) {
 
@@ -405,6 +412,10 @@ function NewTreeHandler() {
 
 	return handler;
 }
+
+
+
+// Helpers...
 
 function get_movelist_highlight() {
 	let elements = document.getElementsByClassName("movelist_highlight_blue");
