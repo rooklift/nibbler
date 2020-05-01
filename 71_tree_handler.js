@@ -14,7 +14,7 @@ function NewTreeHandler() {
 
 	handler.root = NewTree();
 	handler.node = handler.root;
-	handler.tree_version = 0;
+	handler.tree_version = 0;			// Must increment every time the tree structure changes.
 
 	handler.connections = null;
 	handler.connections_version = null;
