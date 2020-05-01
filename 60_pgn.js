@@ -322,13 +322,13 @@ function make_pgn_string(node) {
 function make_movetext(node) {
 
 	let root = node.get_root();
-	let connector = new_string_node_connector();
-	write_tree(root, connector, false, true);
+	let tokens = [];
+	write_tree_tokens(root, tokens, false, true);
 
 	if (root.tags && root.tags.Result) {
-		connector.push(root.tags.Result, null);
+		tokens.push(root.tags.Result);
 	} else {
-		connector.push("*", null);
+		tokens.push("*");
 	}
 
 	// Now it's all about wrapping to 80 chars...
@@ -336,7 +336,7 @@ function make_movetext(node) {
 	let lines = [];
 	let line = "";
 
-	for (let token of connector.tokens) {
+	for (let token of tokens) {
 		if (line.length + token.length > 79) {
 			lines.push(line);
 			line = token;
@@ -354,42 +354,12 @@ function make_movetext(node) {
 	return lines.join("\n");
 }
 
-// -------------------------------------------------------------------------
-// This section was invented for the window's move_list, but incidentally
-// also produces valid PGN.
-
-function TokenNodeConnections(node) {
-	let connector = new_string_node_connector();
-	write_tree(node.get_root(), connector, false, true);
-	return connector;
-}
-
-function new_string_node_connector() {
-
-	// Object will contain the tokens of a PGN string, plus what
-	// node (possibly null) we should go to if they're clicked on.
-
-	return {
-		tokens: [],
-		nodes: [],
-		length: 0,
-		push: function(token, node) {		// node can be null, i.e. no node matches this text
-			this.tokens.push(token);
-			this.nodes.push(node);
-			this.length++;
-		}
-	};
-}
-
-function write_tree(node, connector, skip_self_flag, force_number_string) {
-
-	// Create the connector object - it has a list of tokens
-	// and a corresponding list of nodes/null.
+function write_tree_tokens(node, tokens, skip_self_flag, force_number_string) {
 
 	// Write this node itself...
 
 	if (node.parent && !skip_self_flag) {
-		connector.push(node.token(), node);
+		tokens.push(node.token());
 	}
 
 	// Write descendents as long as there's no branching,
@@ -397,7 +367,7 @@ function write_tree(node, connector, skip_self_flag, force_number_string) {
 
 	while (node.children.length === 1) {
 		node = node.children[0];
-		connector.push(node.token(), node);
+		tokens.push(node.token());
 	}
 
 	if (node.children.length === 0) {
@@ -407,13 +377,13 @@ function write_tree(node, connector, skip_self_flag, force_number_string) {
 	// So multiple child nodes exist...
 
 	let main_child = node.children[0];
-	connector.push(main_child.token(), main_child);
+	tokens.push(main_child.token());
 
 	for (let child of node.children.slice(1)) {
-		connector.push("(", null);
-		write_tree(child, connector, false, true);
-		connector.push(")", null);
+		tokens.push("(");
+		write_tree_tokens(child, tokens, false, true);
+		tokens.push(")");
 	}
 
-	write_tree(main_child, connector, true, false);
+	write_tree_tokens(main_child, tokens, true, false);
 }
