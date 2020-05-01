@@ -202,6 +202,7 @@ function NewTreeHandler() {
 		this.node.children.push(new_node);
 
 		this.node = new_node;
+		this.tree_version++;
 		return true;
 
 		// FIXME - use suppress_draw
@@ -223,6 +224,8 @@ function NewTreeHandler() {
 		for (let s of moves) {
 			node = node.make_move(s);		// Calling the node's make_move() method, not handler's
 		}
+
+		this.tree_version++;
 
 		return false;
 	};
