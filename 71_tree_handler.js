@@ -137,22 +137,23 @@ function NewTreeHandler() {
 
 		// s must be exactly a legal move, including having promotion char iff needed (e.g. e2e1q)
 
+		let node = null;
+
 		if (!force_new_node) {
 			for (let child of this.node.children) {
 				if (child.move === s) {
-					this.node = child;
-					if (!suppress_draw) {
-						this.draw();
-					}
-					return true;
+					node = child;
+					break;
 				}
 			}
 		}
 
-		let new_node = NewNode(this.node, s);
-		this.node.children.push(new_node);
+		if (!node) {
+			node = NewNode(this.node, s);
+			this.node.children.push(node);
+		}
 
-		this.node = new_node;
+		this.node = node;
 		this.tree_version++;
 		if (!suppress_draw) {
 			this.draw();					// Could potentially call something else here.
