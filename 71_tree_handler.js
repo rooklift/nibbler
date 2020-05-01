@@ -1,7 +1,7 @@
 "use strict";
 
 // Experimental WIP
-// Should replace movelist.js ultimately
+// Replaces movelist.js
 
 let draw_hard_count = 0;
 
@@ -399,4 +399,32 @@ function NewTreeHandler() {
 	};
 
 	return handler;
+}
+
+function get_movelist_highlight() {
+	let elements = document.getElementsByClassName("movelist_highlight_blue");
+	if (elements && elements.length > 0) {
+		return elements[0];
+	}
+	elements = document.getElementsByClassName("movelist_highlight_yellow");
+	if (elements && elements.length > 0) {
+		return elements[0];
+	}
+	return null;
+}
+
+function fix_scrollbar_position(node) {
+	let highlight = get_movelist_highlight();
+	if (highlight) {
+		let top = highlight.offsetTop - movelist.offsetTop;
+		if (top < movelist.scrollTop) {
+			movelist.scrollTop = top;
+		}
+		let bottom = top + highlight.offsetHeight;
+		if (bottom > movelist.scrollTop + movelist.offsetHeight) {
+			movelist.scrollTop = bottom - movelist.offsetHeight;
+		}
+	} else {
+		movelist.scrollTop = 0;
+	}
 }
