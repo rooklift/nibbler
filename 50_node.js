@@ -265,10 +265,13 @@ const node_prototype = {
 	}
 };
 
+let __next_node_id = 1;
+
 function NewNode(parent, move) {		// Args are null for root only.
 
 	let node = Object.create(node_prototype);
 
+	node.id = __next_node_id++;
 	node.__position = null;
 	node.parent = parent;
 	node.children = [];

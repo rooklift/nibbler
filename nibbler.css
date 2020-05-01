@@ -159,6 +159,14 @@ ul {
 	list-style: none;
 }
 
+span.varstart::before {
+	content: "(";
+}
+
+span.varend::after {
+	content: ")";
+}
+
 span.pink {
 	color: #ffaaaa;
 }

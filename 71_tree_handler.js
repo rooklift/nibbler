@@ -5,9 +5,16 @@
 // The point is that updating the node should trigger an immediate redraw. The caller doesn't need
 // to care about redrawing. Ideally, this object should be able to make good decisions about how
 // to best redraw.
+//
+// WIP / intentions:
+//
+// - All nodes findable in the DOM by unique span id corresponding to their id.
+// - When adding a node, insert its text straight into the DOM.
+// - When switching node, simply set the classes of all relevant nodes.
+// - Use CSS like ::before and ::after
+// - https://www.designcise.com/web/tutorial/how-to-add-space-before-or-after-an-element-using-css-pseudo-elements
 
 let draw_hard_count = 0;
-let draw_lazy_count = 0;
 let connections_build_count = 0;
 
 function NewTreeHandler() {
@@ -34,7 +41,7 @@ function NewTreeHandler() {
 		this.root = NewTree(board);
 		this.node = this.root;
 		this.tree_version++;
-		this.draw();
+		this.draw_from_scratch();
 		return true;
 	};
 
@@ -43,14 +50,14 @@ function NewTreeHandler() {
 		this.root = root;
 		this.node = this.root;
 		this.tree_version++;
-		this.draw();
+		this.draw_from_scratch();
 		return true;
 	};
 
 	handler.set_node = function(node) {									// node must be in the same tree, or this does nothing
 		if (node.get_root() === this.root && node !== this.node) {
 			this.node = node;
-			this.draw();
+			this.draw_from_scratch();
 			return true;
 		}
 		return false;
@@ -59,7 +66,7 @@ function NewTreeHandler() {
 	handler.prev = function() {
 		if (this.node.parent) {
 			this.node = this.node.parent;
-			this.draw();
+			this.draw_from_scratch();
 			return true;
 		}
 		return false;
@@ -68,7 +75,7 @@ function NewTreeHandler() {
 	handler.next = function() {
 		if (this.node.children.length > 0) {
 			this.node = this.node.children[0];
-			this.draw();
+			this.draw_from_scratch();
 			return true;
 		}
 		return false;
@@ -77,7 +84,7 @@ function NewTreeHandler() {
 	handler.goto_root = function() {
 		if (this.node !== this.root) {
 			this.node = this.root;
-			this.draw();
+			this.draw_from_scratch();
 			return true;
 		}
 		return false;
@@ -87,7 +94,7 @@ function NewTreeHandler() {
 		let end = this.node.get_end();
 		if (this.node !== end) {
 			this.node = end;
-			this.draw();
+			this.draw_from_scratch();
 			return true;
 		}
 		return false;
@@ -112,7 +119,7 @@ function NewTreeHandler() {
 
 		if (this.node !== node) {
 			this.node = node;
-			this.draw();
+			this.draw_from_scratch();
 			return true;
 		}
 		return false;
@@ -129,7 +136,7 @@ function NewTreeHandler() {
 		this.node.detach();
 		this.node = parent;
 		this.tree_version++;
-		this.draw();
+		this.draw_from_scratch();
 		return true;
 	};
 
@@ -160,7 +167,7 @@ function NewTreeHandler() {
 		this.node = node;
 		this.tree_version++;
 		if (!suppress_draw) {
-			this.draw();					// Could potentially call something else here.
+			this.draw_from_scratch();					// Could potentially call something else here.
 		}
 		return true;
 	};
@@ -176,7 +183,7 @@ function NewTreeHandler() {
 		}
 
 		this.tree_version++;				// Redundant, but future bug-proof
-		this.draw();
+		this.draw_from_scratch();
 		return true;
 	};
 
@@ -204,7 +211,7 @@ function NewTreeHandler() {
 
 		if (changed) {
 			this.tree_version++;
-			this.draw();
+			this.draw_from_scratch();
 		}
 
 		return false;						// this.node never changes here. Caller takes no action.
@@ -225,7 +232,7 @@ function NewTreeHandler() {
 
 		if (changed) {
 			this.tree_version++;
-			this.draw();
+			this.draw_from_scratch();
 		}
 
 		return false;						// this.node never changes here. Caller takes no action.
@@ -238,7 +245,7 @@ function NewTreeHandler() {
 				child.detach();
 			}
 			this.tree_version++;
-			this.draw();
+			this.draw_from_scratch();
 		}
 
 		return false;						// this.node never changes here. Caller takes no action.
@@ -259,7 +266,7 @@ function NewTreeHandler() {
 
 		if (changed) {
 			this.tree_version++;
-			this.draw();
+			this.draw_from_scratch();
 		}
 
 		return false;						// this.node never changes here. Caller takes no action.
@@ -278,7 +285,7 @@ function NewTreeHandler() {
 		}
 
 		this.tree_version++;
-		this.draw();
+		this.draw_from_scratch();
 		return false;						// this.node never changes here. Caller takes no action.
 	};
 
@@ -317,18 +324,7 @@ function NewTreeHandler() {
 
 	// -------------------------------------------------------------------------------------------------------------
 
-	handler.draw = function() {
-
-		let end = this.node.get_end();
-
-		if (end === this.line_end && this.connections && this.connections_version === this.tree_version) {
-			this.draw_lazy();
-		} else {
-			this.draw_hard();
-		}
-	};
-
-	handler.draw_hard = function() {
+	handler.draw_from_scratch = function() {
 
 		draw_hard_count++;
 
@@ -412,46 +408,6 @@ function NewTreeHandler() {
 		while(foo) {
 			delete foo.current_line;
 			foo = foo.parent;
-		}
-
-		fix_scrollbar_position();
-	};
-
-	handler.draw_lazy = function() {
-
-		// The tree hasn't changed, nor has the end node of the displayed line. Therefore very little needs
-		// to be done, except the highlight class needs to be applied to a different element. One thing this
-		// fails to do is update stats drawn in the movelist.
-
-		draw_lazy_count++;
-
-		if (!this.connections) {
-			return;
-		}
-
-		let node = this.node;
-
-		let span = get_movelist_highlight();
-		let highlight_class = span ? span.className : "movelist_highlight_blue";	// If nothing was highlighted, old position was root.
-
-		if (span) {
-			span.className = "white";		// This is always correct, it's never gray.
-		}
-
-		// Find the n of the new highlight...
-
-		let n = null;
-
-		for (let i = 0; i < this.connections.length; i++) {
-			if (this.connections.nodes[i] === node) {
-				n = i;
-				break;
-			}
-		}
-
-		if (typeof n === "number") {
-			let span = document.getElementById(`movelist_${n}`);
-			span.className = highlight_class;
 		}
 
 		fix_scrollbar_position();
