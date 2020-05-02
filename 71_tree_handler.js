@@ -20,7 +20,6 @@ function NewTreeHandler() {
 
 	handler.root = NewTree();
 	handler.node = handler.root;
-	handler.highlighted = handler.root;
 	handler.tree_version = 0;				// Must increment every time the tree structure changes.
 
 	// Return values of the methods are whether this.node changed -
@@ -134,11 +133,13 @@ function NewTreeHandler() {
 		return true;
 	};
 
-	handler.make_move = function(s, force_new_node, suppress_draw) {
+	handler.make_move = function(s, force_new_node) {
 
 		// s must be exactly a legal move, including having promotion char iff needed (e.g. e2e1q)
+		// We don't call the node version of make_move() because we need to know if the node is new.
 
 		let node = null;
+		let creation = false;
 
 		if (!force_new_node) {
 			for (let child of this.node.children) {
@@ -152,11 +153,14 @@ function NewTreeHandler() {
 		if (!node) {
 			node = NewNode(this.node, s);
 			this.node.children.push(node);
+			creation = true;
 		}
 
 		this.node = node;
 		this.tree_version++;
-		if (!suppress_draw) {
+		if (creation) {
+			this.dom_insert_node(this.node);
+		} else {
 			this.dom_from_scratch();		// Could potentially call something else here.
 		}
 		return true;
@@ -168,18 +172,14 @@ function NewTreeHandler() {
 			return false;
 		}
 
-		if (moves.length === 1) {
-			this.make_move(moves[0]);
-			return true;
-		}
+		let node = this.node;
 
 		for (let s of moves) {
-			this.make_move(s, false, true);
+			node = node.make_move(s);		// Calling the node's make_move() method, not handler's
 		}
 
-		this.tree_version++;				// Redundant, but future bug-proof
-		this.dom_from_scratch();
-		return true;
+		this.tree_version++;
+		this.set_node(node);
 	};
 
 	// -------------------------------------------------------------------------------------------------------------
@@ -347,7 +347,6 @@ function NewTreeHandler() {
 				} else {
 					classes.push("movelist_highlight_yellow");
 				}
-				this.highlighted = node;
 			}
 
 			if (node.parent && node.parent.children[0] !== node) {
@@ -395,51 +394,53 @@ function NewTreeHandler() {
 
 	handler.dom_insert_node = function(node) {
 
-		// Note that an inserted node is guaranteed to have no children.
-		// At least, if it's inserted the moment it's created.
+		if (node.parent.children[0] === node && node === this.node) {
+			this.dom_insert_node_simple(node)
+		} else {
+			this.dom_from_scratch();
+			return;
+		}
+	};
+
+	handler.dom_insert_node_simple = function(node) {		// Inserting node (which is this.node) right after parent as its only child.
+
+		if (node !== this.node) {
+			throw "dom_insert_node_simple() - node was not this.node";
+		}
+
+		// Fix parent first...
+
+		let parent_span = document.getElementById(`node_${node.parent.id}`);
+
+		if (parent_span) {
+			parent_span.classList.remove("movelist_highlight_blue");
+			parent_span.classList.remove("movelist_highlight_yellow");
+			parent_span.classList.remove("var_end");
+			parent_span.classList.add("not_end");
+		}
+
+		// Now do the new element...
 
 		let classes = [];
 
-		if (node.is_main_line()) {
-			classes.push("movelist_highlight_blue");
-		} else {
-			classes.push("movelist_highlight_yellow");
-		}
+		classes.push(node.is_main_line() ? "movelist_highlight_blue" : "movelist_highlight_yellow");
 
-		if (node.parent && node.parent.children[0] !== node) {
-			classes.push("var_start");
-		}
-
-		if (node.children.length === 0 && !node.is_main_line()) {
+		if (node.children.length === 0 && !node.is_main_line()) {		// First half of the test is redundant.
 			classes.push("var_end");
 		} else {
 			classes.push("not_end");
 		}
 
-		// TODO - the parent nodes's DOM element should have var_end removed and
-		// not_end added, I guess.
-
-		if (node.current_line) {
-			classes.push("white");
-		} else {
-			classes.push("gray");
-		}
+		classes.push("white");
 
 		let class_text = classes.join(" ");
 		let span_html = `<span class="${class_text}" id="node_${node.id}">${node.token()}</span>`
 
-		// TODO - find the correct DOM element to place this after.
-
-
-		// If node === this.node, it will need to be highlighted.
-		//
-		// We may want our handler object to have a .highlighted property which is
-		// updated at the moment the highlight is set, to make life easy. It will
-		// always end up being this.node, but for some short time it won't be.
-	};
-
-	handler.dom_change_highlight = function(node) {
-		// This will require some thought.
+		if (node.parent === this.root) {
+			movelist.insertAdjacentHTML("afterbegin", span_html);
+		} else {
+			parent_span.insertAdjacentHTML("afterend", span_html);
+		}
 	};
 
 	return handler;
