@@ -492,7 +492,7 @@ function menu_build() {
 					type: "separator"
 				},
 				{
-					label: "Evaluate whole line",
+					label: "Fast whole line analysis",
 					click: () => {
 						win.webContents.send("call", {
 							fn: "start_autoplay",
@@ -1389,7 +1389,7 @@ function menu_build() {
 					type: "separator"
 				},
 				{
-					label: "Node limit",
+					label: "Node limit - normal",
 					submenu: [
 						{
 							label: "Unlimited",
@@ -1397,7 +1397,7 @@ function menu_build() {
 							type: "checkbox",
 							checked: typeof config.search_nodes !== "number",
 							click: () => {
-								set_checks("Engine", "Node limit", "Unlimited");
+								set_checks("Engine", "Node limit - normal", "Unlimited");
 								win.webContents.send("call", {
 									fn: "set_node_limit",
 									args: [null]
@@ -1412,7 +1412,7 @@ function menu_build() {
 							type: "checkbox",
 							checked: config.search_nodes === 256 * million,
 							click: () => {
-								set_checks("Engine", "Node limit", "256,000,000");
+								set_checks("Engine", "Node limit - normal", "256,000,000");
 								win.webContents.send("call", {
 									fn: "set_node_limit",
 									args: [256 * million]
@@ -1424,7 +1424,7 @@ function menu_build() {
 							type: "checkbox",
 							checked: config.search_nodes === 64 * million,
 							click: () => {
-								set_checks("Engine", "Node limit", "64,000,000");
+								set_checks("Engine", "Node limit - normal", "64,000,000");
 								win.webContents.send("call", {
 									fn: "set_node_limit",
 									args: [64 * million]
@@ -1436,7 +1436,7 @@ function menu_build() {
 							type: "checkbox",
 							checked: config.search_nodes === 16 * million,
 							click: () => {
-								set_checks("Engine", "Node limit", "16,000,000");
+								set_checks("Engine", "Node limit - normal", "16,000,000");
 								win.webContents.send("call", {
 									fn: "set_node_limit",
 									args: [16 * million]
@@ -1448,7 +1448,7 @@ function menu_build() {
 							type: "checkbox",
 							checked: config.search_nodes === 4 * million,
 							click: () => {
-								set_checks("Engine", "Node limit", "4,000,000");
+								set_checks("Engine", "Node limit - normal", "4,000,000");
 								win.webContents.send("call", {
 									fn: "set_node_limit",
 									args: [4 * million]
@@ -1460,7 +1460,7 @@ function menu_build() {
 							type: "checkbox",
 							checked: config.search_nodes === 1 * million,
 							click: () => {
-								set_checks("Engine", "Node limit", "1,000,000");
+								set_checks("Engine", "Node limit - normal", "1,000,000");
 								win.webContents.send("call", {
 									fn: "set_node_limit",
 									args: [1 * million]
@@ -1475,7 +1475,7 @@ function menu_build() {
 							type: "checkbox",
 							checked: config.search_nodes === 256000,
 							click: () => {
-								set_checks("Engine", "Node limit", "256,000");
+								set_checks("Engine", "Node limit - normal", "256,000");
 								win.webContents.send("call", {
 									fn: "set_node_limit",
 									args: [256000]
@@ -1487,7 +1487,7 @@ function menu_build() {
 							type: "checkbox",
 							checked: config.search_nodes === 64000,
 							click: () => {
-								set_checks("Engine", "Node limit", "64,000");
+								set_checks("Engine", "Node limit - normal", "64,000");
 								win.webContents.send("call", {
 									fn: "set_node_limit",
 									args: [64000]
@@ -1499,7 +1499,7 @@ function menu_build() {
 							type: "checkbox",
 							checked: config.search_nodes === 16000,
 							click: () => {
-								set_checks("Engine", "Node limit", "16,000");
+								set_checks("Engine", "Node limit - normal", "16,000");
 								win.webContents.send("call", {
 									fn: "set_node_limit",
 									args: [16000]
@@ -1511,7 +1511,7 @@ function menu_build() {
 							type: "checkbox",
 							checked: config.search_nodes === 4000,
 							click: () => {
-								set_checks("Engine", "Node limit", "4,000");
+								set_checks("Engine", "Node limit - normal", "4,000");
 								win.webContents.send("call", {
 									fn: "set_node_limit",
 									args: [4000]
@@ -1523,7 +1523,7 @@ function menu_build() {
 							type: "checkbox",
 							checked: config.search_nodes === 1000,
 							click: () => {
-								set_checks("Engine", "Node limit", "1,000");
+								set_checks("Engine", "Node limit - normal", "1,000");
 								win.webContents.send("call", {
 									fn: "set_node_limit",
 									args: [1000]
@@ -1538,7 +1538,7 @@ function menu_build() {
 							type: "checkbox",
 							checked: config.search_nodes === 256,
 							click: () => {
-								set_checks("Engine", "Node limit", "256");
+								set_checks("Engine", "Node limit - normal", "256");
 								win.webContents.send("call", {
 									fn: "set_node_limit",
 									args: [256]
@@ -1550,7 +1550,7 @@ function menu_build() {
 							type: "checkbox",
 							checked: config.search_nodes === 64,
 							click: () => {
-								set_checks("Engine", "Node limit", "64");
+								set_checks("Engine", "Node limit - normal", "64");
 								win.webContents.send("call", {
 									fn: "set_node_limit",
 									args: [64]
@@ -1562,7 +1562,7 @@ function menu_build() {
 							type: "checkbox",
 							checked: config.search_nodes === 16,
 							click: () => {
-								set_checks("Engine", "Node limit", "16");
+								set_checks("Engine", "Node limit - normal", "16");
 								win.webContents.send("call", {
 									fn: "set_node_limit",
 									args: [16]
@@ -1574,7 +1574,7 @@ function menu_build() {
 							type: "checkbox",
 							checked: config.search_nodes === 4,
 							click: () => {
-								set_checks("Engine", "Node limit", "4");
+								set_checks("Engine", "Node limit - normal", "4");
 								win.webContents.send("call", {
 									fn: "set_node_limit",
 									args: [4]
@@ -1586,7 +1586,7 @@ function menu_build() {
 							type: "checkbox",
 							checked: config.search_nodes === 1,
 							click: () => {
-								set_checks("Engine", "Node limit", "1");
+								set_checks("Engine", "Node limit - normal", "1");
 								win.webContents.send("call", {
 									fn: "set_node_limit",
 									args: [1]
@@ -1594,6 +1594,200 @@ function menu_build() {
 							}
 						},
 					]
+				},
+				{
+					label: "Node limit - play / fast analysis",
+					submenu: [
+						{
+							label: "256,000,000",
+							type: "checkbox",
+							checked: config.search_nodes_special === 256 * million,
+							click: () => {
+								set_checks("Engine", "Node limit - play / fast analysis", "256,000,000");
+								win.webContents.send("call", {
+									fn: "set_node_limit_special",
+									args: [256 * million]
+								});
+							}
+						},
+						{
+							label: "64,000,000",
+							type: "checkbox",
+							checked: config.search_nodes_special === 64 * million,
+							click: () => {
+								set_checks("Engine", "Node limit - play / fast analysis", "64,000,000");
+								win.webContents.send("call", {
+									fn: "set_node_limit_special",
+									args: [64 * million]
+								});
+							}
+						},
+						{
+							label: "16,000,000",
+							type: "checkbox",
+							checked: config.search_nodes_special === 16 * million,
+							click: () => {
+								set_checks("Engine", "Node limit - play / fast analysis", "16,000,000");
+								win.webContents.send("call", {
+									fn: "set_node_limit_special",
+									args: [16 * million]
+								});
+							}
+						},
+						{
+							label: "4,000,000",
+							type: "checkbox",
+							checked: config.search_nodes_special === 4 * million,
+							click: () => {
+								set_checks("Engine", "Node limit - play / fast analysis", "4,000,000");
+								win.webContents.send("call", {
+									fn: "set_node_limit_special",
+									args: [4 * million]
+								});
+							}
+						},
+						{
+							label: "1,000,000",
+							type: "checkbox",
+							checked: config.search_nodes_special === 1 * million,
+							click: () => {
+								set_checks("Engine", "Node limit - play / fast analysis", "1,000,000");
+								win.webContents.send("call", {
+									fn: "set_node_limit_special",
+									args: [1 * million]
+								});
+							}
+						},
+						{
+							type: "separator"
+						},
+						{
+							label: "256,000",
+							type: "checkbox",
+							checked: config.search_nodes_special === 256000,
+							click: () => {
+								set_checks("Engine", "Node limit - play / fast analysis", "256,000");
+								win.webContents.send("call", {
+									fn: "set_node_limit_special",
+									args: [256000]
+								});
+							}
+						},
+						{
+							label: "64,000",
+							type: "checkbox",
+							checked: config.search_nodes_special === 64000,
+							click: () => {
+								set_checks("Engine", "Node limit - play / fast analysis", "64,000");
+								win.webContents.send("call", {
+									fn: "set_node_limit_special",
+									args: [64000]
+								});
+							}
+						},
+						{
+							label: "16,000",
+							type: "checkbox",
+							checked: config.search_nodes_special === 16000,
+							click: () => {
+								set_checks("Engine", "Node limit - play / fast analysis", "16,000");
+								win.webContents.send("call", {
+									fn: "set_node_limit_special",
+									args: [16000]
+								});
+							}
+						},
+						{
+							label: "4,000",
+							type: "checkbox",
+							checked: config.search_nodes_special === 4000,
+							click: () => {
+								set_checks("Engine", "Node limit - play / fast analysis", "4,000");
+								win.webContents.send("call", {
+									fn: "set_node_limit_special",
+									args: [4000]
+								});
+							}
+						},
+						{
+							label: "1,000",
+							type: "checkbox",
+							checked: config.search_nodes_special === 1000,
+							click: () => {
+								set_checks("Engine", "Node limit - play / fast analysis", "1,000");
+								win.webContents.send("call", {
+									fn: "set_node_limit_special",
+									args: [1000]
+								});
+							}
+						},
+						{
+							type: "separator"
+						},
+						{
+							label: "256",
+							type: "checkbox",
+							checked: config.search_nodes_special === 256,
+							click: () => {
+								set_checks("Engine", "Node limit - play / fast analysis", "256");
+								win.webContents.send("call", {
+									fn: "set_node_limit_special",
+									args: [256]
+								});
+							}
+						},
+						{
+							label: "64",
+							type: "checkbox",
+							checked: config.search_nodes_special === 64,
+							click: () => {
+								set_checks("Engine", "Node limit - play / fast analysis", "64");
+								win.webContents.send("call", {
+									fn: "set_node_limit_special",
+									args: [64]
+								});
+							}
+						},
+						{
+							label: "16",
+							type: "checkbox",
+							checked: config.search_nodes_special === 16,
+							click: () => {
+								set_checks("Engine", "Node limit - play / fast analysis", "16");
+								win.webContents.send("call", {
+									fn: "set_node_limit_special",
+									args: [16]
+								});
+							}
+						},
+						{
+							label: "4",
+							type: "checkbox",
+							checked: config.search_nodes_special === 4,
+							click: () => {
+								set_checks("Engine", "Node limit - play / fast analysis", "4");
+								win.webContents.send("call", {
+									fn: "set_node_limit_special",
+									args: [4]
+								});
+							}
+						},
+						{
+							label: "1",
+							type: "checkbox",
+							checked: config.search_nodes_special === 1,
+							click: () => {
+								set_checks("Engine", "Node limit - play / fast analysis", "1");
+								win.webContents.send("call", {
+									fn: "set_node_limit_special",
+									args: [1]
+								});
+							}
+						},
+					]
+				},
+				{
+					type: "separator"
 				},
 				{
 					label: "Threads",
