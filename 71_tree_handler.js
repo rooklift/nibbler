@@ -40,51 +40,78 @@ function NewTreeHandler() {
 	};
 
 	handler.set_node = function(node) {									// node must be in the same tree, or this does nothing
+
 		if (node.get_root() !== this.root || node === this.node) {
 			return false;
 		}
-		this.node = node;
-		this.dom_from_scratch();
-		return true;
-	};
 
-	handler.prev = function() {
-		if (!this.node.parent) {
-			return false;
-		}
 		let original_node = this.node;
-		this.node = this.node.parent;
+		this.node = node;
+
 		if (original_node.is_same_line(this.node)) {
 			this.dom_easy_highlight_change();
 		} else {
 			this.dom_from_scratch();
 		}
+
+		return true;
+	};
+
+	handler.prev = function() {
+
+		if (!this.node.parent) {
+			return false;
+		}
+
+		let original_node = this.node;
+		this.node = this.node.parent;
+
+		if (original_node.is_same_line(this.node)) {
+			this.dom_easy_highlight_change();
+		} else {
+			this.dom_from_scratch();
+		}
+
 		return true;
 	};
 
 	handler.next = function() {
+
 		if (this.node.children.length === 0) {
 			return false;
 		}
+
 		this.node = this.node.children[0];
 		this.dom_easy_highlight_change();
 		return true;
 	};
 
 	handler.goto_root = function() {
+
 		if (this.node === this.root) {
 			return false;
 		}
+
+		let original_node = this.node;
 		this.node = this.root;
-		this.dom_from_scratch();
+
+		if (original_node.is_main_line()) {
+			this.dom_easy_highlight_change();		// OK because no gray / white changes needed.
+		} else {
+			this.dom_from_scratch();
+		}
+
 		return true;
 	};
 
 	handler.goto_end = function() {
+
 		let end = this.node.get_end();
+
 		if (this.node === end) {
 			return false;
 		}
+
 		this.node = end;
 		this.dom_from_scratch();
 		return true;
