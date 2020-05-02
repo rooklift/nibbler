@@ -493,7 +493,7 @@ function menu_build() {
 				},
 				{
 					label: "Auto-evaluate whole line",
-					accelerator: "F11",
+					accelerator: "F12",
 					click: () => {
 						win.webContents.send("call", {
 							fn: "start_autoplay",
@@ -2057,7 +2057,7 @@ function menu_build() {
 				},
 				{
 					label: "Start self-play",
-					accelerator: "F12",
+					accelerator: "F11",
 					click: () => {
 						win.webContents.send("call", "start_autoplay");
 					}
