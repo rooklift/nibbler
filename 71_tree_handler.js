@@ -48,7 +48,11 @@ let tree_manipulation_props = {
 		return true;
 	},
 
-	set_node: function(node) {									// node must be in the same tree, or this does nothing
+	set_node: function(node) {
+
+		// The node must be in the same tree, or this does nothing
+		// Note also that we may call dom_easy_highlight_change()
+		// so don't use this if the tree structure has changed.
 
 		if (node.get_root() !== this.root || node === this.node) {
 			return false;
@@ -189,17 +193,19 @@ let tree_manipulation_props = {
 		}
 
 		let next_node_id__initial = next_node_id;
-		let node = this.node;
 
+		let node = this.node;
 		for (let s of moves) {
 			node = node.make_move(s);		// Calling the node's make_move() method, not handler's
 		}
+		this.node = node;
 
 		if (next_node_id !== next_node_id__initial) {		// NewNode() was called
 			this.tree_version++;
 		}
 
-		return this.set_node(node);
+		this.dom_from_scratch();
+		return true;
 	},
 
 	// -------------------------------------------------------------------------------------------------------------
