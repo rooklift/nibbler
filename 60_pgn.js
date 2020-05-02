@@ -160,7 +160,7 @@ function LoadPGNRecord(o) {				// Can throw, either by itself, or by allowing a 
 		startpos = LoadFEN("rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1");
 	}
 
-	let root = NewTree(startpos);
+	let root = NewRoot(startpos);
 	let node = root;
 
 	let inside_brace = false;			// {} are comments. Braces do not nest.

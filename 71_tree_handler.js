@@ -6,22 +6,17 @@
 // to care about redrawing. Ideally, this object should be able to make good decisions about how
 // to best redraw.
 //
-// WIP / intentions / desires:
+// Intentions / desires / hopes / dreams:
 //
-// - All nodes findable in the DOM by unique span id corresponding to their id.
 // - When adding a node, insert its text straight into the DOM.
 // - When switching node, simply set the classes of all relevant nodes.
-// - Use CSS like ::before and ::after
-//
-// - https://developer.mozilla.org/en-US/docs/Web/API/Element/insertAdjacentHTML
-// - https://www.designcise.com/web/tutorial/how-to-add-space-before-or-after-an-element-using-css-pseudo-elements
 
 function NewTreeHandler() {
 
 	let handler = Object.create(null);
 
 	handler.tree_version = 0;		// Increment every time the tree structure changes.
-	handler.root = NewTree();
+	handler.root = NewRoot();
 	handler.node = handler.root;
 	
 	// Where relevant, return values of the methods are whether this.node changed -
@@ -37,7 +32,7 @@ function NewTreeHandler() {
 	};
 
 	handler.new_root_from_board = function(board) {
-		let root = NewTree(board);
+		let root = NewRoot(board);
 		this.replace_tree(root);
 		return true;
 	};
