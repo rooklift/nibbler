@@ -174,7 +174,6 @@ function NewRenderer() {
 	};
 
 	renderer.start_autoplay = function(type = 1) {			// Leela evaluating both sides, and moving or going forwards in the PGN.
-		this.__halt();
 		config.autoplay = type;
 		this.set_versus("wb");
 	};
