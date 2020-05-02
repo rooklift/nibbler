@@ -3,12 +3,12 @@
 let easy_draws = 0;
 let hard_draws = 0;
 
-function AttachTreeDrawMethods(handler) {
+let tree_draw_props = {
 
-	handler.ordered_nodes_cache = [];
-	handler.ordered_nodes_cache_version = -1;
+	ordered_nodes_cache: null,
+	ordered_nodes_cache_version: -1,
 
-	handler.dom_easy_highlight_change = function() {
+	dom_easy_highlight_change: function() {
 
 		// When the previously highlighted node and the newly highlighted node are on the same line,
 		// with the same end-of-line, meaning no gray / white changes are needed.
@@ -36,9 +36,9 @@ function AttachTreeDrawMethods(handler) {
 		}
 
 		fix_scrollbar_position();
-	};
+	},
 
-	handler.dom_from_scratch = function() {
+	dom_from_scratch: function() {
 
 		hard_draws++;
 
@@ -127,9 +127,9 @@ function AttachTreeDrawMethods(handler) {
 		// And finally...
 
 		fix_scrollbar_position();
-	};
+	},
 
-	handler.dom_redraw_node = function(node) {
+	dom_redraw_node: function(node) {
 
 		let element = document.getElementById(`node_${node.id}`);
 
@@ -150,10 +150,8 @@ function AttachTreeDrawMethods(handler) {
 		}
 
 		element.innerHTML = text;
-	};
-
-	return handler;
-}
+	}
+};
 
 // Helpers...
 

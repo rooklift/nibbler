@@ -14,32 +14,39 @@
 // One thing I've noticed, in some cases Electron 5 seems way faster than 8.
 
 function NewTreeHandler() {
-
 	let handler = Object.create(null);
-
-	handler.tree_version = 0;		// Increment every time the tree structure changes.
+	Object.assign(handler, tree_manipulation_props);
+	Object.assign(handler, tree_draw_props);
 	handler.root = NewRoot();
 	handler.node = handler.root;
+	return handler;
+}
+
+let tree_manipulation_props = {
+
+	tree_version: 0,		// Increment every time the tree structure changes.
+	root: null,
+	node: null,
 	
 	// Where relevant, return values of the methods are whether this.node changed -
 	// i.e. whether the renderer has to call position_changed()
 
-	handler.replace_tree = function(root) {
+	replace_tree: function(root) {
 		DestroyTree(this.root);
 		this.root = root;
 		this.node = this.root;
 		this.tree_version++;
 		this.dom_from_scratch();
 		return true;
-	};
+	},
 
-	handler.new_root_from_board = function(board) {
+	new_root_from_board: function(board) {
 		let root = NewRoot(board);
 		this.replace_tree(root);
 		return true;
-	};
+	},
 
-	handler.set_node = function(node) {									// node must be in the same tree, or this does nothing
+	set_node: function(node) {									// node must be in the same tree, or this does nothing
 
 		if (node.get_root() !== this.root || node === this.node) {
 			return false;
@@ -55,9 +62,9 @@ function NewTreeHandler() {
 		}
 
 		return true;
-	};
+	},
 
-	handler.prev = function() {
+	prev: function() {
 
 		if (!this.node.parent) {
 			return false;
@@ -73,9 +80,9 @@ function NewTreeHandler() {
 		}
 
 		return true;
-	};
+	},
 
-	handler.next = function() {
+	next: function() {
 
 		if (this.node.children.length === 0) {
 			return false;
@@ -84,9 +91,9 @@ function NewTreeHandler() {
 		this.node = this.node.children[0];
 		this.dom_easy_highlight_change();
 		return true;
-	};
+	},
 
-	handler.goto_root = function() {
+	goto_root: function() {
 
 		if (this.node === this.root) {
 			return false;
@@ -102,9 +109,9 @@ function NewTreeHandler() {
 		}
 
 		return true;
-	};
+	},
 
-	handler.goto_end = function() {
+	goto_end: function() {
 
 		let end = this.node.get_end();
 
@@ -115,9 +122,9 @@ function NewTreeHandler() {
 		this.node = end;
 		this.dom_easy_highlight_change();
 		return true;
-	};
+	},
 
-	handler.return_to_main_line = function() {
+	return_to_main_line: function() {
 
 		let main_line = this.root.future_history();
 		let history = this.node.history();
@@ -141,9 +148,9 @@ function NewTreeHandler() {
 		this.node = node;
 		this.dom_from_scratch();
 		return true;
-	};
+	},
 
-	handler.delete_node = function() {
+	delete_node: function() {
 
 		if (!this.node.parent) {
 			this.delete_children();
@@ -156,9 +163,9 @@ function NewTreeHandler() {
 		this.tree_version++;
 		this.dom_from_scratch();
 		return true;
-	};
+	},
 
-	handler.make_move = function(s) {
+	make_move: function(s) {
 
 		// s must be exactly a legal move, including having promotion char iff needed (e.g. e2e1q)
 
@@ -171,9 +178,9 @@ function NewTreeHandler() {
 
 		this.dom_from_scratch();			// Could potentially call something else here.
 		return true;
-	};
+	},
 
-	handler.make_move_sequence = function(moves) {
+	make_move_sequence: function(moves) {
 
 		if (Array.isArray(moves) === false || moves.length === 0) {
 			return false;
@@ -191,12 +198,12 @@ function NewTreeHandler() {
 		}
 
 		return this.set_node(node);
-	};
+	},
 
 	// -------------------------------------------------------------------------------------------------------------
 	// The following methods don't ever change this.node - so the caller has no action to take. No return value.
 
-	handler.promote_to_main_line = function() {
+	promote_to_main_line: function() {
 
 		let node = this.node;
 		let changed = false;
@@ -219,9 +226,9 @@ function NewTreeHandler() {
 			this.tree_version++;
 			this.dom_from_scratch();
 		}
-	};
+	},
 
-	handler.delete_other_lines = function() {
+	delete_other_lines: function() {
 
 		let changed = this.promote_to_main_line();
 		let node = this.root;
@@ -238,9 +245,9 @@ function NewTreeHandler() {
 			this.tree_version++;
 			this.dom_from_scratch();
 		}
-	};
+	},
 
-	handler.delete_children = function() {
+	delete_children: function() {
 
 		if (this.node.children.length > 0) {
 			for (let child of this.node.children) {
@@ -249,9 +256,9 @@ function NewTreeHandler() {
 			this.tree_version++;
 			this.dom_from_scratch();
 		}
-	};
+	},
 
-	handler.delete_siblings = function() {
+	delete_siblings: function() {
 
 		let changed = false;
 
@@ -268,9 +275,9 @@ function NewTreeHandler() {
 			this.tree_version++;
 			this.dom_from_scratch();
 		}
-	};
+	},
 
-	handler.add_move_sequence = function(moves) {
+	add_move_sequence: function(moves) {
 
 		if (Array.isArray(moves) === false || moves.length === 0) {
 			return;
@@ -284,11 +291,11 @@ function NewTreeHandler() {
 
 		this.tree_version++;
 		this.dom_from_scratch();
-	};
+	},
 
 	// -------------------------------------------------------------------------------------------------------------
 
-	handler.get_node_from_move = function(s) {
+	get_node_from_move: function(s) {
 
 		for (let child of this.node.children) {
 			if (child.move === s) {
@@ -297,9 +304,9 @@ function NewTreeHandler() {
 		}
 
 		throw `get_node_from_move("${s}") - not found`;
-	};
+	},
 
-	handler.handle_click = function(event) {
+	handle_click: function(event) {
 
 		let n = EventPathN(event, "node_");
 		if (typeof n !== "number") {
@@ -313,11 +320,6 @@ function NewTreeHandler() {
 		}
 
 		return this.set_node(node);
-	};
-
-	// -------------------------------------------------------------------------------------------------------------
-
-	AttachTreeDrawMethods(handler);			// Is there a better way? I just want to split code between files.
-	return handler;
-}
+	}
+};
 
