@@ -136,7 +136,19 @@ function AttachTreeDrawMethods(handler) {
 			return;
 		}
 
-		element.innerHTML = node.token();
+		let text = node.token();
+
+		if (node.parent && node.parent.children[0] !== node) {
+			text = "(" + text;
+		}
+
+		if (node.children.length === 0 && !node.is_main_line()) {
+			text = text + ") ";
+		} else {
+			text = text + " ";
+		}
+
+		element.innerHTML = text;
 	};
 
 	return handler;
