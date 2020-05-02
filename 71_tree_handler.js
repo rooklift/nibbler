@@ -113,7 +113,7 @@ function NewTreeHandler() {
 		}
 
 		this.node = end;
-		this.dom_from_scratch();
+		this.dom_easy_highlight_change();
 		return true;
 	};
 
