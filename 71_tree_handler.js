@@ -232,7 +232,9 @@ let tree_manipulation_props = {
 
 	delete_other_lines: function() {
 
-		let changed = this.promote_to_main_line();
+		this.promote_to_main_line();
+
+		let changed = false;
 		let node = this.root;
 
 		while (node.children.length > 0) {
@@ -245,7 +247,7 @@ let tree_manipulation_props = {
 
 		if (changed) {
 			this.tree_version++;
-			this.dom_from_scratch();
+			this.dom_from_scratch();		// This may be the 2nd draw since promote_to_main_line() may have drawn. Bah.
 		}
 	},
 
