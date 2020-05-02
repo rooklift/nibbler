@@ -292,6 +292,8 @@ function NewTreeHandler() {
 
 	handler.dom_easy_highlight_change = function() {
 
+		// When the previously highlighted node and the newly highlighted node are on the same line.
+
 		easy_draws++
 
 		let old_highlight = get_movelist_highlight();
@@ -363,9 +365,7 @@ function NewTreeHandler() {
 				classes.push("not_end");
 			}
 
-			if (node.current_line) {
-				classes.push("white");
-			} else {
+			if (!node.current_line) {
 				classes.push("gray");
 			}
 
