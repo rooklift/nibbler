@@ -588,10 +588,11 @@ function NewRenderer() {
 
 		} else if (s.startsWith("bestmove")) {
 
-			// When in versus mode, use "bestmove" to detect that analysis is finished. Note about synchronisation:
-			// Any "bestmove" will be ignored by engine.js unless it's the final one due. This means that, in situations
-			// where we say "stop" then immediately say "go", the bestmove we get from the "stop" will be ignored. This
-			// works well, I think.
+			// When in versus / self-play / auto-eval mode, use "bestmove" to detect that analysis is finished.
+			//
+			// Note about synchronisation: Any "bestmove" will be ignored by engine.js unless it's the final one due.
+			// This means that, in situations where we say "stop" then immediately say "go", the bestmove we get from
+			// the "stop" will be ignored. This works well, I think.
 
 			if (this.leela_position === this.tree.node.board) {				// See notes on leela_position above.
 
