@@ -296,24 +296,24 @@ function NewTreeHandler() {
 
 		easy_draws++
 
-		let old_highlight = get_movelist_highlight();
+		let dom_highlight = get_movelist_highlight();
 		let highlight_class;
 
-		if (old_highlight && old_highlight.classList.contains("movelist_highlight_yellow")) {
+		if (dom_highlight && dom_highlight.classList.contains("movelist_highlight_yellow")) {
 			highlight_class = "movelist_highlight_yellow";
 		} else {
 			highlight_class = "movelist_highlight_blue";
 		}
 
-		if (old_highlight) {
-			old_highlight.classList.remove("movelist_highlight_blue");
-			old_highlight.classList.remove("movelist_highlight_yellow");
+		if (dom_highlight) {
+			dom_highlight.classList.remove("movelist_highlight_blue");
+			dom_highlight.classList.remove("movelist_highlight_yellow");
 		}
 
-		let node_element = document.getElementById(`node_${this.node.id}`);
+		let dom_node = document.getElementById(`node_${this.node.id}`);
 
-		if (node_element) {
-			node_element.classList.add(highlight_class);
+		if (dom_node) {
+			dom_node.classList.add(highlight_class);
 		}
 
 		fix_scrollbar_position();
