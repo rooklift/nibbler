@@ -5,6 +5,8 @@ let hard_draws = 0;
 
 let tree_draw_props = {
 
+	// Since we use Object.assign(), it's bad form to have any deep objects in the props.
+
 	ordered_nodes_cache: null,
 	ordered_nodes_cache_version: -1,
 

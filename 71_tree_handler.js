@@ -24,6 +24,8 @@ function NewTreeHandler() {
 
 let tree_manipulation_props = {
 
+	// Since we use Object.assign(), it's bad form to have any deep objects in the props.
+
 	tree_version: 0,		// Increment every time the tree structure changes.
 	root: null,
 	node: null,
