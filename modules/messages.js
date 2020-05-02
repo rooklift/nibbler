@@ -23,10 +23,6 @@ move correctness. Meanwhile, TempDecayMoves specifies how many moves the \
 temperature effect lasts for.`;
 
 
-exports.versus_without_node_limit =
-`No node limit selected; therefore moves will not be automatically played.`;
-
-
 exports.save_not_enabled =
 `Save is disabled until you read the following warning.
 

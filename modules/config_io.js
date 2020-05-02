@@ -90,6 +90,7 @@ exports.defaults = {
 	"animate_delay_multiplier": 4,
 	
 	"search_nodes": null,
+	"search_nodes_special": 4000,
 
 	"save_enabled": false,
 	"override_piece_directory": null,
