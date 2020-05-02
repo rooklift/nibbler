@@ -1,8 +1,5 @@
 "use strict";
 
-let easy_draws = 0;
-let hard_draws = 0;
-
 let tree_draw_props = {
 
 	// Since we use Object.assign(), it's bad form to have any deep objects in the props.
@@ -14,8 +11,6 @@ let tree_draw_props = {
 
 		// When the previously highlighted node and the newly highlighted node are on the same line,
 		// with the same end-of-line, meaning no gray / white changes are needed.
-
-		easy_draws++
 
 		let dom_highlight = this.get_movelist_highlight();
 		let highlight_class;
@@ -41,8 +36,6 @@ let tree_draw_props = {
 	},
 
 	dom_from_scratch: function() {
-
-		hard_draws++;
 
 		// Some prep-work (we need to undo all this at the end)...
 
