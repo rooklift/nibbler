@@ -125,7 +125,7 @@ let tree_manipulation_props = {
 		// s must be exactly a legal move, including having promotion char iff needed (e.g. e2e1q)
 
 		let next_node_id__initial = next_node_id;
-		this.node = this.node.make_move(s)
+		this.node = this.node.make_move(s);
 
 		if (next_node_id !== next_node_id__initial) {		// NewNode() was called
 			this.tree_version++;
