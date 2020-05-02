@@ -17,7 +17,7 @@ let tree_draw_props = {
 
 		easy_draws++
 
-		let dom_highlight = get_movelist_highlight();
+		let dom_highlight = this.get_movelist_highlight();
 		let highlight_class;
 
 		if (dom_highlight && dom_highlight.classList.contains("movelist_highlight_yellow")) {
@@ -37,7 +37,7 @@ let tree_draw_props = {
 			dom_node.classList.add(highlight_class);
 		}
 
-		fix_scrollbar_position();
+		this.fix_scrollbar_position();
 	},
 
 	dom_from_scratch: function() {
@@ -128,7 +128,7 @@ let tree_draw_props = {
 
 		// And finally...
 
-		fix_scrollbar_position();
+		this.fix_scrollbar_position();
 	},
 
 	dom_redraw_node: function(node) {
@@ -152,35 +152,35 @@ let tree_draw_props = {
 		}
 
 		element.innerHTML = text;
-	}
+	},
+
+	// Helpers...
+
+	get_movelist_highlight: function() {
+		let elements = document.getElementsByClassName("movelist_highlight_blue");
+		if (elements && elements.length > 0) {
+			return elements[0];
+		}
+		elements = document.getElementsByClassName("movelist_highlight_yellow");
+		if (elements && elements.length > 0) {
+			return elements[0];
+		}
+		return null;
+	},
+
+	fix_scrollbar_position: function() {
+		let highlight = this.get_movelist_highlight();
+		if (highlight) {
+			let top = highlight.offsetTop - movelist.offsetTop;
+			if (top < movelist.scrollTop) {
+				movelist.scrollTop = top;
+			}
+			let bottom = top + highlight.offsetHeight;
+			if (bottom > movelist.scrollTop + movelist.offsetHeight) {
+				movelist.scrollTop = bottom - movelist.offsetHeight;
+			}
+		} else {
+			movelist.scrollTop = 0;
+		}
+	},
 };
-
-// Helpers...
-
-function get_movelist_highlight() {
-	let elements = document.getElementsByClassName("movelist_highlight_blue");
-	if (elements && elements.length > 0) {
-		return elements[0];
-	}
-	elements = document.getElementsByClassName("movelist_highlight_yellow");
-	if (elements && elements.length > 0) {
-		return elements[0];
-	}
-	return null;
-}
-
-function fix_scrollbar_position() {
-	let highlight = get_movelist_highlight();
-	if (highlight) {
-		let top = highlight.offsetTop - movelist.offsetTop;
-		if (top < movelist.scrollTop) {
-			movelist.scrollTop = top;
-		}
-		let bottom = top + highlight.offsetHeight;
-		if (bottom > movelist.scrollTop + movelist.offsetHeight) {
-			movelist.scrollTop = bottom - movelist.offsetHeight;
-		}
-	} else {
-		movelist.scrollTop = 0;
-	}
-}

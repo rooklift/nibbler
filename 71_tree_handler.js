@@ -322,6 +322,6 @@ let tree_manipulation_props = {
 		}
 
 		return this.set_node(node);
-	}
+	},
 };
 
