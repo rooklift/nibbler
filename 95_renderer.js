@@ -600,13 +600,14 @@ function NewRenderer() {
 
 					let tokens = s.split(" ");
 
-					let info = this.info_handler.table[tokens[1]];					// Update our cached eval in the tree while we can.
+					let info = this.info_handler.table[tokens[1]];			// Update our cached eval in the tree while we can.
 					if (info) {
 						this.tree.node.update_eval_from_info(info);
 					}
 
 					switch (config.autoplay) {
 
+					case 0:									// Versus mode (if config.autoplay === 0 then we got here via config.versus, above)
 					case 1:									// Actual self-play
 
 						this.move(tokens[1]);
