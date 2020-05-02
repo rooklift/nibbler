@@ -44,10 +44,10 @@ let tree_manipulation_props = {
 
 	set_node: function(node) {
 
-		// The node must be in the same tree, or this does nothing. Note also that we may call
-		// dom_easy_highlight_change() so don't rely on this to draw any nodes that never got drawn.
+		// Note that we may call dom_easy_highlight_change() so don't
+		// rely on this to draw any nodes that never got drawn.
 
-		if (node.get_root() !== this.root || node === this.node) {
+		if (!node || node === this.node) {
 			return false;
 		}
 
@@ -64,63 +64,19 @@ let tree_manipulation_props = {
 	},
 
 	prev: function() {
-
-		if (!this.node.parent) {
-			return false;
-		}
-
-		let original_node = this.node;
-		this.node = this.node.parent;
-
-		if (original_node.is_same_line(this.node)) {
-			this.dom_easy_highlight_change();
-		} else {
-			this.dom_from_scratch();
-		}
-
-		return true;
+		return this.set_node(this.node.parent);				// OK if undefined
 	},
 
 	next: function() {
-
-		if (this.node.children.length === 0) {
-			return false;
-		}
-
-		this.node = this.node.children[0];
-		this.dom_easy_highlight_change();
-		return true;
+		return this.set_node(this.node.children[0]);		// OK if undefined
 	},
 
 	goto_root: function() {
-
-		if (this.node === this.root) {
-			return false;
-		}
-
-		let original_node = this.node;
-		this.node = this.root;
-
-		if (original_node.is_main_line()) {
-			this.dom_easy_highlight_change();		// OK because no gray / white changes needed.
-		} else {
-			this.dom_from_scratch();
-		}
-
-		return true;
+		return this.set_node(this.root);
 	},
 
 	goto_end: function() {
-
-		let end = this.node.get_end();
-
-		if (this.node === end) {
-			return false;
-		}
-
-		this.node = end;
-		this.dom_easy_highlight_change();
-		return true;
+		return this.set_node(this.node.get_end());
 	},
 
 	return_to_main_line: function() {
