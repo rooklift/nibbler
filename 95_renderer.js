@@ -1330,7 +1330,12 @@ function NewRenderer() {
 	};
 
 	renderer.dom_test = function() {
+
 		movelist.insertAdjacentHTML("beforeend", `<span> Hello </span>`);
+
+		// let element = document.createElement("span");
+		// element.innerHTML = " Hello ";
+		// movelist.insertAdjacentElement("beforeend", element);
 	};
 
 	// --------------------------------------------------------------------------------------------
