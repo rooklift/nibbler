@@ -9,7 +9,7 @@ function NewRenderer() {
 	renderer.grapher = NewGrapher();
 	renderer.info_handler = NewInfoHandler();
 
-	renderer.info_handler.clear(renderer.tree.node.board);// Best give it a valid board to start with.
+	renderer.info_handler.clear(renderer.tree.node.board);		// Best give it a valid board to start with.
 
 	// Various state we have to keep track of...
 

@@ -11,6 +11,9 @@
 // - When adding a node, insert its text straight into the DOM.
 // - When switching node, simply set the classes of all relevant nodes.
 
+let easy_draws = 0;
+let hard_draws = 0;
+
 function NewTreeHandler() {
 
 	let handler = Object.create(null);
@@ -48,8 +51,13 @@ function NewTreeHandler() {
 
 	handler.prev = function() {
 		if (this.node.parent) {
+			let original_node = this.node;
 			this.node = this.node.parent;
-			this.dom_from_scratch();
+			if (original_node.is_same_line(this.node)) {
+				this.dom_easy_highlight_change();
+			} else {
+				this.dom_from_scratch();
+			}
 			return true;
 		}
 		return false;
@@ -58,7 +66,7 @@ function NewTreeHandler() {
 	handler.next = function() {
 		if (this.node.children.length > 0) {
 			this.node = this.node.children[0];
-			this.dom_from_scratch();
+			this.dom_easy_highlight_change();
 			return true;
 		}
 		return false;
@@ -282,7 +290,36 @@ function NewTreeHandler() {
 
 	// -------------------------------------------------------------------------------------------------------------
 
+	handler.dom_easy_highlight_change = function() {
+
+		easy_draws++
+
+		let old_highlight = get_movelist_highlight();
+		let highlight_class;
+
+		if (old_highlight && old_highlight.classList.contains("movelist_highlight_yellow")) {
+			highlight_class = "movelist_highlight_yellow";
+		} else {
+			highlight_class = "movelist_highlight_blue";
+		}
+
+		if (old_highlight) {
+			old_highlight.classList.remove("movelist_highlight_blue");
+			old_highlight.classList.remove("movelist_highlight_yellow");
+		}
+
+		let node_element = document.getElementById(`node_${this.node.id}`);
+
+		if (node_element) {
+			node_element.classList.add(highlight_class);
+		}
+
+		fix_scrollbar_position();
+	};
+
 	handler.dom_from_scratch = function() {
+
+		hard_draws++;
 
 		// Some prep-work (we need to undo all this at the end)...
 

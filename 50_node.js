@@ -123,6 +123,16 @@ const node_prototype = {
 		return true;
 	},
 
+	is_same_line: function(other) {
+
+		// Easy case is when one is the parent of the other...
+
+		if (this.parent === other) return other.children[0] === this;
+		if (other.parent === this) return this.children[0] === other;
+
+		return this.get_end() === other.get_end();
+	},
+
 	is_triple_rep: function() {
 
 		let our_board = this.board;
