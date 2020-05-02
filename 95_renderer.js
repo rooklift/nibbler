@@ -618,7 +618,7 @@ function NewRenderer() {
 						if (this.tree.next()) {
 							this.position_changed(false, false);
 						} else {
-							config.autoplay = 0;
+							this.set_versus("");
 						}
 						break;
 
