@@ -251,6 +251,7 @@ function LoadPGNRecord(o) {				// Can throw, either by itself, or by allowing a 
 				let [move, error] = node.get_board().parse_pgn(s);
 
 				if (error !== "") {
+					DestroyTree(root);
 					throw `"${s}" -- ${error}`;
 				}
 
