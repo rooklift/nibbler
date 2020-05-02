@@ -379,6 +379,17 @@ function NewTreeHandler() {
 		fix_scrollbar_position();
 	};
 
+	handler.dom_redraw_node = function(node) {
+
+		let element = document.getElementById(`node_${node.id}`);
+
+		if (!element) {
+			return;
+		}
+
+		element.innerHTML = node.token();
+	};
+
 	return handler;
 }
 
