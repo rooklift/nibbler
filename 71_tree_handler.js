@@ -8,8 +8,8 @@
 //
 // Intentions / desires / hopes / dreams:
 //
-// - When adding a node, insert its text straight into the DOM.
-// - When switching node, simply set the classes of all relevant nodes.
+// - When adding a node, insert its text straight into the DOM (but is that even faster?)
+// - When switching node, simply set the classes of all relevant nodes (but is that even faster?)
 //
 // One thing I've noticed, in some cases Electron 5 seems way faster than 8.
 
@@ -179,7 +179,7 @@ let tree_manipulation_props = {
 		return true;
 	},
 
-	make_move_sequence: function(moves) {
+	make_move_sequence: function(moves, set_this_node = true) {
 
 		if (Array.isArray(moves) === false || moves.length === 0) {
 			return false;
@@ -191,7 +191,10 @@ let tree_manipulation_props = {
 		for (let s of moves) {
 			node = node.make_move(s);		// Calling the node's make_move() method, not handler's
 		}
-		this.node = node;
+
+		if (set_this_node) {
+			this.node = node;
+		}
 
 		if (next_node_id !== next_node_id__initial) {		// NewNode() was called
 			this.tree_version++;
@@ -199,6 +202,10 @@ let tree_manipulation_props = {
 
 		this.dom_from_scratch();
 		return true;
+	},
+
+	add_move_sequence: function(moves) {
+		return this.make_move_sequence(moves, false);
 	},
 
 	// -------------------------------------------------------------------------------------------------------------
@@ -278,22 +285,6 @@ let tree_manipulation_props = {
 			this.tree_version++;
 			this.dom_from_scratch();
 		}
-	},
-
-	add_move_sequence: function(moves) {
-
-		if (Array.isArray(moves) === false || moves.length === 0) {
-			return;
-		}
-
-		let node = this.node;
-
-		for (let s of moves) {
-			node = node.make_move(s);		// Calling the node's make_move() method, not handler's
-		}
-
-		this.tree_version++;
-		this.dom_from_scratch();
 	},
 
 	// -------------------------------------------------------------------------------------------------------------
