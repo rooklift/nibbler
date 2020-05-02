@@ -493,6 +493,7 @@ function menu_build() {
 				},
 				{
 					label: "Auto-evaluate whole line",
+					accelerator: "F11",
 					click: () => {
 						win.webContents.send("call", {
 							fn: "start_autoplay",
