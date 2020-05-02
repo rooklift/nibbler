@@ -348,6 +348,7 @@ function NewTreeHandler() {
 		for (let node of ordered_nodes) {
 
 			let classes = [];
+			let text = node.token();
 
 			if (node === this.node) {
 				if (node.is_main_line()) {
@@ -357,14 +358,20 @@ function NewTreeHandler() {
 				}
 			}
 
+			// The use of var_start / var_end / not_end can be avoided for now,
+			// they seem slow (all have ::before or ::after content).
+
 			if (node.parent && node.parent.children[0] !== node) {
-				classes.push("var_start");
+				//classes.push("var_start");
+				text = "(" + text;
 			}
 
 			if (node.children.length === 0 && !node.main_line_end) {
-				classes.push("var_end");
+				//classes.push("var_end");
+				text = text + ") ";
 			} else {
-				classes.push("not_end");
+				//classes.push("not_end");
+				text = text + " ";
 			}
 
 			if (node.current_line) {
@@ -374,7 +381,7 @@ function NewTreeHandler() {
 			pseudoelements.push({
 				class: classes.join(" "),
 				id: `node_${node.id}`,
-				text: node.token()
+				text: text
 			});
 		}
 
