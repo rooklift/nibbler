@@ -1329,6 +1329,10 @@ function NewRenderer() {
 		return null;
 	};
 
+	renderer.dom_test = function() {
+		movelist.insertAdjacentHTML("beforeend", `<span> Hello </span>`);
+	};
+
 	// --------------------------------------------------------------------------------------------
 	// General draw code...
 
