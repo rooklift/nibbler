@@ -365,8 +365,8 @@ function NewTreeHandler() {
 				classes.push("not_end");
 			}
 
-			if (!node.current_line) {
-				classes.push("gray");
+			if (node.current_line) {
+				classes.push("white");	// Otherwise, inherits gray colour from movelist CSS
 			}
 
 			pseudoelements.push({

@@ -134,6 +134,7 @@ input[type=text]:focus {
 }
 
 #movelist {
+	color: #999999;
 	font-family: monospace, monospace;
 	margin-top: 1em;
 	overflow-x: hidden;
