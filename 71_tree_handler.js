@@ -36,7 +36,7 @@ let tree_manipulation_props = {
 	replace_tree: function(root) {
 		DestroyTree(this.root);
 		this.root = root;
-		this.node = this.root;
+		this.node = root;
 		this.tree_version++;
 		this.dom_from_scratch();
 		return true;
@@ -44,9 +44,8 @@ let tree_manipulation_props = {
 
 	set_node: function(node) {
 
-		// The node must be in the same tree, or this does nothing
-		// Note also that we may call dom_easy_highlight_change()
-		// so don't use this if the tree structure has changed.
+		// The node must be in the same tree, or this does nothing. Note also that we may call
+		// dom_easy_highlight_change() so don't rely on this to draw any nodes that never got drawn.
 
 		if (node.get_root() !== this.root || node === this.node) {
 			return false;
