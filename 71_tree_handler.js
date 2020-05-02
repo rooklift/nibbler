@@ -20,25 +20,12 @@ function NewTreeHandler() {
 
 	let handler = Object.create(null);
 
+	handler.tree_version = 0;		// Increment every time the tree structure changes.
 	handler.root = NewTree();
 	handler.node = handler.root;
-	handler.tree_version = 0;				// Must increment every time the tree structure changes.
-
-	// Return values of the methods are whether this.node changed -
+	
+	// Where relevant, return values of the methods are whether this.node changed -
 	// i.e. whether the renderer has to call position_changed()
-	//
-	// We need to draw if either:
-	//    - node changed
-	//    - tree changed
-
-	handler.new_root_from_board = function(board) {
-		DestroyTree(this.root);
-		this.root = NewTree(board);
-		this.node = this.root;
-		this.tree_version++;
-		this.dom_from_scratch();
-		return true;
-	};
 
 	handler.replace_tree = function(root) {
 		DestroyTree(this.root);
@@ -46,6 +33,12 @@ function NewTreeHandler() {
 		this.node = this.root;
 		this.tree_version++;
 		this.dom_from_scratch();
+		return true;
+	};
+
+	handler.new_root_from_board = function(board) {
+		let root = NewTree(board);
+		this.replace_tree(root);
 		return true;
 	};
 
@@ -139,10 +132,10 @@ function NewTreeHandler() {
 
 		// s must be exactly a legal move, including having promotion char iff needed (e.g. e2e1q)
 
-		let next_node_id_before = next_node_id;
+		let next_node_id__initial = next_node_id;
 		this.node = this.node.make_move(s, force_new_node)
 
-		if (next_node_id !== next_node_id_before) {		// NewNode() was called
+		if (next_node_id !== next_node_id__initial) {		// NewNode() was called
 			this.tree_version++;
 		}
 
@@ -156,18 +149,22 @@ function NewTreeHandler() {
 			return false;
 		}
 
+		let next_node_id__initial = next_node_id;
 		let node = this.node;
 
 		for (let s of moves) {
 			node = node.make_move(s);		// Calling the node's make_move() method, not handler's
 		}
 
-		this.tree_version++;
-		this.set_node(node);
+		if (next_node_id !== next_node_id__initial) {		// NewNode() was called
+			this.tree_version++;
+		}
+
+		return this.set_node(node);
 	};
 
 	// -------------------------------------------------------------------------------------------------------------
-	// The following methods don't ever change this.node - so the caller has no action to take. All return false.
+	// The following methods don't ever change this.node - so the caller has no action to take. No return value.
 
 	handler.promote_to_main_line = function() {
 
@@ -192,8 +189,6 @@ function NewTreeHandler() {
 			this.tree_version++;
 			this.dom_from_scratch();
 		}
-
-		return false;						// this.node never changes here. Caller takes no action.
 	};
 
 	handler.delete_other_lines = function() {
@@ -213,8 +208,6 @@ function NewTreeHandler() {
 			this.tree_version++;
 			this.dom_from_scratch();
 		}
-
-		return false;						// this.node never changes here. Caller takes no action.
 	};
 
 	handler.delete_children = function() {
@@ -226,8 +219,6 @@ function NewTreeHandler() {
 			this.tree_version++;
 			this.dom_from_scratch();
 		}
-
-		return false;						// this.node never changes here. Caller takes no action.
 	};
 
 	handler.delete_siblings = function() {
@@ -247,14 +238,12 @@ function NewTreeHandler() {
 			this.tree_version++;
 			this.dom_from_scratch();
 		}
-
-		return false;						// this.node never changes here. Caller takes no action.
 	};
 
 	handler.add_move_sequence = function(moves) {
 
 		if (Array.isArray(moves) === false || moves.length === 0) {
-			return false;
+			return;
 		}
 
 		let node = this.node;
@@ -265,7 +254,6 @@ function NewTreeHandler() {
 
 		this.tree_version++;
 		this.dom_from_scratch();
-		return false;						// this.node never changes here. Caller takes no action.
 	};
 
 	// -------------------------------------------------------------------------------------------------------------
