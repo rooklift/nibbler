@@ -322,13 +322,12 @@ function make_pgn_string(node) {
 
 function make_movetext(node) {
 
-	let ordered_nodes = [];
+	let root = node.get_root();
+	let ordered_nodes = get_ordered_nodes(root);
+	
 	let tokens = [];
 
-	let root = node.get_root();
-	order_nodes(root, ordered_nodes, false);
-
-	for (let node of ordered_nodes) {
+	for (let node of ordered_nodes.slice(1)) {		// Slice to skip the root.
 
 		if (node.parent && node.parent.children[0] !== node) {
 			tokens.push("(");
@@ -370,14 +369,20 @@ function make_movetext(node) {
 	return lines.join("\n");
 }
 
-// The following is to order the nodes into the order they would be
-// written to screen or PGN.
+// The following is to order the nodes into the order they would be written
+// to screen or PGN. The result does contain root, which shouldn't be drawn.
 
-function order_nodes(node, list, skip_self_flag) {
+function get_ordered_nodes(node) {
+	let list = [];
+	__order_nodes(node, list, false);
+	return list;
+}
+
+function __order_nodes(node, list, skip_self_flag) {
 
 	// Write this node itself...
 
-	if (node.parent && !skip_self_flag) {
+	if (!skip_self_flag) {
 		list.push(node);
 	}
 
@@ -399,8 +404,8 @@ function order_nodes(node, list, skip_self_flag) {
 	list.push(main_child);
 
 	for (let child of node.children.slice(1)) {
-		order_nodes(child, list, false);
+		__order_nodes(child, list, false);
 	}
 
-	order_nodes(main_child, list, true);
+	__order_nodes(main_child, list, true);
 }

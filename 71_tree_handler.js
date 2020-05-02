@@ -23,6 +23,9 @@ function NewTreeHandler() {
 	handler.tree_version = 0;		// Increment every time the tree structure changes.
 	handler.root = NewRoot();
 	handler.node = handler.root;
+
+	handler.ordered_nodes_cache = [];
+	handler.ordered_nodes_cache_version = -1;
 	
 	// Where relevant, return values of the methods are whether this.node changed -
 	// i.e. whether the renderer has to call position_changed()
@@ -338,14 +341,18 @@ function NewTreeHandler() {
 		let main_line_end = this.root.get_end();
 		main_line_end.main_line_end = true;
 
-		// ---
+		// Begin...
 
-		let ordered_nodes = [];
-		order_nodes(this.root, ordered_nodes, false);
+		if (this.ordered_nodes_cache_version !== this.tree_version) {
+			this.ordered_nodes_cache = get_ordered_nodes(this.root);
+			this.ordered_nodes_cache_version = this.tree_version;
+		}
+
+		let ordered_nodes = this.ordered_nodes_cache;
 
 		let pseudoelements = [];		// Objects containing class, id, and text
 
-		for (let node of ordered_nodes) {
+		for (let node of ordered_nodes.slice(1)) {		// Slice to skip the root
 
 			let classes = [];
 			let text = node.token();
