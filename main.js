@@ -488,7 +488,6 @@ function menu_build() {
 						});
 					}
 				},
-/*				// This feature is under interdict - needs a better UI
 				{
 					type: "separator"
 				},
@@ -501,7 +500,6 @@ function menu_build() {
 						});
 					}
 				},
-*/
 				{
 					type: "separator"
 				},

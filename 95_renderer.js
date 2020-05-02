@@ -43,7 +43,7 @@ function NewRenderer() {
 
 		if (maybe_stop_versus) {
 			if (config.versus.length === 1 || (config.versus === "wb" && config.autoplay)) {
-				if (this.nodes_are_infinite() === false) {
+				if (this.node_limit()) {
 					config.versus = "";
 					config.autoplay = 0;
 				}
@@ -150,7 +150,6 @@ function NewRenderer() {
 		this.info_handler.table[nextmove].multipv = 1;
 		this.info_handler.table[nextmove].total_nodes = -1;		// So it won't be acceptable as an eval for a node.
 
-
 		// Flip our evals if the colour changes...
 
 		if (oldinfo.board.active !== this.tree.node.board.active) {
@@ -171,20 +170,13 @@ function NewRenderer() {
 		if (config.versus !== "wb") {									// autoplay can only be on if "wb"
 			config.autoplay = 0;
 		}
-		if (config.versus.length === 1) {
-			if (this.nodes_are_infinite()) {
-				alert(messages.versus_without_node_limit);
-			}
-		}
 		this.go_or_halt();
 	};
 
-	renderer.start_autoplay = function(type = 1) {
+	renderer.start_autoplay = function(type = 1) {			// Leela evaluating both sides, and moving or going forwards in the PGN.
+		this.__halt();
 		config.autoplay = type;
 		this.set_versus("wb");
-		if (this.nodes_are_infinite()) {
-			alert(messages.versus_without_node_limit);
-		}
 	};
 
 	renderer.move = function(s) {							// It is safe to call this with illegal moves.
@@ -241,8 +233,25 @@ function NewRenderer() {
 		}
 	};
 
-	renderer.nodes_are_infinite = function() {
-		return (typeof config.search_nodes !== "number" || config.search_nodes < 1);
+	renderer.node_limit = function() {
+
+		// Given the current state of the config, what is the node limit?
+
+		let cfg_value;
+
+		if (config.versus.length === 1) {
+			cfg_value = config.search_nodes_special;
+		} else if (config.autoplay) {
+			cfg_value = config.search_nodes_special;
+		} else {
+			cfg_value = config.search_nodes;
+		}
+
+		if (typeof cfg_value === "number" && cfg_value >= 1) {
+			return cfg_value;
+		} else {
+			return null;
+		}
 	};
 
 	renderer.play_info_index = function(n) {
@@ -709,10 +718,10 @@ function NewRenderer() {
 
 		let s;
 
-		if (this.nodes_are_infinite()) {
+		if (!this.node_limit()) {
 			s = "go infinite";
 		} else {
-			s = `go nodes ${config.search_nodes}`;
+			s = `go nodes ${this.node_limit()}`;
 		}
 
 		if (this.searchmoves.length > 0) {
@@ -782,6 +791,12 @@ function NewRenderer() {
 
 	renderer.set_node_limit = function(val) {
 		config.search_nodes = val;
+		config_io.save(config);
+		this.go_or_halt();
+	};
+
+	renderer.set_node_limit_special = function(val) {
+		config.search_nodes_special = val;
 		config_io.save(config);
 		this.go_or_halt();
 	};
