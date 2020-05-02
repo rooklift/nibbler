@@ -10,7 +10,8 @@ function AttachTreeDrawMethods(handler) {
 
 	handler.dom_easy_highlight_change = function() {
 
-		// When the previously highlighted node and the newly highlighted node are on the same line.
+		// When the previously highlighted node and the newly highlighted node are on the same line,
+		// with the same end-of-line, meaning no gray / white changes are needed.
 
 		easy_draws++
 
