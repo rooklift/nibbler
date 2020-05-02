@@ -52,6 +52,9 @@ const decoder = new util.TextDecoder("utf8");	// https://github.com/electron/ele
 
 let config = config_io.load();
 
+let next_node_id = 1;
+let live_nodes = Object.create(null);
+
 // Get the images loading...........................................
 
 if (typeof config.override_piece_directory === "string") {

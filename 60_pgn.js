@@ -160,7 +160,7 @@ function LoadPGNRecord(o) {				// Can throw, either by itself, or by allowing a 
 		startpos = LoadFEN("rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1");
 	}
 
-	let root = NewTree(startpos);
+	let root = NewRoot(startpos);
 	let node = root;
 
 	let inside_brace = false;			// {} are comments. Braces do not nest.
@@ -248,7 +248,7 @@ function LoadPGNRecord(o) {				// Can throw, either by itself, or by allowing a 
 
 				// Probably an actual move...
 
-				let [move, error] = node.get_board().parse_pgn(s);
+				let [move, error] = node.board.parse_pgn(s);
 
 				if (error !== "") {
 					DestroyTree(root);
@@ -295,7 +295,7 @@ function PGNToClipboard(node) {
 function make_pgn_string(node) {
 
 	let root = node.get_root();
-	let start_fen = root.get_board().fen(true);
+	let start_fen = root.board.fen(true);
 
 	let tags = [];
 
@@ -308,7 +308,7 @@ function make_pgn_string(node) {
 	}
 
 	if (start_fen !== "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1") {
-		if (root.get_board().normalchess === false) {
+		if (root.board.normalchess === false) {
 			tags.push(`[Variant "Chess960"]`);
 		}
 		tags.push(`[FEN "${start_fen}"]`);
@@ -322,14 +322,29 @@ function make_pgn_string(node) {
 
 function make_movetext(node) {
 
+	let ordered_nodes = [];
+	let tokens = [];
+
 	let root = node.get_root();
-	let connector = new_string_node_connector();
-	write_tree(root, connector, false, true);
+	order_nodes(root, ordered_nodes, false);
+
+	for (let node of ordered_nodes) {
+
+		if (node.parent && node.parent.children[0] !== node) {
+			tokens.push("(");
+		}
+
+		tokens.push(node.token());
+
+		if (node.children.length === 0 && node.is_main_line() === false) {
+			tokens.push(")");
+		}
+	}
 
 	if (root.tags && root.tags.Result) {
-		connector.push(root.tags.Result, null);
+		tokens.push(root.tags.Result);
 	} else {
-		connector.push("*", null);
+		tokens.push("*");
 	}
 
 	// Now it's all about wrapping to 80 chars...
@@ -337,7 +352,7 @@ function make_movetext(node) {
 	let lines = [];
 	let line = "";
 
-	for (let token of connector.tokens) {
+	for (let token of tokens) {
 		if (line.length + token.length > 79) {
 			lines.push(line);
 			line = token;
@@ -355,42 +370,15 @@ function make_movetext(node) {
 	return lines.join("\n");
 }
 
-// -------------------------------------------------------------------------
-// This section was invented for the window's move_list, but incidentally
-// also produces valid PGN.
+// The following is to order the nodes into the order they would be
+// written to screen or PGN.
 
-function TokenNodeConnections(node) {
-	let connector = new_string_node_connector();
-	write_tree(node.get_root(), connector, false, true);
-	return connector;
-}
-
-function new_string_node_connector() {
-
-	// Object will contain the tokens of a PGN string, plus what
-	// node (possibly null) we should go to if they're clicked on.
-
-	return {
-		tokens: [],
-		nodes: [],
-		length: 0,
-		push: function(token, node) {		// node can be null, i.e. no node matches this text
-			this.tokens.push(token);
-			this.nodes.push(node);
-			this.length++;
-		}
-	};
-}
-
-function write_tree(node, connector, skip_self_flag, force_number_string) {
-
-	// Create the connector object - it has a list of tokens
-	// and a corresponding list of nodes/null.
+function order_nodes(node, list, skip_self_flag) {
 
 	// Write this node itself...
 
 	if (node.parent && !skip_self_flag) {
-		connector.push(node.token(), node);
+		list.push(node);
 	}
 
 	// Write descendents as long as there's no branching,
@@ -398,7 +386,7 @@ function write_tree(node, connector, skip_self_flag, force_number_string) {
 
 	while (node.children.length === 1) {
 		node = node.children[0];
-		connector.push(node.token(), node);
+		list.push(node);
 	}
 
 	if (node.children.length === 0) {
@@ -408,13 +396,11 @@ function write_tree(node, connector, skip_self_flag, force_number_string) {
 	// So multiple child nodes exist...
 
 	let main_child = node.children[0];
-	connector.push(main_child.token(), main_child);
+	list.push(main_child);
 
 	for (let child of node.children.slice(1)) {
-		connector.push("(", null);
-		write_tree(child, connector, false, true);
-		connector.push(")", null);
+		order_nodes(child, list, false);
 	}
 
-	write_tree(main_child, connector, true, false);
+	order_nodes(main_child, list, true);
 }

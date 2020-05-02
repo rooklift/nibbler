@@ -109,44 +109,6 @@ const node_prototype = {
 		return node;
 	},
 
-	get_board: function() {
-
-		// Note that in various places elsewhere we assume that we can compare boards by
-		// naive identity checking, which means this needs to always return the same object
-		// for the same node, meaning that caching the position is unavoidable.
-
-		if (this.__position) {
-			return this.__position;
-		}
-
-		if (this.destroyed) {
-			throw "get_board(): node has been destroyed!";
-		}
-
-		if (!this.parent) {
-			throw "get_board(): node not destroyed but no __position and no parent";
-		}
-
-		let node_line = [];
-		let foo = this;
-
-		while (!foo.__position) {
-			node_line.push(foo);
-			foo = foo.parent;
-		}
-		node_line.reverse();
-
-		let board = node_line[0].parent.__position;
-
-		for (let node of node_line) {
-			board = board.move(node.move);
-			// node.__position = board;
-		}
-
-		this.__position = board;
-		return this.__position;
-	},
-
 	is_main_line: function() {
 
 		let node = this;
@@ -161,15 +123,25 @@ const node_prototype = {
 		return true;
 	},
 
+	is_same_line: function(other) {
+
+		// Easy case is when one is the parent of the other...
+
+		if (this.parent === other) return other.children[0] === this;
+		if (other.parent === this) return this.children[0] === other;
+
+		return this.get_end() === other.get_end();
+	},
+
 	is_triple_rep: function() {
 
-		let our_board = this.get_board();
+		let our_board = this.board;
 		let ancestor = this;
 		let hits = 0;
 
 		while (ancestor.parent && ancestor.parent.parent) {
 			ancestor = ancestor.parent.parent;
-			if (ancestor.get_board().compare(our_board)) {
+			if (ancestor.board.compare(our_board)) {
 				hits++;
 				if (hits >= 2) {
 					return true;
@@ -189,7 +161,7 @@ const node_prototype = {
 		if (!this.move || !this.parent) {
 			this.__nice_move = "??";
 		} else {
-			this.__nice_move = this.parent.get_board().nice_string(this.move);
+			this.__nice_move = this.parent.board.nice_string(this.move);
 		}
 
 		return this.__nice_move;
@@ -206,7 +178,7 @@ const node_prototype = {
 
 		let need_number_string = false;
 
-		if (this.parent.get_board().active === "w") need_number_string = true;
+		if (this.parent.board.active === "w") need_number_string = true;
 		if (this.parent.children[0] !== this) need_number_string = true;
 
 		// In theory we should also write the number if the parent had siblings. Meh.
@@ -214,7 +186,7 @@ const node_prototype = {
 		let s = "";
 
 		if (need_number_string) {
-			s += this.parent.get_board().next_number_string() + " ";
+			s += this.parent.board.next_number_string() + " ";
 		}
 		
 		s += this.nice_move();
@@ -265,33 +237,43 @@ const node_prototype = {
 	}
 };
 
-function NewNode(parent, move) {		// Args are null for root only.
+// ---------------------------------------------------------------------------------------------------------
+
+function NewNode(parent, move, board) {		// move must be legal; board is only relevant for root nodes
 
 	let node = Object.create(node_prototype);
+	node.id = next_node_id++;
+	live_nodes[node.id.toString()] = node;
 
-	node.__position = null;
-	node.parent = parent;
-	node.children = [];
+	if (parent) {
+		node.parent = parent;
+		node.move = move;
+		node.board = parent.board.move(move);
+	} else {
+		node.parent = null;
+		node.move = null;
+		node.board = board;
+	}
 
-	node.move = move;					// Think of this as the move that led to the position associated with node.
 	node.__nice_move = null;
 	node.eval = null;
-	node.eval_nodes = 0;				// Useful; some info objects get .total_nodes set to -1, and update_eval_from_info() ignores them.
+	node.eval_nodes = 0;					// Useful; some info objects get .total_nodes set to -1, and update_eval_from_info() ignores them.
 	node.destroyed = false;
+
+	node.children = [];
 
 	return node;
 }
 
-function NewTree(startpos) {			// Arg is expected to be a position object, not a FEN.
+function NewRoot(board) {					// Arg is a board (position) object, not a FEN
 	
-	if (!startpos) {
-		startpos = LoadFEN("rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1");
+	if (!board) {
+		board = LoadFEN("rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1");
 	}
 
-	let root = NewNode(null, null);
-	root.__position = startpos;
+	let root = NewNode(null, null, board);
 
-	root.tags = Object.create(null);	// Only root gets these. Get overwritten by the PGN loader.
+	root.tags = Object.create(null);		// Only root gets these. Get overwritten by the PGN loader.
 	root.tags.Event = "Nibbler Line";
 	root.tags.Site = "The fevered dreams of a neural net";
 	root.tags.Date = DateString(new Date());
@@ -304,8 +286,9 @@ function NewTree(startpos) {			// Arg is expected to be a position object, not a
 }
 
 // On the theory that it might help the garbage collector, we can
-// destroy trees when we're done with them. Perhaps this is totally
-// unnecessary. I've seen it matter in Python.
+// destroy trees when we're done with them. Whether this is helpful
+// in general I don't know, but we also take this opportunity to
+// clear nodes from the live_list.
 
 function DestroyTree(node) {
 	__destroy_tree(node.get_root());
@@ -320,9 +303,11 @@ function __destroy_tree(node) {
 		let child = node.children[0];
 
 		node.parent = null;
-		node.__position = null;
+		node.board = null;
 		node.children = null;
 		node.destroyed = true;
+
+		delete live_nodes[node.id.toString()];
 
 		node = child;
 	}
@@ -332,9 +317,11 @@ function __destroy_tree(node) {
 	let children = node.children;
 
 	node.parent = null;
-	node.__position = null;
+	node.board = null;
 	node.children = null;
 	node.destroyed = true;
+
+	delete live_nodes[node.id.toString()];
 
 	for (let child of children) {
 		__destroy_tree(child);

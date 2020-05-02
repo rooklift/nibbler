@@ -98,6 +98,8 @@ td {
 	display: block;
 	font-family: monospace, monospace;
 	margin-bottom: 1em;
+	overflow: hidden;
+	white-space: nowrap;
 	width: 100%;
 }
 
@@ -157,6 +159,18 @@ a {										/* is this even used anywhere? */
 
 ul {
 	list-style: none;
+}
+
+span.var_start::before {
+	content: "(";
+}
+
+span.var_end::after {
+	content: ") ";
+}
+
+span.not_end::after {					/* Any node that's not the end of a variation */
+	content: " ";
 }
 
 span.pink {

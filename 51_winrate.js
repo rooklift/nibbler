@@ -93,7 +93,7 @@ function NewGrapher() {
 
 		this.draw_position_line(eval_list.length, node);
 
-		this.last_drawn_board = node.get_board();
+		this.last_drawn_board = node.board;
 		this.last_draw_time = performance.now();
 	};
 
