@@ -6,12 +6,14 @@
 // to care about redrawing. Ideally, this object should be able to make good decisions about how
 // to best redraw.
 //
-// WIP / intentions:
+// WIP / intentions / desires:
 //
 // - All nodes findable in the DOM by unique span id corresponding to their id.
 // - When adding a node, insert its text straight into the DOM.
 // - When switching node, simply set the classes of all relevant nodes.
 // - Use CSS like ::before and ::after
+//
+// - https://developer.mozilla.org/en-US/docs/Web/API/Element/insertAdjacentHTML
 // - https://www.designcise.com/web/tutorial/how-to-add-space-before-or-after-an-element-using-css-pseudo-elements
 
 function NewTreeHandler() {
@@ -136,33 +138,15 @@ function NewTreeHandler() {
 	handler.make_move = function(s, force_new_node) {
 
 		// s must be exactly a legal move, including having promotion char iff needed (e.g. e2e1q)
-		// We don't call the node version of make_move() because we need to know if the node is new.
 
-		let node = null;
-		let creation = false;
+		let next_node_id_before = next_node_id;
+		this.node = this.node.make_move(s, force_new_node)
 
-		if (!force_new_node) {
-			for (let child of this.node.children) {
-				if (child.move === s) {
-					node = child;
-					break;
-				}
-			}
+		if (next_node_id !== next_node_id_before) {		// NewNode() was called
+			this.tree_version++;
 		}
 
-		if (!node) {
-			node = NewNode(this.node, s);
-			this.node.children.push(node);
-			creation = true;
-		}
-
-		this.node = node;
-		this.tree_version++;
-		if (creation) {
-			this.dom_insert_node(this.node);
-		} else {
-			this.dom_from_scratch();		// Could potentially call something else here.
-		}
+		this.dom_from_scratch();			// Could potentially call something else here.
 		return true;
 	};
 
@@ -390,76 +374,40 @@ function NewTreeHandler() {
 
 		delete main_line_end.main_line_end;
 
-	};
+		// And finally...
 
-	handler.dom_insert_node = function(node) {
-
-		if (node.parent.children[0] === node && node === this.node) {
-			this.dom_insert_node_simple(node)
-		} else {
-			this.dom_from_scratch();
-			return;
-		}
-	};
-
-	handler.dom_insert_node_simple = function(node) {		// Inserting node (which is this.node) right after parent as its only child.
-
-		if (node !== this.node) {
-			throw "dom_insert_node_simple() - node was not this.node";
-		}
-
-		// Fix parent first...
-
-		let parent_span = document.getElementById(`node_${node.parent.id}`);
-
-		if (parent_span) {
-			parent_span.classList.remove("movelist_highlight_blue");
-			parent_span.classList.remove("movelist_highlight_yellow");
-			parent_span.classList.remove("var_end");
-			parent_span.classList.add("not_end");
-		}
-
-		// Now do the new element...
-
-		let classes = [];
-
-		classes.push(node.is_main_line() ? "movelist_highlight_blue" : "movelist_highlight_yellow");
-
-		if (node.children.length === 0 && !node.is_main_line()) {		// First half of the test is redundant.
-			classes.push("var_end");
-		} else {
-			classes.push("not_end");
-		}
-
-		classes.push("white");
-
-		let class_text = classes.join(" ");
-		let span_html = `<span class="${class_text}" id="node_${node.id}">${node.token()}</span>`
-
-		if (node.parent === this.root) {
-			movelist.insertAdjacentHTML("afterbegin", span_html);
-		} else {
-			parent_span.insertAdjacentHTML("afterend", span_html);
-		}
+		fix_scrollbar_position();
 	};
 
 	return handler;
 }
 
+// Helpers...
 
+function get_movelist_highlight() {
+	let elements = document.getElementsByClassName("movelist_highlight_blue");
+	if (elements && elements.length > 0) {
+		return elements[0];
+	}
+	elements = document.getElementsByClassName("movelist_highlight_yellow");
+	if (elements && elements.length > 0) {
+		return elements[0];
+	}
+	return null;
+}
 
-
-
-function dom_advance_highlight(old_highlight_node) {
-	// Advance the highlight one node further on.
-};
-
-function dom_retreat_highlight(old_highlight_node) {
-	// Retreat the highlight one node back. Hard(ish) case is when it was at the start of a variation before it moved.
-};
-
-function dom_redraw_node(node) {
-	// Given a node, redraw it.
-};
-
-function fix_scrollbar_position() {};
+function fix_scrollbar_position() {
+	let highlight = get_movelist_highlight();
+	if (highlight) {
+		let top = highlight.offsetTop - movelist.offsetTop;
+		if (top < movelist.scrollTop) {
+			movelist.scrollTop = top;
+		}
+		let bottom = top + highlight.offsetHeight;
+		if (bottom > movelist.scrollTop + movelist.offsetHeight) {
+			movelist.scrollTop = bottom - movelist.offsetHeight;
+		}
+	} else {
+		movelist.scrollTop = 0;
+	}
+}
