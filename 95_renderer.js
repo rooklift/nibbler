@@ -9,7 +9,7 @@ function NewRenderer() {
 	renderer.grapher = NewGrapher();
 	renderer.info_handler = NewInfoHandler();
 
-	renderer.info_handler.clear(renderer.tree.node.get_board());// Best give it a valid board to start with.
+	renderer.info_handler.clear(renderer.tree.node.board);// Best give it a valid board to start with.
 
 	// Various state we have to keep track of...
 
@@ -58,7 +58,7 @@ function NewRenderer() {
 		this.go_or_halt(new_game_flag);
 
 		this.draw();
-		fenbox.value = this.tree.node.get_board().fen(true);
+		fenbox.value = this.tree.node.board.fen(true);
 
 		if (new_game_flag) {
 			let title = "Nibbler";
@@ -77,13 +77,13 @@ function NewRenderer() {
 		// relevant part of the PV, and evals, if available.
 
 		if (new_game_flag || Object.keys(this.info_handler.table).length === 0) {			// Fail
-			this.info_handler.clear(this.tree.node.get_board());
+			this.info_handler.clear(this.tree.node.board);
 			return;
 		}
 
 		if (config.versus === "w" || config.versus === "b") {
 			if (this.leela_should_go() === false) {											// Fail (conceal)
-				this.info_handler.clear(this.tree.node.get_board());
+				this.info_handler.clear(this.tree.node.board);
 				return;
 			}
 		}
@@ -96,7 +96,7 @@ function NewRenderer() {
 
 		while (node.parent) {
 			moves.push(node.move);
-			if (node.parent.get_board() === this.info_handler.board) {
+			if (node.parent.board === this.info_handler.board) {
 				found = true;
 				break;
 			}
@@ -104,7 +104,7 @@ function NewRenderer() {
 		}
 
 		if (found === false) {																// Fail
-			this.info_handler.clear(this.tree.node.get_board());
+			this.info_handler.clear(this.tree.node.board);
 			return;
 		}
 
@@ -116,12 +116,12 @@ function NewRenderer() {
 		let oldinfo = this.info_handler.table[moves[0]];
 
 		if (!oldinfo) {																		// Fail
-			this.info_handler.clear(this.tree.node.get_board());
+			this.info_handler.clear(this.tree.node.board);
 			return;
 		}
 
 		if (Array.isArray(oldinfo.pv) === false || oldinfo.pv.length <= moves.length) {		// Fail
-			this.info_handler.clear(this.tree.node.get_board());
+			this.info_handler.clear(this.tree.node.board);
 			return;
 		}
 
@@ -131,19 +131,19 @@ function NewRenderer() {
 
 		for (let n = 0; n < moves.length; n++) {
 			if (pv[n] !== moves[n]) {														// Fail
-				this.info_handler.clear(this.tree.node.get_board());
+				this.info_handler.clear(this.tree.node.board);
 				return;
 			}
 		}
 
 		// So, everything matches and we can use the PV...
 
-		this.info_handler.clear(this.tree.node.get_board());
+		this.info_handler.clear(this.tree.node.board);
 
 		let nextmove = pv[moves.length];
 		pv = pv.slice(moves.length);
 
-		this.info_handler.table[nextmove] = new_info(this.tree.node.get_board(), nextmove);
+		this.info_handler.table[nextmove] = new_info(this.tree.node.board, nextmove);
 		this.info_handler.table[nextmove].pv = pv;
 		this.info_handler.table[nextmove].q = oldinfo.q;
 		this.info_handler.table[nextmove].cp = oldinfo.cp;
@@ -153,7 +153,7 @@ function NewRenderer() {
 
 		// Flip our evals if the colour changes...
 
-		if (oldinfo.board.active !== this.tree.node.get_board().active) {
+		if (oldinfo.board.active !== this.tree.node.board.active) {
 			if (typeof this.info_handler.table[nextmove].q === "number") {
 				this.info_handler.table[nextmove].q *= -1;
 			}
@@ -194,7 +194,7 @@ function NewRenderer() {
 			return;
 		}
 
-		let board = this.tree.node.get_board();
+		let board = this.tree.node.board;
 		let source = Point(s.slice(0, 2));
 
 		if (!source) {
@@ -235,7 +235,7 @@ function NewRenderer() {
 	};
 
 	renderer.random_move = function() {
-		let legals = this.tree.node.get_board().movegen();
+		let legals = this.tree.node.board.movegen();
 		if (legals.length > 0) {
 			this.move(RandChoice(legals));
 		}
@@ -310,7 +310,7 @@ function NewRenderer() {
 
 		s = s.trim();
 
-		if (s === this.tree.node.get_board().fen(true)) {
+		if (s === this.tree.node.board.fen(true)) {
 			return;
 		}
 
@@ -541,7 +541,7 @@ function NewRenderer() {
 	// Engine stuff...
 
 	renderer.leela_should_go = function() {
-		return config.versus.includes(this.tree.node.get_board().active);
+		return config.versus.includes(this.tree.node.board.active);
 	};
 
 	renderer.receive = function(s) {
@@ -550,8 +550,8 @@ function NewRenderer() {
 
 		if (s.startsWith("info")) {
 
-			if (this.leela_position === this.tree.node.get_board()) {		// Test may fail if we changed position without informing
-				this.info_handler.receive(s, this.tree.node.get_board());	// Leela - which we commonly do if we're halting Leela.
+			if (this.leela_position === this.tree.node.board) {		// Test may fail if we changed position without informing
+				this.info_handler.receive(s, this.tree.node.board);	// Leela - which we commonly do if we're halting Leela.
 			}
 
 		} else if (s.startsWith("error")) {
@@ -585,9 +585,9 @@ function NewRenderer() {
 			// where we say "stop" then immediately say "go", the bestmove we get from the "stop" will be ignored. This
 			// works well, I think.
 
-			if (this.leela_position === this.tree.node.get_board()) {				// See notes on leela_position above.
+			if (this.leela_position === this.tree.node.board) {				// See notes on leela_position above.
 
-				if (config.autoplay || (config.versus === this.tree.node.get_board().active)) {
+				if (config.autoplay || (config.versus === this.tree.node.board.active)) {
 
 					let tokens = s.split(" ");
 
@@ -667,7 +667,7 @@ function NewRenderer() {
 
 		this.__halt(new_game_flag);
 
-		let board = this.tree.node.get_board();
+		let board = this.tree.node.board;
 
 		if (this.tree.node.children.length === 0) {
 			if (board.no_moves()) {
@@ -698,7 +698,7 @@ function NewRenderer() {
 			}
 		}
 
-		let root_fen = this.tree.node.get_root().get_board().fen(false);
+		let root_fen = this.tree.node.get_root().board.fen(false);
 		let setup = `fen ${root_fen}`;
 
 		// Leela seems to time "readyok" correctly after "position" commands.
@@ -735,7 +735,7 @@ function NewRenderer() {
 		}
 
 		let valid_list = [];
-		let board = this.tree.node.get_board();
+		let board = this.tree.node.board;
 
 		for (let move of this.searchmoves) {
 			if (board.illegal(move) === "") {
@@ -747,7 +747,7 @@ function NewRenderer() {
 	};
 
 	renderer.reset_leela_cache = function() {
-		this.info_handler.clear(this.tree.node.get_board());
+		this.info_handler.clear(this.tree.node.board);
 		this.go_or_halt(true);
 	};
 
@@ -800,7 +800,7 @@ function NewRenderer() {
 			this.engine = NewEngine();
 		}
 
-		this.info_handler.clear(this.tree.node.get_board());
+		this.info_handler.clear(this.tree.node.board);
 		this.info_handler.reset_engine_info();
 
 		if (typeof filepath !== "string" || fs.existsSync(filepath) === false) {
@@ -1124,7 +1124,7 @@ function NewRenderer() {
 		this.hide_promotiontable();		// Just in case it's up.
 
 		let ocm = this.info_handler.one_click_moves[p.x][p.y];
-		let board = this.tree.node.get_board();
+		let board = this.tree.node.board;
 
 		if (!this.active_square && ocm && board.colour(p) !== board.active) {		// Note that we test colour difference
 			this.set_active_square(null);											// to disallow castling moves from OCM
@@ -1156,7 +1156,7 @@ function NewRenderer() {
 			return;
 		}
 
-		let illegal_reason = this.tree.node.get_board().sequence_illegal(moves);
+		let illegal_reason = this.tree.node.board.sequence_illegal(moves);
 		if (illegal_reason !== "") {
 			console.log("infobox_click(): " + illegal_reason);
 			return;
@@ -1248,7 +1248,7 @@ function NewRenderer() {
 		let tr = document.createElement("tr");
 		promotiontable.appendChild(tr);
 
-		let pieces = this.tree.node.get_board().active === "w" ? ["Q", "R", "B", "N"] : ["q", "r", "b", "n"];
+		let pieces = this.tree.node.board.active === "w" ? ["Q", "R", "B", "N"] : ["q", "r", "b", "n"];
 
 		for (let piece of pieces) {
 
@@ -1343,7 +1343,7 @@ function NewRenderer() {
 
 	renderer.draw_friendlies_in_table = function() {
 
-		let position = this.tree.node.get_board();
+		let position = this.tree.node.board;
 
 		for (let x = 0; x < 8; x++) {
 			for (let y = 0; y < 8; y++) {
@@ -1410,7 +1410,7 @@ function NewRenderer() {
 
 	renderer.draw_enemies_in_canvas = function() {
 
-		let board = this.tree.node.get_board();
+		let board = this.tree.node.board;
 
 		for (let x = 0; x < 8; x++) {
 			for (let y = 0; y < 8; y++) {
@@ -1524,7 +1524,7 @@ function NewRenderer() {
 			return false;
 		}
 
-		let board = this.tree.node.get_board();
+		let board = this.tree.node.board;
 
 		for (let move of moves) {
 			let illegal_reason = board.illegal(move);
@@ -1594,7 +1594,7 @@ function NewRenderer() {
 		this.info_handler.draw_infobox(
 			this.mouse_point(),
 			this.active_square,
-			this.tree.node.get_board().active,
+			this.tree.node.board.active,
 			this.searchmoves,
 			this.hoverdraw_div);
 

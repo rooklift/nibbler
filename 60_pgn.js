@@ -248,7 +248,7 @@ function LoadPGNRecord(o) {				// Can throw, either by itself, or by allowing a 
 
 				// Probably an actual move...
 
-				let [move, error] = node.get_board().parse_pgn(s);
+				let [move, error] = node.board.parse_pgn(s);
 
 				if (error !== "") {
 					DestroyTree(root);
@@ -295,7 +295,7 @@ function PGNToClipboard(node) {
 function make_pgn_string(node) {
 
 	let root = node.get_root();
-	let start_fen = root.get_board().fen(true);
+	let start_fen = root.board.fen(true);
 
 	let tags = [];
 
@@ -308,7 +308,7 @@ function make_pgn_string(node) {
 	}
 
 	if (start_fen !== "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1") {
-		if (root.get_board().normalchess === false) {
+		if (root.board.normalchess === false) {
 			tags.push(`[Variant "Chess960"]`);
 		}
 		tags.push(`[FEN "${start_fen}"]`);
