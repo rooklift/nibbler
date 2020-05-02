@@ -10,6 +10,8 @@
 //
 // - When adding a node, insert its text straight into the DOM.
 // - When switching node, simply set the classes of all relevant nodes.
+//
+// One thing I've noticed, in some cases Electron 5 seems way faster than 8.
 
 let easy_draws = 0;
 let hard_draws = 0;
