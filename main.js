@@ -2708,13 +2708,6 @@ function menu_build() {
 						},
 					]
 				},
-				{
-					label: "DOM test",
-					accelerator: "F11",
-					click: () => {
-						win.webContents.send("call", "dom_test");
-					}
-				},
 			]
 		}
 	];
