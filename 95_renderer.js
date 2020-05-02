@@ -367,7 +367,7 @@ function NewRenderer() {
 			return;
 		}
 
-		this.tree.new_root_from_board(board);
+		this.tree.replace_tree(NewRoot(board));
 		this.position_changed(true, true);
 	};
 

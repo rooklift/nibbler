@@ -42,12 +42,6 @@ let tree_manipulation_props = {
 		return true;
 	},
 
-	new_root_from_board: function(board) {
-		let root = NewRoot(board);
-		this.replace_tree(root);
-		return true;
-	},
-
 	set_node: function(node) {
 
 		// The node must be in the same tree, or this does nothing
