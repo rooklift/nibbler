@@ -1,7 +1,5 @@
 "use strict";
 
-let draw_skips = 0;
-
 function NewInfoHandler() {
 
 	let ih = Object.create(null);
@@ -406,7 +404,6 @@ function NewInfoHandler() {
 				if (highlight_move === this.last_drawn_highlight_move) {
 					if (highlight_class === this.last_drawn_highlight_class) {
 						if (CompareArrays(searchmoves, this.last_drawn_searchmoves)) {
-							draw_skips++;
 							return;
 						}
 					}
