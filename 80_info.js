@@ -336,7 +336,11 @@ function NewInfoHandler() {
 			let status_string = "";
 
 			if (leela_maybe_running === false) {
-				status_string += `<span class="yellow">${config.versus === "" ? "HALTED " : "YOUR MOVE "}</span>`;
+				if (config.versus === "") {
+					status_string += `<span class="yellow">HALTED <span id="gobutton_clicker" class="gobutton">(Go)</span> </span>`;
+				} else {
+					status_string += `<span class="yellow">YOUR MOVE</span>`;
+				}
 			} else if (config.autoplay === 1) {
 				status_string += `<span class="green">Self-play! </span>`;
 			} else if (config.autoplay === 2) {

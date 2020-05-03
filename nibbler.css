@@ -99,6 +99,7 @@ td {
 	font-family: monospace, monospace;
 	margin-bottom: 1em;
 	overflow: hidden;
+	pointer-events: auto;
 	white-space: nowrap;
 	width: 100%;
 }
@@ -200,6 +201,14 @@ span.green {
 
 span.blue {
 	color: #6cccee;
+}
+
+span.gobutton {
+	color: #66ff66;
+}
+
+span.gobutton:hover {
+	color: #ffffff;
 }
 
 .infoline {

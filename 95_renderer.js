@@ -1169,6 +1169,13 @@ function NewRenderer() {
 		}
 	};
 
+	renderer.statusbox_click = function(event) {
+		let val = EventPathString(event, "gobutton");
+		if (val) {
+			this.set_versus("wb");
+		}
+	};
+
 	renderer.show_promotiontable = function(partial_move) {
 
 		promotiontable.innerHTML = "";

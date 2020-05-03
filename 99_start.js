@@ -190,6 +190,10 @@ graph.addEventListener("mousedown", (event) => {
 	hub.winrate_click(event);
 });
 
+statusbox.addEventListener("mousedown", (event) => {
+	hub.statusbox_click(event);
+});
+
 document.addEventListener("wheel", (event) => {
 
 	// Only if the PGN chooser is closed, and the mouse is over the board or graph.
