@@ -208,7 +208,7 @@ let tree_manipulation_props = {
 						break;
 					}
 				}
-				break;
+				break;		// 1 tree change only
 			}
 			node = node.parent;
 		}
