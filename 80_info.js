@@ -49,7 +49,7 @@ function NewInfoHandler() {
 
 	ih.receive = function(s, node) {
 
-		if (typeof s !== "string" || !node) {
+		if (typeof s !== "string" || !node || node.destroyed) {
 			return;
 		}
 
@@ -238,7 +238,7 @@ function NewInfoHandler() {
 		//   data are often inferior to moves with new data, regardless of stats.
 		// - We can try and track the age of the data by various means, but these are fallible.
 
-		if (!node) {
+		if (!node || node.destroyed) {
 			return [];
 		}
 
@@ -296,7 +296,7 @@ function NewInfoHandler() {
 	};
 
 	ih.must_draw_infobox = function() {
-		this.last_drawn_version = null;
+		// This used to do something.
 	};
 
 	ih.draw_statusbox = function(node, leela_maybe_running, nogo_reason, searchmoves, ever_received_uciok, syncs_needed) {
@@ -320,6 +320,10 @@ function NewInfoHandler() {
 		} else if (nogo_reason) {
 
 			statusbox.innerHTML = `<span class="yellow">${nogo_reason}</span>`;
+
+		} else if (!node || node.destroyed) {
+
+			statusbox.innerHTML = `<span class="red">draw_statusbox - !node || node.destroyed</span>`;
 
 		} else {
 
@@ -349,6 +353,10 @@ function NewInfoHandler() {
 
 		if (!this.ever_received_info) {
 			infobox.innerHTML = this.stderr_log;
+			return;
+		}
+
+		if (!node || node.destroyed) {
 			return;
 		}
 
@@ -550,7 +558,7 @@ function NewInfoHandler() {
 			}
 		}
 
-		if (!config.arrows_enabled) {
+		if (!config.arrows_enabled || !node || node.destroyed) {
 			return;
 		}
 
