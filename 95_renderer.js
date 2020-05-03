@@ -670,7 +670,7 @@ function NewRenderer() {
 		this.go_or_halt(true);
 	};
 
-	renderer.set_uci_option = function(name, val, save_to_cfg, quiet) {
+	renderer.set_uci_option = function(name, val, save_to_cfg) {
 		this.__halt();
 		if (save_to_cfg) {
 			if (val === null || val === undefined) {
@@ -684,19 +684,17 @@ function NewRenderer() {
 			val = "";
 		}
 		let sent = this.engine.setoption(name, val);
-		if (!quiet) {
-			this.info_handler.set_special_message(sent, "blue");
-		}
+		this.info_handler.set_special_message(sent, "blue");
 		this.go_or_halt();
 	};
 
 	renderer.set_uci_option_permanent = function(name, val) {
-		this.set_uci_option(name, val, true, false);
+		this.set_uci_option(name, val, true);
 	};
 
 	renderer.switch_weights = function(filename) {
 		this.info_handler.stderr_log = "";							// Avoids having confusing stale messages
-		this.set_uci_option("WeightsFile", filename, true, true);
+		this.set_uci_option("WeightsFile", filename, true);
 	};
 
 	renderer.set_node_limit = function(val) {
