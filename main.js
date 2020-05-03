@@ -409,10 +409,16 @@ function menu_build() {
 					}
 				},
 				{
-					label: "Make this the main line",
+					label: "Promote to main line",
 					accelerator: "CommandOrControl+L",
 					click: () => {
 						win.webContents.send("call", "promote_to_main_line");
+					}
+				},
+				{
+					label: "Promote line by 1 level",
+					click: () => {
+						win.webContents.send("call", "promote");
 					}
 				},
 				{

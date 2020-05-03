@@ -207,6 +207,10 @@ function NewRenderer() {
 		this.tree.promote_to_main_line();
 	};
 
+	renderer.promote = function() {
+		this.tree.promote();
+	};
+
 	renderer.delete_other_lines = function() {
 		this.tree.delete_other_lines();
 	};

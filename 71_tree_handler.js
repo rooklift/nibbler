@@ -178,10 +178,37 @@ let tree_manipulation_props = {
 					if (node.parent.children[n] === node) {
 						node.parent.children[n] = node.parent.children[0];
 						node.parent.children[0] = node;
+						changed = true;
 						break;
 					}
 				}
-				changed = true;
+			}
+			node = node.parent;
+		}
+
+		if (changed) {
+			this.tree_version++;
+			this.dom_from_scratch();
+		}
+	},
+
+	promote: function() {
+
+		let node = this.node;
+		let changed = false;
+
+		while (node.parent) {
+			if (node.parent.children[0] !== node) {
+				for (let n = 1; n < node.parent.children.length; n++) {
+					if (node.parent.children[n] === node) {
+						let swapper = node.parent.children[n - 1];
+						node.parent.children[n - 1] = node;
+						node.parent.children[n] = swapper;
+						changed = true;
+						break;
+					}
+				}
+				break;
 			}
 			node = node.parent;
 		}
