@@ -2861,6 +2861,12 @@ function menu_build() {
 					}
 				},
 				{
+					label: "Show versus state",
+					click: () => {
+						win.webContents.send("call", "show_versus_state");
+					}
+				},
+				{
 					label: "Fire GC",
 					click: () => {
 						win.webContents.send("call", "fire_gc");

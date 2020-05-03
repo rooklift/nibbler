@@ -1081,6 +1081,10 @@ function NewRenderer() {
 		alert(`readyok: ${this.engine.readyok_required}, bestmove: ${this.engine.bestmove_required}`);
 	};
 
+	renderer.show_versus_state = function() {
+		alert(`versus: "${config.versus}", autoplay: ${config.autoplay}`);
+	};
+
 	renderer.save_config = function() {			// Just for the dev menu - everything else can just call config_io.save(config) directly.
 		config_io.save(config);
 	};
