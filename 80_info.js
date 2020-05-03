@@ -1,15 +1,10 @@
 "use strict";
 
+let draw_skips = 0;
+
 function NewInfoHandler() {
 
 	let ih = Object.create(null);
-
-	ih.table = Object.create(null);			// Map of move (e.g. "e2e4") --> info object.
-	ih.board = null;
-	ih.version = 0;							// Incremented on any change.
-	ih.nodes = 0;							// Stat sent by engine.
-	ih.nps = 0;								// Stat sent by engine.
-	ih.time = 0;							// Stat sent by engine.
 
 	ih.ever_received_info = false;
 	ih.ever_received_q = false;
@@ -18,33 +13,22 @@ function NewInfoHandler() {
 	ih.one_click_moves = New2DArray(8, 8);	// Array of possible one-click moves. Updated by draw_arrows().
 	ih.info_clickers = [];					// Elements in the infobox. Updated by draw_infobox().
 
-	ih.last_drawn_version = null;
-	ih.last_drawn_highlight = null;
-	ih.last_drawn_highlight_class = null;
-	ih.last_drawn_searchmoves = [];
-
 	ih.stderr_log = "";
 	ih.special_message = null;
 	ih.special_message_class = null;
 	ih.special_message_time = performance.now();
+
+	ih.last_drawn_board = null;
+	ih.last_drawn_version = null;
+	ih.last_drawn_highlight = null;
+	ih.last_drawn_highlight_class = null;
+	ih.last_drawn_searchmoves = [];
 
 	ih.reset_engine_info = function() {
 		this.ever_received_info = false;
 		this.ever_received_q = false;
 		this.ever_received_multipv_2 = false;
 		this.stderr_log = "";
-	};
-
-	ih.clear = function(board) {
-		if (!board) {
-			throw "ih.clear(): need board";
-		}
-		this.table = Object.create(null);
-		this.board = board;
-		this.version++;
-		this.nodes = 0;
-		this.nps = 0;
-		this.time = 0;
 	};
 
 	ih.err_receive = function(s) {
@@ -71,19 +55,13 @@ function NewInfoHandler() {
 		}
 	};
 
-	ih.receive = function(s, board) {
+	ih.receive = function(s, node) {
 
-		if (typeof s !== "string" || !board) {
+		if (typeof s !== "string" || !node || node.destroyed) {
 			return;
 		}
 
-		// We use the board to check legality (only of the first move in the PV,
-		// later moves are checked if we ever try to use them) and also to check
-		// we are in sync with the renderer.
-
-		if (this.board !== board) {
-			throw "ih.receive(): Received unexpected board.";
-		}
+		let board = node.board;
 
 		if (s.startsWith("info") && s.includes(" pv ") && !s.includes("lowerbound") && !s.includes("upperbound")) {
 
@@ -91,7 +69,7 @@ function NewInfoHandler() {
 			// pv d2d4 g8f6 c2c4 e7e6 g1f3 d7d5 b1c3 f8b4 c1g5 d5c4 e2e4 c7c5 f1c4 h7h6 g5f6 d8f6 e1h1 c5d4 e4e5 f6d8 c3e4
 
 			this.ever_received_info = true;
-			this.version++;
+			node.table.version++;
 
 			let infovals = InfoValMany(s, ["pv", "cp", "mate", "multipv", "nodes", "nps", "time"]);
 
@@ -99,18 +77,18 @@ function NewInfoHandler() {
 			let move = infovals["pv"];
 			move = board.c960_castling_converter(move);
 
-			if (this.table[move]) {						// We already have move info for this move.
-				move_info = this.table[move];
+			if (node.table.info[move]) {				// We already have move info for this move.
+				move_info = node.table.info[move];
 			} else {									// We don't.
 				if (board.illegal(move) !== "") {
 					Log(`INVALID MOVE RECEIVED: ${move}`);
 					return;
 				}
 				move_info = new_info(board, move);
-				this.table[move] = move_info;
+				node.table.info[move] = move_info;
 			}
 
-			move_info.version = this.version;
+			move_info.version = node.table.version;
 			move_info.wdl = InfoWDL(s);
 
 			let tmp;
@@ -144,17 +122,17 @@ function NewInfoHandler() {
 			tmp = parseInt(infovals["nodes"], 10);
 			if (Number.isNaN(tmp) === false) {
 				move_info.total_nodes = tmp;
-				this.nodes = tmp;
+				node.table.nodes = tmp;
 			}
 
 			tmp = parseInt(infovals["nps"], 10);
 			if (Number.isNaN(tmp) === false) {
-				this.nps = tmp;
+				node.table.nps = tmp;
 			}
 
 			tmp = parseInt(infovals["time"], 10);
 			if (Number.isNaN(tmp) === false) {
-				this.time = tmp;
+				node.table.time = tmp;
 			}
 
 			let new_pv = InfoPV(s);
@@ -186,7 +164,7 @@ function NewInfoHandler() {
 			// (M:  7.4) (Q:  0.09480) (U: 0.01211) (Q+U:  0.10691) (V:  0.0898)
 
 			this.ever_received_info = true;
-			this.version++;
+			node.table.version++;
 
 			let infovals = InfoValMany(s, ["string", "N:", "(D:", "(U:", "(Q+U:", "(S:", "(P:", "(Q:", "(V:", "(M:"]);
 
@@ -194,18 +172,18 @@ function NewInfoHandler() {
 			let move = infovals["string"];
 			move = board.c960_castling_converter(move);
 
-			if (this.table[move]) {						// We already have move info for this move.
-				move_info = this.table[move];
+			if (node.table.info[move]) {						// We already have move info for this move.
+				move_info = node.table.info[move];
 			} else {									// We don't.
 				if (board.illegal(move) !== "") {
 					Log(`INVALID MOVE RECEIVED: ${move}`);
 					return;
 				}
 				move_info = new_info(board, move);
-				this.table[move] = move_info;
+				node.table.info[move] = move_info;
 			}
 
-			move_info.version = this.version;
+			move_info.version = node.table.version;
 
 			let tmp;
 
@@ -258,7 +236,7 @@ function NewInfoHandler() {
 		}
 	};
 
-	ih.sorted = function() {
+	ih.sorted = function(node) {
 
 		// There are a lot of subtleties around sorting the moves...
 		//
@@ -268,9 +246,13 @@ function NewInfoHandler() {
 		//   data are often inferior to moves with new data, regardless of stats.
 		// - We can try and track the age of the data by various means, but these are fallible.
 
+		if (!node || node.destroyed) {
+			return [];
+		}
+
 		let info_list = [];
 
-		for (let o of Object.values(this.table)) {
+		for (let o of Object.values(node.table.info)) {
 			info_list.push(o);
 		}
 
@@ -325,7 +307,7 @@ function NewInfoHandler() {
 		this.last_drawn_version = null;
 	};
 
-	ih.draw_statusbox = function(leela_maybe_running, nogo_reason, searchmoves, ever_received_uciok, syncs_needed) {
+	ih.draw_statusbox = function(node, leela_maybe_running, nogo_reason, searchmoves, ever_received_uciok, syncs_needed) {
 
 		if (!ever_received_uciok) {
 
@@ -347,6 +329,10 @@ function NewInfoHandler() {
 
 			statusbox.innerHTML = `<span class="yellow">${nogo_reason}</span>`;
 
+		} else if (!node || node.destroyed) {
+
+			statusbox.innerHTML = `<span class="red">draw_statusbox - !node || node.destroyed</span>`;
+
 		} else {
 
 			let status_string = "";
@@ -359,9 +345,9 @@ function NewInfoHandler() {
 				status_string += `<span class="yellow">Auto-eval! </span>`;
 			}
 
-			status_string += `<span class="gray">Nodes: ${NString(this.nodes)}, N/s: ${NString(this.nps)}, Time: ${DurationString(this.time)}</span>`;
+			status_string += `<span class="gray">Nodes: ${NString(node.table.nodes)}, N/s: ${NString(node.table.nps)}, Time: ${DurationString(node.table.time)}</span>`;
 
-			if (typeof config.search_nodes === "number" && this.nodes >= config.search_nodes) {
+			if (typeof config.search_nodes === "number" && node.table.nodes >= config.search_nodes) {		// FIXME - not sure this behaves now
 				status_string += ` <span class="blue">(limit met)</span>`;
 			}
 
@@ -369,7 +355,7 @@ function NewInfoHandler() {
 		}
 	};
 
-	ih.draw_infobox = function(mouse_point, active_square, active_colour, searchmoves, hoverdraw_div) {
+	ih.draw_infobox = function(node, mouse_point, active_square, active_colour, searchmoves, hoverdraw_div) {
 
 		// Display stderr and return if we've never seen any info...
 
@@ -378,7 +364,11 @@ function NewInfoHandler() {
 			return;
 		}
 
-		let info_list = this.sorted();
+		if (!node || node.destroyed) {
+			return;
+		}
+
+		let info_list = this.sorted(node);
 
 		if (typeof config.max_info_lines === "number" && config.max_info_lines > 0) {		// Hidden option, request of rwbc
 			info_list = info_list.slice(0, config.max_info_lines);
@@ -405,22 +395,27 @@ function NewInfoHandler() {
 
 		// We can skip the draw if:
 		//
+		// - The last drawn board matches (implying node matches)
 		// - The last drawn version matches
 		// - The last drawn highlight matches
 		// - The last drawn highlight class matches
 		// - The searchmoves match (some possibility of false negatives due to re-ordering, but that's OK)
 
-		if (this.version === this.last_drawn_version) {
-			if (highlight_move === this.last_drawn_highlight_move) {
-				if (highlight_class === this.last_drawn_highlight_class) {
-					if (CompareArrays(searchmoves, this.last_drawn_searchmoves)) {
-						return;
+		if (node.board === this.last_drawn_board) {
+			if (node.table.version === this.last_drawn_version) {
+				if (highlight_move === this.last_drawn_highlight_move) {
+					if (highlight_class === this.last_drawn_highlight_class) {
+						if (CompareArrays(searchmoves, this.last_drawn_searchmoves)) {
+							draw_skips++;
+							return;
+						}
 					}
 				}
 			}
 		}
 
-		this.last_drawn_version = this.version;
+		this.last_drawn_board = node.board;
+		this.last_drawn_version = node.table.version;
 		this.last_drawn_highlight_move = highlight_move;
 		this.last_drawn_highlight_class = highlight_class;
 		this.last_drawn_searchmoves = Array.from(searchmoves);
@@ -505,7 +500,7 @@ function NewInfoHandler() {
 					u: config.show_u,
 					s: config.show_s,
 				},
-				this.nodes);
+				node.table.nodes);
 
 			if (extra_stat_strings.length > 0) {
 				if (config.infobox_stats_newline) {		// Hidden option, request of jhorthos
@@ -588,7 +583,7 @@ function NewInfoHandler() {
 		return null;
 	};
 
-	ih.draw_arrows = function(specific_source = null, show_move = null) {		// point and movestring
+	ih.draw_arrows = function(node, specific_source = null, show_move = null) {		// point and movestring
 
 		// This function also sets up the one_click_moves array.
 
@@ -598,7 +593,7 @@ function NewInfoHandler() {
 			}
 		}
 
-		if (!config.arrows_enabled) {
+		if (!config.arrows_enabled || !node || node.destroyed) {
 			return;
 		}
 
@@ -610,7 +605,7 @@ function NewInfoHandler() {
 		let arrows = [];
 		let heads = [];
 
-		let info_list = this.sorted();
+		let info_list = this.sorted(node);
 
 		if (info_list.length > 0) {
 
@@ -658,11 +653,11 @@ function NewInfoHandler() {
 					let x_head_adjustment = 0;				// Adjust head of arrow for castling moves...
 					let normal_castling_flag = false;
 
-					if (this.board && this.board.colour(Point(x1, y1)) === this.board.colour(Point(x2, y2))) {
+					if (node.board && node.board.colour(Point(x1, y1)) === node.board.colour(Point(x2, y2))) {
 
 						// So the move is a castling move (reminder: as of 1.1.6 castling format is king-onto-rook).
 
-						if (this.board.normalchess) {
+						if (node.board.normalchess) {
 							normal_castling_flag = true;	// ...and we are playing normal Chess (not 960).
 						}
 
@@ -756,8 +751,8 @@ function NewInfoHandler() {
 				s = o.info.value_string(0);
 				break;
 			case 1:
-				if (this.nodes > 0) {
-					s = (100 * o.info.n / this.nodes).toFixed(0);
+				if (node.table.nodes > 0) {
+					s = (100 * o.info.n / node.table.nodes).toFixed(0);
 				}
 				break;
 			case 2:

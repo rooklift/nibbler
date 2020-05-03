@@ -9,8 +9,6 @@ function NewRenderer() {
 	renderer.grapher = NewGrapher();
 	renderer.info_handler = NewInfoHandler();
 
-	renderer.info_handler.clear(renderer.tree.node.board);		// Best give it a valid board to start with.
-
 	// Various state we have to keep track of...
 
 	renderer.pgn_choices = null;								// All games found when opening a PGN file.
@@ -52,7 +50,6 @@ function NewRenderer() {
 
 		this.searchmoves = [];
 		this.hoverdraw_div = -1;
-		this.position_changed_clear_info_handler(new_game_flag);
 		this.escape();
 
 		this.go_or_halt(new_game_flag);
@@ -67,98 +64,6 @@ function NewRenderer() {
 				title += `: ${root.tags.White} - ${root.tags.Black}`;
 			}
 			ipcRenderer.send("set_title", title);
-		}
-	};
-
-	renderer.position_changed_clear_info_handler = function(new_game_flag) {
-
-		// The position has changed. Maybe the new position is contained within a PV
-		// of the old info table. We want to clear the info table, but preserving the
-		// relevant part of the PV, and evals, if available.
-
-		if (new_game_flag || Object.keys(this.info_handler.table).length === 0) {			// Fail
-			this.info_handler.clear(this.tree.node.board);
-			return;
-		}
-
-		if (config.versus === "w" || config.versus === "b") {
-			if (this.leela_should_go() === false) {											// Fail (conceal)
-				this.info_handler.clear(this.tree.node.board);
-				return;
-			}
-		}
-
-		// First, find what ancestor (if any) has the old position...
-
-		let node = this.tree.node;
-		let moves = [];
-		let found = false;
-
-		while (node.parent) {
-			moves.push(node.move);
-			if (node.parent.board === this.info_handler.board) {
-				found = true;
-				break;
-			}
-			node = node.parent;
-		}
-
-		if (found === false) {																// Fail
-			this.info_handler.clear(this.tree.node.board);
-			return;
-		}
-
-		moves.reverse();
-
-		// moves is now the sequence of moves that gets us from 
-		// the info_handler board to our board.
-
-		let oldinfo = this.info_handler.table[moves[0]];
-
-		if (!oldinfo) {																		// Fail
-			this.info_handler.clear(this.tree.node.board);
-			return;
-		}
-
-		if (Array.isArray(oldinfo.pv) === false || oldinfo.pv.length <= moves.length) {		// Fail
-			this.info_handler.clear(this.tree.node.board);
-			return;
-		}
-
-		let pv = Array.from(oldinfo.pv);
-
-		// Find out if the oldinfo's PV matches our moves.
-
-		for (let n = 0; n < moves.length; n++) {
-			if (pv[n] !== moves[n]) {														// Fail
-				this.info_handler.clear(this.tree.node.board);
-				return;
-			}
-		}
-
-		// So, everything matches and we can use the PV...
-
-		this.info_handler.clear(this.tree.node.board);
-
-		let nextmove = pv[moves.length];
-		pv = pv.slice(moves.length);
-
-		this.info_handler.table[nextmove] = new_info(this.tree.node.board, nextmove);
-		this.info_handler.table[nextmove].pv = pv;
-		this.info_handler.table[nextmove].q = oldinfo.q;
-		this.info_handler.table[nextmove].cp = oldinfo.cp;
-		this.info_handler.table[nextmove].multipv = 1;
-		this.info_handler.table[nextmove].total_nodes = -1;		// So it won't be acceptable as an eval for a node.
-
-		// Flip our evals if the colour changes...
-
-		if (oldinfo.board.active !== this.tree.node.board.active) {
-			if (typeof this.info_handler.table[nextmove].q === "number") {
-				this.info_handler.table[nextmove].q *= -1;
-			}
-			if (typeof this.info_handler.table[nextmove].cp === "number") {
-				this.info_handler.table[nextmove].cp *= -1;
-			}
 		}
 	};
 
@@ -254,7 +159,7 @@ function NewRenderer() {
 	};
 
 	renderer.play_info_index = function(n) {
-		let info_list = this.info_handler.sorted();
+		let info_list = this.info_handler.sorted(this.tree.node);
 		if (typeof n === "number" && n >= 0 && n < info_list.length) {
 			this.move(info_list[n].move);
 		}
@@ -559,7 +464,7 @@ function NewRenderer() {
 		if (s.startsWith("info")) {
 
 			if (this.leela_position === this.tree.node.board) {		// Test may fail if we changed position without informing
-				this.info_handler.receive(s, this.tree.node.board);	// Leela - which we commonly do if we're halting Leela.
+				this.info_handler.receive(s, this.tree.node);		// Leela - which we commonly do if we're halting Leela.
 			}
 
 		} else if (s.startsWith("error")) {
@@ -600,7 +505,7 @@ function NewRenderer() {
 
 					let tokens = s.split(" ");
 
-					let info = this.info_handler.table[tokens[1]];			// Update our cached eval in the tree while we can.
+					let info = this.tree.node.table.info[tokens[1]];
 					if (info) {
 						this.tree.node.update_eval_from_info(info);
 					}
@@ -757,7 +662,7 @@ function NewRenderer() {
 	};
 
 	renderer.reset_leela_cache = function() {
-		this.info_handler.clear(this.tree.node.board);
+		this.tree.node.clear_table();
 		this.go_or_halt(true);
 	};
 
@@ -816,7 +721,6 @@ function NewRenderer() {
 			this.engine = NewEngine();
 		}
 
-		this.info_handler.clear(this.tree.node.board);
 		this.info_handler.reset_engine_info();
 
 		if (typeof filepath !== "string" || fs.existsSync(filepath) === false) {
@@ -914,7 +818,7 @@ function NewRenderer() {
 
 		let moveset = Object.create(null);
 
-		for (let move of Object.keys(this.info_handler.table)) {
+		for (let move of Object.keys(this.tree.node.table.info)) {
 			moveset[move] = true;
 		}
 
@@ -1196,7 +1100,7 @@ function NewRenderer() {
 		this.tree.add_move_sequence(moves);
 
 		let stats_node = this.tree.get_node_from_move(moves[0]);
-		let info = this.info_handler.table[moves[0]];		// info for the first move in our clicked line.
+		let info = this.tree.node.table.info[moves[0]];		// info for the first move in our clicked line.
 
 		if (info) {
 
@@ -1215,7 +1119,7 @@ function NewRenderer() {
 					u: config.sam_u,
 					s: config.sam_s,
 				},
-				this.info_handler.nodes);
+				this.tree.node.table.nodes);
 
 			if (sl.length > 0) {
 				stats_node.stats = sl.join(", ");
@@ -1471,7 +1375,7 @@ function NewRenderer() {
 			return false;
 		}
 
-		let info = this.info_handler.sorted()[div_index];			// Possibly undefined
+		let info = this.info_handler.sorted(this.tree.node)[div_index];			// Possibly undefined
 
 		if (!info || Array.isArray(info.pv) === false || info.pv.length === 0) {
 			return false;
@@ -1600,11 +1504,12 @@ function NewRenderer() {
 			canvas.style.outline = "none";
 			this.draw_move_in_canvas();
 			this.draw_enemies_in_canvas();
-			this.info_handler.draw_arrows(arrow_spotlight_square, null);
+			this.info_handler.draw_arrows(this.tree.node, arrow_spotlight_square, null);
 			this.draw_friendlies_in_table();
 		}
 
 		this.info_handler.draw_statusbox(
+			this.tree.node,
 			this.leela_maybe_running,
 			this.nogo_reason,
 			this.searchmoves,
@@ -1612,6 +1517,7 @@ function NewRenderer() {
 			Math.max(this.engine.readyok_required, this.engine.bestmove_required));
 
 		this.info_handler.draw_infobox(
+			this.tree.node,
 			this.mouse_point(),
 			this.active_square,
 			this.tree.node.board.active,
@@ -1634,7 +1540,7 @@ function NewRenderer() {
 	};
 
 	renderer.update_node_eval = function() {
-		let info_list = this.info_handler.sorted();
+		let info_list = this.info_handler.sorted(this.tree.node);
 		if (info_list.length > 0) {
 			this.tree.node.update_eval_from_info(info_list[0]);
 		}

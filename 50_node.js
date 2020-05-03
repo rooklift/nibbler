@@ -235,7 +235,16 @@ const node_prototype = {
 
 		this.eval = info.board.active === "w" ? info.value() : 1 - info.value();
 		this.eval_nodes = info.total_nodes;
-	}
+	},
+
+	clear_table: function() {
+		this.table = Object.create(null);
+		this.table.info = Object.create(null);		// Map of move (e.g. "e2e4") --> info object.
+		this.table.version = 0;						// Incremented on any change.
+		this.table.nodes = 0;						// Stat sent by engine.
+		this.table.nps = 0;							// Stat sent by engine.
+		this.table.time = 0;						// Stat sent by engine.
+	},
 };
 
 // ---------------------------------------------------------------------------------------------------------
@@ -257,11 +266,14 @@ function NewNode(parent, move, board) {		// move must be legal; board is only re
 	}
 
 	node.__nice_move = null;
+	node.table = null;
 	node.eval = null;
 	node.eval_nodes = 0;					// Useful; some info objects get .total_nodes set to -1, and update_eval_from_info() ignores them.
 	node.destroyed = false;
 
 	node.children = [];
+
+	node.clear_table();
 
 	return node;
 }
@@ -306,6 +318,7 @@ function __destroy_tree(node) {
 		node.parent = null;
 		node.board = null;
 		node.children = null;
+		node.table = null;
 		node.destroyed = true;
 
 		delete live_nodes[node.id.toString()];
@@ -320,6 +333,7 @@ function __destroy_tree(node) {
 	node.parent = null;
 	node.board = null;
 	node.children = null;
+	node.table = null;
 	node.destroyed = true;
 
 	delete live_nodes[node.id.toString()];
