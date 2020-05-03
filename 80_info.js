@@ -339,7 +339,7 @@ function NewInfoHandler() {
 				if (config.versus === "") {
 					status_string += `<span id="gobutton_clicker" class="yellow">HALTED </span>`;
 				} else {
-					status_string += `<span class="yellow">YOUR MOVE</span>`;
+					status_string += `<span class="yellow">YOUR MOVE </span>`;
 				}
 			} else if (config.autoplay === 1) {
 				status_string += `<span class="green">Self-play! </span>`;
