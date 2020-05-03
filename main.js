@@ -417,6 +417,7 @@ function menu_build() {
 				},
 				{
 					label: "Promote line by 1 level",
+					accelerator: "CommandOrControl+Up",
 					click: () => {
 						win.webContents.send("call", "promote");
 					}
