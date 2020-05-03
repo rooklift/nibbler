@@ -267,7 +267,7 @@ function NewNode(parent, move, board) {		// move must be legal; board is only re
 
 	node.__nice_move = null;
 	node.table = null;
-	node.eval = null;
+	node.eval = null;						// Only used by the grapher.
 	node.eval_nodes = 0;					// Useful; some info objects get .total_nodes set to -1, and update_eval_from_info() ignores them.
 	node.destroyed = false;
 
