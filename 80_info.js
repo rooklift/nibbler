@@ -1,5 +1,7 @@
 "use strict";
 
+let draw_skips = 0;
+
 function NewInfoHandler() {
 
 	let ih = Object.create(null);
@@ -15,6 +17,12 @@ function NewInfoHandler() {
 	ih.special_message = null;
 	ih.special_message_class = null;
 	ih.special_message_time = performance.now();
+
+	ih.last_drawn_board = null;
+	ih.last_drawn_version = null;
+	ih.last_drawn_highlight = null;
+	ih.last_drawn_highlight_class = null;
+	ih.last_drawn_searchmoves = [];
 
 	ih.reset_engine_info = function() {
 		this.ever_received_info = false;
@@ -296,7 +304,7 @@ function NewInfoHandler() {
 	};
 
 	ih.must_draw_infobox = function() {
-		// This used to do something.
+		this.last_drawn_version = null;
 	};
 
 	ih.draw_statusbox = function(node, leela_maybe_running, nogo_reason, searchmoves, ever_received_uciok, syncs_needed) {
@@ -384,6 +392,33 @@ function NewInfoHandler() {
 			highlight_move = info_list[hoverdraw_div].move;
 			highlight_class = "hover_highlight";
 		}
+
+		// We can skip the draw if:
+		//
+		// - The last drawn board matches (implying node matches)
+		// - The last drawn version matches
+		// - The last drawn highlight matches
+		// - The last drawn highlight class matches
+		// - The searchmoves match (some possibility of false negatives due to re-ordering, but that's OK)
+
+		if (node.board === this.last_drawn_board) {
+			if (node.table.version === this.last_drawn_version) {
+				if (highlight_move === this.last_drawn_highlight_move) {
+					if (highlight_class === this.last_drawn_highlight_class) {
+						if (CompareArrays(searchmoves, this.last_drawn_searchmoves)) {
+							draw_skips++;
+							return;
+						}
+					}
+				}
+			}
+		}
+
+		this.last_drawn_board = node.board;
+		this.last_drawn_version = node.table.version;
+		this.last_drawn_highlight_move = highlight_move;
+		this.last_drawn_highlight_class = highlight_class;
+		this.last_drawn_searchmoves = Array.from(searchmoves);
 
 		this.info_clickers = [];
 
