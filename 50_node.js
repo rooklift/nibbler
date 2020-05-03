@@ -239,11 +239,11 @@ const node_prototype = {
 
 	clear_table: function() {
 		this.table = Object.create(null);
-		this.table.info = Object.create(null);
-		this.table.version = 0;
-		this.table.nodes = 0;
-		this.table.nps = 0;
-		this.table.time = 0;
+		this.table.info = Object.create(null);		// Map of move (e.g. "e2e4") --> info object.
+		this.table.version = 0;						// Incremented on any change.
+		this.table.nodes = 0;						// Stat sent by engine.
+		this.table.nps = 0;							// Stat sent by engine.
+		this.table.time = 0;						// Stat sent by engine.
 	},
 };
 
