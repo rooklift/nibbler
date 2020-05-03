@@ -321,7 +321,7 @@ function NewInfoHandler() {
 
 		} else if (typeof config.search_nodes === "number" && (searchmoves.length === 1)) {
 
-			statusbox.innerHTML = `<span class="yellow">Node limit with 1 focus might not run!</span>`;
+			statusbox.innerHTML = `<span class="red">Node limit with 1 focus might not run!</span>`;
 
 		} else if (nogo_reason) {
 
@@ -338,9 +338,9 @@ function NewInfoHandler() {
 			if (leela_maybe_running === false) {
 				status_string += `<span class="yellow">${config.versus === "" ? "HALTED " : "YOUR MOVE "}</span>`;
 			} else if (config.autoplay === 1) {
-				status_string += `<span class="yellow">Self-play! </span>`;
+				status_string += `<span class="blue">Self-play! </span>`;
 			} else if (config.autoplay === 2) {
-				status_string += `<span class="yellow">Auto-eval! </span>`;
+				status_string += `<span class="blue">Auto-eval! </span>`;
 			}
 
 			status_string += `<span class="gray">Nodes: ${NString(node.table.nodes)}, N/s: ${NString(node.table.nps)}, Time: ${DurationString(node.table.time)}</span>`;
