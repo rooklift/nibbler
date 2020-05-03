@@ -12,15 +12,15 @@ For prebuilt binary releases, see the [Releases](https://github.com/fohristiwhir
 
 * Display Leela's top choices graphically.
 * Winrate graph.
-* Choice of winrate, node %, or policy display.
 * Optionally shows Leela statistics like N, P, Q, S, U, V, and WDL for each move.
 * UCI `searchmoves` functionality.
+* Automatic full-game analysis.
+* Play against Leela from any position.
+* Leela self-play from any position.
 * PGN loading via menu, clipboard, or drag-and-drop.
 * Supports PGN variations of arbitrary depth.
 * FEN loading.
-* Versus Mode - where Leela only analyses one side.
 * Chess 960.
-* Automatic full-game analysis.
 
 # Installation - the simple way
 
