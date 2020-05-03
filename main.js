@@ -2421,6 +2421,18 @@ function menu_build() {
 							}
 						},
 						{
+							label: "18",
+							type: "checkbox",
+							checked: config.info_font_size === 18,
+							click: () => {
+								set_checks("Sizes", "Infobox font", "18");
+								win.webContents.send("call", {
+									fn: "set_info_font_size",
+									args: [18],
+								});
+							}
+						},
+						{
 							label: "16",
 							type: "checkbox",
 							checked: config.info_font_size === 16,
@@ -2482,6 +2494,18 @@ function menu_build() {
 								win.webContents.send("call", {
 									fn: "set_pgn_font_size",
 									args: [20],
+								});
+							}
+						},
+						{
+							label: "18",
+							type: "checkbox",
+							checked: config.pgn_font_size === 18,
+							click: () => {
+								set_checks("Sizes", "Move history font", "18");
+								win.webContents.send("call", {
+									fn: "set_pgn_font_size",
+									args: [18],
 								});
 							}
 						},
