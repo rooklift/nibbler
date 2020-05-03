@@ -159,7 +159,7 @@ function NewRenderer() {
 	};
 
 	renderer.play_info_index = function(n) {
-		let info_list = this.info_handler.sorted();
+		let info_list = this.info_handler.sorted(this.tree.node);
 		if (typeof n === "number" && n >= 0 && n < info_list.length) {
 			this.move(info_list[n].move);
 		}
