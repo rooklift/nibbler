@@ -409,7 +409,7 @@ function menu_build() {
 					}
 				},
 				{
-					label: "Promote to main line",
+					label: "Promote line to main line",
 					accelerator: "CommandOrControl+L",
 					click: () => {
 						win.webContents.send("call", "promote_to_main_line");
