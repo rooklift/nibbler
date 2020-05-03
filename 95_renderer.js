@@ -1119,7 +1119,7 @@ function NewRenderer() {
 					u: config.sam_u,
 					s: config.sam_s,
 				},
-				this.info_handler.nodes);
+				this.tree.node.table.nodes);
 
 			if (sl.length > 0) {
 				stats_node.stats = sl.join(", ");
