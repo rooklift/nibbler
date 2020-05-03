@@ -337,7 +337,7 @@ function NewInfoHandler() {
 
 			if (leela_maybe_running === false) {
 				if (config.versus === "") {
-					status_string += `<span id="gobutton_clicker" class="yellow">HALTED </span>`;
+					status_string += `<span id="gobutton_clicker" class="yellow">HALTED (go?) </span>`;
 				} else {
 					status_string += `<span class="yellow">YOUR MOVE </span>`;
 				}
