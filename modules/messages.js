@@ -20,7 +20,8 @@ The self-play option causes Leela to play itself.
 
 Higher temperature makes the moves less predictable, but at some cost to \
 move correctness. Meanwhile, TempDecayMoves specifies how many moves the \
-temperature effect lasts for.`;
+temperature effect lasts for. These settings have no effect on analysis, \
+only actual move generation.`;
 
 
 exports.save_not_enabled =
