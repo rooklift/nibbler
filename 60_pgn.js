@@ -352,7 +352,7 @@ function make_movetext(node) {
 			lines.push(line);
 			line = token;
 		} else {
-			if (line.length > 0) {
+			if (line.length > 0 && line.endsWith("(") === false && token !== ")") {
 				line += " ";
 			}
 			line += token;
