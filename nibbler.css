@@ -163,18 +163,6 @@ ul {
 	list-style: none;
 }
 
-span.var_start::before {
-	content: "(";
-}
-
-span.var_end::after {
-	content: ") ";
-}
-
-span.not_end::after {					/* Any node that's not the end of a variation */
-	content: " ";
-}
-
 span.pink {
 	color: #ffaaaa;
 }
