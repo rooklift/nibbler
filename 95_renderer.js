@@ -237,7 +237,7 @@ function NewRenderer() {
 
 		if (s.length <= 3) {
 			let n = parseInt(s, 10);
-			if (Number.isNaN(n) === false) {
+			if (Number.isNaN(n) === false && n < 960) {
 				s = c960_fen(n);
 				abnormal = true;
 			}

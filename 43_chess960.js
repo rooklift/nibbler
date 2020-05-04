@@ -15,16 +15,11 @@ function c960_arrangement(n) {
 	// Helper function to place a piece at an "index",
 	// but considering only empty spots.
 
-	let insert = (index, piece) => {
-		let skips = 0;
-		for (let i = 0; i < 8; i++) {
-			if (pieces[i] === ".") {
-				if (skips === index) {
-					pieces[i] = piece;
-					return;
-				} else {
-					skips++;
-				}
+	let insert = (i, piece) => {
+		for (let n = 0; n < 8; n++) {
+			if (pieces[n] === "." && --i < 0) {		// Careful! Remember short-circuit rules etc.
+				pieces[n] = piece;
+				return;
 			}
 		}
 	};
