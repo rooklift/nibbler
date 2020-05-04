@@ -68,8 +68,8 @@ let tree_draw_props = {
 
 			if (typeof item === "string") {
 				pseudoelements.push({
-					class: "white",
-					id: null,
+					class: "",
+					id: "",
 					text: item
 				});
 				continue;
@@ -91,7 +91,7 @@ let tree_draw_props = {
 			}
 
 			if (node.current_line) {
-				classes.push("white");	// Otherwise, inherits gray colour from movelist CSS
+				classes.push("white");		// Otherwise, inherits gray colour from movelist CSS
 			}
 
 			pseudoelements.push({
@@ -117,8 +117,8 @@ let tree_draw_props = {
 				}
 			}
 
-			if (!p.id || p.id === "") {
-				all_spans.push(`<span class="${p.class}">${p.text}${space}</span>`);
+			if (p.text === "(" || p.text === ")") {
+				all_spans.push(`<span>${p.text}${space}</span>`);
 			} else {
 				all_spans.push(`<span class="${p.class}" id="${p.id}">${p.text}${space}</span>`);
 			}
