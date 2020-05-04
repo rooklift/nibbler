@@ -94,7 +94,7 @@ you want.`;
 exports.min_version = 23;
 exports.obsolete_leela = 
 `Nibbler says: this version of Lc0 may be too old for this version of Nibbler. Please \
-install v0.${exports.min_version} or higher.`;
+install Lc0 v0.${exports.min_version} or higher.`;
 
 
 exports.settings_for_blas = 
