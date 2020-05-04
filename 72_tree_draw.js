@@ -57,11 +57,9 @@ let tree_draw_props = {
 			this.ordered_nodes_cache_version = this.tree_version;
 		}
 
-		let ordered_nodes = this.ordered_nodes_cache;
-
 		let pseudoelements = [];		// Objects containing opening span string `<span foo>` and text string
 
-		for (let item of ordered_nodes) {
+		for (let item of this.ordered_nodes_cache) {
 
 			if (item === this.root) {
 				continue;
