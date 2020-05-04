@@ -327,16 +327,12 @@ function make_movetext(node) {
 	
 	let tokens = [];
 
-	for (let node of ordered_nodes.slice(1)) {		// Slice to skip the root.
+	for (let item of ordered_nodes.slice(1)) {		// Slice to skip the root.
 
-		if (node.parent && node.parent.children[0] !== node) {
-			tokens.push("(");
-		}
-
-		tokens.push(node.token());
-
-		if (node.children.length === 0 && node.is_main_line() === false) {
-			tokens.push(")");
+		if (typeof item === "string") {
+			tokens.push(item);
+		} else {
+			tokens.push(item.token());
 		}
 	}
 
@@ -371,6 +367,9 @@ function make_movetext(node) {
 
 // The following is to order the nodes into the order they would be written
 // to screen or PGN. The result does contain root, which shouldn't be drawn.
+//
+// As a crude hack, the list also contains "(" and ")" elements to indicate
+// where brackets should be drawn.
 
 function get_ordered_nodes(node) {
 	let list = [];
@@ -404,7 +403,9 @@ function __order_nodes(node, list, skip_self_flag) {
 	list.push(main_child);
 
 	for (let child of node.children.slice(1)) {
+		list.push("(");
 		__order_nodes(child, list, false);
+		list.push(")");
 	}
 
 	__order_nodes(main_child, list, true);

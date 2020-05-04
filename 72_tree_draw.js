@@ -61,7 +61,23 @@ let tree_draw_props = {
 
 		let pseudoelements = [];		// Objects containing class, id, and text
 
-		for (let node of ordered_nodes.slice(1)) {		// Slice to skip the root
+		for (let item of ordered_nodes.slice(1)) {		// Slice to skip the root
+
+			// As a crude hack, the item can be a bracket string.
+			// Deal with that first...
+
+			if (typeof item === "string") {
+				pseudoelements.push({
+					class: "white",
+					id: null,
+					text: item
+				});
+				continue;
+			};
+
+			// So item is a real node...
+
+			let node = item;
 
 			let classes = [];
 			let text = node.token();
@@ -72,22 +88,6 @@ let tree_draw_props = {
 				} else {
 					classes.push("movelist_highlight_yellow");
 				}
-			}
-
-			// The use of var_start / var_end / not_end can be avoided for now,
-			// they seem slow (all have ::before or ::after content).
-
-			if (node.parent && node.parent.children[0] !== node) {
-				//classes.push("var_start");
-				text = "(" + text;
-			}
-
-			if (node.children.length === 0 && !node.main_line_end) {
-				//classes.push("var_end");
-				text = text + ") ";
-			} else {
-				//classes.push("not_end");
-				text = text + " ";
 			}
 
 			if (node.current_line) {
@@ -103,8 +103,25 @@ let tree_draw_props = {
 
 		let all_spans = [];
 
-		for (let p of pseudoelements) {
-			all_spans.push(`<span class="${p.class}" id="${p.id}">${p.text}</span>`);
+		let plen = pseudoelements.length;
+
+		for (let n = 0; n < plen; n++) {
+
+			let p = pseudoelements[n];
+			let nextp = pseudoelements[n + 1];		// Possibly undefined
+			let space = " ";
+
+			if (n < plen - 1) {
+				if (p.text === "(" || nextp.text === ")") {
+					space = "";
+				}
+			}
+
+			if (!p.id || p.id === "") {
+				all_spans.push(`<span class="${p.class}">${p.text}${space}</span>`);
+			} else {
+				all_spans.push(`<span class="${p.class}" id="${p.id}">${p.text}${space}</span>`);
+			}
 		}
 
 		movelist.innerHTML = all_spans.join("");
