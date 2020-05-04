@@ -112,10 +112,8 @@ let tree_draw_props = {
 			let p = pseudoelements[n];
 			let nextp = pseudoelements[n + 1];		// Possibly undefined
 
-			if (n < plen - 1) {
-				if (p.text !== "(" && nextp.text !== ")") {
-					p.text += " ";
-				}
+			if (!nextp || (p.text !== "(" && nextp.text !== ")")) {
+				p.text += " ";
 			}
 
 			all_spans.push(`${p.opener}${p.text}${p.closer}`);
