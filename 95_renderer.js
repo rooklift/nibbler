@@ -1519,7 +1519,6 @@ function NewRenderer() {
 
 		this.info_handler.draw_statusbox(
 			this.tree.node,
-			this.leela_maybe_running,
 			this.nogo_reason,
 			this.searchmoves,
 			this.engine.ever_received_uciok,

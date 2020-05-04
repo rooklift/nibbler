@@ -305,7 +305,7 @@ function NewInfoHandler() {
 		this.last_drawn_version = null;
 	};
 
-	ih.draw_statusbox = function(node, leela_maybe_running, nogo_reason, searchmoves, ever_received_uciok, syncs_needed) {
+	ih.draw_statusbox = function(node, nogo_reason, searchmoves, ever_received_uciok, syncs_needed) {
 
 		if (!ever_received_uciok) {
 
@@ -335,12 +335,10 @@ function NewInfoHandler() {
 
 			let status_string = "";
 
-			if (leela_maybe_running === false) {
-				if (config.versus === "") {
-					status_string += `<span id="gobutton_clicker" class="yellow">HALTED (go?) </span>`;
-				} else {
-					status_string += `<span class="yellow">YOUR MOVE </span>`;
-				}
+			if (config.versus === "") {
+				status_string += `<span id="gobutton_clicker" class="yellow">HALTED (go?) </span>`;
+			} else if (config.versus.length === 1 && config.versus !== node.board.active) {
+				status_string += `<span class="yellow">YOUR MOVE </span>`;
 			} else if (config.autoplay === 1) {
 				status_string += `<span class="green">Self-play! </span>`;
 			} else if (config.autoplay === 2) {
@@ -349,7 +347,7 @@ function NewInfoHandler() {
 
 			status_string += `<span class="gray">Nodes: ${NString(node.table.nodes)}, N/s: ${NString(node.table.nps)}, Time: ${DurationString(node.table.time)}</span>`;
 
-			if (typeof config.search_nodes === "number" && node.table.nodes >= config.search_nodes) {		// FIXME - not sure this behaves now
+			if (!config.autoplay && config.versus.length !== 1 && typeof config.search_nodes === "number" && node.table.nodes >= config.search_nodes) {
 				status_string += ` <span class="blue">(limit met)</span>`;
 			}
 
