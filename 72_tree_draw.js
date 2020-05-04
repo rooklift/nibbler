@@ -61,7 +61,11 @@ let tree_draw_props = {
 
 		let pseudoelements = [];		// Objects containing opening span string `<span foo>` and text string
 
-		for (let item of ordered_nodes.slice(1)) {		// Slice to skip the root
+		for (let item of ordered_nodes) {
+
+			if (item === this.root) {
+				continue;
+			}
 
 			// As a crude hack, the item can be a bracket string.
 			// Deal with that first...

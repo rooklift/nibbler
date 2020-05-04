@@ -327,7 +327,9 @@ function make_movetext(node) {
 	
 	let tokens = [];
 
-	for (let item of ordered_nodes.slice(1)) {		// Slice to skip the root.
+	for (let item of ordered_nodes) {
+
+		if (item === root) continue;
 
 		// As it stands, item could be a "(" or ")" string, or an actual node...
 
