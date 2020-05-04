@@ -72,8 +72,9 @@ let tree_draw_props = {
 
 			if (typeof item === "string") {
 				pseudoelements.push({
-					opener: `<span>`,
-					text: item
+					opener: "",
+					text: item,
+					closer: ""
 				});
 				continue;
 			};
@@ -97,7 +98,8 @@ let tree_draw_props = {
 
 			pseudoelements.push({
 				opener: `<span class="${classes.join(" ")}" id="node_${node.id}">`,
-				text: node.token()
+				text: node.token(),
+				closer: `</span>`
 			});
 		}
 
@@ -116,7 +118,7 @@ let tree_draw_props = {
 				}
 			}
 
-			all_spans.push(`${p.opener}${p.text}</span>`);
+			all_spans.push(`${p.opener}${p.text}${p.closer}`);
 		}
 
 		movelist.innerHTML = all_spans.join("");
