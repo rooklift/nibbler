@@ -105,9 +105,7 @@ let tree_draw_props = {
 
 		let all_spans = [];
 
-		let plen = pseudoelements.length;
-
-		for (let n = 0; n < plen; n++) {
+		for (let n = 0; n < pseudoelements.length; n++) {
 
 			let p = pseudoelements[n];
 			let nextp = pseudoelements[n + 1];		// Possibly undefined
