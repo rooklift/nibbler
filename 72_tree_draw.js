@@ -59,7 +59,7 @@ let tree_draw_props = {
 
 		let ordered_nodes = this.ordered_nodes_cache;
 
-		let pseudoelements = [];		// Objects containing class, id, and text
+		let pseudoelements = [];		// Objects containing opening span string `<span foo>` and text string
 
 		for (let item of ordered_nodes.slice(1)) {		// Slice to skip the root
 
@@ -68,8 +68,7 @@ let tree_draw_props = {
 
 			if (typeof item === "string") {
 				pseudoelements.push({
-					class: "",
-					id: "",
+					opener: `<span>`,
 					text: item
 				});
 				continue;
@@ -78,9 +77,7 @@ let tree_draw_props = {
 			// So item is a real node...
 
 			let node = item;
-
 			let classes = [];
-			let text = node.token();
 
 			if (node === this.node) {
 				if (node.is_main_line()) {
@@ -95,9 +92,8 @@ let tree_draw_props = {
 			}
 
 			pseudoelements.push({
-				class: classes.join(" "),
-				id: `node_${node.id}`,
-				text: text
+				opener: `<span class="${classes.join(" ")}" id="node_${node.id}">`,
+				text: node.token()
 			});
 		}
 
@@ -109,19 +105,14 @@ let tree_draw_props = {
 
 			let p = pseudoelements[n];
 			let nextp = pseudoelements[n + 1];		// Possibly undefined
-			let space = " ";
 
 			if (n < plen - 1) {
-				if (p.text === "(" || nextp.text === ")") {
-					space = "";
+				if (p.text !== "(" && nextp.text !== ")") {
+					p.text += " ";
 				}
 			}
 
-			if (p.text === "(" || p.text === ")") {
-				all_spans.push(`<span>${p.text}${space}</span>`);
-			} else {
-				all_spans.push(`<span class="${p.class}" id="${p.id}">${p.text}${space}</span>`);
-			}
+			all_spans.push(`${p.opener}${p.text}</span>`);
 		}
 
 		movelist.innerHTML = all_spans.join("");
