@@ -2886,6 +2886,9 @@ function menu_build() {
 					}
 				},
 				{
+					type: "separator"
+				},
+				{
 					label: "Show sync status",
 					click: () => {
 						win.webContents.send("call", "show_sync_status");
@@ -2898,45 +2901,19 @@ function menu_build() {
 					}
 				},
 				{
+					type: "separator"
+				},
+				{
+					label: "Log RAM state to console",
+					click: () => {
+						win.webContents.send("call", "log_ram");
+					}
+				},
+				{
 					label: "Fire GC",
 					click: () => {
 						win.webContents.send("call", "fire_gc");
 					}
-				},
-				{
-					type: "separator"
-				},
-				{
-					label: "Crash test",
-					submenu: [
-						{
-							label: "Crash",
-							click: () => {
-								win.webContents.executeJavaScript("hub.engine.send('stop')");
-								setTimeout(() => {
-									win.webContents.executeJavaScript("process.crash()");
-								}, 500);
-							}
-						},
-						{
-							label: "Hang",
-							click: () => {
-								win.webContents.executeJavaScript("hub.engine.send('stop')");
-								setTimeout(() => {
-									win.webContents.executeJavaScript("process.hang()");
-								}, 500);
-							}
-						},
-						{
-							label: "Perft",
-							click: () => {
-								win.webContents.executeJavaScript("hub.engine.send('stop')");
-								setTimeout(() => {
-									win.webContents.executeJavaScript("Perft('1nr1nk1r/1b5B/p1p1qp2/b2pp1pP/3P2P1/P3P2N/1Pp2P2/BNR2KQR w CHch g6 0 1', 5)");
-								}, 500);
-							}
-						},
-					]
 				},
 			]
 		}

@@ -973,14 +973,11 @@ function NewRenderer() {
 	};
 
 	renderer.fire_gc = function() {
-
 		if (!global || !global.gc) {
 			alert("Unable.");
-			return;
+		} else {
+			global.gc();
 		}
-
-		alert("Firing GC in 5 seconds.");
-		setTimeout(global.gc, 5000);
 	};
 
 	renderer.show_sync_status = function() {
@@ -989,6 +986,16 @@ function NewRenderer() {
 
 	renderer.show_versus_state = function() {
 		alert(`versus: "${config.versus}", autoplay: ${config.autoplay}`);
+	};
+
+	renderer.log_ram = function() {
+		console.log(`RAM after ${Math.floor(performance.now() / 1000)} seconds:`);
+		for (let foo of Object.entries(process.memoryUsage())) {
+			let type = foo[0] + " ".repeat(12 - foo[0].length);
+			let mb = foo[1] / (1024 * 1024);
+			let mb_rounded = Math.floor(mb * 1000) / 1000;		// 3 d.p.
+			console.log(type, "(MB)", mb_rounded);
+		}
 	};
 
 	renderer.save_config = function() {			// Just for the dev menu - everything else can just call config_io.save(config) directly.
