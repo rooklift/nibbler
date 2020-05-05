@@ -746,6 +746,12 @@ const position_prototype = {
 
 	parse_pgn: function(s) {		// Returns a UCI move and an error message.
 
+		// Replace fruity dash characters with proper ASCII dash "-"
+
+		for (let n of [8208, 8210, 8211, 8212, 8213, 8722]) {
+			s = ReplaceAll(s, String.fromCodePoint(n), "-");
+		}
+
 		// Delete things we don't need...
 
 		s = ReplaceAll(s, "x", "");
