@@ -247,11 +247,17 @@ function NewNode(parent, move, board) {		// move must be legal; board is only re
 		node.move = move;
 		node.board = parent.board.move(move);
 		node.depth = parent.depth + 1;
+		node.graph_length_knower = parent.graph_length_knower		// 1 object every node points to, a bit lame
 	} else {
 		node.parent = null;
 		node.move = null;
 		node.board = board;
 		node.depth = 0;
+		node.graph_length_knower = {val: 48};						// Minimum graph length
+	}
+
+	if (node.depth + 1 > node.graph_length_knower.val) {
+		node.graph_length_knower.val = node.depth + 1;
 	}
 
 	node.__nice_move = null;
@@ -308,6 +314,7 @@ function __destroy_tree(node) {
 		node.board = null;
 		node.children = null;
 		node.table = null;
+		node.graph_length_knower = null;
 		node.destroyed = true;
 
 		delete live_nodes[node.id.toString()];
@@ -323,6 +330,7 @@ function __destroy_tree(node) {
 	node.board = null;
 	node.children = null;
 	node.table = null;
+	node.graph_length_knower = null;
 	node.destroyed = true;
 
 	delete live_nodes[node.id.toString()];

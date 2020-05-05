@@ -617,7 +617,7 @@ function NewRenderer() {
 			}
 		}
 
-		let root_fen = this.tree.node.get_root().board.fen(false);
+		let root_fen = this.tree.root.board.fen(false);
 		let setup = `fen ${root_fen}`;
 
 		// Leela seems to time "readyok" correctly after "position" commands.
