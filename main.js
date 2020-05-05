@@ -2628,6 +2628,38 @@ function menu_build() {
 					]
 				},
 				{
+					label: "Arrows",
+					submenu: [
+						{
+							label: "Giant",
+							click: () => {
+								win.webContents.send("call", "giant_arrows");
+							}
+						},
+						{
+							label: "Large",
+							click: () => {
+								win.webContents.send("call", "large_arrows");
+							}
+						},
+						{
+							label: "Medium",
+							click: () => {
+								win.webContents.send("call", "medium_arrows");
+							}
+						},
+						{
+							label: "Small",
+							click: () => {
+								win.webContents.send("call", "small_arrows");
+							}
+						},
+					]
+				},
+				{
+					type: "separator"
+				},
+				{
 					label: "Graph",
 					submenu: [
 						{
@@ -2813,35 +2845,6 @@ function menu_build() {
 									key: "graph_line_width",
 									value: 2,
 								});
-							}
-						},
-					]
-				},
-				{
-					label: "Arrows",
-					submenu: [
-						{
-							label: "Giant",
-							click: () => {
-								win.webContents.send("call", "giant_arrows");
-							}
-						},
-						{
-							label: "Large",
-							click: () => {
-								win.webContents.send("call", "large_arrows");
-							}
-						},
-						{
-							label: "Medium",
-							click: () => {
-								win.webContents.send("call", "medium_arrows");
-							}
-						},
-						{
-							label: "Small",
-							click: () => {
-								win.webContents.send("call", "small_arrows");
 							}
 						},
 					]
