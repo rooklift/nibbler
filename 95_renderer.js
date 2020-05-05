@@ -860,17 +860,6 @@ function NewRenderer() {
 		console.log(...args);
 	};
 
-	renderer.set_info_font_size = function(n) {
-
-		// While this should probably set the statusbox font size as well,
-		// this would cause a need to recalculate infobox.style.height as
-		// well as causing other issues if the statusbox gets wide.
-
-		infobox.style["font-size"] = n.toString() + "px";
-		config.info_font_size = n;
-		config_io.save(config);
-	};
-
 	renderer.set_pgn_font_size = function(n) {
 		movelist.style["font-size"] = n.toString() + "px";
 		fenbox.style["font-size"] = n.toString() + "px";
@@ -905,6 +894,15 @@ function NewRenderer() {
 		config.arrowhead_radius = 32;
 		config.board_font = "40px Arial";
 		config_io.save(config);
+	};
+
+	renderer.set_info_font_size = function(n) {
+		infobox.style["font-size"] = n.toString() + "px";
+		statusbox.style["font-size"] = n.toString() + "px";
+		config.info_font_size = n;
+		config.status_font_size = n;
+		config_io.save(config);
+		this.rebuild_sizes();
 	};
 
 	renderer.set_graph_height = function(sz) {
