@@ -507,18 +507,18 @@ function NewRenderer() {
 
 				if (config.autoplay || (config.versus === this.tree.node.board.active)) {
 
-					let tokens = s.split(" ");
+					// We need to update our node's graph eval now (while we still can). We used to use
+					// the bestmove itself to decide what info to update from, but that causes issues
+					// when Temperature is not 0, as the bestmove may not actually be best...
 
-					let info = this.tree.node.table.info[tokens[1]];
-					if (info) {
-						this.tree.node.update_eval_from_info(info);
-					}
+					this.update_node_eval();
 
 					switch (config.autoplay) {
 
 					case 0:									// Versus mode (if config.autoplay === 0 then we got here via config.versus, above)
 					case 1:									// Actual self-play
 
+						let tokens = s.split(" ");
 						this.move(tokens[1]);
 						break;
 
