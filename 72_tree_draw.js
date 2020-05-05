@@ -142,14 +142,8 @@ let tree_draw_props = {
 
 		let text = node.token();
 
-		if (node.parent && node.parent.children[0] !== node) {
-			text = "(" + text;
-		}
-
-		if (node.children.length === 0 && !node.is_main_line()) {
-			text = text + ") ";
-		} else {
-			text = text + " ";
+		if (typeof element.innerHTML === "string" && element.innerHTML.endsWith(" ")) {
+			text += " ";
 		}
 
 		element.innerHTML = text;
