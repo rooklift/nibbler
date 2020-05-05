@@ -665,9 +665,9 @@ function NewRenderer() {
 		this.searchmoves = valid_list;
 	};
 
-	renderer.reset_leela_cache = function() {
+	renderer.soft_engine_reset = function() {
 		this.tree.node.clear_table();
-		this.go_or_halt(true);
+		this.go_or_halt(true);			// new game flag, causes ucinewgame to be sent
 	};
 
 	renderer.set_uci_option = function(name, val, save_to_cfg) {
@@ -713,6 +713,11 @@ function NewRenderer() {
 		this.set_versus("");
 		config.path = filename;
 		config_io.save(config);
+		this.engine_start(config.path, config.args, config.options);
+	};
+
+	renderer.restart_engine = function() {
+		this.set_versus("");
 		this.engine_start(config.path, config.args, config.options);
 	};
 

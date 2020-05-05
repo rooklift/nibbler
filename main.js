@@ -1388,15 +1388,6 @@ function menu_build() {
 					type: "separator"
 				},
 				{
-					label: "Reset Lc0 cache",
-					click: () => {
-						win.webContents.send("call", "reset_leela_cache");
-					}
-				},
-				{
-					type: "separator"
-				},
-				{
 					label: "Node limit - normal",
 					submenu: [
 						{
@@ -2033,7 +2024,22 @@ function menu_build() {
 				{
 					label: "Custom UCI options",
 					submenu: cclist_in_menu			// Will be filled at the end, see below.
-				}
+				},
+				{
+					type: "separator"
+				},
+				{
+					label: "Restart engine",
+					click: () => {
+						win.webContents.send("call", "restart_engine");
+					}
+				},
+				{
+					label: "Soft engine reset",
+					click: () => {
+						win.webContents.send("call", "soft_engine_reset");
+					}
+				},
 			]
 		},
 		{
