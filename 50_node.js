@@ -253,7 +253,7 @@ function NewNode(parent, move, board) {		// move must be legal; board is only re
 		node.move = null;
 		node.board = board;
 		node.depth = 0;
-		node.graph_length_knower = {val: 48};						// Minimum graph length
+		node.graph_length_knower = {val: config.graph_minimum_length};
 	}
 
 	if (node.depth + 1 > node.graph_length_knower.val) {
