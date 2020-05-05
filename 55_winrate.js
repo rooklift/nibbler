@@ -4,7 +4,6 @@ function NewGrapher() {
 
 	let grapher = Object.create(null);
 
-	grapher.last_drawn_board = null;
 	grapher.last_draw_time = -10000;
 	grapher.last_position_marker_x = null;
 
@@ -92,8 +91,6 @@ function NewGrapher() {
 		// Finish...
 
 		this.draw_position_line(eval_list.length, node);
-
-		this.last_drawn_board = node.board;
 		this.last_draw_time = performance.now();
 	};
 
