@@ -4,8 +4,7 @@ function NewInfoHandler() {
 
 	let ih = Object.create(null);
 
-	ih.stderr_phase = true;
-
+	ih.ever_received_info = false;
 	ih.ever_received_q = false;
 	ih.ever_received_multipv_2 = false;
 
@@ -24,6 +23,7 @@ function NewInfoHandler() {
 	ih.last_drawn_searchmoves = [];
 
 	ih.reset_engine_info = function() {
+		this.ever_received_info = false;
 		this.ever_received_q = false;
 		this.ever_received_multipv_2 = false;
 		this.stderr_log = "";
@@ -48,7 +48,7 @@ function NewInfoHandler() {
 			this.stderr_log += `${s}<br>`;
 		}
 
-		if (this.stderr_phase === false) {		// Means we won't see the err message on screen.
+		if (this.ever_received_info) {		// Means we won't see the err message on screen.
 			console.log(s);
 		}
 	};
@@ -66,7 +66,7 @@ function NewInfoHandler() {
 			// info depth 8 seldepth 31 time 3029 nodes 23672 score cp 27 wdl 384 326 290 nps 7843 tbhits 0 multipv 1
 			// pv d2d4 g8f6 c2c4 e7e6 g1f3 d7d5 b1c3 f8b4 c1g5 d5c4 e2e4 c7c5 f1c4 h7h6 g5f6 d8f6 e1h1 c5d4 e4e5 f6d8 c3e4
 
-			this.stderr_phase = false;
+			this.ever_received_info = true;
 			node.table.version++;
 
 			let infovals = InfoValMany(s, ["pv", "cp", "mate", "multipv", "nodes", "nps", "time"]);
@@ -161,7 +161,7 @@ function NewInfoHandler() {
 			// info string d2d4  (293 ) N:   12005 (+169) (P: 22.38%) (WL:  0.09480) (D:  0.326)
 			// (M:  7.4) (Q:  0.09480) (U: 0.01211) (Q+U:  0.10691) (V:  0.0898)
 
-			this.stderr_phase = false;
+			this.ever_received_info = true;
 			node.table.version++;
 
 			let infovals = InfoValMany(s, ["string", "N:", "(D:", "(U:", "(Q+U:", "(S:", "(P:", "(Q:", "(V:", "(M:"]);
@@ -359,7 +359,7 @@ function NewInfoHandler() {
 
 		// Display stderr and return if we've never seen any info...
 
-		if (this.stderr_phase) {
+		if (!this.ever_received_info) {
 			infobox.innerHTML = this.stderr_log;
 			return;
 		}
