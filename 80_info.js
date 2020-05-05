@@ -4,12 +4,13 @@ function NewInfoHandler() {
 
 	let ih = Object.create(null);
 
-	ih.stderr_phase = true;						// Where we print stderr to infobox at start.
+	ih.stderr_phase = true;
+
 	ih.ever_received_q = false;
 	ih.ever_received_multipv_2 = false;
 
-	ih.one_click_moves = New2DArray(8, 8);		// Array of possible one-click moves. Updated by draw_arrows().
-	ih.info_clickers = [];						// Elements in the infobox. Updated by draw_infobox().
+	ih.one_click_moves = New2DArray(8, 8);	// Array of possible one-click moves. Updated by draw_arrows().
+	ih.info_clickers = [];					// Elements in the infobox. Updated by draw_infobox().
 
 	ih.stderr_log = "";
 	ih.special_message = null;
