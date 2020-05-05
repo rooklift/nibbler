@@ -19,18 +19,6 @@ function NewGrapher() {
 		graph.height = height;
 	};
 
-	grapher.imaginary_length = function(real_length) {
-
-		// What length we'll pretend the eval list is for the sake of aesthetics.
-		// Maybe we should make this the max of [current variation line length] and [main line length]?
-
-		if (real_length < 48) {
-			return 48;
-		} else {
-			return real_length;
-		}
-	};
-
 	grapher.draw = function(node, force) {
 
 		if (config.graph_height <= 0) {
@@ -52,11 +40,10 @@ function NewGrapher() {
 		this.draw_50_percent_line(width, height);
 
 		let eval_list = node.future_eval_history();
-		let imaginary_length = this.imaginary_length(eval_list.length);
 
 		// We make lists of contiguous edges that can be drawn at once...
 
-		let runs = this.make_runs(eval_list, width, height, imaginary_length);
+		let runs = this.make_runs(eval_list, width, height, node.root.graph_length);
 
 		// Draw our normal runs...
 
@@ -94,7 +81,7 @@ function NewGrapher() {
 		this.last_draw_time = performance.now();
 	};
 
-	grapher.make_runs = function(eval_list, width, height, imaginary_length) {
+	grapher.make_runs = function(eval_list, width, height, graph_length) {
 
 		// Returns an object with 2 arrays (normal_runs and dashed_runs).
 		// Each of those is an array of arrays of contiguous edges that can be drawn at once.
@@ -114,7 +101,7 @@ function NewGrapher() {
 
 			if (e !== null) {
 
-				let x = width * n / imaginary_length;
+				let x = width * n / graph_length;
 
 				let y = (1 - e) * height;
 				if (y < 1) y = 1;
@@ -181,9 +168,8 @@ function NewGrapher() {
 
 		let width = graph.width;
 		let height = graph.height;
-		let imaginary_length = this.imaginary_length(eval_list_length);
 
-		let x = Math.floor(width * node.depth / imaginary_length) + 0.5;
+		let x = Math.floor(width * node.depth / node.root.graph_length) + 0.5;
 
 		graphctx.strokeStyle = node.is_main_line() ? "#6cccee" : "#ffff00";
 		graphctx.lineWidth = 1;
@@ -253,8 +239,7 @@ function NewGrapher() {
 
 		// OK, everything is valid...
 
-		let imaginary_length = this.imaginary_length(node_list.length);
-		let click_depth = Math.round(imaginary_length * mousex / width);
+		let click_depth = Math.round(node.root.graph_length * mousex / width);
 
 		if (click_depth < 0) click_depth = 0;
 		if (click_depth >= node_list.length) click_depth = node_list.length - 1;

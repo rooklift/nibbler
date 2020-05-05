@@ -74,17 +74,6 @@ const node_prototype = {
 		return this.get_end().eval_history();
 	},
 
-	get_root: function() {
-
-		let node = this;
-
-		while (node.parent) {
-			node = node.parent;
-		}
-
-		return node;
-	},
-
 	get_end: function() {
 
 		let node = this;
@@ -243,15 +232,23 @@ function NewNode(parent, move, board) {		// move must be legal; board is only re
 	live_nodes[node.id.toString()] = node;
 
 	if (parent) {
+		node.root = parent.root;
 		node.parent = parent;
 		node.move = move;
 		node.board = parent.board.move(move);
 		node.depth = parent.depth + 1;
 	} else {
+		// This is the root node...
+		node.root = node;
 		node.parent = null;
 		node.move = null;
 		node.board = board;
 		node.depth = 0;
+		node.graph_length = 48;				// Minimum value. Note this value only ever goes up, even if nodes deleted. Hmm.
+	}
+
+	if (node.depth + 1 > node.root.graph_length) {
+		node.root.graph_length = node.depth + 1;
 	}
 
 	node.__nice_move = null;
@@ -293,7 +290,7 @@ function NewRoot(board) {					// Arg is a board (position) object, not a FEN
 // clear nodes from the live_list.
 
 function DestroyTree(node) {
-	__destroy_tree(node.get_root());
+	__destroy_tree(node.root);
 }
 
 function __destroy_tree(node) {
@@ -304,6 +301,7 @@ function __destroy_tree(node) {
 
 		let child = node.children[0];
 
+		node.root = null;
 		node.parent = null;
 		node.board = null;
 		node.children = null;
@@ -319,6 +317,7 @@ function __destroy_tree(node) {
 
 	let children = node.children;
 
+	node.root = null;
 	node.parent = null;
 	node.board = null;
 	node.children = null;
