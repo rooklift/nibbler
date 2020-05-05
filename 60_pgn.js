@@ -294,7 +294,7 @@ function PGNToClipboard(node) {
 
 function make_pgn_string(node) {
 
-	let root = node.root;
+	let root = node.get_root();
 	let start_fen = root.board.fen(true);
 
 	let tags = [];
@@ -322,7 +322,7 @@ function make_pgn_string(node) {
 
 function make_movetext(node) {
 
-	let root = node.root;
+	let root = node.get_root();
 	let ordered_nodes = get_ordered_nodes(root);
 	
 	let tokens = [];
