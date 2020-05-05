@@ -1553,6 +1553,14 @@ function NewRenderer() {
 	};
 
 	renderer.update_node_eval = function() {
+
+		// Avoid surprising additions to the graph when Lc0 is halted (i.e. possible when some small amount
+		// of info is in the table but was never actually graphed because user was holding right arrow).
+
+		if (config.versus === "") {
+			return;
+		}
+
 		let info_list = this.info_handler.sorted(this.tree.node);
 		if (info_list.length > 0) {
 			this.tree.node.update_eval_from_info(info_list[0]);
