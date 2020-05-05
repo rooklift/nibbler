@@ -185,9 +185,8 @@ function NewGrapher() {
 		let width = graph.width;
 		let height = graph.height;
 		let imaginary_length = this.imaginary_length(eval_list_length);
-		let depth = node.depth();
 
-		let x = Math.floor(width * depth / imaginary_length) + 0.5;
+		let x = Math.floor(width * node.depth / imaginary_length) + 0.5;
 
 		graphctx.strokeStyle = node.is_main_line() ? "#6cccee" : "#ffff00";
 		graphctx.lineWidth = 1;

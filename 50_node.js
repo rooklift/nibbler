@@ -74,19 +74,6 @@ const node_prototype = {
 		return this.get_end().eval_history();
 	},
 
-	depth: function() {
-
-		let n = 0;
-		let node = this;
-
-		while (node.parent) {
-			n++;
-			node = node.parent;
-		}
-
-		return n;
-	},
-
 	get_root: function() {
 
 		let node = this;
@@ -259,10 +246,12 @@ function NewNode(parent, move, board) {		// move must be legal; board is only re
 		node.parent = parent;
 		node.move = move;
 		node.board = parent.board.move(move);
+		node.depth = parent.depth + 1;
 	} else {
 		node.parent = null;
 		node.move = null;
 		node.board = board;
+		node.depth = 0;
 	}
 
 	node.__nice_move = null;
