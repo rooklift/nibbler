@@ -4,9 +4,6 @@ function NewGrapher() {
 
 	let grapher = Object.create(null);
 
-	grapher.last_draw_time = -10000;
-	grapher.last_position_marker_x = null;
-
 	grapher.clear_graph = function() {
 
 		let boundingrect = graph.getBoundingClientRect();
@@ -20,15 +17,10 @@ function NewGrapher() {
 	};
 
 	grapher.draw = function(node, force) {
-
 		if (config.graph_height <= 0) {
 			return;
-		} else if (force || performance.now() - this.last_draw_time > 1000) {
-			this.draw_everything(node);
-		} else {
-			this.clear_position_line();
-			this.draw_position_line(node.future_eval_history().length, node);
 		}
+		this.draw_everything(node);
 	};
 
 	grapher.draw_everything = function(node) {
@@ -37,9 +29,10 @@ function NewGrapher() {
 		let width = graph.width;		// After the above.
 		let height = graph.height;
 
-		this.draw_50_percent_line(width, height);
-
 		let eval_list = node.future_eval_history();
+
+		this.draw_50_percent_line(width, height);
+		this.draw_position_line(eval_list.length, node);
 
 		// We make lists of contiguous edges that can be drawn at once...
 
@@ -48,7 +41,7 @@ function NewGrapher() {
 		// Draw our normal runs...
 
 		graphctx.strokeStyle = "white";
-		graphctx.lineWidth = 2;
+		graphctx.lineWidth = config.graph_line_width;
 		graphctx.setLineDash([]);
 		
 		for (let run of runs.normal_runs) {
@@ -63,8 +56,8 @@ function NewGrapher() {
 		// Draw our dashed runs...
 
 		graphctx.strokeStyle = "#999999";
-		graphctx.lineWidth = 2;
-		graphctx.setLineDash([2, 2]);
+		graphctx.lineWidth = config.graph_line_width;
+		graphctx.setLineDash([config.graph_line_width, config.graph_line_width]);
 
 		for (let run of runs.dashed_runs) {
 			graphctx.beginPath();
@@ -74,11 +67,6 @@ function NewGrapher() {
 			}
 			graphctx.stroke();
 		}
-
-		// Finish...
-
-		this.draw_position_line(eval_list.length, node);
-		this.last_draw_time = performance.now();
 	};
 
 	grapher.make_runs = function(eval_list, width, height, graph_length) {
@@ -149,18 +137,20 @@ function NewGrapher() {
 	};
 
 	grapher.draw_50_percent_line = function(width, height) {
+
+		// Avoid anti-aliasing...
+		let pixel_y_adjustment = config.graph_line_width % 2 === 0 ? 0 : -0.5;
+
 		graphctx.strokeStyle = "#666666";
-		graphctx.lineWidth = 1;
-		graphctx.setLineDash([2, 2]);
+		graphctx.lineWidth = config.graph_line_width;
+		graphctx.setLineDash([config.graph_line_width, config.graph_line_width]);
 		graphctx.beginPath();
-		graphctx.moveTo(0, height / 2 - 0.5);
-		graphctx.lineTo(width, height / 2 - 0.5);
+		graphctx.moveTo(0, height / 2 + pixel_y_adjustment);
+		graphctx.lineTo(width, height / 2 + pixel_y_adjustment);
 		graphctx.stroke();
 	};
 
 	grapher.draw_position_line = function(eval_list_length, node) {
-
-		this.last_position_marker_x = null;
 
 		if (eval_list_length < 2) {
 			return;
@@ -169,49 +159,23 @@ function NewGrapher() {
 		let width = graph.width;
 		let height = graph.height;
 
-		let x = Math.floor(width * node.depth / node.graph_length_knower.val) + 0.5;
+		// Avoid anti-aliasing with x value, line up with 50 percent line (above) with y value...
+		let pixel_x_adjustment = config.graph_line_width % 2 === 0 ? 0 : 0.5;
+		let pixel_y_adjustment = config.graph_line_width % 2 === 0 ? 0 : -0.5;
+
+		let x = Math.floor(width * node.depth / node.graph_length_knower.val) + pixel_x_adjustment;
 
 		graphctx.strokeStyle = node.is_main_line() ? "#6cccee" : "#ffff00";
-		graphctx.lineWidth = 1;
-		graphctx.setLineDash([2, 2]);
+		graphctx.lineWidth = config.graph_line_width;
+		graphctx.setLineDash([config.graph_line_width, config.graph_line_width]);
 
 		graphctx.beginPath();
-		graphctx.moveTo(x, height / 2 - 3);
+		graphctx.moveTo(x, height / 2 + pixel_y_adjustment - config.graph_line_width - 1);
 		graphctx.lineTo(x, 0);
 		graphctx.stroke();
 
 		graphctx.beginPath();
-		graphctx.moveTo(x, height / 2 + 2);
-		graphctx.lineTo(x, height);
-		graphctx.stroke();
-
-		this.last_position_marker_x = x;
-	};
-
-	grapher.clear_position_line = function() {
-
-		// This leaves some ugly artifacts on the canvas.
-
-		let x = this.last_position_marker_x;
-
-		if (typeof x !== "number") {
-			return;
-		}
-
-		let width = graph.width;
-		let height = graph.height;
-
-		graphctx.strokeStyle = "#080808";		// Match the CSS background
-		graphctx.lineWidth = 1;
-		graphctx.setLineDash([2, 2]);
-
-		graphctx.beginPath();
-		graphctx.moveTo(x, height / 2 - 3);
-		graphctx.lineTo(x, 0);
-		graphctx.stroke();
-
-		graphctx.beginPath();
-		graphctx.moveTo(x, height / 2 + 2);
+		graphctx.moveTo(x, height / 2 + pixel_y_adjustment + config.graph_line_width + 1);
 		graphctx.lineTo(x, height);
 		graphctx.stroke();
 	};

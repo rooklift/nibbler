@@ -29,7 +29,7 @@ exports.defaults = {
 	"board_font": "18px Arial",
 	
 	"graph_height": 96,
-	"ugly_graph_performance_hack": false,
+	"graph_line_width": 2,
 	"graph_minimum_length": 41,					// Desired depth + 1
 
 	"light_square": "#dadada",

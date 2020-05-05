@@ -2729,6 +2729,95 @@ function menu_build() {
 					]
 				},
 				{
+					label: "Graph lines",
+					submenu: [
+						{
+							label: "8",
+							type: "checkbox",
+							checked: config.graph_line_width === 8,
+							click: () => {
+								set_checks("Sizes", "Graph lines", "8");
+								win.webContents.send("set", {
+									key: "graph_line_width",
+									value: 8,
+								});
+							}
+						},
+						{
+							label: "7",
+							type: "checkbox",
+							checked: config.graph_line_width === 7,
+							click: () => {
+								set_checks("Sizes", "Graph lines", "7");
+								win.webContents.send("set", {
+									key: "graph_line_width",
+									value: 7,
+								});
+							}
+						},
+						{
+							label: "6",
+							type: "checkbox",
+							checked: config.graph_line_width === 6,
+							click: () => {
+								set_checks("Sizes", "Graph lines", "6");
+								win.webContents.send("set", {
+									key: "graph_line_width",
+									value: 6,
+								});
+							}
+						},
+						{
+							label: "5",
+							type: "checkbox",
+							checked: config.graph_line_width === 5,
+							click: () => {
+								set_checks("Sizes", "Graph lines", "5");
+								win.webContents.send("set", {
+									key: "graph_line_width",
+									value: 5,
+								});
+							}
+						},
+						{
+							label: "4",
+							type: "checkbox",
+							checked: config.graph_line_width === 4,
+							click: () => {
+								set_checks("Sizes", "Graph lines", "4");
+								win.webContents.send("set", {
+									key: "graph_line_width",
+									value: 4,
+								});
+							}
+						},
+						{
+							label: "3",
+							type: "checkbox",
+							checked: config.graph_line_width === 3,
+							click: () => {
+								set_checks("Sizes", "Graph lines", "3");
+								win.webContents.send("set", {
+									key: "graph_line_width",
+									value: 3,
+								});
+							}
+						},
+						{
+							label: "2",
+							type: "checkbox",
+							checked: config.graph_line_width === 2,
+							click: () => {
+								set_checks("Sizes", "Graph lines", "2");
+								win.webContents.send("set", {
+									key: "graph_line_width",
+									value: 2,
+								});
+							}
+						},
+					]
+				},
+				{
 					label: "Arrows",
 					submenu: [
 						{
@@ -2873,17 +2962,6 @@ function menu_build() {
 							}
 						},
 					]
-				},
-				{
-					label: "Ugly graph performance hack",
-					type: "checkbox",
-					checked: config.ugly_graph_performance_hack,
-					click: () => {
-						win.webContents.send("call", {
-							fn: "toggle",
-							args: ["ugly_graph_performance_hack"],
-						});
-					}
 				},
 				{
 					type: "separator"

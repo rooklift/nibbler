@@ -1537,7 +1537,7 @@ function NewRenderer() {
 			this.searchmoves,
 			this.hoverdraw_div);
 
-		this.grapher.draw(this.tree.node, !config.ugly_graph_performance_hack);
+		this.grapher.draw(this.tree.node);
 
 		debug.draw -= 1;
 	};
