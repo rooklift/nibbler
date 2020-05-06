@@ -87,7 +87,7 @@ function NewRenderer() {
 
 		if (typeof s !== "string") {
 			console.log(`renderer.move(${s}) - bad argument`);
-			return;
+			return false;
 		}
 
 		let board = this.tree.node.board;
@@ -95,7 +95,7 @@ function NewRenderer() {
 
 		if (!source) {
 			console.log(`renderer.move(${s}) - invalid source`);
-			return;
+			return false;
 		}
 
 		// First deal with old-school castling in Standard Chess...
@@ -113,7 +113,7 @@ function NewRenderer() {
 				} else {
 					this.show_promotiontable(s);
 				}
-				return;
+				return false;
 			}
 		}
 
@@ -122,12 +122,12 @@ function NewRenderer() {
 		let illegal_reason = board.illegal(s);
 		if (illegal_reason !== "") {
 			console.log(`renderer.move(${s}) - ${illegal_reason}`);
-			return;
+			return false;
 		}
 
 		this.tree.make_move(s);
 		this.position_changed();
-		return;
+		return true;
 	};
 
 	renderer.random_move = function() {
@@ -514,7 +514,14 @@ function NewRenderer() {
 					case 1:									// Actual self-play
 
 						let tokens = s.split(" ");
-						this.move(tokens[1]);
+						let ok = this.move(tokens[1]);
+
+						if (!ok) {
+							let msg = `BAD BESTMOVE (${tokens[1]}) IN POSITION ${this.tree.node.board.fen(true)}`;
+							Log(msg)
+							console.log(msg);
+						}
+
 						break;
 
 					case 2:									// "Evaluate line" mode
