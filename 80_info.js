@@ -173,7 +173,7 @@ function NewInfoHandler() {
 
 			if (move === "node") {								// See https://github.com/LeelaChessZero/lc0/pull/1268
 				this.ever_received_node_line = true;
-				node.table.update_eval_from_node_line(s);
+				node.table.update_eval_from_node_line(infovals["(Q:"], infovals["N:"], board.active);
 				return;
 			}
 
