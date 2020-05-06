@@ -507,7 +507,7 @@ function NewRenderer() {
 
 				if (config.autoplay || (config.versus === this.tree.node.board.active)) {
 
-					this.update_node_eval();				// Now's the last chance to update our graph eval for this node.
+					this.maybe_update_node_eval();			// Now's the last chance to update our graph eval for this node.
 
 					switch (config.autoplay) {
 
@@ -1545,14 +1545,14 @@ function NewRenderer() {
 	renderer.spin = function() {
 		this.tick++;
 		this.draw();
-		this.update_node_eval();
+		this.maybe_update_node_eval();
 		if (config.versus !== "" && Math.max(this.engine.readyok_required, this.engine.bestmove_required) > 10) {
 			this.set_versus("");			// Stop the engine if we get too far out of sync. See issue #57.
 		}
 		setTimeout(this.spin.bind(this), config.update_delay);
 	};
 
-	renderer.update_node_eval = function() {
+	renderer.maybe_update_node_eval = function() {
 
 		// Avoid surprising additions to the graph when Lc0 is halted (i.e. possible when some small amount
 		// of info is in the table but was never actually graphed because user was holding right arrow).
