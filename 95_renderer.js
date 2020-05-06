@@ -507,11 +507,7 @@ function NewRenderer() {
 
 				if (config.autoplay || (config.versus === this.tree.node.board.active)) {
 
-					// We need to update our node's graph eval now (while we still can). We used to use
-					// the bestmove itself to decide what info to update from, but that causes issues
-					// when Temperature is not 0, as the bestmove may not actually be best...
-
-					this.update_node_eval();
+					this.update_node_eval();				// Now's the last chance to update our graph eval for this node.
 
 					switch (config.autoplay) {
 
