@@ -18,7 +18,7 @@ const table_prototype = {
 		this.time = 0;							// Stat sent by engine
 
 		this.eval = null;						// Used by grapher only. Is preserved even if the engine restarts its search at 0 nodes,
-		this.eval_nodes = 0;					// and this line is how.
+		this.eval_nodes = 0;					// because we note how many search nodes existed when we stored the info, and refuse to update.
 	},
 
 	update_eval_from_move: function(move) {
