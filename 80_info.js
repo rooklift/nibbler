@@ -7,11 +7,12 @@ function NewInfoHandler() {
 	ih.ever_received_info = false;
 	ih.ever_received_q = false;
 	ih.ever_received_multipv_2 = false;
+	ih.ever_received_node_line = false;
+	ih.stderr_log = "";
 
 	ih.one_click_moves = New2DArray(8, 8);	// Array of possible one-click moves. Updated by draw_arrows().
 	ih.info_clickers = [];					// Elements in the infobox. Updated by draw_infobox().
 
-	ih.stderr_log = "";
 	ih.special_message = null;
 	ih.special_message_class = null;
 	ih.special_message_time = performance.now();
@@ -26,6 +27,7 @@ function NewInfoHandler() {
 		this.ever_received_info = false;
 		this.ever_received_q = false;
 		this.ever_received_multipv_2 = false;
+		this.ever_received_node_line = false;
 		this.stderr_log = "";
 	};
 
@@ -75,15 +77,15 @@ function NewInfoHandler() {
 			let move = infovals["pv"];
 			move = board.c960_castling_converter(move);
 
-			if (node.table.info[move]) {				// We already have move info for this move.
-				move_info = node.table.info[move];
+			if (node.table.moveinfo[move]) {			// We already have move info for this move.
+				move_info = node.table.moveinfo[move];
 			} else {									// We don't.
 				if (board.illegal(move) !== "") {
 					Log(`INVALID MOVE RECEIVED: ${move}`);
 					return;
 				}
-				move_info = new_info(board, move);
-				node.table.info[move] = move_info;
+				move_info = NewInfo(board, move);
+				node.table.moveinfo[move] = move_info;
 			}
 
 			move_info.version = node.table.version;
@@ -168,17 +170,24 @@ function NewInfoHandler() {
 
 			let move_info;
 			let move = infovals["string"];
+
+			if (move === "node") {								// See https://github.com/LeelaChessZero/lc0/pull/1268
+				this.ever_received_node_line = true;
+				node.table.update_eval_from_node_line(s);
+				return;
+			}
+
 			move = board.c960_castling_converter(move);
 
-			if (node.table.info[move]) {						// We already have move info for this move.
-				move_info = node.table.info[move];
-			} else {									// We don't.
+			if (node.table.moveinfo[move]) {					// We already have move info for this move.
+				move_info = node.table.moveinfo[move];
+			} else {											// We don't.
 				if (board.illegal(move) !== "") {
 					Log(`INVALID MOVE RECEIVED: ${move}`);
 					return;
 				}
-				move_info = new_info(board, move);
-				node.table.info[move] = move_info;
+				move_info = NewInfo(board, move);
+				node.table.moveinfo[move] = move_info;
 			}
 
 			move_info.version = node.table.version;
@@ -250,7 +259,7 @@ function NewInfoHandler() {
 
 		let info_list = [];
 
-		for (let o of Object.values(node.table.info)) {
+		for (let o of Object.values(node.table.moveinfo)) {
 			info_list.push(o);
 		}
 
@@ -778,199 +787,4 @@ function NewInfoHandler() {
 	};
 
 	return ih;
-}
-
-// --------------------------------------------------------------------------------------------
-
-const info_prototype = {
-
-	nice_pv: function() {
-
-		// Human readable moves. Since there's no real guarantee that our
-		// moves list is legal, we legality check them. Also note that
-		// our stored PV might conceivably contain old-fashioned castling
-		// moves.
-
-		if (this.nice_pv_cache) {
-			return Array.from(this.nice_pv_cache);
-		}
-
-		let tmp_board = this.board;
-
-		if (!this.pv || this.pv.length === 0) {		// Should be impossible.
-			this.pv = [this.move];
-		}
-
-		let ret = [];
-
-		for (let move of this.pv) {
-			if (tmp_board.illegal(move) !== "") {
-				break;
-			}
-			ret.push(tmp_board.nice_string(move));
-			tmp_board = tmp_board.move(move);
-		}
-
-		this.nice_pv_cache = ret;
-		return Array.from(this.nice_pv_cache);
-	},
-
-	value: function() {								// Rescale Q to 0..1 range.
-
-		if (typeof this.q !== "number") {
-			return 0;
-		}
-
-		if (this.q < -1) {
-			return 0;
-		}
-
-		if (this.q > 1) {
-			return 1;
-		}
-
-		return (this.q + 1) / 2;
-	},
-
-	value_string: function(dp) {
-		if (typeof this.q !== "number") {
-			return "?";
-		}
-		return (this.value() * 100).toFixed(dp);
-	},
-
-	stats_list: function(opts, nodes_total) {
-
-		let ret = [];
-
-		if (opts.ev) {
-			ret.push(`EV: ${this.value_string(1)}%`);
-		}
-
-		// N is fairly complicated...
-
-		if (typeof this.n === "number" && nodes_total) {		// i.e. nodes_total is not zero or undefined
-
-			let n_string = "";
-
-			if (opts.n) {
-				n_string += ` N: ${(100 * this.n / nodes_total).toFixed(2)}%`;
-			}
-
-			if (opts.n_abs) {
-				if (opts.n) {
-					n_string += ` [${NString(this.n)}]`;
-				} else {
-					n_string += ` N: ${NString(this.n)}`;
-				}
-			}
-
-			if (opts.of_n) {
-				n_string += ` of ${NString(nodes_total)}`;
-			}
-
-			if (n_string !== "") {
-				ret.push(n_string.trim());
-			}
-
-		} else {
-
-			if (opts.n || opts.n_abs || opts.of_n) {
-				ret.push("N: ?");
-			}
-			
-		}
-
-		// Everything else...
-
-		if (opts.p) {
-			if (typeof this.p === "number" && this.p > 0) {
-				ret.push(`P: ${this.p}%`);
-			} else {
-				ret.push(`P: ?`);
-			}
-		}
-
-		if (opts.v) {
-			if (typeof this.v === "number") {
-				ret.push(`V: ${this.v.toFixed(3)}`);
-			} else {
-				ret.push(`V: ?`);
-			}
-		}
-
-		if (opts.q) {
-			if (typeof this.q === "number") {
-				ret.push(`Q: ${this.q.toFixed(3)}`);
-			} else {
-				ret.push(`Q: ?`);
-			}
-		}
-
-		if (opts.u) {
-			if (typeof this.u === "number" && this.n > 0) {						// Checking n is correct.
-				ret.push(`U: ${this.u.toFixed(3)}`);
-			} else {
-				ret.push(`U: ?`);
-			}
-		}
-
-		if (opts.s) {
-			if (typeof this.s === "number" && this.n > 0) {						// Checking n is correct.
-				ret.push(`S: ${this.s.toFixed(5)}`);
-			} else {
-				ret.push(`S: ?`);
-			}
-		}
-
-		if (opts.m) {
-			if (typeof this.m === "number" && this.m > 0) {
-				ret.push(`M: ${this.m.toFixed(1)}`);
-			} else {
-				ret.push(`M: 0`);
-			}
-		}
-
-		if (opts.d) {
-			if (typeof this.d === "number") {
-				ret.push(`D: ${this.d.toFixed(3)}`);
-			} else {
-				ret.push(`D: ?`);
-			}
-		}
-
-		if (opts.wdl) {
-			ret.push(`WDL: ${this.wdl}`);
-		}
-
-		return ret;
-	}
-};
-
-function new_info(board, move) {
-
-	// In some places elsewhere we might assume these things will have sensible values, so
-	// better not initialise most things to null. Best to use neutral-ish values, especially
-	// since some info (cp and q) can be carried (inverted) into the next step of a line...
-
-	let info = Object.create(info_prototype);
-	info.board = board;
-	info.cp = 0;
-	info.d = 0;
-	info.m = 0;
-	info.mate = 0;					// 0 can be the "not present" value.
-	info.move = move;
-	info.multipv = 1;
-	info.n = 0;
-	info.p = 0;						// Note P is received and stored as a percent, e.g. 31.76 is a reasonable P.
-	info.pv = [move];				// Warning: never assume this is a legal sequence.
-	info.nice_pv_cache = null;
-	info.q = 0;
-	info.s = 1;						// Known as Q+U before Lc0 v0.25-rc2
-	info.total_nodes = 0;
-	info.u = 1;
-	info.v = null;					// Warning: v is allowed to be null if not known.
-	info.version = 0;
-	info.wdl = "??";
-	return info;
 }

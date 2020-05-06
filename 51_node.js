@@ -1,5 +1,57 @@
 "use strict";
 
+function NewNode(parent, move, board) {		// move must be legal; board is only relevant for root nodes
+
+	let node = Object.create(node_prototype);
+	node.id = next_node_id++;
+	live_nodes[node.id.toString()] = node;
+
+	if (parent) {
+		node.parent = parent;
+		node.move = move;
+		node.board = parent.board.move(move);
+		node.depth = parent.depth + 1;
+		node.graph_length_knower = parent.graph_length_knower		// 1 object every node points to, a bit lame
+	} else {
+		node.parent = null;
+		node.move = null;
+		node.board = board;
+		node.depth = 0;
+		node.graph_length_knower = {val: config.graph_minimum_length};
+	}
+
+	if (node.depth + 1 > node.graph_length_knower.val) {
+		node.graph_length_knower.val = node.depth + 1;
+	}
+
+	node.table = NewTable();
+	node.__nice_move = null;
+	node.destroyed = false;
+	node.children = [];
+
+	return node;
+}
+
+function NewRoot(board) {					// Arg is a board (position) object, not a FEN
+	
+	if (!board) {
+		board = LoadFEN("rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1");
+	}
+
+	let root = NewNode(null, null, board);
+
+	root.tags = Object.create(null);		// Only root gets these. Get overwritten by the PGN loader.
+	root.tags.Event = "Nibbler Line";
+	root.tags.Site = "The fevered dreams of a neural net";
+	root.tags.Date = DateString(new Date());
+	root.tags.Round = "1";
+	root.tags.White = "White";
+	root.tags.Black = "Black";
+	root.tags.Result = "*";
+
+	return root;
+}
+
 const node_prototype = {
 
 	make_move: function(s, force_new_node) {
@@ -54,7 +106,7 @@ const node_prototype = {
 		let node = this;
 
 		while (node) {
-			ret.push(node.eval);
+			ret.push(node.table.eval);
 			node = node.parent;
 		}
 
@@ -207,92 +259,9 @@ const node_prototype = {
 		DestroyTree(this);
 		return parent;
 	},
-
-	update_eval_from_info: function(info) {
-
-		// info should be the best info object, i.e. the top of the ih.sorted() list...
-
-		if (!info) {
-			return;
-		}
-
-		if (this.eval_nodes > info.total_nodes) {
-			return;
-		}
-
-		this.eval = info.board.active === "w" ? info.value() : 1 - info.value();
-		this.eval_nodes = info.total_nodes;
-	},
-
-	clear_table: function() {
-		this.table = Object.create(null);
-		this.table.info = Object.create(null);		// Map of move (e.g. "e2e4") --> info object.
-		this.table.version = 0;						// Incremented on any change.
-		this.table.nodes = 0;						// Stat sent by engine.
-		this.table.nps = 0;							// Stat sent by engine.
-		this.table.time = 0;						// Stat sent by engine.
-	},
 };
 
 // ---------------------------------------------------------------------------------------------------------
-
-function NewNode(parent, move, board) {		// move must be legal; board is only relevant for root nodes
-
-	let node = Object.create(node_prototype);
-	node.id = next_node_id++;
-	live_nodes[node.id.toString()] = node;
-
-	if (parent) {
-		node.parent = parent;
-		node.move = move;
-		node.board = parent.board.move(move);
-		node.depth = parent.depth + 1;
-		node.graph_length_knower = parent.graph_length_knower		// 1 object every node points to, a bit lame
-	} else {
-		node.parent = null;
-		node.move = null;
-		node.board = board;
-		node.depth = 0;
-		node.graph_length_knower = {val: config.graph_minimum_length};
-	}
-
-	if (node.depth + 1 > node.graph_length_knower.val) {
-		node.graph_length_knower.val = node.depth + 1;
-	}
-
-	node.__nice_move = null;
-	node.table = null;
-	node.eval = null;						// Only used by the grapher.
-	node.eval_nodes = 0;					// Useful; some info objects get .total_nodes set to -1, and update_eval_from_info() ignores them.
-	node.destroyed = false;
-
-	node.children = [];
-
-	node.clear_table();
-
-	return node;
-}
-
-function NewRoot(board) {					// Arg is a board (position) object, not a FEN
-	
-	if (!board) {
-		board = LoadFEN("rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1");
-	}
-
-	let root = NewNode(null, null, board);
-
-	root.tags = Object.create(null);		// Only root gets these. Get overwritten by the PGN loader.
-	root.tags.Event = "Nibbler Line";
-	root.tags.Site = "The fevered dreams of a neural net";
-	root.tags.Date = DateString(new Date());
-	root.tags.Round = "1";
-	root.tags.White = "White";
-	root.tags.Black = "Black";
-	root.tags.Result = "*";
-
-	return root;
-}
-
 // On the theory that it might help the garbage collector, we can
 // destroy trees when we're done with them. Whether this is helpful
 // in general I don't know, but we also take this opportunity to

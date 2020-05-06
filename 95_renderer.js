@@ -592,27 +592,27 @@ function NewRenderer() {
 			if (board.no_moves()) {
 				if (board.king_in_check()) {
 					this.nogo_reason = "Checkmate";
-					this.tree.node.eval = board.active === "w" ? 0 : 1;
+					this.tree.node.table.eval = board.active === "w" ? 0 : 1;
 					return;
 				} else {
 					this.nogo_reason = "Stalemate";
-					this.tree.node.eval = 0.5;
+					this.tree.node.table.eval = 0.5;
 					return;
 				}
 			}
 			if (board.insufficient_material()) {
 				this.nogo_reason = "Insufficient Material";
-				this.tree.node.eval = 0.5;
+				this.tree.node.table.eval = 0.5;
 				return;
 			}
 			if (board.halfmove >= 100) {
 				this.nogo_reason = "50 Move Rule";
-				this.tree.node.eval = 0.5;
+				this.tree.node.table.eval = 0.5;
 				return;
 			}
 			if (this.tree.node.is_triple_rep()) {
 				this.nogo_reason = "Triple Repetition";
-				this.tree.node.eval = 0.5;
+				this.tree.node.table.eval = 0.5;
 				return;
 			}
 		}
@@ -666,7 +666,7 @@ function NewRenderer() {
 	};
 
 	renderer.soft_engine_reset = function() {
-		this.tree.node.clear_table();
+		this.tree.node.table.clear();
 		this.go_or_halt(true);			// new game flag, causes ucinewgame to be sent
 	};
 
@@ -825,7 +825,7 @@ function NewRenderer() {
 
 		let moveset = Object.create(null);
 
-		for (let move of Object.keys(this.tree.node.table.info)) {
+		for (let move of Object.keys(this.tree.node.table.moveinfo)) {
 			moveset[move] = true;
 		}
 
@@ -1112,7 +1112,7 @@ function NewRenderer() {
 		this.tree.add_move_sequence(moves);
 
 		let stats_node = this.tree.get_node_from_move(moves[0]);
-		let info = this.tree.node.table.info[moves[0]];		// info for the first move in our clicked line.
+		let info = this.tree.node.table.moveinfo[moves[0]];			// info for the first move in our clicked line.
 
 		if (info) {
 
@@ -1562,13 +1562,18 @@ function NewRenderer() {
 		// Avoid surprising additions to the graph when Lc0 is halted (i.e. possible when some small amount
 		// of info is in the table but was never actually graphed because user was holding right arrow).
 
-		if (config.versus === "") {
-			return;
-		}
+		if (config.versus === "") return;
 
-		let info_list = this.info_handler.sorted(this.tree.node);
-		if (info_list.length > 0) {
-			this.tree.node.update_eval_from_info(info_list[0]);
+		// Future Lc0 will send a "node" info line, which we will automatically use in
+		// the info handler, rendering this whole process unnecessary.
+
+		if (info_handler.ever_received_node_line) return;
+
+		// OK...
+
+		let info = this.info_handler.sorted(this.tree.node)[0];		// Possibly undefined.
+		if (info) {
+			this.tree.node.table.update_eval_from_move(info.move);
 		}
 	};
 
