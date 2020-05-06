@@ -34,26 +34,6 @@ const table_prototype = {
 		this.eval = info.board.active === "w" ? info.value() : 1 - info.value();
 		this.eval_nodes = info.total_nodes;
 	},
-
-	update_eval_from_node_line: function(q_string, n_string, active) {
-
-		// In the future this will be a better alternative to update_eval_from_move(), since
-		// the caller of the above has to figure out which move is best.
-		//
-		// See https://github.com/LeelaChessZero/lc0/pull/1268
-		//
-		// node  (   1) N:     532 (+ 4) (P: 100.00%) (WL: -0.99811) (D: 0.002) (M:  2.0) (Q: -0.99811) (V: -0.9996)
-
-		let q = parseFloat(q_string);
-		let n = parseInt(n_string, 10);
-
-		if (Number.isNaN(q) || Number.isNaN(n)) return;
-
-		// if (n < this.eval_nodes) return;							// This can feel unintuitive.
-
-		this.eval = active === "w" ? Value(q) : 1 - Value(q);
-		this.eval_nodes = n;
-	},
 };
 
 // --------------------------------------------------------------------------------------------

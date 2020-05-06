@@ -1563,17 +1563,7 @@ function NewRenderer() {
 
 	renderer.maybe_update_node_eval = function() {
 
-		// Avoid surprising additions to the graph when Lc0 is halted (i.e. possible when some small amount
-		// of info is in the table but was never actually graphed because user was holding right arrow).
-
-		if (config.versus === "") return;
-
-		// Future Lc0 will send a "node" info line, which we will automatically use in
-		// the info handler, rendering this whole process unnecessary.
-
-		if (this.info_handler.ever_received_node_line) return;
-
-		// OK...
+		if (config.versus === "") return;			// Avoid surprising additions to the graph when Lc0 is halted.
 
 		let info = this.info_handler.sorted(this.tree.node)[0];		// Possibly undefined.
 		if (info) {

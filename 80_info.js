@@ -7,7 +7,6 @@ function NewInfoHandler() {
 	ih.ever_received_info = false;
 	ih.ever_received_q = false;
 	ih.ever_received_multipv_2 = false;
-	ih.ever_received_node_line = false;
 	ih.stderr_log = "";
 
 	ih.one_click_moves = New2DArray(8, 8);	// Array of possible one-click moves. Updated by draw_arrows().
@@ -27,7 +26,6 @@ function NewInfoHandler() {
 		this.ever_received_info = false;
 		this.ever_received_q = false;
 		this.ever_received_multipv_2 = false;
-		this.ever_received_node_line = false;
 		this.stderr_log = "";
 	};
 
@@ -172,8 +170,6 @@ function NewInfoHandler() {
 			let move = infovals["string"];
 
 			if (move === "node") {								// See https://github.com/LeelaChessZero/lc0/pull/1268
-				this.ever_received_node_line = true;
-				node.table.update_eval_from_node_line(infovals["(Q:"], infovals["N:"], board.active);
 				return;
 			}
 
