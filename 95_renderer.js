@@ -1567,7 +1567,7 @@ function NewRenderer() {
 		// Future Lc0 will send a "node" info line, which we will automatically use in
 		// the info handler, rendering this whole process unnecessary.
 
-		if (info_handler.ever_received_node_line) return;
+		if (this.info_handler.ever_received_node_line) return;
 
 		// OK...
 
