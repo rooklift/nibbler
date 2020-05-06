@@ -17,8 +17,8 @@ const table_prototype = {
 		this.nps = 0;							// Stat sent by engine
 		this.time = 0;							// Stat sent by engine
 
-		this.eval = null;						// Used by grapher only. Is preserved even if the engine restarts its search at 0 nodes,
-		this.eval_nodes = 0;					// because we note how many search nodes existed when we stored the info, and refuse to update.
+		this.eval = null;						// Used by grapher only. Value from White's POV.
+		this.eval_nodes = 0;					// Number of search nodes used to generate the eval.
 	},
 
 	update_eval_from_move: function(move) {
@@ -27,9 +27,9 @@ const table_prototype = {
 
 		let info = this.moveinfo[move];
 
-		if (!info || info.total_nodes < this.eval_nodes) {
-			return;
-		}
+		if (!info) return;
+
+		// if (info.total_nodes < this.eval_nodes) return;			// This can feel unintuitive.
 
 		this.eval = info.board.active === "w" ? info.value() : 1 - info.value();
 		this.eval_nodes = info.total_nodes;
@@ -47,13 +47,9 @@ const table_prototype = {
 		let q = parseFloat(q_string);
 		let n = parseInt(n_string, 10);
 
-		if (Number.isNaN(q) || Number.isNaN(n)) {
-			return;
-		}
+		if (Number.isNaN(q) || Number.isNaN(n)) return;
 
-		if (n < this.eval_nodes) {
-			return;
-		}
+		// if (n < this.eval_nodes) return;							// This can feel unintuitive.
 
 		this.eval = active === "w" ? Value(q) : 1 - Value(q);
 		this.eval_nodes = n;
