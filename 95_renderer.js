@@ -753,18 +753,19 @@ function NewRenderer() {
 		}
 
 		this.engine.send("uci");
-		for (let key of Object.keys(options)) {
-			this.engine.setoption(key, options[key]);
-		}
-
-		this.engine.setoption("UCI_Chess960", true);	// We always use Chess 960 mode now, for consistency.
 
 		if (send_normal_options) {
 			for (let key of Object.keys(leela_normal_options)) {
 				this.engine.setoption(key, leela_normal_options[key]);
 			}
 		}
-		
+
+		for (let key of Object.keys(options)) {
+			this.engine.setoption(key, options[key]);	// Allowing user to override even the above normal options.
+		}
+
+		this.engine.setoption("UCI_Chess960", true);	// We always use Chess 960 mode now, for consistency.
+
 		this.engine.send("ucinewgame");
 	};
 
