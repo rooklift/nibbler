@@ -500,8 +500,7 @@ function NewRenderer() {
 			// When in versus / self-play / auto-eval mode, use "bestmove" to detect that analysis is finished.
 			//
 			// Note about synchronisation: Any "bestmove" will be ignored by engine.js unless it's the final one due.
-			// This means that, in situations where we say "stop" then immediately say "go", the bestmove we get from
-			// the "stop" will be ignored. This works well, I think.
+			// Also the leela_position test here is good to have. There are a lot of subtleties.
 
 			if (this.leela_position === this.tree.node.board) {				// See notes on leela_position above.
 
