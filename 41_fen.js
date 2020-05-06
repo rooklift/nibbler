@@ -10,12 +10,12 @@ function LoadFEN(fen) {
 
 	let tokens = fen.split(" ").filter(s => s !== "");
 
-	if (tokens.length === 4) {
-		tokens.push("0");
-	}
-	if (tokens.length === 5) {
-		tokens.push("1");
-	}
+	if (tokens.length === 1) tokens.push("w");
+	if (tokens.length === 2) tokens.push("-");
+	if (tokens.length === 3) tokens.push("-");
+	if (tokens.length === 4) tokens.push("0");
+	if (tokens.length === 5) tokens.push("1");
+	
 	if (tokens.length !== 6) {
 		throw "Invalid FEN - token count";
 	}
@@ -26,11 +26,11 @@ function LoadFEN(fen) {
 
 	let rows = tokens[0].split("/");
 
-	if (rows.length !== 8) {
+	if (rows.length > 8) {
 		throw "Invalid FEN - board row count";
 	}
 
-	for (let y = 0; y < 8; y++) {
+	for (let y = 0; y < rows.length; y++) {
 
 		let x = 0;
 
@@ -52,10 +52,6 @@ function LoadFEN(fen) {
 			}
 
 			throw "Invalid FEN - unknown piece";
-		}
-
-		if (x !== 8) {
-			throw "Invalid FEN - row length";
 		}
 	}
 
