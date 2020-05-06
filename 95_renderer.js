@@ -662,7 +662,6 @@ function NewRenderer() {
 	};
 
 	renderer.soft_engine_reset = function() {
-		this.tree.node.table.clear();
 		this.go_or_halt(true);			// new game flag, causes ucinewgame to be sent
 	};
 
