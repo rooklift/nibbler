@@ -37,7 +37,7 @@ const table_prototype = {
 
 	update_eval_from_node_line: function(q_string, n_string, active) {
 
-		// TODO - in the future this will be a better alternative to update_eval_from_move(), since
+		// In the future this will be a better alternative to update_eval_from_move(), since
 		// the caller of the above has to figure out which move is best.
 		//
 		// See https://github.com/LeelaChessZero/lc0/pull/1268
