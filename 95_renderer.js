@@ -517,9 +517,11 @@ function NewRenderer() {
 						let ok = this.move(tokens[1]);
 
 						if (!ok) {
-							let msg = `BAD BESTMOVE (${tokens[1]}) IN POSITION ${this.tree.node.board.fen(true)}`;
-							Log(msg)
-							console.log(msg);
+							LogBoth(`BAD BESTMOVE (${tokens[1]}) IN POSITION ${this.tree.node.board.fen(true)}`);
+							if (!this.warned_bad_bestmove) {
+								alert(messages.bad_bestmove);
+								this.warned_bad_bestmove = true;
+							}
 						}
 
 						break;

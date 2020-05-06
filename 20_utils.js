@@ -199,6 +199,11 @@ function Log(s) {
 	Log.stream.write(s + "\n");
 }
 
+function LogBoth(s) {
+	console.log(s);
+	Log(s);
+}
+
 function New2DArray(width, height) {
 
 	let ret = [];

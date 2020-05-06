@@ -121,3 +121,8 @@ exports.send_fail =
 exports.two_go = 
 `Warning: "go" command sent twice in a row. This is supposed to be impossible. If you see this, \
 Nibbler has a bug and the author would like to be informed.`;
+
+
+exports.bad_bestmove =
+`Warning: bad "bestmove" received. This is supposed to be impossible; if you see this, Nibbler's \
+author would like to be informed.`;
