@@ -210,7 +210,7 @@ const node_prototype = {
 
 		// The complete token when writing the move, including number string if necessary,
 		// which depends on position within variations etc and so cannot easily be cached.
-		// We don't do brackets because closing brackets depend on main line status.
+		// We don't do brackets because closing brackets are complicated.
 
 		if (!this.move || !this.parent) {
 			return "";
