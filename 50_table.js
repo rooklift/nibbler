@@ -27,7 +27,7 @@ const table_prototype = {
 
 		let info = this.moveinfo[move];
 
-		if (!info || info.eval_nodes < this.eval_nodes) {
+		if (!info || info.total_nodes < this.eval_nodes) {
 			return;
 		}
 
