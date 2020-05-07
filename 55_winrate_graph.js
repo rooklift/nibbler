@@ -138,7 +138,7 @@ function NewGrapher() {
 
 	grapher.draw_50_percent_line = function(width, height) {
 
-		// Avoid anti-aliasing...
+		// Avoid anti-aliasing... (FIXME: we assumed graph size was even)
 		let pixel_y_adjustment = config.graph_line_width % 2 === 0 ? 0 : -0.5;
 
 		graphctx.strokeStyle = "#666666";
