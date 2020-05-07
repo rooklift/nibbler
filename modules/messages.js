@@ -39,15 +39,12 @@ You can permanently enable save in the dev menu.`;
 exports.about_serious_analysis =
 `Serious Analysis Mode has two effects.
 
-1: clicking on a move in the infobox on the right will add the \
-relevant moves to the tree, but will not actually take you there; i.e. \
-we will continue analysing the current position.
+1: clicking on a move in the infobox will add the relevant moves to the \
+tree, but will not actually take you there; i.e. we will continue analysing \
+the current position.
 
-2: clicking on a move in the infobox will cause some statistics \
-about the first move in the line to be displayed in the tree.
-
-These features were added due to specific requests, but most users can \
-safely ignore them.`;
+2: clicking on a move in the infobox will cause some statistics about the \
+first move in the line to be displayed in the tree.`;
 
 
 exports.engine_not_present =
