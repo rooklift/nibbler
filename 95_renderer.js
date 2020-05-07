@@ -726,16 +726,17 @@ function NewRenderer() {
 
 	renderer.engine_start = function(filepath, args, options, send_normal_options = true) {
 
-		if (this.engine.exe) {				// We already have an engine connection (possibly non-functioning, but still...)
+		if (this.engine.exe) {						// We already have an engine connection (possibly non-functioning, but still...)
 			this.engine.shutdown();
 			this.engine = NewEngine();
 		}
 
 		this.info_handler.reset_engine_info();
+		this.info_handler.must_draw_infobox();		// To displace the new stderr log that appears.
 
 		if (typeof filepath !== "string" || fs.existsSync(filepath) === false) {
 
-			if (!config.failure) {			// Only show the following if there isn't a bigger problem...
+			if (!config.failure) {					// Only show the following if there isn't a bigger problem...
 				this.err_receive(`<span class="blue">${messages.engine_not_present}</span>`);
 				this.err_receive("");
 			}

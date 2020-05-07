@@ -4,10 +4,14 @@ function NewInfoHandler() {
 
 	let ih = Object.create(null);
 
+	ih.engine_start_time = performance.now();
 	ih.ever_received_info = false;
 	ih.ever_received_q = false;
 	ih.ever_received_multipv_2 = false;
+	ih.ever_received_errors = false;
 	ih.stderr_log = "";
+
+	ih.ever_drew_infobox = false;
 
 	ih.one_click_moves = New2DArray(8, 8);	// Array of possible one-click moves. Updated by draw_arrows().
 	ih.info_clickers = [];					// Elements in the infobox. Updated by draw_infobox().
@@ -23,10 +27,34 @@ function NewInfoHandler() {
 	ih.last_drawn_searchmoves = [];
 
 	ih.reset_engine_info = function() {
+		this.engine_start_time = performance.now();
 		this.ever_received_info = false;
 		this.ever_received_q = false;
 		this.ever_received_multipv_2 = false;
+		this.ever_received_errors = false;
 		this.stderr_log = "";
+	};
+
+	ih.displaying_stderr = function() {
+
+		if (this.ever_received_info) {
+			return false;
+		}
+		if (this.ever_drew_infobox === false) {
+			return true;
+		}
+
+		// So we've not received info from this engine, but we have drawn the infobox,
+		// meaning the engine was recently restarted or replaced...
+
+		if (performance.now() - ih.engine_start_time > 5000 && ih.ever_received_errors === false) {
+			return false;
+		}
+		if (performance.now() - ih.engine_start_time > 15000) {
+			return false;
+		}
+
+		return true;
 	};
 
 	ih.err_receive = function(s) {
@@ -44,11 +72,12 @@ function NewInfoHandler() {
 
 		if (s_low.includes("warning") || s_low.includes("error") || s_low.includes("unknown") || s_low.includes("failed")) {
 			this.stderr_log += `<span class="red">${s}</span><br>`;
+			this.ever_received_errors = true;
 		} else {
 			this.stderr_log += `${s}<br>`;
 		}
 
-		if (this.ever_received_info) {		// Means we won't see the err message on screen.
+		if (this.displaying_stderr() === false) {
 			console.log(s);
 		}
 	};
@@ -364,7 +393,7 @@ function NewInfoHandler() {
 
 		// Display stderr and return if we've never seen any info...
 
-		if (!this.ever_received_info) {
+		if (this.displaying_stderr()) {
 			infobox.innerHTML = this.stderr_log;
 			return;
 		}
@@ -520,6 +549,7 @@ function NewInfoHandler() {
 		}
 
 		infobox.innerHTML = substrings.join("");
+		this.ever_drew_infobox = true;
 	};
 
 	ih.moves_from_click = function(event) {
