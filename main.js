@@ -523,7 +523,7 @@ function menu_build() {
 					}
 				},
 				{
-					label: "...with click spotlight",
+					label: "...with piece-click spotlight",
 					type: "checkbox",
 					checked: config.click_spotlight,
 					click: () => {
@@ -543,9 +543,6 @@ function menu_build() {
 							args: ["next_move_arrow"],
 						});
 					}
-				},
-				{
-					type: "separator"
 				},
 				{
 					label: "Arrowhead type",
@@ -605,14 +602,14 @@ function menu_build() {
 					]
 				},
 				{
-					label: "Moves to show",
+					label: "Arrow filter",
 					submenu: [
 						{
 							label: "All moves",
 							type: "checkbox",
 							checked: config.uncertainty_cutoff === 999,				// Semi-special value we use
 							click: () => {
-								set_checks("Analysis", "Moves to show", "All moves");
+								set_checks("Analysis", "Arrow filter", "All moves");
 								win.webContents.send("set", {
 									key: "uncertainty_cutoff",
 									value: 999
@@ -624,7 +621,7 @@ function menu_build() {
 							type: "checkbox",
 							checked: config.uncertainty_cutoff === 0.2,
 							click: () => {
-								set_checks("Analysis", "Moves to show", "U < 0.2");
+								set_checks("Analysis", "Arrow filter", "U < 0.2");
 								win.webContents.send("set", {
 									key: "uncertainty_cutoff",
 									value: 0.2
@@ -636,7 +633,7 @@ function menu_build() {
 							type: "checkbox",
 							checked: config.uncertainty_cutoff === 0.175,
 							click: () => {
-								set_checks("Analysis", "Moves to show", "U < 0.175");
+								set_checks("Analysis", "Arrow filter", "U < 0.175");
 								win.webContents.send("set", {
 									key: "uncertainty_cutoff",
 									value: 0.175
@@ -648,7 +645,7 @@ function menu_build() {
 							type: "checkbox",
 							checked: config.uncertainty_cutoff === 0.15,
 							click: () => {
-								set_checks("Analysis", "Moves to show", "U < 0.15");
+								set_checks("Analysis", "Arrow filter", "U < 0.15");
 								win.webContents.send("set", {
 									key: "uncertainty_cutoff",
 									value: 0.15
@@ -660,7 +657,7 @@ function menu_build() {
 							type: "checkbox",
 							checked: config.uncertainty_cutoff === 0.125,
 							click: () => {
-								set_checks("Analysis", "Moves to show", "U < 0.125");
+								set_checks("Analysis", "Arrow filter", "U < 0.125");
 								win.webContents.send("set", {
 									key: "uncertainty_cutoff",
 									value: 0.125
@@ -672,7 +669,7 @@ function menu_build() {
 							type: "checkbox",
 							checked: config.uncertainty_cutoff === 0.1,
 							click: () => {
-								set_checks("Analysis", "Moves to show", "U < 0.1");
+								set_checks("Analysis", "Arrow filter", "U < 0.1");
 								win.webContents.send("set", {
 									key: "uncertainty_cutoff",
 									value: 0.1
@@ -683,7 +680,7 @@ function menu_build() {
 							type: "checkbox",
 							checked: config.uncertainty_cutoff === 0.075,
 							click: () => {
-								set_checks("Analysis", "Moves to show", "U < 0.075");
+								set_checks("Analysis", "Arrow filter", "U < 0.075");
 								win.webContents.send("set", {
 									key: "uncertainty_cutoff",
 									value: 0.075
@@ -695,7 +692,7 @@ function menu_build() {
 							type: "checkbox",
 							checked: config.uncertainty_cutoff === 0.05,
 							click: () => {
-								set_checks("Analysis", "Moves to show", "U < 0.05");
+								set_checks("Analysis", "Arrow filter", "U < 0.05");
 								win.webContents.send("set", {
 									key: "uncertainty_cutoff",
 									value: 0.05
@@ -707,7 +704,7 @@ function menu_build() {
 							type: "checkbox",
 							checked: config.uncertainty_cutoff === 0.025,
 							click: () => {
-								set_checks("Analysis", "Moves to show", "U < 0.025");
+								set_checks("Analysis", "Arrow filter", "U < 0.025");
 								win.webContents.send("set", {
 									key: "uncertainty_cutoff",
 									value: 0.025
@@ -719,7 +716,7 @@ function menu_build() {
 							type: "checkbox",
 							checked: config.uncertainty_cutoff === -999,				// Semi-special value we use
 							click: () => {
-								set_checks("Analysis", "Moves to show", "Top move");
+								set_checks("Analysis", "Arrow filter", "Top move");
 								win.webContents.send("set", {
 									key: "uncertainty_cutoff",
 									value: -999
@@ -736,6 +733,9 @@ function menu_build() {
 							}
 						}
 					]
+				},
+				{
+					type: "separator"
 				},
 				{
 					label: "Infobox stats",
