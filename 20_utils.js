@@ -362,6 +362,12 @@ function Value(q) {					// Rescale Q to 0..1 range.
 	return (q + 1) / 2;
 }
 
+function SmoothStep(x) {
+	if (x < 0) x = 0;
+	if (x > 1) x = 1;
+	return (-2 * x * x * x) + (3 * x * x);
+}
+
 function Sign(n) {
 	if (n < 0) return -1;
 	if (n > 0) return 1;
