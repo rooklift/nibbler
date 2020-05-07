@@ -534,6 +534,17 @@ function menu_build() {
 					}
 				},
 				{
+					label: "...always show actual move (if known)",
+					type: "checkbox",
+					checked: config.next_move_arrow,
+					click: () => {
+						win.webContents.send("call", {
+							fn: "toggle",
+							args: ["next_move_arrow"],
+						});
+					}
+				},
+				{
 					type: "separator"
 				},
 				{

@@ -1517,6 +1517,7 @@ function NewRenderer() {
 		let did_hoverdraw = this.hoverdraw();
 
 		let arrow_spotlight_square = config.click_spotlight ? this.active_square : null;
+		let next_move = config.next_move_arrow && this.tree.node.children.length > 0 ? this.tree.node.children[0].move : null;
 
 		if (did_hoverdraw) {
 			boardfriends.style.display = "none";
@@ -1527,7 +1528,7 @@ function NewRenderer() {
 			canvas.style.outline = "none";
 			this.draw_move_in_canvas();
 			this.draw_enemies_in_canvas();
-			this.info_handler.draw_arrows(this.tree.node, arrow_spotlight_square, null);
+			this.info_handler.draw_arrows(this.tree.node, arrow_spotlight_square, next_move);
 			this.draw_friendlies_in_table();
 		}
 
