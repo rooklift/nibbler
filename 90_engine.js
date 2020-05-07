@@ -182,6 +182,9 @@ function NewEngine() {
 		this.receive_fn = () => {};
 		this.err_receive_fn = () => {};
 		this.send("quit");
+		setTimeout(() => {
+			this.exe.kill();
+		}, 2000);
 	};
 	
 	return eng;
