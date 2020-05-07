@@ -904,33 +904,6 @@ function menu_build() {
 					type: "separator"
 				},
 				{
-					label: "Show focus (searchmoves) buttons",
-					type: "checkbox",
-					checked: config.searchmoves_buttons,
-					click: () => {
-						win.webContents.send("call", {
-							fn: "toggle",
-							args: ["searchmoves_buttons"],
-						});
-					}
-				},
-				{
-					label: "Clear focus",
-					click: () => {
-						win.webContents.send("call", "clear_searchmoves");
-					}
-				},
-				{
-					label: "Invert focus",
-					accelerator: "CommandOrControl+I",
-					click: () => {
-						win.webContents.send("call", "invert_searchmoves");
-					}
-				},
-				{
-					type: "separator"
-				},
-				{
 					label: "Draw PV on mouseover",
 					accelerator: "CommandOrControl+D",
 					type: "checkbox",
@@ -982,6 +955,33 @@ function menu_build() {
 							}
 						},
 					]
+				},
+				{
+					type: "separator"
+				},
+				{
+					label: "Show focus (searchmoves) buttons",
+					type: "checkbox",
+					checked: config.searchmoves_buttons,
+					click: () => {
+						win.webContents.send("call", {
+							fn: "toggle",
+							args: ["searchmoves_buttons"],
+						});
+					}
+				},
+				{
+					label: "Clear focus",
+					click: () => {
+						win.webContents.send("call", "clear_searchmoves");
+					}
+				},
+				{
+					label: "Invert focus",
+					accelerator: "CommandOrControl+I",
+					click: () => {
+						win.webContents.send("call", "invert_searchmoves");
+					}
 				},
 				{
 					type: "separator"
