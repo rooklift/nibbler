@@ -715,11 +715,11 @@ function menu_build() {
 							}
 						},
 						{
-							label: "Top move only",
+							label: "Top move",
 							type: "checkbox",
 							checked: config.uncertainty_cutoff === -999,				// Semi-special value we use
 							click: () => {
-								set_checks("Analysis", "Moves to show", "Top move only");
+								set_checks("Analysis", "Moves to show", "Top move");
 								win.webContents.send("set", {
 									key: "uncertainty_cutoff",
 									value: -999
