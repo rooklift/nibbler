@@ -74,6 +74,8 @@ exports.defaults = {
 
 	"serious_analysis_mode": false,
 	"sam_ev": true,
+	"sam_cp": false,
+	"sam_cp_white_pov": true,
 	"sam_n": true,
 	"sam_n_abs": false,
 	"sam_of_n": true,

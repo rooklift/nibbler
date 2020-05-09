@@ -1012,6 +1012,34 @@ function menu_build() {
 							}
 						},
 						{
+							type: "separator"
+						},
+						{
+							label: "Centipawns",
+							type: "checkbox",
+							checked: config.sam_cp,
+							click: () => {
+								win.webContents.send("call", {
+									fn: "toggle",
+									args: ["sam_cp"],
+								});
+							}
+						},
+						{
+							label: "...from white's POV",
+							type: "checkbox",
+							checked: config.sam_cp_white_pov,
+							click: () => {
+								win.webContents.send("call", {
+									fn: "toggle",
+									args: ["sam_cp_white_pov"],
+								});
+							}
+						},
+						{
+							type: "separator"
+						},
+						{
 							label: "N (%)",
 							type: "checkbox",
 							checked: config.sam_n,

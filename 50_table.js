@@ -110,12 +110,31 @@ const info_prototype = {
 		return (this.value() * 100).toFixed(dp);
 	},
 
+	cp_string: function(white_pov) {
+		if (typeof this.cp !== "number") {
+			return "?";
+		}
+		let cp = this.cp;
+		if (white_pov && this.board.active === "b") {
+			cp = 0 - cp;
+		}
+		let ret = (cp / 100).toFixed(2);
+		if (cp > 0) {
+			ret = "+" + ret;
+		}
+		return ret;
+	},
+
 	stats_list: function(opts, nodes_total) {
 
 		let ret = [];
 
 		if (opts.ev) {
 			ret.push(`EV: ${this.value_string(1)}%`);
+		}
+
+		if (opts.cp) {
+			ret.push(`CP: ${this.cp_string(opts.cp_white_pov)}`);
 		}
 
 		// N is fairly complicated...

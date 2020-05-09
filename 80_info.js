@@ -485,14 +485,7 @@ function NewInfoHandler() {
 
 			let value_string = "?";
 			if (config.show_cp) {
-				let cp = info.cp;
-				if (config.cp_white_pov && active_colour === "b") {
-					cp = 0 - cp;
-				}
-				value_string = (cp / 100).toFixed(2);
-				if (cp > 0) {
-					value_string = "+" + value_string;
-				}
+				value_string = info.cp_string(config.cp_white_pov)
 			} else {
 				value_string = info.value_string(1) + "%";
 			}
