@@ -180,7 +180,8 @@ function NewInfoHandler() {
 				new_pv[0] = move;		// Partial mitigation for wrong-format castling.
 
 				if (CompareArrays(new_pv, move_info.pv) === false) {
-					move_info.replace_pv(new_pv);
+					move_info.nice_pv_cache = null;
+					move_info.pv = new_pv;
 				}
 			}
 
