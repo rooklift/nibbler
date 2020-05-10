@@ -697,6 +697,55 @@ function menu_build() {
 					type: "separator"
 				},
 				{
+					label: "Show focus (searchmoves) buttons",
+					type: "checkbox",
+					checked: config.searchmoves_buttons,
+					click: () => {
+						win.webContents.send("call", {
+							fn: "toggle",
+							args: ["searchmoves_buttons"],
+						});
+					}
+				},
+				{
+					label: "Clear focus",
+					click: () => {
+						win.webContents.send("call", "clear_searchmoves");
+					}
+				},
+				{
+					label: "Invert focus",
+					accelerator: "CommandOrControl+I",
+					click: () => {
+						win.webContents.send("call", "invert_searchmoves");
+					}
+				},
+				{
+					type: "separator"
+				},
+				{
+					label: "Serious Analysis Mode",
+					type: "checkbox",
+					checked: config.serious_analysis_mode,
+					click: () => {
+						win.webContents.send("call", {
+							fn: "toggle",
+							args: ["serious_analysis_mode"],
+						});
+					}
+				},
+				{
+					label: "About Serious Analysis Mode",
+					click: () => {
+						alert(messages.about_serious_analysis);
+					}
+				}
+			]
+		},
+		{
+			label: "Display",
+			submenu: [
+				{
 					label: "Arrows",
 					type: "checkbox",
 					checked: config.arrows_enabled,
@@ -738,7 +787,7 @@ function menu_build() {
 							checked: config.arrowhead_type === 0,
 							accelerator: "F5",
 							click: () => {
-								set_checks("Analysis", "Arrowhead type", "Winrate");
+								set_checks("Display", "Arrowhead type", "Winrate");
 								win.webContents.send("set", {
 									key: "arrowhead_type",
 									value: 0,
@@ -751,7 +800,7 @@ function menu_build() {
 							checked: config.arrowhead_type === 1,
 							accelerator: "F6",
 							click: () => {
-								set_checks("Analysis", "Arrowhead type", "Node %");
+								set_checks("Display", "Arrowhead type", "Node %");
 								win.webContents.send("set", {
 									key: "arrowhead_type",
 									value: 1,
@@ -764,7 +813,7 @@ function menu_build() {
 							checked: config.arrowhead_type === 2,
 							accelerator: "F7",
 							click: () => {
-								set_checks("Analysis", "Arrowhead type", "Policy");
+								set_checks("Display", "Arrowhead type", "Policy");
 								win.webContents.send("set", {
 									key: "arrowhead_type",
 									value: 2,
@@ -777,7 +826,7 @@ function menu_build() {
 							checked: config.arrowhead_type === 3,
 							accelerator: "F8",
 							click: () => {
-								set_checks("Analysis", "Arrowhead type", "MultiPV rank");
+								set_checks("Display", "Arrowhead type", "MultiPV rank");
 								win.webContents.send("set", {
 									key: "arrowhead_type",
 									value: 3,
@@ -794,7 +843,7 @@ function menu_build() {
 							type: "checkbox",
 							checked: config.uncertainty_cutoff === 999,				// Semi-special value we use
 							click: () => {
-								set_checks("Analysis", "Arrow filter", "All moves");
+								set_checks("Display", "Arrow filter", "All moves");
 								win.webContents.send("set", {
 									key: "uncertainty_cutoff",
 									value: 999
@@ -806,7 +855,7 @@ function menu_build() {
 							type: "checkbox",
 							checked: config.uncertainty_cutoff === 0.2,
 							click: () => {
-								set_checks("Analysis", "Arrow filter", "U < 0.2");
+								set_checks("Display", "Arrow filter", "U < 0.2");
 								win.webContents.send("set", {
 									key: "uncertainty_cutoff",
 									value: 0.2
@@ -818,7 +867,7 @@ function menu_build() {
 							type: "checkbox",
 							checked: config.uncertainty_cutoff === 0.175,
 							click: () => {
-								set_checks("Analysis", "Arrow filter", "U < 0.175");
+								set_checks("Display", "Arrow filter", "U < 0.175");
 								win.webContents.send("set", {
 									key: "uncertainty_cutoff",
 									value: 0.175
@@ -830,7 +879,7 @@ function menu_build() {
 							type: "checkbox",
 							checked: config.uncertainty_cutoff === 0.15,
 							click: () => {
-								set_checks("Analysis", "Arrow filter", "U < 0.15");
+								set_checks("Display", "Arrow filter", "U < 0.15");
 								win.webContents.send("set", {
 									key: "uncertainty_cutoff",
 									value: 0.15
@@ -842,7 +891,7 @@ function menu_build() {
 							type: "checkbox",
 							checked: config.uncertainty_cutoff === 0.125,
 							click: () => {
-								set_checks("Analysis", "Arrow filter", "U < 0.125");
+								set_checks("Display", "Arrow filter", "U < 0.125");
 								win.webContents.send("set", {
 									key: "uncertainty_cutoff",
 									value: 0.125
@@ -854,7 +903,7 @@ function menu_build() {
 							type: "checkbox",
 							checked: config.uncertainty_cutoff === 0.1,
 							click: () => {
-								set_checks("Analysis", "Arrow filter", "U < 0.1");
+								set_checks("Display", "Arrow filter", "U < 0.1");
 								win.webContents.send("set", {
 									key: "uncertainty_cutoff",
 									value: 0.1
@@ -865,7 +914,7 @@ function menu_build() {
 							type: "checkbox",
 							checked: config.uncertainty_cutoff === 0.075,
 							click: () => {
-								set_checks("Analysis", "Arrow filter", "U < 0.075");
+								set_checks("Display", "Arrow filter", "U < 0.075");
 								win.webContents.send("set", {
 									key: "uncertainty_cutoff",
 									value: 0.075
@@ -877,7 +926,7 @@ function menu_build() {
 							type: "checkbox",
 							checked: config.uncertainty_cutoff === 0.05,
 							click: () => {
-								set_checks("Analysis", "Arrow filter", "U < 0.05");
+								set_checks("Display", "Arrow filter", "U < 0.05");
 								win.webContents.send("set", {
 									key: "uncertainty_cutoff",
 									value: 0.05
@@ -889,7 +938,7 @@ function menu_build() {
 							type: "checkbox",
 							checked: config.uncertainty_cutoff === 0.025,
 							click: () => {
-								set_checks("Analysis", "Arrow filter", "U < 0.025");
+								set_checks("Display", "Arrow filter", "U < 0.025");
 								win.webContents.send("set", {
 									key: "uncertainty_cutoff",
 									value: 0.025
@@ -901,7 +950,7 @@ function menu_build() {
 							type: "checkbox",
 							checked: config.uncertainty_cutoff === -999,				// Semi-special value we use
 							click: () => {
-								set_checks("Analysis", "Arrow filter", "Top move");
+								set_checks("Display", "Arrow filter", "Top move");
 								win.webContents.send("set", {
 									key: "uncertainty_cutoff",
 									value: -999
@@ -1108,7 +1157,7 @@ function menu_build() {
 							type: "checkbox",
 							checked: config.hover_method === 0,
 							click: () => {
-								set_checks("Analysis", "Draw PV method", "Animate");
+								set_checks("Display", "Draw PV method", "Animate");
 								win.webContents.send("set", {
 									key: "hover_method",
 									value: 0
@@ -1120,7 +1169,7 @@ function menu_build() {
 							type: "checkbox",
 							checked: config.hover_method === 1,
 							click: () => {
-								set_checks("Analysis", "Draw PV method", "Single move");
+								set_checks("Display", "Draw PV method", "Single move");
 								win.webContents.send("set", {
 									key: "hover_method",
 									value: 1
@@ -1132,7 +1181,7 @@ function menu_build() {
 							type: "checkbox",
 							checked: config.hover_method === 2,
 							click: () => {
-								set_checks("Analysis", "Draw PV method", "Final position");
+								set_checks("Display", "Draw PV method", "Final position");
 								win.webContents.send("set", {
 									key: "hover_method",
 									value: 2
@@ -1141,53 +1190,6 @@ function menu_build() {
 						},
 					]
 				},
-				{
-					type: "separator"
-				},
-				{
-					label: "Show focus (searchmoves) buttons",
-					type: "checkbox",
-					checked: config.searchmoves_buttons,
-					click: () => {
-						win.webContents.send("call", {
-							fn: "toggle",
-							args: ["searchmoves_buttons"],
-						});
-					}
-				},
-				{
-					label: "Clear focus",
-					click: () => {
-						win.webContents.send("call", "clear_searchmoves");
-					}
-				},
-				{
-					label: "Invert focus",
-					accelerator: "CommandOrControl+I",
-					click: () => {
-						win.webContents.send("call", "invert_searchmoves");
-					}
-				},
-				{
-					type: "separator"
-				},
-				{
-					label: "Serious Analysis Mode",
-					type: "checkbox",
-					checked: config.serious_analysis_mode,
-					click: () => {
-						win.webContents.send("call", {
-							fn: "toggle",
-							args: ["serious_analysis_mode"],
-						});
-					}
-				},
-				{
-					label: "About Serious Analysis Mode",
-					click: () => {
-						alert(messages.about_serious_analysis);
-					}
-				}
 			]
 		},
 		{
