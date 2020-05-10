@@ -654,6 +654,12 @@ function NewInfoHandler() {
 				let good_n = typeof info_list[i].n === "number" && info_list[i].n > 0;
 				let doomed = typeof info_list[i].u === "number" && info_list[i].u === 0 && info_list[i].value() === 0;
 
+				// If we have set "all moves" (filter of U below 999) then don't use the doomed flag...
+
+				if (config.uncertainty_cutoff === 999) {
+					doomed = false;
+				}
+
 				if (specific_source || i === 0 || (good_u && good_n && !doomed) || info_list[i].move === show_move) {
 
 					let [x1, y1] = XY(info_list[i].move.slice(0, 2));

@@ -820,7 +820,7 @@ function menu_build() {
 						{
 							label: "All moves",
 							type: "checkbox",
-							checked: config.uncertainty_cutoff === 999,				// Semi-special value we use
+							checked: config.uncertainty_cutoff === 999,			// Semi-special value we use, e.g. in ih.draw_arrows()
 							click: () => {
 								set_checks("Display", "Arrow filter", "All moves");
 								win.webContents.send("set", {
@@ -927,7 +927,7 @@ function menu_build() {
 						{
 							label: "Top move",
 							type: "checkbox",
-							checked: config.uncertainty_cutoff === -999,				// Semi-special value we use
+							checked: config.uncertainty_cutoff === -999,		// Semi-special value we use
 							click: () => {
 								set_checks("Display", "Arrow filter", "Top move");
 								win.webContents.send("set", {
