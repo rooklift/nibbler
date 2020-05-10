@@ -510,17 +510,6 @@ function menu_build() {
 				},
 				{
 					label: "...and write stats to game tree",
-					type: "checkbox",
-					checked: config.sam_for_autoanalysis,
-					click: () => {
-						win.webContents.send("call", {
-							fn: "toggle",
-							args: ["sam_for_autoanalysis"],
-						});
-					}
-				},
-				{
-					label: "Analysis stats",
 					submenu: [
 						{
 							label: "EV",
