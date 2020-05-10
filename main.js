@@ -210,6 +210,9 @@ function menu_build() {
 					}
 				},
 				{
+					type: "separator"
+				},
+				{
 					label: "Load PGN from clipboard",
 					click: () => {
 						win.webContents.send("call", {
@@ -217,9 +220,6 @@ function menu_build() {
 							args: [electron.clipboard.readText()]
 						});
 					}
-				},
-				{
-					type: "separator"
 				},
 				{
 					label: "Load FEN from clipboard",
