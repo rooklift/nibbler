@@ -510,6 +510,72 @@ function menu_build() {
 				},
 				{
 					label: "...and write stats to game tree",
+					type: "checkbox",
+					checked: config.sam_for_autoanalysis,
+					click: () => {
+						win.webContents.send("call", {
+							fn: "toggle",
+							args: ["sam_for_autoanalysis"],
+						});
+					}
+				},
+				{
+					type: "separator"
+				},
+				{
+					label: "Show focus (searchmoves) buttons",
+					type: "checkbox",
+					checked: config.searchmoves_buttons,
+					click: () => {
+						win.webContents.send("call", {
+							fn: "toggle",
+							args: ["searchmoves_buttons"],
+						});
+					}
+				},
+				{
+					label: "Clear focus",
+					click: () => {
+						win.webContents.send("call", "clear_searchmoves");
+					}
+				},
+				{
+					label: "Invert focus",
+					accelerator: "CommandOrControl+I",
+					click: () => {
+						win.webContents.send("call", "invert_searchmoves");
+					}
+				},
+				{
+					type: "separator"
+				},
+				{
+					label: "Score winrates from white POV",
+					type: "checkbox",
+					checked: config.ev_white_pov,
+					click: () => {
+						win.webContents.send("call", {
+							fn: "toggle",
+							args: ["ev_white_pov"],
+						});
+					}
+				},
+				{
+					label: "Score CP values from white POV",
+					type: "checkbox",
+					checked: config.cp_white_pov,
+					click: () => {
+						win.webContents.send("call", {
+							fn: "toggle",
+							args: ["cp_white_pov"],
+						});
+					}
+				},
+				{
+					type: "separator"
+				},
+				{
+					label: "Analysis statistics",
 					submenu: [
 						{
 							label: "EV",
@@ -667,61 +733,6 @@ function menu_build() {
 							}
 						},
 					]
-				},
-				{
-					type: "separator"
-				},
-				{
-					label: "Show focus (searchmoves) buttons",
-					type: "checkbox",
-					checked: config.searchmoves_buttons,
-					click: () => {
-						win.webContents.send("call", {
-							fn: "toggle",
-							args: ["searchmoves_buttons"],
-						});
-					}
-				},
-				{
-					label: "Clear focus",
-					click: () => {
-						win.webContents.send("call", "clear_searchmoves");
-					}
-				},
-				{
-					label: "Invert focus",
-					accelerator: "CommandOrControl+I",
-					click: () => {
-						win.webContents.send("call", "invert_searchmoves");
-					}
-				},
-				{
-					type: "separator"
-				},
-				{
-					label: "Score winrates from white POV",
-					type: "checkbox",
-					checked: config.ev_white_pov,
-					click: () => {
-						win.webContents.send("call", {
-							fn: "toggle",
-							args: ["ev_white_pov"],
-						});
-					}
-				},
-				{
-					label: "Score CP values from white POV",
-					type: "checkbox",
-					checked: config.cp_white_pov,
-					click: () => {
-						win.webContents.send("call", {
-							fn: "toggle",
-							args: ["cp_white_pov"],
-						});
-					}
-				},
-				{
-					type: "separator"
 				},
 				{
 					label: "Serious Analysis Mode",

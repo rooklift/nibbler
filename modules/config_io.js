@@ -75,6 +75,7 @@ exports.defaults = {
 	"hover_method": 0,
 
 	"serious_analysis_mode": false,
+	"sam_for_autoanalysis": false,
 	"sam_ev": false,
 	"sam_cp": false,
 	"sam_n": false,

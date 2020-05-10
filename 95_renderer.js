@@ -528,9 +528,11 @@ function NewRenderer() {
 
 					case 2:									// "Evaluate line" mode
 
-						for (let child of this.tree.node.children) {
-							this.tree.node.write_stats_for_move(child.move);
-							this.tree.dom_redraw_node(child);
+						if (config.sam_for_autoanalysis) {
+							for (let child of this.tree.node.children) {
+								this.tree.node.write_stats_for_move(child.move);
+								this.tree.dom_redraw_node(child);
+							}
 						}
 
 						if (this.tree.next()) {
