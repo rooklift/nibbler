@@ -523,9 +523,6 @@ function menu_build() {
 							}
 						},
 						{
-							type: "separator"
-						},
-						{
 							label: "Centipawns",
 							type: "checkbox",
 							checked: config.sam_cp,
@@ -533,17 +530,6 @@ function menu_build() {
 								win.webContents.send("call", {
 									fn: "toggle",
 									args: ["sam_cp"],
-								});
-							}
-						},
-						{
-							label: "...from white's POV",
-							type: "checkbox",
-							checked: config.sam_cp_white_pov,
-							click: () => {
-								win.webContents.send("call", {
-									fn: "toggle",
-									args: ["sam_cp_white_pov"],
 								});
 							}
 						},
@@ -707,6 +693,31 @@ function menu_build() {
 					accelerator: "CommandOrControl+I",
 					click: () => {
 						win.webContents.send("call", "invert_searchmoves");
+					}
+				},
+				{
+					type: "separator"
+				},
+				{
+					label: "Score winrates from white POV",
+					type: "checkbox",
+					checked: config.ev_white_pov,
+					click: () => {
+						win.webContents.send("call", {
+							fn: "toggle",
+							args: ["ev_white_pov"],
+						});
+					}
+				},
+				{
+					label: "Score CP values from white POV",
+					type: "checkbox",
+					checked: config.cp_white_pov,
+					click: () => {
+						win.webContents.send("call", {
+							fn: "toggle",
+							args: ["cp_white_pov"],
+						});
 					}
 				},
 				{
@@ -971,17 +982,6 @@ function menu_build() {
 								win.webContents.send("call", {
 									fn: "toggle",
 									args: ["show_cp"],
-								});
-							}
-						},
-						{
-							label: "...from white's POV",
-							type: "checkbox",
-							checked: config.cp_white_pov,
-							click: () => {
-								win.webContents.send("call", {
-									fn: "toggle",
-									args: ["cp_white_pov"],
 								});
 							}
 						},

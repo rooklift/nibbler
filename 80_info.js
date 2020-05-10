@@ -487,7 +487,7 @@ function NewInfoHandler() {
 			if (config.show_cp) {
 				value_string = info.cp_string(config.cp_white_pov)
 			} else {
-				value_string = info.value_string(1) + "%";
+				value_string = info.value_string(1, config.ev_white_pov) + "%";
 			}
 
 			substrings.push(`<span class="blue">${value_string} </span>`);
@@ -774,7 +774,7 @@ function NewInfoHandler() {
 
 			switch (config.arrowhead_type) {
 			case 0:
-				s = o.info.value_string(0);
+				s = o.info.value_string(0, config.ev_white_pov);
 				break;
 			case 1:
 				if (node.table.nodes > 0) {

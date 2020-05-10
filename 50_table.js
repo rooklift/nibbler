@@ -102,14 +102,18 @@ const info_prototype = {
 	},
 
 	value: function() {
-		return Value(this.q);
+		return Value(this.q);		// Rescaled to 0..1
 	},
 
-	value_string: function(dp) {
+	value_string: function(dp, white_pov) {
 		if (typeof this.q !== "number") {
 			return "?";
 		}
-		return (this.value() * 100).toFixed(dp);
+		let val = this.value();
+		if (white_pov && this.board.active === "b") {
+			val = 1 - val;
+		}
+		return (val * 100).toFixed(dp);
 	},
 
 	cp_string: function(white_pov) {
@@ -132,7 +136,7 @@ const info_prototype = {
 		let ret = [];
 
 		if (opts.ev) {
-			ret.push(`EV: ${this.value_string(1)}%`);
+			ret.push(`EV: ${this.value_string(1, opts.ev_white_pov)}%`);
 		}
 
 		if (opts.cp) {

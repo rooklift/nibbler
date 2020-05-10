@@ -55,8 +55,10 @@ exports.defaults = {
 	"next_move_arrow": false,
 	"arrowhead_type": 0,
 
-	"show_cp": false,
+	"ev_white_pov": false,
 	"cp_white_pov": false,
+
+	"show_cp": false,
 	"show_n": true,
 	"show_n_abs": true,
 	"show_p": true,
@@ -75,7 +77,6 @@ exports.defaults = {
 	"serious_analysis_mode": false,
 	"sam_ev": false,
 	"sam_cp": false,
-	"sam_cp_white_pov": true,
 	"sam_n": false,
 	"sam_n_abs": false,
 	"sam_of_n": false,
