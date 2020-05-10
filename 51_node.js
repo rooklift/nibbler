@@ -233,7 +233,7 @@ const node_prototype = {
 
 		if (stats_flag) {
 			let stats = this.make_stats();
-			if (stats != "") {
+			if (stats !== "") {
 				s += " {" + stats + "}";
 			}
 		}
