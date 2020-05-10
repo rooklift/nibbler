@@ -249,7 +249,7 @@ const node_prototype = {
 		return null;
 	},
 
-	write_stats_to_child(move) {
+	write_stats_for_move(move) {
 
 		let child = this.get_child_from_move(move);
 		let info = this.table.moveinfo[move];
