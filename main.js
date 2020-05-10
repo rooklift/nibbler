@@ -575,7 +575,18 @@ function menu_build() {
 					type: "separator"
 				},
 				{
-					label: "Analysis statistics",
+					label: "Serious Analysis Mode",
+					type: "checkbox",
+					checked: config.serious_analysis_mode,
+					click: () => {
+						win.webContents.send("call", {
+							fn: "toggle",
+							args: ["serious_analysis_mode"],
+						});
+					}
+				},
+				{
+					label: "Serious Analysis statistics",
 					submenu: [
 						{
 							label: "EV",
@@ -733,17 +744,6 @@ function menu_build() {
 							}
 						},
 					]
-				},
-				{
-					label: "Serious Analysis Mode",
-					type: "checkbox",
-					checked: config.serious_analysis_mode,
-					click: () => {
-						win.webContents.send("call", {
-							fn: "toggle",
-							args: ["serious_analysis_mode"],
-						});
-					}
 				},
 				{
 					label: "About Serious Analysis Mode",
