@@ -1115,39 +1115,8 @@ function NewRenderer() {
 		// But we do save some statistics into the node of the first move made...
 
 		this.tree.add_move_sequence(moves);
-
-		let stats_node = this.tree.get_node_from_move(moves[0]);
-		let info = this.tree.node.table.moveinfo[moves[0]];			// info for the first move in our clicked line.
-
-		if (info) {
-
-			let sl = info.stats_list(
-				{
-					ev:           config.sam_ev,
-					cp:           config.sam_cp,
-					cp_white_pov: config.sam_cp_white_pov,
-					n:            config.sam_n,
-					n_abs:        config.sam_n_abs,
-					of_n:         config.sam_of_n,
-					wdl:          config.sam_wdl,
-					p:            config.sam_p,
-					m:            config.sam_m,
-					v:            config.sam_v,
-					q:            config.sam_q,
-					d:            config.sam_d,
-					u:            config.sam_u,
-					s:            config.sam_s,
-				},
-				this.tree.node.table.nodes);
-
-			if (sl.length > 0) {
-				stats_node.stats = sl.join(", ");
-			} else {
-				delete stats_node.stats;
-			}
-		}
-
-		this.tree.dom_redraw_node(stats_node);
+		this.tree.node.write_stats_to_child(moves[0]);
+		this.tree.dom_redraw_node(this.tree.node.get_child_from_move(moves[0]));
 	};
 
 	renderer.maybe_searchmove_click = function(event) {

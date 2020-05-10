@@ -272,17 +272,6 @@ let tree_manipulation_props = {
 
 	// -------------------------------------------------------------------------------------------------------------
 
-	get_node_from_move: function(s) {
-
-		for (let child of this.node.children) {
-			if (child.move === s) {
-				return child;
-			}
-		}
-
-		throw `get_node_from_move("${s}") - not found`;
-	},
-
 	handle_click: function(event) {
 
 		let n = EventPathN(event, "node_");

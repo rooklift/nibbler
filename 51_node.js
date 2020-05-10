@@ -238,6 +238,50 @@ const node_prototype = {
 		return s;
 	},
 
+	get_child_from_move: function(s) {
+
+		for (let child of this.children) {
+			if (child.move === s) {
+				return child;
+			}
+		}
+
+		return null;
+	},
+
+	write_stats_to_child(move) {
+
+		let child = this.get_child_from_move(move);
+		let info = this.table.moveinfo[move];
+
+		if (!child || !info) {
+			return;
+		}
+
+		let sl = info.stats_list({
+			ev:           config.sam_ev,
+			cp:           config.sam_cp,
+			cp_white_pov: config.sam_cp_white_pov,
+			n:            config.sam_n,
+			n_abs:        config.sam_n_abs,
+			of_n:         config.sam_of_n,
+			wdl:          config.sam_wdl,
+			p:            config.sam_p,
+			m:            config.sam_m,
+			v:            config.sam_v,
+			q:            config.sam_q,
+			d:            config.sam_d,
+			u:            config.sam_u,
+			s:            config.sam_s,
+		});
+
+		if (sl.length > 0) {
+			child.stats = sl.join(", ");
+		} else {
+			delete child.stats;
+		}
+	},
+
 	detach: function() {
 
 		// Returns the node that the renderer should point to,
