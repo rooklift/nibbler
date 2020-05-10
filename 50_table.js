@@ -37,6 +37,8 @@ const table_prototype = {
 };
 
 // --------------------------------------------------------------------------------------------
+// The info object stores info received from the engine about a move. The actual updating of
+// the object takes place in info.js and the ih.receive() method there.
 
 function NewInfo(board, move) {
 
