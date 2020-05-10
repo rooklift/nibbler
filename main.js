@@ -696,7 +696,7 @@ function menu_build() {
 					type: "separator"
 				},
 				{
-					label: "PV clicks don't change position",
+					label: "PV clicks add to tree instead of moving",
 					type: "checkbox",
 					checked: config.serious_analysis_mode,
 					click: () => {
