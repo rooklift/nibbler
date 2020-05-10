@@ -584,7 +584,7 @@ function menu_build() {
 							}
 						},
 						{
-							label: "Total nodes",
+							label: "...out of total",
 							type: "checkbox",
 							checked: config.sam_of_n,
 							click: () => {
