@@ -68,6 +68,12 @@ function NewInfo(board, move) {
 
 const info_prototype = {
 
+	replace_pv: function(new_pv) {
+		this.nice_pv_cache = null;
+		this.pv = Array.from(new_pv);
+		this.pv[0] = this.move;
+	},
+
 	nice_pv: function() {
 
 		// Human readable moves. Since there's no real guarantee that our
