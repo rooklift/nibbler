@@ -336,7 +336,11 @@ function make_movetext(node) {
 		if (typeof item === "string") {
 			tokens.push(item);
 		} else {
-			tokens.push(item.token(true));
+			let item_token = item.token(true);
+			let subtokens = item_token.split(" ").filter(s => s !== "");
+			for (let subtoken of subtokens) {
+				tokens.push(subtoken);
+			}
 		}
 	}
 
