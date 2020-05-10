@@ -134,6 +134,10 @@ let tree_draw_props = {
 
 	dom_redraw_node: function(node) {
 
+		if (!node) {
+			return;
+		}
+
 		let element = document.getElementById(`node_${node.id}`);
 
 		if (!element) {
