@@ -269,22 +269,22 @@ function menu_build() {
 						{
 							label: "EV",
 							type: "checkbox",
-							checked: config.sam_ev,
+							checked: config.pgn_ev,
 							click: () => {
 								win.webContents.send("call", {
 									fn: "toggle",
-									args: ["sam_ev"],
+									args: ["pgn_ev"],
 								});
 							}
 						},
 						{
 							label: "Centipawns",
 							type: "checkbox",
-							checked: config.sam_cp,
+							checked: config.pgn_cp,
 							click: () => {
 								win.webContents.send("call", {
 									fn: "toggle",
-									args: ["sam_cp"],
+									args: ["pgn_cp"],
 								});
 							}
 						},
@@ -294,33 +294,33 @@ function menu_build() {
 						{
 							label: "N (%)",
 							type: "checkbox",
-							checked: config.sam_n,
+							checked: config.pgn_n,
 							click: () => {
 								win.webContents.send("call", {
 									fn: "toggle",
-									args: ["sam_n"],
+									args: ["pgn_n"],
 								});
 							}
 						},
 						{
 							label: "N (absolute)",
 							type: "checkbox",
-							checked: config.sam_n_abs,
+							checked: config.pgn_n_abs,
 							click: () => {
 								win.webContents.send("call", {
 									fn: "toggle",
-									args: ["sam_n_abs"],
+									args: ["pgn_n_abs"],
 								});
 							}
 						},
 						{
 							label: "...out of total",
 							type: "checkbox",
-							checked: config.sam_of_n,
+							checked: config.pgn_of_n,
 							click: () => {
 								win.webContents.send("call", {
 									fn: "toggle",
-									args: ["sam_of_n"],
+									args: ["pgn_of_n"],
 								});
 							}
 						},
@@ -330,22 +330,22 @@ function menu_build() {
 						{
 							label: "P",
 							type: "checkbox",
-							checked: config.sam_p,
+							checked: config.pgn_p,
 							click: () => {
 								win.webContents.send("call", {
 									fn: "toggle",
-									args: ["sam_p"],
+									args: ["pgn_p"],
 								});
 							}
 						},
 						{
 							label: "V",
 							type: "checkbox",
-							checked: config.sam_v,
+							checked: config.pgn_v,
 							click: () => {
 								win.webContents.send("call", {
 									fn: "toggle",
-									args: ["sam_v"],
+									args: ["pgn_v"],
 								});
 							}
 						},
@@ -355,33 +355,33 @@ function menu_build() {
 						{
 							label: "Q",
 							type: "checkbox",
-							checked: config.sam_q,
+							checked: config.pgn_q,
 							click: () => {
 								win.webContents.send("call", {
 									fn: "toggle",
-									args: ["sam_q"],
+									args: ["pgn_q"],
 								});
 							}
 						},
 						{
 							label: "U",
 							type: "checkbox",
-							checked: config.sam_u,
+							checked: config.pgn_u,
 							click: () => {
 								win.webContents.send("call", {
 									fn: "toggle",
-									args: ["sam_u"],
+									args: ["pgn_u"],
 								});
 							}
 						},
 						{
 							label: "S",
 							type: "checkbox",
-							checked: config.sam_s,
+							checked: config.pgn_s,
 							click: () => {
 								win.webContents.send("call", {
 									fn: "toggle",
-									args: ["sam_s"],
+									args: ["pgn_s"],
 								});
 							}
 						},
@@ -391,33 +391,33 @@ function menu_build() {
 						{
 							label: "M",
 							type: "checkbox",
-							checked: config.sam_m,
+							checked: config.pgn_m,
 							click: () => {
 								win.webContents.send("call", {
 									fn: "toggle",
-									args: ["sam_m"],
+									args: ["pgn_m"],
 								});
 							}
 						},
 						{
 							label: "D",
 							type: "checkbox",
-							checked: config.sam_d,
+							checked: config.pgn_d,
 							click: () => {
 								win.webContents.send("call", {
 									fn: "toggle",
-									args: ["sam_d"],
+									args: ["pgn_d"],
 								});
 							}
 						},
 						{
 							label: "WDL",
 							type: "checkbox",
-							checked: config.sam_wdl,
+							checked: config.pgn_wdl,
 							click: () => {
 								win.webContents.send("call", {
 									fn: "toggle",
-									args: ["sam_wdl"],
+									args: ["pgn_wdl"],
 								});
 							}
 						},
