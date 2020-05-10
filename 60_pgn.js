@@ -336,7 +336,7 @@ function make_movetext(node) {
 		if (typeof item === "string") {
 			tokens.push(item);
 		} else {
-			tokens.push(item.token());
+			tokens.push(item.token(true));
 		}
 	}
 
@@ -353,7 +353,9 @@ function make_movetext(node) {
 
 	for (let token of tokens) {
 		if (line.length + token.length > 79) {
-			lines.push(line);
+			if (line !== "") {
+				lines.push(line);
+			}
 			line = token;
 		} else {
 			if (line.length > 0 && line.endsWith("(") === false && token !== ")") {

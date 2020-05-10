@@ -36,17 +36,6 @@ containing only the current game.
 You can permanently enable save in the dev menu.`;
 
 
-exports.about_serious_analysis =
-`Serious Analysis Mode has two effects.
-
-1: clicking on a move in the infobox will add the relevant moves to the \
-tree, but will not actually take you there; i.e. we will continue analysing \
-the current position.
-
-2: clicking on a move in the infobox will cause some statistics about the \
-first move in the line to be displayed in the tree.`;
-
-
 exports.engine_not_present =
 `Engine not found. Please find the engine via the Engine menu. You might also \
 need to locate the weights (neural network) file.`;
@@ -70,13 +59,13 @@ exports.renderer_hang =
 
 exports.about_sizes = 
 `You can get more fine-grained control of font, board, graph, and window sizes via \
-Nibbler's config file (which can be found via the App menu).`;
+Nibbler's config file (which can be found via the Dev menu).`;
 
 
 exports.new_config_location =
 `WARNING: Nibbler now looks for ${config_io.filename} in a new location and also \
 saves to it automatically. You can delete the file in your app's folder. If you want to \
-manually edit ${config_io.filename}, you can find it via the App menu.`;
+manually edit ${config_io.filename}, you can find it via the Dev menu.`;
 
 
 exports.thread_warning =

@@ -206,7 +206,7 @@ const node_prototype = {
 		return this.__nice_move;
 	},
 
-	token: function() {
+	token: function(stats_flag) {
 
 		// The complete token when writing the move, including number string if necessary,
 		// which depends on position within variations etc and so cannot easily be cached.
@@ -231,31 +231,26 @@ const node_prototype = {
 		
 		s += this.nice_move();
 
-		if (this.stats) {
-			s += " {" + this.stats + "}";
+		if (stats_flag) {
+			let stats = this.make_stats();
+			if (stats != "") {
+				s += " {" + stats + "}";
+			}
 		}
 
 		return s;
 	},
 
-	get_child_from_move: function(s) {
+	make_stats() {
 
-		for (let child of this.children) {
-			if (child.move === s) {
-				return child;
-			}
+		if (!this.parent) {
+			return "";
 		}
 
-		return null;
-	},
+		let info = this.parent.table.moveinfo[this.move];
 
-	write_stats_for_move(move) {
-
-		let child = this.get_child_from_move(move);
-		let info = this.table.moveinfo[move];
-
-		if (!child || !info) {
-			return;
+		if (!info) {
+			return "";
 		}
 
 		let sl = info.stats_list({
@@ -276,11 +271,7 @@ const node_prototype = {
 			s:            config.sam_s,
 		});
 
-		if (sl.length > 0) {
-			child.stats = sl.join(", ");
-		} else {
-			delete child.stats;
-		}
+		return sl.join(", ");			// Will be "" on empty list
 	},
 
 	detach: function() {
