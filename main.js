@@ -264,23 +264,164 @@ function menu_build() {
 					}
 				},
 				{
-					type: "separator"
-				},
-				{
-					label: "Flip board",
-					accelerator: "CommandOrControl+F",
-					click: () => {
-						win.webContents.send("call", {
-							fn: "toggle",
-							args: ["flip"],
-						});
-					}
-				},
-				{
-					label: "Write infobox to clipboard",
-					click: () => {
-						win.webContents.send("call", "infobox_to_clipboard");
-					}
+					label: "PGN saved statistics",
+					submenu: [
+						{
+							label: "EV",
+							type: "checkbox",
+							checked: config.sam_ev,
+							click: () => {
+								win.webContents.send("call", {
+									fn: "toggle",
+									args: ["sam_ev"],
+								});
+							}
+						},
+						{
+							label: "Centipawns",
+							type: "checkbox",
+							checked: config.sam_cp,
+							click: () => {
+								win.webContents.send("call", {
+									fn: "toggle",
+									args: ["sam_cp"],
+								});
+							}
+						},
+						{
+							type: "separator"
+						},
+						{
+							label: "N (%)",
+							type: "checkbox",
+							checked: config.sam_n,
+							click: () => {
+								win.webContents.send("call", {
+									fn: "toggle",
+									args: ["sam_n"],
+								});
+							}
+						},
+						{
+							label: "N (absolute)",
+							type: "checkbox",
+							checked: config.sam_n_abs,
+							click: () => {
+								win.webContents.send("call", {
+									fn: "toggle",
+									args: ["sam_n_abs"],
+								});
+							}
+						},
+						{
+							label: "...out of total",
+							type: "checkbox",
+							checked: config.sam_of_n,
+							click: () => {
+								win.webContents.send("call", {
+									fn: "toggle",
+									args: ["sam_of_n"],
+								});
+							}
+						},
+						{
+							type: "separator"
+						},
+						{
+							label: "P",
+							type: "checkbox",
+							checked: config.sam_p,
+							click: () => {
+								win.webContents.send("call", {
+									fn: "toggle",
+									args: ["sam_p"],
+								});
+							}
+						},
+						{
+							label: "V",
+							type: "checkbox",
+							checked: config.sam_v,
+							click: () => {
+								win.webContents.send("call", {
+									fn: "toggle",
+									args: ["sam_v"],
+								});
+							}
+						},
+						{
+							type: "separator"
+						},
+						{
+							label: "Q",
+							type: "checkbox",
+							checked: config.sam_q,
+							click: () => {
+								win.webContents.send("call", {
+									fn: "toggle",
+									args: ["sam_q"],
+								});
+							}
+						},
+						{
+							label: "U",
+							type: "checkbox",
+							checked: config.sam_u,
+							click: () => {
+								win.webContents.send("call", {
+									fn: "toggle",
+									args: ["sam_u"],
+								});
+							}
+						},
+						{
+							label: "S",
+							type: "checkbox",
+							checked: config.sam_s,
+							click: () => {
+								win.webContents.send("call", {
+									fn: "toggle",
+									args: ["sam_s"],
+								});
+							}
+						},
+						{
+							type: "separator"
+						},
+						{
+							label: "M",
+							type: "checkbox",
+							checked: config.sam_m,
+							click: () => {
+								win.webContents.send("call", {
+									fn: "toggle",
+									args: ["sam_m"],
+								});
+							}
+						},
+						{
+							label: "D",
+							type: "checkbox",
+							checked: config.sam_d,
+							click: () => {
+								win.webContents.send("call", {
+									fn: "toggle",
+									args: ["sam_d"],
+								});
+							}
+						},
+						{
+							label: "WDL",
+							type: "checkbox",
+							checked: config.sam_wdl,
+							click: () => {
+								win.webContents.send("call", {
+									fn: "toggle",
+									args: ["sam_wdl"],
+								});
+							}
+						},
+					]
 				},
 				{
 					type: "separator"
@@ -299,15 +440,6 @@ function menu_build() {
 					label: "Paste",
 					accelerator: "CommandOrControl+V",
 					role: "paste",
-				},
-				{
-					type: "separator"
-				},
-				{
-					label: `Show ${config_io.filename}`,
-					click: () => {
-						electron.shell.showItemInFolder(config_io.filepath);
-					}
 				},
 				{
 					type: "separator"
@@ -509,17 +641,6 @@ function menu_build() {
 					}
 				},
 				{
-					label: "...and write stats to game tree",
-					type: "checkbox",
-					checked: config.sam_for_autoanalysis,
-					click: () => {
-						win.webContents.send("call", {
-							fn: "toggle",
-							args: ["sam_for_autoanalysis"],
-						});
-					}
-				},
-				{
 					type: "separator"
 				},
 				{
@@ -575,7 +696,7 @@ function menu_build() {
 					type: "separator"
 				},
 				{
-					label: "Serious Analysis Mode",
+					label: "PV clicks don't change position",
 					type: "checkbox",
 					checked: config.serious_analysis_mode,
 					click: () => {
@@ -585,177 +706,24 @@ function menu_build() {
 						});
 					}
 				},
-				{
-					label: "Serious Analysis statistics",
-					submenu: [
-						{
-							label: "EV",
-							type: "checkbox",
-							checked: config.sam_ev,
-							click: () => {
-								win.webContents.send("call", {
-									fn: "toggle",
-									args: ["sam_ev"],
-								});
-							}
-						},
-						{
-							label: "Centipawns",
-							type: "checkbox",
-							checked: config.sam_cp,
-							click: () => {
-								win.webContents.send("call", {
-									fn: "toggle",
-									args: ["sam_cp"],
-								});
-							}
-						},
-						{
-							type: "separator"
-						},
-						{
-							label: "N (%)",
-							type: "checkbox",
-							checked: config.sam_n,
-							click: () => {
-								win.webContents.send("call", {
-									fn: "toggle",
-									args: ["sam_n"],
-								});
-							}
-						},
-						{
-							label: "N (absolute)",
-							type: "checkbox",
-							checked: config.sam_n_abs,
-							click: () => {
-								win.webContents.send("call", {
-									fn: "toggle",
-									args: ["sam_n_abs"],
-								});
-							}
-						},
-						{
-							label: "...out of total",
-							type: "checkbox",
-							checked: config.sam_of_n,
-							click: () => {
-								win.webContents.send("call", {
-									fn: "toggle",
-									args: ["sam_of_n"],
-								});
-							}
-						},
-						{
-							type: "separator"
-						},
-						{
-							label: "P",
-							type: "checkbox",
-							checked: config.sam_p,
-							click: () => {
-								win.webContents.send("call", {
-									fn: "toggle",
-									args: ["sam_p"],
-								});
-							}
-						},
-						{
-							label: "V",
-							type: "checkbox",
-							checked: config.sam_v,
-							click: () => {
-								win.webContents.send("call", {
-									fn: "toggle",
-									args: ["sam_v"],
-								});
-							}
-						},
-						{
-							type: "separator"
-						},
-						{
-							label: "Q",
-							type: "checkbox",
-							checked: config.sam_q,
-							click: () => {
-								win.webContents.send("call", {
-									fn: "toggle",
-									args: ["sam_q"],
-								});
-							}
-						},
-						{
-							label: "U",
-							type: "checkbox",
-							checked: config.sam_u,
-							click: () => {
-								win.webContents.send("call", {
-									fn: "toggle",
-									args: ["sam_u"],
-								});
-							}
-						},
-						{
-							label: "S",
-							type: "checkbox",
-							checked: config.sam_s,
-							click: () => {
-								win.webContents.send("call", {
-									fn: "toggle",
-									args: ["sam_s"],
-								});
-							}
-						},
-						{
-							type: "separator"
-						},
-						{
-							label: "M",
-							type: "checkbox",
-							checked: config.sam_m,
-							click: () => {
-								win.webContents.send("call", {
-									fn: "toggle",
-									args: ["sam_m"],
-								});
-							}
-						},
-						{
-							label: "D",
-							type: "checkbox",
-							checked: config.sam_d,
-							click: () => {
-								win.webContents.send("call", {
-									fn: "toggle",
-									args: ["sam_d"],
-								});
-							}
-						},
-						{
-							label: "WDL",
-							type: "checkbox",
-							checked: config.sam_wdl,
-							click: () => {
-								win.webContents.send("call", {
-									fn: "toggle",
-									args: ["sam_wdl"],
-								});
-							}
-						},
-					]
-				},
-				{
-					label: "About Serious Analysis Mode",
-					click: () => {
-						alert(messages.about_serious_analysis);
-					}
-				}
 			]
 		},
 		{
 			label: "Display",
 			submenu: [
+				{
+					label: "Flip board",
+					accelerator: "CommandOrControl+F",
+					click: () => {
+						win.webContents.send("call", {
+							fn: "toggle",
+							args: ["flip"],
+						});
+					}
+				},
+				{
+					type: "separator"
+				},
 				{
 					label: "Arrows",
 					type: "checkbox",
@@ -2950,6 +2918,15 @@ function menu_build() {
 							key: "save_enabled",			// config file.
 							value: true,
 						});
+					}
+				},
+				{
+					type: "separator"
+				},
+				{
+					label: `Show ${config_io.filename}`,
+					click: () => {
+						electron.shell.showItemInFolder(config_io.filepath);
 					}
 				},
 				{

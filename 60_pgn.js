@@ -336,7 +336,7 @@ function make_movetext(node) {
 		if (typeof item === "string") {
 			tokens.push(item);
 		} else {
-			tokens.push(item.token());
+			tokens.push(item.token(true));
 		}
 	}
 

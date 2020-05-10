@@ -528,13 +528,6 @@ function NewRenderer() {
 
 					case 2:									// "Evaluate line" mode
 
-						if (config.sam_for_autoanalysis) {
-							for (let child of this.tree.node.children) {
-								this.tree.node.write_stats_for_move(child.move);
-								this.tree.dom_redraw_node(child);
-							}
-						}
-
 						if (this.tree.next()) {
 							this.position_changed(false, false);
 						} else {
@@ -1119,11 +1112,8 @@ function NewRenderer() {
 		}
 
 		// OK, so we're in Serious Analysis Mode (tm). We don't change our place in the tree.
-		// But we do save some statistics into the node of the first move made...
 
 		this.tree.add_move_sequence(moves);
-		this.tree.node.write_stats_for_move(moves[0]);
-		this.tree.dom_redraw_node(this.tree.node.get_child_from_move(moves[0]));
 	};
 
 	renderer.maybe_searchmove_click = function(event) {
