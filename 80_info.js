@@ -650,10 +650,11 @@ function NewInfoHandler() {
 			
 			for (let i = 0; i < info_list.length; i++) {
 
-				let good_u = typeof info_list[i].u === "number" && info_list[i].u < config.uncertainty_cutoff;
-				let good_n = typeof info_list[i].n === "number" && info_list[i].n > 0;
+				let good_u   = typeof info_list[i].u === "number" && info_list[i].u < config.uncertainty_cutoff;
+				let good_n   = typeof info_list[i].n === "number" && info_list[i].n > 0;
+				let deadlost = typeof info_list[i].u === "number" && info_list[i].value() === 0
 
-				if (specific_source || i === 0 || (good_u && good_n) || info_list[i].move === show_move) {
+				if (specific_source || i === 0 || (good_u && good_n && !deadlost) || info_list[i].move === show_move) {
 
 					let [x1, y1] = XY(info_list[i].move.slice(0, 2));
 					let [x2, y2] = XY(info_list[i].move.slice(2, 4));
