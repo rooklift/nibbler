@@ -1193,6 +1193,509 @@ function menu_build() {
 			]
 		},
 		{
+			label: "Sizes",
+			submenu: [
+				{
+					label: "Infobox font",
+					submenu: [
+						{
+							label: "32",
+							type: "checkbox",
+							checked: config.info_font_size === 32,
+							click: () => {
+								set_checks("Sizes", "Infobox font", "32");
+								win.webContents.send("call", {
+									fn: "set_info_font_size",
+									args: [32],
+								});
+							}
+						},
+						{
+							label: "28",
+							type: "checkbox",
+							checked: config.info_font_size === 28,
+							click: () => {
+								set_checks("Sizes", "Infobox font", "28");
+								win.webContents.send("call", {
+									fn: "set_info_font_size",
+									args: [28],
+								});
+							}
+						},
+						{
+							label: "24",
+							type: "checkbox",
+							checked: config.info_font_size === 24,
+							click: () => {
+								set_checks("Sizes", "Infobox font", "24");
+								win.webContents.send("call", {
+									fn: "set_info_font_size",
+									args: [24],
+								});
+							}
+						},
+						{
+							label: "20",
+							type: "checkbox",
+							checked: config.info_font_size === 20,
+							click: () => {
+								set_checks("Sizes", "Infobox font", "20");
+								win.webContents.send("call", {
+									fn: "set_info_font_size",
+									args: [20],
+								});
+							}
+						},
+						{
+							label: "18",
+							type: "checkbox",
+							checked: config.info_font_size === 18,
+							click: () => {
+								set_checks("Sizes", "Infobox font", "18");
+								win.webContents.send("call", {
+									fn: "set_info_font_size",
+									args: [18],
+								});
+							}
+						},
+						{
+							label: "16",
+							type: "checkbox",
+							checked: config.info_font_size === 16,
+							click: () => {
+								set_checks("Sizes", "Infobox font", "16");
+								win.webContents.send("call", {
+									fn: "set_info_font_size",
+									args: [16],
+								});
+							}
+						},
+					]
+				},
+				{
+					label: "Move history font",
+					submenu: [
+						{
+							label: "32",
+							type: "checkbox",
+							checked: config.pgn_font_size === 32,
+							click: () => {
+								set_checks("Sizes", "Move history font", "32");
+								win.webContents.send("call", {
+									fn: "set_pgn_font_size",
+									args: [32],
+								});
+							}
+						},
+						{
+							label: "28",
+							type: "checkbox",
+							checked: config.pgn_font_size === 28,
+							click: () => {
+								set_checks("Sizes", "Move history font", "28");
+								win.webContents.send("call", {
+									fn: "set_pgn_font_size",
+									args: [28],
+								});
+							}
+						},
+						{
+							label: "24",
+							type: "checkbox",
+							checked: config.pgn_font_size === 24,
+							click: () => {
+								set_checks("Sizes", "Move history font", "24");
+								win.webContents.send("call", {
+									fn: "set_pgn_font_size",
+									args: [24],
+								});
+							}
+						},
+						{
+							label: "20",
+							type: "checkbox",
+							checked: config.pgn_font_size === 20,
+							click: () => {
+								set_checks("Sizes", "Move history font", "20");
+								win.webContents.send("call", {
+									fn: "set_pgn_font_size",
+									args: [20],
+								});
+							}
+						},
+						{
+							label: "18",
+							type: "checkbox",
+							checked: config.pgn_font_size === 18,
+							click: () => {
+								set_checks("Sizes", "Move history font", "18");
+								win.webContents.send("call", {
+									fn: "set_pgn_font_size",
+									args: [18],
+								});
+							}
+						},
+						{
+							label: "16",
+							type: "checkbox",
+							checked: config.pgn_font_size === 16,
+							click: () => {
+								set_checks("Sizes", "Move history font", "16");
+								win.webContents.send("call", {
+									fn: "set_pgn_font_size",
+									args: [16],
+								});
+							}
+						},
+					]
+				},
+				{
+					type: "separator"
+				},
+				{
+					label: "Board",
+					submenu: [
+						{
+							label: "1280",
+							type: "checkbox",
+							checked: config.board_size === 1280,
+							click: () => {
+								set_checks("Sizes", "Board", "1280");
+								win.webContents.send("call", {
+									fn: "set_board_size",
+									args: [1280],
+								});
+							}
+						},
+						{
+							label: "1120",
+							type: "checkbox",
+							checked: config.board_size === 1120,
+							click: () => {
+								set_checks("Sizes", "Board", "1120");
+								win.webContents.send("call", {
+									fn: "set_board_size",
+									args: [1120],
+								});
+							}
+						},
+						{
+							label: "960",
+							type: "checkbox",
+							checked: config.board_size === 960,
+							click: () => {
+								set_checks("Sizes", "Board", "960");
+								win.webContents.send("call", {
+									fn: "set_board_size",
+									args: [960],
+								});
+							}
+						},
+						{
+							label: "800",
+							type: "checkbox",
+							checked: config.board_size === 800,
+							click: () => {
+								set_checks("Sizes", "Board", "800");
+								win.webContents.send("call", {
+									fn: "set_board_size",
+									args: [800],
+								});
+							}
+						},
+						{
+							label: "640",
+							type: "checkbox",
+							checked: config.board_size === 640,
+							click: () => {
+								set_checks("Sizes", "Board", "640");
+								win.webContents.send("call", {
+									fn: "set_board_size",
+									args: [640],
+								});
+							}
+						},
+						{
+							label: "576",
+							type: "checkbox",
+							checked: config.board_size === 576,
+							click: () => {
+								set_checks("Sizes", "Board", "576");
+								win.webContents.send("call", {
+									fn: "set_board_size",
+									args: [576],
+								});
+							}
+						},
+						{
+							label: "512",
+							type: "checkbox",
+							checked: config.board_size === 512,
+							click: () => {
+								set_checks("Sizes", "Board", "512");
+								win.webContents.send("call", {
+									fn: "set_board_size",
+									args: [512],
+								});
+							}
+						},
+						{
+							label: "480",
+							type: "checkbox",
+							checked: config.board_size === 480,
+							click: () => {
+								set_checks("Sizes", "Board", "480");
+								win.webContents.send("call", {
+									fn: "set_board_size",
+									args: [480],
+								});
+							}
+						},
+					]
+				},
+				{
+					label: "Arrows",
+					submenu: [
+						{
+							label: "Giant",
+							click: () => {
+								win.webContents.send("call", "giant_arrows");
+							}
+						},
+						{
+							label: "Large",
+							click: () => {
+								win.webContents.send("call", "large_arrows");
+							}
+						},
+						{
+							label: "Medium",
+							click: () => {
+								win.webContents.send("call", "medium_arrows");
+							}
+						},
+						{
+							label: "Small",
+							click: () => {
+								win.webContents.send("call", "small_arrows");
+							}
+						},
+					]
+				},
+				{
+					type: "separator"
+				},
+				{
+					label: "Graph",
+					submenu: [
+						{
+							label: "192",
+							type: "checkbox",
+							checked: config.graph_height === 192,
+							click: () => {
+								set_checks("Sizes", "Graph", "192");
+								win.webContents.send("call", {
+									fn: "set_graph_height",
+									args: [192],
+								});
+							}
+						},
+						{
+							label: "160",
+							type: "checkbox",
+							checked: config.graph_height === 160,
+							click: () => {
+								set_checks("Sizes", "Graph", "160");
+								win.webContents.send("call", {
+									fn: "set_graph_height",
+									args: [160],
+								});
+							}
+						},
+						{
+							label: "128",
+							type: "checkbox",
+							checked: config.graph_height === 128,
+							click: () => {
+								set_checks("Sizes", "Graph", "128");
+								win.webContents.send("call", {
+									fn: "set_graph_height",
+									args: [128],
+								});
+							}
+						},
+						{
+							label: "96",
+							type: "checkbox",
+							checked: config.graph_height === 96,
+							click: () => {
+								set_checks("Sizes", "Graph", "96");
+								win.webContents.send("call", {
+									fn: "set_graph_height",
+									args: [96],
+								});
+							}
+						},
+						{
+							label: "64",
+							type: "checkbox",
+							checked: config.graph_height === 64,
+							click: () => {
+								set_checks("Sizes", "Graph", "64");
+								win.webContents.send("call", {
+									fn: "set_graph_height",
+									args: [64],
+								});
+							}
+						},
+						{
+							label: "48",
+							type: "checkbox",
+							checked: config.graph_height === 48,
+							click: () => {
+								set_checks("Sizes", "Graph", "48");
+								win.webContents.send("call", {
+									fn: "set_graph_height",
+									args: [48],
+								});
+							}
+						},
+						{
+							label: "32",
+							type: "checkbox",
+							checked: config.graph_height === 32,
+							click: () => {
+								set_checks("Sizes", "Graph", "32");
+								win.webContents.send("call", {
+									fn: "set_graph_height",
+									args: [32],
+								});
+							}
+						},
+						{
+							label: "0",
+							type: "checkbox",
+							checked: config.graph_height === 0,
+							click: () => {
+								set_checks("Sizes", "Graph", "0");
+								win.webContents.send("call", {
+									fn: "set_graph_height",
+									args: [0],
+								});
+							}
+						},
+					]
+				},
+				{
+					label: "Graph lines",
+					submenu: [
+						{
+							label: "8",
+							type: "checkbox",
+							checked: config.graph_line_width === 8,
+							click: () => {
+								set_checks("Sizes", "Graph lines", "8");
+								win.webContents.send("set", {
+									key: "graph_line_width",
+									value: 8,
+								});
+							}
+						},
+						{
+							label: "7",
+							type: "checkbox",
+							checked: config.graph_line_width === 7,
+							click: () => {
+								set_checks("Sizes", "Graph lines", "7");
+								win.webContents.send("set", {
+									key: "graph_line_width",
+									value: 7,
+								});
+							}
+						},
+						{
+							label: "6",
+							type: "checkbox",
+							checked: config.graph_line_width === 6,
+							click: () => {
+								set_checks("Sizes", "Graph lines", "6");
+								win.webContents.send("set", {
+									key: "graph_line_width",
+									value: 6,
+								});
+							}
+						},
+						{
+							label: "5",
+							type: "checkbox",
+							checked: config.graph_line_width === 5,
+							click: () => {
+								set_checks("Sizes", "Graph lines", "5");
+								win.webContents.send("set", {
+									key: "graph_line_width",
+									value: 5,
+								});
+							}
+						},
+						{
+							label: "4",
+							type: "checkbox",
+							checked: config.graph_line_width === 4,
+							click: () => {
+								set_checks("Sizes", "Graph lines", "4");
+								win.webContents.send("set", {
+									key: "graph_line_width",
+									value: 4,
+								});
+							}
+						},
+						{
+							label: "3",
+							type: "checkbox",
+							checked: config.graph_line_width === 3,
+							click: () => {
+								set_checks("Sizes", "Graph lines", "3");
+								win.webContents.send("set", {
+									key: "graph_line_width",
+									value: 3,
+								});
+							}
+						},
+						{
+							label: "2",
+							type: "checkbox",
+							checked: config.graph_line_width === 2,
+							click: () => {
+								set_checks("Sizes", "Graph lines", "2");
+								win.webContents.send("set", {
+									key: "graph_line_width",
+									value: 2,
+								});
+							}
+						},
+					]
+				},
+				{
+					type: "separator"
+				},
+				{
+					label: "Save window size",
+					click: () => {
+						win.webContents.send("call", "save_window_size");
+					}
+				},
+				{
+					type: "separator"
+				},
+				{
+					label: "I want other size options!",
+					click: () => {
+						alert(messages.about_sizes);
+					}
+				},
+			]
+		},
+		{
 			label: "Engine",
 			submenu: [
 				{
@@ -2422,509 +2925,6 @@ function menu_build() {
 						alert(messages.about_versus_mode);
 					}
 				}
-			]
-		},
-		{
-			label: "Sizes",
-			submenu: [
-				{
-					label: "Infobox font",
-					submenu: [
-						{
-							label: "32",
-							type: "checkbox",
-							checked: config.info_font_size === 32,
-							click: () => {
-								set_checks("Sizes", "Infobox font", "32");
-								win.webContents.send("call", {
-									fn: "set_info_font_size",
-									args: [32],
-								});
-							}
-						},
-						{
-							label: "28",
-							type: "checkbox",
-							checked: config.info_font_size === 28,
-							click: () => {
-								set_checks("Sizes", "Infobox font", "28");
-								win.webContents.send("call", {
-									fn: "set_info_font_size",
-									args: [28],
-								});
-							}
-						},
-						{
-							label: "24",
-							type: "checkbox",
-							checked: config.info_font_size === 24,
-							click: () => {
-								set_checks("Sizes", "Infobox font", "24");
-								win.webContents.send("call", {
-									fn: "set_info_font_size",
-									args: [24],
-								});
-							}
-						},
-						{
-							label: "20",
-							type: "checkbox",
-							checked: config.info_font_size === 20,
-							click: () => {
-								set_checks("Sizes", "Infobox font", "20");
-								win.webContents.send("call", {
-									fn: "set_info_font_size",
-									args: [20],
-								});
-							}
-						},
-						{
-							label: "18",
-							type: "checkbox",
-							checked: config.info_font_size === 18,
-							click: () => {
-								set_checks("Sizes", "Infobox font", "18");
-								win.webContents.send("call", {
-									fn: "set_info_font_size",
-									args: [18],
-								});
-							}
-						},
-						{
-							label: "16",
-							type: "checkbox",
-							checked: config.info_font_size === 16,
-							click: () => {
-								set_checks("Sizes", "Infobox font", "16");
-								win.webContents.send("call", {
-									fn: "set_info_font_size",
-									args: [16],
-								});
-							}
-						},
-					]
-				},
-				{
-					label: "Move history font",
-					submenu: [
-						{
-							label: "32",
-							type: "checkbox",
-							checked: config.pgn_font_size === 32,
-							click: () => {
-								set_checks("Sizes", "Move history font", "32");
-								win.webContents.send("call", {
-									fn: "set_pgn_font_size",
-									args: [32],
-								});
-							}
-						},
-						{
-							label: "28",
-							type: "checkbox",
-							checked: config.pgn_font_size === 28,
-							click: () => {
-								set_checks("Sizes", "Move history font", "28");
-								win.webContents.send("call", {
-									fn: "set_pgn_font_size",
-									args: [28],
-								});
-							}
-						},
-						{
-							label: "24",
-							type: "checkbox",
-							checked: config.pgn_font_size === 24,
-							click: () => {
-								set_checks("Sizes", "Move history font", "24");
-								win.webContents.send("call", {
-									fn: "set_pgn_font_size",
-									args: [24],
-								});
-							}
-						},
-						{
-							label: "20",
-							type: "checkbox",
-							checked: config.pgn_font_size === 20,
-							click: () => {
-								set_checks("Sizes", "Move history font", "20");
-								win.webContents.send("call", {
-									fn: "set_pgn_font_size",
-									args: [20],
-								});
-							}
-						},
-						{
-							label: "18",
-							type: "checkbox",
-							checked: config.pgn_font_size === 18,
-							click: () => {
-								set_checks("Sizes", "Move history font", "18");
-								win.webContents.send("call", {
-									fn: "set_pgn_font_size",
-									args: [18],
-								});
-							}
-						},
-						{
-							label: "16",
-							type: "checkbox",
-							checked: config.pgn_font_size === 16,
-							click: () => {
-								set_checks("Sizes", "Move history font", "16");
-								win.webContents.send("call", {
-									fn: "set_pgn_font_size",
-									args: [16],
-								});
-							}
-						},
-					]
-				},
-				{
-					type: "separator"
-				},
-				{
-					label: "Board",
-					submenu: [
-						{
-							label: "1280",
-							type: "checkbox",
-							checked: config.board_size === 1280,
-							click: () => {
-								set_checks("Sizes", "Board", "1280");
-								win.webContents.send("call", {
-									fn: "set_board_size",
-									args: [1280],
-								});
-							}
-						},
-						{
-							label: "1120",
-							type: "checkbox",
-							checked: config.board_size === 1120,
-							click: () => {
-								set_checks("Sizes", "Board", "1120");
-								win.webContents.send("call", {
-									fn: "set_board_size",
-									args: [1120],
-								});
-							}
-						},
-						{
-							label: "960",
-							type: "checkbox",
-							checked: config.board_size === 960,
-							click: () => {
-								set_checks("Sizes", "Board", "960");
-								win.webContents.send("call", {
-									fn: "set_board_size",
-									args: [960],
-								});
-							}
-						},
-						{
-							label: "800",
-							type: "checkbox",
-							checked: config.board_size === 800,
-							click: () => {
-								set_checks("Sizes", "Board", "800");
-								win.webContents.send("call", {
-									fn: "set_board_size",
-									args: [800],
-								});
-							}
-						},
-						{
-							label: "640",
-							type: "checkbox",
-							checked: config.board_size === 640,
-							click: () => {
-								set_checks("Sizes", "Board", "640");
-								win.webContents.send("call", {
-									fn: "set_board_size",
-									args: [640],
-								});
-							}
-						},
-						{
-							label: "576",
-							type: "checkbox",
-							checked: config.board_size === 576,
-							click: () => {
-								set_checks("Sizes", "Board", "576");
-								win.webContents.send("call", {
-									fn: "set_board_size",
-									args: [576],
-								});
-							}
-						},
-						{
-							label: "512",
-							type: "checkbox",
-							checked: config.board_size === 512,
-							click: () => {
-								set_checks("Sizes", "Board", "512");
-								win.webContents.send("call", {
-									fn: "set_board_size",
-									args: [512],
-								});
-							}
-						},
-						{
-							label: "480",
-							type: "checkbox",
-							checked: config.board_size === 480,
-							click: () => {
-								set_checks("Sizes", "Board", "480");
-								win.webContents.send("call", {
-									fn: "set_board_size",
-									args: [480],
-								});
-							}
-						},
-					]
-				},
-				{
-					label: "Arrows",
-					submenu: [
-						{
-							label: "Giant",
-							click: () => {
-								win.webContents.send("call", "giant_arrows");
-							}
-						},
-						{
-							label: "Large",
-							click: () => {
-								win.webContents.send("call", "large_arrows");
-							}
-						},
-						{
-							label: "Medium",
-							click: () => {
-								win.webContents.send("call", "medium_arrows");
-							}
-						},
-						{
-							label: "Small",
-							click: () => {
-								win.webContents.send("call", "small_arrows");
-							}
-						},
-					]
-				},
-				{
-					type: "separator"
-				},
-				{
-					label: "Graph",
-					submenu: [
-						{
-							label: "192",
-							type: "checkbox",
-							checked: config.graph_height === 192,
-							click: () => {
-								set_checks("Sizes", "Graph", "192");
-								win.webContents.send("call", {
-									fn: "set_graph_height",
-									args: [192],
-								});
-							}
-						},
-						{
-							label: "160",
-							type: "checkbox",
-							checked: config.graph_height === 160,
-							click: () => {
-								set_checks("Sizes", "Graph", "160");
-								win.webContents.send("call", {
-									fn: "set_graph_height",
-									args: [160],
-								});
-							}
-						},
-						{
-							label: "128",
-							type: "checkbox",
-							checked: config.graph_height === 128,
-							click: () => {
-								set_checks("Sizes", "Graph", "128");
-								win.webContents.send("call", {
-									fn: "set_graph_height",
-									args: [128],
-								});
-							}
-						},
-						{
-							label: "96",
-							type: "checkbox",
-							checked: config.graph_height === 96,
-							click: () => {
-								set_checks("Sizes", "Graph", "96");
-								win.webContents.send("call", {
-									fn: "set_graph_height",
-									args: [96],
-								});
-							}
-						},
-						{
-							label: "64",
-							type: "checkbox",
-							checked: config.graph_height === 64,
-							click: () => {
-								set_checks("Sizes", "Graph", "64");
-								win.webContents.send("call", {
-									fn: "set_graph_height",
-									args: [64],
-								});
-							}
-						},
-						{
-							label: "48",
-							type: "checkbox",
-							checked: config.graph_height === 48,
-							click: () => {
-								set_checks("Sizes", "Graph", "48");
-								win.webContents.send("call", {
-									fn: "set_graph_height",
-									args: [48],
-								});
-							}
-						},
-						{
-							label: "32",
-							type: "checkbox",
-							checked: config.graph_height === 32,
-							click: () => {
-								set_checks("Sizes", "Graph", "32");
-								win.webContents.send("call", {
-									fn: "set_graph_height",
-									args: [32],
-								});
-							}
-						},
-						{
-							label: "0",
-							type: "checkbox",
-							checked: config.graph_height === 0,
-							click: () => {
-								set_checks("Sizes", "Graph", "0");
-								win.webContents.send("call", {
-									fn: "set_graph_height",
-									args: [0],
-								});
-							}
-						},
-					]
-				},
-				{
-					label: "Graph lines",
-					submenu: [
-						{
-							label: "8",
-							type: "checkbox",
-							checked: config.graph_line_width === 8,
-							click: () => {
-								set_checks("Sizes", "Graph lines", "8");
-								win.webContents.send("set", {
-									key: "graph_line_width",
-									value: 8,
-								});
-							}
-						},
-						{
-							label: "7",
-							type: "checkbox",
-							checked: config.graph_line_width === 7,
-							click: () => {
-								set_checks("Sizes", "Graph lines", "7");
-								win.webContents.send("set", {
-									key: "graph_line_width",
-									value: 7,
-								});
-							}
-						},
-						{
-							label: "6",
-							type: "checkbox",
-							checked: config.graph_line_width === 6,
-							click: () => {
-								set_checks("Sizes", "Graph lines", "6");
-								win.webContents.send("set", {
-									key: "graph_line_width",
-									value: 6,
-								});
-							}
-						},
-						{
-							label: "5",
-							type: "checkbox",
-							checked: config.graph_line_width === 5,
-							click: () => {
-								set_checks("Sizes", "Graph lines", "5");
-								win.webContents.send("set", {
-									key: "graph_line_width",
-									value: 5,
-								});
-							}
-						},
-						{
-							label: "4",
-							type: "checkbox",
-							checked: config.graph_line_width === 4,
-							click: () => {
-								set_checks("Sizes", "Graph lines", "4");
-								win.webContents.send("set", {
-									key: "graph_line_width",
-									value: 4,
-								});
-							}
-						},
-						{
-							label: "3",
-							type: "checkbox",
-							checked: config.graph_line_width === 3,
-							click: () => {
-								set_checks("Sizes", "Graph lines", "3");
-								win.webContents.send("set", {
-									key: "graph_line_width",
-									value: 3,
-								});
-							}
-						},
-						{
-							label: "2",
-							type: "checkbox",
-							checked: config.graph_line_width === 2,
-							click: () => {
-								set_checks("Sizes", "Graph lines", "2");
-								win.webContents.send("set", {
-									key: "graph_line_width",
-									value: 2,
-								});
-							}
-						},
-					]
-				},
-				{
-					type: "separator"
-				},
-				{
-					label: "Save window size",
-					click: () => {
-						win.webContents.send("call", "save_window_size");
-					}
-				},
-				{
-					type: "separator"
-				},
-				{
-					label: "I want other size options!",
-					click: () => {
-						alert(messages.about_sizes);
-					}
-				},
 			]
 		},
 		{
