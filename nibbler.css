@@ -98,9 +98,9 @@ td {
 	display: block;
 	font-family: monospace, monospace;
 	margin-bottom: 1em;
-	overflow: hidden;
+	/* overflow: hidden; */
 	pointer-events: auto;
-	white-space: nowrap;
+	/* white-space: nowrap; */
 	width: 100%;
 }
 
