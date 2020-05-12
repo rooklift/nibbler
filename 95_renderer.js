@@ -772,7 +772,7 @@ function NewRenderer() {
 		if (val) {
 			this.info_handler.set_special_message(`${msg_start} now ${CommaNum(val)}`, "blue");
 		} else {
-			this.info_handler.set_special_message(`${msg_start} limit removed!`, "blue");
+			this.info_handler.set_special_message(`${msg_start} removed!`, "blue");
 		}
 
 		this.draw_statusbox()		// Just to make the message show up instantly
