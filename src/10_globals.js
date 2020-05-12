@@ -36,7 +36,6 @@ const clipboard = require("electron").clipboard;
 const config_io = require("./modules/config_io");
 const custom_uci = require("./modules/custom_uci");
 const fs = require("fs");
-const get_main_folder = require("./modules/get_main_folder");
 const images = require("./modules/images");
 const ipcRenderer = require("electron").ipcRenderer;
 const messages = require("./modules/messages");

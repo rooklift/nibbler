@@ -13,11 +13,6 @@ Log(`Nibbler startup at ${new Date().toUTCString()}`);
 let hub = NewRenderer();
 hub.engine_start(config.path, config.args, config.options);		// This obliterates any error log, so this must come before the following...
 
-if (fs.existsSync(path.join(get_main_folder(), "config.json"))) {
-	hub.err_receive(`<span class="blue">${messages.new_config_location}</span>`);
-	hub.err_receive("");
-}
-
 if (config.failure) {
 	hub.err_receive(`<span class="blue">While loading config file: ${config.failure}</span>`);
 	hub.err_receive("");
