@@ -38,7 +38,10 @@ If you like a different piece set, you can create a folder of `.png` or `.svg` f
 
 # Advanced engine options
 
-All Leela's UCI engine options can be set in two ways: in the options part of Nibbler's own `config.json` file (which you can find via the App menu) or in a file called `lc0.config` in the same folder as Leela - for info about how to use that, see [here](https://github.com/LeelaChessZero/lc0/blob/master/FLAGS.md).
+All Leela's UCI engine options can be set in two ways:
+
+* Leela automatically loads options from a file called `lc0.config` at startup - see [here](https://github.com/LeelaChessZero/lc0/blob/master/FLAGS.md).
+* Nibbler will send UCI options specified in Nibbler's own `config.json` file (which you can find via the Dev menu).
 
 See also [this list of UCI options](https://github.com/LeelaChessZero/lc0/wiki/Lc0-options) supported by Leela.
 
