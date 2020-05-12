@@ -477,7 +477,7 @@ function NewRenderer() {
 			// drawing the infobox for real, we'll need to flash it up in the status box instead...
 
 			if (this.info_handler.ever_received_info) {
-				this.info_handler.set_special_message(s, "red");
+				this.set_special_message(s, "red");
 			}
 			this.info_handler.err_receive(s);
 
@@ -687,8 +687,7 @@ function NewRenderer() {
 			val = "";
 		}
 		let sent = this.engine.setoption(name, val);
-		this.info_handler.set_special_message(sent, "blue");
-		this.draw_statusbox()										// Just to make the message show up instantly
+		this.set_special_message(sent, "blue");
 		this.go_or_halt();
 	};
 
@@ -763,9 +762,9 @@ function NewRenderer() {
 		let ack_type = special_flag ? "ack_special_node_limit" : "ack_node_limit";
 
 		if (val) {
-			this.info_handler.set_special_message(`${msg_start} now ${CommaNum(val)}`, "blue");
+			this.set_special_message(`${msg_start} now ${CommaNum(val)}`, "blue");
 		} else {
-			this.info_handler.set_special_message(`${msg_start} removed!`, "blue");
+			this.set_special_message(`${msg_start} removed!`, "blue");
 		}
 
 		this.draw_statusbox()		// Just to make the message show up instantly
@@ -1601,6 +1600,11 @@ function NewRenderer() {
 			this.tree.node.board.active,
 			this.searchmoves,
 			this.hoverdraw_div);
+	};
+
+	renderer.set_special_message = function(s, css_class) {
+		this.info_handler.set_special_message(s, css_class);
+		this.draw_statusbox()
 	};
 
 	renderer.spin = function() {
