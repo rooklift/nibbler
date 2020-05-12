@@ -95,9 +95,6 @@ function NewInfoHandler() {
 			// info depth 8 seldepth 31 time 3029 nodes 23672 score cp 27 wdl 384 326 290 nps 7843 tbhits 0 multipv 1
 			// pv d2d4 g8f6 c2c4 e7e6 g1f3 d7d5 b1c3 f8b4 c1g5 d5c4 e2e4 c7c5 f1c4 h7h6 g5f6 d8f6 e1h1 c5d4 e4e5 f6d8 c3e4
 
-			this.ever_received_info = true;
-			node.table.version++;
-
 			let infovals = InfoValMany(s, ["pv", "cp", "mate", "multipv", "nodes", "nps", "time"]);
 
 			let move_info;
@@ -115,8 +112,10 @@ function NewInfoHandler() {
 				node.table.moveinfo[move] = move_info;
 			}
 
+			this.ever_received_info = true;				// After the move legality check; i.e. we want REAL info
+			node.table.version++;						// Likewise
+
 			move_info.version = node.table.version;
-			move_info.wdl = InfoWDL(s);
 
 			let tmp;
 
@@ -162,6 +161,8 @@ function NewInfoHandler() {
 				node.table.time = tmp;
 			}
 
+			move_info.wdl = InfoWDL(s);
+
 			let new_pv = InfoPV(s);
 
 			// Note: if the engine isn't respecting Chess960 castling format, the PV
@@ -190,9 +191,6 @@ function NewInfoHandler() {
 			// info string d2d4  (293 ) N:   12005 (+169) (P: 22.38%) (WL:  0.09480) (D:  0.326)
 			// (M:  7.4) (Q:  0.09480) (U: 0.01211) (Q+U:  0.10691) (V:  0.0898)
 
-			this.ever_received_info = true;
-			node.table.version++;
-
 			let infovals = InfoValMany(s, ["string", "N:", "(D:", "(U:", "(Q+U:", "(S:", "(P:", "(Q:", "(V:", "(M:"]);
 
 			let move_info;
@@ -214,6 +212,9 @@ function NewInfoHandler() {
 				move_info = NewInfo(board, move);
 				node.table.moveinfo[move] = move_info;
 			}
+
+			this.ever_received_info = true;						// After the move legality check; i.e. we want REAL info
+			node.table.version++;								// Likewise
 
 			move_info.version = node.table.version;
 
@@ -309,11 +310,14 @@ function NewInfoHandler() {
 			// If we're running Leela we should have an N score, so getting here probably
 			// indicates it's some other engine. If it isn't respecting MultiPV, that means
 			// its most recently sent message should be its best move...
-
-			if (this.ever_received_multipv_2 === false) {
-				if (a.version < b.version) return 1;
-				if (a.version > b.version) return -1;
-			}
+			//
+			// Unfortunately, because the engine might be restarted (clearing the variable
+			// ever_received_multipv_2) this test can't really be done.
+			//
+			//	if (this.ever_received_multipv_2 === false) {
+			//		if (a.version < b.version) return 1;
+			//		if (a.version > b.version) return -1;
+			//	}
 
 			// If version and total_nodes are both lower/higher, it's safe to say that the
 			// info for one move is more up to date, and the other move is being neglected
@@ -390,8 +394,6 @@ function NewInfoHandler() {
 	};
 
 	ih.draw_infobox = function(node, mouse_point, active_square, active_colour, searchmoves, hoverdraw_div) {
-
-		// Display stderr and return if we've never seen any info...
 
 		if (this.displaying_stderr()) {
 			infobox.innerHTML = this.stderr_log;
