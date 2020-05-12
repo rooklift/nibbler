@@ -702,15 +702,11 @@ function NewRenderer() {
 	};
 
 	renderer.init_limit_options = function() {
-
 		let limits = [1, 1.2, 1.4, 1.6, 1.8, 2, 2.2, 2.4, 2.6, 2.8, 3, 3.2, 3.6, 4, 4.5, 5, 6.4, 8];
-
 		this.limit_options = [];
-
 		for (let i = 1; i <= 100000000; i *= 10) {
 			this.limit_options = this.limit_options.concat(limits.map(n => n * i));
 		}
-
 		this.limit_options = this.limit_options.filter(n => n === Math.floor(n));
 	}
 
@@ -728,8 +724,7 @@ function NewRenderer() {
 
 			for (let i = 0; i < this.limit_options.length; i++) {
 				if (this.limit_options[i] > cfg_value) {
-					let val = this.limit_options[i];
-					special_flag ? this.set_node_limit_special(val) : this.set_node_limit(val);
+					this.set_node_limit_generic(this.limit_options[i], special_flag);
 					return;
 				}
 			}
@@ -737,15 +732,13 @@ function NewRenderer() {
 		} else {
 
 			if (typeof cfg_value !== "number" || cfg_value <= 0) {				// Unlimited; reduce to highest finite option
-				let val = this.limit_options[this.limit_options.length - 1];
-				special_flag ? this.set_node_limit_special(val) : this.set_node_limit(val);
+				this.set_node_limit_generic(this.limit_options[this.limit_options.length - 1], special_flag)
 				return;
 			}
 
 			for (let i = this.limit_options.length - 1; i >= 0; i--) {
 				if (this.limit_options[i] < cfg_value) {
-					let val = this.limit_options[i];
-					special_flag ? this.set_node_limit_special(val) : this.set_node_limit(val);
+					this.set_node_limit_generic(this.limit_options[i], special_flag);
 					return;
 				}
 			}
