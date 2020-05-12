@@ -374,6 +374,30 @@ function Sign(n) {
 	return 0;
 }
 
+function CommaNum(n) {
+
+	if (typeof n !== "number") {
+		return JSON.stringify(n);
+	}
+
+	if (n < 1000) {
+		return n.toString();
+	}
+
+	let ret = "";
+
+	let n_string = n.toString();
+
+	for (let i = 0; i < n_string.length; i++) {
+		ret += n_string[i];
+		if ((n_string.length - i) % 3 === 1 && n_string.length - i > 1) {
+			ret += ",";
+		}
+	}
+
+	return ret;
+}
+
 function DurationString(ms) {
 
 	let hours = Math.floor(ms / 3600000);

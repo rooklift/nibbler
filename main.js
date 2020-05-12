@@ -31,6 +31,7 @@ let config = config_io.load();		// Do this early, it's a needed global.
 
 let win;
 let menu = menu_build();
+let menu_is_set = false;
 
 let loaded_engine = config.path;
 let loaded_weights = config.options.WeightsFile || null;
@@ -114,6 +115,14 @@ function startup() {
 		win.setTitle(msg);
 	});
 
+	electron.ipcMain.on("ack_node_limit", (event, msg) => {
+		set_checks("Engine", "Node limit - normal", msg);
+	});
+
+	electron.ipcMain.on("ack_special_node_limit", (event, msg) => {
+		set_checks("Engine", "Node limit - play / auto-eval", msg);
+	});
+
 	// Actually load the page last, I guess, so the event handlers above are already set up...
 
 	win.loadURL(url.format({
@@ -123,6 +132,7 @@ function startup() {
 	}));
 
 	electron.Menu.setApplicationMenu(menu);
+	menu_is_set = true;
 }
 
 // About the menu, remember that the renderer has a "queue" system (not really a queue, it drops all but 1
@@ -1919,7 +1929,7 @@ function menu_build() {
 							type: "checkbox",
 							checked: typeof config.search_nodes !== "number",
 							click: () => {
-								set_checks("Engine", "Node limit - normal", "Unlimited");
+								// No set_checks call, it's done via an ipc message.
 								win.webContents.send("call", {
 									fn: "set_node_limit",
 									args: [null]
@@ -1934,7 +1944,7 @@ function menu_build() {
 							type: "checkbox",
 							checked: config.search_nodes === 256 * million,
 							click: () => {
-								set_checks("Engine", "Node limit - normal", "256,000,000");
+								// No set_checks call, it's done via an ipc message.
 								win.webContents.send("call", {
 									fn: "set_node_limit",
 									args: [256 * million]
@@ -1946,7 +1956,7 @@ function menu_build() {
 							type: "checkbox",
 							checked: config.search_nodes === 64 * million,
 							click: () => {
-								set_checks("Engine", "Node limit - normal", "64,000,000");
+								// No set_checks call, it's done via an ipc message.
 								win.webContents.send("call", {
 									fn: "set_node_limit",
 									args: [64 * million]
@@ -1958,7 +1968,7 @@ function menu_build() {
 							type: "checkbox",
 							checked: config.search_nodes === 16 * million,
 							click: () => {
-								set_checks("Engine", "Node limit - normal", "16,000,000");
+								// No set_checks call, it's done via an ipc message.
 								win.webContents.send("call", {
 									fn: "set_node_limit",
 									args: [16 * million]
@@ -1970,7 +1980,7 @@ function menu_build() {
 							type: "checkbox",
 							checked: config.search_nodes === 4 * million,
 							click: () => {
-								set_checks("Engine", "Node limit - normal", "4,000,000");
+								// No set_checks call, it's done via an ipc message.
 								win.webContents.send("call", {
 									fn: "set_node_limit",
 									args: [4 * million]
@@ -1982,7 +1992,7 @@ function menu_build() {
 							type: "checkbox",
 							checked: config.search_nodes === 1 * million,
 							click: () => {
-								set_checks("Engine", "Node limit - normal", "1,000,000");
+								// No set_checks call, it's done via an ipc message.
 								win.webContents.send("call", {
 									fn: "set_node_limit",
 									args: [1 * million]
@@ -1997,7 +2007,7 @@ function menu_build() {
 							type: "checkbox",
 							checked: config.search_nodes === 256000,
 							click: () => {
-								set_checks("Engine", "Node limit - normal", "256,000");
+								// No set_checks call, it's done via an ipc message.
 								win.webContents.send("call", {
 									fn: "set_node_limit",
 									args: [256000]
@@ -2009,7 +2019,7 @@ function menu_build() {
 							type: "checkbox",
 							checked: config.search_nodes === 64000,
 							click: () => {
-								set_checks("Engine", "Node limit - normal", "64,000");
+								// No set_checks call, it's done via an ipc message.
 								win.webContents.send("call", {
 									fn: "set_node_limit",
 									args: [64000]
@@ -2021,7 +2031,7 @@ function menu_build() {
 							type: "checkbox",
 							checked: config.search_nodes === 16000,
 							click: () => {
-								set_checks("Engine", "Node limit - normal", "16,000");
+								// No set_checks call, it's done via an ipc message.
 								win.webContents.send("call", {
 									fn: "set_node_limit",
 									args: [16000]
@@ -2033,7 +2043,7 @@ function menu_build() {
 							type: "checkbox",
 							checked: config.search_nodes === 4000,
 							click: () => {
-								set_checks("Engine", "Node limit - normal", "4,000");
+								// No set_checks call, it's done via an ipc message.
 								win.webContents.send("call", {
 									fn: "set_node_limit",
 									args: [4000]
@@ -2045,7 +2055,7 @@ function menu_build() {
 							type: "checkbox",
 							checked: config.search_nodes === 1000,
 							click: () => {
-								set_checks("Engine", "Node limit - normal", "1,000");
+								// No set_checks call, it's done via an ipc message.
 								win.webContents.send("call", {
 									fn: "set_node_limit",
 									args: [1000]
@@ -2060,7 +2070,7 @@ function menu_build() {
 							type: "checkbox",
 							checked: config.search_nodes === 256,
 							click: () => {
-								set_checks("Engine", "Node limit - normal", "256");
+								// No set_checks call, it's done via an ipc message.
 								win.webContents.send("call", {
 									fn: "set_node_limit",
 									args: [256]
@@ -2072,7 +2082,7 @@ function menu_build() {
 							type: "checkbox",
 							checked: config.search_nodes === 64,
 							click: () => {
-								set_checks("Engine", "Node limit - normal", "64");
+								// No set_checks call, it's done via an ipc message.
 								win.webContents.send("call", {
 									fn: "set_node_limit",
 									args: [64]
@@ -2084,7 +2094,7 @@ function menu_build() {
 							type: "checkbox",
 							checked: config.search_nodes === 16,
 							click: () => {
-								set_checks("Engine", "Node limit - normal", "16");
+								// No set_checks call, it's done via an ipc message.
 								win.webContents.send("call", {
 									fn: "set_node_limit",
 									args: [16]
@@ -2096,7 +2106,7 @@ function menu_build() {
 							type: "checkbox",
 							checked: config.search_nodes === 4,
 							click: () => {
-								set_checks("Engine", "Node limit - normal", "4");
+								// No set_checks call, it's done via an ipc message.
 								win.webContents.send("call", {
 									fn: "set_node_limit",
 									args: [4]
@@ -2108,10 +2118,33 @@ function menu_build() {
 							type: "checkbox",
 							checked: config.search_nodes === 1,
 							click: () => {
-								set_checks("Engine", "Node limit - normal", "1");
+								// No set_checks call, it's done via an ipc message.
 								win.webContents.send("call", {
 									fn: "set_node_limit",
 									args: [1]
+								});
+							}
+						},
+						{
+							type: "separator",
+						},
+						{
+							label: "Up slightly",
+							accelerator: "CommandOrControl+Shift+=",
+							click: () => {
+								win.webContents.send("call", {
+									fn: "adjust_node_limit",
+									args: [1, false]
+								});
+							}
+						},
+						{
+							label: "Down slightly",
+							accelerator: "CommandOrControl+Shift+-",
+							click: () => {
+								win.webContents.send("call", {
+									fn: "adjust_node_limit",
+									args: [-1, false]
 								});
 							}
 						},
@@ -2121,74 +2154,11 @@ function menu_build() {
 					label: "Node limit - play / auto-eval",
 					submenu: [
 						{
-							label: "256,000,000",
-							type: "checkbox",
-							checked: config.search_nodes_special === 256 * million,
-							click: () => {
-								set_checks("Engine", "Node limit - play / auto-eval", "256,000,000");
-								win.webContents.send("call", {
-									fn: "set_node_limit_special",
-									args: [256 * million]
-								});
-							}
-						},
-						{
-							label: "64,000,000",
-							type: "checkbox",
-							checked: config.search_nodes_special === 64 * million,
-							click: () => {
-								set_checks("Engine", "Node limit - play / auto-eval", "64,000,000");
-								win.webContents.send("call", {
-									fn: "set_node_limit_special",
-									args: [64 * million]
-								});
-							}
-						},
-						{
-							label: "16,000,000",
-							type: "checkbox",
-							checked: config.search_nodes_special === 16 * million,
-							click: () => {
-								set_checks("Engine", "Node limit - play / auto-eval", "16,000,000");
-								win.webContents.send("call", {
-									fn: "set_node_limit_special",
-									args: [16 * million]
-								});
-							}
-						},
-						{
-							label: "4,000,000",
-							type: "checkbox",
-							checked: config.search_nodes_special === 4 * million,
-							click: () => {
-								set_checks("Engine", "Node limit - play / auto-eval", "4,000,000");
-								win.webContents.send("call", {
-									fn: "set_node_limit_special",
-									args: [4 * million]
-								});
-							}
-						},
-						{
-							label: "1,000,000",
-							type: "checkbox",
-							checked: config.search_nodes_special === 1 * million,
-							click: () => {
-								set_checks("Engine", "Node limit - play / auto-eval", "1,000,000");
-								win.webContents.send("call", {
-									fn: "set_node_limit_special",
-									args: [1 * million]
-								});
-							}
-						},
-						{
-							type: "separator"
-						},
-						{
 							label: "256,000",
 							type: "checkbox",
 							checked: config.search_nodes_special === 256000,
 							click: () => {
-								set_checks("Engine", "Node limit - play / auto-eval", "256,000");
+								// No set_checks call, it's done via an ipc message.
 								win.webContents.send("call", {
 									fn: "set_node_limit_special",
 									args: [256000]
@@ -2200,7 +2170,7 @@ function menu_build() {
 							type: "checkbox",
 							checked: config.search_nodes_special === 64000,
 							click: () => {
-								set_checks("Engine", "Node limit - play / auto-eval", "64,000");
+								// No set_checks call, it's done via an ipc message.
 								win.webContents.send("call", {
 									fn: "set_node_limit_special",
 									args: [64000]
@@ -2212,7 +2182,7 @@ function menu_build() {
 							type: "checkbox",
 							checked: config.search_nodes_special === 16000,
 							click: () => {
-								set_checks("Engine", "Node limit - play / auto-eval", "16,000");
+								// No set_checks call, it's done via an ipc message.
 								win.webContents.send("call", {
 									fn: "set_node_limit_special",
 									args: [16000]
@@ -2224,7 +2194,7 @@ function menu_build() {
 							type: "checkbox",
 							checked: config.search_nodes_special === 4000,
 							click: () => {
-								set_checks("Engine", "Node limit - play / auto-eval", "4,000");
+								// No set_checks call, it's done via an ipc message.
 								win.webContents.send("call", {
 									fn: "set_node_limit_special",
 									args: [4000]
@@ -2236,7 +2206,7 @@ function menu_build() {
 							type: "checkbox",
 							checked: config.search_nodes_special === 1000,
 							click: () => {
-								set_checks("Engine", "Node limit - play / auto-eval", "1,000");
+								// No set_checks call, it's done via an ipc message.
 								win.webContents.send("call", {
 									fn: "set_node_limit_special",
 									args: [1000]
@@ -2251,7 +2221,7 @@ function menu_build() {
 							type: "checkbox",
 							checked: config.search_nodes_special === 256,
 							click: () => {
-								set_checks("Engine", "Node limit - play / auto-eval", "256");
+								// No set_checks call, it's done via an ipc message.
 								win.webContents.send("call", {
 									fn: "set_node_limit_special",
 									args: [256]
@@ -2263,7 +2233,7 @@ function menu_build() {
 							type: "checkbox",
 							checked: config.search_nodes_special === 64,
 							click: () => {
-								set_checks("Engine", "Node limit - play / auto-eval", "64");
+								// No set_checks call, it's done via an ipc message.
 								win.webContents.send("call", {
 									fn: "set_node_limit_special",
 									args: [64]
@@ -2275,7 +2245,7 @@ function menu_build() {
 							type: "checkbox",
 							checked: config.search_nodes_special === 16,
 							click: () => {
-								set_checks("Engine", "Node limit - play / auto-eval", "16");
+								// No set_checks call, it's done via an ipc message.
 								win.webContents.send("call", {
 									fn: "set_node_limit_special",
 									args: [16]
@@ -2287,7 +2257,7 @@ function menu_build() {
 							type: "checkbox",
 							checked: config.search_nodes_special === 4,
 							click: () => {
-								set_checks("Engine", "Node limit - play / auto-eval", "4");
+								// No set_checks call, it's done via an ipc message.
 								win.webContents.send("call", {
 									fn: "set_node_limit_special",
 									args: [4]
@@ -2299,10 +2269,33 @@ function menu_build() {
 							type: "checkbox",
 							checked: config.search_nodes_special === 1,
 							click: () => {
-								set_checks("Engine", "Node limit - play / auto-eval", "1");
+								// No set_checks call, it's done via an ipc message.
 								win.webContents.send("call", {
 									fn: "set_node_limit_special",
 									args: [1]
+								});
+							}
+						},
+						{
+							type: "separator",
+						},
+						{
+							label: "Up slightly",
+							accelerator: "CommandOrControl+=",
+							click: () => {
+								win.webContents.send("call", {
+									fn: "adjust_node_limit",
+									args: [1, true]
+								});
+							}
+						},
+						{
+							label: "Down slightly",
+							accelerator: "CommandOrControl+-",
+							click: () => {
+								win.webContents.send("call", {
+									fn: "adjust_node_limit",
+									args: [-1, true]
 								});
 							}
 						},
@@ -3086,6 +3079,10 @@ function get_submenu_items(menupath) {
 }
 
 function set_checks(...menupath) {
+
+	if (!menu_is_set) {
+		return;
+	}
 
 	// Since I don't know precisely how the menu works behind the scenes,
 	// give a little time for the original click to go through first.
