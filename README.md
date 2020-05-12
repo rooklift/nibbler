@@ -32,7 +32,7 @@ Running Nibbler from source requires Electron, but has no other dependencies. If
 
 # Aesthetic adjustments
 
-As well as the menu options, various aesthetic adjustments are possible in the `config.json` file, which can be found via the App menu. For example, board colour can be changed.
+As well as the menu options, various aesthetic adjustments are possible in the `config.json` file, which can be found via the Dev menu. For example, board colour can be changed.
 
 If you like a different piece set, you can create a folder of `.png` or `.svg` files with [the right names](https://github.com/fohristiwhirl/nibbler/tree/master/src/pieces) and point the `override_piece_directory` config option to it.
 
