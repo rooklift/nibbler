@@ -43,8 +43,6 @@ All Leela's UCI engine options can be set in two ways:
 * Leela automatically loads options from a file called `lc0.config` at startup - see [here](https://github.com/LeelaChessZero/lc0/blob/master/FLAGS.md).
 * Nibbler will send UCI options specified in Nibbler's own `config.json` file (which you can find via the Dev menu).
 
-See also [this list of UCI options](https://github.com/LeelaChessZero/lc0/wiki/Lc0-options) supported by Leela.
-
 # Hints and tips
 
 An option to enable the UCI `searchmoves` feature is available in the Analysis menu. Once enabled, one or more moves can be specified as moves to focus on; Leela will ignore other moves. This is useful when you think Leela isn't giving a certain move enough attention.
