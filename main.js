@@ -120,7 +120,7 @@ function startup() {
 	});
 
 	electron.ipcMain.on("ack_special_node_limit", (event, msg) => {
-		set_checks("Engine", "Node limit - play / auto-eval", msg);
+		set_checks("Engine", "Node limit - auto-eval / play", msg);
 	});
 
 	// Actually load the page last, I guess, so the event handlers above are already set up...
@@ -1940,50 +1940,26 @@ function menu_build() {
 							type: "separator"
 						},
 						{
-							label: "256,000,000",
+							label: "100,000,000",
 							type: "checkbox",
-							checked: config.search_nodes === 256 * million,
+							checked: config.search_nodes === 100 * million,
 							click: () => {
 								// No set_checks call, it's done via an ipc message.
 								win.webContents.send("call", {
 									fn: "set_node_limit",
-									args: [256 * million]
+									args: [100 * million]
 								});
 							}
 						},
 						{
-							label: "64,000,000",
+							label: "10,000,000",
 							type: "checkbox",
-							checked: config.search_nodes === 64 * million,
+							checked: config.search_nodes === 10 * million,
 							click: () => {
 								// No set_checks call, it's done via an ipc message.
 								win.webContents.send("call", {
 									fn: "set_node_limit",
-									args: [64 * million]
-								});
-							}
-						},
-						{
-							label: "16,000,000",
-							type: "checkbox",
-							checked: config.search_nodes === 16 * million,
-							click: () => {
-								// No set_checks call, it's done via an ipc message.
-								win.webContents.send("call", {
-									fn: "set_node_limit",
-									args: [16 * million]
-								});
-							}
-						},
-						{
-							label: "4,000,000",
-							type: "checkbox",
-							checked: config.search_nodes === 4 * million,
-							click: () => {
-								// No set_checks call, it's done via an ipc message.
-								win.webContents.send("call", {
-									fn: "set_node_limit",
-									args: [4 * million]
+									args: [10 * million]
 								});
 							}
 						},
@@ -2000,53 +1976,26 @@ function menu_build() {
 							}
 						},
 						{
-							type: "separator"
-						},
-						{
-							label: "256,000",
+							label: "100,000",
 							type: "checkbox",
-							checked: config.search_nodes === 256000,
+							checked: config.search_nodes === 100000,
 							click: () => {
 								// No set_checks call, it's done via an ipc message.
 								win.webContents.send("call", {
 									fn: "set_node_limit",
-									args: [256000]
+									args: [100000]
 								});
 							}
 						},
 						{
-							label: "64,000",
+							label: "10,000",
 							type: "checkbox",
-							checked: config.search_nodes === 64000,
+							checked: config.search_nodes === 10000,
 							click: () => {
 								// No set_checks call, it's done via an ipc message.
 								win.webContents.send("call", {
 									fn: "set_node_limit",
-									args: [64000]
-								});
-							}
-						},
-						{
-							label: "16,000",
-							type: "checkbox",
-							checked: config.search_nodes === 16000,
-							click: () => {
-								// No set_checks call, it's done via an ipc message.
-								win.webContents.send("call", {
-									fn: "set_node_limit",
-									args: [16000]
-								});
-							}
-						},
-						{
-							label: "4,000",
-							type: "checkbox",
-							checked: config.search_nodes === 4000,
-							click: () => {
-								// No set_checks call, it's done via an ipc message.
-								win.webContents.send("call", {
-									fn: "set_node_limit",
-									args: [4000]
+									args: [10000]
 								});
 							}
 						},
@@ -2063,11 +2012,47 @@ function menu_build() {
 							}
 						},
 						{
+							label: "100",
+							type: "checkbox",
+							checked: config.search_nodes === 100,
+							click: () => {
+								// No set_checks call, it's done via an ipc message.
+								win.webContents.send("call", {
+									fn: "set_node_limit",
+									args: [100]
+								});
+							}
+						},
+						{
+							label: "10",
+							type: "checkbox",
+							checked: config.search_nodes === 10,
+							click: () => {
+								// No set_checks call, it's done via an ipc message.
+								win.webContents.send("call", {
+									fn: "set_node_limit",
+									args: [10]
+								});
+							}
+						},
+						{
+							label: "1",
+							type: "checkbox",
+							checked: config.search_nodes === 1,
+							click: () => {
+								// No set_checks call, it's done via an ipc message.
+								win.webContents.send("call", {
+									fn: "set_node_limit",
+									args: [1]
+								});
+							}
+						},
+						{
 							type: "separator",
 						},
 						{
 							label: "Up slightly",
-							accelerator: "CommandOrControl+Shift+=",
+							accelerator: "CommandOrControl+=",
 							click: () => {
 								win.webContents.send("call", {
 									fn: "adjust_node_limit",
@@ -2077,7 +2062,7 @@ function menu_build() {
 						},
 						{
 							label: "Down slightly",
-							accelerator: "CommandOrControl+Shift+-",
+							accelerator: "CommandOrControl+-",
 							click: () => {
 								win.webContents.send("call", {
 									fn: "adjust_node_limit",
@@ -2088,41 +2073,113 @@ function menu_build() {
 					]
 				},
 				{
-					label: "Node limit - play / auto-eval",
+					label: "Node limit - auto-eval / play",
 					submenu: [
 						{
-							label: "256,000",
+							label: "4,000,000",
 							type: "checkbox",
-							checked: config.search_nodes_special === 256000,
+							checked: config.search_nodes_special === 4 * million,
 							click: () => {
 								// No set_checks call, it's done via an ipc message.
 								win.webContents.send("call", {
 									fn: "set_node_limit_special",
-									args: [256000]
+									args: [4 * million]
 								});
 							}
 						},
 						{
-							label: "64,000",
+							label: "2,000,000",
 							type: "checkbox",
-							checked: config.search_nodes_special === 64000,
+							checked: config.search_nodes_special === 2 * million,
 							click: () => {
 								// No set_checks call, it's done via an ipc message.
 								win.webContents.send("call", {
 									fn: "set_node_limit_special",
-									args: [64000]
+									args: [2 * million]
 								});
 							}
 						},
 						{
-							label: "16,000",
+							label: "1,000,000",
 							type: "checkbox",
-							checked: config.search_nodes_special === 16000,
+							checked: config.search_nodes_special === 1 * million,
 							click: () => {
 								// No set_checks call, it's done via an ipc message.
 								win.webContents.send("call", {
 									fn: "set_node_limit_special",
-									args: [16000]
+									args: [1 * million]
+								});
+							}
+						},
+						{
+							label: "400,000",
+							type: "checkbox",
+							checked: config.search_nodes_special === 400000,
+							click: () => {
+								// No set_checks call, it's done via an ipc message.
+								win.webContents.send("call", {
+									fn: "set_node_limit_special",
+									args: [400000]
+								});
+							}
+						},
+						{
+							label: "200,000",
+							type: "checkbox",
+							checked: config.search_nodes_special === 200000,
+							click: () => {
+								// No set_checks call, it's done via an ipc message.
+								win.webContents.send("call", {
+									fn: "set_node_limit_special",
+									args: [200000]
+								});
+							}
+						},
+						{
+							label: "100,000",
+							type: "checkbox",
+							checked: config.search_nodes_special === 100000,
+							click: () => {
+								// No set_checks call, it's done via an ipc message.
+								win.webContents.send("call", {
+									fn: "set_node_limit_special",
+									args: [100000]
+								});
+							}
+						},
+						{
+							label: "40,000",
+							type: "checkbox",
+							checked: config.search_nodes_special === 40000,
+							click: () => {
+								// No set_checks call, it's done via an ipc message.
+								win.webContents.send("call", {
+									fn: "set_node_limit_special",
+									args: [40000]
+								});
+							}
+						},
+						{
+							label: "20,000",
+							type: "checkbox",
+							checked: config.search_nodes_special === 20000,
+							click: () => {
+								// No set_checks call, it's done via an ipc message.
+								win.webContents.send("call", {
+									fn: "set_node_limit_special",
+									args: [20000]
+								});
+							}
+						},
+						{
+							label: "10,000",
+							type: "checkbox",
+							checked: config.search_nodes_special === 10000,
+							click: () => {
+								// No set_checks call, it's done via an ipc message.
+								win.webContents.send("call", {
+									fn: "set_node_limit_special",
+									args: [10000]
 								});
 							}
 						},
@@ -2139,6 +2196,18 @@ function menu_build() {
 							}
 						},
 						{
+							label: "2,000",
+							type: "checkbox",
+							checked: config.search_nodes_special === 2000,
+							click: () => {
+								// No set_checks call, it's done via an ipc message.
+								win.webContents.send("call", {
+									fn: "set_node_limit_special",
+									args: [2000]
+								});
+							}
+						},
+						{
 							label: "1,000",
 							type: "checkbox",
 							checked: config.search_nodes_special === 1000,
@@ -2151,53 +2220,38 @@ function menu_build() {
 							}
 						},
 						{
-							type: "separator"
-						},
-						{
-							label: "256",
+							label: "400",
 							type: "checkbox",
-							checked: config.search_nodes_special === 256,
+							checked: config.search_nodes_special === 400,
 							click: () => {
 								// No set_checks call, it's done via an ipc message.
 								win.webContents.send("call", {
 									fn: "set_node_limit_special",
-									args: [256]
+									args: [400]
 								});
 							}
 						},
 						{
-							label: "64",
+							label: "200",
 							type: "checkbox",
-							checked: config.search_nodes_special === 64,
+							checked: config.search_nodes_special === 200,
 							click: () => {
 								// No set_checks call, it's done via an ipc message.
 								win.webContents.send("call", {
 									fn: "set_node_limit_special",
-									args: [64]
+									args: [200]
 								});
 							}
 						},
 						{
-							label: "16",
+							label: "100",
 							type: "checkbox",
-							checked: config.search_nodes_special === 16,
+							checked: config.search_nodes_special === 100,
 							click: () => {
 								// No set_checks call, it's done via an ipc message.
 								win.webContents.send("call", {
 									fn: "set_node_limit_special",
-									args: [16]
-								});
-							}
-						},
-						{
-							label: "4",
-							type: "checkbox",
-							checked: config.search_nodes_special === 4,
-							click: () => {
-								// No set_checks call, it's done via an ipc message.
-								win.webContents.send("call", {
-									fn: "set_node_limit_special",
-									args: [4]
+									args: [100]
 								});
 							}
 						},
@@ -2218,7 +2272,7 @@ function menu_build() {
 						},
 						{
 							label: "Up slightly",
-							accelerator: "CommandOrControl+=",
+							accelerator: "CommandOrControl+Shift+=",
 							click: () => {
 								win.webContents.send("call", {
 									fn: "adjust_node_limit",
@@ -2228,7 +2282,7 @@ function menu_build() {
 						},
 						{
 							label: "Down slightly",
-							accelerator: "CommandOrControl+-",
+							accelerator: "CommandOrControl+Shift+-",
 							click: () => {
 								win.webContents.send("call", {
 									fn: "adjust_node_limit",
