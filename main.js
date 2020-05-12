@@ -2063,69 +2063,6 @@ function menu_build() {
 							}
 						},
 						{
-							type: "separator"
-						},
-						{
-							label: "256",
-							type: "checkbox",
-							checked: config.search_nodes === 256,
-							click: () => {
-								// No set_checks call, it's done via an ipc message.
-								win.webContents.send("call", {
-									fn: "set_node_limit",
-									args: [256]
-								});
-							}
-						},
-						{
-							label: "64",
-							type: "checkbox",
-							checked: config.search_nodes === 64,
-							click: () => {
-								// No set_checks call, it's done via an ipc message.
-								win.webContents.send("call", {
-									fn: "set_node_limit",
-									args: [64]
-								});
-							}
-						},
-						{
-							label: "16",
-							type: "checkbox",
-							checked: config.search_nodes === 16,
-							click: () => {
-								// No set_checks call, it's done via an ipc message.
-								win.webContents.send("call", {
-									fn: "set_node_limit",
-									args: [16]
-								});
-							}
-						},
-						{
-							label: "4",
-							type: "checkbox",
-							checked: config.search_nodes === 4,
-							click: () => {
-								// No set_checks call, it's done via an ipc message.
-								win.webContents.send("call", {
-									fn: "set_node_limit",
-									args: [4]
-								});
-							}
-						},
-						{
-							label: "1",
-							type: "checkbox",
-							checked: config.search_nodes === 1,
-							click: () => {
-								// No set_checks call, it's done via an ipc message.
-								win.webContents.send("call", {
-									fn: "set_node_limit",
-									args: [1]
-								});
-							}
-						},
-						{
 							type: "separator",
 						},
 						{
