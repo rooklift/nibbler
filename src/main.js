@@ -2275,7 +2275,7 @@ function menu_build() {
 						},
 						{
 							label: "Up slightly",
-							accelerator: "CommandOrControl+Shift+=",
+							accelerator: "CommandOrControl+]",
 							click: () => {
 								win.webContents.send("call", {
 									fn: "adjust_node_limit",
@@ -2285,7 +2285,7 @@ function menu_build() {
 						},
 						{
 							label: "Down slightly",
-							accelerator: "CommandOrControl+Shift+-",
+							accelerator: "CommandOrControl+[",
 							click: () => {
 								win.webContents.send("call", {
 									fn: "adjust_node_limit",
