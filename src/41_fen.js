@@ -106,7 +106,7 @@ function LoadFEN(fen) {
 
 	ret.castling = CastlingRights(ret, tokens[2]);
 	ret.enpassant = EnPassantSquare(ret, tokens[3]);	// Requires ret.active to be correct.
-	ret.normalchess = IsNormalChessPosition(ret);
+	ret.normalchess = IsNormalChessPosition(ret);		// Requires ret.castling to be correct.
 
 	return ret;
 }
