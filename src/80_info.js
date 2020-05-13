@@ -277,6 +277,7 @@ function NewInfoHandler() {
 		// - We want to work with low MultiPV values.
 		// - Old and stale data can be left in our cache if MultiPV is low. Moves with only old
 		//   data are often inferior to moves with new data, regardless of stats.
+		// - We want to work with searchmoves, which is bound to leave stale info in the table.
 		// - We can try and track the age of the data by various means, but these are fallible.
 
 		if (!node || node.destroyed) {
@@ -291,46 +292,43 @@ function NewInfoHandler() {
 
 		info_list.sort((a, b) => {
 
+			const a_is_best = -1;						// return -1 to sort a to the left
+			const b_is_best = 1;						// return 1 to sort a to the right
+
 			// Mate - positive good, negative bad.
 			// Note our info struct uses 0 when not given.
 
 			if (Sign(a.mate) !== Sign(b.mate)) {		// negative is worst, 0 is neutral, positive is best
-				if (a.mate < b.mate) return 1;
-				if (a.mate > b.mate) return -1;
+				if (a.mate > b.mate) return a_is_best;
+				if (a.mate < b.mate) return b_is_best;
 			} else {									// lower (i.e. towards -Inf) is better regardless of who's mating
-				if (a.mate < b.mate) return -1;
-				if (a.mate > b.mate) return 1;
+				if (a.mate < b.mate) return a_is_best;
+				if (a.mate > b.mate) return b_is_best;
 			} 
 
 			// Leela N score (node count) - higher is better...
 
-			if (a.n < b.n) return 1;
-			if (a.n > b.n) return -1;
+			if (a.n > b.n) return a_is_best;
+			if (a.n < b.n) return b_is_best;
+			
+			// Leela will give an N score, so if we're here, it's some other engine.
+			// If MultiPV is the same, go with the more recent data...
 
-			// If we're running Leela we should have an N score, so getting here probably
-			// indicates it's some other engine. If it isn't respecting MultiPV, that means
-			// its most recently sent message should be its best move...
-			//
-			// Unfortunately, because the engine might be restarted (clearing the variable
-			// ever_received_multipv_2) this test can't really be done.
-			//
-			//	if (this.ever_received_multipv_2 === false) {
-			//		if (a.version < b.version) return 1;
-			//		if (a.version > b.version) return -1;
-			//	}
+			if (a.multipv === b.multipv) {
+				if (a.version > b.version && a.total_nodes > b.total_nodes) return a_is_best;
+				if (a.version < b.version && a.total_nodes < b.total_nodes) return b_is_best;
+			}
 
-			// If version and total_nodes are both lower/higher, it's safe to say that the
-			// info for one move is more up to date, and the other move is being neglected
-			// by the engine, because it's bad...
+			// I hesitate to use multipv sort sorting because of stale data issues, but...
 
-			if (a.version < b.version && a.total_nodes < b.total_nodes) return 1;
-			if (a.version > b.version && a.total_nodes > b.total_nodes) return -1;
+			if (a.multipv < b.multipv) return a_is_best;
+			if (a.multipv > b.multipv) return b_is_best;
 
 			// Finally, sort by CP if needed...
 
-			if (a.cp < b.cp) return 1;
-			if (a.cp > b.cp) return -1;
-
+			if (a.cp > b.cp) return a_is_best;
+			if (a.cp < b.cp) return b_is_best;
+			
 			// Who knows...
 
 			return 0;
