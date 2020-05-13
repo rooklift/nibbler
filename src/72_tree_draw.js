@@ -75,7 +75,7 @@ let tree_draw_props = {
 					closer: ""
 				});
 				continue;
-			};
+			}
 
 			// So item is a real node...
 

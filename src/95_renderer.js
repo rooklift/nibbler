@@ -707,7 +707,7 @@ function NewRenderer() {
 			this.limit_options = this.limit_options.concat(limits.map(n => n * i));
 		}
 		this.limit_options = this.limit_options.filter(n => n === Math.floor(n));
-	}
+	};
 
 	renderer.adjust_node_limit = function(direction, special_flag) {
 
@@ -731,7 +731,7 @@ function NewRenderer() {
 		} else {
 
 			if (typeof cfg_value !== "number" || cfg_value <= 0) {				// Unlimited; reduce to highest finite option
-				this.set_node_limit_generic(this.limit_options[this.limit_options.length - 1], special_flag)
+				this.set_node_limit_generic(this.limit_options[this.limit_options.length - 1], special_flag);
 				return;
 			}
 
@@ -766,8 +766,6 @@ function NewRenderer() {
 		} else {
 			this.set_special_message(`${msg_start} removed!`, "blue");
 		}
-
-		this.draw_statusbox()		// Just to make the message show up instantly
 
 		if (special_flag) {
 			config.search_nodes_special = val;
@@ -1607,7 +1605,7 @@ function NewRenderer() {
 
 	renderer.set_special_message = function(s, css_class) {
 		this.info_handler.set_special_message(s, css_class);
-		this.draw_statusbox()
+		this.draw_statusbox();
 	};
 
 	renderer.spin = function() {

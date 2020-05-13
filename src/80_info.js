@@ -485,7 +485,7 @@ function NewInfoHandler() {
 
 			let value_string = "?";
 			if (config.show_cp) {
-				value_string = info.cp_string(config.cp_white_pov)
+				value_string = info.cp_string(config.cp_white_pov);
 			} else {
 				value_string = info.value_string(1, config.ev_white_pov) + "%";
 			}
