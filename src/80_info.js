@@ -341,7 +341,7 @@ function NewInfoHandler() {
 		this.last_drawn_version = null;
 	};
 
-	ih.draw_statusbox = function(node, nogo_reason, searchmoves, ever_received_uciok, syncs_needed) {
+	ih.draw_statusbox = function(node, nogo_reason, searchmoves, ever_received_uciok, sync_change_time, syncs_needed) {
 
 		if (!ever_received_uciok) {
 
@@ -351,7 +351,7 @@ function NewInfoHandler() {
 
 			statusbox.innerHTML = `<span class="${this.special_message_class || "yellow"}">${this.special_message}</span>`;
 
-		} else if (typeof syncs_needed === "number" && syncs_needed > 2) {
+		} else if (typeof syncs_needed === "number" && syncs_needed > 0 && performance.now() - sync_change_time > 1000) {
 
 			statusbox.innerHTML = `<span class="gray">Out of sync: ${syncs_needed}</span>`;
 

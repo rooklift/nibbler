@@ -33,6 +33,7 @@ function NewEngine() {
 	eng.exe = null;
 	eng.readyok_required = 0;
 	eng.bestmove_required = 0;
+	eng.sync_receive_time = performance.now();		// Updated upon receiving readyok / bestmove
 	eng.scanner = null;
 	eng.err_scanner = null;
 	eng.ever_sent = false;
@@ -50,8 +51,11 @@ function NewEngine() {
 		msg = msg.trim();
 
 		if (msg.startsWith("go")) {
+
 			this.bestmove_required++;
+			this.sync_change_time = performance.now();
 			this.go_in_a_row++;
+			
 			if (this.go_in_a_row > 1 && !this.warned_two_go) {
 				alert(messages.two_go);
 				this.warned_two_go = true;
@@ -64,6 +68,7 @@ function NewEngine() {
 
 		if (msg === "isready") {
 			this.readyok_required++;
+			this.sync_change_time = performance.now();
 		}
 
 		try {
@@ -140,16 +145,18 @@ function NewEngine() {
 			// Firstly, make sure we correct our sync counters...
 			// Do both these things before anything else.
 
-			if (line.includes("uciok")) {
-				this.ever_received_uciok = true;
-			}
-
 			if (line.includes("bestmove") && this.bestmove_required > 0) {
 				this.bestmove_required--;
+				this.sync_change_time = performance.now();
 			}
 
 			if (line.includes("readyok") && this.readyok_required > 0) {
 				this.readyok_required--;
+				this.sync_change_time = performance.now();
+			}
+
+			if (line.includes("uciok")) {
+				this.ever_received_uciok = true;
 			}
 
 			// We want to ignore output that is clearly obsolete...
