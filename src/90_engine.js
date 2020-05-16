@@ -33,7 +33,7 @@ function NewEngine() {
 	eng.exe = null;
 	eng.readyok_required = 0;
 	eng.bestmove_required = 0;
-	eng.sync_receive_time = performance.now();		// Updated upon receiving readyok / bestmove
+	eng.sync_receive_time = performance.now();
 	eng.scanner = null;
 	eng.err_scanner = null;
 	eng.ever_sent = false;
@@ -55,7 +55,7 @@ function NewEngine() {
 			this.bestmove_required++;
 			this.sync_change_time = performance.now();
 			this.go_in_a_row++;
-			
+
 			if (this.go_in_a_row > 1 && !this.warned_two_go) {
 				alert(messages.two_go);
 				this.warned_two_go = true;
