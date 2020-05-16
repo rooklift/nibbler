@@ -446,3 +446,14 @@ function RandChoice(arr) {
 	}
 	return arr[RandInt(0, arr.length)];
 }
+
+function HighLightString(s, prefix, classname) {
+
+	// Highlights the thing after the prefix
+
+	if (s.startsWith(prefix) === false) {
+		return s;
+	}
+
+	return prefix + `<span class="${classname}">` + s.slice(prefix.length) + `</span>`;
+}
