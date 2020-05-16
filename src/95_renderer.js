@@ -556,6 +556,23 @@ function NewRenderer() {
 			return;
 		}
 
+		// Some highlights... this is obviously super-fragile based on the precise strings Leela sends...
+
+		if (s.startsWith("Found configuration file: ")) {
+			this.info_handler.err_receive(HighLightString(s, "Found configuration file: ", "blue"));
+			return;
+		}
+
+		if (s.startsWith("Loading Syzygy tablebases from ")) {
+			this.info_handler.err_receive(HighLightString(s, "Loading Syzygy tablebases from ", "blue"));
+			return;
+		}
+
+		if (s.startsWith("Loading weights file from: ")) {
+			this.info_handler.err_receive(HighLightString(s, "Loading weights file from: ", "blue"));
+			return;
+		}
+
 		this.info_handler.err_receive(s);
 	};
 
