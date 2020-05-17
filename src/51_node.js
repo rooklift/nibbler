@@ -274,6 +274,18 @@ const node_prototype = {
 		return sl.join(", ");			// Will be "" on empty list
 	},
 
+	end_nodes: function() {
+		if (this.children.length === 0) {
+			return [this];
+		} else {
+			let list = [];
+			for (let child of this.children) {
+				list = list.concat(child.end_nodes());
+			}
+			return list;
+		}
+	},
+
 	detach: function() {
 
 		// Returns the node that the renderer should point to,
