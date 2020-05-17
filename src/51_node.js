@@ -241,7 +241,7 @@ const node_prototype = {
 		return s;
 	},
 
-	make_stats() {
+	make_stats: function() {
 
 		if (!this.parent) {
 			return "";
