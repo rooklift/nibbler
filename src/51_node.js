@@ -222,7 +222,8 @@ const node_prototype = {
 		if (this.parent.board.active === "w") need_number_string = true;
 		if (this.parent.children[0] !== this) need_number_string = true;
 
-		// In theory we should also write the number if the parent had siblings. Meh.
+		// There are some other cases where we are supposed to have numbers but the logic
+		// escapes me right now.
 
 		let s = "";
 
