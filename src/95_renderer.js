@@ -719,8 +719,8 @@ function NewRenderer() {
 	};
 
 	renderer.disable_syzygy = function() {
-		this.set_versus("");
-		this.set_uci_option_permanent("SyzygyPath", null);
+		delete config.options["SyzygyPath"];
+		config_io.save(config);
 		this.restart_engine();
 	};
 
