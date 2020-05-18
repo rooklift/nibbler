@@ -816,13 +816,6 @@ const position_prototype = {
 			}
 		}
 
-		// We may as well support German characters...
-
-		if (s[0] === "D") s = "Q" + s.slice(1);
-		if (s[0] === "S") s = "N" + s.slice(1);
-		if (s[0] === "L") s = "B" + s.slice(1);
-		if (s[0] === "T") s = "R" + s.slice(1);
-
 		// If the piece isn't specified (with an uppercase letter) then it's a pawn move.
 		// Let's add P to the start of the string to keep the string format consistent...
 
