@@ -218,6 +218,7 @@ const node_prototype = {
 
 		let need_number_string = false;
 
+		if (!this.parent.parent) need_number_string = true;
 		if (this.parent.board.active === "w") need_number_string = true;
 		if (this.parent.children[0] !== this) need_number_string = true;
 
