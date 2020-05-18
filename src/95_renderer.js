@@ -191,6 +191,12 @@ function NewRenderer() {
 		}
 	};
 
+	renderer.next_sibling = function() {
+		if (this.tree.next_sibling()) {
+			this.position_changed(false, true);
+		}
+	};
+
 	renderer.return_to_main_line = function() {
 		if (this.tree.return_to_main_line()) {
 			this.position_changed(false, true);
@@ -1115,7 +1121,7 @@ function NewRenderer() {
 		}
 	};
 
-	renderer.generate_simple_book = function() {		// Format I used in LeelaStockZeroFish.
+	renderer.generate_simple_book = function() {		// Format I used in LeelaStockZeroFish. But remember castling format!
 		let lines = [];
 		for (let node of hub.tree.root.end_nodes()) {
     		lines.push(`\t"${node.history().join(" ")}"`);

@@ -544,6 +544,13 @@ function menu_build() {
 					}
 				},
 				{
+					label: "Sibling",
+					accelerator: "CommandOrControl+B",
+					click: () => {
+						win.webContents.send("call", "next_sibling");
+					}
+				},
+				{
 					type: "separator"
 				},
 				{

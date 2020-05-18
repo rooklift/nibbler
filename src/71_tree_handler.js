@@ -79,6 +79,21 @@ let tree_manipulation_props = {
 		return this.set_node(this.node.get_end());
 	},
 
+	next_sibling: function() {
+		if (!this.node.parent || this.node.parent.children.length < 2) {
+			return false;
+		}
+		if (this.node.parent.children[this.node.parent.children.length - 1] === this.node) {
+			return this.set_node(this.node.parent.children[0]);
+		}
+		for (let i = 0; i < this.node.parent.children.length; i++) {
+			if (this.node.parent.children[i] === this.node) {
+				return this.set_node(this.node.parent.children[i + 1]);
+			}
+		}
+		return false;		// Can't get here.
+	},
+
 	return_to_main_line: function() {
 
 		let main_line = this.root.future_history();
