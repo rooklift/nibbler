@@ -1919,10 +1919,7 @@ function menu_build() {
 						{
 							label: "Disable",
 							click: () => {
-								win.webContents.send("call", {
-									fn: "set_uci_option_permanent",
-									args: ["SyzygyPath", null]
-								});
+								win.webContents.send("call", "disable_syzygy");
 							}
 						}
 					]

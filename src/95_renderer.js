@@ -718,6 +718,12 @@ function NewRenderer() {
 		this.set_uci_option(name, val, true);
 	};
 
+	renderer.disable_syzygy = function() {
+		this.set_versus("");
+		this.set_uci_option_permanent("SyzygyPath", null);
+		this.restart_engine();
+	};
+
 	renderer.switch_weights = function(filename) {
 		this.info_handler.stderr_log = "";							// Avoids having confusing stale messages
 		this.set_uci_option("WeightsFile", filename, true);
