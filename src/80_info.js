@@ -176,7 +176,7 @@ function NewInfoHandler() {
 			// While we could work around the presence of such bad-format moves,
 			// there are many complex ramifications.
 
-			if (new_pv.length > 1) {	// Ignore info with missing PV (Stockfish likes to send these). 
+			if (new_pv.length > 1) {	// Ignore info with missing PV (Stockfish likes to send these).
 
 				new_pv[0] = move;		// Partial mitigation for wrong-format castling.
 
@@ -304,13 +304,13 @@ function NewInfoHandler() {
 			} else {									// lower (i.e. towards -Inf) is better regardless of who's mating
 				if (a.mate < b.mate) return a_is_best;
 				if (a.mate > b.mate) return b_is_best;
-			} 
+			}
 
 			// Leela N score (node count) - higher is better...
 
 			if (a.n > b.n) return a_is_best;
 			if (a.n < b.n) return b_is_best;
-			
+
 			// Leela will give an N score, so if we're here, it's some other engine.
 			// If MultiPV is the same, go with the more recent data...
 
@@ -328,7 +328,7 @@ function NewInfoHandler() {
 
 			if (a.cp > b.cp) return a_is_best;
 			if (a.cp < b.cp) return b_is_best;
-			
+
 			// Who knows...
 
 			return 0;
@@ -341,7 +341,7 @@ function NewInfoHandler() {
 		this.last_drawn_version = null;
 	};
 
-	ih.draw_statusbox = function(node, nogo_reason, searchmoves, ever_received_uciok, sync_change_time, syncs_needed) {
+	ih.draw_statusbox = function(node, nogo_reason, ever_received_uciok, sync_change_time, syncs_needed) {
 
 		if (!ever_received_uciok) {
 
@@ -354,10 +354,6 @@ function NewInfoHandler() {
 		} else if (syncs_needed > 2 || (syncs_needed > 0 && performance.now() - sync_change_time > 1000)) {
 
 			statusbox.innerHTML = `<span class="gray">Out of sync: ${syncs_needed}</span>`;
-
-		} else if (typeof config.search_nodes === "number" && (searchmoves.length === 1)) {
-
-			statusbox.innerHTML = `<span class="red">Node limit with 1 focus might not run!</span>`;
 
 		} else if (nogo_reason) {
 
@@ -464,7 +460,7 @@ function NewInfoHandler() {
 			// The div containing the PV etc...
 
 			let divclass = "infoline";
-			
+
 			if (info.move === highlight_move) {
 				divclass += " " + highlight_class;
 			}
@@ -537,7 +533,7 @@ function NewInfoHandler() {
 			// Close the whole div...
 
 			substrings.push("</div>");
-			
+
 		}
 
 		infobox.innerHTML = substrings.join("");
@@ -647,7 +643,7 @@ function NewInfoHandler() {
 					specific_source = null;
 				}
 			}
-			
+
 			for (let i = 0; i < info_list.length; i++) {
 
 				let good_u = typeof info_list[i].u === "number" && info_list[i].u < config.uncertainty_cutoff;

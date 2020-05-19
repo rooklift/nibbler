@@ -433,7 +433,7 @@ function NewRenderer() {
 	};
 
 	renderer.validate_pgn = function(filename) {
-		
+
 		let buf;
 		try {
 			buf = fs.readFileSync(filename);		// i.e. binary buffer object
@@ -586,7 +586,7 @@ function NewRenderer() {
 
 	renderer.go_or_halt = function(new_game_flag) {
 		if (this.leela_should_go()) {
-			this.__go(new_game_flag);								
+			this.__go(new_game_flag);
 		} else {
 			this.__halt(new_game_flag);
 		}
@@ -595,7 +595,7 @@ function NewRenderer() {
 	renderer.__halt = function(new_game_flag) {		// "isready" is not needed. If changing position, invalid data will be discarded by renderer.receive().
 
 		if (this.leela_maybe_running) {
-			this.engine.send("stop");		
+			this.engine.send("stop");
 		}
 
 		this.leela_maybe_running = false;
@@ -1164,7 +1164,7 @@ function NewRenderer() {
 
 		let s = EventPathString(event, "overlay_");
 		let p = Point(s);
-		
+
 		if (!p) {
 			return;
 		}
@@ -1625,7 +1625,6 @@ function NewRenderer() {
 		this.info_handler.draw_statusbox(
 			this.tree.node,
 			this.nogo_reason,
-			this.searchmoves,
 			this.engine.ever_received_uciok,
 			this.engine.sync_change_time,
 			Math.max(this.engine.readyok_required, this.engine.bestmove_required - 1));		// How far out of sync we are, commonly 0
