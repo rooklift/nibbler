@@ -49,7 +49,7 @@ An option to enable the UCI `searchmoves` feature is available in the Analysis m
 
 Leela forgets much of the evaluation if the position changes. To mitigate this, an option in the Analysis menu allows you to hover over a PV (on the right) and see it play out on the board, without changing the position we're actually analysing. You might prefer to halt Leela while doing this, so that the PVs don't change while you're looking at them.
 
-Leela running out of RAM can be a problem if searches go on too long. You might like to use the UCI option `RamLimitMb` (see *advanced engine options*, above).
+Leela running out of RAM can be a problem if searches go on too long. You might like to set a reasonable node limit (in the Engine menu), perhaps 10 million or so.
 
 Note that other UCI engines should run OK if they support Chess960 castling format, but the results will be poor because we use `MultiPV`, which cripples traditional A/B engines.
 
