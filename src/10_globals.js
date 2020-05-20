@@ -77,7 +77,7 @@ const leela_normal_options = {
 	"UCI_ShowWDL": true,
 };
 
-// Yeah this seemed a good idea at the time...
+// Yeah this seemed a good idea at the time.........................
 
 const limit_options = [
 	1, 10, 50, 100, 200, 300, 400, 500, 600, 800, 1000, 1200, 1400, 1600, 1800, 2000, 2200, 2400, 2600, 2800, 3000, 3200,
