@@ -9,7 +9,7 @@ function NewGrapher() {
 		let boundingrect = graph.getBoundingClientRect();
 		let width = boundingrect.right - boundingrect.left;
 		let height = boundingrect.bottom - boundingrect.top;
-		
+
 		// This clears the canvas...
 
 		graph.width = width;
@@ -43,7 +43,7 @@ function NewGrapher() {
 		graphctx.strokeStyle = "white";
 		graphctx.lineWidth = config.graph_line_width;
 		graphctx.setLineDash([]);
-		
+
 		for (let run of runs.normal_runs) {
 			graphctx.beginPath();
 			graphctx.moveTo(run[0].x1, run[0].y1);

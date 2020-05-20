@@ -21,7 +21,7 @@ let sprites = {
 			if (c === c.toUpperCase()) {
 
 				sprites[c].addEventListener("error", () => {console.log(`Failed to load image ${c}.svg or ${c}.png`);}, {once: true});
-				
+
 				if (fs.existsSync(path.join(directory, `${c}.svg`))) {
 					sprites[c].src = path.join(directory, `${c}.svg`);
 				} else {

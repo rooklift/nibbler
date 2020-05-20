@@ -174,7 +174,7 @@ const info_prototype = {
 			if (opts.n || opts.n_abs || opts.of_n) {
 				ret.push("N: ?");
 			}
-			
+
 		}
 
 		// Everything else...

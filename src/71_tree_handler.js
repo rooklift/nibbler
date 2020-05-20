@@ -29,7 +29,7 @@ let tree_manipulation_props = {
 	tree_version: 0,		// Increment every time the tree structure changes.
 	root: null,
 	node: null,
-	
+
 	// Where relevant, return values of the methods are whether this.node changed -
 	// i.e. whether the renderer has to call position_changed()
 

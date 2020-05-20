@@ -12,7 +12,7 @@ exports.filepath = electron.app ?
 
 exports.defaults = {
 	"warning": "EDITING THIS FILE WHILE NIBBLER IS RUNNING WILL GENERALLY CAUSE YOUR EDITS TO BE LOST.",
-	
+
 	"path": null,		// Not undefined, all normal keys should have an actual value.
 	"options": {},
 	"args": [],
@@ -27,7 +27,7 @@ exports.defaults = {
 	"arrow_width": 8,
 	"arrowhead_radius": 12,
 	"board_font": "18px Arial",
-	
+
 	"graph_height": 96,
 	"graph_line_width": 2,
 	"graph_minimum_length": 41,					// Desired depth + 1
@@ -96,7 +96,7 @@ exports.defaults = {
 
 	"update_delay": 170,
 	"animate_delay_multiplier": 4,
-	
+
 	"search_nodes": null,
 	"search_nodes_special": 4000,
 

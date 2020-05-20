@@ -57,7 +57,7 @@ exports.renderer_hang =
 `The renderer process may have hung. Please tell the author how you made this happen.`;
 
 
-exports.about_sizes = 
+exports.about_sizes =
 `You can get more fine-grained control of font, board, graph, and window sizes via \
 Nibbler's config file (which can be found via the Dev menu).`;
 
@@ -78,17 +78,17 @@ you want.`;
 
 
 exports.min_version = 23;
-exports.obsolete_leela = 
+exports.obsolete_leela =
 `Nibbler says: this version of Lc0 may be too old for this version of Nibbler. Please \
 install Lc0 v0.${exports.min_version} or higher.`;
 
 
-exports.settings_for_blas = 
+exports.settings_for_blas =
 `Nibbler says: setting [MaxPrefetch = 0, MinibatchSize = 8] for BLAS. If you don't want \
 this, explicitly set either value in ${config_io.filename} (options section).`;
 
 
-exports.adding_uci_options = 
+exports.adding_uci_options =
 `You can add arbitrary UCI settings to this menu by editing the file ${custom_uci.filename}. \
 The format is fairly self-explanatory. Restart Nibbler for this to take effect.
 
@@ -96,15 +96,15 @@ Note that these custom settings are only sent WHEN CLICKED (not automatically). 
 send custom UCI options at startup, edit ${config_io.filename} (options section) instead.`;
 
 
-exports.wrong_engine_exe = 
+exports.wrong_engine_exe =
 `That is almost certainly the wrong file. What we need is likely to be called lc0.exe or lc0.`;
 
 
-exports.send_fail = 
+exports.send_fail =
 `Sending to the engine failed. This usually means it has crashed.`;
 
 
-exports.two_go = 
+exports.two_go =
 `Warning: "go" command sent twice in a row. This is supposed to be impossible. If you see this, \
 Nibbler has a bug and the author would like to be informed.`;
 

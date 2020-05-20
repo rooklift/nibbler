@@ -149,7 +149,7 @@ function menu_build() {
 
 	let template = [
 		{
-			label: "App",
+			label: "File",
 			submenu: [
 				{
 					label: "About",
@@ -458,9 +458,9 @@ function menu_build() {
 					type: "separator"
 				},
 				{
-					role: "quit",
 					label: "Quit",
-					accelerator: "CommandOrControl+Q"
+					accelerator: "CommandOrControl+Q",
+					role: "quit"
 				},
 			]
 		},

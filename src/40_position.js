@@ -43,7 +43,7 @@ const position_prototype = {
 		let ret = this.copy();
 
 		let promotion_char = s.length > 4 ? s[4].toLowerCase() : "q";
-		
+
 		let white_flag = ret.is_white(Point(x1, y1));
 		let pawn_flag = ret.state[x1][y1] === "P" || ret.state[x1][y1] === "p";
 		let castle_flag = (ret.state[x2][y2] === "R" && white_flag) || (ret.state[x2][y2] === "r" && white_flag === false);
@@ -786,7 +786,7 @@ const position_prototype = {
 		if (s.toUpperCase() === "O-O-O") {
 
 			let mv = this.find_castling_move(true);
-			
+
 			if (mv !== "" && this.illegal(mv) === "") {
 				return [mv, ""];
 			} else {
@@ -1070,7 +1070,7 @@ const position_prototype = {
 		// Given some raw (but valid) UCI move string, return a nice human-readable
 		// string for display in the browser window. This string should never be
 		// examined by the caller, merely displayed.
-		// 
+		//
 		// Note that as of 1.1.6, all castling moves are expected to be king-onto-rook,
 		// that is, Chess960 format.
 

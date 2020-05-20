@@ -4,7 +4,7 @@ const electron = require("electron");
 const fs = require("fs");
 const path = require("path");
 
-const default_file_contents = 
+const default_file_contents =
 `CPuct 4.0
 CPuct 3.8
 CPuct 3.6
@@ -68,7 +68,7 @@ exports.create_if_needed = () => {
 	if (fs.existsSync(exports.filepath)) {
 		return;
 	}
-	
+
 	try {
 		fs.writeFileSync(exports.filepath, default_file_contents);
 	} catch (err) {

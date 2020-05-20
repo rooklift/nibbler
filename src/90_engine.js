@@ -118,7 +118,7 @@ function NewEngine() {
 			alert(err);
 			return;
 		}
-		
+
 		this.exe.once("error", (err) => {
 			alert(err);
 		});
@@ -195,6 +195,6 @@ function NewEngine() {
 			}, 2000);
 		}
 	};
-	
+
 	return eng;
 }

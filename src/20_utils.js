@@ -349,7 +349,7 @@ function QfromPawns(pawns) {
 	return winrate * 2 - 1;
 }
 
-function Value(q) {					// Rescale Q to 0..1 range.			
+function Value(q) {					// Rescale Q to 0..1 range.
 	if (typeof q !== "number") {
 		return 0;
 	}

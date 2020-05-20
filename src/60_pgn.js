@@ -324,7 +324,7 @@ function make_movetext(node) {
 
 	let root = node.get_root();
 	let ordered_nodes = get_ordered_nodes(root);
-	
+
 	let tokens = [];
 
 	for (let item of ordered_nodes) {

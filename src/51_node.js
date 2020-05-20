@@ -33,7 +33,7 @@ function NewNode(parent, move, board) {		// move must be legal; board is only re
 }
 
 function NewRoot(board) {					// Arg is a board (position) object, not a FEN
-	
+
 	if (!board) {
 		board = LoadFEN("rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1");
 	}
@@ -230,7 +230,7 @@ const node_prototype = {
 		if (need_number_string) {
 			s += this.parent.board.next_number_string() + " ";
 		}
-		
+
 		s += this.nice_move();
 
 		if (stats_flag) {
