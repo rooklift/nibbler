@@ -94,6 +94,4 @@ const limit_options = [
 	600000000, 650000000, 700000000, 750000000, 800000000, 850000000, 900000000, 950000000, 1000000000
 ];
 
-limit_options.sort((a, b) => {					// Just in case.
-	return a < b ? -1 : a === b ? 0 : 1;
-});
+limit_options.sort((a, b) => a - b);
