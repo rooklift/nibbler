@@ -747,6 +747,7 @@ function NewRenderer() {
 		if (direction > 0) {
 
 			if (typeof cfg_value !== "number" || cfg_value <= 0) {				// Already unlimited
+				this.set_node_limit_generic(null, special_flag);
 				return;
 			}
 
@@ -756,6 +757,8 @@ function NewRenderer() {
 					return;
 				}
 			}
+
+			this.set_node_limit_generic(null, special_flag);
 
 		} else {
 
@@ -770,6 +773,8 @@ function NewRenderer() {
 					return;
 				}
 			}
+
+			this.set_node_limit_generic(1, special_flag);
 		}
 	};
 
