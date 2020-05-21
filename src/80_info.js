@@ -631,7 +631,7 @@ function NewInfoHandler() {
 
 		if (info_list.length > 0) {
 
-			let best_move = info_list[0];		// Note that, since we may filter the list, it might not contain best_move later.
+			let best_info = info_list[0];		// Note that, since we may filter the list, it might not contain best_info later.
 
 			if (specific_source) {
 
@@ -663,13 +663,13 @@ function NewInfoHandler() {
 
 					let loss = 0;
 
-					if (typeof best_move.q === "number" && typeof info_list[i].q === "number") {
-						loss = best_move.value() - info_list[i].value();
+					if (typeof best_info.q === "number" && typeof info_list[i].q === "number") {
+						loss = best_info.value() - info_list[i].value();
 					}
 
 					let colour;
 
-					if (info_list[i] === best_move) {
+					if (info_list[i] === best_info) {
 						colour = config.best_colour;
 					} else if (loss > config.terrible_move_threshold) {
 						colour = config.terrible_colour;
