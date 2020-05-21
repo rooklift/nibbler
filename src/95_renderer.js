@@ -726,7 +726,7 @@ function NewRenderer() {
 
 	renderer.switch_weights = function(filename) {
 		this.info_handler.stderr_log = "";							// Avoids having confusing stale messages
-		this.set_uci_option("WeightsFile", filename, true);
+		this.set_uci_option_permanent("WeightsFile", filename);
 	};
 
 	renderer.adjust_node_limit = function(direction, special_flag) {
