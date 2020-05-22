@@ -173,19 +173,22 @@ const node_prototype = {
 
 	is_triple_rep: function() {
 
-		let our_board = this.board;
+		if (this.board.halfmove < 8) {
+			return false;
+		}
+
 		let ancestor = this;
 		let hits = 0;
 
 		while (ancestor.parent && ancestor.parent.parent) {
 			ancestor = ancestor.parent.parent;
-			if (ancestor.board.compare(our_board)) {
+			if (ancestor.board.compare(this.board)) {
 				hits++;
 				if (hits >= 2) {
 					return true;
 				}
 			}
-			if (ancestor.board.halfmove <= 1) {
+			if (ancestor.board.halfmove < 2) {
 				return false;
 			}
 		}
