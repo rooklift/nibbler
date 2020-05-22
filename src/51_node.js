@@ -186,6 +186,9 @@ const node_prototype = {
 					return true;
 				}
 			}
+			if (ancestor.board.halfmove <= 1) {
+				return false;
+			}
 		}
 
 		return false;
