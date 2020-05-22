@@ -37,7 +37,7 @@ function InfoVal(s, key) {
 		return "";
 	}
 
-	let tokens = s.split(" ").filter(s => s !== "");
+	let tokens = s.split(" ").filter(z => z !== "");
 
 	for (let i = 0; i < tokens.length - 1; i++) {
 		if (tokens[i] === key) {
@@ -57,7 +57,7 @@ function InfoValMany(s, keys) {
 
 	let ret = Object.create(null);
 
-	let tokens = s.split(" ").filter(s => s !== "");
+	let tokens = s.split(" ").filter(z => z !== "");
 
 	for (let key of keys) {
 		let ok = false;
@@ -88,7 +88,7 @@ function InfoPV(s) {
 		return [];
 	}
 
-	let tokens = s.split(" ").filter(s => s !== "");
+	let tokens = s.split(" ").filter(z => z !== "");
 
 	for (let i = 0; i < tokens.length - 1; i++) {
 		if (tokens[i] === "pv") {
@@ -106,7 +106,7 @@ function InfoWDL(s) {
 		return "??";
 	}
 
-	let tokens = s.split(" ").filter(s => s !== "");
+	let tokens = s.split(" ").filter(z => z !== "");
 
 	for (let i = 0; i < tokens.length - 1; i++) {
 		if (tokens[i] === "wdl") {

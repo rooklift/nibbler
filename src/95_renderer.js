@@ -518,7 +518,7 @@ function NewRenderer() {
 					case 0:									// Versus mode (if config.autoplay === 0 then we got here via config.versus, above)
 					case 1:									// Actual self-play
 
-						let tokens = s.split(" ");
+						let tokens = s.split(" ").filter(z => z !== "");
 						let ok = this.move(tokens[1]);
 
 						if (!ok) {

@@ -337,7 +337,7 @@ function make_movetext(node) {
 			tokens.push(item);
 		} else {
 			let item_token = item.token(true);
-			let subtokens = item_token.split(" ").filter(s => s !== "");
+			let subtokens = item_token.split(" ").filter(z => z !== "");
 			for (let subtoken of subtokens) {
 				tokens.push(subtoken);
 			}
