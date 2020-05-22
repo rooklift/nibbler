@@ -173,6 +173,8 @@ const node_prototype = {
 
 	is_triple_rep: function() {
 
+		// Are there enough ancestors since the last pawn move or capture?
+
 		if (this.board.halfmove < 8) {
 			return false;
 		}
@@ -188,6 +190,9 @@ const node_prototype = {
 					return true;
 				}
 			}
+
+			// All further ancestors are the wrong side of a pawn move or capture?
+
 			if (ancestor.board.halfmove < 2) {
 				return false;
 			}
