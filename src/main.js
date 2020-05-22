@@ -77,11 +77,11 @@ function startup() {
 	});
 
 	win.webContents.once("crashed", () => {
-	    alert(messages.renderer_crash);
+		alert(messages.renderer_crash);
 	});
 
 	win.webContents.once("unresponsive", () => {
-	    alert(messages.renderer_hang);
+		alert(messages.renderer_hang);
 	});
 
 	electron.app.on("window-all-closed", () => {
@@ -724,6 +724,15 @@ function menu_build() {
 							fn: "toggle",
 							args: ["serious_analysis_mode"],
 						});
+					}
+				},
+				{
+					type: "separator"
+				},
+				{
+					label: "Write infobox to clipboard",
+					click: () => {
+						win.webContents.send("call", "infobox_to_clipboard");
 					}
 				},
 			]
