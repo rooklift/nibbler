@@ -294,15 +294,8 @@ const node_prototype = {
 		let parent = this.parent;
 		if (!parent) return this;		// Fail
 
-		let new_list_for_parent = [];
+		parent.children = parent.children.filter(child => child !== this);
 
-		for (let c of parent.children) {
-			if (c !== this) {
-				new_list_for_parent.push(c);
-			}
-		}
-
-		parent.children = new_list_for_parent;
 		this.parent = null;
 		DestroyTree(this);
 		return parent;
