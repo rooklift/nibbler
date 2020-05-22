@@ -1415,14 +1415,15 @@ function NewRenderer() {
 			return;
 		}
 
+		let points = PointsBetween(source, dest);
+
 		boardctx.fillStyle = config.move_colour;
 		boardctx.globalAlpha = config.move_colour_alpha;
 
-		let cc = CanvasCoords(source.x, source.y);
-		boardctx.fillRect(cc.x1, cc.y1, config.square_size, config.square_size);
-
-		cc = CanvasCoords(dest.x, dest.y);
-		boardctx.fillRect(cc.x1, cc.y1, config.square_size, config.square_size);
+		for (let p of points) {
+			let cc = CanvasCoords(p.x, p.y);
+			boardctx.fillRect(cc.x1, cc.y1, config.square_size, config.square_size);
+		}
 
 		boardctx.globalAlpha = 1;
 	};
