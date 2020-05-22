@@ -7,6 +7,7 @@ function NewNode(parent, move, board) {		// move must be legal; board is only re
 	live_nodes[node.id.toString()] = node;
 
 	if (parent) {
+		parent.children.push(node);
 		node.parent = parent;
 		node.move = move;
 		node.board = parent.board.move(move);
@@ -66,10 +67,7 @@ const node_prototype = {
 			}
 		}
 
-		let new_node = NewNode(this, s);
-		this.children.push(new_node);
-
-		return new_node;
+		return NewNode(this, s, null);
 	},
 
 	history: function() {
