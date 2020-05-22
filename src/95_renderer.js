@@ -22,7 +22,6 @@ function NewRenderer() {
 	// Some sync stuff...
 
 	renderer.leela_maybe_running = false;						// Whether we last sent "go" or "stop" to Leela.
-	renderer.nogo_reason = null;								// Whether we declined to send "go" due to stalemate / checkmate.
 	renderer.leela_position = null;								// The position we last sent to Leela.
 	renderer.searchmoves = [];									// Moves that we're compelling Leela to search.
 
@@ -599,7 +598,6 @@ function NewRenderer() {
 		}
 
 		this.leela_maybe_running = false;
-		this.nogo_reason = null;
 
 		if (new_game_flag) {
 			this.engine.send("ucinewgame");			// Shouldn't be sent when engine is running.
@@ -613,35 +611,8 @@ function NewRenderer() {
 
 		this.__halt(new_game_flag);
 
-		let board = this.tree.node.board;
-
-		if (this.tree.node.children.length === 0) {
-			if (board.no_moves()) {
-				if (board.king_in_check()) {
-					this.nogo_reason = "Checkmate";
-					this.tree.node.table.eval = board.active === "w" ? 0 : 1;
-					return;
-				} else {
-					this.nogo_reason = "Stalemate";
-					this.tree.node.table.eval = 0.5;
-					return;
-				}
-			}
-			if (board.insufficient_material()) {
-				this.nogo_reason = "Insufficient Material";
-				this.tree.node.table.eval = 0.5;
-				return;
-			}
-			if (board.halfmove >= 100) {
-				this.nogo_reason = "50 Move Rule";
-				this.tree.node.table.eval = 0.5;
-				return;
-			}
-			if (this.tree.node.is_triple_rep()) {
-				this.nogo_reason = "Triple Repetition";
-				this.tree.node.table.eval = 0.5;
-				return;
-			}
+		if (this.tree.node.terminal_reason() !== "") {
+			return;											// Note versus status is not changed.
 		}
 
 		let root_fen = this.tree.root.board.fen(false);
@@ -669,7 +640,7 @@ function NewRenderer() {
 		}
 
 		this.engine.send(s);
-		this.leela_position = board;
+		this.leela_position = this.tree.node.board;
 		this.leela_maybe_running = true;
 	};
 
@@ -1619,7 +1590,7 @@ function NewRenderer() {
 	renderer.draw_statusbox = function() {
 		this.info_handler.draw_statusbox(
 			this.tree.node,
-			this.nogo_reason,
+			this.tree.node.terminal_reason(),
 			this.engine.ever_received_uciok,
 			this.engine.sync_change_time,
 			Math.max(this.engine.readyok_required, this.engine.bestmove_required - 1));		// How far out of sync we are, commonly 0

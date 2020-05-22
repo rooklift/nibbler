@@ -25,6 +25,8 @@ function NewNode(parent, move, board) {		// move must be legal; board is only re
 		node.graph_length_knower.val = node.depth + 1;
 	}
 
+	node.terminal = null;					// Unknown
+
 	node.table = NewTable();
 	node.__nice_move = null;
 	node.destroyed = false;
@@ -284,6 +286,41 @@ const node_prototype = {
 			}
 			return list;
 		}
+	},
+
+	terminal_reason: function() {
+
+		// Returns "" if not a terminal position, otherwise returns the reason.
+		// Also updates table.eval (for the graph) if needed.
+
+		if (typeof this.terminal === "string") {
+			return this.terminal;
+		}
+
+		let board = this.board;
+
+		if (board.no_moves()) {
+			if (board.king_in_check()) {
+				this.terminal = "Checkmate";
+				this.table.eval = board.active === "w" ? 0 : 1;
+			} else {
+				this.terminal = "Stalemate";
+				this.table.eval = 0.5;
+			}
+		} else if (board.insufficient_material()) {
+			this.terminal = "Insufficient Material";
+			this.table.eval = 0.5;
+		} else if (board.halfmove >= 100) {
+			this.terminal = "50 Move Rule";
+			this.table.eval = 0.5;
+		} else if (this.is_triple_rep()) {
+			this.terminal = "Triple Repetition";
+			this.table.eval = 0.5;
+		} else {
+			this.terminal = "";
+		}
+
+		return this.terminal;
 	},
 
 	detach: function() {
