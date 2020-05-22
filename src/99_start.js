@@ -140,8 +140,10 @@ function input_loop() {
 	if (length === 1) {
 		fn = input_queue[0];
 	} else if (length > 1) {
+		if (total_dropped_inputs === 0) {
+			console.log(`input_loop() is dropping inputs (for count, see total_dropped_inputs).`);
+		}
 		total_dropped_inputs += length - 1;
-		console.log(`input_loop() dropped ${length - 1} input${length === 2 ? "" : "s"}, total now ${total_dropped_inputs}.`);
 		fn = input_queue[length - 1];
 	}
 

@@ -3008,6 +3008,12 @@ function menu_build() {
 					}
 				},
 				{
+					label: "Show dropped inputs",
+					click: () => {
+						win.webContents.send("call", "show_dropped_inputs");
+					}
+				},
+				{
 					type: "separator"
 				},
 				{
