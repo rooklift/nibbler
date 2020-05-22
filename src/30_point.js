@@ -80,6 +80,5 @@ function PointsBetween(a, b) {
 		}
 		x += stepx;
 		y += stepy;
-		console.log(x, y);
 	}
 }
