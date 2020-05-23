@@ -1,5 +1,7 @@
 "use strict";
 
+// FIXME - searchmoves
+
 function NewRenderer() {
 
 	let renderer = Object.create(null);
@@ -99,16 +101,6 @@ function NewRenderer() {
 		config.behaviour = s;
 		this.behave();
 	};
-
-	renderer.set_versus = function(s) {						// FIXME - delete
-		if (s === "wb") {
-			this.set_behaviour("analysis_free");
-		} else {
-			this.set_behaviour("halt");
-		}
-	};
-
-	renderer.start_autoplay = function(type = 1) {};		// FIXME
 
 	renderer.move = function(s) {							// It is safe to call this with illegal moves.
 
@@ -508,8 +500,6 @@ function NewRenderer() {
 
 	renderer.receive = function(s) {
 
-		// FIXME
-
 		debug.receive = debug.receive ? debug.receive + 1 : 1;
 
 		if (s.startsWith("info")) {
@@ -688,7 +678,9 @@ function NewRenderer() {
 
 	renderer.validate_searchmoves = function() {};		// FIXME
 
-	renderer.soft_engine_reset = function() {};			// FIXME
+	renderer.soft_engine_reset = function() {
+		this.position_changed(true);
+	};
 
 	renderer.set_uci_option = function(name, val, save_to_cfg) {
 		if (save_to_cfg) {
@@ -798,16 +790,14 @@ function NewRenderer() {
 	};
 
 	renderer.switch_engine = function(filename) {
-		// FIXME
-		this.set_versus("");
+		this.set_behaviour("halt");
 		config.path = filename;
 		config_io.save(config);
 		this.engine_start(config.path, config.args, config.options);
 	};
 
 	renderer.restart_engine = function() {
-		// FIXME
-		this.set_versus("");
+		this.set_behaviour("halt");
 		this.engine_start(config.path, config.args, config.options);
 	};
 
@@ -1084,8 +1074,7 @@ function NewRenderer() {
 	};
 
 	renderer.show_versus_state = function() {
-		// FIXME
-		alert(`versus: "${config.versus}", autoplay: ${config.autoplay}`);
+		alert(`${config.versus}", autoplay: ${config.autoplay}`);
 	};
 
 	renderer.show_dropped_inputs = function() {
@@ -1120,7 +1109,7 @@ function NewRenderer() {
 		let s = buf.toString();
 		let lines = s.split("\n").map(z => z.trim()).filter(z => z !== "");
 
-		this.set_versus("");
+		this.set_behaviour("halt");
 		this.engine_start(lines[0], null, null, false);
 		for (let line of lines.slice(1)) {
 			this.engine.send(line);
@@ -1262,10 +1251,9 @@ function NewRenderer() {
 	};
 
 	renderer.statusbox_click = function(event) {
-		// FIXME
 		let val = EventPathString(event, "gobutton");
 		if (val) {
-			this.set_versus("wb");
+			this.set_behaviour("analysis_free");
 		}
 	};
 
@@ -1660,19 +1648,20 @@ function NewRenderer() {
 	};
 
 	renderer.spin = function() {
-		// FIXME
 		this.tick++;
 		this.draw();
 		this.maybe_update_node_eval();
 		if (config.versus !== "" && Math.max(this.engine.readyok_required, this.engine.bestmove_required) > 10) {
-			// this.set_versus("");			// Stop the engine if we get too far out of sync. See issue #57.
+			this.set_behaviour("halt");			// Stop the engine if we get too far out of sync. See issue #57.
 		}
 		setTimeout(this.spin.bind(this), config.update_delay);
 	};
 
 	renderer.maybe_update_node_eval = function() {
 
-		// FIXME - avoid surprising changes
+		if (config.behaviour === "halt") {
+			return;			// Avoid surprising additions to the graph when Lc0 is halted.
+		}
 
 		let info = this.info_handler.sorted(this.tree.node)[0];		// Possibly undefined.
 		if (info) {
