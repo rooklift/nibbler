@@ -114,9 +114,9 @@ function NewRenderer() {
 		// with the new searchmoves. The following is the simplest way to force this.
 
 		if (config.leela_node === this.tree.node) {
-			let behaviour = config.behaviour;
+			let tmp = config.behaviour;
 			this.set_behaviour("halt");
-			this.set_behaviour(behaviour);
+			this.set_behaviour(tmp);
 		}
 	};
 
