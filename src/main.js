@@ -639,6 +639,7 @@ function menu_build() {
 				},
 				{
 					label: "Go and lock",
+					accelerator: "CommandOrControl+Shift+G",
 					click: () => {
 						win.webContents.send("call", "go_and_lock");
 					}
