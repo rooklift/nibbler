@@ -668,7 +668,6 @@ function NewRenderer() {
 	};
 
 	renderer.set_uci_option = function(name, val, save_to_cfg) {
-		this.__halt();
 		if (save_to_cfg) {
 			if (val === null || val === undefined) {
 				delete config.options[name];
@@ -682,7 +681,6 @@ function NewRenderer() {
 		}
 		let sent = this.engine.setoption(name, val);
 		this.set_special_message(sent, "blue");
-		this.go_or_halt();
 	};
 
 	renderer.set_uci_option_permanent = function(name, val) {
