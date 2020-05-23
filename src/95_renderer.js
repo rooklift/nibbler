@@ -1345,7 +1345,7 @@ function NewRenderer() {
 			return;
 		}
 
-		if (EventPathString(event, "lock_return_clicker")) {
+		if (EventPathString(event, "lock_return")) {
 			this.return_to_lock();
 			return;
 		}
