@@ -50,6 +50,22 @@ function NewRenderer() {
 			this.__go();
 			break;
 
+		case "play_white":
+			if (this.tree.node.board.active === "w") {
+				this.__go();
+			} else {
+				this.__halt();
+			}
+			break;
+
+		case "play_black":
+			if (this.tree.node.board.active === "b") {
+				this.__go();
+			} else {
+				this.__halt();
+			}
+			break;
+
 		}
 
 	};
@@ -148,10 +164,39 @@ function NewRenderer() {
 		}
 	};
 
-	renderer.node_limit = function() {		// FIXME
+	renderer.node_limit = function() {
 
-		if (config.behaviour === "self_play" || config.behaviour === "auto_analysis") {
-			return 100;
+		// Given the current state of the config, what is the node limit?
+
+		let cfg_value;
+
+		switch (config.behaviour) {
+
+		case "halt":
+		case "analysis_free":
+		case "analysis_locked":
+
+			cfg_value = config.search_nodes;
+			break;
+
+		case "play_white":
+		case "play_black":
+		case "self_play":
+		case "auto_analysis":
+
+			cfg_value = config.search_nodes_special;
+			break;
+
+		default:
+
+			cfg_value = config.search_nodes;
+			alert("node_limit(): unknown config.behaviour");
+			break;
+
+		}
+
+		if (typeof cfg_value === "number" && cfg_value >= 1) {
+			return cfg_value;
 		} else {
 			return null;
 		}
@@ -506,12 +551,14 @@ function NewRenderer() {
 			this.leela_node = null;							// This may already have been done if we sent a "stop".
 
 			if (bestmove_node === this.tree.node) {
-				this.maybe_update_node_eval();			// Now's the last chance to update our graph eval for this node.
+				this.maybe_update_node_eval();				// Now's the last chance to update our graph eval for this node.
 			}
 
 			switch (config.behaviour) {
 
 			case "self_play":
+			case "play_white":
+			case "play_black":
 
 				if (bestmove_node === this.tree.node) {
 
@@ -540,7 +587,6 @@ function NewRenderer() {
 					} else {
 						this.set_behaviour("halt");
 					}
-					break;
 
 				} else {
 					this.set_behaviour("halt");				// Can this ever happen?

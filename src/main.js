@@ -2584,8 +2584,8 @@ function menu_build() {
 					accelerator: "F9",
 					click: () => {
 						win.webContents.send("call", {
-							fn: "set_versus",
-							args: ["w"],
+							fn: "set_behaviour",
+							args: ["play_white"],
 						});
 					}
 				},
@@ -2594,8 +2594,8 @@ function menu_build() {
 					accelerator: "F10",
 					click: () => {
 						win.webContents.send("call", {
-							fn: "set_versus",
-							args: ["b"],
+							fn: "set_behaviour",
+							args: ["play_black"],
 						});
 					}
 				},
@@ -2616,8 +2616,8 @@ function menu_build() {
 					label: "Halt",
 					click: () => {
 						win.webContents.send("call", {
-							fn: "set_versus",
-							args: [""],
+							fn: "set_behaviour",
+							args: ["halt"],
 						});
 					}
 				},
