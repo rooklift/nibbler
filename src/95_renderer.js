@@ -33,6 +33,8 @@ function NewRenderer() {
 
 	renderer.position_changed = function(new_game_flag, maybe_stop_versus) {
 
+		// FIXME
+
 		this.position_change_time = performance.now();
 
 		// maybe_stop_versus is for cases where auto-played moves would be surprising to the
@@ -68,6 +70,7 @@ function NewRenderer() {
 	};
 
 	renderer.set_versus = function(s) {				// config.versus should not be directly set, as go_or_halt() needs to be called too.
+		// FIXME
 		if (typeof s !== "string") s = "";
 		config.versus = "";
 		if (s.includes("W") || s.includes("w")) config.versus += "w";
@@ -79,6 +82,8 @@ function NewRenderer() {
 	};
 
 	renderer.start_autoplay = function(type = 1) {			// Leela evaluating both sides, and moving or going forwards in the PGN.
+		// FIXME
+
 		config.autoplay = type;
 		this.set_versus("wb");
 	};
@@ -138,6 +143,8 @@ function NewRenderer() {
 	};
 
 	renderer.node_limit = function() {
+
+		// FIXME
 
 		// Given the current state of the config, what is the node limit?
 
@@ -373,6 +380,8 @@ function NewRenderer() {
 
 	renderer.show_pgn_chooser = function() {
 
+		// FIXME
+
 		if (!this.pgn_choices) {
 			alert("No PGN loaded");
 			return;
@@ -464,10 +473,12 @@ function NewRenderer() {
 	// Engine stuff...
 
 	renderer.leela_should_go = function() {
+		// FIXME - delete
 		return config.versus.includes(this.tree.node.board.active);
 	};
 
 	renderer.receive = function(s) {
+		// FIXME
 
 		debug.receive = debug.receive ? debug.receive + 1 : 1;
 
@@ -588,6 +599,7 @@ function NewRenderer() {
 	// The go and halt methods should generally not be called directly.
 
 	renderer.go_or_halt = function(new_game_flag) {
+		// FIXME - delete
 		if (this.leela_should_go()) {
 			this.__go(new_game_flag);
 		} else {
@@ -607,7 +619,7 @@ function NewRenderer() {
 
 	renderer.__go = function(new_game_flag) {
 
-		this.validate_searchmoves();				// Leela can crash on illegal searchmoves.
+		this.validate_searchmoves();				// FIXME		// Leela can crash on illegal searchmoves.
 		this.hide_pgn_chooser();
 
 		this.__halt(new_game_flag);
@@ -634,6 +646,7 @@ function NewRenderer() {
 		}
 
 		if (this.searchmoves.length > 0) {
+			// FIXME
 			s += " searchmoves";
 			for (let move of this.searchmoves) {
 				s += " " + move;
@@ -645,6 +658,7 @@ function NewRenderer() {
 	};
 
 	renderer.validate_searchmoves = function() {
+		// FIXME
 
 		if (!config.searchmoves_buttons) {
 			this.searchmoves = [];
@@ -664,6 +678,7 @@ function NewRenderer() {
 	};
 
 	renderer.soft_engine_reset = function() {
+		// FIXME
 		this.go_or_halt(true);			// new game flag, causes ucinewgame to be sent
 	};
 
@@ -745,6 +760,7 @@ function NewRenderer() {
 	};
 
 	renderer.set_node_limit_generic = function(val, special_flag) {
+		// FIXME
 
 		if (typeof val !== "number" || val <= 0) {
 			val = null;
@@ -775,6 +791,7 @@ function NewRenderer() {
 	};
 
 	renderer.switch_engine = function(filename) {
+		// FIXME
 		this.set_versus("");
 		config.path = filename;
 		config_io.save(config);
@@ -782,6 +799,7 @@ function NewRenderer() {
 	};
 
 	renderer.restart_engine = function() {
+		// FIXME
 		this.set_versus("");
 		this.engine_start(config.path, config.args, config.options);
 	};
@@ -854,6 +872,7 @@ function NewRenderer() {
 		// Cases that have additional actions after...
 
 		if (option === "searchmoves_buttons") {
+			// FIXME
 			if (!config.searchmoves_buttons) {		// We turned it off.
 				this.searchmoves = [];
 				this.go_or_halt();					// If running, we resend the engine the new "go" command without searchmoves.
@@ -883,6 +902,8 @@ function NewRenderer() {
 
 	renderer.invert_searchmoves = function() {
 
+		// FIXME
+
 		if (!config.searchmoves_buttons) {
 			return;
 		}
@@ -905,6 +926,7 @@ function NewRenderer() {
 	};
 
 	renderer.clear_searchmoves = function() {
+		// FIXME
 		this.searchmoves = [];
 		this.go_or_halt();
 	};
@@ -1055,6 +1077,7 @@ function NewRenderer() {
 	};
 
 	renderer.show_versus_state = function() {
+		// FIXME
 		alert(`versus: "${config.versus}", autoplay: ${config.autoplay}`);
 	};
 
@@ -1077,6 +1100,9 @@ function NewRenderer() {
 	};
 
 	renderer.run_script = function(filename) {
+
+		// FIXME
+
 		let buf;
 		try {
 			buf = fs.readFileSync(filename);
@@ -1192,6 +1218,8 @@ function NewRenderer() {
 
 	renderer.maybe_searchmove_click = function(event) {
 
+		// FIXME
+
 		let sm = this.info_handler.searchmove_from_click(event);
 
 		if (!sm) {
@@ -1227,6 +1255,7 @@ function NewRenderer() {
 	};
 
 	renderer.statusbox_click = function(event) {
+		// FIXME
 		let val = EventPathString(event, "gobutton");
 		if (val) {
 			this.set_versus("wb");
@@ -1599,6 +1628,7 @@ function NewRenderer() {
 	};
 
 	renderer.draw_infobox = function() {
+		// FIXME
 		this.info_handler.draw_infobox(
 			this.tree.node,
 			this.mouse_point(),
@@ -1614,6 +1644,7 @@ function NewRenderer() {
 	};
 
 	renderer.spin = function() {
+		// FIXME
 		this.tick++;
 		this.draw();
 		this.maybe_update_node_eval();
@@ -1624,6 +1655,8 @@ function NewRenderer() {
 	};
 
 	renderer.maybe_update_node_eval = function() {
+
+		// FIXME
 
 		if (config.versus === "") return;			// Avoid surprising additions to the graph when Lc0 is halted.
 
