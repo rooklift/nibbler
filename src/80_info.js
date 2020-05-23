@@ -373,6 +373,8 @@ function NewInfoHandler() {
 
 			if (config.behaviour === "halt") {
 				status_string += `<span id="gobutton_clicker" class="yellow">HALTED (go?) </span>`;
+			} else if (config.behaviour === "analysis_locked") {
+				status_string += `<span class="green">Locked! </span>`;
 			} else if (config.behaviour === "play_white" && node.board.active !== "w") {
 				status_string += `<span class="yellow">YOUR MOVE </span>`;
 			} else if (config.behaviour === "play_black" && node.board.active !== "b") {
