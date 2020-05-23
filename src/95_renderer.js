@@ -1098,7 +1098,7 @@ function NewRenderer() {
 
 	renderer.generate_simple_book = function() {		// Format I used in LeelaStockZeroFish. But remember castling format!
 		let lines = [];
-		for (let node of hub.tree.root.end_nodes()) {
+		for (let node of this.tree.root.end_nodes()) {
     		lines.push(`\t"${node.history().join(" ")}"`);
     	}
     	console.log("[\n" + lines.join(",\n") + "\n]");
