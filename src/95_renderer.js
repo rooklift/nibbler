@@ -1,7 +1,5 @@
 "use strict";
 
-// FIXME - searchmoves
-
 function NewRenderer() {
 
 	let renderer = Object.create(null);
@@ -90,8 +88,8 @@ function NewRenderer() {
 			this.send_title();
 		}
 
-		if (avoid_confusion) {			// Change behaviour from self-play / auto-analysis / colour-play
-			if (this.node_limit()) {
+		if (avoid_confusion) {
+			if (["play_white", "play_black", "self_play", "auto_analysis"].includes(config.behaviour)) {
 				this.set_behaviour("halt");
 			}
 		}
@@ -111,7 +109,9 @@ function NewRenderer() {
 	};
 
 	renderer.handle_searchmoves_change = function() {
-		this.behave();
+		let behaviour = config.behaviour;
+		this.set_behaviour("halt");
+		this.set_behaviour(behaviour);			// Sigh.
 	};
 
 	renderer.go_and_lock = function() {
