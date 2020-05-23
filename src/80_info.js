@@ -357,7 +357,7 @@ function NewInfoHandler() {
 
 		} else if (terminal_reason) {
 
-			statusbox.innerHTML = `${config.behaviour} - <span class="yellow">${terminal_reason}</span>`;
+			statusbox.innerHTML = `<span class="yellow">${terminal_reason}</span>`;
 
 		} else if (!node || node.destroyed) {
 
@@ -365,9 +365,27 @@ function NewInfoHandler() {
 
 		} else {
 
-			// FIXME
+			let status_string = "";
 
-			statusbox.innerHTML = config.behaviour;
+			if (config.behaviour === "halt") {
+				status_string += `<span id="gobutton_clicker" class="yellow">HALTED (go?) </span>`;
+			} else if (config.behaviour === "play_white" && node.board.active !== "w") {
+				status_string += `<span class="yellow">YOUR MOVE </span>`;
+			} else if (config.behaviour === "play_black" && node.board.active !== "b") {
+				status_string += `<span class="yellow">YOUR MOVE </span>`;
+			} else if (config.behaviour === "self_play") {
+				status_string += `<span class="green">Self-play! </span>`;
+			} else if (config.behaviour === "auto_analysis") {
+				status_string += `<span class="green">Auto-eval! </span>`;
+			}
+
+			status_string += `<span class="gray">Nodes: ${NString(node.table.nodes)}, N/s: ${NString(node.table.nps)}, Time: ${DurationString(node.table.time)}</span>`;
+
+			if (typeof config.search_nodes === "number" && node.table.nodes >= config.search_nodes && config.behaviour === "halt") {
+				status_string += ` <span class="blue">(limit met)</span>`;
+			}
+
+			statusbox.innerHTML = status_string;
 		}
 	};
 
