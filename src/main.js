@@ -640,11 +640,17 @@ function menu_build() {
 				{
 					label: "Go and lock",
 					click: () => {
-						win.webContents.send("call", {
-							fn: "set_behaviour",
-							args: ["analysis_locked"],
-						});
+						win.webContents.send("call", "go_and_lock");
 					}
+				},
+				{
+					label: "Return to locked position",
+					click: () => {
+						win.webContents.send("call", "return_to_lock");
+					}
+				},
+				{
+					type: "separator"
 				},
 				{
 					label: "Halt",

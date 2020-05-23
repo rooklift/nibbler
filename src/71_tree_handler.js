@@ -47,7 +47,7 @@ let tree_manipulation_props = {
 		// Note that we may call dom_easy_highlight_change() so don't
 		// rely on this to draw any nodes that never got drawn.
 
-		if (!node || node === this.node) {
+		if (!node || node === this.node || node.destroyed) {
 			return false;
 		}
 

@@ -69,7 +69,6 @@ function NewRenderer() {
 			break;
 
 		}
-
 	};
 
 	renderer.position_changed = function(new_game_flag, avoid_confusion) {
@@ -100,6 +99,23 @@ function NewRenderer() {
 
 		config.behaviour = s;
 		this.behave();
+	};
+
+	renderer.go_and_lock = function() {
+
+		// We have to halt first in case we are already locked on some other position
+		// (in which case setting "analysis_locked" would have no effect).
+
+		this.set_behaviour("halt");
+		this.set_behaviour("analysis_locked");
+	};
+
+	renderer.return_to_lock = function() {
+		if (config.behaviour === "analysis_locked") {
+			if (this.tree.set_node(this.leela_node)) {		// Fool-proof against null / destroyed.
+				this.position_changed(false, true);
+			}
+		}
 	};
 
 	renderer.move = function(s) {							// It is safe to call this with illegal moves.
@@ -622,7 +638,7 @@ function NewRenderer() {
 		this.info_handler.err_receive(s);
 	};
 
-	// The go and halt methods should generally not be called directly.
+	// The go and halt methods should not be called directly.
 
 	renderer.__halt = function(new_game_flag) {		// "isready" is not needed. If changing position, invalid data will be discarded by renderer.receive().
 
@@ -780,7 +796,7 @@ function NewRenderer() {
 			config.search_nodes = val;
 		}
 		config_io.save(config);
-		// this.go_or_halt();			// FIXME
+		// this.go_or_halt();			// FIXME - and think about how searchmoves will work
 
 		if (val) {
 			ipcRenderer.send(ack_type, CommaNum(val));
@@ -1096,9 +1112,6 @@ function NewRenderer() {
 	};
 
 	renderer.run_script = function(filename) {
-
-		// FIXME
-
 		let buf;
 		try {
 			buf = fs.readFileSync(filename);
