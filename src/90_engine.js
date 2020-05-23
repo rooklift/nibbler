@@ -38,7 +38,6 @@ function NewEngine() {
 	eng.err_scanner = null;
 	eng.ever_sent = false;
 	eng.ever_received_uciok = false;
-	eng.go_in_a_row = 0;
 	eng.warned_send_fail = false;
 	eng.warned_two_go = false;
 
@@ -51,19 +50,8 @@ function NewEngine() {
 		msg = msg.trim();
 
 		if (msg.startsWith("go")) {
-
 			this.bestmove_required++;
 			this.sync_change_time = performance.now();
-			this.go_in_a_row++;
-
-			if (this.go_in_a_row > 1 && !this.warned_two_go) {
-				alert(messages.two_go);
-				this.warned_two_go = true;
-			}
-		}
-
-		if (msg === "stop") {
-			this.go_in_a_row = 0;
 		}
 
 		if (msg === "isready") {
