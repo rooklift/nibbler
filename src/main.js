@@ -2606,7 +2606,10 @@ function menu_build() {
 					label: "Start self-play",
 					accelerator: "F11",
 					click: () => {
-						win.webContents.send("call", "start_autoplay");
+						win.webContents.send("call", {
+							fn: "set_behaviour",
+							args: ["self_play"],
+						});
 					}
 				},
 				{

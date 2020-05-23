@@ -28,6 +28,9 @@ function NewRenderer() {
 
 	renderer.behave = function() {
 
+		// Called when position changes.
+		// Called when behaviour changes.
+
 		switch (config.behaviour) {
 
 		case "halt":
@@ -44,8 +47,11 @@ function NewRenderer() {
 			}
 			this.__go();
 			break;
-		}
 
+		case "self_play":
+			this.__go();
+			break;
+		}
 	};
 
 	renderer.position_changed = function(new_game_flag, avoid_confusion) {
@@ -54,8 +60,10 @@ function NewRenderer() {
 			this.set_behaviour("halt");
 		}
 
-		if (avoid_confusion) {
-			// Change behaviour from self-play / auto-analysis / colour play
+		if (avoid_confusion) {			// Change behaviour from self-play / auto-analysis / colour-play
+			if (this.node_limit()) {
+				this.set_behaviour("halt");
+			}
 		}
 
 		this.behave();
@@ -137,7 +145,12 @@ function NewRenderer() {
 	};
 
 	renderer.node_limit = function() {		// FIXME
-		return null;
+
+		if (config.behaviour === "self_play") {
+			return 100;
+		} else {
+			return null;
+		}
 	};
 
 	renderer.play_info_index = function(n) {
@@ -487,6 +500,26 @@ function NewRenderer() {
 
 			let bestmove_node = this.leela_node;
 			this.leela_node = null;							// This may already have been done if we sent a "stop".
+
+			if (config.behaviour === "self_play") {
+
+				if (bestmove_node === this.tree.node) {
+
+					let tokens = s.split(" ").filter(z => z !== "");
+					let ok = this.move(tokens[1]);
+
+					if (!ok) {
+						LogBoth(`BAD BESTMOVE (${tokens[1]}) IN POSITION ${this.tree.node.board.fen(true)}`);
+						if (!this.warned_bad_bestmove) {
+							alert(messages.bad_bestmove);
+							this.warned_bad_bestmove = true;
+						}
+					}
+				} else {
+					alert("yeah");					// FIXME
+					this.set_behaviour("halt");
+				}
+			}
 		}
 
 		debug.receive -= 1;
