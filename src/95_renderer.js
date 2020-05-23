@@ -22,7 +22,7 @@ function NewRenderer() {
 	// Some sync stuff...
 
 	renderer.leela_maybe_running = false;						// Whether we last sent "go" or "stop" to Leela.
-	renderer.leela_position = null;								// The position we last sent to Leela.
+	renderer.leela_node = null;									// The node we last sent to Leela.
 	renderer.searchmoves = [];									// Moves that we're compelling Leela to search.
 
 	// We use various and multiple means to ensure that we are actually synced up with Lc0 when
@@ -472,9 +472,7 @@ function NewRenderer() {
 
 		if (s.startsWith("info")) {
 
-			if (this.leela_position === this.tree.node.board) {		// Test may fail if we changed position without informing
-				this.info_handler.receive(s, this.tree.node);		// Leela - which we commonly do if we're halting Leela.
-			}
+			this.info_handler.receive(s, this.leela_node);
 
 		} else if (s.startsWith("error")) {
 
@@ -503,11 +501,9 @@ function NewRenderer() {
 		} else if (s.startsWith("bestmove")) {
 
 			// When in versus / self-play / auto-eval mode, use "bestmove" to detect that analysis is finished.
-			//
 			// Note about synchronisation: Any "bestmove" will be ignored by engine.js unless it's the final one due.
-			// Also the leela_position test here is good to have. There are a lot of subtleties.
 
-			if (this.leela_position === this.tree.node.board) {				// See notes on leela_position above.
+			if (this.leela_node === this.tree.node) {
 
 				if (config.autoplay || (config.versus === this.tree.node.board.active)) {
 
@@ -640,7 +636,7 @@ function NewRenderer() {
 		}
 
 		this.engine.send(s);
-		this.leela_position = this.tree.node.board;
+		this.leela_node = this.tree.node;
 		this.leela_maybe_running = true;
 	};
 
