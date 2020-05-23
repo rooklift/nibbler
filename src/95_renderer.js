@@ -683,11 +683,12 @@ function NewRenderer() {
 		this.validate_searchmoves();				// Leela can crash on illegal searchmoves.
 		this.hide_pgn_chooser();
 
-		this.__halt(new_game_flag);
-
 		if (this.tree.node.terminal_reason() !== "") {
-			return;											// Note versus status is not changed.
+			this.set_behaviour("halt");
+			return;
 		}
+
+		this.__halt(new_game_flag);
 
 		let root_fen = this.tree.root.board.fen(false);
 		let setup = `fen ${root_fen}`;
