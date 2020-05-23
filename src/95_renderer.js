@@ -1339,9 +1339,15 @@ function NewRenderer() {
 	};
 
 	renderer.statusbox_click = function(event) {
-		let val = EventPathString(event, "gobutton");
-		if (val) {
+
+		if (EventPathString(event, "gobutton")) {
 			this.set_behaviour("analysis_free");
+			return;
+		}
+
+		if (EventPathString(event, "lock_return_clicker")) {
+			this.return_to_lock();
+			return;
 		}
 	};
 
@@ -1716,7 +1722,9 @@ function NewRenderer() {
 			this.tree.node.terminal_reason(),
 			this.engine.ever_received_uciok,
 			this.engine.sync_change_time,
-			Math.max(this.engine.readyok_required, this.engine.bestmove_required - 1));		// How far out of sync we are, commonly 0
+			Math.max(this.engine.readyok_required, this.engine.bestmove_required - 1),		// How far out of sync we are, commonly 0
+			config.behaviour === "analysis_locked" && this.leela_node !== this.tree.node
+		);
 	};
 
 	renderer.draw_infobox = function() {

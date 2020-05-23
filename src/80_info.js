@@ -341,7 +341,7 @@ function NewInfoHandler() {
 		this.last_drawn_version = null;
 	};
 
-	ih.draw_statusbox = function(node, terminal_reason, ever_received_uciok, sync_change_time, syncs_needed) {
+	ih.draw_statusbox = function(node, terminal_reason, ever_received_uciok, sync_change_time, syncs_needed, analysing_other_flag) {
 
 		if (!ever_received_uciok) {
 
@@ -354,6 +354,10 @@ function NewInfoHandler() {
 		} else if (syncs_needed > 2 || (syncs_needed > 0 && performance.now() - sync_change_time > 1000)) {
 
 			statusbox.innerHTML = `<span class="gray">Out of sync: ${syncs_needed}</span>`;
+
+		} else if (analysing_other_flag) {
+
+			statusbox.innerHTML = `<span id="lock_return_clicker" class="green">Analysing other position (return?)</span>`;
 
 		} else if (terminal_reason) {
 
