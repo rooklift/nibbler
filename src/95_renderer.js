@@ -620,6 +620,12 @@ function NewRenderer() {
 				}
 
 				break;
+
+			case "analysis_free":
+			case "analysis_locked":
+
+				this.set_behaviour("halt");					// We hit the node limit
+
 			}
 		}
 
@@ -710,6 +716,44 @@ function NewRenderer() {
 		this.engine.send(s);
 		this.leela_node = this.tree.node;
 		this.searchmoves_sent = Array.from(this.searchmoves);
+	};
+
+	renderer.__maybe_go_after_node_change = function() {
+
+		// When the node limit changes, we may need to resend "go", possibly on a
+		// different node than the one we're looking at, and possibly with some
+		// searchmoves, which again might be different than what we're looking at.
+
+		if (!this.leela_node || config.behaviour === "halt") {
+			return;
+		}
+
+		// Directly send "stop" to avoid clearing this.leela_node and this.searchmoves_sent
+
+		this.engine.send("stop");
+
+		let root_fen = this.tree.root.board.fen(false);
+		let setup = `fen ${root_fen}`;
+
+		this.engine.send(`position ${setup} moves ${this.leela_node.history().join(" ")}`);
+		this.engine.send("isready");
+
+		let s;
+
+		if (!this.node_limit()) {
+			s = "go infinite";
+		} else {
+			s = `go nodes ${this.node_limit()}`;
+		}
+
+		if (this.searchmoves_sent.length > 0) {
+			s += " searchmoves";
+			for (let move of this.searchmoves_sent) {
+				s += " " + move;
+			}
+		}
+
+		this.engine.send(s);
 	};
 
 	renderer.validate_searchmoves = function() {
@@ -833,7 +877,7 @@ function NewRenderer() {
 			config.search_nodes = val;
 		}
 		config_io.save(config);
-		// this.go_or_halt();			// FIXME - and think about how searchmoves will work
+		this.__maybe_go_after_node_change();
 
 		if (val) {
 			ipcRenderer.send(ack_type, CommaNum(val));
