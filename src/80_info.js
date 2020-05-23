@@ -365,25 +365,9 @@ function NewInfoHandler() {
 
 		} else {
 
-			let status_string = "";
+			// FIXME
 
-			if (config.versus === "") {
-				status_string += `<span id="gobutton_clicker" class="yellow">HALTED (go?) </span>`;
-			} else if (config.versus.length === 1 && config.versus !== node.board.active) {
-				status_string += `<span class="yellow">YOUR MOVE </span>`;
-			} else if (config.autoplay === 1) {
-				status_string += `<span class="green">Self-play! </span>`;
-			} else if (config.autoplay === 2) {
-				status_string += `<span class="green">Auto-eval! </span>`;
-			}
-
-			status_string += `<span class="gray">Nodes: ${NString(node.table.nodes)}, N/s: ${NString(node.table.nps)}, Time: ${DurationString(node.table.time)}</span>`;
-
-			if (!config.autoplay && config.versus.length !== 1 && typeof config.search_nodes === "number" && node.table.nodes >= config.search_nodes) {
-				status_string += ` <span class="blue">(limit met)</span>`;
-			}
-
-			statusbox.innerHTML = status_string;
+			statusbox.innerHTML = config.behaviour;
 		}
 	};
 

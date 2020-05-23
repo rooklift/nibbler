@@ -14,79 +14,56 @@ function NewRenderer() {
 	renderer.pgn_choices = null;								// All games found when opening a PGN file.
 	renderer.friendly_draws = New2DArray(8, 8);					// What pieces are drawn in boardfriends. Used to skip redraws.
 	renderer.active_square = null;								// Clicked square.
-	renderer.hoverdraw_div = -1;
-	renderer.hoverdraw_depth = 0;
 	renderer.tick = 0;											// How many draw loops we've been through.
-	renderer.position_change_time = performance.now();			// Time of the last position change. Used for cooldown on hover draw.
 
 	// Some sync stuff...
 
 	renderer.leela_node = null;									// The node Leela is analysing now. Set when we send "go".
 																// Set to null if we send "stop", or if we receive a "bestmove".
 
-	renderer.searchmoves = [];									// Moves that we're compelling Leela to search.
-
 	// We use various and multiple means to ensure that we are actually synced up with Lc0 when
 	// interpreting Lc0 output. Regardless, we also don't trust moves to be legal.
 
 	// --------------------------------------------------------------------------------------------
 
+	renderer.behave = function() {
+
+		switch (config.behaviour) {
+
+		case "halt":
+			this.__halt();
+			break;
+
+		case "analysis_free":
+			this.__go();
+			break;
+		}
+	};
+
 	renderer.position_changed = function(new_game_flag, maybe_stop_versus) {
-
-		// FIXME
-
-		this.position_change_time = performance.now();
-
-		// maybe_stop_versus is for cases where auto-played moves would be surprising to the
-		// user. Note that it's OK to directly set config.versus here because we're about to
-		// call go_or_halt().
-
-		if (maybe_stop_versus) {
-			if (config.versus.length === 1 || (config.versus === "wb" && config.autoplay)) {
-				if (this.node_limit()) {
-					config.versus = "";
-					config.autoplay = 0;
-				}
-			}
-		}
-
-		this.searchmoves = [];
-		this.hoverdraw_div = -1;
-		this.escape();
-
-		this.go_or_halt(new_game_flag);
-
+		this.behave();
 		this.draw();
-		fenbox.value = this.tree.node.board.fen(true);
+	};
 
-		if (new_game_flag) {
-			let title = "Nibbler";
-			let root = this.tree.root;
-			if (root.tags && root.tags.White && root.tags.White !== "White" && root.tags.Black && root.tags.Black !== "Black") {
-				title += `: ${root.tags.White} - ${root.tags.Black}`;
-			}
-			ipcRenderer.send("set_title", title);
+	renderer.set_behaviour = function(s) {
+
+		if (s === config.behaviour) {
+			return;
+		}
+
+		config.behaviour = s;
+		this.behave();
+	};
+
+	renderer.set_versus = function(s) {
+		if (s === "wb") {
+			this.set_behaviour("analysis_free");
+		} else {
+			this.set_behaviour("halt");
 		}
 	};
 
-	renderer.set_versus = function(s) {				// config.versus should not be directly set, as go_or_halt() needs to be called too.
-		// FIXME
-		if (typeof s !== "string") s = "";
-		config.versus = "";
-		if (s.includes("W") || s.includes("w")) config.versus += "w";
-		if (s.includes("B") || s.includes("b")) config.versus += "b";
-		if (config.versus !== "wb") {									// autoplay can only be on if "wb"
-			config.autoplay = 0;
-		}
-		this.go_or_halt();
-	};
-
-	renderer.start_autoplay = function(type = 1) {			// Leela evaluating both sides, and moving or going forwards in the PGN.
-		// FIXME
-
-		config.autoplay = type;
-		this.set_versus("wb");
-	};
+	renderer.start_autoplay = function(type = 1) {};
 
 	renderer.move = function(s) {							// It is safe to call this with illegal moves.
 
@@ -142,27 +119,8 @@ function NewRenderer() {
 		}
 	};
 
-	renderer.node_limit = function() {
-
-		// FIXME
-
-		// Given the current state of the config, what is the node limit?
-
-		let cfg_value;
-
-		if (config.versus.length === 1) {
-			cfg_value = config.search_nodes_special;
-		} else if (config.autoplay) {
-			cfg_value = config.search_nodes_special;
-		} else {
-			cfg_value = config.search_nodes;
-		}
-
-		if (typeof cfg_value === "number" && cfg_value >= 1) {
-			return cfg_value;
-		} else {
-			return null;
-		}
+	renderer.node_limit = function() {		// FIXME
+		return null;
 	};
 
 	renderer.play_info_index = function(n) {
@@ -380,15 +338,12 @@ function NewRenderer() {
 
 	renderer.show_pgn_chooser = function() {
 
-		// FIXME
-
 		if (!this.pgn_choices) {
 			alert("No PGN loaded");
 			return;
 		}
 
 		this.hide_promotiontable();		// Just in case it's up.
-		this.set_versus("");			// It's lame to run the GPU when we're clearly switching games.
 
 		let lines = [];
 
@@ -472,12 +427,8 @@ function NewRenderer() {
 	// --------------------------------------------------------------------------------------------
 	// Engine stuff...
 
-	renderer.leela_should_go = function() {
-		// FIXME - delete
-		return config.versus.includes(this.tree.node.board.active);
-	};
-
 	renderer.receive = function(s) {
+
 		// FIXME
 
 		debug.receive = debug.receive ? debug.receive + 1 : 1;
@@ -514,50 +465,11 @@ function NewRenderer() {
 
 		} else if (s.startsWith("bestmove")) {
 
-			// When in versus / self-play / auto-eval mode, use "bestmove" to detect that analysis is finished.
-			//
-			// Note about synchronisation: Any "bestmove" will be ignored by engine.js unless it's the final one due.
+			// Any "bestmove" will be ignored by engine.js unless it's the final one due.
 			// Therefore, if we ever receive a bestmove, then Leela is no longer running...
 
 			let bestmove_node = this.leela_node;
 			this.leela_node = null;							// This may already have been done if we sent a "stop".
-
-			if (bestmove_node === this.tree.node) {
-
-				if (config.autoplay || (config.versus === this.tree.node.board.active)) {
-
-					this.maybe_update_node_eval();			// Now's the last chance to update our graph eval for this node.
-
-					switch (config.autoplay) {
-
-					case 0:									// Versus mode (if config.autoplay === 0 then we got here via config.versus, above)
-					case 1:									// Actual self-play
-
-						let tokens = s.split(" ").filter(z => z !== "");
-						let ok = this.move(tokens[1]);
-
-						if (!ok) {
-							LogBoth(`BAD BESTMOVE (${tokens[1]}) IN POSITION ${this.tree.node.board.fen(true)}`);
-							if (!this.warned_bad_bestmove) {
-								alert(messages.bad_bestmove);
-								this.warned_bad_bestmove = true;
-							}
-						}
-
-						break;
-
-					case 2:									// "Evaluate line" mode
-
-						if (this.tree.next()) {
-							this.position_changed(false, false);
-						} else {
-							this.set_versus("");
-						}
-						break;
-
-					}
-				}
-			}
 		}
 
 		debug.receive -= 1;
@@ -598,15 +510,6 @@ function NewRenderer() {
 
 	// The go and halt methods should generally not be called directly.
 
-	renderer.go_or_halt = function(new_game_flag) {
-		// FIXME - delete
-		if (this.leela_should_go()) {
-			this.__go(new_game_flag);
-		} else {
-			this.__halt(new_game_flag);
-		}
-	};
-
 	renderer.__halt = function(new_game_flag) {		// "isready" is not needed. If changing position, invalid data will be discarded by renderer.receive().
 
 		this.engine.send("stop");
@@ -645,6 +548,7 @@ function NewRenderer() {
 			s = `go nodes ${this.node_limit()}`;
 		}
 
+/*
 		if (this.searchmoves.length > 0) {
 			// FIXME
 			s += " searchmoves";
@@ -652,35 +556,15 @@ function NewRenderer() {
 				s += " " + move;
 			}
 		}
+*/
 
 		this.engine.send(s);
 		this.leela_node = this.tree.node;
 	};
 
-	renderer.validate_searchmoves = function() {
-		// FIXME
+	renderer.validate_searchmoves = function() {};
 
-		if (!config.searchmoves_buttons) {
-			this.searchmoves = [];
-			return;
-		}
-
-		let valid_list = [];
-		let board = this.tree.node.board;
-
-		for (let move of this.searchmoves) {
-			if (board.illegal(move) === "") {
-				valid_list.push(move);
-			}
-		}
-
-		this.searchmoves = valid_list;
-	};
-
-	renderer.soft_engine_reset = function() {
-		// FIXME
-		this.go_or_halt(true);			// new game flag, causes ucinewgame to be sent
-	};
+	renderer.soft_engine_reset = function() {};
 
 	renderer.set_uci_option = function(name, val, save_to_cfg) {
 		if (save_to_cfg) {
@@ -760,7 +644,6 @@ function NewRenderer() {
 	};
 
 	renderer.set_node_limit_generic = function(val, special_flag) {
-		// FIXME
 
 		if (typeof val !== "number" || val <= 0) {
 			val = null;
@@ -781,7 +664,7 @@ function NewRenderer() {
 			config.search_nodes = val;
 		}
 		config_io.save(config);
-		this.go_or_halt();
+		// this.go_or_halt();			// FIXME
 
 		if (val) {
 			ipcRenderer.send(ack_type, CommaNum(val));
@@ -1634,8 +1517,8 @@ function NewRenderer() {
 			this.mouse_point(),
 			this.active_square,
 			this.tree.node.board.active,
-			this.searchmoves,
-			this.hoverdraw_div);
+			[], // this.searchmoves,
+			-1); // this.hoverdraw_div);
 	};
 
 	renderer.set_special_message = function(s, css_class) {
@@ -1649,22 +1532,12 @@ function NewRenderer() {
 		this.draw();
 		this.maybe_update_node_eval();
 		if (config.versus !== "" && Math.max(this.engine.readyok_required, this.engine.bestmove_required) > 10) {
-			this.set_versus("");			// Stop the engine if we get too far out of sync. See issue #57.
+			// this.set_versus("");			// Stop the engine if we get too far out of sync. See issue #57.
 		}
 		setTimeout(this.spin.bind(this), config.update_delay);
 	};
 
-	renderer.maybe_update_node_eval = function() {
-
-		// FIXME
-
-		if (config.versus === "") return;			// Avoid surprising additions to the graph when Lc0 is halted.
-
-		let info = this.info_handler.sorted(this.tree.node)[0];		// Possibly undefined.
-		if (info) {
-			this.tree.node.table.update_eval_from_move(info.move);
-		}
-	};
+	renderer.maybe_update_node_eval = function() {};
 
 	return renderer;
 }
