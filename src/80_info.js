@@ -357,7 +357,7 @@ function NewInfoHandler() {
 
 		} else if (terminal_reason) {
 
-			statusbox.innerHTML = `<span class="yellow">${terminal_reason}</span>`;
+			statusbox.innerHTML = `${config.behaviour} - <span class="yellow">${terminal_reason}</span>`;
 
 		} else if (!node || node.destroyed) {
 
