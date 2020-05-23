@@ -1,7 +1,5 @@
 "use strict";
 
-// FIXME - all set_versus etc
-
 const electron = require("electron");
 
 // The docs are a bit vague but it seems there's a limited timeframe
