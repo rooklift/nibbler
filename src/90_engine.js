@@ -36,7 +36,7 @@ function NewEngine() {
 	eng.sync_change_time = performance.now();
 	eng.scanner = null;
 	eng.err_scanner = null;
-	eng.ever_sent = false;
+	eng.last_send = null;
 	eng.ever_received_uciok = false;
 	eng.warned_send_fail = false;
 
@@ -58,14 +58,18 @@ function NewEngine() {
 			this.sync_change_time = performance.now();
 		}
 
+		if (msg === "stop" && this.last_send === "stop") {
+			return;
+		}
+
 		try {
 			this.exe.stdin.write(msg);
 			this.exe.stdin.write("\n");
 			Log("--> " + msg);
-			this.ever_sent = true;
+			this.last_send = msg;
 		} catch (err) {
 			Log("(failed) --> " + msg);
-			if (this.ever_sent && !this.warned_send_fail) {
+			if (this.last_send !== null && !this.warned_send_fail) {
 				alert(messages.send_fail);
 				this.warned_send_fail = true;
 			}
