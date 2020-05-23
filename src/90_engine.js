@@ -33,13 +33,12 @@ function NewEngine() {
 	eng.exe = null;
 	eng.readyok_required = 0;
 	eng.bestmove_required = 0;
-	eng.sync_receive_time = performance.now();
+	eng.sync_change_time = performance.now();
 	eng.scanner = null;
 	eng.err_scanner = null;
 	eng.ever_sent = false;
 	eng.ever_received_uciok = false;
 	eng.warned_send_fail = false;
-	eng.warned_two_go = false;
 
 	eng.send = function(msg) {
 
