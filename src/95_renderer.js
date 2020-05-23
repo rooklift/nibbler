@@ -1723,7 +1723,7 @@ function NewRenderer() {
 			this.engine.ever_received_uciok,
 			this.engine.sync_change_time,
 			Math.max(this.engine.readyok_required, this.engine.bestmove_required - 1),		// How far out of sync we are, commonly 0
-			config.behaviour === "analysis_locked" && this.leela_node !== this.tree.node
+			config.behaviour === "analysis_locked" && this.leela_node && this.leela_node !== this.tree.node
 		);
 	};
 
