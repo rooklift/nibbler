@@ -472,7 +472,9 @@ function NewRenderer() {
 
 		if (s.startsWith("info")) {
 
-			this.info_handler.receive(s, this.leela_node);
+			if (this.leela_node && !this.leela_node.destroyed) {
+				this.info_handler.receive(s, this.leela_node);
+			}
 
 		} else if (s.startsWith("error")) {
 
