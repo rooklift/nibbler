@@ -37,10 +37,27 @@ function NewRenderer() {
 		case "analysis_free":
 			this.__go();
 			break;
+
+		case "analysis_locked":
+			if (this.leela_node) {
+				break;
+			}
+			this.__go();
+			break;
 		}
+
 	};
 
-	renderer.position_changed = function(new_game_flag, maybe_stop_versus) {
+	renderer.position_changed = function(new_game_flag, avoid_confusion) {
+
+		if (new_game_flag) {
+			this.set_behaviour("halt");
+		}
+
+		if (avoid_confusion) {
+			// Change behaviour from self-play / auto-analysis / colour play
+		}
+
 		this.behave();
 		this.draw();
 	};
@@ -63,7 +80,7 @@ function NewRenderer() {
 		}
 	};
 
-	renderer.start_autoplay = function(type = 1) {};
+	renderer.start_autoplay = function(type = 1) {};		// FIXME
 
 	renderer.move = function(s) {							// It is safe to call this with illegal moves.
 
@@ -562,9 +579,9 @@ function NewRenderer() {
 		this.leela_node = this.tree.node;
 	};
 
-	renderer.validate_searchmoves = function() {};
+	renderer.validate_searchmoves = function() {};		// FIXME
 
-	renderer.soft_engine_reset = function() {};
+	renderer.soft_engine_reset = function() {};			// FIXME
 
 	renderer.set_uci_option = function(name, val, save_to_cfg) {
 		if (save_to_cfg) {
@@ -1537,7 +1554,7 @@ function NewRenderer() {
 		setTimeout(this.spin.bind(this), config.update_delay);
 	};
 
-	renderer.maybe_update_node_eval = function() {};
+	renderer.maybe_update_node_eval = function() {};		// FIXME
 
 	return renderer;
 }

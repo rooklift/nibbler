@@ -1,5 +1,7 @@
 "use strict";
 
+// FIXME - all set_versus etc
+
 const electron = require("electron");
 
 // The docs are a bit vague but it seems there's a limited timeframe
@@ -632,8 +634,17 @@ function menu_build() {
 					accelerator: "CommandOrControl+G",
 					click: () => {
 						win.webContents.send("call", {
-							fn: "set_versus",
-							args: ["wb"],
+							fn: "set_behaviour",
+							args: ["analysis_free"],
+						});
+					}
+				},
+				{
+					label: "Go and lock",
+					click: () => {
+						win.webContents.send("call", {
+							fn: "set_behaviour",
+							args: ["analysis_locked"],
 						});
 					}
 				},
@@ -642,8 +653,8 @@ function menu_build() {
 					accelerator: "CommandOrControl+H",
 					click: () => {
 						win.webContents.send("call", {
-							fn: "set_versus",
-							args: [""],
+							fn: "set_behaviour",
+							args: ["halt"],
 						});
 					}
 				},
