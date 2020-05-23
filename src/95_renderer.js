@@ -109,9 +109,15 @@ function NewRenderer() {
 	};
 
 	renderer.handle_searchmoves_change = function() {
-		let behaviour = config.behaviour;
-		this.set_behaviour("halt");
-		this.set_behaviour(behaviour);			// Sigh.
+
+		// If Leela is analysing the current position, we need to resend a go command
+		// with the new searchmoves. The following is the simplest way to force this.
+
+		if (config.leela_node === this.tree.node) {
+			let behaviour = config.behaviour;
+			this.set_behaviour("halt");
+			this.set_behaviour(behaviour);
+		}
 	};
 
 	renderer.go_and_lock = function() {
