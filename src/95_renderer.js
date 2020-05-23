@@ -38,6 +38,8 @@ function NewRenderer() {
 			break;
 
 		case "analysis_free":
+		case "self_play":
+		case "auto_analysis":
 			this.__go();
 			break;
 
@@ -48,16 +50,18 @@ function NewRenderer() {
 			this.__go();
 			break;
 
-		case "self_play":
-			this.__go();
-			break;
 		}
+
 	};
 
 	renderer.position_changed = function(new_game_flag, avoid_confusion) {
 
+		this.escape();
+		fenbox.value = this.tree.node.board.fen(true);
+
 		if (new_game_flag) {
 			this.set_behaviour("halt");
+			this.send_title();
 		}
 
 		if (avoid_confusion) {			// Change behaviour from self-play / auto-analysis / colour-play
@@ -80,7 +84,7 @@ function NewRenderer() {
 		this.behave();
 	};
 
-	renderer.set_versus = function(s) {
+	renderer.set_versus = function(s) {						// FIXME - delete
 		if (s === "wb") {
 			this.set_behaviour("analysis_free");
 		} else {
@@ -146,7 +150,7 @@ function NewRenderer() {
 
 	renderer.node_limit = function() {		// FIXME
 
-		if (config.behaviour === "self_play") {
+		if (config.behaviour === "self_play" || config.behaviour === "auto_analysis") {
 			return 100;
 		} else {
 			return null;
@@ -501,7 +505,13 @@ function NewRenderer() {
 			let bestmove_node = this.leela_node;
 			this.leela_node = null;							// This may already have been done if we sent a "stop".
 
-			if (config.behaviour === "self_play") {
+			if (bestmove_node === this.tree.node) {
+				this.maybe_update_node_eval();			// Now's the last chance to update our graph eval for this node.
+			}
+
+			switch (config.behaviour) {
+
+			case "self_play":
 
 				if (bestmove_node === this.tree.node) {
 
@@ -516,9 +526,27 @@ function NewRenderer() {
 						}
 					}
 				} else {
-					alert("yeah");					// FIXME
-					this.set_behaviour("halt");
+					this.set_behaviour("halt");				// Can this ever happen?
 				}
+
+				break;
+
+			case "auto_analysis":
+
+				if (bestmove_node === this.tree.node) {
+
+					if (this.tree.next()) {
+						this.position_changed(false, false);
+					} else {
+						this.set_behaviour("halt");
+					}
+					break;
+
+				} else {
+					this.set_behaviour("halt");				// Can this ever happen?
+				}
+
+				break;
 			}
 		}
 
@@ -1292,6 +1320,15 @@ function NewRenderer() {
 		// movelist.insertAdjacentElement("beforeend", element);
 	};
 
+	renderer.send_title = function() {
+		let title = "Nibbler";
+		let root = this.tree.root;
+		if (root.tags && root.tags.White && root.tags.White !== "White" && root.tags.Black && root.tags.Black !== "Black") {
+			title += `: ${root.tags.White} - ${root.tags.Black}`;
+		}
+		ipcRenderer.send("set_title", title);
+	};
+
 	// --------------------------------------------------------------------------------------------
 	// General draw code...
 
@@ -1587,7 +1624,16 @@ function NewRenderer() {
 		setTimeout(this.spin.bind(this), config.update_delay);
 	};
 
-	renderer.maybe_update_node_eval = function() {};		// FIXME
+	renderer.maybe_update_node_eval = function() {
+
+		// FIXME - avoid surprising changes
+
+		let info = this.info_handler.sorted(this.tree.node)[0];		// Possibly undefined.
+		if (info) {
+			this.tree.node.table.update_eval_from_move(info.move);
+		}
+
+	};
 
 	return renderer;
 }

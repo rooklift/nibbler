@@ -666,8 +666,8 @@ function menu_build() {
 					accelerator: "F12",
 					click: () => {
 						win.webContents.send("call", {
-							fn: "start_autoplay",
-							args: [2]
+							fn: "set_behaviour",
+							args: ["auto_analysis"]
 						});
 					}
 				},
