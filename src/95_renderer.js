@@ -1090,7 +1090,7 @@ function NewRenderer() {
 	};
 
 	renderer.show_versus_state = function() {
-		alert(`${config.versus}", autoplay: ${config.autoplay}`);
+		alert(`${config.behaviour}`);
 	};
 
 	renderer.show_dropped_inputs = function() {
