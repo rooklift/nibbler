@@ -23,7 +23,7 @@ function NewRenderer() {
 
 	renderer.leela_node = null;									// The last node sent to Leela. Cleared upon tree change to prevent reuse.
 	renderer.leela_running = false;								// True iff we sent go and haven't send stop or received bestmove.
-	renderer.leela_lock_node = null;
+	renderer.leela_lock_node = null;							// Set only when starting "analysis_locked" mode.
 
 	// -------------------------------------------------------------------------------------------------------------------------
 
