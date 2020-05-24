@@ -113,3 +113,7 @@ Nibbler has a bug and the author would like to be informed.`;
 exports.bad_bestmove =
 `Warning: bad "bestmove" received. This is supposed to be impossible; if you see this, Nibbler's \
 author would like to be informed.`;
+
+
+exports.inferred_info =
+`Info inferred from an ancestral node; it will not be saved.`;
