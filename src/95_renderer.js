@@ -96,6 +96,7 @@ function NewRenderer() {
 		}
 
 		// Delete any ghost info that exists, then create some if possible...
+		// FIXME - delete ghost info upon node exit.
 
 		for (let key of Object.keys(this.tree.node.table.moveinfo)) {
 			if (this.tree.node.table.moveinfo[key].__ghost) {
@@ -158,12 +159,15 @@ function NewRenderer() {
 	renderer.maybe_borrow_info = function() {
 
 		// This function creates "ghost" info in the info table when possible and necessary;
-		// such info is inferred from the parent's info. It is also deleted upon entering the
-		// node again in the future.
+		// such info is inferred from the parent's info. It is also deleted at (FIXME) some point.
 		//
 		// The whole thing is a bit sketchy, maybe.
 
 		let node = this.tree.node;
+
+		if (!node.parent) {
+			return;
+		}
 
 		if (Object.keys(node.table.moveinfo).length > 0) {
 			return;
@@ -171,6 +175,33 @@ function NewRenderer() {
 
 		// So the current node has no info.
 
+		let moves = [node.move];
+		let ancestor = null;
+
+		let foo = node.parent;
+
+		while (foo) {
+			if (Object.keys(foo.table.moveinfo).length > 0) {
+				ancestor = foo;
+				break;
+			}
+			moves.push(foo.move)
+			foo = foo.parent;
+		}
+
+		if (!ancestor) {
+			return;
+		}
+
+		// So we found the closest ancestor with info.
+
+		moves.reverse();
+
+
+
+
+
+/*
 		if (!node.parent) {
 			return;
 		}
@@ -208,6 +239,7 @@ function NewRenderer() {
 		new_info.multipv = 1;
 
 		node.table.moveinfo[info.pv[1]] = new_info;
+*/
 	};
 
 	// -------------------------------------------------------------------------------------------------------------------------
