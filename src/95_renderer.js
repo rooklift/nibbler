@@ -21,8 +21,8 @@ function NewRenderer() {
 
 	// Some sync stuff...
 
-	renderer.leela_node = null;									// The node Leela is analysing now. Set when we send "go".
-																// Set to null if we send "stop", or if we receive a "bestmove".
+	renderer.leela_node = null;									// The last node sent to Leela. Should be cleared upon tree change.
+	renderer.leela_running = false;								// True iff we sent go and haven't send stop or received bestmove.
 
 	renderer.searchmoves = [];									// Searchmoves to display in the GUI.
 	renderer.searchmoves_sent = [];								// Last searchmoves actually sent.
@@ -50,7 +50,7 @@ function NewRenderer() {
 			break;
 
 		case "analysis_locked":
-			if (this.leela_node) {
+			if (this.leela_running) {
 				break;
 			}
 			this.__go();
@@ -84,6 +84,7 @@ function NewRenderer() {
 		fenbox.value = this.tree.node.board.fen(true);
 
 		if (new_game_flag) {
+			this.leela_node = null;
 			this.set_behaviour("halt");
 			this.send_title();
 		}
@@ -117,25 +118,25 @@ function NewRenderer() {
 		}
 	};
 
+	renderer.go_and_lock = function() {
+
+		// Upon calling this.behave() while we're set to "analysis_locked", it will
+		// do nothing if Leela is already running, therefore...
+
+		this.set_behaviour("halt");
+		this.set_behaviour("analysis_locked");
+	};
+
 	renderer.handle_searchmoves_change = function() {
 
 		// If Leela is analysing the current position, we need to resend a go command
 		// with the new searchmoves. The following is the simplest way to force this.
 
-		if (config.leela_node === this.tree.node) {
+		if (this.leela_running && this.leela_node === this.tree.node) {
 			let tmp = config.behaviour;
 			this.set_behaviour("halt");
 			this.set_behaviour(tmp);
 		}
-	};
-
-	renderer.go_and_lock = function() {
-
-		// We have to halt first in case we are already locked on some other position
-		// (in which case setting "analysis_locked" would have no effect).
-
-		this.set_behaviour("halt");
-		this.set_behaviour("analysis_locked");
 	};
 
 	// --------------------------------------------------------------------------------------------
@@ -583,10 +584,9 @@ function NewRenderer() {
 			// Any "bestmove" will be ignored by engine.js unless it's the final one due.
 			// Therefore, if we ever receive a bestmove, then Leela is no longer running...
 
-			let bestmove_node = this.leela_node;
-			this.leela_node = null;							// This may already have been done if we sent a "stop".
+			this.leela_running = false;
 
-			if (bestmove_node === this.tree.node) {
+			if (this.leela_node === this.tree.node) {
 				this.maybe_update_node_eval();				// Now's the last chance to update our graph eval for this node.
 			}
 
@@ -596,7 +596,7 @@ function NewRenderer() {
 			case "play_white":
 			case "play_black":
 
-				if (bestmove_node === this.tree.node) {
+				if (this.leela_node === this.tree.node) {
 
 					let tokens = s.split(" ").filter(z => z !== "");
 					let ok = this.move(tokens[1]);
@@ -616,7 +616,7 @@ function NewRenderer() {
 
 			case "auto_analysis":
 
-				if (bestmove_node === this.tree.node) {
+				if (this.leela_node === this.tree.node) {
 
 					if (this.tree.next()) {
 						this.position_changed(false, false);
@@ -633,7 +633,7 @@ function NewRenderer() {
 			case "analysis_free":
 			case "analysis_locked":
 
-				this.set_behaviour("halt");					// We hit the node limit
+				// We hit the node limit. No need to change our set behaviour.
 
 			}
 		}
@@ -679,7 +679,7 @@ function NewRenderer() {
 	renderer.__halt = function(new_game_flag) {		// "isready" is not needed. If changing position, invalid data will be discarded by renderer.receive().
 
 		this.engine.send("stop");
-		this.leela_node = null;
+		this.leela_running = false;
 		this.searchmoves_sent = [];
 
 		if (new_game_flag) {
@@ -692,12 +692,11 @@ function NewRenderer() {
 		this.validate_searchmoves();				// Leela can crash on illegal searchmoves.
 		this.hide_pgn_chooser();
 
+		this.__halt(new_game_flag);
+
 		if (this.tree.node.terminal_reason() !== "") {
-			this.set_behaviour("halt");
 			return;
 		}
-
-		this.__halt(new_game_flag);
 
 		let root_fen = this.tree.root.board.fen(false);
 		let setup = `fen ${root_fen}`;
@@ -725,6 +724,7 @@ function NewRenderer() {
 
 		this.engine.send(s);
 		this.leela_node = this.tree.node;
+		this.leela_running = true;
 		this.searchmoves_sent = Array.from(this.searchmoves);
 	};
 
