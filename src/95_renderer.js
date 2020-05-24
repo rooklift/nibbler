@@ -584,10 +584,7 @@ function NewRenderer() {
 			// Therefore, if we ever receive a bestmove, then Leela is no longer running...
 
 			this.leela_running = false;
-
-			if (this.leela_node === this.tree.node) {
-				this.maybe_update_node_eval();				// Now's the last chance to update our graph eval for this node.
-			}
+			this.update_graph_eval();				// Now's the last chance to update our graph eval for this node.
 
 			switch (config.behaviour) {
 
@@ -1688,22 +1685,24 @@ function NewRenderer() {
 	renderer.spin = function() {
 		this.tick++;
 		this.draw();
-		this.maybe_update_node_eval();
+		this.update_graph_eval();
 		if (config.behaviour !== "halt" && Math.max(this.engine.readyok_required, this.engine.bestmove_required) > 10) {
 			this.set_behaviour("halt");			// Stop the engine if we get too far out of sync. See issue #57.
 		}
 		setTimeout(this.spin.bind(this), config.update_delay);
 	};
 
-	renderer.maybe_update_node_eval = function() {
+	renderer.update_graph_eval = function() {
 
-		if (config.behaviour === "halt") {
-			return;			// Avoid surprising additions to the graph when Lc0 is halted.
+		// Occasionally update the eval (for graphs) of whatever Leela is looking at.
+
+		if (!this.leela_node || this.leela_node.destroyed) {
+			return;
 		}
 
-		let info = this.info_handler.sorted(this.tree.node)[0];		// Possibly undefined.
+		let info = this.info_handler.sorted(this.leela_node)[0];		// Possibly undefined.
 		if (info) {
-			this.tree.node.table.update_eval_from_move(info.move);
+			this.leela_node.table.update_eval_from_move(info.move);
 		}
 
 	};
