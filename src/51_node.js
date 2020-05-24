@@ -345,7 +345,7 @@ const node_prototype = {
 		}
 
 		this.searchmoves = valid_list;
-	};
+	},
 
 	detach: function() {
 
