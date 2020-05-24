@@ -208,13 +208,6 @@ function NewRenderer() {
 
 		switch (config.behaviour) {
 
-		case "halt":
-		case "analysis_free":
-		case "analysis_locked":
-
-			cfg_value = config.search_nodes;
-			break;
-
 		case "play_white":
 		case "play_black":
 		case "self_play":
@@ -226,7 +219,6 @@ function NewRenderer() {
 		default:
 
 			cfg_value = config.search_nodes;
-			alert("node_limit(): unknown config.behaviour");
 			break;
 
 		}
