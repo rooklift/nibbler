@@ -78,8 +78,8 @@ function NewRenderer() {
 
 		if (new_game_flag) {
 			this.leela_node = null;
-			this.set_behaviour("halt");
-			this.__halt(true);				// Sends ucinewgame.
+			this.set_behaviour("halt");					// Will cause "stop" to be sent
+			this.engine.send("ucinewgame");				// Must happen after "stop" is sent.
 			this.send_title();
 		}
 
@@ -95,7 +95,10 @@ function NewRenderer() {
 
 	renderer.set_behaviour = function(s) {
 
-		if (s === config.behaviour) {
+		// For safety's sake, always allow "halt" to go through,
+		// thus set_behaviour("halt") always sends "stop".
+
+		if (s === config.behaviour && s !== "halt") {
 			return;
 		}
 
@@ -672,14 +675,11 @@ function NewRenderer() {
 
 	// The go and halt methods should not be called directly.
 
-	renderer.__halt = function(new_game_flag) {
+	renderer.__halt = function() {
 
 		this.engine.send("stop");
 		this.leela_running = false;
 
-		if (new_game_flag) {
-			this.engine.send("ucinewgame");			// Shouldn't be sent when engine is running.
-		}
 	};
 
 	renderer.__go = function(node) {
