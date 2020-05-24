@@ -1657,13 +1657,24 @@ function NewRenderer() {
 	};
 
 	renderer.draw_statusbox = function() {
+
+		let analysing_other = null;
+
+		if (config.behaviour === "analysis_locked" && this.leela_node && this.leela_node !== this.tree.node) {
+			if (!this.leela_node.parent) {
+				analysing_other = "root";
+			} else {
+				analysing_other = "position after " + this.leela_node.token(false, true);
+			}
+		}
+
 		this.info_handler.draw_statusbox(
 			this.tree.node,
 			this.tree.node.terminal_reason(),
 			this.engine.ever_received_uciok,
 			this.engine.sync_change_time,
 			Math.max(this.engine.readyok_required, this.engine.bestmove_required - 1),		// How far out of sync we are, commonly 0
-			config.behaviour === "analysis_locked" && this.leela_node && this.leela_node !== this.tree.node
+			analysing_other,
 		);
 	};
 

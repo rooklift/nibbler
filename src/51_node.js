@@ -217,7 +217,7 @@ const node_prototype = {
 		return this.__nice_move;
 	},
 
-	token: function(stats_flag) {
+	token: function(stats_flag, force_number_flag) {
 
 		// The complete token when writing the move, including number string if necessary,
 		// which depends on position within variations etc and so cannot easily be cached.
@@ -229,6 +229,7 @@ const node_prototype = {
 
 		let need_number_string = false;
 
+		if (force_number_flag) need_number_string = true;
 		if (!this.parent.parent) need_number_string = true;
 		if (this.parent.board.active === "w") need_number_string = true;
 		if (this.parent.children[0] !== this) need_number_string = true;
