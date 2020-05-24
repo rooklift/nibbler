@@ -157,7 +157,7 @@ function NewRenderer() {
 	renderer.maybe_infer_info = function() {
 
 		// This function creates "ghost" info in the info table when possible and necessary;
-		// such info is inferred from the parent's info. It is also deleted upon leaving the node.
+		// such info is inferred from ancestral info. It is also deleted upon leaving the node.
 		//
 		// The whole thing is a bit sketchy, maybe.
 
