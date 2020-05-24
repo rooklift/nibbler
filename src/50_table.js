@@ -47,7 +47,7 @@ function NewInfo(board, move) {
 	// since some info (cp and q) can be carried (inverted) into the next step of a line...
 
 	let info = Object.create(info_prototype);
-	info.__ghost = false;			// Whether this is temporary info that should be destroyed upon reentering the node.
+	info.__ghost = false;			// Whether this is temporary info that will be destroyed upon leaving the node.
 	info.board = board;
 	info.cp = 0;
 	info.d = 0;
