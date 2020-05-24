@@ -75,7 +75,6 @@ function NewRenderer() {
 
 	renderer.position_changed = function(new_game_flag, avoid_confusion) {
 
-		this.cleanup_previous_node();
 		this.escape();
 
 		this.hoverdraw_div = -1;
@@ -100,6 +99,7 @@ function NewRenderer() {
 			}
 		}
 
+		this.cleanup_previous_node();
 		this.maybe_infer_info();
 		this.behave();
 		this.draw();
