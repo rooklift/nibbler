@@ -12,11 +12,11 @@ thinks the right move is "obvious".`;
 
 
 exports.about_versus_mode =
-`The "Go when [white|black]" options cause Leela to evaluate one side of \
-the position only. The top move is automatically played on the board upon \
+`The "play this colour" option causes Leela to evaluate one side of the \
+position only. The top move is automatically played on the board upon \
 reaching the node limit (see the Engine menu).
 
-The self-play option causes Leela to play itself.
+The "self-play" option causes Leela to play itself.
 
 Higher temperature makes the moves less predictable, but at some cost to \
 move correctness. Meanwhile, TempDecayMoves specifies how many moves the \
