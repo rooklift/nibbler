@@ -629,7 +629,9 @@ function NewRenderer() {
 			case "analysis_free":
 			case "analysis_locked":
 
-				// We hit the node limit. No need to change our set behaviour.
+				// We hit the node limit. Confusion can arise if we don't halt.
+				this.set_behaviour("halt");
+				break;
 
 			}
 		}
