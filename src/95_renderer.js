@@ -734,7 +734,7 @@ function NewRenderer() {
 		// different node than the one we're looking at, and possibly with some
 		// searchmoves, which again might be different than what we're looking at.
 
-		if (!this.leela_node || config.behaviour === "halt") {
+		if (!this.leela_node || this.leela_node.destroyed || config.behaviour === "halt") {
 			return;
 		}
 
