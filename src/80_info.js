@@ -395,7 +395,9 @@ function NewInfoHandler() {
 		}
 	};
 
-	ih.draw_infobox = function(node, mouse_point, active_square, active_colour, searchmoves, hoverdraw_div) {
+	ih.draw_infobox = function(node, mouse_point, active_square, active_colour, hoverdraw_div) {
+
+		let searchmoves = node.searchmoves;
 
 		if (this.displaying_stderr()) {
 			infobox.innerHTML = this.stderr_log;

@@ -26,6 +26,7 @@ function NewNode(parent, move, board) {		// move must be legal; board is only re
 	}
 
 	node.table = NewTable();
+	node.searchmoves = [];
 	node.__nice_move = null;
 	node.__terminal = null;
 	node.destroyed = false;
@@ -333,6 +334,19 @@ const node_prototype = {
 		return this.__terminal;
 	},
 
+	validate_searchmoves: function() {
+
+		let valid_list = [];
+
+		for (let move of this.searchmoves) {
+			if (this.board.illegal(move) === "") {
+				valid_list.push(move);
+			}
+		}
+
+		this.searchmoves = valid_list;
+	};
+
 	detach: function() {
 
 		// Returns the node that the renderer should point to,
@@ -370,6 +384,7 @@ function __destroy_tree(node) {
 		node.parent = null;
 		node.board = null;
 		node.children = null;
+		node.searchmoves = null;
 		node.table = null;
 		node.graph_length_knower = null;
 		node.destroyed = true;
@@ -386,6 +401,7 @@ function __destroy_tree(node) {
 	node.parent = null;
 	node.board = null;
 	node.children = null;
+	node.searchmoves = null;
 	node.table = null;
 	node.graph_length_knower = null;
 	node.destroyed = true;

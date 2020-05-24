@@ -24,13 +24,7 @@ function NewRenderer() {
 	renderer.leela_node = null;									// The last node sent to Leela. Should be cleared upon tree change.
 	renderer.leela_running = false;								// True iff we sent go and haven't send stop or received bestmove.
 
-	renderer.searchmoves = [];									// Searchmoves to display in the GUI.
-	renderer.searchmoves_sent = [];								// Last searchmoves actually sent.
-
-	// We use various and multiple means to ensure that we are actually synced up with Lc0 when
-	// interpreting Lc0 output. Regardless, we also don't trust moves to be legal.
-
-	// --------------------------------------------------------------------------------------------
+	// -------------------------------------------------------------------------------------------------------------------------
 
 	renderer.behave = function() {
 
@@ -46,19 +40,19 @@ function NewRenderer() {
 		case "analysis_free":
 		case "self_play":
 		case "auto_analysis":
-			this.__go();
+			this.__go(this.tree.node);
 			break;
 
 		case "analysis_locked":
 			if (this.leela_running) {
 				break;
 			}
-			this.__go();
+			this.__go(this.tree.node);
 			break;
 
 		case "play_white":
 			if (this.tree.node.board.active === "w") {
-				this.__go();
+				this.__go(this.tree.node);
 			} else {
 				this.__halt();
 			}
@@ -66,7 +60,7 @@ function NewRenderer() {
 
 		case "play_black":
 			if (this.tree.node.board.active === "b") {
-				this.__go();
+				this.__go(this.tree.node);
 			} else {
 				this.__halt();
 			}
@@ -78,14 +72,13 @@ function NewRenderer() {
 	renderer.position_changed = function(new_game_flag, avoid_confusion) {
 
 		this.escape();
-		this.searchmoves = [];
 		this.hoverdraw_div = -1;
 		this.position_change_time = performance.now();
 		fenbox.value = this.tree.node.board.fen(true);
 
 		if (new_game_flag) {
 			this.leela_node = null;
-			this.set_behaviour("halt");
+			this.set_behaviour("halt");		// This is what causes ucinewgame to be sent.
 			this.send_title();
 		}
 
@@ -109,6 +102,20 @@ function NewRenderer() {
 		this.behave();
 	};
 
+	renderer.handle_searchmoves_change = function() {
+
+		if (this.leela_running && this.leela_node === this.tree.node) {
+			this.__go(this.leela_node);
+		}
+	};
+
+	renderer.handle_node_limit_change = function() {
+
+		if (config.behaviour !== "halt") {
+			this.__go(this.leela_node);
+		}
+	};
+
 	renderer.play_this_colour = function() {
 
 		if (this.tree.node.board.active === "w") {
@@ -127,19 +134,7 @@ function NewRenderer() {
 		this.set_behaviour("analysis_locked");
 	};
 
-	renderer.handle_searchmoves_change = function() {
-
-		// If Leela is analysing the current position, we need to resend a go command
-		// with the new searchmoves. The following is the simplest way to force this.
-
-		if (this.leela_running && this.leela_node === this.tree.node) {
-			let tmp = config.behaviour;
-			this.set_behaviour("halt");
-			this.set_behaviour(tmp);
-		}
-	};
-
-	// --------------------------------------------------------------------------------------------
+	// -------------------------------------------------------------------------------------------------------------------------
 
 	renderer.move = function(s) {							// It is safe to call this with illegal moves.
 
@@ -395,7 +390,7 @@ function NewRenderer() {
 		clipboard.writeText(statusbox.innerText + "\n\n" + s);
 	};
 
-	// --------------------------------------------------------------------------------------------
+	// -------------------------------------------------------------------------------------------------------------------------
 	// PGN...
 
 	renderer.pgn_to_clipboard = function() {
@@ -542,7 +537,7 @@ function NewRenderer() {
 		return true;
 	};
 
-	// --------------------------------------------------------------------------------------------
+	// -------------------------------------------------------------------------------------------------------------------------
 	// Engine stuff...
 
 	renderer.receive = function(s) {
@@ -680,21 +675,19 @@ function NewRenderer() {
 
 		this.engine.send("stop");
 		this.leela_running = false;
-		this.searchmoves_sent = [];
 
 		if (new_game_flag) {
 			this.engine.send("ucinewgame");			// Shouldn't be sent when engine is running.
 		}
 	};
 
-	renderer.__go = function(new_game_flag) {
+	renderer.__go = function(node) {
 
-		this.validate_searchmoves();				// Leela can crash on illegal searchmoves.
 		this.hide_pgn_chooser();
 
-		this.__halt(new_game_flag);
+		this.__halt();
 
-		if (this.tree.node.terminal_reason() !== "") {
+		if (!node || node.destroyed || node.terminal_reason() !== "") {
 			return;
 		}
 
@@ -704,7 +697,7 @@ function NewRenderer() {
 		// Leela seems to time "readyok" correctly after "position" commands.
 		// After sending "isready" we'll ignore Leela output until "readyok" comes.
 
-		this.engine.send(`position ${setup} moves ${this.tree.node.history().join(" ")}`);
+		this.engine.send(`position ${setup} moves ${node.history().join(" ")}`);
 		this.engine.send("isready");
 
 		let s;
@@ -715,74 +708,17 @@ function NewRenderer() {
 			s = `go nodes ${this.node_limit()}`;
 		}
 
-		if (this.searchmoves.length > 0) {
+		if (config.searchmoves_buttons && node.searchmoves && node.searchmoves.length > 0) {
+			node.validate_searchmoves();	// Leela can crash on illegal searchmoves.
 			s += " searchmoves";
-			for (let move of this.searchmoves) {
+			for (let move of node.searchmoves) {
 				s += " " + move;
 			}
 		}
 
 		this.engine.send(s);
-		this.leela_node = this.tree.node;
+		this.leela_node = node;
 		this.leela_running = true;
-		this.searchmoves_sent = Array.from(this.searchmoves);
-	};
-
-	renderer.__maybe_go_after_node_change = function() {
-
-		// When the node limit changes, we may need to resend "go", possibly on a
-		// different node than the one we're looking at, and possibly with some
-		// searchmoves, which again might be different than what we're looking at.
-
-		if (!this.leela_node || this.leela_node.destroyed || config.behaviour === "halt") {
-			return;
-		}
-
-		// Directly send "stop" to avoid clearing this.leela_node and this.searchmoves_sent
-
-		this.engine.send("stop");
-
-		let root_fen = this.tree.root.board.fen(false);
-		let setup = `fen ${root_fen}`;
-
-		this.engine.send(`position ${setup} moves ${this.leela_node.history().join(" ")}`);
-		this.engine.send("isready");
-
-		let s;
-
-		if (!this.node_limit()) {
-			s = "go infinite";
-		} else {
-			s = `go nodes ${this.node_limit()}`;
-		}
-
-		if (this.searchmoves_sent.length > 0) {
-			s += " searchmoves";
-			for (let move of this.searchmoves_sent) {
-				s += " " + move;
-			}
-		}
-
-		this.engine.send(s);
-	};
-
-	renderer.validate_searchmoves = function() {
-
-		if (!config.searchmoves_buttons) {
-			this.searchmoves = [];
-			return;
-		}
-
-		let valid_list = [];
-		let board = this.tree.node.board;
-
-		for (let move of this.searchmoves) {
-			if (board.illegal(move) === "") {
-				valid_list.push(move);
-			}
-		}
-
-		this.searchmoves = valid_list;
 	};
 
 	renderer.soft_engine_reset = function() {
@@ -887,7 +823,7 @@ function NewRenderer() {
 			config.search_nodes = val;
 		}
 		config_io.save(config);
-		this.__maybe_go_after_node_change();
+		this.handle_node_limit_change();
 
 		if (val) {
 			ipcRenderer.send(ack_type, CommaNum(val));
@@ -954,7 +890,7 @@ function NewRenderer() {
 		this.engine.send("ucinewgame");
 	};
 
-	// --------------------------------------------------------------------------------------------
+	// -------------------------------------------------------------------------------------------------------------------------
 	// Settings etc...
 
 	renderer.toggle = function(option) {
@@ -976,10 +912,7 @@ function NewRenderer() {
 		// Cases that have additional actions after...
 
 		if (option === "searchmoves_buttons") {
-			if (!config.searchmoves_buttons) {		// We turned it off.
-				this.searchmoves = [];
-				this.handle_searchmoves_change();
-			}
+			this.handle_searchmoves_change();
 		}
 	};
 
@@ -1005,7 +938,7 @@ function NewRenderer() {
 
 	renderer.invert_searchmoves = function() {
 
-		if (!config.searchmoves_buttons) {
+		if (!config.searchmoves_buttons || !this.tree.node.searchmoves) {
 			return;
 		}
 
@@ -1018,16 +951,16 @@ function NewRenderer() {
 			moveset[move] = true;
 		}
 
-		for (let move of this.searchmoves) {
+		for (let move of this.tree.node.searchmoves) {
 			delete moveset[move];
 		}
 
-		this.searchmoves = Object.keys(moveset);
+		this.tree.node.searchmoves = Object.keys(moveset);
 		this.handle_searchmoves_change();
 	};
 
 	renderer.clear_searchmoves = function() {
-		this.searchmoves = [];
+		this.tree.node.searchmoves = [];
 		this.handle_searchmoves_change();
 	};
 
@@ -1224,7 +1157,7 @@ function NewRenderer() {
     	console.log("[\n" + lines.join(",\n") + "\n]");
 	};
 
-	// --------------------------------------------------------------------------------------------
+	// -------------------------------------------------------------------------------------------------------------------------
 	// Clicks, drops, mouse stuff...
 
 	renderer.set_active_square = function(new_point) {
@@ -1320,10 +1253,10 @@ function NewRenderer() {
 			return;
 		}
 
-		if (this.searchmoves.includes(sm)) {
-			this.searchmoves = this.searchmoves.filter(move => move !== sm);
+		if (this.tree.node.searchmoves.includes(sm)) {
+			this.tree.node.searchmoves = this.tree.node.searchmoves.filter(move => move !== sm);
 		} else {
-			this.searchmoves.push(sm);
+			this.tree.node.searchmoves.push(sm);
 		}
 
 		this.handle_searchmoves_change();
@@ -1467,7 +1400,7 @@ function NewRenderer() {
 		ipcRenderer.send("set_title", title);
 	};
 
-	// --------------------------------------------------------------------------------------------
+	// -------------------------------------------------------------------------------------------------------------------------
 	// General draw code...
 
 	renderer.draw_friendlies_in_table = function() {
@@ -1743,7 +1676,6 @@ function NewRenderer() {
 			this.mouse_point(),
 			this.active_square,
 			this.tree.node.board.active,
-			this.searchmoves,
 			this.hoverdraw_div);
 	};
 
