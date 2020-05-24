@@ -263,7 +263,7 @@ const node_prototype = {
 
 		let info = this.parent.table.moveinfo[this.move];
 
-		if (!info) {
+		if (!info || info.__ghost) {
 			return "";
 		}
 

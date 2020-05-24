@@ -101,7 +101,7 @@ function NewInfoHandler() {
 			let move = infovals["pv"];
 			move = board.c960_castling_converter(move);
 
-			if (node.table.moveinfo[move]) {			// We already have move info for this move.
+			if (node.table.moveinfo[move] && !node.table.moveinfo[move].__ghost) {		// We already have move info for this move.
 				move_info = node.table.moveinfo[move];
 			} else {									// We don't.
 				if (board.illegal(move) !== "") {
@@ -202,7 +202,7 @@ function NewInfoHandler() {
 
 			move = board.c960_castling_converter(move);
 
-			if (node.table.moveinfo[move]) {					// We already have move info for this move.
+			if (node.table.moveinfo[move] && !node.table.moveinfo[move].__ghost) {		// We already have move info for this move.
 				move_info = node.table.moveinfo[move];
 			} else {											// We don't.
 				if (board.illegal(move) !== "") {

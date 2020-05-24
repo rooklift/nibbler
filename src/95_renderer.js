@@ -95,6 +95,15 @@ function NewRenderer() {
 			}
 		}
 
+		// Delete any ghost info that exists, then create some if possible...
+
+		for (let key of Object.keys(this.tree.node.table.moveinfo)) {
+			if (this.tree.node.table.moveinfo[key].__ghost) {
+				delete this.tree.node.table.moveinfo[key];
+			}
+		}
+		this.maybe_borrow_info();
+
 		this.behave();
 		this.draw();
 	};
@@ -142,6 +151,57 @@ function NewRenderer() {
 
 		this.leela_lock_node = this.tree.node;
 		this.set_behaviour("analysis_locked", true);
+	};
+
+	// -------------------------------------------------------------------------------------------------------------------------
+
+	renderer.maybe_borrow_info = function() {
+
+		let node = this.tree.node;
+
+		if (Object.keys(node.table.moveinfo).length > 0) {
+			return;
+		}
+
+		// So the current node has no info.
+
+		if (!node.parent) {
+			return;
+		}
+
+		// But it does have a parent.
+
+		let info = node.parent.table.moveinfo[node.move];
+
+		if (!info) {
+			return;
+		}
+
+		// We have info available for the move to this node.
+
+		if (info.pv.length < 2) {
+			return;
+		}
+
+		// The PV extends beyond this move.
+
+		let new_info = NewInfo(node.board, info.pv[1]);
+
+		new_info.__ghost = true;
+
+		new_info.pv = info.pv.slice(1);
+
+		if (typeof info.q === "number") {
+			new_info.q = info.q * -1;
+		}
+
+		if (typeof info.cp === "number") {
+			new_info.cp = info.cp * -1;
+		}
+
+		new_info.multipv = 1;
+
+		node.table.moveinfo[info.pv[1]] = new_info;
 	};
 
 	// -------------------------------------------------------------------------------------------------------------------------
