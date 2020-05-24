@@ -357,7 +357,7 @@ function NewInfoHandler() {
 
 		} else if (analysing_other) {
 
-			statusbox.innerHTML = `<span id="lock_return_clicker" class="blue">Locked at ${analysing_other} (return?)</span>`;
+			statusbox.innerHTML = `<span id="lock_return_clicker" class="blue">Locked to ${analysing_other} (return?)</span>`;
 
 		} else if (terminal_reason) {
 
