@@ -25,6 +25,8 @@ function NewRenderer() {
 	renderer.leela_running = false;								// True iff we sent go and haven't send stop or received bestmove.
 	renderer.leela_lock_node = null;							// Set only when starting "analysis_locked" mode.
 
+	renderer.previous_node = null;								// So we can cleanup nodes as we leave them.
+
 	// -------------------------------------------------------------------------------------------------------------------------
 
 	renderer.behave = function() {
@@ -73,7 +75,9 @@ function NewRenderer() {
 
 	renderer.position_changed = function(new_game_flag, avoid_confusion) {
 
+		this.cleanup_previous_node();
 		this.escape();
+
 		this.hoverdraw_div = -1;
 		this.position_change_time = performance.now();
 		fenbox.value = this.tree.node.board.fen(true);
@@ -82,6 +86,7 @@ function NewRenderer() {
 
 			this.leela_node = null;
 			this.leela_lock_node = null;
+			this.previous_node = null;
 
 			this.set_behaviour("halt");					// Will cause "stop" to be sent
 			this.engine.send("ucinewgame");				// Must happen after "stop" is sent.
@@ -95,18 +100,11 @@ function NewRenderer() {
 			}
 		}
 
-		// Delete any ghost info that exists, then create some if possible...
-		// FIXME - delete ghost info upon node exit.
-
-		for (let key of Object.keys(this.tree.node.table.moveinfo)) {
-			if (this.tree.node.table.moveinfo[key].__ghost) {
-				delete this.tree.node.table.moveinfo[key];
-			}
-		}
-		this.maybe_borrow_info();
-
+		this.maybe_infer_info();
 		this.behave();
 		this.draw();
+
+		this.previous_node = this.tree.node;
 	};
 
 	renderer.set_behaviour = function(s, force_behave) {
@@ -156,7 +154,7 @@ function NewRenderer() {
 
 	// -------------------------------------------------------------------------------------------------------------------------
 
-	renderer.maybe_borrow_info = function() {
+	renderer.maybe_infer_info = function() {
 
 		// This function creates "ghost" info in the info table when possible and necessary;
 		// such info is inferred from the parent's info. It is also deleted at (FIXME) some point.
@@ -197,49 +195,62 @@ function NewRenderer() {
 
 		moves.reverse();
 
+		let oldinfo = ancestor.table.moveinfo[moves[0]];
 
-
-
-
-/*
-		if (!node.parent) {
+		if (!oldinfo) {
 			return;
 		}
 
-		// But it does have a parent.
-
-		let info = node.parent.table.moveinfo[node.move];
-
-		if (!info) {
+		if (Array.isArray(oldinfo.pv) === false || oldinfo.pv.length <= moves.length) {
 			return;
 		}
 
-		// We have info available for the move to this node.
+		let pv = Array.from(oldinfo.pv);
 
-		if (info.pv.length < 2) {
-			return;
+		for (let n = 0; n < moves.length; n++) {
+			if (pv[n] !== moves[n]) {
+				return;
+			}
 		}
 
-		// The PV extends beyond this move.
+		// So, everything matches and we can use the PV...
 
-		let new_info = NewInfo(node.board, info.pv[1]);
+		let nextmove = pv[moves.length];
+		pv = pv.slice(moves.length);
+
+		let new_info = NewInfo(node.board, nextmove);
 
 		new_info.__ghost = true;
-
-		new_info.pv = info.pv.slice(1);
-
-		if (typeof info.q === "number") {
-			new_info.q = info.q * -1;
-		}
-
-		if (typeof info.cp === "number") {
-			new_info.cp = info.cp * -1;
-		}
-
+		new_info.pv = pv;
+		new_info.q = oldinfo.q;
+		new_info.cp = oldinfo.cp;
 		new_info.multipv = 1;
 
-		node.table.moveinfo[info.pv[1]] = new_info;
-*/
+		// Flip our evals if the colour changes...
+
+		if (oldinfo.board.active !== node.board.active) {
+			if (typeof new_info.q === "number") {
+				new_info.q *= -1;
+			}
+			if (typeof new_info.cp === "number") {
+				new_info.cp *= -1;
+			}
+		}
+
+		node.table.moveinfo[nextmove] = new_info;
+	};
+
+	renderer.cleanup_previous_node = function() {
+
+		if (!this.previous_node || this.previous_node.destroyed) {
+			return;
+		}
+
+		for (let key of Object.keys(this.previous_node.table.moveinfo)) {
+			if (this.previous_node.table.moveinfo[key].__ghost) {
+				delete this.previous_node.table.moveinfo[key];
+			}
+		}
 	};
 
 	// -------------------------------------------------------------------------------------------------------------------------
