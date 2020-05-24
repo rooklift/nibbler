@@ -1645,7 +1645,7 @@ function NewRenderer() {
 
 		if (did_hoverdraw) {
 			boardfriends.style.display = "none";
-			canvas.style.outline = "2px dashed #6cccee";
+			canvas.style.outline = "2px dashed #999999";
 		} else {
 			this.hoverdraw_div = -1;
 			boardfriends.style.display = "block";
