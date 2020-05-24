@@ -72,7 +72,7 @@ exports.defaults = {
 	"infobox_stats_newline": false,
 	"max_info_lines": null,
 	"hover_draw": false,
-	"hover_method": 0,
+	"hover_method": 2,
 
 	"serious_analysis_mode": false,
 	"pgn_ev": true,
