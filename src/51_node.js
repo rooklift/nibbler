@@ -164,6 +164,9 @@ const node_prototype = {
 
 	is_same_line: function(other) {
 
+		// This is not testing whether one is an ancestor of the other, but
+		// rather whether the main lines of each end in the same place.
+
 		// Easy case is when one is the parent of the other...
 
 		if (this.parent === other) return other.children[0] === this;

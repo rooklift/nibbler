@@ -157,6 +157,12 @@ function NewRenderer() {
 
 	renderer.maybe_borrow_info = function() {
 
+		// This function creates "ghost" info in the info table when possible and necessary;
+		// such info is inferred from the parent's info. It is also deleted upon entering the
+		// node again in the future.
+		//
+		// The whole thing is a bit sketchy, maybe.
+
 		let node = this.tree.node;
 
 		if (Object.keys(node.table.moveinfo).length > 0) {
