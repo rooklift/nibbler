@@ -632,18 +632,34 @@ function menu_build() {
 					accelerator: "CommandOrControl+G",
 					click: () => {
 						win.webContents.send("call", {
-							fn: "set_versus",
-							args: ["wb"],
+							fn: "set_behaviour",
+							args: ["analysis_free"],
 						});
 					}
+				},
+				{
+					label: "Go and lock",
+					accelerator: "CommandOrControl+Shift+G",
+					click: () => {
+						win.webContents.send("call", "go_and_lock");
+					}
+				},
+				{
+					label: "Return to locked position",
+					click: () => {
+						win.webContents.send("call", "return_to_lock");
+					}
+				},
+				{
+					type: "separator"
 				},
 				{
 					label: "Halt",
 					accelerator: "CommandOrControl+H",
 					click: () => {
 						win.webContents.send("call", {
-							fn: "set_versus",
-							args: [""],
+							fn: "set_behaviour",
+							args: ["halt"],
 						});
 					}
 				},
@@ -655,8 +671,8 @@ function menu_build() {
 					accelerator: "F12",
 					click: () => {
 						win.webContents.send("call", {
-							fn: "start_autoplay",
-							args: [2]
+							fn: "set_behaviour",
+							args: ["auto_analysis"]
 						});
 					}
 				},
@@ -2573,8 +2589,8 @@ function menu_build() {
 					accelerator: "F9",
 					click: () => {
 						win.webContents.send("call", {
-							fn: "set_versus",
-							args: ["w"],
+							fn: "set_behaviour",
+							args: ["play_white"],
 						});
 					}
 				},
@@ -2583,8 +2599,8 @@ function menu_build() {
 					accelerator: "F10",
 					click: () => {
 						win.webContents.send("call", {
-							fn: "set_versus",
-							args: ["b"],
+							fn: "set_behaviour",
+							args: ["play_black"],
 						});
 					}
 				},
@@ -2595,15 +2611,18 @@ function menu_build() {
 					label: "Start self-play",
 					accelerator: "F11",
 					click: () => {
-						win.webContents.send("call", "start_autoplay");
+						win.webContents.send("call", {
+							fn: "set_behaviour",
+							args: ["self_play"],
+						});
 					}
 				},
 				{
 					label: "Halt",
 					click: () => {
 						win.webContents.send("call", {
-							fn: "set_versus",
-							args: [""],
+							fn: "set_behaviour",
+							args: ["halt"],
 						});
 					}
 				},

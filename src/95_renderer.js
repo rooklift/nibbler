@@ -24,64 +24,112 @@ function NewRenderer() {
 	renderer.leela_node = null;									// The node Leela is analysing now. Set when we send "go".
 																// Set to null if we send "stop", or if we receive a "bestmove".
 
-	renderer.searchmoves = [];									// Moves that we're compelling Leela to search.
+	renderer.searchmoves = [];									// Searchmoves to display in the GUI.
+	renderer.searchmoves_sent = [];								// Last searchmoves actually sent.
 
 	// We use various and multiple means to ensure that we are actually synced up with Lc0 when
 	// interpreting Lc0 output. Regardless, we also don't trust moves to be legal.
 
 	// --------------------------------------------------------------------------------------------
 
-	renderer.position_changed = function(new_game_flag, maybe_stop_versus) {
+	renderer.behave = function() {
 
-		this.position_change_time = performance.now();
+		// Called when position changes.
+		// Called when behaviour changes.
 
-		// maybe_stop_versus is for cases where auto-played moves would be surprising to the
-		// user. Note that it's OK to directly set config.versus here because we're about to
-		// call go_or_halt().
+		switch (config.behaviour) {
 
-		if (maybe_stop_versus) {
-			if (config.versus.length === 1 || (config.versus === "wb" && config.autoplay)) {
-				if (this.node_limit()) {
-					config.versus = "";
-					config.autoplay = 0;
-				}
+		case "halt":
+			this.__halt();
+			break;
+
+		case "analysis_free":
+		case "self_play":
+		case "auto_analysis":
+			this.__go();
+			break;
+
+		case "analysis_locked":
+			if (this.leela_node) {
+				break;
 			}
-		}
+			this.__go();
+			break;
 
+		case "play_white":
+			if (this.tree.node.board.active === "w") {
+				this.__go();
+			} else {
+				this.__halt();
+			}
+			break;
+
+		case "play_black":
+			if (this.tree.node.board.active === "b") {
+				this.__go();
+			} else {
+				this.__halt();
+			}
+			break;
+
+		}
+	};
+
+	renderer.position_changed = function(new_game_flag, avoid_confusion) {
+
+		this.escape();
 		this.searchmoves = [];
 		this.hoverdraw_div = -1;
-		this.escape();
-
-		this.go_or_halt(new_game_flag);
-
-		this.draw();
+		this.position_change_time = performance.now();
 		fenbox.value = this.tree.node.board.fen(true);
 
 		if (new_game_flag) {
-			let title = "Nibbler";
-			let root = this.tree.root;
-			if (root.tags && root.tags.White && root.tags.White !== "White" && root.tags.Black && root.tags.Black !== "Black") {
-				title += `: ${root.tags.White} - ${root.tags.Black}`;
+			this.set_behaviour("halt");
+			this.send_title();
+		}
+
+		if (avoid_confusion) {
+			if (["play_white", "play_black", "self_play", "auto_analysis"].includes(config.behaviour)) {
+				this.set_behaviour("halt");
 			}
-			ipcRenderer.send("set_title", title);
+		}
+
+		this.behave();
+		this.draw();
+	};
+
+	renderer.set_behaviour = function(s) {
+
+		if (s === config.behaviour) {
+			return;
+		}
+
+		config.behaviour = s;
+		this.behave();
+	};
+
+	renderer.handle_searchmoves_change = function() {
+
+		// If Leela is analysing the current position, we need to resend a go command
+		// with the new searchmoves. The following is the simplest way to force this.
+
+		if (config.leela_node === this.tree.node) {
+			let tmp = config.behaviour;
+			this.set_behaviour("halt");
+			this.set_behaviour(tmp);
 		}
 	};
 
-	renderer.set_versus = function(s) {				// config.versus should not be directly set, as go_or_halt() needs to be called too.
-		if (typeof s !== "string") s = "";
-		config.versus = "";
-		if (s.includes("W") || s.includes("w")) config.versus += "w";
-		if (s.includes("B") || s.includes("b")) config.versus += "b";
-		if (config.versus !== "wb") {									// autoplay can only be on if "wb"
-			config.autoplay = 0;
-		}
-		this.go_or_halt();
+	renderer.go_and_lock = function() {
+
+		// We have to halt first in case we are already locked on some other position
+		// (in which case setting "analysis_locked" would have no effect).
+
+		this.set_behaviour("halt");
+		this.set_behaviour("analysis_locked");
 	};
 
-	renderer.start_autoplay = function(type = 1) {			// Leela evaluating both sides, and moving or going forwards in the PGN.
-		config.autoplay = type;
-		this.set_versus("wb");
-	};
+	// --------------------------------------------------------------------------------------------
 
 	renderer.move = function(s) {							// It is safe to call this with illegal moves.
 
@@ -143,12 +191,29 @@ function NewRenderer() {
 
 		let cfg_value;
 
-		if (config.versus.length === 1) {
-			cfg_value = config.search_nodes_special;
-		} else if (config.autoplay) {
-			cfg_value = config.search_nodes_special;
-		} else {
+		switch (config.behaviour) {
+
+		case "halt":
+		case "analysis_free":
+		case "analysis_locked":
+
 			cfg_value = config.search_nodes;
+			break;
+
+		case "play_white":
+		case "play_black":
+		case "self_play":
+		case "auto_analysis":
+
+			cfg_value = config.search_nodes_special;
+			break;
+
+		default:
+
+			cfg_value = config.search_nodes;
+			alert("node_limit(): unknown config.behaviour");
+			break;
+
 		}
 
 		if (typeof cfg_value === "number" && cfg_value >= 1) {
@@ -166,6 +231,14 @@ function NewRenderer() {
 	};
 
 	// Note that the various tree.methods() return whether or not the current node changed.
+
+	renderer.return_to_lock = function() {
+		if (config.behaviour === "analysis_locked") {
+			if (this.tree.set_node(this.leela_node)) {		// Fool-proof against null / destroyed.
+				this.position_changed(false, true);
+			}
+		}
+	};
 
 	renderer.prev = function() {
 		if (this.tree.prev()) {
@@ -379,7 +452,6 @@ function NewRenderer() {
 		}
 
 		this.hide_promotiontable();		// Just in case it's up.
-		this.set_versus("");			// It's lame to run the GPU when we're clearly switching games.
 
 		let lines = [];
 
@@ -463,10 +535,6 @@ function NewRenderer() {
 	// --------------------------------------------------------------------------------------------
 	// Engine stuff...
 
-	renderer.leela_should_go = function() {
-		return config.versus.includes(this.tree.node.board.active);
-	};
-
 	renderer.receive = function(s) {
 
 		debug.receive = debug.receive ? debug.receive + 1 : 1;
@@ -503,49 +571,61 @@ function NewRenderer() {
 
 		} else if (s.startsWith("bestmove")) {
 
-			// When in versus / self-play / auto-eval mode, use "bestmove" to detect that analysis is finished.
-			//
-			// Note about synchronisation: Any "bestmove" will be ignored by engine.js unless it's the final one due.
+			// Any "bestmove" will be ignored by engine.js unless it's the final one due.
 			// Therefore, if we ever receive a bestmove, then Leela is no longer running...
 
 			let bestmove_node = this.leela_node;
 			this.leela_node = null;							// This may already have been done if we sent a "stop".
 
 			if (bestmove_node === this.tree.node) {
+				this.maybe_update_node_eval();				// Now's the last chance to update our graph eval for this node.
+			}
 
-				if (config.autoplay || (config.versus === this.tree.node.board.active)) {
+			switch (config.behaviour) {
 
-					this.maybe_update_node_eval();			// Now's the last chance to update our graph eval for this node.
+			case "self_play":
+			case "play_white":
+			case "play_black":
 
-					switch (config.autoplay) {
+				if (bestmove_node === this.tree.node) {
 
-					case 0:									// Versus mode (if config.autoplay === 0 then we got here via config.versus, above)
-					case 1:									// Actual self-play
+					let tokens = s.split(" ").filter(z => z !== "");
+					let ok = this.move(tokens[1]);
 
-						let tokens = s.split(" ").filter(z => z !== "");
-						let ok = this.move(tokens[1]);
-
-						if (!ok) {
-							LogBoth(`BAD BESTMOVE (${tokens[1]}) IN POSITION ${this.tree.node.board.fen(true)}`);
-							if (!this.warned_bad_bestmove) {
-								alert(messages.bad_bestmove);
-								this.warned_bad_bestmove = true;
-							}
+					if (!ok) {
+						LogBoth(`BAD BESTMOVE (${tokens[1]}) IN POSITION ${this.tree.node.board.fen(true)}`);
+						if (!this.warned_bad_bestmove) {
+							alert(messages.bad_bestmove);
+							this.warned_bad_bestmove = true;
 						}
-
-						break;
-
-					case 2:									// "Evaluate line" mode
-
-						if (this.tree.next()) {
-							this.position_changed(false, false);
-						} else {
-							this.set_versus("");
-						}
-						break;
-
 					}
+				} else {
+					this.set_behaviour("halt");				// Can this ever happen?
 				}
+
+				break;
+
+			case "auto_analysis":
+
+				if (bestmove_node === this.tree.node) {
+
+					if (this.tree.next()) {
+						this.position_changed(false, false);
+					} else {
+						this.set_behaviour("halt");
+					}
+
+				} else {
+					this.set_behaviour("halt");				// Can this ever happen?
+				}
+
+				break;
+
+			case "analysis_free":
+			case "analysis_locked":
+
+				this.set_behaviour("halt");					// We hit the node limit
+
 			}
 		}
 
@@ -585,20 +665,13 @@ function NewRenderer() {
 		this.info_handler.err_receive(s);
 	};
 
-	// The go and halt methods should generally not be called directly.
-
-	renderer.go_or_halt = function(new_game_flag) {
-		if (this.leela_should_go()) {
-			this.__go(new_game_flag);
-		} else {
-			this.__halt(new_game_flag);
-		}
-	};
+	// The go and halt methods should not be called directly.
 
 	renderer.__halt = function(new_game_flag) {		// "isready" is not needed. If changing position, invalid data will be discarded by renderer.receive().
 
 		this.engine.send("stop");
 		this.leela_node = null;
+		this.searchmoves_sent = [];
 
 		if (new_game_flag) {
 			this.engine.send("ucinewgame");			// Shouldn't be sent when engine is running.
@@ -610,11 +683,12 @@ function NewRenderer() {
 		this.validate_searchmoves();				// Leela can crash on illegal searchmoves.
 		this.hide_pgn_chooser();
 
-		this.__halt(new_game_flag);
-
 		if (this.tree.node.terminal_reason() !== "") {
-			return;											// Note versus status is not changed.
+			this.set_behaviour("halt");
+			return;
 		}
+
+		this.__halt(new_game_flag);
 
 		let root_fen = this.tree.root.board.fen(false);
 		let setup = `fen ${root_fen}`;
@@ -642,6 +716,45 @@ function NewRenderer() {
 
 		this.engine.send(s);
 		this.leela_node = this.tree.node;
+		this.searchmoves_sent = Array.from(this.searchmoves);
+	};
+
+	renderer.__maybe_go_after_node_change = function() {
+
+		// When the node limit changes, we may need to resend "go", possibly on a
+		// different node than the one we're looking at, and possibly with some
+		// searchmoves, which again might be different than what we're looking at.
+
+		if (!this.leela_node || config.behaviour === "halt") {
+			return;
+		}
+
+		// Directly send "stop" to avoid clearing this.leela_node and this.searchmoves_sent
+
+		this.engine.send("stop");
+
+		let root_fen = this.tree.root.board.fen(false);
+		let setup = `fen ${root_fen}`;
+
+		this.engine.send(`position ${setup} moves ${this.leela_node.history().join(" ")}`);
+		this.engine.send("isready");
+
+		let s;
+
+		if (!this.node_limit()) {
+			s = "go infinite";
+		} else {
+			s = `go nodes ${this.node_limit()}`;
+		}
+
+		if (this.searchmoves_sent.length > 0) {
+			s += " searchmoves";
+			for (let move of this.searchmoves_sent) {
+				s += " " + move;
+			}
+		}
+
+		this.engine.send(s);
 	};
 
 	renderer.validate_searchmoves = function() {
@@ -664,7 +777,7 @@ function NewRenderer() {
 	};
 
 	renderer.soft_engine_reset = function() {
-		this.go_or_halt(true);			// new game flag, causes ucinewgame to be sent
+		this.position_changed(true);
 	};
 
 	renderer.set_uci_option = function(name, val, save_to_cfg) {
@@ -765,7 +878,7 @@ function NewRenderer() {
 			config.search_nodes = val;
 		}
 		config_io.save(config);
-		this.go_or_halt();
+		this.__maybe_go_after_node_change();
 
 		if (val) {
 			ipcRenderer.send(ack_type, CommaNum(val));
@@ -775,14 +888,14 @@ function NewRenderer() {
 	};
 
 	renderer.switch_engine = function(filename) {
-		this.set_versus("");
+		this.set_behaviour("halt");
 		config.path = filename;
 		config_io.save(config);
 		this.engine_start(config.path, config.args, config.options);
 	};
 
 	renderer.restart_engine = function() {
-		this.set_versus("");
+		this.set_behaviour("halt");
 		this.engine_start(config.path, config.args, config.options);
 	};
 
@@ -856,7 +969,7 @@ function NewRenderer() {
 		if (option === "searchmoves_buttons") {
 			if (!config.searchmoves_buttons) {		// We turned it off.
 				this.searchmoves = [];
-				this.go_or_halt();					// If running, we resend the engine the new "go" command without searchmoves.
+				this.handle_searchmoves_change();
 			}
 		}
 	};
@@ -901,12 +1014,12 @@ function NewRenderer() {
 		}
 
 		this.searchmoves = Object.keys(moveset);
-		this.go_or_halt();
+		this.handle_searchmoves_change();
 	};
 
 	renderer.clear_searchmoves = function() {
 		this.searchmoves = [];
-		this.go_or_halt();
+		this.handle_searchmoves_change();
 	};
 
 	renderer.escape = function() {					// Set things into a clean state.
@@ -1055,7 +1168,7 @@ function NewRenderer() {
 	};
 
 	renderer.show_versus_state = function() {
-		alert(`versus: "${config.versus}", autoplay: ${config.autoplay}`);
+		alert(`${config.behaviour}`);
 	};
 
 	renderer.show_dropped_inputs = function() {
@@ -1087,7 +1200,7 @@ function NewRenderer() {
 		let s = buf.toString();
 		let lines = s.split("\n").map(z => z.trim()).filter(z => z !== "");
 
-		this.set_versus("");
+		this.set_behaviour("halt");
 		this.engine_start(lines[0], null, null, false);
 		for (let line of lines.slice(1)) {
 			this.engine.send(line);
@@ -1204,7 +1317,7 @@ function NewRenderer() {
 			this.searchmoves.push(sm);
 		}
 
-		this.go_or_halt();									// If we're running, send a new go message with the updated searchmoves.
+		this.handle_searchmoves_change();
 	};
 
 	renderer.movelist_click = function(event) {
@@ -1227,9 +1340,15 @@ function NewRenderer() {
 	};
 
 	renderer.statusbox_click = function(event) {
-		let val = EventPathString(event, "gobutton");
-		if (val) {
-			this.set_versus("wb");
+
+		if (EventPathString(event, "gobutton")) {
+			this.set_behaviour("analysis_free");
+			return;
+		}
+
+		if (EventPathString(event, "lock_return")) {
+			this.return_to_lock();
+			return;
 		}
 	};
 
@@ -1328,6 +1447,15 @@ function NewRenderer() {
 		// let element = document.createElement("span");
 		// element.innerHTML = " Hello ";
 		// movelist.insertAdjacentElement("beforeend", element);
+	};
+
+	renderer.send_title = function() {
+		let title = "Nibbler";
+		let root = this.tree.root;
+		if (root.tags && root.tags.White && root.tags.White !== "White" && root.tags.Black && root.tags.Black !== "Black") {
+			title += `: ${root.tags.White} - ${root.tags.Black}`;
+		}
+		ipcRenderer.send("set_title", title);
 	};
 
 	// --------------------------------------------------------------------------------------------
@@ -1595,7 +1723,9 @@ function NewRenderer() {
 			this.tree.node.terminal_reason(),
 			this.engine.ever_received_uciok,
 			this.engine.sync_change_time,
-			Math.max(this.engine.readyok_required, this.engine.bestmove_required - 1));		// How far out of sync we are, commonly 0
+			Math.max(this.engine.readyok_required, this.engine.bestmove_required - 1),		// How far out of sync we are, commonly 0
+			config.behaviour === "analysis_locked" && this.leela_node && this.leela_node !== this.tree.node
+		);
 	};
 
 	renderer.draw_infobox = function() {
@@ -1618,19 +1748,22 @@ function NewRenderer() {
 		this.draw();
 		this.maybe_update_node_eval();
 		if (config.versus !== "" && Math.max(this.engine.readyok_required, this.engine.bestmove_required) > 10) {
-			this.set_versus("");			// Stop the engine if we get too far out of sync. See issue #57.
+			this.set_behaviour("halt");			// Stop the engine if we get too far out of sync. See issue #57.
 		}
 		setTimeout(this.spin.bind(this), config.update_delay);
 	};
 
 	renderer.maybe_update_node_eval = function() {
 
-		if (config.versus === "") return;			// Avoid surprising additions to the graph when Lc0 is halted.
+		if (config.behaviour === "halt") {
+			return;			// Avoid surprising additions to the graph when Lc0 is halted.
+		}
 
 		let info = this.info_handler.sorted(this.tree.node)[0];		// Possibly undefined.
 		if (info) {
 			this.tree.node.table.update_eval_from_move(info.move);
 		}
+
 	};
 
 	return renderer;

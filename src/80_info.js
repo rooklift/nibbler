@@ -341,7 +341,7 @@ function NewInfoHandler() {
 		this.last_drawn_version = null;
 	};
 
-	ih.draw_statusbox = function(node, terminal_reason, ever_received_uciok, sync_change_time, syncs_needed) {
+	ih.draw_statusbox = function(node, terminal_reason, ever_received_uciok, sync_change_time, syncs_needed, analysing_other_flag) {
 
 		if (!ever_received_uciok) {
 
@@ -355,6 +355,10 @@ function NewInfoHandler() {
 
 			statusbox.innerHTML = `<span class="gray">Out of sync: ${syncs_needed}</span>`;
 
+		} else if (analysing_other_flag) {
+
+			statusbox.innerHTML = `<span id="lock_return_clicker" class="green">Analysing other position (return?)</span>`;
+
 		} else if (terminal_reason) {
 
 			statusbox.innerHTML = `<span class="yellow">${terminal_reason}</span>`;
@@ -367,19 +371,23 @@ function NewInfoHandler() {
 
 			let status_string = "";
 
-			if (config.versus === "") {
+			if (config.behaviour === "halt") {
 				status_string += `<span id="gobutton_clicker" class="yellow">HALTED (go?) </span>`;
-			} else if (config.versus.length === 1 && config.versus !== node.board.active) {
+			} else if (config.behaviour === "analysis_locked") {
+				status_string += `<span class="green">Locked! </span>`;
+			} else if (config.behaviour === "play_white" && node.board.active !== "w") {
 				status_string += `<span class="yellow">YOUR MOVE </span>`;
-			} else if (config.autoplay === 1) {
+			} else if (config.behaviour === "play_black" && node.board.active !== "b") {
+				status_string += `<span class="yellow">YOUR MOVE </span>`;
+			} else if (config.behaviour === "self_play") {
 				status_string += `<span class="green">Self-play! </span>`;
-			} else if (config.autoplay === 2) {
+			} else if (config.behaviour === "auto_analysis") {
 				status_string += `<span class="green">Auto-eval! </span>`;
 			}
 
 			status_string += `<span class="gray">Nodes: ${NString(node.table.nodes)}, N/s: ${NString(node.table.nps)}, Time: ${DurationString(node.table.time)}</span>`;
 
-			if (!config.autoplay && config.versus.length !== 1 && typeof config.search_nodes === "number" && node.table.nodes >= config.search_nodes) {
+			if (typeof config.search_nodes === "number" && node.table.nodes >= config.search_nodes && config.behaviour === "halt") {
 				status_string += ` <span class="blue">(limit met)</span>`;
 			}
 
