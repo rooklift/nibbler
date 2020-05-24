@@ -357,7 +357,7 @@ function NewInfoHandler() {
 
 		} else if (analysing_other_flag) {
 
-			statusbox.innerHTML = `<span id="lock_return_clicker" class="green">Analysing other position (return?)</span>`;
+			statusbox.innerHTML = `<span id="lock_return_clicker" class="blue">Analysing other position (return?)</span>`;
 
 		} else if (terminal_reason) {
 
@@ -374,7 +374,7 @@ function NewInfoHandler() {
 			if (config.behaviour === "halt") {
 				status_string += `<span id="gobutton_clicker" class="yellow">HALTED (go?) </span>`;
 			} else if (config.behaviour === "analysis_locked") {
-				status_string += `<span class="green">Locked! </span>`;
+				status_string += `<span class="blue">Locked! </span>`;
 			} else if (config.behaviour === "play_white" && node.board.active !== "w") {
 				status_string += `<span class="yellow">YOUR MOVE </span>`;
 			} else if (config.behaviour === "play_black" && node.board.active !== "b") {
@@ -387,7 +387,7 @@ function NewInfoHandler() {
 
 			status_string += `<span class="gray">Nodes: ${NString(node.table.nodes)}, N/s: ${NString(node.table.nps)}, Time: ${DurationString(node.table.time)}</span>`;
 
-			if (typeof config.search_nodes === "number" && node.table.nodes >= config.search_nodes && config.behaviour === "halt") {
+			if (typeof config.search_nodes === "number" && node.table.nodes >= config.search_nodes) {
 				status_string += ` <span class="blue">(limit met)</span>`;
 			}
 
