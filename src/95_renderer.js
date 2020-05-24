@@ -78,7 +78,8 @@ function NewRenderer() {
 
 		if (new_game_flag) {
 			this.leela_node = null;
-			this.set_behaviour("halt");		// This is what causes ucinewgame to be sent.
+			this.set_behaviour("halt");
+			this.__halt(true);				// Sends ucinewgame.
 			this.send_title();
 		}
 
@@ -671,7 +672,7 @@ function NewRenderer() {
 
 	// The go and halt methods should not be called directly.
 
-	renderer.__halt = function(new_game_flag) {		// "isready" is not needed. If changing position, invalid data will be discarded by renderer.receive().
+	renderer.__halt = function(new_game_flag) {
 
 		this.engine.send("stop");
 		this.leela_running = false;
