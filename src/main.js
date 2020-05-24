@@ -638,7 +638,7 @@ function menu_build() {
 					}
 				},
 				{
-					label: "Go and lock",
+					label: "Go and lock engine",
 					accelerator: "CommandOrControl+Shift+G",
 					click: () => {
 						win.webContents.send("call", "go_and_lock");
