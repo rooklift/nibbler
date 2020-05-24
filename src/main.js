@@ -2585,23 +2585,10 @@ function menu_build() {
 			label: "Versus",
 			submenu: [
 				{
-					label: "Go (when white)",
+					label: "Play this colour",
 					accelerator: "F9",
 					click: () => {
-						win.webContents.send("call", {
-							fn: "set_behaviour",
-							args: ["play_white"],
-						});
-					}
-				},
-				{
-					label: "Go (when black)",
-					accelerator: "F10",
-					click: () => {
-						win.webContents.send("call", {
-							fn: "set_behaviour",
-							args: ["play_black"],
-						});
+						win.webContents.send("call", "play_this_colour");
 					}
 				},
 				{

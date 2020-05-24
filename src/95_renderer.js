@@ -108,6 +108,15 @@ function NewRenderer() {
 		this.behave();
 	};
 
+	renderer.play_this_colour = function() {
+
+		if (this.tree.node.board.active === "w") {
+			this.set_behaviour("play_white");
+		} else {
+			this.set_behaviour("play_black");
+		}
+	};
+
 	renderer.handle_searchmoves_change = function() {
 
 		// If Leela is analysing the current position, we need to resend a go command
