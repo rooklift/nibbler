@@ -546,6 +546,10 @@ function NewInfoHandler() {
 
 		}
 
+		if (info_list.length === 1 && info_list[0].__ghost) {
+			substrings.push(`<div><span class="gray">Info inferred from an ancestral node; it will not be saved.</span></div>`);
+		}
+
 		infobox.innerHTML = substrings.join("");
 		this.ever_drew_infobox = true;
 	};
