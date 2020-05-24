@@ -1756,7 +1756,7 @@ function NewRenderer() {
 		this.tick++;
 		this.draw();
 		this.maybe_update_node_eval();
-		if (config.versus !== "" && Math.max(this.engine.readyok_required, this.engine.bestmove_required) > 10) {
+		if (config.behaviour !== "halt" && Math.max(this.engine.readyok_required, this.engine.bestmove_required) > 10) {
 			this.set_behaviour("halt");			// Stop the engine if we get too far out of sync. See issue #57.
 		}
 		setTimeout(this.spin.bind(this), config.update_delay);
