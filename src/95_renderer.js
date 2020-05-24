@@ -23,6 +23,7 @@ function NewRenderer() {
 
 	renderer.leela_node = null;									// The last node sent to Leela. Cleared upon tree change to prevent reuse.
 	renderer.leela_running = false;								// True iff we sent go and haven't send stop or received bestmove.
+	renderer.leela_lock_node = null;
 
 	// -------------------------------------------------------------------------------------------------------------------------
 
@@ -44,10 +45,11 @@ function NewRenderer() {
 			break;
 
 		case "analysis_locked":
-			if (this.leela_running) {
-				break;
+			if (!this.leela_running || this.leela_node !== this.leela_lock_node) {
+				if (this.tree.node === this.leela_lock_node) {
+					this.__go(this.tree.node);
+				}
 			}
-			this.__go(this.tree.node);
 			break;
 
 		case "play_white":
@@ -77,9 +79,13 @@ function NewRenderer() {
 		fenbox.value = this.tree.node.board.fen(true);
 
 		if (new_game_flag) {
+
 			this.leela_node = null;
+			this.leela_lock_node = null;
+
 			this.set_behaviour("halt");					// Will cause "stop" to be sent
 			this.engine.send("ucinewgame");				// Must happen after "stop" is sent.
+
 			this.send_title();
 		}
 
@@ -93,12 +99,12 @@ function NewRenderer() {
 		this.draw();
 	};
 
-	renderer.set_behaviour = function(s) {
+	renderer.set_behaviour = function(s, force_behave) {
 
-		// For safety's sake, always allow "halt" to go through,
-		// thus set_behaviour("halt") always sends "stop".
+		// "halt" always triggers a behave() call for safety reasons.
+		// We can also force one with the force_behave flag.
 
-		if (s === config.behaviour && s !== "halt") {
+		if (!force_behave && s !== "halt" && s === config.behaviour) {
 			return;
 		}
 
@@ -131,11 +137,11 @@ function NewRenderer() {
 
 	renderer.go_and_lock = function() {
 
-		// Upon calling this.behave() while we're set to "analysis_locked", it will
-		// do nothing if Leela is already running, therefore...
+		// Whenever behaviour becomes "analysis_locked", we need to set the lock_node.
+		// Also, the call to set_behaviour() should use the force flag.
 
-		this.set_behaviour("halt");
-		this.set_behaviour("analysis_locked");
+		this.leela_lock_node = this.tree.node;
+		this.set_behaviour("analysis_locked", true);
 	};
 
 	// -------------------------------------------------------------------------------------------------------------------------
@@ -629,8 +635,7 @@ function NewRenderer() {
 			case "analysis_free":
 			case "analysis_locked":
 
-				// We hit the node limit. Confusion can arise if we don't halt.
-				this.set_behaviour("halt");
+				// We hit the node limit. No need to change behaviour.
 				break;
 
 			}
