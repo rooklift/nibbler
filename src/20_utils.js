@@ -457,3 +457,13 @@ function HighLightString(s, prefix, classname) {
 
 	return prefix + `<span class="${classname}">` + s.slice(prefix.length) + `</span>`;
 }
+
+function StringIsNumeric(s) {
+	for (let i = 0; i < s.length; i++) {
+		let code = s.charCodeAt(i);
+		if (code < 48 || code > 57) {
+			return false;
+		}
+	}
+	return true;
+}
