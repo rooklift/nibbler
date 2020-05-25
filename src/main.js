@@ -33,8 +33,8 @@ let win;
 let menu = menu_build();
 let menu_is_set = false;
 
-let loaded_engine = config.path;
-let loaded_weights = config.options.WeightsFile || null;
+let loaded_engine = null;
+let loaded_weights = null;
 
 // Avoid a theoretical race by checking whether the ready event has already occurred,
 // otherwise set an event listener for it...
@@ -124,6 +124,14 @@ function startup() {
 
 	electron.ipcMain.on("ack_special_node_limit", (event, msg) => {
 		set_checks("Engine", "Node limit - auto-eval / play", msg);
+	});
+
+	electron.ipcMain.on("ack_engine_start", (event, msg) => {
+		loaded_engine = msg;
+	});
+
+	electron.ipcMain.on("ack_weightsfile", (event, msg) => {
+		loaded_weights = msg;
 	});
 
 	// Actually load the page last, I guess, so the event handlers above are already set up...
@@ -1740,7 +1748,6 @@ function menu_build() {
 								fn: "switch_engine",
 								args: [file]
 							});
-							loaded_engine = file;
 							// Save the dir as the new default dir, in both processes.
 							config.engine_dialog_folder = path.dirname(file);
 							win.webContents.send("set", {
@@ -1763,7 +1770,6 @@ function menu_build() {
 								fn: "switch_weights",
 								args: [file]
 							});
-							loaded_weights = file;
 							// Save the dir as the new default dir, in both processes.
 							config.weights_dialog_folder = path.dirname(file);
 							win.webContents.send("set", {

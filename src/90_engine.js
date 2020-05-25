@@ -62,6 +62,11 @@ function NewEngine() {
 			return;
 		}
 
+		if (msg.startsWith("setoption") && msg.includes("WeightsFile")) {
+			let i = msg.indexOf("value") + 5;
+			ipcRenderer.send("ack_weightsfile", msg.slice(i).trim())
+		}
+
 		try {
 			this.exe.stdin.write(msg);
 			this.exe.stdin.write("\n");
@@ -109,6 +114,9 @@ function NewEngine() {
 			alert(err);
 			return;
 		}
+
+		ipcRenderer.send("ack_engine_start", filepath);
+		ipcRenderer.send("ack_weightsfile", null);
 
 		this.exe.once("error", (err) => {
 			alert(err);
