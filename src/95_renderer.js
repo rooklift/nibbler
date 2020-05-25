@@ -758,7 +758,7 @@ function NewRenderer() {
 			return;
 		}
 
-		// Some highlights... this is obviously super-fragile based on the precise strings Leela sends...
+		// Some highlights... this is obviously super-fragile based on the precise strings Leela sends.
 
 		if (s.startsWith("Found configuration file: ")) {
 			this.info_handler.err_receive(HighLightString(s, "Found configuration file: ", "blue"));
@@ -770,7 +770,10 @@ function NewRenderer() {
 			return;
 		}
 
+		// We can also send an IPC message so main.js knows what WeightsFile we have...
+
 		if (s.startsWith("Loading weights file from: ")) {
+			ipcRenderer.send("ack_weightsfile", s.slice(26).trim());
 			this.info_handler.err_receive(HighLightString(s, "Loading weights file from: ", "blue"));
 			return;
 		}
