@@ -942,15 +942,17 @@ function NewRenderer() {
 		this.set_behaviour("halt");
 		config.path = filename;
 		config_io.save(config);
-		this.engine_start(config.path, config.args, config.options);
+		this.engine_start(config.path, config.args);
+		this.engine_initial_comms(config.options);
 	};
 
 	renderer.restart_engine = function() {
 		this.set_behaviour("halt");
-		this.engine_start(config.path, config.args, config.options);
+		this.engine_start(config.path, config.args);
+		this.engine_initial_comms(config.options);
 	};
 
-	renderer.engine_start = function(filepath, args, options, send_normal_options = true) {
+	renderer.engine_start = function(filepath, args) {
 
 		if (this.engine.exe) {						// We already have an engine connection (possibly non-functioning, but still...)
 			this.engine.shutdown();
@@ -974,6 +976,9 @@ function NewRenderer() {
 		}
 
 		this.engine.setup(filepath, args, this.receive.bind(this), this.err_receive.bind(this));
+	};
+
+	renderer.engine_initial_comms = function(options) {
 
 		if (typeof options !== "object" || options === null) {
 			options = {};
@@ -981,10 +986,10 @@ function NewRenderer() {
 
 		this.engine.send("uci");
 
-		if (send_normal_options) {
-			for (let key of Object.keys(leela_normal_options)) {
-				this.engine.setoption(key, leela_normal_options[key]);
-			}
+		// Here we send the leela_normal_options...
+
+		for (let key of Object.keys(leela_normal_options)) {
+			this.engine.setoption(key, leela_normal_options[key]);
 		}
 
 		for (let key of Object.keys(options)) {
@@ -1249,7 +1254,7 @@ function NewRenderer() {
 		let lines = s.split("\n").map(z => z.trim()).filter(z => z !== "");
 
 		this.set_behaviour("halt");
-		this.engine_start(lines[0], null, null, false);
+		this.engine_start(lines[0], null);
 		for (let line of lines.slice(1)) {
 			this.engine.send(line);
 		}
