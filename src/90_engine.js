@@ -64,7 +64,7 @@ function NewEngine() {
 
 		if (msg.startsWith("setoption") && msg.includes("WeightsFile")) {
 			let i = msg.indexOf("value") + 5;
-			ipcRenderer.send("ack_weightsfile", msg.slice(i).trim())
+			ipcRenderer.send("ack_weightsfile", msg.slice(i).trim());
 		}
 
 		try {
