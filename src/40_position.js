@@ -760,7 +760,7 @@ const position_prototype = {
 		s = ReplaceAll(s, "!", "");
 		s = ReplaceAll(s, "?", "");
 
-		// If the string contains any dots it'll be something like "1.e4" or "1...e4"
+		// If the string contains any dots it'll be something like "1.e4" or "...e4" or whatnot...
 
 		let lio = s.lastIndexOf(".");
 		if (lio !== -1) {
