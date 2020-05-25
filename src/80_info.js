@@ -223,10 +223,6 @@ function NewInfoHandler() {
 			tmp = parseInt(infovals["N:"], 10);
 			if (Number.isNaN(tmp) === false) {
 				move_info.n = tmp;
-				if (tmp === 0) {								// If no nodes have been spent, any PV info we have is
-					move_info.nice_pv_cache = null;				// from a previous "go" and should be discarded.
-					move_info.pv = [move_info.move];
-				}
 			}
 
 			tmp = parseFloat(infovals["(D:"]);
