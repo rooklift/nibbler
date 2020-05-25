@@ -1257,6 +1257,7 @@ function NewRenderer() {
 		this.engine_start(lines[0], null);
 		for (let line of lines.slice(1)) {
 			this.engine.send(line);
+			console.log(line);
 		}
 	};
 
