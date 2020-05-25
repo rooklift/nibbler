@@ -163,8 +163,6 @@ function NewInfoHandler() {
 
 			move_info.wdl = InfoWDL(s);
 
-			let new_pv = InfoPV(s);
-
 			// Note: if the engine isn't respecting Chess960 castling format, the PV
 			// may contain old-fashioned castling moves. This is (at time of writing)
 			// the only place in the code where we might store such bad-format moves,
@@ -176,14 +174,17 @@ function NewInfoHandler() {
 			// While we could work around the presence of such bad-format moves,
 			// there are many complex ramifications.
 
-			if (new_pv.length > 1) {	// Ignore info with missing PV (Stockfish likes to send these).
+			let new_pv = InfoPV(s);
 
-				new_pv[0] = move;		// Partial mitigation for wrong-format castling.
+			// Note: we used to ignore PV of length 1 on account of Stockfish sending
+			// such PVs sometimes, but this does lead to actual PVs of length 1 being
+			// ignored, which can lead to stale long PVs in the infobox.
 
-				if (CompareArrays(new_pv, move_info.pv) === false) {
-					move_info.nice_pv_cache = null;
-					move_info.pv = new_pv;
-				}
+			new_pv[0] = move;		// Partial mitigation for wrong-format castling.
+
+			if (CompareArrays(new_pv, move_info.pv) === false) {
+				move_info.nice_pv_cache = null;
+				move_info.pv = new_pv;
 			}
 
 		} else if (s.startsWith("info string")) {
