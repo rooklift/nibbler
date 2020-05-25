@@ -218,6 +218,7 @@ function LoadPGNRecord(o) {				// Can throw, either by itself, or by allowing a 
 			token.push(c);
 
 			// It the current token complete?
+			// We'll split the input on the following characters...
 
 			let peek = rawline[i + 1];
 
