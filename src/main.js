@@ -857,6 +857,18 @@ function menu_build() {
 								});
 							}
 						},
+						{
+							label: "Moves Left Head",
+							type: "checkbox",
+							checked: config.arrowhead_type === 4,
+							click: () => {
+								set_checks("Display", "Arrowhead type", "Moves Left Head");
+								win.webContents.send("set", {
+									key: "arrowhead_type",
+									value: 4,
+								});
+							}
+						},
 					]
 				},
 				{

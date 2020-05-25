@@ -806,6 +806,9 @@ function NewInfoHandler() {
 			case 3:
 				s = o.info.multipv;
 				break;
+			case 4:
+				s = o.info.m.toFixed(0);
+				break;
 			default:
 				s = "!";
 				break;
