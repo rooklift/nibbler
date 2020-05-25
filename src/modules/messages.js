@@ -116,4 +116,4 @@ author would like to be informed.`;
 
 
 exports.inferred_info =
-`Info inferred from an ancestral node; it will not be saved.`;
+`Info inferred from an ancestral node.`;
