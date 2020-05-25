@@ -218,7 +218,7 @@ function LoadPGNRecord(o) {				// Can throw, either by itself, or by allowing a 
 			token.push(c);
 
 			// It the current token complete?
-			// We'll split the input on the following characters...
+			// We'll start a new token when we see any of the following...
 
 			let peek = rawline[i + 1];
 
@@ -230,14 +230,18 @@ function LoadPGNRecord(o) {				// Can throw, either by itself, or by allowing a 
 			peek === 46				||			// .
 			peek === 123) {						// {
 
-				let initial_s = token.string();
-				let s = initial_s.trim();
-
+				let s = token.string().trim();
 				token = new_byte_pusher();			// For the next round.
+
+				// The above conditional means "." can only appear as the first character.
+
+				if (s[0] === ".") {
+					s = s.slice(1);
+				}
 
 				// Parse s.
 
-				if (s === "" || s.endsWith(".") || s.startsWith("$") || peek === 46) {
+				if (s === "" || s.startsWith("$") || StringIsNumeric(s)) {
 					// Useless token.
 					continue;
 				}
