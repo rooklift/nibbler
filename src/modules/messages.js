@@ -63,12 +63,6 @@ exports.about_sizes =
 Nibbler's config file (which can be found via the Dev menu).`;
 
 
-exports.new_config_location =
-`WARNING: Nibbler now looks for ${config_io.filename} in a new location and also \
-saves to it automatically. You can delete the file in your app's folder. If you want to \
-manually edit ${config_io.filename}, you can find it via the Dev menu.`;
-
-
 exports.thread_warning =
 `Note that, for systems using a GPU, 2 threads is usually sufficient, and increasing \
 this number can actually make Leela weaker! More threads should probably only be used \
@@ -94,7 +88,7 @@ exports.adding_uci_options =
 The format is fairly self-explanatory. Restart Nibbler for this to take effect.
 
 Note that these custom settings are only sent WHEN CLICKED (not automatically). To automatically \
-send custom UCI options at startup, edit ${config_io.filename} (options section) instead.`;
+send custom options at startup, an lc0.config file is recommended instead.`;
 
 
 exports.wrong_engine_exe =
