@@ -83,12 +83,10 @@ exports.settings_for_blas =
 this, explicitly set either value in ${config_io.filename} (options section).`;
 
 
-exports.adding_uci_options =
-`You can add arbitrary UCI settings to this menu by editing the file ${custom_uci.filename}. \
-The format is fairly self-explanatory. Restart Nibbler for this to take effect.
-
-Note that these custom settings are only sent WHEN CLICKED (not automatically). To automatically \
-send custom options at startup, an lc0.config file is recommended instead.`;
+exports.adding_scripts =
+`Nibbler has a scripts folder, inside which you can place scripts of raw input to send to
+the engine. A small example file is provided. This is for advanced users and devs who
+understand the UCI protocol.`;
 
 
 exports.wrong_engine_exe =
