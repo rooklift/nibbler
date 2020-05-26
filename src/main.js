@@ -3089,8 +3089,10 @@ function menu_build() {
 		click: () => {}
 	});
 	scriptlist_in_menu.push({
-		label: `Show scripts folder (TODO)`,
-		click: () => {}
+		label: `Show scripts folder`,
+		click: () => {
+			electron.shell.showItemInFolder(custom_uci.script_dir_path);
+		}
 	});
 
 	// Actually build the menu...
