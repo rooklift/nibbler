@@ -53,7 +53,7 @@ function NewRenderer() {
 			// Only send "go" in certain circumstances...
 
 			if (!this.leela_running || this.leela_node !== this.leela_lock_node || this.leela_search_nodes !== this.node_limit()) {
-				if (this.tree.node === this.leela_lock_node) {
+				if (this.tree.node === this.leela_lock_node) {		// So moving around in irrelevant positions doesn't trigger.
 					this.__go(this.tree.node);
 				}
 			}
