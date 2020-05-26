@@ -115,16 +115,30 @@ function NewRenderer() {
 		this.previous_node = this.tree.node;
 	};
 
-	renderer.set_behaviour = function(s, force_behave) {
+	renderer.set_behaviour = function(s) {
 
-		// "halt" always triggers a behave() call for safety reasons.
-		// We can also force one with the force_behave flag.
+		// Don't do anything if behaviour is already correct. But
+		// "halt" always triggers a behave() call for safety reasons,
+		// though engine.js may filter duplicates.
 
-		if (!force_behave && s !== "halt" && s === config.behaviour) {
+		if (s !== "halt" && s === config.behaviour) {
 			return;
 		}
 
+		// "analysis_locked" has its own function.
+
+		if (s === "analysis_locked") {
+			throw `set_behaviour("analysis_locked") not allowed`;
+		}
+
+		this.leela_lock_node = null;
 		config.behaviour = s;
+		this.behave();
+	};
+
+	renderer.go_and_lock = function() {
+		this.leela_lock_node = this.tree.node;
+		config.behaviour = "analysis_locked";
 		this.behave();
 	};
 
@@ -151,15 +165,6 @@ function NewRenderer() {
 		} else {
 			this.set_behaviour("play_black");
 		}
-	};
-
-	renderer.go_and_lock = function() {
-
-		// Whenever behaviour becomes "analysis_locked", we need to set the lock_node.
-		// Also, the call to set_behaviour() should use the force flag.
-
-		this.leela_lock_node = this.tree.node;
-		this.set_behaviour("analysis_locked", true);
 	};
 
 	// -------------------------------------------------------------------------------------------------------------------------
