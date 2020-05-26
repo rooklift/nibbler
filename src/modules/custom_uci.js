@@ -50,17 +50,10 @@ exports.create_if_needed = () => {
 	try {
 		if (!fs.existsSync(exports.script_dir_path)) {
 			fs.mkdirSync(exports.script_dir_path);
+			let example_path = path.join(exports.script_dir_path, example_file);
+			fs.writeFileSync(example_path, example);
 		}
 	} catch (err) {
 		console.log(err.toString());
-		return;
-	}
-
-	let example_path = path.join(exports.script_dir_path, example_file);
-
-	try {
-		fs.writeFileSync(example_path, example);
-	} catch (err) {
-		console.log(err.toString());		// alert() might not be available.
 	}
 }
