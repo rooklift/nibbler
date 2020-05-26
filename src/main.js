@@ -153,7 +153,7 @@ function menu_build() {
 
 	const million = 1000000;
 
-	let cclist_in_menu = [];
+	let scriptlist_in_menu = [];
 
 	let template = [
 		{
@@ -2579,8 +2579,8 @@ function menu_build() {
 					type: "separator"
 				},
 				{
-					label: "Custom UCI options",
-					submenu: cclist_in_menu			// Will be filled at the end, see below.
+					label: "Custom scripts",
+					submenu: scriptlist_in_menu			// Will be filled at the end, see below.
 				},
 				{
 					type: "separator"
@@ -3065,36 +3065,32 @@ function menu_build() {
 		}
 	];
 
-	// Some special shennanigans to build the custom options menu...
+	// Some special shennanigans to build the custom scripts menu...
 
-	let cclist = custom_uci.load();
+	let scriptlist = custom_uci.load();
 
-	for (let command of cclist) {
-		cclist_in_menu.push({
-			label: command.name + " " + command.val,
+	for (let script of scriptlist) {
+		scriptlist_in_menu.push({
+			label: script.name,
 			click: () => {
 				win.webContents.send("call", {
-					fn: "set_uci_option",
-					args: [command.name, command.val]
+					fn: "run_script",
+					args: [script.path]
 				});
 			}
 		});
 	}
 
-	if (cclist_in_menu.length > 0) {
-		cclist_in_menu.push({type: "separator"});
+	if (scriptlist_in_menu.length > 0) {
+		scriptlist_in_menu.push({type: "separator"});
 	}
-	cclist_in_menu.push({
-		label: "How to add UCI options",
-		click: () => {
-			alert(messages.adding_uci_options);
-		}
+	scriptlist_in_menu.push({
+		label: "How to add scripts (TODO)",
+		click: () => {}
 	});
-	cclist_in_menu.push({
-		label: `Show ${custom_uci.filename}`,
-		click: () => {
-			electron.shell.showItemInFolder(custom_uci.filepath);
-		}
+	scriptlist_in_menu.push({
+		label: `Show scripts folder (TODO)`,
+		click: () => {}
 	});
 
 	// Actually build the menu...
