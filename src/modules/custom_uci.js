@@ -8,8 +8,8 @@ const scripts_dir = "scripts";
 const example_file = "example.txt";
 
 const example =
-`setoption name Foo value Bar
-setoption name SomethingElse value Whatever`;
+`setoption name Something value WhoKnows
+setoption name Example value Whatever`;
 
 exports.script_dir_path = electron.app ?
 		path.join(electron.app.getPath("userData"), scripts_dir) :
