@@ -99,8 +99,8 @@ function NewRenderer() {
 			}
 		}
 
-		this.cleanup_previous_node();
 		this.maybe_infer_info();
+		this.cleanup_previous_node();					// After info inference, so we can use ghost info when going forwards.
 		this.behave();
 		this.draw();
 
