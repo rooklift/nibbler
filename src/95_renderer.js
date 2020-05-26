@@ -50,7 +50,8 @@ function NewRenderer() {
 
 		case "analysis_locked":
 
-			// Only send "go" in certain circumstances...
+			// Only send "go" in certain circumstances... the leela_search_nodes condition is for cases like switching from
+			// "auto_analysis" mode to "analysis_locked" mode.
 
 			if (!this.leela_running || this.leela_node !== this.leela_lock_node || this.leela_search_nodes !== this.node_limit()) {
 				if (this.tree.node === this.leela_lock_node) {		// So moving around in irrelevant positions doesn't trigger.
