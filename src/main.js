@@ -3085,8 +3085,10 @@ function menu_build() {
 		scriptlist_in_menu.push({type: "separator"});
 	}
 	scriptlist_in_menu.push({
-		label: "How to add scripts (TODO)",
-		click: () => {}
+		label: "How to add scripts",
+		click: () => {
+			alert(messages.adding_scripts);
+		}
 	});
 	scriptlist_in_menu.push({
 		label: `Show scripts folder`,
