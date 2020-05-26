@@ -1251,6 +1251,8 @@ function NewRenderer() {
 
 	renderer.run_script = function(filename) {
 
+		const disallowed = ["position", "go", "stop", "ponderhit", "quit"];
+
 		let buf;
 		try {
 			buf = fs.readFileSync(filename);
@@ -1265,10 +1267,12 @@ function NewRenderer() {
 		let lines = s.split("\n").map(z => z.trim()).filter(z => z !== "");
 
 		for (let line of lines) {
-			if (line.startsWith("setoption") === false) {
-				this.set_special_message(`${messages.invalid_script}`, "yellow");
-				console.log(`Refused to run script: ${filename}`);
-				return;
+			for (let d of disallowed) {
+				if (line.startsWith(d)) {
+					this.set_special_message(`${messages.invalid_script}`, "yellow");
+					console.log(`Refused to run script: ${filename}`);
+					return;
+				}
 			}
 		}
 

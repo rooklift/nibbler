@@ -88,11 +88,11 @@ exports.adding_scripts =
 the engine. A small example file is provided. This is for advanced users and devs who \
 understand the UCI protocol.
 
-Note that only the setoption command may be used.`;
+Note that this is for configuration only.`;
 
 
 exports.invalid_script =
-`Bad script. Only the setoption command may be used.`;
+`Bad script; scripts are for configuration only.`;
 
 
 exports.wrong_engine_exe =
