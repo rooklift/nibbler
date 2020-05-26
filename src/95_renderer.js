@@ -1266,12 +1266,15 @@ function NewRenderer() {
 
 		this.set_behaviour("halt");
 
+		console.log(`Running script: ${filename}`);
+
 		let s = buf.toString();
 		let lines = s.split("\n").map(z => z.trim()).filter(z => z !== "");
 		for (let line of lines) {
 			this.engine.send(line);
 			console.log(line);
 		}
+		this.set_special_message(`${path.basename(filename)}: Sent ${lines.length} lines`, "blue");
 	};
 
 	renderer.generate_simple_book = function() {		// Format I used in LeelaStockZeroFish. But remember castling format!
