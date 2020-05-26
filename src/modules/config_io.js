@@ -260,6 +260,8 @@ exports.save = (cfg) => {
 
 exports.create_if_needed = (cfg) => {
 
+	// Note that this must be called fairly late, when userData directory exists.
+
 	if (!cfg) {
 		throw "create_if_needed() needs an argument";
 	}
