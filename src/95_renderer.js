@@ -1261,10 +1261,19 @@ function NewRenderer() {
 
 		this.set_behaviour("halt");
 
-		console.log(`Running script: ${filename}`);
-
 		let s = buf.toString();
 		let lines = s.split("\n").map(z => z.trim()).filter(z => z !== "");
+
+		for (let line of lines) {
+			if (line.startsWith("setoption") === false) {
+				this.set_special_message(`${messages.invalid_script}`, "yellow");
+				console.log(`Refused to run script: ${filename}`);
+				return;
+			}
+		}
+
+		console.log(`Running script: ${filename}`);
+
 		for (let line of lines) {
 			this.engine.send(line);
 			console.log(line);

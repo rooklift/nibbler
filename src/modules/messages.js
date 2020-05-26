@@ -84,9 +84,15 @@ this, explicitly set either value in ${config_io.filename} (options section).`;
 
 
 exports.adding_scripts =
-`Nibbler has a scripts folder, inside which you can place scripts of raw input to send to
-the engine. A small example file is provided. This is for advanced users and devs who
-understand the UCI protocol.`;
+`Nibbler has a scripts folder, inside which you can place scripts of raw input to send to \
+the engine. A small example file is provided. This is for advanced users and devs who \
+understand the UCI protocol.
+
+Note that only the setoption command may be used.`;
+
+
+exports.invalid_script =
+`Bad script. Only the setoption command may be used.`;
 
 
 exports.wrong_engine_exe =
