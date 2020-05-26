@@ -110,8 +110,8 @@ author would like to be informed.`;
 
 
 exports.inferred_info =
-`Info inferred from an ancestral position.`;
+`Info inferred from a previous position.`;
 
 
 exports.inferred_info_unstable =
-`Info inferred from an ancestral position undergoing analysis; the PV may be unstable!`;
+`Info inferred from a previous position undergoing live analysis; the PV may be unstable!`;
