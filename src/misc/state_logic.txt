@@ -10,7 +10,7 @@ User changes POSITION --------/       \----> set_behaviour()      |
                                      2             ^              |
                                                    |              |
 User changes BEHAVIOUR ----------------------------/              |
-                                                                  |
+                                            3                     |
                                                                   |
 User changes SEARCHMOVES -----> handle_searchmoves_change() ------/
                                                                   |
@@ -21,3 +21,4 @@ User changes NODE LIMITS ------> handle_node_limit_change() ------/
 Notes:
 1. Only with relevant behaviour setting
 2. This path only sets "halt"
+3. Except that "analysis_locked" has its own function go_and_lock()
