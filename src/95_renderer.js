@@ -45,7 +45,9 @@ function NewRenderer() {
 		case "analysis_free":
 		case "self_play":
 		case "auto_analysis":
-			this.__go(this.tree.node);
+			if (!this.leela_running || this.leela_node !== this.tree.node || this.leela_search_nodes !== this.node_limit()) {
+				this.__go(this.tree.node);
+			}
 			break;
 
 		case "analysis_locked":
