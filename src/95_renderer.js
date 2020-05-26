@@ -161,6 +161,10 @@ function NewRenderer() {
 		//
 		// The whole thing is a bit sketchy, maybe.
 
+		if (config.behaviour !== "halt" && config.behaviour !== "analysis_locked") {
+			return;
+		}
+
 		let node = this.tree.node;
 
 		if (!node.parent) {
@@ -220,7 +224,12 @@ function NewRenderer() {
 
 		let new_info = NewInfo(node.board, nextmove);
 
-		new_info.__ghost = true;
+		if (config.behaviour === "analysis_locked" && ancestor === this.leela_node) {
+			new_info.__ghost = messages.inferred_info_unstable;
+		} else {
+			new_info.__ghost = messages.inferred_info;
+		}
+
 		new_info.pv = pv;
 		new_info.q = oldinfo.q;
 		new_info.cp = oldinfo.cp;
