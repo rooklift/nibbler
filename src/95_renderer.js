@@ -224,12 +224,7 @@ function NewRenderer() {
 
 		let new_info = NewInfo(node.board, nextmove);
 
-		if (config.behaviour === "analysis_locked" && ancestor === this.leela_node) {
-			new_info.__ghost = messages.inferred_info_unstable;
-		} else {
-			new_info.__ghost = messages.inferred_info;
-		}
-
+		new_info.__ghost = true;
 		new_info.pv = pv;
 		new_info.q = oldinfo.q;
 		new_info.cp = oldinfo.cp;

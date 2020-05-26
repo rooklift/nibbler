@@ -548,7 +548,7 @@ function NewInfoHandler() {
 		}
 
 		if (info_list.length === 1 && info_list[0].__ghost) {
-			substrings.push(`<div><span class="gray">${info_list[0].__ghost}</span></div>`);
+			substrings.push(`<div><span class="gray">${messages.inferred_info}</span></div>`);
 		}
 
 		infobox.innerHTML = substrings.join("");
