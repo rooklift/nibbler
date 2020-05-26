@@ -29,6 +29,8 @@ function NewRenderer() {
 	renderer.leela_search_nodes = -1;							// The node limit we last sent (e.g. "go nodes 1000" --> 1000) or null for infinite.
 	renderer.leela_lock_node = null;							// Set only when starting "analysis_locked" mode.
 
+	// Note that only leela_running is changed when we stop Leela or detect that it stopped on its own.
+
 	// -------------------------------------------------------------------------------------------------------------------------
 
 	renderer.behave = function() {
