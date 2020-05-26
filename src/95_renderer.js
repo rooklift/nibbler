@@ -1255,6 +1255,7 @@ function NewRenderer() {
 	};
 
 	renderer.run_script = function(filename) {
+
 		let buf;
 		try {
 			buf = fs.readFileSync(filename);
@@ -1262,12 +1263,12 @@ function NewRenderer() {
 			alert(err);
 			return;
 		}
-		let s = buf.toString();
-		let lines = s.split("\n").map(z => z.trim()).filter(z => z !== "");
 
 		this.set_behaviour("halt");
-		this.engine_start(lines[0], null);
-		for (let line of lines.slice(1)) {
+
+		let s = buf.toString();
+		let lines = s.split("\n").map(z => z.trim()).filter(z => z !== "");
+		for (let line of lines) {
 			this.engine.send(line);
 			console.log(line);
 		}
