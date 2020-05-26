@@ -19,13 +19,15 @@ function NewRenderer() {
 	renderer.tick = 0;											// How many draw loops we've been through.
 	renderer.position_change_time = performance.now();			// Time of the last position change. Used for cooldown on hover draw.
 
+	renderer.previous_node = null;								// Our previous tree position, so we can cleanup nodes as we leave them.
+
 	// Some sync stuff...
 
-	renderer.leela_node = null;									// The last node sent to Leela. Cleared upon tree change to prevent reuse.
-	renderer.leela_running = false;								// True iff we sent go and haven't send stop or received bestmove.
-	renderer.leela_lock_node = null;							// Set only when starting "analysis_locked" mode.
+	renderer.leela_running = false;								// True iff we sent "go" and haven't sent "stop" or received "bestmove".
 
-	renderer.previous_node = null;								// So we can cleanup nodes as we leave them.
+	renderer.leela_node = null;									// The last tree node sent to Leela. Cleared upon tree change to prevent reuse.
+	renderer.leela_search_nodes = -1;							// The node limit we last sent (e.g. "go nodes 1000" --> 1000) or null for infinite.
+	renderer.leela_lock_node = null;							// Set only when starting "analysis_locked" mode.
 
 	// -------------------------------------------------------------------------------------------------------------------------
 
@@ -46,11 +48,11 @@ function NewRenderer() {
 			this.__go(this.tree.node);
 			break;
 
-		// FIXME: switching from a state that uses the special node limit to "analysis_locked"
-		// will not trigger a "go" with the correct limit.
-
 		case "analysis_locked":
-			if (!this.leela_running || this.leela_node !== this.leela_lock_node) {
+
+			// Only send "go" in certain circumstances...
+
+			if (!this.leela_running || this.leela_node !== this.leela_lock_node || this.leela_search_nodes !== this.node_limit()) {
 				if (this.tree.node === this.leela_lock_node) {
 					this.__go(this.tree.node);
 				}
@@ -86,9 +88,11 @@ function NewRenderer() {
 
 		if (new_game_flag) {
 
-			this.leela_node = null;
-			this.leela_lock_node = null;
 			this.previous_node = null;
+
+			this.leela_node = null;
+			this.leela_search_nodes = -1;
+			this.leela_lock_node = null;
 
 			this.set_behaviour("halt");					// Will cause "stop" to be sent
 			this.engine.send("ucinewgame");				// Must happen after "stop" is sent.
@@ -132,8 +136,10 @@ function NewRenderer() {
 
 	renderer.handle_node_limit_change = function() {
 
-		if (config.behaviour !== "halt") {
-			this.__go(this.leela_node);
+		if (this.leela_search_nodes !== this.node_limit()) {
+			if (config.behaviour !== "halt") {
+				this.__go(this.leela_node);
+			}
 		}
 	};
 
@@ -817,11 +823,12 @@ function NewRenderer() {
 		this.engine.send("isready");
 
 		let s;
+		this.leela_search_nodes = this.node_limit();
 
-		if (!this.node_limit()) {
+		if (!this.leela_search_nodes) {
 			s = "go infinite";
 		} else {
-			s = `go nodes ${this.node_limit()}`;
+			s = `go nodes ${this.leela_search_nodes}`;
 		}
 
 		if (config.searchmoves_buttons && node.searchmoves && node.searchmoves.length > 0) {
