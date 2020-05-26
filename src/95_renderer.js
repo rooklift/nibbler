@@ -46,6 +46,9 @@ function NewRenderer() {
 			this.__go(this.tree.node);
 			break;
 
+		// FIXME: switching from a state that uses the special node limit to "analysis_locked"
+		// will not trigger a "go" with the correct limit.
+
 		case "analysis_locked":
 			if (!this.leela_running || this.leela_node !== this.leela_lock_node) {
 				if (this.tree.node === this.leela_lock_node) {
@@ -1228,7 +1231,7 @@ function NewRenderer() {
 	};
 
 	renderer.show_versus_state = function() {
-		alert(`${config.behaviour}`);
+		alert(`behaviour: "${config.behaviour}", leela_running: ${this.leela_running}`);
 	};
 
 	renderer.show_dropped_inputs = function() {
