@@ -356,7 +356,7 @@ function NewInfoHandler() {
 
 			statusbox.innerHTML = `<span class="gray">Out of sync: ${syncs_needed}</span>`;
 
-		} else if (config.show_versus_state) {
+		} else if (config.show_engine_state) {
 
 			statusbox.innerHTML =
 			`running: <span class="${engine.running ? "green" : "yellow"}">${engine.running}</span>, ` +

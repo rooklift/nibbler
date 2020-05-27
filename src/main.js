@@ -3041,13 +3041,13 @@ function menu_build() {
 					}
 				},
 				{
-					label: "Show versus state",
+					label: "Show engine state",
 					type: "checkbox",
-					checked: config.show_versus_state,
+					checked: config.show_engine_state,
 					click: () => {
 						win.webContents.send("call", {
 							fn: "toggle",
-							args: ["show_versus_state"]
+							args: ["show_engine_state"]
 						});
 					}
 				},
