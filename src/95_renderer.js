@@ -809,7 +809,7 @@ function NewRenderer() {
 		this.__halt();
 
 		if (!node || node.destroyed || node.terminal_reason() !== "") {
-			this.leela_node = null;
+			this.leela_node = null;			// So that terminal positions don't leave this set to some previous node.
 			return;
 		}
 
