@@ -150,7 +150,7 @@ function NewRenderer() {
 	renderer.handle_node_limit_change = function() {
 
 		if (this.engine.search_nodes !== this.node_limit()) {
-			if (config.behaviour !== "halt") {
+			if (this.leela_node && config.behaviour !== "halt") {
 				this.__go(this.leela_node);
 			}
 		}
@@ -809,6 +809,7 @@ function NewRenderer() {
 		this.__halt();
 
 		if (!node || node.destroyed || node.terminal_reason() !== "") {
+			this.leela_node = null;
 			return;
 		}
 
