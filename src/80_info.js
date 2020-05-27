@@ -360,7 +360,7 @@ function NewInfoHandler() {
 
 			statusbox.innerHTML =
 			`running: <span class="${engine.running ? "green" : "yellow"}">${engine.running}</span>, ` +
-			`search_nodes: <span class="yellow">${engine.search_nodes}</span>, ` +
+			`sent_limit: <span class="yellow">${engine.sent_limit}</span>, ` +
 			`behaviour: <span class="yellow">"${config.behaviour}"</span>`;
 
 		} else if (analysing_other) {

@@ -42,17 +42,17 @@ function NewRenderer() {
 		case "analysis_free":
 		case "self_play":
 		case "auto_analysis":
-			if (!this.engine.running || this.leela_node !== this.tree.node || this.engine.search_nodes !== this.node_limit()) {
+			if (!this.engine.running || this.leela_node !== this.tree.node || this.engine.sent_limit !== this.node_limit()) {
 				this.__go(this.tree.node);
 			}
 			break;
 
 		case "analysis_locked":
 
-			// Only send "go" in certain circumstances... the engine.search_nodes condition is for cases like switching from
+			// Only send "go" in certain circumstances... the engine.sent_limit condition is for cases like switching from
 			// "auto_analysis" mode to "analysis_locked" mode.
 
-			if (!this.engine.running || this.leela_node !== this.leela_lock_node || this.engine.search_nodes !== this.node_limit()) {
+			if (!this.engine.running || this.leela_node !== this.leela_lock_node || this.engine.sent_limit !== this.node_limit()) {
 				if (this.tree.node === this.leela_lock_node) {		// So moving around in irrelevant positions doesn't trigger.
 					this.__go(this.tree.node);
 				}
@@ -149,7 +149,7 @@ function NewRenderer() {
 
 	renderer.handle_node_limit_change = function() {
 
-		if (this.engine.search_nodes !== this.node_limit()) {
+		if (this.engine.sent_limit !== this.node_limit()) {
 			if (this.leela_node && config.behaviour !== "halt") {
 				this.__go(this.leela_node);
 			}
@@ -349,7 +349,7 @@ function NewRenderer() {
 
 		}
 
-		// We need to match the values stored in engine.search_nodes.
+		// We need to match the values stored in engine.sent_limit.
 
 		if (typeof cfg_value === "number" && cfg_value >= 1) {
 			return cfg_value;

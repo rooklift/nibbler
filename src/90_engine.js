@@ -44,12 +44,12 @@ function NewEngine() {
 
 	eng.running = false;
 
-	// eng.search_nodes - the node limit of the last "go" we sent (but not affected by "bestmove").
+	// eng.sent_limit - the node limit of the last "go" we sent (but not affected by "bestmove").
 	// Needs to match the values provided by renderer.node_limit().
 
 	// Positive number for node limit; null for infinite; -1 for stopped *by us*.
 
-	eng.search_nodes = -1;
+	eng.sent_limit = -1;
 
 	// -------------------------------------------------------------------------------------------
 
@@ -88,11 +88,11 @@ function NewEngine() {
 			this.running = true;
 
 			if (msg.includes("infinite")) {		// Might not end with infinite due to searchmoves.
-				this.search_nodes = null;
+				this.sent_limit = null;
 			} else {
 				let tokens = msg.split(" ").map(z => z.trim()).filter(z => z !== "");
 				let i = tokens.indexOf("nodes");
-				this.search_nodes = parseInt(tokens[i + 1], 10);
+				this.sent_limit = parseInt(tokens[i + 1], 10);
 			}
 
 			this.bestmove_required++;
@@ -106,7 +106,7 @@ function NewEngine() {
 		} else if (msg === "stop") {
 
 			this.running = false;
-			this.search_nodes = -1;
+			this.sent_limit = -1;
 
 		} else if (msg.startsWith("setoption") && msg.includes("WeightsFile")) {
 
@@ -212,7 +212,7 @@ function NewEngine() {
 			}
 
 			// We want relevant "bestmove" output (if synced) to make our running variable false.
-			// Note that this.search_nodes is not changed.
+			// Note that this.sent_limit is not changed.
 
 			if (line.includes("bestmove")) {
 				this.running = false;
