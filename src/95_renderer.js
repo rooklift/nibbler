@@ -1813,9 +1813,9 @@ function NewRenderer() {
 
 		this.info_handler.draw_statusbox(
 			this.tree.node,
+			this.engine,
 			Math.max(this.engine.readyok_required, this.engine.bestmove_required - 1),		// How far out of sync we are, commonly 0
-			analysing_other,
-			this.engine
+			analysing_other
 		);
 	};
 

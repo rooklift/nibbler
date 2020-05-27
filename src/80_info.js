@@ -342,7 +342,7 @@ function NewInfoHandler() {
 		this.last_drawn_version = null;
 	};
 
-	ih.draw_statusbox = function(node, syncs_needed, analysing_other, engine) {
+	ih.draw_statusbox = function(node, engine, syncs_needed, analysing_other) {
 
 		if (!engine.ever_received_uciok) {
 
