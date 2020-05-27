@@ -92,7 +92,7 @@ function NewEngine() {
 			} else {
 				let tokens = msg.split(" ").map(z => z.trim()).filter(z => z !== "");
 				let i = tokens.indexOf("nodes");
-				this.search_nodes = parseInt(tokens[i + 1]);
+				this.search_nodes = parseInt(tokens[i + 1], 10);
 			}
 
 			this.bestmove_required++;
