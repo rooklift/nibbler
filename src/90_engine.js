@@ -46,10 +46,11 @@ function NewEngine() {
 
 	// eng.sent_limit - the node limit of the last "go" we sent (but not affected by "bestmove").
 	// Needs to match the values provided by renderer.node_limit().
+	// This 3-type var is a bit sketchy, maybe.
 
-	// Positive number for node limit; null for infinite; -1 for stopped *by us*.
+	// Positive number for node limit; null for infinite; "n/a" for stopped *by us*.
 
-	eng.sent_limit = -1;
+	eng.sent_limit = "n/a";
 
 	// -------------------------------------------------------------------------------------------
 
@@ -106,7 +107,7 @@ function NewEngine() {
 		} else if (msg === "stop") {
 
 			this.running = false;
-			this.sent_limit = -1;
+			this.sent_limit = "n/a";
 
 		} else if (msg.startsWith("setoption") && msg.includes("WeightsFile")) {
 
