@@ -3035,15 +3035,20 @@ function menu_build() {
 					}
 				},
 				{
-					label: "Show versus state",
-					click: () => {
-						win.webContents.send("call", "show_versus_state");
-					}
-				},
-				{
 					label: "Show dropped inputs",
 					click: () => {
 						win.webContents.send("call", "show_dropped_inputs");
+					}
+				},
+				{
+					label: "Show versus state",
+					type: "checkbox",
+					checked: config.show_versus_state,
+					click: () => {
+						win.webContents.send("call", {
+							fn: "toggle",
+							args: ["show_versus_state"]
+						});
 					}
 				},
 				{

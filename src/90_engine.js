@@ -40,6 +40,18 @@ function NewEngine() {
 	eng.ever_received_uciok = false;
 	eng.warned_send_fail = false;
 
+	// eng.running will be true iff we sent "go" and haven't sent "stop" or received "bestmove".
+
+	eng.running = false;
+
+	// eng.search_nodes - the node limit of the last "go" we sent...
+	// -1 for stopped by us; number for node limit; null for infinite.
+	// Not affected by "bestmove".
+
+	eng.search_nodes = -1;
+
+	// -------------------------------------------------------------------------------------------
+
 	eng.send = function(msg) {
 
 		if (!this.exe) {
@@ -48,24 +60,11 @@ function NewEngine() {
 
 		msg = msg.trim();
 
-		if (msg.startsWith("go")) {
-			this.bestmove_required++;
-			this.sync_change_time = performance.now();
-		}
-
-		if (msg === "isready") {
-			this.readyok_required++;
-			this.sync_change_time = performance.now();
-		}
-
 		if (msg === "stop" && this.last_send === "stop") {
 			return;
 		}
 
-		if (msg.startsWith("setoption") && msg.includes("WeightsFile")) {
-			let i = msg.indexOf("value") + 5;
-			ipcRenderer.send("ack_weightsfile", msg.slice(i).trim());
-		}
+		this.send_msg_bookkeeping(msg);
 
 		try {
 			this.exe.stdin.write(msg);
@@ -78,6 +77,41 @@ function NewEngine() {
 				alert(messages.send_fail);
 				this.warned_send_fail = true;
 			}
+		}
+	};
+
+	eng.send_msg_bookkeeping = function(msg) {
+
+		if (msg.startsWith("go")) {
+
+			this.running = true;
+
+			if (msg.includes("infinite")) {		// Might not end with infinite due to searchmoves.
+				this.search_nodes = null;
+			} else {
+				let tokens = msg.split(" ").map(z => z.trim()).filter(z => z !== "");
+				let i = tokens.indexOf("nodes");
+				this.search_nodes = parseInt(tokens[i + 1]);
+			}
+
+			this.bestmove_required++;
+			this.sync_change_time = performance.now();
+
+		} else if (msg === "isready") {
+
+			this.readyok_required++;
+			this.sync_change_time = performance.now();
+
+		} else if (msg === "stop") {
+
+			this.running = false;
+			this.search_nodes = -1;
+
+		} else if (msg.startsWith("setoption") && msg.includes("WeightsFile")) {
+
+			let i = msg.indexOf("value") + 5;
+			ipcRenderer.send("ack_weightsfile", msg.slice(i).trim());
+
 		}
 	};
 
@@ -174,6 +208,13 @@ function NewEngine() {
 					Log("(readyok desync) < " + line);
 				}
 				return;
+			}
+
+			// We want relevant "bestmove" output (if synced) to make our running variable false.
+			// Note that this.search_nodes is not changed.
+
+			if (line.includes("bestmove")) {
+				this.running = false;
 			}
 
 			if (config.log_info_lines || line.includes("info") === false) {

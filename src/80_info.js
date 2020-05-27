@@ -342,9 +342,9 @@ function NewInfoHandler() {
 		this.last_drawn_version = null;
 	};
 
-	ih.draw_statusbox = function(node, terminal_reason, ever_received_uciok, sync_change_time, syncs_needed, analysing_other) {
+	ih.draw_statusbox = function(node, syncs_needed, analysing_other, engine) {
 
-		if (!ever_received_uciok) {
+		if (!engine.ever_received_uciok) {
 
 			statusbox.innerHTML = `<span class="yellow">Awaiting uciok from engine</span>`;
 
@@ -352,17 +352,24 @@ function NewInfoHandler() {
 
 			statusbox.innerHTML = `<span class="${this.special_message_class || "yellow"}">${this.special_message}</span>`;
 
-		} else if (syncs_needed > 2 || (syncs_needed > 0 && performance.now() - sync_change_time > 1000)) {
+		} else if (syncs_needed > 2 || (syncs_needed > 0 && performance.now() - engine.sync_change_time > 1000)) {
 
 			statusbox.innerHTML = `<span class="gray">Out of sync: ${syncs_needed}</span>`;
+
+		} else if (config.show_versus_state) {
+
+			statusbox.innerHTML =
+			`running: <span class="${engine.running ? "green" : "yellow"}">${engine.running}</span>, ` +
+			`search_nodes: <span class="yellow">${engine.search_nodes}</span>, ` +
+			`behaviour: <span class="yellow">"${config.behaviour}"</span>`;
 
 		} else if (analysing_other) {
 
 			statusbox.innerHTML = `<span id="lock_return_clicker" class="blue">Locked to ${analysing_other} (return?)</span>`;
 
-		} else if (terminal_reason) {
+		} else if (node.terminal_reason() !== "") {
 
-			statusbox.innerHTML = `<span class="yellow">${terminal_reason}</span>`;
+			statusbox.innerHTML = `<span class="yellow">${node.terminal_reason()}</span>`;
 
 		} else if (!node || node.destroyed) {
 

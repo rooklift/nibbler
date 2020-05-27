@@ -23,13 +23,8 @@ function NewRenderer() {
 
 	// Some sync stuff...
 
-	renderer.leela_running = false;								// True iff we sent "go" and haven't sent "stop" or received "bestmove".
-
-	renderer.leela_node = null;									// The last tree node sent to Leela. Cleared upon tree change to prevent reuse.
-	renderer.leela_search_nodes = -1;							// The node limit we last sent (e.g. "go nodes 1000" --> 1000) or null for infinite.
+	renderer.leela_node = null;									// The last tree node sent to Leela.
 	renderer.leela_lock_node = null;							// Set only when starting "analysis_locked" mode.
-
-	// Note that only leela_running is changed when we stop Leela or detect that it stopped on its own.
 
 	// -------------------------------------------------------------------------------------------------------------------------
 
@@ -47,17 +42,17 @@ function NewRenderer() {
 		case "analysis_free":
 		case "self_play":
 		case "auto_analysis":
-			if (!this.leela_running || this.leela_node !== this.tree.node || this.leela_search_nodes !== this.node_limit()) {
+			if (!this.engine.running || this.leela_node !== this.tree.node || this.engine.search_nodes !== this.node_limit()) {
 				this.__go(this.tree.node);
 			}
 			break;
 
 		case "analysis_locked":
 
-			// Only send "go" in certain circumstances... the leela_search_nodes condition is for cases like switching from
+			// Only send "go" in certain circumstances... the engine.search_nodes condition is for cases like switching from
 			// "auto_analysis" mode to "analysis_locked" mode.
 
-			if (!this.leela_running || this.leela_node !== this.leela_lock_node || this.leela_search_nodes !== this.node_limit()) {
+			if (!this.engine.running || this.leela_node !== this.leela_lock_node || this.engine.search_nodes !== this.node_limit()) {
 				if (this.tree.node === this.leela_lock_node) {		// So moving around in irrelevant positions doesn't trigger.
 					this.__go(this.tree.node);
 				}
@@ -96,7 +91,6 @@ function NewRenderer() {
 			this.previous_node = null;
 
 			this.leela_node = null;
-			this.leela_search_nodes = -1;
 			this.leela_lock_node = null;
 
 			this.set_behaviour("halt");					// Will cause "stop" to be sent
@@ -148,14 +142,14 @@ function NewRenderer() {
 
 	renderer.handle_searchmoves_change = function() {
 
-		if (this.leela_running && this.leela_node === this.tree.node) {
+		if (this.engine.running && this.leela_node === this.tree.node) {
 			this.__go(this.leela_node);
 		}
 	};
 
 	renderer.handle_node_limit_change = function() {
 
-		if (this.leela_search_nodes !== this.node_limit()) {
+		if (this.engine.search_nodes !== this.node_limit()) {
 			if (config.behaviour !== "halt") {
 				this.__go(this.leela_node);
 			}
@@ -710,10 +704,6 @@ function NewRenderer() {
 
 		} else if (s.startsWith("bestmove")) {
 
-			// Any "bestmove" will be ignored by engine.js unless it's the final one due.
-			// Therefore, if we ever receive a bestmove, then Leela is no longer running...
-
-			this.leela_running = false;
 			this.update_graph_eval();				// Now's the last chance to update our graph eval for this node.
 
 			switch (config.behaviour) {
@@ -807,10 +797,7 @@ function NewRenderer() {
 	// The go and halt methods should not be called directly.
 
 	renderer.__halt = function() {
-
 		this.engine.send("stop");
-		this.leela_running = false;
-
 	};
 
 	renderer.__go = function(node) {
@@ -833,12 +820,12 @@ function NewRenderer() {
 		this.engine.send("isready");
 
 		let s;
-		this.leela_search_nodes = this.node_limit();
+		let n = this.node_limit();
 
-		if (!this.leela_search_nodes) {
+		if (!n) {
 			s = "go infinite";
 		} else {
-			s = `go nodes ${this.leela_search_nodes}`;
+			s = `go nodes ${n}`;
 		}
 
 		if (config.searchmoves_buttons && node.searchmoves && node.searchmoves.length > 0) {
@@ -851,7 +838,6 @@ function NewRenderer() {
 
 		this.engine.send(s);
 		this.leela_node = node;
-		this.leela_running = true;
 	};
 
 	renderer.soft_engine_reset = function() {
@@ -1245,10 +1231,6 @@ function NewRenderer() {
 
 	renderer.show_sync_status = function() {
 		alert(`readyok: ${this.engine.readyok_required}, bestmove: ${this.engine.bestmove_required}`);
-	};
-
-	renderer.show_versus_state = function() {
-		alert(`behaviour: "${config.behaviour}", leela_running: ${this.leela_running}`);
 	};
 
 	renderer.show_dropped_inputs = function() {
@@ -1829,11 +1811,9 @@ function NewRenderer() {
 
 		this.info_handler.draw_statusbox(
 			this.tree.node,
-			this.tree.node.terminal_reason(),
-			this.engine.ever_received_uciok,
-			this.engine.sync_change_time,
 			Math.max(this.engine.readyok_required, this.engine.bestmove_required - 1),		// How far out of sync we are, commonly 0
-			analysing_other
+			analysing_other,
+			this.engine
 		);
 	};
 
