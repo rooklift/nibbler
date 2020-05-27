@@ -349,6 +349,8 @@ function NewRenderer() {
 
 		}
 
+		// We need to match the values stored in engine.search_nodes.
+
 		if (typeof cfg_value === "number" && cfg_value >= 1) {
 			return cfg_value;
 		} else {

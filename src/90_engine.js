@@ -44,9 +44,10 @@ function NewEngine() {
 
 	eng.running = false;
 
-	// eng.search_nodes - the node limit of the last "go" we sent...
-	// -1 for stopped by us; number for node limit; null for infinite.
-	// Not affected by "bestmove".
+	// eng.search_nodes - the node limit of the last "go" we sent (but not affected by "bestmove").
+	// Needs to match the values provided by renderer.node_limit().
+
+	// Positive number for node limit; null for infinite; -1 for stopped *by us*.
 
 	eng.search_nodes = -1;
 
