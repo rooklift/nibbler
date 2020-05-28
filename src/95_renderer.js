@@ -1406,6 +1406,9 @@ function NewRenderer() {
 
 	renderer.maybe_return_ancestor_click = function(event) {
 
+		// This rather relies on the details of the inference system.
+		// Instead, perhaps we should just pre-store the ancestor node in some variable.
+
 		if (!EventPathString(event, "ancestor_return")) {
 			return;
 		}
