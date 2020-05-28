@@ -114,4 +114,4 @@ author would like to be informed.`;
 
 
 exports.inferred_info =
-`Info inferred from a previous position.`;
+`Info inferred from a previous position`;
