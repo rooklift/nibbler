@@ -23,8 +23,8 @@ function NewRenderer() {
 
 	// Some sync stuff...
 
-	renderer.leela_node = null;									// The last tree node sent to Leela.
-	renderer.leela_lock_node = null;							// Set only when starting "analysis_locked" mode.
+	renderer.leela_node = null;									// The last tree node sent to Leela. Generally not cleared upon halting.
+	renderer.leela_lock_node = null;							// Non-null only when in "analysis_locked" mode.
 
 	// -------------------------------------------------------------------------------------------------------------------------
 
