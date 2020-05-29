@@ -1484,6 +1484,30 @@ function menu_build() {
 								});
 							}
 						},
+						{
+							label: "448",
+							type: "checkbox",
+							checked: config.board_size === 448,
+							click: () => {
+								set_checks("Sizes", "Board", "448");
+								win.webContents.send("call", {
+									fn: "set_board_size",
+									args: [448],
+								});
+							}
+						},
+						{
+							label: "416",
+							type: "checkbox",
+							checked: config.board_size === 416,
+							click: () => {
+								set_checks("Sizes", "Board", "416");
+								win.webContents.send("call", {
+									fn: "set_board_size",
+									args: [416],
+								});
+							}
+						},
 					]
 				},
 				{
