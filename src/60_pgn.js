@@ -302,13 +302,30 @@ function make_pgn_string(node) {
 	let root = node.get_root();
 	let start_fen = root.board.fen(true);
 
+	if (!root.tags) {							// This should be impossible.
+		root.tags = Object.create(null);
+	}
+
+	// Let's set the Result tag if possible...
+
+	let main_line_end = root.get_end();
+	let terminal_reason = main_line_end.terminal_reason();
+
+	if (terminal_reason === "") {
+		// Pass - leave it unchanged since we know nothing
+	} else if (terminal_reason === "Checkmate") {
+		root.tags.Result = main_line_end.board.active === "w" ? "0-1" : "1-0";
+	} else {
+		root.tags.Result = "1/2-1/2";
+	}
+
+	// Convert tag object to PGN formatted strings...
+
 	let tags = [];
 
 	for (let t of ["Event", "Site", "Date", "Round", "White", "Black", "Result"]) {
-		if (root.tags && root.tags[t]) {
+		if (root.tags[t]) {
 			tags.push(`[${t} "${root.tags[t]}"]`);
-		} else {
-			tags.push(`[${t} "Not present (this is a Nibbler bug, please report)"]`);
 		}
 	}
 

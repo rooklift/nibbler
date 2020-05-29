@@ -316,7 +316,7 @@ const node_prototype = {
 
 		if (board.no_moves()) {
 			if (board.king_in_check()) {
-				this.__terminal = "Checkmate";
+				this.__terminal = "Checkmate";						// The PGN writer checks for this exact string! (Lame...)
 				this.table.eval = board.active === "w" ? 0 : 1;
 			} else {
 				this.__terminal = "Stalemate";
