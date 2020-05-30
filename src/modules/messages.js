@@ -34,7 +34,7 @@ prompted with a standard "Save As" dialog. If you save to a file that \
 already exists, that file will be DESTROYED and REPLACED with a file \
 containing only the current game.
 
-You can permanently enable save in the dev menu.`;
+You can enable save in the dev menu.`;
 
 
 exports.engine_not_present =
