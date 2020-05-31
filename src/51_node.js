@@ -340,6 +340,10 @@ const node_prototype = {
 
 	validate_searchmoves: function() {
 
+		if (Array.isArray(this.searchmoves) === false) {
+			this.searchmoves = [];
+		}
+
 		let valid_list = [];
 
 		for (let move of this.searchmoves) {
