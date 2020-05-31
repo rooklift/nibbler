@@ -831,7 +831,7 @@ function NewRenderer() {
 			s = `go nodes ${n}`;
 		}
 
-		if (config.searchmoves_buttons && node.searchmoves && node.searchmoves.length > 0) {
+		if (config.searchmoves_buttons && Array.isArray(node.searchmoves) && node.searchmoves.length > 0) {
 			node.validate_searchmoves();	// Leela can crash on illegal searchmoves.
 			s += " searchmoves";
 			for (let move of node.searchmoves) {
