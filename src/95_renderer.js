@@ -19,7 +19,7 @@ function NewRenderer() {
 	renderer.tick = 0;											// How many draw loops we've been through.
 	renderer.position_change_time = performance.now();			// Time of the last position change. Used for cooldown on hover draw.
 
-	renderer.previous_node = null;								// Our previous tree position, so we can cleanup nodes as we leave them.
+	renderer.node_to_clean = renderer.tree.node;				// The next node to be cleaned up (done when exiting it).
 
 	// Some sync stuff...
 
@@ -88,7 +88,7 @@ function NewRenderer() {
 
 		if (new_game_flag) {
 
-			this.previous_node = null;
+			this.node_to_clean = null;
 
 			this.leela_node = null;
 			this.leela_lock_node = null;
@@ -105,12 +105,12 @@ function NewRenderer() {
 			}
 		}
 
-		this.maybe_infer_info();
-		this.cleanup_previous_node();					// After info inference, so we can use ghost info when going forwards.
-		this.behave();
+		this.maybe_infer_info();						// Before node_exit_cleanup() so that previous ghost info is available when moving forwards.
+		this.behave();									// Before node_exit_cleanup() so that this.leela_node is correct for it.
 		this.draw();
 
-		this.previous_node = this.tree.node;
+		this.node_exit_cleanup();						// So this is the right time to do this.
+		this.node_to_clean = this.tree.node;
 	};
 
 	renderer.set_behaviour = function(s) {
@@ -257,17 +257,26 @@ function NewRenderer() {
 		node.table.moveinfo[nextmove] = new_info;
 	};
 
-	renderer.cleanup_previous_node = function() {
+	renderer.node_exit_cleanup = function() {
 
-		if (!this.previous_node || this.previous_node.destroyed) {
+		if (!this.node_to_clean || this.node_to_clean.destroyed) {
 			return;
 		}
 
-		for (let key of Object.keys(this.previous_node.table.moveinfo)) {
-			if (this.previous_node.table.moveinfo[key].__ghost) {
-				delete this.previous_node.table.moveinfo[key];
+		// Remove ghost info; which is only allowed in the node we're currently looking at...
+
+		for (let key of Object.keys(this.node_to_clean.table.moveinfo)) {
+			if (this.node_to_clean.table.moveinfo[key].__ghost) {
+				delete this.node_to_clean.table.moveinfo[key];
 			}
 		}
+
+		// Clear searchmoves unless Leela is still analysing the position...
+
+		if (config.behaviour !== "analysis_locked" || this.node_to_clean !== this.leela_node) {
+			this.node_to_clean.searchmoves = [];
+		}
+
 	};
 
 	// -------------------------------------------------------------------------------------------------------------------------
