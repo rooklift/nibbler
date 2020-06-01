@@ -1065,7 +1065,7 @@ function NewRenderer() {
 
 	renderer.invert_searchmoves = function() {
 
-		if (!config.searchmoves_buttons || !this.tree.node.searchmoves) {
+		if (!config.searchmoves_buttons || Array.isArray(this.tree.node.searchmoves) === false) {
 			return;
 		}
 
