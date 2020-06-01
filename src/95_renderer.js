@@ -87,17 +87,21 @@ function NewRenderer() {
 		fenbox.value = this.tree.node.board.fen(true);
 
 		if (new_game_flag) {
-
 			this.node_to_clean = null;
-
 			this.leela_node = null;
 			this.leela_lock_node = null;
-
 			this.set_behaviour("halt");					// Will cause "stop" to be sent
 			this.engine.send("ucinewgame");				// Must happen after "stop" is sent.
-
 			this.send_title();
 		}
+
+		// When entering a position, clear its searchmoves, unless it's the analysis_locked node.
+
+		if (this.leela_lock_node !== this.tree.node) {
+			this.tree.node.searchmoves = [];
+		}
+
+		// Caller can tell us the change would cause user confusion for some modes...
 
 		if (avoid_confusion) {
 			if (["play_white", "play_black", "self_play", "auto_analysis"].includes(config.behaviour)) {
@@ -106,10 +110,10 @@ function NewRenderer() {
 		}
 
 		this.maybe_infer_info();						// Before node_exit_cleanup() so that previous ghost info is available when moving forwards.
-		this.behave();									// Before node_exit_cleanup() so that this.leela_node is correct for it.
+		this.behave();
 		this.draw();
 
-		this.node_exit_cleanup();						// So this is the right time to do this.
+		this.node_exit_cleanup();						// This feels like the right time to do this.
 		this.node_to_clean = this.tree.node;
 	};
 
@@ -269,12 +273,6 @@ function NewRenderer() {
 			if (this.node_to_clean.table.moveinfo[key].__ghost) {
 				delete this.node_to_clean.table.moveinfo[key];
 			}
-		}
-
-		// Clear searchmoves unless Leela is still analysing the position...
-
-		if (config.behaviour !== "analysis_locked" || this.node_to_clean !== this.leela_node) {
-			this.node_to_clean.searchmoves = [];
 		}
 
 	};
