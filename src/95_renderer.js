@@ -1046,6 +1046,7 @@ function NewRenderer() {
 		// Cases that have additional actions after...
 
 		if (option === "searchmoves_buttons") {
+			this.tree.node.searchmoves = [];		// This is reasonable regardless of which way the toggle went.
 			this.handle_searchmoves_change();
 		}
 	};
