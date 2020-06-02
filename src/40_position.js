@@ -1289,15 +1289,18 @@ const position_prototype = {
 	},
 
 	graphic: function() {
-		let chars = [];
+		let units = [];
 		for (let y = 0; y < 8; y++) {
-			chars.push("\n");
+			units.push("\n");
 			for (let x = 0; x < 8; x++) {
-				chars.push(this.state[x][y] === "" ? "." : this.state[x][y]);
+				units.push(this.state[x][y] === "" ? " " : this.state[x][y]);
+				if (x < 7) {
+					units.push(" ");
+				}
 			}
 		}
-		chars.push("\n");
-		return chars.join("");
+		units.push("\n");
+		return units.join("");
 	},
 
 	compare: function(other) {
