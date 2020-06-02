@@ -359,9 +359,9 @@ function NewInfoHandler() {
 		} else if (config.show_engine_state) {
 
 			statusbox.innerHTML =
-			`running: <span class="${engine.running ? "green" : "yellow"}">${engine.running}</span>, ` +
-			`sent_limit: <span class="yellow">${engine.sent_limit}</span>, ` +
-			`behaviour: <span class="yellow">${config.behaviour}</span>`;
+			`<span class="${engine.running ? "green" : "yellow"}">${engine.running ? "running" : "stopped"}</span>, ` +
+			`${config.behaviour}, ` +
+			`${engine.last_send}`;
 
 		} else if (analysing_other) {
 
