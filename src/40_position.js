@@ -1293,7 +1293,7 @@ const position_prototype = {
 		for (let y = 0; y < 8; y++) {
 			units.push("\n");
 			for (let x = 0; x < 8; x++) {
-				units.push(this.state[x][y] === "" ? " " : this.state[x][y]);
+				units.push(this.state[x][y] === "" ? "." : this.state[x][y]);
 				if (x < 7) {
 					units.push(" ");
 				}
