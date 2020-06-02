@@ -1288,6 +1288,18 @@ const position_prototype = {
 		return true;
 	},
 
+	graphic: function() {
+		let chars = [];
+		for (let y = 0; y < 8; y++) {
+			chars.push("\n");
+			for (let x = 0; x < 8; x++) {
+				chars.push(this.state[x][y] === "" ? "." : this.state[x][y]);
+			}
+		}
+		chars.push("\n");
+		return chars.join("");
+	},
+
 	compare: function(other) {
 		if (this.active !== other.active) return false;
 		if (this.castling !== other.castling) return false;

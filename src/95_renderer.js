@@ -827,6 +827,7 @@ function NewRenderer() {
 		// After sending "isready" we'll ignore Leela output until "readyok" comes.
 
 		this.engine.send(`position ${setup} moves ${node.history().join(" ")}`);
+		Log(node.board.graphic());
 		this.engine.send("isready");
 
 		let s;
