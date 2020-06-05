@@ -312,7 +312,9 @@ function NewInfoHandler() {
 			if (a.n > b.n) return a_is_best;
 			if (a.n < b.n) return b_is_best;
 
-			// Leela will give an N score, so if we're here, it's some other engine.
+			// Leela will give an N score, so if we're here, it's some other engine,
+			// or we're breaking ties.
+
 			// If MultiPV is the same, go with the more recent data...
 
 			if (a.multipv === b.multipv) {
