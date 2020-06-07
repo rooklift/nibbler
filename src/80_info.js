@@ -223,6 +223,9 @@ function NewInfoHandler() {
 
 			tmp = parseInt(infovals["N:"], 10);
 			if (Number.isNaN(tmp) === false) {
+				if (tmp === 0 && move_info.n > 0) {		// Bailout in this exact situation - this allows engine restart
+					return;								// combined with searchmove change to work better.
+				}
 				move_info.n = tmp;
 			}
 
