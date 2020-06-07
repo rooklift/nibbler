@@ -534,17 +534,17 @@ function NewInfoHandler() {
 
 			let extra_stat_strings = info.stats_list(
 				{
-					n: config.show_n,
+					n:     config.show_n,
 					n_abs: config.show_n_abs,
-					wdl: config.show_wdl,
-					p: config.show_p,
-					m: config.show_m,
-					v: config.show_v,
-					q: config.show_q,
-					d: config.show_d,
-					u: config.show_u,
-					s: config.show_s,
-				});
+					wdl:   config.show_wdl,
+					p:     config.show_p,
+					m:     config.show_m,
+					v:     config.show_v,
+					q:     config.show_q,
+					d:     config.show_d,
+					u:     config.show_u,
+					s:     config.show_s,
+				}, node.table.nodes);
 
 			if (extra_stat_strings.length > 0) {
 				if (config.infobox_stats_newline) {		// Hidden option, request of jhorthos

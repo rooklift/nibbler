@@ -132,7 +132,7 @@ const info_prototype = {
 		return ret;
 	},
 
-	stats_list: function(opts) {
+	stats_list: function(opts, total_nodes) {		// We pass total_nodes rather than use this.total_nodes which can be obsolete (e.g. due to searchmoves)
 
 		let ret = [];
 
@@ -146,12 +146,12 @@ const info_prototype = {
 
 		// N is fairly complicated...
 
-		if (typeof this.n === "number" && this.total_nodes) {		// i.e. this.total_nodes is not zero or undefined
+		if (typeof this.n === "number" && total_nodes) {		// i.e. total_nodes is not zero or undefined
 
 			let n_string = "";
 
 			if (opts.n) {
-				n_string += ` N: ${(100 * this.n / this.total_nodes).toFixed(2)}%`;
+				n_string += ` N: ${(100 * this.n / total_nodes).toFixed(2)}%`;
 			}
 
 			if (opts.n_abs) {
@@ -163,7 +163,7 @@ const info_prototype = {
 			}
 
 			if (opts.of_n) {
-				n_string += ` of ${NString(this.total_nodes)}`;
+				n_string += ` of ${NString(total_nodes)}`;
 			}
 
 			if (n_string !== "") {

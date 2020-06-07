@@ -265,6 +265,7 @@ const node_prototype = {
 		}
 
 		let info = this.parent.table.moveinfo[this.move];
+		let total_nodes = this.parent.table.nodes;
 
 		if (!info || info.__ghost) {
 			return "";
@@ -286,7 +287,7 @@ const node_prototype = {
 			d:            config.pgn_d,
 			u:            config.pgn_u,
 			s:            config.pgn_s,
-		});
+		}, total_nodes);
 
 		return sl.join(", ");			// Will be "" on empty list
 	},
