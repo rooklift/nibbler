@@ -805,6 +805,9 @@ function NewInfoHandler() {
 			switch (config.arrowhead_type) {
 			case 0:
 				s = o.info.value_string(0, config.ev_white_pov);
+				if (s === "100" && o.info.q < 1.0) {
+					s = "99";								// Don't round up to 100.
+				}
 				break;
 			case 1:
 				if (node.table.nodes > 0) {
