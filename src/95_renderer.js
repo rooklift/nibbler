@@ -1299,12 +1299,44 @@ function NewRenderer() {
 		this.set_special_message(`${path.basename(filename)}: Sent ${lines.length} lines`, "blue");
 	};
 
-	renderer.generate_simple_book = function() {		// Format I used in LeelaStockZeroFish. But remember castling format!
-		let lines = [];
-		for (let node of this.tree.root.end_nodes()) {
-    		lines.push(`\t"${node.history().join(" ")}"`);
-    	}
-    	console.log("[\n" + lines.join(",\n") + "\n]");
+	renderer.generate_simple_book = function() {		// For https://github.com/fohristiwhirl/lc0_lichess
+
+		let node_histories = [];
+		let text_lines = [];
+
+		for (let end_node of this.tree.root.end_nodes()) {
+			node_histories.push(end_node.node_history());
+		}
+
+		for (let node_history of node_histories) {
+
+			let elements = [];
+
+			for (let node of node_history) {
+
+				if (!node.move) {						// Root node, no move present
+					continue;
+				}
+
+				let s = node.move;
+
+				// Convert castling moves from e1h1 format to standard...
+				// Do this by detecting that nothing landed on the nominal target square.
+
+				if (s === "e1h1" && node.board.state[7][7] === "") s = "e1g1";
+				if (s === "e1a1" && node.board.state[0][7] === "") s = "e1c1";
+				if (s === "e8h8" && node.board.state[7][0] === "") s = "e8g8";
+				if (s === "e8a8" && node.board.state[0][0] === "") s = "e8c8";
+
+				elements.push(s);
+			}
+
+			text_lines.push(elements.join(" "));
+		}
+
+		text_lines = text_lines.map(s => "\t\"" + s + "\"");
+
+		console.log("[\n" + text_lines.join(",\n") + "\n]");
 	};
 
 	// -------------------------------------------------------------------------------------------------------------------------
