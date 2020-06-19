@@ -800,6 +800,12 @@ function NewRenderer() {
 			return;
 		}
 
+		if (s.startsWith("Found pb network file: ")) {
+			ipcRenderer.send("ack_weightsfile", s.slice(22).trim());
+			this.info_handler.err_receive(HighLightString(s, "Found pb network file: ", "blue"));
+			return;
+		}
+
 		this.info_handler.err_receive(s);
 	};
 
