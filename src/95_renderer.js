@@ -1307,22 +1307,13 @@ function NewRenderer() {
 
 	renderer.generate_simple_book = function() {		// For https://github.com/fohristiwhirl/lc0_lichess
 
-		let node_histories = [];
-		let text_lines = [];
+		let node_histories = this.tree.root.end_nodes().map(end => end.node_history().slice(1));
 
-		for (let end_node of this.tree.root.end_nodes()) {
-			node_histories.push(end_node.node_history());
-		}
-
-		for (let node_history of node_histories) {
+		let text_lines = node_histories.map(node_history => {
 
 			let elements = [];
 
 			for (let node of node_history) {
-
-				if (!node.move) {						// Root node, no move present
-					continue;
-				}
 
 				let s = node.move;
 
@@ -1337,10 +1328,9 @@ function NewRenderer() {
 				elements.push(s);
 			}
 
-			text_lines.push(elements.join(" "));
-		}
+			return "\t\"" + elements.join(" ") + "\"";
 
-		text_lines = text_lines.map(s => "\t\"" + s + "\"");
+		});
 
 		console.log("[\n" + text_lines.join(",\n") + "\n]");
 	};
