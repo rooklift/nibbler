@@ -594,6 +594,7 @@ function NewRenderer() {
 		}
 
 		this.hide_promotiontable();		// Just in case it's up.
+		this.set_behaviour("halt");
 
 		let lines = [];
 
