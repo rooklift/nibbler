@@ -859,7 +859,16 @@ function NewRenderer() {
 	};
 
 	renderer.soft_engine_reset = function() {
-		this.position_changed(true);
+		this.set_behaviour("halt");
+		this.engine.send("ucinewgame");
+	};
+
+	renderer.forget_analysis = function() {
+		CleanTree(this.tree.root);
+		this.info_handler.must_draw_infobox();
+		this.set_behaviour("halt");
+		this.engine.send("ucinewgame");
+		this.leela_node = null;				// So incoming data doesn't update anything.
 	};
 
 	renderer.set_uci_option = function(name, val, save_to_cfg) {

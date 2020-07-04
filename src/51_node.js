@@ -421,3 +421,30 @@ function __destroy_tree(node) {
 		__destroy_tree(child);
 	}
 }
+
+// ---------------------------------------------------------------------------------------------------------
+// Reset analysis and searchmove selections, recursively.
+
+function CleanTree(node) {
+	__clean_tree(node.get_root());
+}
+
+function __clean_tree(node) {
+
+	// Non-recursive when possible...
+
+	while (node.children.length === 1) {
+		node.table.clear();
+		node.searchmoves = [];
+		node = node.children[0];
+	}
+
+	// Recursive when necessary...
+
+	node.table.clear();
+	node.searchmoves = [];
+
+	for (let child of node.children) {
+		__clean_tree(child);
+	}
+}

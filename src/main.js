@@ -759,6 +759,16 @@ function menu_build() {
 						win.webContents.send("call", "infobox_to_clipboard");
 					}
 				},
+				{
+					type: "separator"
+				},
+				{
+					label: "Forget all analysis",
+					accelerator: "CommandOrControl+.",
+					click: () => {
+						win.webContents.send("call", "forget_analysis");
+					}
+				},
 			]
 		},
 		{
@@ -2988,7 +2998,7 @@ function menu_build() {
 				},
 				{
 					label: "Random move",
-					accelerator: "CommandOrControl+.",
+					accelerator: "CommandOrControl+/",
 					click: () => {
 						win.webContents.send("call", "random_move");
 					}
