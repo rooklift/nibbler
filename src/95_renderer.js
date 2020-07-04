@@ -735,7 +735,7 @@ function NewRenderer() {
 						}
 					}
 				} else {
-					this.set_behaviour("halt");				// Can this ever happen?
+					this.set_behaviour("halt");
 				}
 
 				break;
@@ -751,7 +751,7 @@ function NewRenderer() {
 					}
 
 				} else {
-					this.set_behaviour("halt");				// Can this ever happen?
+					this.set_behaviour("halt");
 				}
 
 				break;
