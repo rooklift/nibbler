@@ -10,16 +10,17 @@ We have two systems...
 -- Sometimes we send "isready", and ignore all output until receiving "readyok"
 -- We expect each "go" command to eventually be followed by a "bestmove" message
 
-Sadly, some engines, including Lc0, send "readyok" at dubious times, meaning we
-have to always assume the info could be about the wrong position. Bah! Still,
-Leela seems to send "readyok" at roughly the correct time if it is after a
-"position" command. But not after a mere "stop" command.
+Sadly, it seems "readyok" wasn't really intended for synchronisation of this sort
+(unlike XBoard's "ping" / "pong" cycle) and so some engines, including Lc0, send
+"readyok" before they've finished processing whatever came first, meaning we have to
+always assume the info could be about the wrong position. Bah! Still, Leela seems to
+send "readyok" at roughly the correct time if it is after a "position" command. But
+not after a mere "stop" command.
 
-The bestmove tracker should be OK, as long as Leela really does send a
-"bestmove" for every "go", and as long as the "bestmove" message is the very
-last message it sends about a position. Note that "ucinewgame" causes Leela to
-halt its analysis without sending "bestmove", so we must always send "stop"
-before sending "ucinewgame".
+The bestmove tracker should be OK, as long as Leela really does send a "bestmove" for
+every "go", and as long as the "bestmove" message is the very last message it sends
+about a position. Note that "ucinewgame" causes Leela to halt its analysis without
+sending "bestmove", so we must always send "stop" before sending "ucinewgame".
 
 It seems in practice either one of these is enough. The "bestmove" tracker is
 probably more reliable, so we could probably remove the "readyok" tracker.
