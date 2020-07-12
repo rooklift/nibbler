@@ -656,6 +656,24 @@ function NewInfoHandler() {
 
 		let info_list = this.sorted(node);
 
+		// If there's some specific move we're supposed to show, and it's not actually present in the move table,
+		// we'll need to add it...
+
+		if (show_move) {
+			let present = false;
+			for (let info of info_list) {
+				if (info.move === show_move) {
+					present = true;
+					break;
+				}
+			}
+			if (present === false) {
+				let temp_info = NewInfo(node.board, show_move);
+				temp_info.__temp = true;
+				info_list.push(temp_info);
+			}
+		}
+
 		if (info_list.length > 0) {
 
 			let best_info = info_list[0];		// Note that, since we may filter the list, it might not contain best_info later.
@@ -696,7 +714,9 @@ function NewInfoHandler() {
 
 					let colour;
 
-					if (info_list[i] === best_info) {
+					if (info_list[i].move === show_move && typeof config.next_move_colour === "string") {
+						colour = config.next_move_colour;
+					} else if (info_list[i] === best_info) {
 						colour = config.best_colour;
 					} else if (loss > config.terrible_move_threshold) {
 						colour = config.terrible_colour;
@@ -828,6 +848,10 @@ function NewInfoHandler() {
 			default:
 				s = "!";
 				break;
+			}
+
+			if (o.info.__temp) {							// The info was created above just to have an arrow.
+				s = "?";
 			}
 
 			boardctx.fillText(s, cc2.cx, cc2.cy + 1);
