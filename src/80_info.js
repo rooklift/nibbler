@@ -669,7 +669,7 @@ function NewInfoHandler() {
 			}
 			if (present === false) {
 				let temp_info = NewInfo(node.board, show_move);
-				temp_info.__temp = true;
+				temp_info.__arrow_temp = true;
 				info_list.push(temp_info);
 			}
 		}
@@ -715,7 +715,7 @@ function NewInfoHandler() {
 					let colour;
 
 					if (info_list[i].move === show_move && typeof config.next_move_colour === "string") {
-						if (info_list[i] === best_info && !info_list[i].__temp) {
+						if (info_list[i] === best_info && !info_list[i].__arrow_temp) {
 							colour = config.best_colour;
 						} else {
 							colour = config.next_move_colour;
@@ -854,7 +854,7 @@ function NewInfoHandler() {
 				break;
 			}
 
-			if (o.info.__temp) {							// The info was created above just to have an arrow.
+			if (o.info.__arrow_temp) {							// The info was created above just to have an arrow.
 				s = "?";
 			}
 
