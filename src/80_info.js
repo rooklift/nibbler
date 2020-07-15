@@ -715,7 +715,11 @@ function NewInfoHandler() {
 					let colour;
 
 					if (info_list[i].move === show_move && typeof config.next_move_colour === "string") {
-						colour = config.next_move_colour;
+						if (info_list[i] === best_info && !info_list[i].__temp) {
+							colour = config.best_colour;
+						} else {
+							colour = config.next_move_colour;
+						}
 					} else if (info_list[i] === best_info) {
 						colour = config.best_colour;
 					} else if (loss > config.terrible_move_threshold) {
