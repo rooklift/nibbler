@@ -57,9 +57,17 @@ let live_nodes = Object.create(null);
 // Get the images loading...........................................
 
 if (typeof config.override_piece_directory === "string") {
-	images.load_from(config.override_piece_directory);
+	images.load_from(
+		path.join(
+			__dirname, "theme", "pieces", config.override_piece_directory
+		)
+	);
 } else {
-	images.load_from(path.join(__dirname, "pieces"));
+	images.load_from(
+		path.join(
+			__dirname, "theme", "pieces", "default"
+		)
+	);
 }
 
 // Debug (see start.js).............................................

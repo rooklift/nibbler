@@ -13,6 +13,8 @@ const alert = require("./modules/alert");
 const config_io = require("./modules/config_io");
 const custom_uci = require("./modules/custom_uci");
 const messages = require("./modules/messages");
+const images = require("./modules/images");
+const fs = require("fs");
 const path = require("path");
 const running_as_electron = require("./modules/running_as_electron");
 const url = require("url");
@@ -154,6 +156,31 @@ function menu_build() {
 	const million = 1000000;
 
 	let scriptlist_in_menu = [];
+
+	let piece_theme_names = [];
+	fs.readdirSync(path.join(__dirname, "theme", "pieces")).forEach(file => {
+		piece_theme_names.push(file)
+	});
+
+	let piece_theme_submenus = [];
+	for (let i = 0; i < piece_theme_names.length; i++) {
+		let piece_theme_name = piece_theme_names[i];
+		piece_theme_submenus.push(
+			{
+				label: piece_theme_name,
+				type: "checkbox",
+				checked: config.override_piece_directory === piece_theme_name,
+				click: () => {
+					set_checks("Display", "Piece Theme", piece_theme_name);
+					win.webContents.send("set", {
+						key: "override_piece_directory",
+						value: piece_theme_name
+					});
+					win.webContents.reload();
+				}
+			}
+		);
+	}
 
 	let template = [
 		{
@@ -1021,6 +1048,13 @@ function menu_build() {
 							}
 						}
 					]
+				},
+				{
+					type: "separator"
+				},
+				{
+					label: "Piece Theme",
+					submenu: piece_theme_submenus
 				},
 				{
 					type: "separator"
