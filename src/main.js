@@ -176,7 +176,8 @@ function menu_build() {
 						key: "override_piece_directory",
 						value: piece_theme_name
 					});
-					win.webContents.reload();
+					// Reload not recommended
+					// win.webContents.reload();
 				}
 			}
 		);
