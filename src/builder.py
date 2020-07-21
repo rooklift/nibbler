@@ -3,7 +3,7 @@ import json, os, shutil, zipfile
 # https://electronjs.org/docs/tutorial/application-distribution
 
 with open("package.json") as f:
-    version = json.load(f)["version"]
+	version = json.load(f)["version"]
 
 # Location of zipped electron distributions...
 

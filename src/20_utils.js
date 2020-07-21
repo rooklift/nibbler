@@ -294,11 +294,11 @@ function SwapElements(obj1, obj2) {
 
 	// https://stackoverflow.com/questions/10716986/swap-2-html-elements-and-preserve-event-listeners-on-them
 
-    var temp = document.createElement("div");
-    obj1.parentNode.insertBefore(temp, obj1);
-    obj2.parentNode.insertBefore(obj1, obj2);
-    temp.parentNode.insertBefore(obj2, temp);
-    temp.parentNode.removeChild(temp);
+	var temp = document.createElement("div");
+	obj1.parentNode.insertBefore(temp, obj1);
+	obj2.parentNode.insertBefore(obj1, obj2);
+	temp.parentNode.insertBefore(obj2, temp);
+	temp.parentNode.removeChild(temp);
 }
 
 function NString(n) {
