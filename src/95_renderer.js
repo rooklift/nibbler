@@ -1198,6 +1198,13 @@ function NewRenderer() {
 		this.rebuild_sizes();
 	};
 
+	renderer.change_piece_set = function(directory) {
+		images.load_from(directory);
+		this.friendly_draws = New2DArray(8, 8);
+		config["override_piece_directory"] = directory;
+		config_io.save(config);
+	};
+
 	renderer.rebuild_sizes = function() {
 
 		// This assumes everything already exists.

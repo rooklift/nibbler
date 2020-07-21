@@ -1233,6 +1233,24 @@ function menu_build() {
 						},
 					]
 				},
+				{
+					type: "separator"
+				},
+				{
+					label: "Choose pieces folder...",
+					click: () => {
+						let folders = open_dialog({
+							properties: ["openDirectory"]
+						});
+						if (Array.isArray(folders) && folders.length > 0) {
+							let folder = folders[0];
+							win.webContents.send("call", {
+								fn: "change_piece_set",
+								args: [folder]
+							});
+						}
+					}
+				},
 			]
 		},
 		{
