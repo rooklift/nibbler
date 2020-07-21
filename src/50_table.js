@@ -132,6 +132,21 @@ const info_prototype = {
 		return ret;
 	},
 
+	mate_string: function(white_pov) {
+		if (typeof this.mate !== "number" || this.mate === 0) {
+			return "?";
+		}
+		let mate = this.mate;
+		if (white_pov && this.board.active === "b") {	// Is this the convention? Should check some time...
+			mate = 0 - mate;
+		}
+		if (mate < 0) {
+			return "-M" + (0 - mate).toString();
+		} else {
+			return "M" + mate.toString();
+		}
+	},
+
 	stats_list: function(opts, total_nodes) {		// We pass total_nodes rather than use this.total_nodes which can be obsolete (e.g. due to searchmoves)
 
 		let ret = [];
