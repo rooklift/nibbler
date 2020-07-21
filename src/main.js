@@ -13,7 +13,6 @@ const alert = require("./modules/alert");
 const config_io = require("./modules/config_io");
 const custom_uci = require("./modules/custom_uci");
 const messages = require("./modules/messages");
-const images = require("./modules/images");
 const fs = require("fs");
 const path = require("path");
 const running_as_electron = require("./modules/running_as_electron");
@@ -157,6 +156,8 @@ function menu_build() {
 
 	let scriptlist_in_menu = [];
 
+	// Piece theme submenu to be used in template
+
 	let piece_theme_names = [];
 	fs.readdirSync(path.join(__dirname, "theme", "pieces")).forEach(file => {
 		piece_theme_names.push(file)
@@ -164,24 +165,62 @@ function menu_build() {
 
 	let piece_theme_submenus = [];
 	for (let i = 0; i < piece_theme_names.length; i++) {
-		let piece_theme_name = piece_theme_names[i];
+		let theme = piece_theme_names[i];
 		piece_theme_submenus.push(
 			{
-				label: piece_theme_name,
+				label: theme,
 				type: "checkbox",
-				checked: config.override_piece_directory === piece_theme_name,
+				checked: config.override_piece_directory === theme,
 				click: () => {
-					set_checks("Display", "Piece Theme", piece_theme_name);
-					win.webContents.send("set", {
-						key: "override_piece_directory",
-						value: piece_theme_name
+					set_checks("Display", "Piece Theme", theme);
+					win.webContents.send("call", {
+						fn: "load_piece_theme",
+						args: [theme]
 					});
-					// Reload not recommended
-					// win.webContents.reload();
 				}
 			}
 		);
 	}
+
+	// Board theme submenu to be used in template
+
+	let board_theme_names = [];
+	fs.readdirSync(path.join(__dirname, "theme", "board")).forEach(file => {
+		board_theme_names.push(file)
+	});
+
+	let board_theme_submenus = [
+		{
+			label: "default",
+			type: "checkbox",
+			checked: config.override_board === "default",
+			click: () => {
+				set_checks("Display", "Board Theme", "default");
+				win.webContents.send("call", {
+					fn: "reset_board_theme"
+				});
+			}
+		}
+	];
+	for (let i = 0; i < board_theme_names.length; i++) {
+		let theme = board_theme_names[i];
+		board_theme_submenus.push(
+			{
+				label: theme,
+				type: "checkbox",
+				checked: config.override_board === theme,
+				click: () => {
+					set_checks("Display", "Board Theme", theme);
+					win.webContents.send("call", {
+						fn: "load_board_theme",
+						args: [theme]
+					});
+				}
+			}
+		);
+	}
+
+	// Template for menu
 
 	let template = [
 		{
@@ -1056,6 +1095,10 @@ function menu_build() {
 				{
 					label: "Piece Theme",
 					submenu: piece_theme_submenus
+				},
+				{
+					label: "Board Theme",
+					submenu: board_theme_submenus
 				},
 				{
 					type: "separator"

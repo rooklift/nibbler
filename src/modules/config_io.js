@@ -105,6 +105,7 @@ exports.defaults = {
 
 	"save_enabled": false,
 	"override_piece_directory": null,
+	"override_board": null,
 
 	"logfile": null,
 	"log_info_lines": false

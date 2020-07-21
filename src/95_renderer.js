@@ -509,6 +509,57 @@ function NewRenderer() {
 		this.position_changed(true, true);
 	};
 
+	renderer.load_piece_theme = function(theme) {
+		images.load_from(path.join(__dirname, "theme", "pieces", theme));
+		this.friendly_draws = New2DArray(8, 8);
+		config["override_piece_directory"] = theme;
+		config_io.save(config);
+	};
+
+	renderer.load_board_theme = function(theme) {
+		let old_theme = config["override_board"];
+		config["override_board"] = theme;
+		config_io.save(config);
+		reload_board_image(theme);
+		boardsquares.style["background-image"] = board_image.string_for_bg_style;
+
+		if (old_theme != "default") {
+			return;
+		}
+
+		boardsquares.style["background-size"] = "contain";
+		for (let x = 0; x < 8; x++) {
+			for (let y = 0; y < 8; y++) {
+				let element = document.getElementById(`underlay_${S(x, y)}`);
+				if ((x + y) % 2 === 0) {
+					element.style.removeProperty("background-color");
+				} else {
+					element.style.removeProperty("background-color");
+				}
+			}
+		}
+		this.draw();
+	};
+
+	renderer.reset_board_theme = function() {
+		config["override_board"] = "default";
+		config_io.save(config);
+		reload_board_image("default");
+		boardsquares.style.removeProperty("background-size");
+		boardsquares.style.removeProperty("background-image");
+		for (let x = 0; x < 8; x++) {
+			for (let y = 0; y < 8; y++) {
+				let element = document.getElementById(`underlay_${S(x, y)}`);
+				if ((x + y) % 2 === 0) {
+					element.style["background-color"] = config.light_square;
+				} else {
+					element.style["background-color"] = config.dark_square;
+				}
+			}
+		}
+		this.draw();
+	};
+
 	renderer.new_game = function() {
 		this.load_fen("rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1");
 	};
@@ -1358,7 +1409,15 @@ function NewRenderer() {
 
 		if (old_point) {
 			let td = document.getElementById("underlay_" + old_point.s);
-			td.style["background-color"] = (old_point.x + old_point.y) % 2 === 0 ? config.light_square : config.dark_square;
+			if (board_image == null) {
+				td.style["background-color"] = (
+					(old_point.x + old_point.y) % 2 === 0 ?
+					config.light_square :
+					config.dark_square
+				);
+			} else {
+				td.style.removeProperty("background-color");
+			}
 		}
 
 		this.active_square = null;
@@ -1671,6 +1730,7 @@ function NewRenderer() {
 		let points = PointsBetween(source, dest);
 
 		boardctx.fillStyle = config.move_colour;
+
 		boardctx.globalAlpha = config.move_colour_alpha;
 
 		for (let p of points) {
@@ -1682,9 +1742,7 @@ function NewRenderer() {
 	};
 
 	renderer.draw_enemies_in_canvas = function() {
-
 		let board = this.tree.node.board;
-
 		for (let x = 0; x < 8; x++) {
 			for (let y = 0; y < 8; y++) {
 
@@ -1815,7 +1873,6 @@ function NewRenderer() {
 	};
 
 	renderer.draw_fantasy = function(board) {
-
 		for (let x = 0; x < 8; x++) {
 			for (let y = 0; y < 8; y++) {
 

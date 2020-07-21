@@ -70,6 +70,32 @@ if (typeof config.override_piece_directory === "string") {
 	);
 }
 
+var board_image = null;
+
+function reload_board_image(theme) {
+	function load_sprite(filename) {
+		let sprite = new Image();
+		sprite.src = filename;
+		if (fs.existsSync(filename)) {
+			sprite.src = filename;
+		} else {
+			console.log("Failed to load chess board image");
+		}
+		sprite.string_for_bg_style = `url("${sprite.src}")`;
+		return sprite;
+	}
+
+	if (typeof theme === "string" && theme != "default") {
+		board_image = load_sprite(
+			path.join(__dirname, "theme", "board", theme)
+		);
+	} else {
+		board_image = null;
+	}
+}
+
+reload_board_image(config.override_board);
+
 // Debug (see start.js).............................................
 
 let debug = Object.create(null);
