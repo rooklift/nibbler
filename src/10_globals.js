@@ -56,7 +56,7 @@ let live_nodes = Object.create(null);
 
 // Get the images loading...........................................
 
-if (typeof config.override_piece_directory === "string") {
+if (images.validate_folder(config.override_piece_directory)) {
 	images.load_from(config.override_piece_directory);
 } else {
 	images.load_from(path.join(__dirname, "pieces"));

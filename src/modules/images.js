@@ -13,6 +13,10 @@ let sprites = {
 
 	validate_folder: function(directory) {
 
+		if (typeof directory !== "string") {
+			return false;
+		}
+
 		for (let c of "KkQqRrBbNnPp") {
 
 			if (!fs.existsSync(path.join(directory, `${c.toUpperCase()}.svg`))) {
