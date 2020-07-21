@@ -197,7 +197,8 @@ function menu_build() {
 			click: () => {
 				set_checks("Display", "Board Theme", "default");
 				win.webContents.send("call", {
-					fn: "reset_board_theme"
+					fn: "reset_board_theme",
+					args: []
 				});
 			}
 		}
@@ -208,7 +209,7 @@ function menu_build() {
 			{
 				label: theme,
 				type: "checkbox",
-				checked: config.override_board === theme,
+				checked: config.override_board === theme || config.override_board === null,
 				click: () => {
 					set_checks("Display", "Board Theme", theme);
 					win.webContents.send("call", {
