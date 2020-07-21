@@ -11,6 +11,26 @@ let sprites = {
 		return this.loads === 12;
 	},
 
+	validate_folder: function(directory) {
+
+		for (let c of "KkQqRrBbNnPp") {
+
+			if (!fs.existsSync(path.join(directory, `${c.toUpperCase()}.svg`))) {
+				if (!fs.existsSync(path.join(directory, `${c.toUpperCase()}.png`))) {
+					return false;
+				}
+			}
+
+			if (!fs.existsSync(path.join(directory, `_${c.toUpperCase()}.svg`))) {
+				if (!fs.existsSync(path.join(directory, `_${c.toUpperCase()}.png`))) {
+					return false;
+				}
+			}
+		}
+
+		return true;
+	},
+
 	load_from: function(directory) {
 
 		for (let c of "KkQqRrBbNnPp") {
