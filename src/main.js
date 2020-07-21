@@ -62,6 +62,7 @@ function startup() {
 			backgroundThrottling: false,
 			enableRemoteModule: true,
 			nodeIntegration: true,
+			spellcheck: false,
 			zoomFactor: 1 / electron.screen.getPrimaryDisplay().scaleFactor		// Unreliable, see https://github.com/electron/electron/issues/10572
 		}
 	});
