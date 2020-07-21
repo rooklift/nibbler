@@ -33,6 +33,8 @@ let sprites = {
 
 	load_from: function(directory) {
 
+		sprites.loads = 0;
+
 		for (let c of "KkQqRrBbNnPp") {
 
 			sprites[c] = new Image();
