@@ -65,6 +65,9 @@ let sprites = {
 				}
 			}
 
+			// Note that, after the src is set above, it is automatically changed by the JS engine to be something like
+			// "file:///C:/foo/bar/whatever.png"
+
 			sprites[c].string_for_bg_style = `url("${sprites[c].src}")`;		// Since the src path won't contain " this should be safe.
 		}
 	},
