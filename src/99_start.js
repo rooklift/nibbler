@@ -40,6 +40,8 @@ boardfriends.style.top = canvas.style.top = boardsquares.offsetTop.toString() + 
 // themselves are moved to their new position, so everything works, e.g.
 // the x and y values are still correct for the flipped view.
 
+hub.change_background(config.override_board, false);
+
 for (let y = 0; y < 8; y++) {
 	let tr1 = document.createElement("tr");
 	let tr2 = document.createElement("tr");
@@ -52,11 +54,6 @@ for (let y = 0; y < 8; y++) {
 		td2.id = "overlay_" + S(x, y);
 		td1.width = td2.width = config.square_size;
 		td1.height = td2.height = config.square_size;
-		if ((x + y) % 2 === 0) {
-			td1.style["background-color"] = config.light_square;
-		} else {
-			td1.style["background-color"] = config.dark_square;
-		}
 		tr1.appendChild(td1);
 		tr2.appendChild(td2);
 		td2.addEventListener("dragstart", (event) => {
