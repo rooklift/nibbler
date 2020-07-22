@@ -1830,10 +1830,7 @@ function NewRenderer() {
 		for (let x = 0; x < 8; x++) {
 			for (let y = 0; y < 8; y++) {
 
-				boardctx.fillStyle = (x + y) % 2 === 0 ? config.light_square : config.dark_square;
-
 				let cc = CanvasCoords(x, y);
-				boardctx.fillRect(cc.x1, cc.y1, config.square_size, config.square_size);
 
 				if (board.state[x][y] === "") {
 					continue;
