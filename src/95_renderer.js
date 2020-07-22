@@ -517,47 +517,11 @@ function NewRenderer() {
 	};
 
 	renderer.load_board_theme = function(theme) {
-		let old_theme = config["override_board"];
 		config["override_board"] = theme;
 		config_io.save(config);
-		reload_board_image(theme);
-		boardsquares.style["background-image"] = board_image.string_for_bg_style;
-
-		if (old_theme != "default") {
-			return;
-		}
-
-		boardsquares.style["background-size"] = "contain";
-		for (let x = 0; x < 8; x++) {
-			for (let y = 0; y < 8; y++) {
-				let element = document.getElementById(`underlay_${S(x, y)}`);
-				if ((x + y) % 2 === 0) {
-					element.style.removeProperty("background-color");
-				} else {
-					element.style.removeProperty("background-color");
-				}
-			}
-		}
-		this.draw();
-	};
-
-	renderer.reset_board_theme = function() {
-		config["override_board"] = "default";
-		config_io.save(config);
-		reload_board_image("default");
-		boardsquares.style.removeProperty("background-size");
-		boardsquares.style.removeProperty("background-image");
-		for (let x = 0; x < 8; x++) {
-			for (let y = 0; y < 8; y++) {
-				let element = document.getElementById(`underlay_${S(x, y)}`);
-				if ((x + y) % 2 === 0) {
-					element.style["background-color"] = config.light_square;
-				} else {
-					element.style["background-color"] = config.dark_square;
-				}
-			}
-		}
-		this.draw();
+		reload_board_image(theme, function() {
+			boardsquares.style["background-image"] = board_image.string_for_bg_style;
+		});
 	};
 
 	renderer.new_game = function() {
@@ -1125,13 +1089,8 @@ function NewRenderer() {
 
 		for (let x = 0; x < 8; x++) {
 			for (let y = 0; y < 4; y++) {
-
 				let first = document.getElementById(`overlay_${S(x, y)}`);
 				let second = document.getElementById(`overlay_${S(7 - x, 7 - y)}`);
-				SwapElements(first, second);
-
-				first = document.getElementById(`underlay_${S(x, y)}`);
-				second = document.getElementById(`underlay_${S(7 - x, 7 - y)}`);
 				SwapElements(first, second);
 			}
 		}
@@ -1409,15 +1368,7 @@ function NewRenderer() {
 
 		if (old_point) {
 			let td = document.getElementById("underlay_" + old_point.s);
-			if (board_image == null) {
-				td.style["background-color"] = (
-					(old_point.x + old_point.y) % 2 === 0 ?
-					config.light_square :
-					config.dark_square
-				);
-			} else {
-				td.style.removeProperty("background-color");
-			}
+			td.style.removeProperty("background-color");
 		}
 
 		this.active_square = null;
@@ -1873,18 +1824,13 @@ function NewRenderer() {
 	};
 
 	renderer.draw_fantasy = function(board) {
+		boardctx.drawImage(board_image, 0, 0, config.board, config.board_size);
 		for (let x = 0; x < 8; x++) {
 			for (let y = 0; y < 8; y++) {
-
-				boardctx.fillStyle = (x + y) % 2 === 0 ? config.light_square : config.dark_square;
-
 				let cc = CanvasCoords(x, y);
-				boardctx.fillRect(cc.x1, cc.y1, config.square_size, config.square_size);
-
 				if (board.state[x][y] === "") {
 					continue;
 				}
-
 				let piece = board.state[x][y];
 				boardctx.drawImage(images[piece], cc.x1, cc.y1, config.square_size, config.square_size);
 			}

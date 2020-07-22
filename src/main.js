@@ -193,12 +193,12 @@ function menu_build() {
 		{
 			label: "default",
 			type: "checkbox",
-			checked: config.override_board === "default",
+			checked: config.override_board === "default" || config.override_board == null,
 			click: () => {
 				set_checks("Display", "Board Theme", "default");
 				win.webContents.send("call", {
-					fn: "reset_board_theme",
-					args: []
+					fn: "load_board_theme",
+					args: ["default"]
 				});
 			}
 		}
@@ -209,7 +209,7 @@ function menu_build() {
 			{
 				label: theme,
 				type: "checkbox",
-				checked: config.override_board === theme || config.override_board === null,
+				checked: config.override_board === theme,
 				click: () => {
 					set_checks("Display", "Board Theme", theme);
 					win.webContents.send("call", {

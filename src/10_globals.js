@@ -71,30 +71,68 @@ if (typeof config.override_piece_directory === "string") {
 }
 
 var board_image = null;
+var board_canvas = document.createElement("canvas");
 
-function reload_board_image(theme) {
-	function load_sprite(filename) {
-		let sprite = new Image();
-		sprite.src = filename;
+function reload_board_image(theme, callback) {
+	function load_sprite(filename, callback) {
+		boardsquares.style.removeProperty("image-rendering");
+		board_image = new Image();
+		board_image.onload = function() {
+			callback();
+		}
+		board_image.src = filename;
 		if (fs.existsSync(filename)) {
-			sprite.src = filename;
+			board_image.src = filename;
 		} else {
 			console.log("Failed to load chess board image");
 		}
-		sprite.string_for_bg_style = `url("${sprite.src}")`;
-		return sprite;
+		board_image.string_for_bg_style = `url("${board_image.src}")`;
+	}
+
+	function create_sprite(callback) {
+		boardsquares.style["image-rendering"] = "pixelated";
+		const img_h = 8;
+		const img_w = 8;
+		const img_c = 4; // RGBA
+
+		board_image = new Image();
+		board_canvas.width = img_w;
+		board_canvas.height = img_h;
+
+		let ctx = board_canvas.getContext("2d");
+		let board_img_data = ctx.createImageData(img_w, img_h);
+	
+		for (let y = 0; y < img_h; y++) {
+			for (let x = 0; x < img_w; x++) {
+				const is_dark_square = (x + y) % 2 === 0;
+				const color = is_dark_square ? config.dark_square : config.light_square;
+				const [r, g, b] = color.match(/\w\w/g).map(x => parseInt(x, 16));
+				const index = y*img_w*img_c + x*img_c;
+				board_img_data.data[index + 0] = r;
+				board_img_data.data[index + 1] = g;
+				board_img_data.data[index + 2] = b;
+				board_img_data.data[index + 3] = 255;
+			}
+		}
+
+		ctx.putImageData(board_img_data, 0, 0);
+
+		board_image.onload = function() {
+			callback();
+		}
+
+		board_image.src = board_canvas.toDataURL();
+		board_image.string_for_bg_style = `url("${board_image.src}")`;
 	}
 
 	if (typeof theme === "string" && theme != "default") {
-		board_image = load_sprite(
-			path.join(__dirname, "theme", "board", theme)
-		);
+		load_sprite(path.join(__dirname, "theme", "board", theme), callback);
 	} else {
-		board_image = null;
+		create_sprite(callback);
 	}
 }
 
-reload_board_image(config.override_board);
+reload_board_image(config.override_board, function() {});
 
 // Debug (see start.js).............................................
 
