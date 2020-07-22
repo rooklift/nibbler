@@ -119,3 +119,8 @@ exports.inferred_info =
 
 exports.invalid_pieces_directory =
 `Did not find all pieces required!`;
+
+
+exports.about_custom_pieces =
+`To use a custom piece set, select a folder containing SVG or PNG files with names such as "Q.png" \
+(or "Q.svg") for white and "_Q.png" (or "_Q.svg") for black.`;
