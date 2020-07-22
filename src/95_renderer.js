@@ -1824,7 +1824,7 @@ function NewRenderer() {
 	};
 
 	renderer.draw_fantasy = function(board) {
-		boardctx.drawImage(board_image, 0, 0, config.board, config.board_size);
+		boardctx.drawImage(board_image, 0, 0, config.board_size, config.board_size);
 		for (let x = 0; x < 8; x++) {
 			for (let y = 0; y < 8; y++) {
 				let cc = CanvasCoords(x, y);
