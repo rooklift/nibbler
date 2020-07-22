@@ -94,6 +94,8 @@ exports.defaults = {
 	"engine_dialog_folder": "",
 	"weights_dialog_folder": "",
 	"syzygy_dialog_folder": "",
+	"pieces_dialog_folder": "",
+	"background_dialog_folder": "",
 
 	"update_delay": 170,
 	"animate_delay_multiplier": 4,

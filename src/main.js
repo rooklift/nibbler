@@ -1244,6 +1244,7 @@ function menu_build() {
 							label: "Choose image folder...",
 							click: () => {
 								let folders = open_dialog({
+									defaultPath: config.pieces_dialog_folder,
 									properties: ["openDirectory"]
 								});
 								if (Array.isArray(folders) && folders.length > 0) {
@@ -1251,6 +1252,12 @@ function menu_build() {
 									win.webContents.send("call", {
 										fn: "change_piece_set",
 										args: [folder]
+									});
+									// Save the dir as the new default dir, in both processes.
+									config.pieces_dialog_folder = path.dirname(folder);
+									win.webContents.send("set", {
+										key: "pieces_dialog_folder",
+										value: path.dirname(folder)
 									});
 								}
 							}
@@ -1282,6 +1289,7 @@ function menu_build() {
 							label: "Choose background image...",
 							click: () => {
 								let files = open_dialog({
+									defaultPath: config.background_dialog_folder,
 									properties: ["openFile"]
 								});
 								if (Array.isArray(files) && files.length > 0) {
@@ -1289,6 +1297,12 @@ function menu_build() {
 									win.webContents.send("call", {
 										fn: "change_background",
 										args: [file]
+									});
+									// Save the dir as the new default dir, in both processes.
+									config.background_dialog_folder = path.dirname(file);
+									win.webContents.send("set", {
+										key: "background_dialog_folder",
+										value: path.dirname(file)
 									});
 								}
 							}
