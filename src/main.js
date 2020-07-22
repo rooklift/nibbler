@@ -1241,7 +1241,7 @@ function menu_build() {
 					label: "Pieces",
 					submenu: [
 						{
-							label: "Choose image folder...",
+							label: "Choose pieces folder...",
 							click: () => {
 								let folders = open_dialog({
 									defaultPath: config.pieces_dialog_folder,
