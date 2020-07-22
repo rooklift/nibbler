@@ -1252,6 +1252,30 @@ function menu_build() {
 						}
 					}
 				},
+				{
+					label: "Choose background image...",
+					click: () => {
+						let files = open_dialog({
+							properties: ["openFile"]
+						});
+						if (Array.isArray(files) && files.length > 0) {
+							let file = files[0];
+							win.webContents.send("call", {
+								fn: "change_background",
+								args: [file]
+							});
+						}
+					}
+				},
+				{
+					label: "Clear background",
+					click: () => {
+						win.webContents.send("call", {
+							fn: "change_background",
+							args: [null]
+						});
+					}
+				},
 			]
 		},
 		{

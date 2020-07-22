@@ -31,6 +31,7 @@ try {
 // Requires.........................................................
 
 const alert = require("./modules/alert");
+const background = require("./modules/background");
 const child_process = require("child_process");
 const clipboard = require("electron").clipboard;
 const config_io = require("./modules/config_io");

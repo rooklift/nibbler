@@ -42,7 +42,9 @@ body {
 }
 
 #boardsquares {
+	background-size: contain;
 	border-collapse: collapse;
+	image-rendering: pixelated;		/* Needs to be changed if loading a "real" image */
 	margin-bottom: 1em;
 	margin-right: 1em;
 	table-layout: fixed;

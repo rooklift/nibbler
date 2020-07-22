@@ -1209,6 +1209,22 @@ function NewRenderer() {
 		config_io.save(config);
 	};
 
+	renderer.change_background = function(file, config_save = true) {
+		if (file && fs.existsSync(file)) {
+			let img = new Image();
+			img.src = file;			// Automagically gets converted to "file:///C:/foo/bar/whatever.png"
+			boardsquares.style["image-rendering"] = "auto";
+			boardsquares.style["background-image"] = `url("${img.src}")`;
+		} else {
+			boardsquares.style["image-rendering"] = "pixelated";
+			boardsquares.style["background-image"] = background(config.light_square, config.dark_square);
+		}
+		if (config_save) {
+			config.override_board = file;
+			config_io.save(config);
+		}
+	};
+
 	renderer.rebuild_sizes = function() {
 
 		// This assumes everything already exists.
@@ -1369,7 +1385,7 @@ function NewRenderer() {
 
 		if (old_point) {
 			let td = document.getElementById("underlay_" + old_point.s);
-			td.style["background-color"] = (old_point.x + old_point.y) % 2 === 0 ? config.light_square : config.dark_square;
+			td.style["background-color"] = "transparent";
 		}
 
 		this.active_square = null;
