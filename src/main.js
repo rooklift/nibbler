@@ -1253,6 +1253,15 @@ function menu_build() {
 					}
 				},
 				{
+					label: "Reset pieces",
+					click: () => {
+						win.webContents.send("call", {
+							fn: "change_piece_set",
+							args: [null]
+						});
+					}
+				},
+				{
 					label: "Choose background image...",
 					click: () => {
 						let files = open_dialog({
@@ -1268,7 +1277,7 @@ function menu_build() {
 					}
 				},
 				{
-					label: "Clear background",
+					label: "Reset background",
 					click: () => {
 						win.webContents.send("call", {
 							fn: "change_background",

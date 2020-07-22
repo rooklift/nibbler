@@ -1199,11 +1199,16 @@ function NewRenderer() {
 	};
 
 	renderer.change_piece_set = function(directory) {
-		if (images.validate_folder(directory) === false) {
-			alert(messages.invalid_pieces_directory);
-			return;
+		if (directory) {
+			if (images.validate_folder(directory) === false) {
+				alert(messages.invalid_pieces_directory);
+				return;
+			}
+			images.load_from(directory);
+		} else {
+			directory = null;
+			images.load_from(path.join(__dirname, "pieces"));
 		}
-		images.load_from(directory);
 		this.friendly_draws = New2DArray(8, 8);
 		config["override_piece_directory"] = directory;
 		config_io.save(config);
