@@ -1238,53 +1238,72 @@ function menu_build() {
 					type: "separator"
 				},
 				{
-					label: "Choose pieces folder...",
-					click: () => {
-						let folders = open_dialog({
-							properties: ["openDirectory"]
-						});
-						if (Array.isArray(folders) && folders.length > 0) {
-							let folder = folders[0];
-							win.webContents.send("call", {
-								fn: "change_piece_set",
-								args: [folder]
-							});
+					label: "Pieces",
+					submenu: [
+						{
+							label: "Choose image folder...",
+							click: () => {
+								let folders = open_dialog({
+									properties: ["openDirectory"]
+								});
+								if (Array.isArray(folders) && folders.length > 0) {
+									let folder = folders[0];
+									win.webContents.send("call", {
+										fn: "change_piece_set",
+										args: [folder]
+									});
+								}
+							}
+						},
+						{
+							label: "Default",
+							click: () => {
+								win.webContents.send("call", {
+									fn: "change_piece_set",
+									args: [null]
+								});
+							}
+						},
+						{
+							type: "separator"
+						},
+						{
+							label: "About custom pieces",
+							click: () => {
+								alert(messages.about_custom_pieces);
+							}
 						}
-					}
+					]
 				},
 				{
-					label: "Reset pieces",
-					click: () => {
-						win.webContents.send("call", {
-							fn: "change_piece_set",
-							args: [null]
-						});
-					}
-				},
-				{
-					label: "Choose background image...",
-					click: () => {
-						let files = open_dialog({
-							properties: ["openFile"]
-						});
-						if (Array.isArray(files) && files.length > 0) {
-							let file = files[0];
-							win.webContents.send("call", {
-								fn: "change_background",
-								args: [file]
-							});
-						}
-					}
-				},
-				{
-					label: "Reset background",
-					click: () => {
-						win.webContents.send("call", {
-							fn: "change_background",
-							args: [null]
-						});
-					}
-				},
+					label: "Background",
+					submenu: [
+						{
+							label: "Choose background image...",
+							click: () => {
+								let files = open_dialog({
+									properties: ["openFile"]
+								});
+								if (Array.isArray(files) && files.length > 0) {
+									let file = files[0];
+									win.webContents.send("call", {
+										fn: "change_background",
+										args: [file]
+									});
+								}
+							}
+						},
+						{
+							label: "Default",
+							click: () => {
+								win.webContents.send("call", {
+									fn: "change_background",
+									args: [null]
+								});
+							}
+						},
+					]
+				}
 			]
 		},
 		{
