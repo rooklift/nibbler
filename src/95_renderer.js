@@ -1830,13 +1830,13 @@ function NewRenderer() {
 		for (let x = 0; x < 8; x++) {
 			for (let y = 0; y < 8; y++) {
 
-				let cc = CanvasCoords(x, y);
+				let piece = board.state[x][y];
 
-				if (board.state[x][y] === "") {
+				if (piece === "") {
 					continue;
 				}
 
-				let piece = board.state[x][y];
+				let cc = CanvasCoords(x, y);
 				boardctx.drawImage(images[piece], cc.x1, cc.y1, config.square_size, config.square_size);
 			}
 		}
