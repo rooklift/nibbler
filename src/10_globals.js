@@ -30,7 +30,6 @@ try {
 
 // Requires.........................................................
 
-const alert = require("./modules/alert");
 const background = require("./modules/background");
 const child_process = require("child_process");
 const clipboard = require("electron").clipboard;
@@ -42,6 +41,7 @@ const ipcRenderer = require("electron").ipcRenderer;
 const messages = require("./modules/messages");
 const path = require("path");
 const readline = require("readline");
+const stringify = require("./modules/stringify");
 const util = require("util");
 
 // Globals..........................................................
@@ -54,6 +54,12 @@ let config = config_io.load();
 
 let next_node_id = 1;
 let live_nodes = Object.create(null);
+
+// Replace the renderer's built-in alert()..........................
+
+let alert = (msg) => {
+	ipcRenderer.send("alert", stringify(msg));
+}
 
 // Get the images loading...........................................
 

@@ -9,12 +9,12 @@ electron.app.commandLine.appendSwitch("js-flags", "--expose_gc");
 
 // Other requires...
 
-const alert = require("./modules/alert");
 const config_io = require("./modules/config_io");
 const custom_uci = require("./modules/custom_uci");
 const messages = require("./modules/messages");
 const path = require("path");
 const running_as_electron = require("./modules/running_as_electron");
+const stringify = require("./modules/stringify");
 const url = require("url");
 
 // We want sync save and open dialogs. In Electron 5 we could get these by calling
@@ -23,6 +23,13 @@ const url = require("url");
 
 const save_dialog = electron.dialog.showSaveDialogSync || electron.dialog.showSaveDialog;
 const open_dialog = electron.dialog.showOpenDialogSync || electron.dialog.showOpenDialog;
+
+// Create an alert() function...
+
+let alert = (msg) => {
+	electron.dialog.showMessageBox({message: stringify(msg), title: "Alert", buttons: ["OK"]}, () => {});
+	// Providing a callback makes the window not block the process.
+}
 
 // Note that as the user adjusts menu items, our copy of the config will become
 // out of date. The renderer is responsible for having an up-to-date copy.
@@ -133,6 +140,10 @@ function startup() {
 
 	electron.ipcMain.on("ack_weightsfile", (event, msg) => {
 		loaded_weights = msg;
+	});
+
+	electron.ipcMain.on("alert", (event, msg) => {
+		alert(msg);
 	});
 
 	// Actually load the page last, I guess, so the event handlers above are already set up...
