@@ -67,7 +67,6 @@ function startup() {
 		useContentSize: true,
 		webPreferences: {
 			backgroundThrottling: false,
-			enableRemoteModule: true,
 			nodeIntegration: true,
 			spellcheck: false,
 			zoomFactor: 1 / electron.screen.getPrimaryDisplay().scaleFactor		// Unreliable, see https://github.com/electron/electron/issues/10572
@@ -146,13 +145,16 @@ function startup() {
 		alert(msg);
 	});
 
-	// Actually load the page last, I guess, so the event handlers above are already set up...
+	// Actually load the page last, I guess, so the event handlers above are already set up.
+	// Send some needed info as a query.
 
-	win.loadURL(url.format({
-		protocol: "file:",
-		pathname: path.join(__dirname, "nibbler.html"),
-		slashes: true
-	}));
+	let query = {};
+	query.user_data_path = electron.app.getPath("userData");
+
+	win.loadFile(
+		path.join(__dirname, "nibbler.html"),
+		{query: query}
+	);
 
 	electron.Menu.setApplicationMenu(menu);
 	menu_is_set = true;

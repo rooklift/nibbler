@@ -3,12 +3,15 @@
 const electron = require("electron");
 const fs = require("fs");
 const path = require("path");
+const querystring = require("querystring");
 
 exports.filename = "config.json";
 
+// To avoid using "remote", we rely on the main process passing userData location in the query...
+
 exports.filepath = electron.app ?
-                   path.join(electron.app.getPath("userData"), exports.filename) :
-                   path.join(electron.remote.app.getPath("userData"), exports.filename);
+		path.join(electron.app.getPath("userData"), exports.filename) :
+		path.join(querystring.parse(global.location.search)["?user_data_path"], exports.filename);
 
 exports.defaults = {
 	"warning": "EDITING THIS FILE WHILE NIBBLER IS RUNNING WILL GENERALLY CAUSE YOUR EDITS TO BE LOST.",

@@ -3,6 +3,7 @@
 const electron = require("electron");
 const fs = require("fs");
 const path = require("path");
+const querystring = require("querystring");
 
 const scripts_dir = "scripts";
 const example_file = "example.txt";
@@ -11,9 +12,11 @@ const example =
 `setoption name Something value WhoKnows
 setoption name Example value Whatever`;
 
+// To avoid using "remote", we rely on the main process passing userData location in the query...
+
 exports.script_dir_path = electron.app ?
 		path.join(electron.app.getPath("userData"), scripts_dir) :
-		path.join(electron.remote.app.getPath("userData"), scripts_dir);
+		path.join(querystring.parse(global.location.search)["?user_data_path"], scripts_dir);
 
 exports.load = () => {
 
