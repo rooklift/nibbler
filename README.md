@@ -28,7 +28,7 @@ Some Windows and Linux standalone releases are uploaded to the [Releases](https:
 
 # Installation - the hard way
 
-Running Nibbler from source requires Electron, but has no other dependencies. If you have Electron installed (e.g. `npm install -g electron`) you can likely enter the `/src` directory, then do `electron .` to run it. This is mostly tested with Electron 5, but older and newer versions may work too.
+Running Nibbler from source requires Electron, but has no other dependencies. If you have Electron installed (e.g. `npm install -g electron`) you can likely enter the `/src` directory, then do `electron .` to run it. Nibbler should be compatible with at least version 5 and above.
 
 # Aesthetic adjustments
 
