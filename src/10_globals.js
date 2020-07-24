@@ -59,7 +59,7 @@ let live_nodes = Object.create(null);
 
 let alert = (msg) => {
 	ipcRenderer.send("alert", stringify(msg));
-}
+};
 
 // Get the images loading...........................................
 
