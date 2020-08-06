@@ -51,6 +51,7 @@ function NewInfo(board, move) {
 	info.board = board;
 	info.cp = 0;
 	info.d = 0;
+	info.depth = 0;
 	info.m = 0;
 	info.mate = 0;					// 0 can be the "not present" value.
 	info.move = move;
@@ -61,6 +62,7 @@ function NewInfo(board, move) {
 	info.nice_pv_cache = null;
 	info.q = 0;
 	info.s = 1;						// Known as Q+U before Lc0 v0.25-rc2
+	info.seldepth = 0;
 	info.total_nodes = 0;
 	info.u = 1;
 	info.v = null;					// Warning: v is allowed to be null if not known.
