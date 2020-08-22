@@ -3187,6 +3187,20 @@ function menu_build() {
 					type: "separator"
 				},
 				{
+					label: "Use VerboseMoveStats ordering",
+					type: "checkbox",
+					checked: config.vms_ordering,
+					click: () => {
+						win.webContents.send("call", {
+							fn: "toggle",
+							args: ["vms_ordering"],
+						});
+					}
+				},
+				{
+					type: "separator"
+				},
+				{
 					label: "Log RAM state to console",
 					click: () => {
 						win.webContents.send("call", "log_ram");

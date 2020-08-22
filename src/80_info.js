@@ -13,6 +13,8 @@ function NewInfoHandler() {
 
 	ih.ever_drew_infobox = false;
 
+	ih.next_vms_order_int = 1;
+
 	ih.one_click_moves = New2DArray(8, 8);	// Array of possible one-click moves. Updated by draw_arrows().
 	ih.info_clickers = [];					// Elements in the infobox. Updated by draw_infobox().
 
@@ -207,7 +209,8 @@ function NewInfoHandler() {
 			let move_info;
 			let move = infovals["string"];
 
-			if (move === "node") {								// See https://github.com/LeelaChessZero/lc0/pull/1268
+			if (move === "node") {						// Ignore this, but use it to note that the VMS is complete. A bit sketchy?
+				this.next_vms_order_int = 1;
 				return;
 			}
 
@@ -215,7 +218,7 @@ function NewInfoHandler() {
 
 			if (node.table.moveinfo[move] && !node.table.moveinfo[move].__ghost) {		// We already have move info for this move.
 				move_info = node.table.moveinfo[move];
-			} else {											// We don't.
+			} else {																	// We don't.
 				if (board.illegal(move) !== "") {
 					Log(`INVALID / ILLEGAL MOVE RECEIVED: ${move}`);
 					return;
@@ -224,10 +227,10 @@ function NewInfoHandler() {
 				node.table.moveinfo[move] = move_info;
 			}
 
-			this.ever_received_info = true;						// After the move legality check; i.e. we want REAL info
-			node.table.version++;								// Likewise
-
+			this.ever_received_info = true;				// After the move legality check; i.e. we want REAL info
+			node.table.version++;						// Likewise
 			move_info.version = node.table.version;
+			move_info.vms_order = this.next_vms_order_int++;
 
 			let tmp;
 
@@ -308,6 +311,13 @@ function NewInfoHandler() {
 
 			const a_is_best = -1;						// return -1 to sort a to the left
 			const b_is_best = 1;						// return 1 to sort a to the right
+
+			// Ordering by VerboseMoveStats (request of Napthalin)...
+
+			if (config.vms_ordering) {
+				if (a.vms_order > b.vms_order) return a_is_best;
+				if (a.vms_order < b.vms_order) return b_is_best;
+			}
 
 			// Mate - positive good, negative bad.
 			// Note our info struct uses 0 when not given.

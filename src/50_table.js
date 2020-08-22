@@ -67,6 +67,7 @@ function NewInfo(board, move) {
 	info.u = 1;
 	info.v = null;					// Warning: v is allowed to be null if not known.
 	info.version = 0;
+	info.vms_order = 0;				// VerboseMoveStats order, 0 means not present, 1 is the worst, higher is better.
 	info.wdl = "??";
 	return info;
 }

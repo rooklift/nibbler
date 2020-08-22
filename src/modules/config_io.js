@@ -103,6 +103,8 @@ exports.defaults = {
 	"update_delay": 170,
 	"animate_delay_multiplier": 4,
 
+	"vms_ordering": false,
+
 	"search_nodes": null,
 	"search_nodes_special": 4000,
 
