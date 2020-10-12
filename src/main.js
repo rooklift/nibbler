@@ -1954,6 +1954,45 @@ function menu_build() {
 							type: "separator"
 						},
 						{
+							label: "cuda-auto",
+							type: "checkbox",
+							checked: config.options.Backend === "cuda-auto",
+							click: () => {
+								set_checks("Engine", "Backend", "cuda-auto");
+								win.webContents.send("call", {
+									fn: "set_uci_option_permanent",
+									args: ["Backend", "cuda-auto"]
+								});
+							}
+						},
+						{
+							label: "cuda",
+							type: "checkbox",
+							checked: config.options.Backend === "cuda",
+							click: () => {
+								set_checks("Engine", "Backend", "cuda");
+								win.webContents.send("call", {
+									fn: "set_uci_option_permanent",
+									args: ["Backend", "cuda"]
+								});
+							}
+						},
+						{
+							label: "cuda-fp16",
+							type: "checkbox",
+							checked: config.options.Backend === "cuda-fp16",
+							click: () => {
+								set_checks("Engine", "Backend", "cuda-fp16");
+								win.webContents.send("call", {
+									fn: "set_uci_option_permanent",
+									args: ["Backend", "cuda-fp16"]
+								});
+							}
+						},
+						{
+							type: "separator"
+						},
+						{
 							label: "opencl",
 							type: "checkbox",
 							checked: config.options.Backend === "opencl",
