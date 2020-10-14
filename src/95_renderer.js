@@ -1088,6 +1088,13 @@ function NewRenderer() {
 		this.draw();								// For the canvas stuff.
 	};
 
+	renderer.set_arrow_filter = function(type, value) {
+		config.arrow_filter_type = type;
+		config.arrow_filter_value = value;
+		config_io.save(config);
+		this.draw();
+	};
+
 	renderer.invert_searchmoves = function() {
 
 		if (!config.searchmoves_buttons || Array.isArray(this.tree.node.searchmoves) === false) {

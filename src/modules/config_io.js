@@ -52,7 +52,9 @@ exports.defaults = {
 
 	"bad_move_threshold": 0.02,
 	"terrible_move_threshold": 0.04,
-	"uncertainty_cutoff": 0.1,
+
+	"arrow_filter_type": "U",
+	"arrow_filter_value": 0.1,
 
 	"arrows_enabled": true,
 	"click_spotlight": true,
@@ -139,11 +141,14 @@ function fix(cfg) {
 
 	cfg.board_size = cfg.square_size * 8;
 
-	// Uncertainty can, counterintuitively, be above 1 or below 0. Adjust for the user's likely intention.
-	// Note these numbers are tested in main.js for whether the checkbox should be checked...
+	// uncertainty_cutoff was removed and replaced with something better...
 
-	if (cfg.uncertainty_cutoff >= 1) cfg.uncertainty_cutoff = 999;
-	if (cfg.uncertainty_cutoff <= 0) cfg.uncertainty_cutoff = -999;
+	if (cfg.uncertainty_cutoff !== undefined) {
+		cfg.arrow_filter_type = "U";
+		cfg.arrow_filter_value = cfg.uncertainty_cutoff;
+		if (cfg.arrow_filter_value >= 1) cfg.arrow_filter_type = "all";
+		if (cfg.arrow_filter_value <= 0) cfg.arrow_filter_type = "top";
+	}
 
 	// This can't be 0 because we divide by it...
 

@@ -711,15 +711,42 @@ function NewInfoHandler() {
 
 			for (let i = 0; i < info_list.length; i++) {
 
-				let good_u = typeof info_list[i].u === "number" && info_list[i].u < config.uncertainty_cutoff;
-				let good_n = typeof info_list[i].n === "number" && info_list[i].n > 0;
+				let good_u = true;
+				let good_n = true;
+
+				if (config.arrow_filter_type === "top") {	// Rely on the i === 0 test, below.
+					good_u = false;
+					good_n = false;
+				}
+
+				if (config.arrow_filter_type === "U") {
+					if (typeof info_list[i].u !== "number") {
+						good_u = false;
+					} else if (info_list[i].u >= config.arrow_filter_value) {
+						good_u = false;
+					}
+				}
+
+				if (config.arrow_filter_type === "N") {
+					if (typeof info_list[i].n !== "number" || info_list[i].n === 0) {
+						good_n = false;
+					} else {
+						let n_fraction = info_list[i].n / info_list[i].total_nodes;
+						if (n_fraction < config.arrow_filter_value) {
+							good_n = false;
+						}
+					}
+				}
+
+				// Doomed flag, for moves proven to lose...
+
 				let doomed = typeof info_list[i].u === "number" && info_list[i].u === 0 && info_list[i].value() === 0;
 
-				// If we have set "all moves" (filter of U below 999) then don't use the doomed flag...
-
-				if (config.uncertainty_cutoff === 999) {
+				if (config.arrow_filter_type === "all") {
 					doomed = false;
 				}
+
+				// Go ahead, if the various tests don't filter the move out...
 
 				if (specific_source || i === 0 || (good_u && good_n && !doomed) || info_list[i].move === show_move) {
 

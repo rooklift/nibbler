@@ -6,7 +6,7 @@ const custom_uci = require("./custom_uci");
 
 exports.about_move_display =
 `Leela sends a statistic U showing how uncertain it is about its evaluation \
-of each move. Nibbler decides which moves to show on the board using this \
+of each move. Nibbler can decide which moves to show on the board using this \
 statistic. Often the U statistic remains high for most moves, when Leela \
 thinks the right move is "obvious".`;
 

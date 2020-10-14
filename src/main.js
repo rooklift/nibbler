@@ -909,119 +909,173 @@ function menu_build() {
 						{
 							label: "All moves",
 							type: "checkbox",
-							checked: config.uncertainty_cutoff === 999,			// Semi-special value we use, e.g. in ih.draw_arrows()
+							checked: config.arrow_filter_type === "all",
 							click: () => {
 								set_checks("Display", "Arrow filter", "All moves");
-								win.webContents.send("set", {
-									key: "uncertainty_cutoff",
-									value: 999
-								});
-							}
-						},
-						{
-							label: "U < 0.2",
-							type: "checkbox",
-							checked: config.uncertainty_cutoff === 0.2,
-							click: () => {
-								set_checks("Display", "Arrow filter", "U < 0.2");
-								win.webContents.send("set", {
-									key: "uncertainty_cutoff",
-									value: 0.2
-								});
-							}
-						},
-						{
-							label: "U < 0.175",
-							type: "checkbox",
-							checked: config.uncertainty_cutoff === 0.175,
-							click: () => {
-								set_checks("Display", "Arrow filter", "U < 0.175");
-								win.webContents.send("set", {
-									key: "uncertainty_cutoff",
-									value: 0.175
-								});
-							}
-						},
-						{
-							label: "U < 0.15",
-							type: "checkbox",
-							checked: config.uncertainty_cutoff === 0.15,
-							click: () => {
-								set_checks("Display", "Arrow filter", "U < 0.15");
-								win.webContents.send("set", {
-									key: "uncertainty_cutoff",
-									value: 0.15
-								});
-							}
-						},
-						{
-							label: "U < 0.125",
-							type: "checkbox",
-							checked: config.uncertainty_cutoff === 0.125,
-							click: () => {
-								set_checks("Display", "Arrow filter", "U < 0.125");
-								win.webContents.send("set", {
-									key: "uncertainty_cutoff",
-									value: 0.125
-								});
-							}
-						},
-						{
-							label: "U < 0.1",
-							type: "checkbox",
-							checked: config.uncertainty_cutoff === 0.1,
-							click: () => {
-								set_checks("Display", "Arrow filter", "U < 0.1");
-								win.webContents.send("set", {
-									key: "uncertainty_cutoff",
-									value: 0.1
-								});
-							}
-						},{
-							label: "U < 0.075",
-							type: "checkbox",
-							checked: config.uncertainty_cutoff === 0.075,
-							click: () => {
-								set_checks("Display", "Arrow filter", "U < 0.075");
-								win.webContents.send("set", {
-									key: "uncertainty_cutoff",
-									value: 0.075
-								});
-							}
-						},
-						{
-							label: "U < 0.05",
-							type: "checkbox",
-							checked: config.uncertainty_cutoff === 0.05,
-							click: () => {
-								set_checks("Display", "Arrow filter", "U < 0.05");
-								win.webContents.send("set", {
-									key: "uncertainty_cutoff",
-									value: 0.05
-								});
-							}
-						},
-						{
-							label: "U < 0.025",
-							type: "checkbox",
-							checked: config.uncertainty_cutoff === 0.025,
-							click: () => {
-								set_checks("Display", "Arrow filter", "U < 0.025");
-								win.webContents.send("set", {
-									key: "uncertainty_cutoff",
-									value: 0.025
+								win.webContents.send("call", {
+									fn: "set_arrow_filter",
+									args: ["all", null],
 								});
 							}
 						},
 						{
 							label: "Top move",
 							type: "checkbox",
-							checked: config.uncertainty_cutoff === -999,		// Semi-special value we use
+							checked: config.arrow_filter_type === "top",
 							click: () => {
 								set_checks("Display", "Arrow filter", "Top move");
-								win.webContents.send("set", {
-									key: "uncertainty_cutoff",
-									value: -999
+								win.webContents.send("call", {
+									fn: "set_arrow_filter",
+									args: ["top", null],
+								});
+							}
+						},
+						{
+							type: "separator"
+						},
+						{
+							label: "N > 10%",
+							type: "checkbox",
+							checked: config.arrow_filter_type === "N" && config.arrow_filter_value === 0.1,
+							click: () => {
+								set_checks("Display", "Arrow filter", "N > 10%");
+								win.webContents.send("call", {
+									fn: "set_arrow_filter",
+									args: ["N", 0.1],
+								});
+							}
+						},
+						{
+							label: "N > 5%",
+							type: "checkbox",
+							checked: config.arrow_filter_type === "N" && config.arrow_filter_value === 0.05,
+							click: () => {
+								set_checks("Display", "Arrow filter", "N > 5%");
+								win.webContents.send("call", {
+									fn: "set_arrow_filter",
+									args: ["N", 0.05],
+								});
+							}
+						},
+						{
+							label: "N > 3%",
+							type: "checkbox",
+							checked: config.arrow_filter_type === "N" && config.arrow_filter_value === 0.03,
+							click: () => {
+								set_checks("Display", "Arrow filter", "N > 3%");
+								win.webContents.send("call", {
+									fn: "set_arrow_filter",
+									args: ["N", 0.03],
+								});
+							}
+						},
+						{
+							label: "N > 1%",
+							type: "checkbox",
+							checked: config.arrow_filter_type === "N" && config.arrow_filter_value === 0.01,
+							click: () => {
+								set_checks("Display", "Arrow filter", "N > 1%");
+								win.webContents.send("call", {
+									fn: "set_arrow_filter",
+									args: ["N", 0.01],
+								});
+							}
+						},
+						{
+							type: "separator"
+						},
+						{
+							label: "U < 0.2",
+							type: "checkbox",
+							checked: config.arrow_filter_type === "U" && config.arrow_filter_value === 0.2,
+							click: () => {
+								set_checks("Display", "Arrow filter", "U < 0.2");
+								win.webContents.send("call", {
+									fn: "set_arrow_filter",
+									args: ["U", 0.2],
+								});
+							}
+						},
+						{
+							label: "U < 0.175",
+							type: "checkbox",
+							checked: config.arrow_filter_type === "U" && config.arrow_filter_value === 0.175,
+							click: () => {
+								set_checks("Display", "Arrow filter", "U < 0.175");
+								win.webContents.send("call", {
+									fn: "set_arrow_filter",
+									args: ["U", 0.175],
+								});
+							}
+						},
+						{
+							label: "U < 0.15",
+							type: "checkbox",
+							checked: config.arrow_filter_type === "U" && config.arrow_filter_value === 0.15,
+							click: () => {
+								set_checks("Display", "Arrow filter", "U < 0.15");
+								win.webContents.send("call", {
+									fn: "set_arrow_filter",
+									args: ["U", 0.15],
+								});
+							}
+						},
+						{
+							label: "U < 0.125",
+							type: "checkbox",
+							checked: config.arrow_filter_type === "U" && config.arrow_filter_value === 0.125,
+							click: () => {
+								set_checks("Display", "Arrow filter", "U < 0.125");
+								win.webContents.send("call", {
+									fn: "set_arrow_filter",
+									args: ["U", 0.125],
+								});
+							}
+						},
+						{
+							label: "U < 0.1",
+							type: "checkbox",
+							checked: config.arrow_filter_type === "U" && config.arrow_filter_value === 0.1,
+							click: () => {
+								set_checks("Display", "Arrow filter", "U < 0.1");
+								win.webContents.send("call", {
+									fn: "set_arrow_filter",
+									args: ["U", 0.1],
+								});
+							}
+						},{
+							label: "U < 0.075",
+							type: "checkbox",
+							checked: config.arrow_filter_type === "U" && config.arrow_filter_value === 0.075,
+							click: () => {
+								set_checks("Display", "Arrow filter", "U < 0.075");
+								win.webContents.send("call", {
+									fn: "set_arrow_filter",
+									args: ["U", 0.075],
+								});
+							}
+						},
+						{
+							label: "U < 0.05",
+							type: "checkbox",
+							checked: config.arrow_filter_type === "U" && config.arrow_filter_value === 0.05,
+							click: () => {
+								set_checks("Display", "Arrow filter", "U < 0.05");
+								win.webContents.send("call", {
+									fn: "set_arrow_filter",
+									args: ["U", 0.05],
+								});
+							}
+						},
+						{
+							label: "U < 0.025",
+							type: "checkbox",
+							checked: config.arrow_filter_type === "U" && config.arrow_filter_value === 0.025,
+							click: () => {
+								set_checks("Display", "Arrow filter", "U < 0.025");
+								win.webContents.send("call", {
+									fn: "set_arrow_filter",
+									args: ["U", 0.025],
 								});
 							}
 						},
