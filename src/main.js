@@ -934,6 +934,18 @@ function menu_build() {
 							type: "separator"
 						},
 						{
+							label: "N > 0.5%",
+							type: "checkbox",
+							checked: config.arrow_filter_type === "N" && config.arrow_filter_value === 0.005,
+							click: () => {
+								set_checks("Display", "Arrow filter", "N > 0.5%");
+								win.webContents.send("call", {
+									fn: "set_arrow_filter",
+									args: ["N", 0.005],
+								});
+							}
+						},
+						{
 							label: "N > 1%",
 							type: "checkbox",
 							checked: config.arrow_filter_type === "N" && config.arrow_filter_value === 0.01,
