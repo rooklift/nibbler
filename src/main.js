@@ -934,26 +934,14 @@ function menu_build() {
 							type: "separator"
 						},
 						{
-							label: "N > 10%",
+							label: "N > 1%",
 							type: "checkbox",
-							checked: config.arrow_filter_type === "N" && config.arrow_filter_value === 0.1,
+							checked: config.arrow_filter_type === "N" && config.arrow_filter_value === 0.01,
 							click: () => {
-								set_checks("Display", "Arrow filter", "N > 10%");
+								set_checks("Display", "Arrow filter", "N > 1%");
 								win.webContents.send("call", {
 									fn: "set_arrow_filter",
-									args: ["N", 0.1],
-								});
-							}
-						},
-						{
-							label: "N > 5%",
-							type: "checkbox",
-							checked: config.arrow_filter_type === "N" && config.arrow_filter_value === 0.05,
-							click: () => {
-								set_checks("Display", "Arrow filter", "N > 5%");
-								win.webContents.send("call", {
-									fn: "set_arrow_filter",
-									args: ["N", 0.05],
+									args: ["N", 0.01],
 								});
 							}
 						},
@@ -970,14 +958,26 @@ function menu_build() {
 							}
 						},
 						{
-							label: "N > 1%",
+							label: "N > 5%",
 							type: "checkbox",
-							checked: config.arrow_filter_type === "N" && config.arrow_filter_value === 0.01,
+							checked: config.arrow_filter_type === "N" && config.arrow_filter_value === 0.05,
 							click: () => {
-								set_checks("Display", "Arrow filter", "N > 1%");
+								set_checks("Display", "Arrow filter", "N > 5%");
 								win.webContents.send("call", {
 									fn: "set_arrow_filter",
-									args: ["N", 0.01],
+									args: ["N", 0.05],
+								});
+							}
+						},
+						{
+							label: "N > 10%",
+							type: "checkbox",
+							checked: config.arrow_filter_type === "N" && config.arrow_filter_value === 0.1,
+							click: () => {
+								set_checks("Display", "Arrow filter", "N > 10%");
+								win.webContents.send("call", {
+									fn: "set_arrow_filter",
+									args: ["N", 0.1],
 								});
 							}
 						},
