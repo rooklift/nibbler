@@ -731,7 +731,7 @@ function NewInfoHandler() {
 					if (typeof info_list[i].n !== "number" || info_list[i].n === 0) {
 						good_n = false;
 					} else {
-						let n_fraction = info_list[i].n / info_list[i].total_nodes;
+						let n_fraction = info_list[i].n / node.table.nodes;
 						if (n_fraction < config.arrow_filter_value) {
 							good_n = false;
 						}
