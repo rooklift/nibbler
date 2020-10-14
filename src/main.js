@@ -914,7 +914,7 @@ function menu_build() {
 								set_checks("Display", "Arrow filter", "All moves");
 								win.webContents.send("call", {
 									fn: "set_arrow_filter",
-									args: ["all", null],
+									args: ["all", 0],
 								});
 							}
 						},
@@ -926,7 +926,7 @@ function menu_build() {
 								set_checks("Display", "Arrow filter", "Top move");
 								win.webContents.send("call", {
 									fn: "set_arrow_filter",
-									args: ["top", null],
+									args: ["top", 0],
 								});
 							}
 						},
