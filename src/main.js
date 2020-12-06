@@ -2544,6 +2544,18 @@ function menu_build() {
 							}
 						},
 						{
+							label: "2",
+							type: "checkbox",
+							checked: config.search_nodes_special === 2,
+							click: () => {
+								// No set_checks call, it's done via an ipc message.
+								win.webContents.send("call", {
+									fn: "set_node_limit_special",
+									args: [2]
+								});
+							}
+						},
+						{
 							label: "1",
 							type: "checkbox",
 							checked: config.search_nodes_special === 1,
