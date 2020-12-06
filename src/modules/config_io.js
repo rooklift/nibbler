@@ -10,8 +10,8 @@ exports.filename = "config.json";
 // To avoid using "remote", we rely on the main process passing userData location in the query...
 
 exports.filepath = electron.app ?
-		path.join(electron.app.getPath("userData"), exports.filename) :
-		path.join(querystring.parse(global.location.search)["?user_data_path"], exports.filename);
+		path.join(electron.app.getPath("userData"), exports.filename) :									// in Main process
+		path.join(querystring.parse(global.location.search)["?user_data_path"], exports.filename);		// in Renderer process
 
 exports.defaults = {
 	"warning": "EDITING THIS FILE WHILE NIBBLER IS RUNNING WILL GENERALLY CAUSE YOUR EDITS TO BE LOST.",
