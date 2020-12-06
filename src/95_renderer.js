@@ -891,6 +891,10 @@ function NewRenderer() {
 		this.set_uci_option(name, val, true);
 	};
 
+	renderer.toggle_uci_option = function(name, save_to_cfg) {
+		this.set_uci_option(name, !config.options[name], save_to_cfg);
+	};
+
 	renderer.disable_syzygy = function() {
 		delete config.options["SyzygyPath"];
 		config_io.save(config);
