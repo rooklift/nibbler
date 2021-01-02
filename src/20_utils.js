@@ -98,6 +98,43 @@ function InfoPV(s) {
 	return [];
 }
 
+function C960_PV_Converter(pv, board) {
+
+	// In place.
+
+	let fix_e1g1 = board.state[4][7] === "K" && !board.castling.includes("G");
+	let fix_e1c1 = board.state[4][7] === "K" && !board.castling.includes("C");
+	let fix_e8g8 = board.state[4][0] === "k" && !board.castling.includes("g");
+	let fix_e8c8 = board.state[4][0] === "k" && !board.castling.includes("c");
+
+	for (let i = 0; i < pv.length; i++) {
+
+		let token = pv[i];
+
+		if (fix_e1g1 && token === "e1g1") {
+			pv[i] = "e1h1";
+		} else if (fix_e1c1 && token === "e1c1") {
+			pv[i] = "e1a1";
+		} else if (fix_e8g8 && token === "e8g8") {
+			pv[i] = "e8h8";
+		} else if (fix_e8c8 && token === "e8c8") {
+			pv[i] = "e8a8";
+		}
+
+		let start = token.slice(0, 2);
+
+		if (start === "e1") {
+			fix_e1g1 = false;
+			fix_e1c1 = false;
+		}
+
+		if (start === "e8") {
+			fix_e8g8 = false;
+			fix_e8c8 = false;
+		}
+	}
+}
+
 function InfoWDL(s) {
 
 	// Pull the WDL out as a string.

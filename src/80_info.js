@@ -175,18 +175,11 @@ function NewInfoHandler() {
 
 			move_info.wdl = InfoWDL(s);
 
-			// Note: if the engine isn't respecting Chess960 castling format, the PV
-			// may contain old-fashioned castling moves. This is (at time of writing)
-			// the only place in the code where we might store such bad-format moves,
-			// as everywhere else they are instantly converted.
-			//
-			// Converting these at reception would be a hassle, and also would cause
-			// future CompareArrays() calls (see below) to fail.
-			//
-			// While we could work around the presence of such bad-format moves,
-			// there are many complex ramifications.
+			// If the engine isn't respecting Chess960 castling format, the PV
+			// may contain old-fashioned castling moves...
 
 			let new_pv = InfoPV(s);
+			C960_PV_Converter(new_pv, board);
 
 			// Note: we used to ignore PV of length 1 on account of Stockfish sending
 			// such PVs sometimes, but this does lead to actual PVs of length 1 being
