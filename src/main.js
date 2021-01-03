@@ -730,6 +730,17 @@ function menu_build() {
 					type: "separator"
 				},
 				{
+					label: "Show WDL from white POV",
+					type: "checkbox",
+					checked: config.wdl_white_pov,
+					click: () => {
+						win.webContents.send("call", {
+							fn: "toggle",
+							args: ["wdl_white_pov"],
+						});
+					}
+				},
+				{
 					label: "Score winrates from white POV",
 					type: "checkbox",
 					checked: config.ev_white_pov,

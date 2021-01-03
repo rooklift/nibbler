@@ -120,6 +120,19 @@ const info_prototype = {
 		return (val * 100).toFixed(dp);
 	},
 
+	wdl_string: function(white_pov) {
+		if (typeof this.wdl !== "string") {
+			return "?";
+		}
+		let wdl = this.wdl;
+		if (white_pov && this.board.active === "b") {
+			let sp = wdl.split(" ");
+			sp.reverse();
+			return sp.join(" ");
+		}
+		return wdl;
+	},
+
 	cp_string: function(white_pov) {
 		if (typeof this.cp !== "number") {
 			return "?";
@@ -255,7 +268,7 @@ const info_prototype = {
 		}
 
 		if (opts.wdl) {
-			ret.push(`WDL: ${this.wdl}`);
+			ret.push(`WDL: ${this.wdl_string(opts.wdl_white_pov)}`);
 		}
 
 		return ret;
