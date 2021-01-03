@@ -124,13 +124,11 @@ const info_prototype = {
 		if (typeof this.wdl !== "string") {
 			return "?";
 		}
-		let wdl = this.wdl;
+		let s = this.wdl;
 		if (white_pov && this.board.active === "b") {
-			let sp = wdl.split(" ");
-			sp.reverse();
-			return sp.join(" ");
+			s = s.split(" ").reverse().join(" ");
 		}
-		return wdl;
+		return s;
 	},
 
 	cp_string: function(white_pov) {

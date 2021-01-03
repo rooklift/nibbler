@@ -547,17 +547,17 @@ function NewInfoHandler() {
 
 			let extra_stat_strings = info.stats_list(
 				{
-					n:     config.show_n,
-					n_abs: config.show_n_abs,
-					wdl:   config.show_wdl,
+					n:             config.show_n,
+					n_abs:         config.show_n_abs,
+					wdl:           config.show_wdl,
 					wdl_white_pov: config.wdl_white_pov,
-					p:     config.show_p,
-					m:     config.show_m,
-					v:     config.show_v,
-					q:     config.show_q,
-					d:     config.show_d,
-					u:     config.show_u,
-					s:     config.show_s,
+					p:             config.show_p,
+					m:             config.show_m,
+					v:             config.show_v,
+					q:             config.show_q,
+					d:             config.show_d,
+					u:             config.show_u,
+					s:             config.show_s,
 				}, node.table.nodes);
 
 			if (extra_stat_strings.length > 0) {

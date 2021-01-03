@@ -61,9 +61,9 @@ exports.defaults = {
 	"next_move_arrow": false,
 	"arrowhead_type": 0,
 
-	"wdl_white_pov": false,
 	"ev_white_pov": false,
 	"cp_white_pov": false,
+	"wdl_white_pov": false,
 
 	"show_cp": false,
 	"show_n": true,

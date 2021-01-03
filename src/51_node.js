@@ -272,22 +272,22 @@ const node_prototype = {
 		}
 
 		let sl = info.stats_list({
+			ev_white_pov:  config.ev_white_pov,
+			cp_white_pov:  config.cp_white_pov,
 			wdl_white_pov: config.wdl_white_pov,
-			ev_white_pov: config.ev_white_pov,
-			cp_white_pov: config.cp_white_pov,
-			ev:           config.pgn_ev,
-			cp:           config.pgn_cp,
-			n:            config.pgn_n,
-			n_abs:        config.pgn_n_abs,
-			of_n:         config.pgn_of_n,
-			wdl:          config.pgn_wdl,
-			p:            config.pgn_p,
-			m:            config.pgn_m,
-			v:            config.pgn_v,
-			q:            config.pgn_q,
-			d:            config.pgn_d,
-			u:            config.pgn_u,
-			s:            config.pgn_s,
+			ev:            config.pgn_ev,
+			cp:            config.pgn_cp,
+			n:             config.pgn_n,
+			n_abs:         config.pgn_n_abs,
+			of_n:          config.pgn_of_n,
+			wdl:           config.pgn_wdl,
+			p:             config.pgn_p,
+			m:             config.pgn_m,
+			v:             config.pgn_v,
+			q:             config.pgn_q,
+			d:             config.pgn_d,
+			u:             config.pgn_u,
+			s:             config.pgn_s,
 		}, total_nodes);
 
 		return sl.join(", ");			// Will be "" on empty list
