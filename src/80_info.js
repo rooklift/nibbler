@@ -550,6 +550,7 @@ function NewInfoHandler() {
 					n:     config.show_n,
 					n_abs: config.show_n_abs,
 					wdl:   config.show_wdl,
+					wdl_white_pov: config.wdl_white_pov,
 					p:     config.show_p,
 					m:     config.show_m,
 					v:     config.show_v,

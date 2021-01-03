@@ -272,6 +272,7 @@ const node_prototype = {
 		}
 
 		let sl = info.stats_list({
+			wdl_white_pov: config.wdl_white_pov,
 			ev_white_pov: config.ev_white_pov,
 			cp_white_pov: config.cp_white_pov,
 			ev:           config.pgn_ev,
