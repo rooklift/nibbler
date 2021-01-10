@@ -185,7 +185,7 @@ function NewInfoHandler() {
 			// such PVs sometimes, but this does lead to actual PVs of length 1 being
 			// ignored, which can lead to stale long PVs in the infobox.
 
-			new_pv[0] = move;		// Partial mitigation for wrong-format castling.
+			new_pv[0] = move;		// This was partial mitigation for wrong-format castling. It's now redundant with C960_PV_Converter().
 
 			if (CompareArrays(new_pv, move_info.pv) === false) {
 				move_info.nice_pv_cache = null;
