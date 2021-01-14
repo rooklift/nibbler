@@ -1548,6 +1548,11 @@ function NewRenderer() {
 		if (EventPathString(event, "gobutton")) {
 			this.set_behaviour("analysis_free");
 			return;
+		}		
+				
+		if (EventPathString(event, "haltbutton")) {
+			this.set_behaviour("halt");
+			return;
 		}
 
 		if (EventPathString(event, "lock_return")) {
