@@ -82,20 +82,47 @@ function InfoValMany(s, keys) {
 
 function InfoPV(s) {
 
-	// Pull the PV out, assuming it's at the end of the string.
+	// Pull the PV out.
 
 	if (typeof s !== "string") {
 		return [];
 	}
 
 	let tokens = s.split(" ").filter(z => z !== "");
+	let pv_index = null;
 
-	for (let i = 0; i < tokens.length - 1; i++) {
+	for (let i = 0; i < tokens.length; i++) {
 		if (tokens[i] === "pv") {
-			return tokens.slice(i + 1);
+			pv_index = i;
+			break;
 		}
 	}
-	return [];
+
+	if (pv_index === null) {
+		return [];
+	}
+
+	let ret = [];
+
+	for (let i = pv_index + 1; i < tokens.length; i++) {
+
+		let token = tokens[i];
+
+		if (token.length < 4 || token.length > 5) {
+			break;
+		}
+
+		let codes = [token.charCodeAt(0), token.charCodeAt(1), token.charCodeAt(2), token.charCodeAt(3)];
+
+		if (codes[0] < 97 || codes[0] > 104) break;		// a - h
+		if (codes[1] < 49 || codes[1] > 56) break;		// 1 - 8
+		if (codes[2] < 97 || codes[2] > 104) break;
+		if (codes[3] < 49 || codes[3] > 56) break;
+
+		ret.push(token);
+	}
+
+	return ret;
 }
 
 function C960_PV_Converter(pv, board) {
