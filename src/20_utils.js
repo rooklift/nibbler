@@ -98,28 +98,27 @@ function InfoPV(s) {
 		}
 	}
 
-	if (pv_index === null) {
-		return [];
-	}
-
 	let ret = [];
 
-	for (let i = pv_index + 1; i < tokens.length; i++) {
+	if (pv_index !== null) {
 
-		let token = tokens[i];
+		for (let i = pv_index + 1; i < tokens.length; i++) {
 
-		if (token.length < 4 || token.length > 5) {
-			break;
+			let token = tokens[i];
+
+			if (token.length < 4 || token.length > 5) {
+				break;
+			}
+
+			let codes = [token.charCodeAt(0), token.charCodeAt(1), token.charCodeAt(2), token.charCodeAt(3)];
+
+			if (codes[0] < 97 || codes[0] > 104) break;		// a - h
+			if (codes[1] < 49 || codes[1] > 56) break;		// 1 - 8
+			if (codes[2] < 97 || codes[2] > 104) break;
+			if (codes[3] < 49 || codes[3] > 56) break;
+
+			ret.push(token);
 		}
-
-		let codes = [token.charCodeAt(0), token.charCodeAt(1), token.charCodeAt(2), token.charCodeAt(3)];
-
-		if (codes[0] < 97 || codes[0] > 104) break;		// a - h
-		if (codes[1] < 49 || codes[1] > 56) break;		// 1 - 8
-		if (codes[2] < 97 || codes[2] > 104) break;
-		if (codes[3] < 49 || codes[3] > 56) break;
-
-		ret.push(token);
 	}
 
 	return ret;
