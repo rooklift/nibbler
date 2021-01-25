@@ -829,13 +829,20 @@ function NewRenderer() {
 
 		let root_fen = this.tree.root.board.fen(false);
 		let setup = `fen ${root_fen}`;
+		let moves = node.history();
+
+		if (moves.length === 0) {
+			this.engine.send(`position ${setup}`);
+		} else {
+			this.engine.send(`position ${setup} moves ${moves.join(" ")}`);
+		}
+
+		Log(node.board.graphic());
+
+		this.engine.send("isready");
 
 		// Leela seems to time "readyok" correctly after "position" commands.
 		// After sending "isready" we'll ignore Leela output until "readyok" comes.
-
-		this.engine.send(`position ${setup} moves ${node.history().join(" ")}`);
-		Log(node.board.graphic());
-		this.engine.send("isready");
 
 		let s;
 		let n = this.node_limit();
@@ -1548,8 +1555,8 @@ function NewRenderer() {
 		if (EventPathString(event, "gobutton")) {
 			this.set_behaviour("analysis_free");
 			return;
-		}		
-				
+		}
+
 		if (EventPathString(event, "haltbutton")) {
 			this.set_behaviour("halt");
 			return;
