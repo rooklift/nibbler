@@ -222,6 +222,8 @@ function NewInfoHandler() {
 
 			this.ever_received_info = true;				// After the move legality check; i.e. we want REAL info
 			node.table.version++;						// Likewise
+
+			move_info.leelaish = true;
 			move_info.version = node.table.version;
 			move_info.vms_order = this.next_vms_order_int++;
 
@@ -521,7 +523,10 @@ function NewInfoHandler() {
 			if (config.show_cp) {
 				value_string = info.cp_string(config.cp_white_pov);
 			} else {
-				value_string = info.value_string(1, config.ev_white_pov) + "%";
+				value_string = info.value_string(1, config.ev_white_pov);
+				if (value_string !== "?") {
+					value_string += "%";
+				}
 			}
 
 			substrings.push(`<span class="blue">${value_string} </span>`);

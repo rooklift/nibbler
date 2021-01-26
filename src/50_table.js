@@ -52,6 +52,7 @@ function NewInfo(board, move) {
 	info.cp = 0;
 	info.d = 0;
 	info.depth = 0;
+	info.leelaish = false;			// Whether this info object has ever been updated from a VerboseMoveStats item.
 	info.m = 0;
 	info.mate = 0;					// 0 can be the "not present" value.
 	info.move = move;
@@ -113,6 +114,9 @@ const info_prototype = {
 		if (typeof this.q !== "number") {
 			return "?";
 		}
+		if (this.leelaish && this.n === 0) {
+			return "?";
+		}
 		let val = this.value();
 		if (white_pov && this.board.active === "b") {
 			val = 1 - val;
@@ -133,6 +137,9 @@ const info_prototype = {
 
 	cp_string: function(white_pov) {
 		if (typeof this.cp !== "number") {
+			return "?";
+		}
+		if (this.leelaish && this.n === 0) {
 			return "?";
 		}
 		let cp = this.cp;
