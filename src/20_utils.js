@@ -126,7 +126,8 @@ function InfoPV(s) {
 
 function C960_PV_Converter(pv, board) {
 
-	// In place.
+	// Change standard UCI format castling moves in the PV
+	// into our favoured c960 format. In place.
 
 	let fix_e1g1 = board.state[4][7] === "K" && !board.castling.includes("G");
 	let fix_e1c1 = board.state[4][7] === "K" && !board.castling.includes("C");
