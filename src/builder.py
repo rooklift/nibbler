@@ -7,8 +7,8 @@ with open("package.json") as f:
 
 # Location of zipped electron distributions...
 
-linux_electron = "electron_zipped/electron-v9.4.0-linux-x64.zip"
-windows_electron = "electron_zipped/electron-v9.4.0-win32-x64.zip"
+linux_electron = "electron_zipped/electron-v9.4.2-linux-x64.zip"
+windows_electron = "electron_zipped/electron-v9.4.2-win32-x64.zip"
 
 # Setup directories...
 
