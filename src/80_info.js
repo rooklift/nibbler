@@ -200,7 +200,7 @@ function NewInfoHandler() {
 			// Ceres has been known to send these in Euro decimal format e.g. Q: 0,094
 			// We'll have to replace all commas...
 
-			s = ReplaceAll(s, ",", ".")
+			s = ReplaceAll(s, ",", ".");
 
 			let infovals = InfoValMany(s, ["string", "N:", "(D:", "(U:", "(Q+U:", "(S:", "(P:", "(Q:", "(V:", "(M:"]);
 
