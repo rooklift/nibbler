@@ -3341,6 +3341,44 @@ function menu_build() {
 						win.webContents.send("call", "fire_gc");
 					}
 				},
+				{
+					type: "separator"
+				},
+				{
+					label: "Set logfile...",
+					click: () => {
+						let file = save_dialog();
+						if (typeof file === "string" && file.length > 0) {
+							win.webContents.send("set", {
+								key: "logfile",
+								value: file,
+							});
+						}
+					}
+				},
+				{
+					label: "Disable logging",
+					click: () => {
+						win.webContents.send("set", {
+							key: "logfile",
+							value: null,
+						});
+					}
+				},
+				{
+					type: "separator"
+				},
+				{
+					label: "Log verbosely (when logging)",
+					type: "checkbox",
+					checked: config.log_info_lines,
+					click: () => {
+						win.webContents.send("call", {
+							fn: "toggle",
+							args: ["log_info_lines"],
+						});
+					}
+				},
 			]
 		}
 	];
