@@ -208,11 +208,11 @@ function NewInfoHandler() {
 			let move_info;
 			let move = infovals["string"];
 
-			if (move === "node") {						// Mostly ignore these lines, but..., but use it to note that the VMS is complete. A bit sketchy?
-				this.next_vms_order_int = 1;			// Use them to note that the VerboseMoveStats have completed.
+			if (move === "node") {						// Mostly ignore these lines, but...
+				this.next_vms_order_int = 1;			// ...use them to note that the VerboseMoveStats have completed. A bit sketchy?
 				tmp = parseInt(infovals["N:"], 10);
 				if (Number.isNaN(tmp) === false) {
-					node.table.nodes = tmp;				// And use this line to ensure a valid nodes count for the table. (Mostly helps with Ceres.)
+					node.table.nodes = tmp;				// ...and use this line to ensure a valid nodes count for the table. (Mostly helps with Ceres.)
 				}
 				return;
 			}
