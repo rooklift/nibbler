@@ -3359,10 +3359,7 @@ function menu_build() {
 				{
 					label: "Disable logging",
 					click: () => {
-						win.webContents.send("set", {
-							key: "logfile",
-							value: null,
-						});
+						win.webContents.send("call", "stop_logging");
 					}
 				},
 				{

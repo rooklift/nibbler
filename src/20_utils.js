@@ -243,17 +243,24 @@ function SafeString(s) {
 
 function Log(s) {
 
-	if (typeof config.logfile !== "string" || config.logfile === "") {
-		return;
-	}
-
+	// config.logfile  - name of desired log file (or null)
 	// Log.logfilename - name of currently open log file (undefined if none)
 	// Log.stream      - actual write stream
+
+	if (typeof config.logfile !== "string" || config.logfile === "") {
+		if (Log.logfilename) {
+			console.log(`Closing ${Log.logfilename}`);
+			Log.stream.end();
+			Log.logfilename = undefined;
+		}
+		return;
+	}
 
 	if (Log.logfilename !== config.logfile) {
 		if (Log.logfilename) {
 			console.log(`Closing ${Log.logfilename}`);
 			Log.stream.end();
+			Log.logfilename = undefined;
 		}
 		console.log(`Opening ${config.logfile}`);
 		Log.logfilename = config.logfile;
