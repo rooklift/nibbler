@@ -197,6 +197,11 @@ function NewInfoHandler() {
 			// info string d2d4  (293 ) N:   12005 (+169) (P: 22.38%) (WL:  0.09480) (D:  0.326)
 			// (M:  7.4) (Q:  0.09480) (U: 0.01211) (Q+U:  0.10691) (V:  0.0898)
 
+			// Ceres has been known to send these in Euro decimal format e.g. Q: 0,094
+			// We'll have to replace all commas...
+
+			s = ReplaceAll(s, ",", ".")
+
 			let infovals = InfoValMany(s, ["string", "N:", "(D:", "(U:", "(Q+U:", "(S:", "(P:", "(Q:", "(V:", "(M:"]);
 
 			let move_info;
