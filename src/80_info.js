@@ -204,11 +204,16 @@ function NewInfoHandler() {
 
 			let infovals = InfoValMany(s, ["string", "N:", "(D:", "(U:", "(Q+U:", "(S:", "(P:", "(Q:", "(V:", "(M:"]);
 
+			let tmp;
 			let move_info;
 			let move = infovals["string"];
 
-			if (move === "node") {						// Ignore this, but use it to note that the VMS is complete. A bit sketchy?
-				this.next_vms_order_int = 1;
+			if (move === "node") {						// Mostly ignore these lines, but..., but use it to note that the VMS is complete. A bit sketchy?
+				this.next_vms_order_int = 1;			// Use them to note that the VerboseMoveStats have completed.
+				tmp = parseInt(infovals["N:"], 10);
+				if (Number.isNaN(tmp) === false) {
+					node.table.nodes = tmp;				// And use this line to ensure a valid nodes count for the table. (Mostly helps with Ceres.)
+				}
 				return;
 			}
 
@@ -231,8 +236,6 @@ function NewInfoHandler() {
 			move_info.leelaish = true;
 			move_info.version = node.table.version;
 			move_info.vms_order = this.next_vms_order_int++;
-
-			let tmp;
 
 			tmp = parseInt(infovals["N:"], 10);
 			if (Number.isNaN(tmp) === false) {
