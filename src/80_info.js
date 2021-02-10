@@ -149,7 +149,7 @@ function NewInfoHandler() {
 
 			tmp = parseInt(infovals["nodes"], 10);
 			if (Number.isNaN(tmp) === false) {
-				move_info.total_nodes = tmp;
+				move_info.uci_nodes = tmp;
 				node.table.nodes = tmp;
 			}
 
@@ -344,8 +344,8 @@ function NewInfoHandler() {
 			// If MultiPV is the same, go with the more recent data...
 
 			if (a.multipv === b.multipv) {
-				if (a.version > b.version && a.total_nodes > b.total_nodes) return a_is_best;
-				if (a.version < b.version && a.total_nodes < b.total_nodes) return b_is_best;
+				if (a.version > b.version && a.uci_nodes > b.uci_nodes) return a_is_best;
+				if (a.version < b.version && a.uci_nodes < b.uci_nodes) return b_is_best;
 			}
 
 			// I hesitate to use multipv sort sorting because of stale data issues, but...

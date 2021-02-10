@@ -29,10 +29,10 @@ const table_prototype = {
 
 		if (!info || info.__ghost) return;
 
-		// if (info.total_nodes < this.eval_nodes) return;			// This can feel unintuitive.
+		// if (info.uci_nodes < this.eval_nodes) return;			// This can feel unintuitive.
 
 		this.eval = info.board.active === "w" ? info.value() : 1 - info.value();
-		this.eval_nodes = info.total_nodes;
+		this.eval_nodes = info.uci_nodes;
 	},
 };
 
@@ -64,8 +64,8 @@ function NewInfo(board, move) {
 	info.q = 0;
 	info.s = 1;						// Known as Q+U before Lc0 v0.25-rc2
 	info.seldepth = 0;
-	info.total_nodes = 0;
 	info.u = 1;
+	info.uci_nodes = 0;				// The number of nodes reported by the UCI info lines (i.e. for the whole position).
 	info.v = null;					// Warning: v is allowed to be null if not known.
 	info.version = 0;
 	info.vms_order = 0;				// VerboseMoveStats order, 0 means not present, 1 is the worst, higher is better.
@@ -168,7 +168,7 @@ const info_prototype = {
 		}
 	},
 
-	stats_list: function(opts, total_nodes) {		// We pass total_nodes rather than use this.total_nodes which can be obsolete (e.g. due to searchmoves)
+	stats_list: function(opts, total_nodes) {		// We pass total_nodes rather than use this.uci_nodes which can be obsolete (e.g. due to searchmoves)
 
 		let ret = [];
 
