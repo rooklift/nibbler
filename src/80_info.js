@@ -97,7 +97,7 @@ function NewInfoHandler() {
 			// info depth 8 seldepth 31 time 3029 nodes 23672 score cp 27 wdl 384 326 290 nps 7843 tbhits 0 multipv 1
 			// pv d2d4 g8f6 c2c4 e7e6 g1f3 d7d5 b1c3 f8b4 c1g5 d5c4 e2e4 c7c5 f1c4 h7h6 g5f6 d8f6 e1h1 c5d4 e4e5 f6d8 c3e4
 
-			let infovals = InfoValMany(s, ["pv", "cp", "mate", "multipv", "nodes", "nps", "time", "depth", "seldepth"]);
+			let infovals = InfoValMany(s, ["pv", "cp", "mate", "multipv", "nodes", "nps", "time", "depth", "seldepth", "tbhits"]);
 
 			let move_info;
 			let move = infovals["pv"];
@@ -161,6 +161,11 @@ function NewInfoHandler() {
 			tmp = parseInt(infovals["time"], 10);
 			if (Number.isNaN(tmp) === false) {
 				node.table.time = tmp;					// Note this is stored in the node.table, not the move_info
+			}
+
+			tmp = parseInt(infovals["tbhits"], 10);
+			if (Number.isNaN(tmp) === false) {
+				node.table.tbhits = tmp;				// Note this is stored in the node.table, not the move_info
 			}
 
 			tmp = parseInt(infovals["depth"], 10);

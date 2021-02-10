@@ -15,8 +15,8 @@ const table_prototype = {
 		this.version = 0;						// Incremented on any change
 		this.nodes = 0;							// Stat sent by engine
 		this.nps = 0;							// Stat sent by engine
+		this.tbhits = 0;						// Stat sent by engine
 		this.time = 0;							// Stat sent by engine
-
 		this.eval = null;						// Used by grapher only. Value from White's POV.
 		this.eval_nodes = 0;					// Number of search nodes used to generate the eval.
 	},
