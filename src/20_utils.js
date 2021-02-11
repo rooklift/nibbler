@@ -518,7 +518,7 @@ function RandChoice(arr) {
 	return arr[RandInt(0, arr.length)];
 }
 
-function HighLightString(s, prefix, classname) {
+function HighlightString(s, prefix, classname) {
 
 	// Highlights the thing after the prefix
 

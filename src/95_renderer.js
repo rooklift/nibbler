@@ -784,12 +784,12 @@ function NewRenderer() {
 		// Some highlights... this is obviously super-fragile based on the precise strings Leela sends.
 
 		if (s.startsWith("Found configuration file: ")) {
-			this.info_handler.err_receive(HighLightString(s, "Found configuration file: ", "blue"));
+			this.info_handler.err_receive(HighlightString(s, "Found configuration file: ", "blue"));
 			return;
 		}
 
 		if (s.startsWith("Loading Syzygy tablebases from ")) {
-			this.info_handler.err_receive(HighLightString(s, "Loading Syzygy tablebases from ", "blue"));
+			this.info_handler.err_receive(HighlightString(s, "Loading Syzygy tablebases from ", "blue"));
 			return;
 		}
 
@@ -797,13 +797,13 @@ function NewRenderer() {
 
 		if (s.startsWith("Loading weights file from: ")) {
 			ipcRenderer.send("ack_weightsfile", s.slice(26).trim());
-			this.info_handler.err_receive(HighLightString(s, "Loading weights file from: ", "blue"));
+			this.info_handler.err_receive(HighlightString(s, "Loading weights file from: ", "blue"));
 			return;
 		}
 
 		if (s.startsWith("Found pb network file: ")) {
 			ipcRenderer.send("ack_weightsfile", s.slice(22).trim());
-			this.info_handler.err_receive(HighLightString(s, "Found pb network file: ", "blue"));
+			this.info_handler.err_receive(HighlightString(s, "Found pb network file: ", "blue"));
 			return;
 		}
 
