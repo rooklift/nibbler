@@ -1676,15 +1676,15 @@ function NewRenderer() {
 
 	renderer.draw_friendlies_in_table = function() {
 
-		let position = this.tree.node.board;
+		let board = this.tree.node.board;
 
 		for (let x = 0; x < 8; x++) {
 			for (let y = 0; y < 8; y++) {
 
 				let piece_to_draw = "";
 
-				if (position.colour(Point(x, y)) === position.active) {
-					piece_to_draw = position.state[x][y];
+				if (board.colour(Point(x, y)) === board.active) {
+					piece_to_draw = board.state[x][y];
 				}
 
 				if (piece_to_draw === this.friendly_draws[x][y]) {
