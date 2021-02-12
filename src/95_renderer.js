@@ -1401,6 +1401,7 @@ function NewRenderer() {
 		config.logfile = null;
 		config_io.save(config);
 		Log("Stopping log.");		// This should do nothing, but calling Log() forces it to close any open file.
+		ipcRenderer.send("ack_logfile", null);
 	};
 
 	// -------------------------------------------------------------------------------------------------------------------------

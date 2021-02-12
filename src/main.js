@@ -142,6 +142,14 @@ function startup() {
 		loaded_weights = msg;
 	});
 
+	electron.ipcMain.on("ack_logfile", (event, msg) => {
+		if (msg) {
+			set_one_check(true, "Dev", "Set logfile...");
+		} else {
+			set_one_check(false, "Dev", "Set logfile...");
+		}
+	});
+
 	electron.ipcMain.on("alert", (event, msg) => {
 		alert(msg);
 	});
@@ -3346,6 +3354,8 @@ function menu_build() {
 				},
 				{
 					label: "Set logfile...",
+					type: "checkbox",
+					checked: false,
 					click: () => {
 						let file = save_dialog();
 						if (typeof file === "string" && file.length > 0) {
@@ -3353,6 +3363,8 @@ function menu_build() {
 								key: "logfile",
 								value: file,
 							});
+						} else {
+							win.webContents.send("send_ack_logfile");		// Query current state of logfile so we can get our check back.
 						}
 					}
 				},
@@ -3418,12 +3430,20 @@ function menu_build() {
 }
 
 function get_submenu_items(menupath) {
+
+	// If the path is to a submenu, this returns a list of all items in the submenu.
+	// If the path is to a specific menu item, it just returns that item.
+
 	let o = menu.items;
 	for (let p of menupath) {
 		for (let item of o) {
 			if (item.label === p) {
-				o = item.submenu.items;
-				break;
+				if (item.submenu) {
+					o = item.submenu.items;
+					break;
+				} else {
+					return item;		// No submenu so this must be the end.
+				}
 			}
 		}
 	}
@@ -3449,3 +3469,14 @@ function set_checks(...menupath) {
 	}, 50);
 }
 
+function set_one_check(state, ...menupath) {
+
+	if (!menu_is_set) {
+		return;
+	}
+
+	let item = get_submenu_items(menupath);
+	if (item.checked !== undefined) {
+		item.checked = state;
+	}
+}

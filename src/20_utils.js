@@ -256,6 +256,8 @@ function Log(s) {
 		return;
 	}
 
+	// So at this point, we know config.logfile is some string...
+
 	if (Log.logfilename !== config.logfile) {
 		if (Log.logfilename) {
 			console.log(`Closing log ${Log.logfilename}`);
@@ -265,6 +267,7 @@ function Log(s) {
 		console.log(`Logging to ${config.logfile}`);
 		Log.logfilename = config.logfile;
 		Log.stream = fs.createWriteStream(config.logfile, {flags: "a"});
+		ipcRenderer.send("ack_logfile", config.logfile);
 	}
 
 	Log.stream.write(s + "\n");

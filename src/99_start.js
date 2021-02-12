@@ -124,6 +124,10 @@ ipcRenderer.on("call", (event, msg) => {	// Adds stuff to the "queue" - so main 
 	}
 });
 
+ipcRenderer.on("send_ack_logfile", () => {				// This is a stupid hack so the main process can know whether the menu item needs a check.
+	ipcRenderer.send("ack_logfile", config.logfile);
+});
+
 // The queue needs to be examined very regularly and acted upon.
 // We actually drop all but 1 item, so the term "queue" is a bit inaccurate.
 
