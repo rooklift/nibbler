@@ -144,9 +144,9 @@ function startup() {
 
 	electron.ipcMain.on("ack_logfile", (event, msg) => {
 		if (msg) {
-			set_one_check(true, "Dev", "Set logfile...");
+			set_one_check(true, "Dev", "Use logfile...");
 		} else {
-			set_one_check(false, "Dev", "Set logfile...");
+			set_one_check(false, "Dev", "Use logfile...");
 		}
 	});
 
@@ -3353,7 +3353,7 @@ function menu_build() {
 					type: "separator"
 				},
 				{
-					label: "Set logfile...",
+					label: "Use logfile...",
 					type: "checkbox",
 					checked: typeof config.logfile === "string" && config.logfile !== "",
 					click: () => {
@@ -3363,7 +3363,7 @@ function menu_build() {
 								key: "logfile",
 								value: file,
 							});
-							set_one_check(true, "Dev", "Set logfile...");
+							set_one_check(true, "Dev", "Use logfile...");
 						} else {													// User cancelled.
 							win.webContents.send("call", "send_ack_logfile");		// Query current state of logfile so we can get our check back.
 						}
@@ -3373,7 +3373,7 @@ function menu_build() {
 					label: "Disable logging",
 					click: () => {
 						win.webContents.send("call", "stop_logging");
-						set_one_check(false, "Dev", "Set logfile...");
+						set_one_check(false, "Dev", "Use logfile...");
 					}
 				},
 				{
