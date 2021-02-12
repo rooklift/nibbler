@@ -3373,6 +3373,7 @@ function menu_build() {
 					label: "Disable logging",
 					click: () => {
 						win.webContents.send("call", "stop_logging");
+						set_one_check(false, "Dev", "Set logfile...");
 					}
 				},
 				{

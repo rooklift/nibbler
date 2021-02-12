@@ -252,7 +252,6 @@ function Log(s) {
 			console.log(`Closing ${Log.logfilename}`);
 			Log.stream.end();
 			Log.logfilename = undefined;
-			ipcRenderer.send("ack_logfile", null);
 		}
 		return;
 	}
@@ -268,7 +267,6 @@ function Log(s) {
 		console.log(`Logging to ${config.logfile}`);
 		Log.logfilename = config.logfile;
 		Log.stream = fs.createWriteStream(config.logfile, {flags: "a"});
-		ipcRenderer.send("ack_logfile", config.logfile);
 	}
 
 	Log.stream.write(s + "\n");
