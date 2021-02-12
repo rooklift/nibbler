@@ -484,16 +484,13 @@ function NewInfoHandler() {
 		// - The last drawn highlight class matches
 		// - The searchmoves match (some possibility of false negatives due to re-ordering, but that's OK)
 
-		if (node.board === this.last_drawn_board) {
-			if (node.table.version === this.last_drawn_version) {
-				if (highlight_move === this.last_drawn_highlight_move) {
-					if (highlight_class === this.last_drawn_highlight_class) {
-						if (CompareArrays(searchmoves, this.last_drawn_searchmoves)) {
-							return;
-						}
-					}
-				}
-			}
+		if (node.board === this.last_drawn_board &&
+			node.table.version === this.last_drawn_version &&
+			highlight_move === this.last_drawn_highlight_move &&
+			highlight_class === this.last_drawn_highlight_class &&
+			CompareArrays(searchmoves, this.last_drawn_searchmoves)
+		) {
+				return;
 		}
 
 		this.last_drawn_board = node.board;
