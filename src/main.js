@@ -3355,7 +3355,7 @@ function menu_build() {
 				{
 					label: "Set logfile...",
 					type: "checkbox",
-					checked: false,						// Gets set by ack from renderer.
+					checked: typeof config.logfile === "string" && config.logfile !== "",
 					click: () => {
 						let file = save_dialog();
 						if (typeof file === "string" && file.length > 0) {
