@@ -258,11 +258,11 @@ function Log(s) {
 
 	if (Log.logfilename !== config.logfile) {
 		if (Log.logfilename) {
-			console.log(`Closing ${Log.logfilename}`);
+			console.log(`Closing log ${Log.logfilename}`);
 			Log.stream.end();
 			Log.logfilename = undefined;
 		}
-		console.log(`Opening ${config.logfile}`);
+		console.log(`Logging to ${config.logfile}`);
 		Log.logfilename = config.logfile;
 		Log.stream = fs.createWriteStream(config.logfile, {flags: "a"});
 	}

@@ -546,11 +546,13 @@ function NewRenderer() {
 			alert(err);
 			return;
 		}
+		console.log(`Loading PGN: ${filename}`);
 		this.load_pgn_buffer(buf);
 	};
 
 	renderer.load_pgn_from_string = function(s) {
 		let buf = Buffer.from(s);
+		console.log(`Loading PGN from string...`);
 		this.load_pgn_buffer(buf);
 	};
 
