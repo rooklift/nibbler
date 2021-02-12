@@ -3355,7 +3355,7 @@ function menu_build() {
 				{
 					label: "Set logfile...",
 					type: "checkbox",
-					checked: false,
+					checked: false,						// Gets set by ack from renderer.
 					click: () => {
 						let file = save_dialog();
 						if (typeof file === "string" && file.length > 0) {
@@ -3363,8 +3363,9 @@ function menu_build() {
 								key: "logfile",
 								value: file,
 							});
-						} else {
-							win.webContents.send("send_ack_logfile");		// Query current state of logfile so we can get our check back.
+							set_one_check(true, "Dev", "Set logfile...");
+						} else {													// User cancelled.
+							win.webContents.send("call", "send_ack_logfile");		// Query current state of logfile so we can get our check back.
 						}
 					}
 				},

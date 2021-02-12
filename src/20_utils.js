@@ -252,6 +252,7 @@ function Log(s) {
 			console.log(`Closing ${Log.logfilename}`);
 			Log.stream.end();
 			Log.logfilename = undefined;
+			ipcRenderer.send("ack_logfile", null);
 		}
 		return;
 	}
