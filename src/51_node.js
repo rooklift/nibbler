@@ -1,6 +1,6 @@
 "use strict";
 
-function NewNode(parent, move, board) {		// move must be legal; board is only relevant for root nodes
+function NewNode(parent, move, board_for_root) {		// move must be legal; board is only relevant for root nodes
 
 	let node = Object.create(node_prototype);
 	node.id = next_node_id++;
@@ -16,7 +16,7 @@ function NewNode(parent, move, board) {		// move must be legal; board is only re
 	} else {
 		node.parent = null;
 		node.move = null;
-		node.board = board;
+		node.board = board_for_root;
 		node.depth = 0;
 		node.graph_length_knower = {val: config.graph_minimum_length};
 	}
