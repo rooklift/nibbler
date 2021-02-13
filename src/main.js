@@ -978,6 +978,18 @@ function menu_build() {
 							}
 						},
 						{
+							label: "N > 2%",
+							type: "checkbox",
+							checked: config.arrow_filter_type === "N" && config.arrow_filter_value === 0.02,
+							click: () => {
+								set_checks("Display", "Arrow filter", "N > 2%");
+								win.webContents.send("call", {
+									fn: "set_arrow_filter",
+									args: ["N", 0.02],
+								});
+							}
+						},
+						{
 							label: "N > 3%",
 							type: "checkbox",
 							checked: config.arrow_filter_type === "N" && config.arrow_filter_value === 0.03,
@@ -986,6 +998,18 @@ function menu_build() {
 								win.webContents.send("call", {
 									fn: "set_arrow_filter",
 									args: ["N", 0.03],
+								});
+							}
+						},
+						{
+							label: "N > 4%",
+							type: "checkbox",
+							checked: config.arrow_filter_type === "N" && config.arrow_filter_value === 0.04,
+							click: () => {
+								set_checks("Display", "Arrow filter", "N > 4%");
+								win.webContents.send("call", {
+									fn: "set_arrow_filter",
+									args: ["N", 0.04],
 								});
 							}
 						},
