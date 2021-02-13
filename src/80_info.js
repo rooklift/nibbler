@@ -411,11 +411,14 @@ function NewInfoHandler() {
 		} else {
 
 			let status_string = "";
+			let can_have_limit_met_msg = false;
 
 			if (config.behaviour === "halt") {
 				status_string += `<span id="gobutton_clicker" class="yellow">HALTED (go?) </span>`;
+				can_have_limit_met_msg = true;
 			} else if (config.behaviour === "analysis_locked") {
 				status_string += `<span class="blue">Locked! </span>`;
+				can_have_limit_met_msg = true;
 			} else if (config.behaviour === "play_white" && node.board.active !== "w") {
 				status_string += `<span class="yellow">YOUR MOVE </span>`;
 			} else if (config.behaviour === "play_black" && node.board.active !== "b") {
@@ -426,11 +429,12 @@ function NewInfoHandler() {
 				status_string += `<span class="green">Auto-eval! </span>`;
 			} else if (config.behaviour === "analysis_free") {
 				status_string += `<span id="haltbutton_clicker" class="green">RUNNING (halt?) </span>`;
+				can_have_limit_met_msg = true;
 			}
 
 			status_string += `<span class="gray">Nodes: ${NString(node.table.nodes)}, N/s: ${NString(node.table.nps)}, Time: ${DurationString(node.table.time)}</span>`;
 
-			if (typeof config.search_nodes === "number" && node.table.nodes >= config.search_nodes) {
+			if (can_have_limit_met_msg && typeof config.search_nodes === "number" && node.table.nodes >= config.search_nodes) {
 				status_string += ` <span class="blue">(limit met)</span>`;
 			}
 
