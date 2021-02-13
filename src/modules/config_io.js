@@ -53,8 +53,8 @@ exports.defaults = {
 	"bad_move_threshold": 0.02,
 	"terrible_move_threshold": 0.04,
 
-	"arrow_filter_type": "U",
-	"arrow_filter_value": 0.1,
+	"arrow_filter_type": "N",
+	"arrow_filter_value": 0.01,
 
 	"arrows_enabled": true,
 	"click_spotlight": true,
@@ -142,13 +142,11 @@ function fix(cfg) {
 
 	cfg.board_size = cfg.square_size * 8;
 
-	// uncertainty_cutoff was removed and replaced with something better...
+	// The uncertainty_cutoff key was removed. Filtering by U was also removed...
 
-	if (cfg.uncertainty_cutoff !== undefined) {
-		cfg.arrow_filter_type = "U";
-		cfg.arrow_filter_value = cfg.uncertainty_cutoff;
-		if (cfg.arrow_filter_value >= 1) cfg.arrow_filter_type = "all";
-		if (cfg.arrow_filter_value <= 0) cfg.arrow_filter_type = "top";
+	if (cfg.uncertainty_cutoff !== undefined || cfg.arrow_filter_type === "U") {
+		cfg.arrow_filter_type = "N";
+		cfg.arrow_filter_value = exports.defaults.arrow_filter_value;
 	}
 
 	// This can't be 0 because we divide by it...
