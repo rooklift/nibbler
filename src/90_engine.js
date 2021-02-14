@@ -1,6 +1,8 @@
 "use strict";
 
 // FIXME - remove leela_node from renderer.js if possible.
+// FIXME - searchmoves (and live adjustments)
+// FIXME - limits (and live adjustments)
 
 function NewEngine() {
 
