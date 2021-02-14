@@ -4,11 +4,6 @@
 // FIXME - searchmoves (and live adjustments)
 // FIXME - limits (and live adjustments)
 
-// FIXME - go followed by F11 - the bestmove generated from stopping the first search
-// causes receive to advance the position. The fact that this can happen is a real
-// nuisance for the entire rewrite... under the old system such a bestmove line would
-// be screened out by the synchronisation.
-
 function SearchParams(node = null, limit = null, searchmoves = null) {
 	return {
 		node: node,
@@ -32,10 +27,12 @@ function NewEngine() {
 
 	// FIXME - remove sent_limit
 
-	eng.sent_limit = "n/a";			// Positive number for node limit; null for infinite; "n/a" for stopped *by us*.
+	eng.sent_limit = "n/a";				// Positive number for node limit; null for infinite; "n/a" for stopped *by us*.
 
 	eng.search_running = NoSearch;
 	eng.search_desired = NoSearch;
+
+	eng.ignoring_bestmove = false;		// If we send stop because we want to make a new search, don't pass the bestmove line to hub.
 
 	eng.hub = null;
 
@@ -91,9 +88,9 @@ function NewEngine() {
 
 	eng.send_desired = function() {
 
-		if (this.search_running.node) {
-			this.send("stop");
-		}
+//		if (this.search_running.node) {			// This shouldn't be possible.
+//			this.send("stop");
+//		}
 
 		let node = this.search_desired.node;
 
@@ -161,6 +158,7 @@ function NewEngine() {
 			this.send_desired();
 		} else {
 			this.send("stop");
+			this.ignoring_bestmove = true;
 		}
 	};
 
@@ -230,7 +228,11 @@ function NewEngine() {
 					this.search_running = NoSearch;
 					this.send_desired();				// Must be done even if the desired node is null.
 				}
-				this.hub.receive(line, completed_node);
+				if (this.ignoring_bestmove) {
+					this.ignoring_bestmove = false;
+				} else {
+					this.hub.receive(line, completed_node);
+				}
 			} else {
 				this.hub.receive(line, this.search_running.node);
 			}
