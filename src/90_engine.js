@@ -12,9 +12,7 @@ function SearchParams(node = null, limit = null, searchmoves = null) {
 	};
 }
 
-function NoSearch() {
-	return SearchParams();		// i.e. with the null defaults
-}
+let NoSearch = Object.freeze(SearchParams());		// i.e. with the null defaults
 
 function NewEngine() {
 
@@ -31,8 +29,8 @@ function NewEngine() {
 
 	eng.sent_limit = "n/a";			// Positive number for node limit; null for infinite; "n/a" for stopped *by us*.
 
-	eng.search_running = NoSearch();
-	eng.search_desired = NoSearch();
+	eng.search_running = NoSearch;
+	eng.search_desired = NoSearch;
 
 	eng.hub = null;
 
@@ -95,8 +93,8 @@ function NewEngine() {
 		let node = this.search_desired.node;
 
 		if (!node || node.destroyed || node.terminal_reason() !== "") {
-			this.search_running = NoSearch();
-			this.search_desired = NoSearch();
+			this.search_running = NoSearch;
+			this.search_desired = NoSearch;
 			return;
 		}
 
@@ -133,13 +131,12 @@ function NewEngine() {
 
 		this.send(s);
 		this.search_running = this.search_desired;
-		this.search_desired = NoSearch();
 	};
 
 	eng.set_search_desired = function(node, limit, searchmoves) {
 
 		if (!node) {
-			this.search_desired = NoSearch();
+			this.search_desired = NoSearch;
 		} else {
 			this.search_desired = SearchParams(node, limit, searchmoves);
 		}
@@ -213,8 +210,11 @@ function NewEngine() {
 				this.hub.info_handler.receive(line, this.search_running.node);
 			} else if (line.includes("bestmove")) {
 				let completed_node = this.search_running.node;
-				this.search_running = NoSearch();
-				if (this.search_desired.node) {
+				if (this.search_desired === this.search_running) {
+					this.search_running = NoSearch;
+					this.search_desired = NoSearch;
+				} else if (this.search_desired.node) {
+					this.search_running = NoSearch;
 					this.send_desired();
 				}
 				this.hub.receive(line, completed_node);

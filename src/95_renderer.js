@@ -824,9 +824,9 @@ function NewRenderer() {
 			return;
 		}
 
-		// FIXME - add limit and searchmoves
+		// FIXME - add searchmoves
 
-		this.engine.set_search_desired(node, null, null);
+		this.engine.set_search_desired(node, this.node_limit(), null);
 		this.leela_node = node;
 	};
 
