@@ -829,41 +829,7 @@ function NewRenderer() {
 			return;
 		}
 
-		let root_fen = this.tree.root.board.fen(false);
-		let setup = `fen ${root_fen}`;
-		let moves = node.history();
-
-		if (moves.length === 0) {
-			this.engine.send(`position ${setup}`);
-		} else {
-			this.engine.send(`position ${setup} moves ${moves.join(" ")}`);
-		}
-
-		Log(node.board.graphic());
-
-		this.engine.send("isready");
-
-		// Leela seems to time "readyok" correctly after "position" commands.
-		// After sending "isready" we'll ignore Leela output until "readyok" comes.
-
-		let s;
-		let n = this.node_limit();
-
-		if (!n) {
-			s = "go infinite";
-		} else {
-			s = `go nodes ${n}`;
-		}
-
-		if (config.searchmoves_buttons && Array.isArray(node.searchmoves) && node.searchmoves.length > 0) {
-			node.validate_searchmoves();	// Leela can crash on illegal searchmoves.
-			s += " searchmoves";
-			for (let move of node.searchmoves) {
-				s += " " + move;
-			}
-		}
-
-		this.engine.send(s);
+		this.engine.set_node_desired(node);
 		this.leela_node = node;
 	};
 

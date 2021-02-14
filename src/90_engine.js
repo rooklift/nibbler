@@ -1,5 +1,7 @@
 "use strict";
 
+// FIXME - remove leela_node from renderer.js if possible.
+
 function NewEngine() {
 
 	let eng = Object.create(null);
@@ -76,6 +78,66 @@ function NewEngine() {
 		}
 	};
 
+	eng.send_desired = function() {
+
+		let node = this.node_desired;
+
+		this.send("stop");
+
+		if (!node || node.destroyed || node.terminal_reason() !== "") {
+			this.node_running = null;
+			this.node_desired = null;
+			return;
+		}
+
+		let root_fen = node.get_root().board.fen(false);
+		let setup = `fen ${root_fen}`;
+		let moves = node.history();
+
+		if (moves.length === 0) {
+			this.send(`position ${setup}`);
+		} else {
+			this.send(`position ${setup} moves ${moves.join(" ")}`);
+		}
+
+		Log(node.board.graphic());
+
+		let s;
+		let n = hub.node_limit();
+
+		if (!n) {
+			s = "go infinite";
+		} else {
+			s = `go nodes ${n}`;
+		}
+
+		// FIXME - can't change searchmoves while running.
+
+		if (config.searchmoves_buttons && Array.isArray(node.searchmoves) && node.searchmoves.length > 0) {
+			node.validate_searchmoves();	// Leela can crash on illegal searchmoves.
+			s += " searchmoves";
+			for (let move of node.searchmoves) {
+				s += " " + move;
+			}
+		}
+
+		this.send(s);
+		this.node_running = node;
+	};
+
+	eng.set_node_desired = function(node) {
+
+		// If a search is running, stop it (we will send the new position after receiving bestmove).
+		// If no search is running, start the new search immediately.
+
+		this.node_desired = node;
+		if (!this.node_running) {
+			this.send_desired();
+		} else {
+			this.send("stop");
+		}
+	};
+
 	eng.setoption = function(name, value) {
 		let s = `setoption name ${name} value ${value}`;
 		this.send(s);
@@ -132,7 +194,15 @@ function NewEngine() {
 			}
 
 			if (line.includes("bestmove")) {
-				// FIXME - update node_running and maybe start new search.
+
+				let completed_node = this.node_running;
+				this.node_running = null;
+
+				if (this.node_desired === completed_node) {
+					this.node_desired = null;
+				} else {
+					this.send_desired();
+				}
 			}
 
 			this.hub.receive(line);
