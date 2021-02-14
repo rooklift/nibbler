@@ -136,14 +136,16 @@ function NewEngine() {
 		this.search_desired = NoSearch();
 	};
 
-	eng.set_search_desired = function(search) {
+	eng.set_search_desired = function(node, limit, searchmoves) {
 
-		if (!search) search = NoSearch();
+		if (!node) {
+			this.search_desired = NoSearch();
+		} else {
+			this.search_desired = SearchParams(node, limit, searchmoves);
+		}
 
 		// If a search is running, stop it (we will send the new position after receiving bestmove).
 		// If no search is running, start the new search immediately.
-
-		this.search_desired = search;
 
 		if (this.search_desired.node && !this.search_running.node) {
 			this.send_desired();

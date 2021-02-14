@@ -826,7 +826,7 @@ function NewRenderer() {
 
 		// FIXME - add limit and searchmoves
 
-		this.engine.set_search_desired(SearchParams(node, null, null));
+		this.engine.set_search_desired(node, null, null);
 		this.leela_node = node;
 	};
 
