@@ -839,7 +839,9 @@ function NewRenderer() {
 			this.engine.send(`position ${setup} moves ${moves.join(" ")}`);
 		}
 
-		Log(node.board.graphic());
+		if (config.log_positions) {
+			Log(node.board.graphic());
+		}
 
 		this.engine.send("isready");
 

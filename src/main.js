@@ -3297,13 +3297,35 @@ function menu_build() {
 					type: "separator"
 				},
 				{
-					label: "Log verbosely (when logging)",
+					label: "Log info lines",
 					type: "checkbox",
 					checked: config.log_info_lines,
 					click: () => {
 						win.webContents.send("call", {
 							fn: "toggle",
 							args: ["log_info_lines"],
+						});
+					}
+				},
+				{
+					label: "Log illegal moves",
+					type: "checkbox",
+					checked: config.log_illegal_moves,
+					click: () => {
+						win.webContents.send("call", {
+							fn: "toggle",
+							args: ["log_illegal_moves"],
+						});
+					}
+				},
+				{
+					label: "Log positions",
+					type: "checkbox",
+					checked: config.log_positions,
+					click: () => {
+						win.webContents.send("call", {
+							fn: "toggle",
+							args: ["log_positions"],
 						});
 					}
 				},
