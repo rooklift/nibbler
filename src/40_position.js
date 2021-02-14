@@ -1298,6 +1298,10 @@ const position_prototype = {
 					units.push(" ");
 				}
 			}
+			if (y === 3) {
+				units.push("        ");
+				units.push(this.fen(false));
+			}
 		}
 		units.push("\n");
 		return units.join("");
