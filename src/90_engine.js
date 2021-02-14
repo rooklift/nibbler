@@ -4,6 +4,18 @@
 // FIXME - searchmoves (and live adjustments)
 // FIXME - limits (and live adjustments)
 
+function SearchParams(node = null, limit = null, searchmoves = null) {
+	return {
+		node: node,
+		limit: limit,
+		searchmoves: Array.isArray(searchmoves) ? Array.from(searchmoves) : []
+	};
+}
+
+function NoSearch() {
+	return SearchParams();		// i.e. with the null defaults
+}
+
 function NewEngine() {
 
 	let eng = Object.create(null);
@@ -15,14 +27,12 @@ function NewEngine() {
 	eng.ever_received_uciok = false;
 	eng.warned_send_fail = false;
 
-	// eng.sent_limit - the node limit of the last "go" we sent (but not affected by "bestmove").
-	// Needs to match the values provided by renderer.node_limit().
-	// This 3-type var is a bit sketchy, maybe.
+	// FIXME - remove sent_limit
 
-	eng.sent_limit = "n/a";		// Positive number for node limit; null for infinite; "n/a" for stopped *by us*.
+	eng.sent_limit = "n/a";			// Positive number for node limit; null for infinite; "n/a" for stopped *by us*.
 
-	eng.node_running = null;
-	eng.node_desired = null;	// null when actually running.
+	eng.search_running = NoSearch();
+	eng.search_desired = NoSearch();
 
 	eng.hub = null;
 
@@ -78,15 +88,15 @@ function NewEngine() {
 
 	eng.send_desired = function() {
 
-		let node = this.node_desired;
-
-		if (this.node_running) {
+		if (this.search_running.node) {
 			this.send("stop");
 		}
 
+		let node = this.search_desired.node;
+
 		if (!node || node.destroyed || node.terminal_reason() !== "") {
-			this.node_running = null;
-			this.node_desired = null;
+			this.search_running = NoSearch();
+			this.search_desired = NoSearch();
 			return;
 		}
 
@@ -105,7 +115,7 @@ function NewEngine() {
 		}
 
 		let s;
-		let n = hub.node_limit();
+		let n = this.search_desired.limit									// was hub.node_limit();
 
 		if (!n) {
 			s = "go infinite";
@@ -113,33 +123,29 @@ function NewEngine() {
 			s = `go nodes ${n}`;
 		}
 
-		// FIXME - can't change searchmoves while running.
-
-		if (config.searchmoves_buttons && Array.isArray(node.searchmoves) && node.searchmoves.length > 0) {
-			node.validate_searchmoves();	// Leela can crash on illegal searchmoves.
+		if (config.searchmoves_buttons && this.search_desired.searchmoves.length > 0) {
+			// node.validate_searchmoves();									// FIXME - validate the search object's searchmoves, not the node's
 			s += " searchmoves";
-			for (let move of node.searchmoves) {
+			for (let move of this.search_desired.searchmoves) {
 				s += " " + move;
 			}
 		}
 
 		this.send(s);
-		this.node_running = node;
-		this.node_desired = null;
+		this.search_running = this.search_desired;
+		this.search_desired = NoSearch();
 	};
 
-	eng.set_node_desired = function(node) {
+	eng.set_search_desired = function(search) {
+
+		if (!search) search = NoSearch();
 
 		// If a search is running, stop it (we will send the new position after receiving bestmove).
 		// If no search is running, start the new search immediately.
 
-		if (this.node_running === node) {
-			return;
-		}
+		this.search_desired = search;
 
-		this.node_desired = node;			// This may be null.
-
-		if (this.node_desired && !this.node_running) {
+		if (this.search_desired.node && !this.search_running.node) {
 			this.send_desired();
 		} else {
 			this.send("stop");
@@ -202,16 +208,16 @@ function NewEngine() {
 			}
 
 			if (line.startsWith("info")) {
-				this.hub.info_handler.receive(line, this.node_running);
+				this.hub.info_handler.receive(line, this.search_running.node);
 			} else if (line.includes("bestmove")) {
-				let completed_node = this.node_running;
-				this.node_running = null;
-				if (this.node_desired) {
+				let completed_node = this.search_running.node;
+				this.search_running = NoSearch();
+				if (this.search_desired.node) {
 					this.send_desired();
 				}
 				this.hub.receive(line, completed_node);
 			} else {
-				this.hub.receive(line, this.node_running);
+				this.hub.receive(line, this.search_running.node);
 			}
 
 		});

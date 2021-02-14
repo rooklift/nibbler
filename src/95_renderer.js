@@ -811,7 +811,7 @@ function NewRenderer() {
 	// The go and halt methods should not be called directly.
 
 	renderer.__halt = function() {
-		this.engine.set_node_desired(null);
+		this.engine.set_search_desired(null);
 	};
 
 	renderer.__go = function(node) {
@@ -819,12 +819,14 @@ function NewRenderer() {
 		this.hide_pgn_chooser();
 
 		if (!node || node.destroyed || node.terminal_reason() !== "") {
-			this.engine.set_node_desired(null);
+			this.engine.set_search_desired(null);
 			this.leela_node = null;			// So that terminal positions don't leave this set to some previous node.
 			return;
 		}
 
-		this.engine.set_node_desired(node);
+		// FIXME - add limit and searchmoves
+
+		this.engine.set_search_desired(SearchParams(node, null, null));
 		this.leela_node = node;
 	};
 
