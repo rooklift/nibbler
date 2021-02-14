@@ -107,7 +107,9 @@ function NewInfoHandler() {
 				move_info = node.table.moveinfo[move];
 			} else {									// We don't.
 				if (board.illegal(move) !== "") {
-					Log(`INVALID / ILLEGAL MOVE RECEIVED: ${move}`);
+					if (config.log_illegal_moves) {
+						Log(`INVALID / ILLEGAL MOVE RECEIVED: ${move}`);
+					}
 					return;
 				}
 				move_info = NewInfo(board, move);
@@ -228,7 +230,9 @@ function NewInfoHandler() {
 				move_info = node.table.moveinfo[move];
 			} else {																	// We don't.
 				if (board.illegal(move) !== "") {
-					Log(`INVALID / ILLEGAL MOVE RECEIVED: ${move}`);
+					if (config.log_illegal_moves) {
+						Log(`INVALID / ILLEGAL MOVE RECEIVED: ${move}`);
+					}
 					return;
 				}
 				move_info = NewInfo(board, move);

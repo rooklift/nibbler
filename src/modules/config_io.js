@@ -118,7 +118,9 @@ exports.defaults = {
 	"override_board": null,
 
 	"logfile": null,
-	"log_info_lines": false
+	"log_info_lines": false,
+	"log_illegal_moves": true,
+	"log_positions": true,
 };
 
 function fix(cfg) {

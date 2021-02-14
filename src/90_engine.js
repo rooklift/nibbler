@@ -96,7 +96,9 @@ function NewEngine() {
 			this.send(`position ${setup} moves ${moves.join(" ")}`);
 		}
 
-		Log(node.board.graphic());
+		if (config.log_positions) {
+			Log(node.board.graphic());
+		}
 
 		let s;
 		let n = hub.node_limit();
