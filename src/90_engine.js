@@ -4,6 +4,9 @@
 // FIXME - searchmoves (and live adjustments)
 // FIXME - limits (and live adjustments)
 
+// FIXME - go followed by F11 - the bestmove generated from stopping the first search
+// causes receive top advance the position.
+
 function SearchParams(node = null, limit = null, searchmoves = null) {
 	return {
 		node: node,
@@ -135,6 +138,14 @@ function NewEngine() {
 
 	eng.set_search_desired = function(node, limit, searchmoves) {
 
+		if (this.search_desired.node === node) {
+			if (this.search_desired.limit === limit) {
+				if (CompareArrays(this.search_desired.searchmoves, searchmoves)) {
+					return;
+				}
+			}
+		}
+
 		if (!node) {
 			this.search_desired = NoSearch;
 		} else {
@@ -213,9 +224,9 @@ function NewEngine() {
 				if (this.search_desired === this.search_running) {
 					this.search_running = NoSearch;
 					this.search_desired = NoSearch;
-				} else if (this.search_desired.node) {
+				} else {
 					this.search_running = NoSearch;
-					this.send_desired();
+					this.send_desired();				// Must be done even if the desired node is null.
 				}
 				this.hub.receive(line, completed_node);
 			} else {
