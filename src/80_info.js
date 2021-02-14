@@ -375,7 +375,7 @@ function NewInfoHandler() {
 		this.last_drawn_version = null;
 	};
 
-	ih.draw_statusbox = function(node, engine, syncs_needed, analysing_other) {
+	ih.draw_statusbox = function(node, engine, analysing_other) {
 
 		if (!engine.ever_received_uciok) {
 
@@ -384,10 +384,6 @@ function NewInfoHandler() {
 		} else if (this.special_message && performance.now() - this.special_message_time < 3000) {
 
 			statusbox.innerHTML = `<span class="${this.special_message_class || "yellow"}">${this.special_message}</span>`;
-
-		} else if (syncs_needed > 2 || (syncs_needed > 0 && performance.now() - engine.sync_change_time > 1000)) {
-
-			statusbox.innerHTML = `<span class="gray">Out of sync: ${syncs_needed}</span>`;
 
 		} else if (config.show_engine_state) {
 

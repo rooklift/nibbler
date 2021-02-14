@@ -34,7 +34,6 @@ function NewEngine() {
 	eng.exe = null;
 	eng.readyok_required = 0;
 	eng.bestmove_required = 0;
-	eng.sync_change_time = performance.now();
 	eng.scanner = null;
 	eng.err_scanner = null;
 	eng.last_send = null;
@@ -98,12 +97,10 @@ function NewEngine() {
 			}
 
 			this.bestmove_required++;
-			this.sync_change_time = performance.now();
 
 		} else if (msg === "isready") {
 
 			this.readyok_required++;
-			this.sync_change_time = performance.now();
 
 		} else if (msg === "stop") {
 
@@ -183,12 +180,10 @@ function NewEngine() {
 
 			if (line.includes("bestmove") && this.bestmove_required > 0) {
 				this.bestmove_required--;
-				this.sync_change_time = performance.now();
 			}
 
 			if (line.includes("readyok") && this.readyok_required > 0) {
 				this.readyok_required--;
-				this.sync_change_time = performance.now();
 			}
 
 			if (line.includes("uciok")) {
