@@ -1028,7 +1028,7 @@ function NewRenderer() {
 			args = [];
 		}
 
-		this.engine.setup(filepath, args, this.receive.bind(this), this.err_receive.bind(this));
+		this.engine.setup(filepath, args, this);
 	};
 
 	renderer.engine_initial_comms = function(options) {

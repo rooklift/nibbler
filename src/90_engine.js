@@ -15,9 +15,12 @@ function NewEngine() {
 	// Needs to match the values provided by renderer.node_limit().
 	// This 3-type var is a bit sketchy, maybe.
 
-	// Positive number for node limit; null for infinite; "n/a" for stopped *by us*.
+	eng.sent_limit = "n/a";		// Positive number for node limit; null for infinite; "n/a" for stopped *by us*.
 
-	eng.sent_limit = "n/a";
+	eng.node_running = null;
+	eng.node_desired = null;
+
+	eng.hub = null;
 
 	// -------------------------------------------------------------------------------------------
 
@@ -79,20 +82,13 @@ function NewEngine() {
 		return s;			// Just so the renderer can pop s up as a message if it wants.
 	};
 
-	eng.setup = function(filepath, args, receive_fn, err_receive_fn) {
+	eng.setup = function(filepath, args, hub) {
 
 		Log("");
 		Log(`Launching ${filepath}`);
 		Log("");
 
-		// This is slightly sketchy, the passed functions get saved to our engine
-		// object in a way that makes them look like methods of this object. Hmm.
-		//
-		// Also note, everything is stored as a reference in the object. Not sure
-		// if this is needed to stop stuff getting garbage collected...?
-
-		this.receive_fn = receive_fn;
-		this.err_receive_fn = err_receive_fn;
+		this.hub = hub;
 
 		try {
 			this.exe = child_process.spawn(filepath, args, {cwd: path.dirname(filepath)});
@@ -122,24 +118,24 @@ function NewEngine() {
 
 		this.err_scanner.on("line", (line) => {
 			Log(". " + line);
-			this.err_receive_fn(line);
+			this.hub.err_receive(line);
 		});
 
 		this.scanner.on("line", (line) => {
+
+			if (config.log_info_lines || line.includes("info") === false) {
+				Log("< " + line);
+			}
 
 			if (line.includes("uciok")) {
 				this.ever_received_uciok = true;
 			}
 
 			if (line.includes("bestmove")) {
-				// FIXME
+				// FIXME - update node_running and maybe start new search.
 			}
 
-			if (config.log_info_lines || line.includes("info") === false) {
-				Log("< " + line);
-			}
-
-			this.receive_fn(line);
+			this.hub.receive(line);
 		});
 	};
 
