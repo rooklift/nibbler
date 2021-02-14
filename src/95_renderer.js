@@ -1310,7 +1310,7 @@ function NewRenderer() {
 	};
 
 	renderer.show_sync_status = function() {
-		alert(`readyok: ${this.engine.readyok_required}, bestmove: ${this.engine.bestmove_required}`);
+		alert("This was removed.");
 	};
 
 	renderer.show_dropped_inputs = function() {
@@ -1970,9 +1970,6 @@ function NewRenderer() {
 		this.tick++;
 		this.draw();
 		this.update_graph_eval();
-		if (config.behaviour !== "halt" && Math.max(this.engine.readyok_required, this.engine.bestmove_required) > 10) {
-			this.set_behaviour("halt");			// Stop the engine if we get too far out of sync. See issue #57.
-		}
 		setTimeout(this.spin.bind(this), config.update_delay);
 	};
 
