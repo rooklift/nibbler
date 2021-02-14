@@ -413,8 +413,11 @@ function NewInfoHandler() {
 			let status_string = "";
 			let can_have_limit_met_msg = false;
 
-			if (config.behaviour === "halt") {
+			if (config.behaviour === "halt" && !engine.node_running) {
 				status_string += `<span id="gobutton_clicker" class="yellow">HALTED (go?) </span>`;
+				can_have_limit_met_msg = true;
+			} else if (config.behaviour === "halt" && engine.node_running) {
+				status_string += `<span class="yellow">HALTING... </span>`;
 				can_have_limit_met_msg = true;
 			} else if (config.behaviour === "analysis_locked") {
 				status_string += `<span class="blue">Locked! </span>`;
