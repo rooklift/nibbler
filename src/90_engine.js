@@ -78,7 +78,9 @@ function NewEngine() {
 
 		let node = this.node_desired;
 
-		this.send("stop");
+		if (this.node_running) {
+			this.send("stop");
+		}
 
 		if (!node || node.destroyed || node.terminal_reason() !== "") {
 			this.node_running = null;
@@ -133,8 +135,9 @@ function NewEngine() {
 			return;
 		}
 
-		this.node_desired = node;
-		if (!this.node_running) {
+		this.node_desired = node;			// This may be null.
+
+		if (this.node_desired && !this.node_running) {
 			this.send_desired();
 		} else {
 			this.send("stop");
