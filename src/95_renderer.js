@@ -680,7 +680,7 @@ function NewRenderer() {
 	// -------------------------------------------------------------------------------------------------------------------------
 	// Engine stuff...
 
-	renderer.receive = function(s) {
+	renderer.receive = function(s, relevant_node) {
 
 		debug.receive = debug.receive ? debug.receive + 1 : 1;
 
@@ -720,7 +720,7 @@ function NewRenderer() {
 			case "play_white":
 			case "play_black":
 
-				if (this.leela_node === this.tree.node) {
+				if (relevant_node === this.tree.node) {
 
 					let tokens = s.split(" ").filter(z => z !== "");
 					let ok = this.move(tokens[1]);
@@ -740,7 +740,7 @@ function NewRenderer() {
 
 			case "auto_analysis":
 
-				if (this.leela_node === this.tree.node) {
+				if (relevant_node === this.tree.node) {
 
 					if (this.tree.next()) {
 						this.position_changed(false, false);

@@ -199,24 +199,17 @@ function NewEngine() {
 				this.ever_received_uciok = true;
 			}
 
-			if (line.includes("bestmove")) {
-
+			if (line.startsWith("info")) {
+				this.hub.info_handler.receive(line, this.node_running);
+			} else if (line.includes("bestmove")) {
 				let completed_node = this.node_running;
 				this.node_running = null;
-
 				if (this.node_desired) {
 					this.send_desired();
 				}
-			}
-
-			// Send info lines direct to the info_handler, all other lines to hub.receive()
-
-			if (line.startsWith("info")) {
-				if (this.node_running && !this.node_running.destroyed) {
-					this.hub.info_handler.receive(line, this.node_running);
-				}
+				this.hub.receive(line, completed_node);
 			} else {
-				this.hub.receive(line);
+				this.hub.receive(line, this.node_running);
 			}
 
 		});
