@@ -712,7 +712,7 @@ function NewRenderer() {
 
 		} else if (s.startsWith("bestmove")) {
 
-			this.update_graph_eval();				// Now's the last chance to update our graph eval for this node.
+			this.update_graph_eval(relevant_node);		// Now's the last chance to update our graph eval for this node.
 
 			switch (config.behaviour) {
 
@@ -1930,21 +1930,19 @@ function NewRenderer() {
 	renderer.spin = function() {
 		this.tick++;
 		this.draw();
-		this.update_graph_eval();
+		this.update_graph_eval(this.leela_node);
 		setTimeout(this.spin.bind(this), config.update_delay);
 	};
 
-	renderer.update_graph_eval = function() {
+	renderer.update_graph_eval = function(node) {
 
-		// Occasionally update the eval (for graphs) of whatever Leela is looking at.
-
-		if (!this.leela_node || this.leela_node.destroyed) {
+		if (!node || node.destroyed) {
 			return;
 		}
 
-		let info = this.info_handler.sorted(this.leela_node)[0];		// Possibly undefined.
+		let info = this.info_handler.sorted(node)[0];		// Possibly undefined.
 		if (info) {
-			this.leela_node.table.update_eval_from_move(info.move);
+			node.table.update_eval_from_move(info.move);
 		}
 
 	};
