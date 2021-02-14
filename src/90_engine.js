@@ -5,7 +5,9 @@
 // FIXME - limits (and live adjustments)
 
 // FIXME - go followed by F11 - the bestmove generated from stopping the first search
-// causes receive top advance the position.
+// causes receive to advance the position. The fact that this can happen is a real
+// nuisance for the entire rewrite... under the old system such a bestmove line would
+// be screened out by the synchronisation.
 
 function SearchParams(node = null, limit = null, searchmoves = null) {
 	return {
