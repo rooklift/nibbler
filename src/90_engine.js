@@ -20,7 +20,7 @@ function NewEngine() {
 	eng.sent_limit = "n/a";		// Positive number for node limit; null for infinite; "n/a" for stopped *by us*.
 
 	eng.node_running = null;
-	eng.node_desired = null;
+	eng.node_desired = null;	// null when actually running.
 
 	eng.hub = null;
 
@@ -33,10 +33,6 @@ function NewEngine() {
 		}
 
 		msg = msg.trim();
-
-		if (msg === "stop" && this.last_send === "stop") {
-			return;
-		}
 
 		this.send_msg_bookkeeping(msg);
 
@@ -123,12 +119,17 @@ function NewEngine() {
 
 		this.send(s);
 		this.node_running = node;
+		this.node_desired = null;
 	};
 
 	eng.set_node_desired = function(node) {
 
 		// If a search is running, stop it (we will send the new position after receiving bestmove).
 		// If no search is running, start the new search immediately.
+
+		if (this.node_running === node) {
+			return;
+		}
 
 		this.node_desired = node;
 		if (!this.node_running) {
@@ -198,14 +199,21 @@ function NewEngine() {
 				let completed_node = this.node_running;
 				this.node_running = null;
 
-				if (this.node_desired === completed_node) {
-					this.node_desired = null;
-				} else {
+				if (this.node_desired) {
 					this.send_desired();
 				}
 			}
 
-			this.hub.receive(line);
+			// Send info lines direct to the info_handler, all other lines to hub.receive()
+
+			if (line.startsWith("info")) {
+				if (this.node_running && !this.node_running.destroyed) {
+					this.hub.info_handler.receive(line, this.node_running);
+				}
+			} else {
+				this.hub.receive(line);
+			}
+
 		});
 	};
 

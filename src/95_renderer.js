@@ -684,13 +684,9 @@ function NewRenderer() {
 
 		debug.receive = debug.receive ? debug.receive + 1 : 1;
 
-		if (s.startsWith("info")) {
+		// Note that lines of "info" are sent directly to the info_handler by engine.js
 
-			if (this.leela_node && !this.leela_node.destroyed) {
-				this.info_handler.receive(s, this.leela_node);
-			}
-
-		} else if (s.startsWith("error")) {
+		if (s.startsWith("error")) {
 
 			// If this comes at the start, we want to display it in the infobox, but if we're already
 			// drawing the infobox for real, we'll need to flash it up in the status box instead...
@@ -815,16 +811,15 @@ function NewRenderer() {
 	// The go and halt methods should not be called directly.
 
 	renderer.__halt = function() {
-		this.engine.send("stop");
+		this.engine.set_node_desired(null);
 	};
 
 	renderer.__go = function(node) {
 
 		this.hide_pgn_chooser();
 
-		this.__halt();
-
 		if (!node || node.destroyed || node.terminal_reason() !== "") {
+			this.engine.set_node_desired(null);
 			this.leela_node = null;			// So that terminal positions don't leave this set to some previous node.
 			return;
 		}
