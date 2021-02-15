@@ -1,10 +1,5 @@
 "use strict";
 
-// FIXME - remove leela_node from renderer.js if possible
-// FIXME - remove refs to engine.running
-// FIXME - searchmoves (and live adjustments)
-// FIXME - limits (and live adjustments)
-
 function SearchParams(node = null, limit = null, searchmoves = null) {
 	return {
 		node: node,

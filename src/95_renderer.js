@@ -21,9 +21,6 @@ function NewRenderer() {
 
 	renderer.node_to_clean = renderer.tree.node;				// The next node to be cleaned up (done when exiting it).
 
-	// Some sync stuff...
-
-	renderer.leela_node = null;									// The last tree node sent to Leela. Generally not cleared upon halting.
 	renderer.leela_lock_node = null;							// Non-null only when in "analysis_locked" mode.
 
 	// -------------------------------------------------------------------------------------------------------------------------
@@ -82,7 +79,6 @@ function NewRenderer() {
 
 		if (new_game_flag) {
 			this.node_to_clean = null;
-			this.leela_node = null;
 			this.leela_lock_node = null;
 			this.set_behaviour("halt");					// Will cause "stop" to be sent
 			this.engine.send("ucinewgame");				// Must happen after "stop" is sent.
@@ -378,7 +374,7 @@ function NewRenderer() {
 
 	renderer.return_to_lock = function() {
 		if (config.behaviour === "analysis_locked") {
-			if (this.tree.set_node(this.leela_node)) {		// Fool-proof against null / destroyed.
+			if (this.tree.set_node(this.leela_lock_node)) {		// Fool-proof against null / destroyed.
 				this.position_changed(false, true);
 			}
 		}
@@ -822,12 +818,10 @@ function NewRenderer() {
 
 		if (!node || node.destroyed || node.terminal_reason() !== "") {
 			this.engine.set_search_desired(null);
-			this.leela_node = null;			// So that terminal positions don't leave this set to some previous node.
 			return;
 		}
 
 		this.engine.set_search_desired(node, this.node_limit(), node.searchmoves);
-		this.leela_node = node;
 	};
 
 	renderer.soft_engine_reset = function() {
@@ -840,7 +834,6 @@ function NewRenderer() {
 		this.info_handler.must_draw_infobox();
 		this.set_behaviour("halt");
 		this.engine.send("ucinewgame");
-		this.leela_node = null;				// So incoming data doesn't update anything.
 	};
 
 	renderer.set_uci_option = function(name, val, save_to_cfg) {
@@ -1900,11 +1893,11 @@ function NewRenderer() {
 
 		let analysing_other = null;
 
-		if (config.behaviour === "analysis_locked" && this.leela_node && this.leela_node !== this.tree.node) {
-			if (!this.leela_node.parent) {
+		if (config.behaviour === "analysis_locked" && this.leela_lock_node && this.leela_lock_node !== this.tree.node) {
+			if (!this.leela_lock_node.parent) {
 				analysing_other = "root";
 			} else {
-				analysing_other = "position after " + this.leela_node.token(false, true);
+				analysing_other = "position after " + this.leela_lock_node.token(false, true);
 			}
 		}
 
@@ -1932,7 +1925,7 @@ function NewRenderer() {
 	renderer.spin = function() {
 		this.tick++;
 		this.draw();
-		this.update_graph_eval(this.leela_node);
+		this.update_graph_eval(this.engine.search_running.node);		// Possibly null.
 		setTimeout(this.spin.bind(this), config.update_delay);
 	};
 
@@ -1942,7 +1935,7 @@ function NewRenderer() {
 			return;
 		}
 
-		let info = this.info_handler.sorted(node)[0];		// Possibly undefined.
+		let info = this.info_handler.sorted(node)[0];					// Possibly undefined.
 		if (info) {
 			node.table.update_eval_from_move(info.move);
 		}
