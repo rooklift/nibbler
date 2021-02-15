@@ -410,6 +410,10 @@ function NewInfoHandler() {
 			`${config.behaviour}, ` +
 			`${engine.last_send}`;
 
+		} else if (engine.stop_send_time && performance.now() - engine.stop_send_time > 1000) {
+
+			statusbox.innerHTML = `<span class="yellow">Desync...</span>`;
+
 		} else if (analysing_other) {
 
 			statusbox.innerHTML = `<span id="lock_return_clicker" class="blue">Locked to ${analysing_other} (return?)</span>`;

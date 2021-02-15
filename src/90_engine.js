@@ -20,6 +20,7 @@ function NewEngine() {
 	eng.err_scanner = null;
 
 	eng.last_send = null;
+	eng.stop_send_time = null;
 	eng.ever_received_uciok = false;
 
 	eng.warned_send_fail = false;
@@ -131,6 +132,7 @@ function NewEngine() {
 		if (this.search_running.node) {
 			this.send("stop");
 			this.ignoring_output = true;
+			this.stop_send_time = performance.now();
 		} else {
 			if (this.search_desired.node) {
 				this.send_desired();
@@ -140,6 +142,8 @@ function NewEngine() {
 	};
 
 	eng.handle_bestmove_line = function(line) {
+
+		this.stop_send_time = null;
 
 		let completed_search = this.search_running;
 		this.search_running = NoSearch;
