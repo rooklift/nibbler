@@ -1,14 +1,21 @@
 "use strict";
 
+let NoSearch = Object.freeze({
+	node: null,
+	limit: null,
+	searchmoves: Object.freeze([])
+});
+
 function SearchParams(node = null, limit = null, searchmoves = null) {
-	return {
+
+	if (!node) return NoSearch;
+
+	return Object.freeze({
 		node: node,
 		limit: limit,
-		searchmoves: Array.isArray(searchmoves) ? Array.from(searchmoves) : []
+		searchmoves: Object.freeze(Array.isArray(searchmoves) ? Array.from(searchmoves) : [])
 	};
 }
-
-let NoSearch = Object.freeze(SearchParams());		// i.e. with the null defaults
 
 function NewEngine() {
 
@@ -109,19 +116,17 @@ function NewEngine() {
 
 	eng.set_search_desired = function(node, limit, searchmoves) {
 
-		if (this.search_desired.node === node) {
-			if (this.search_desired.limit === limit) {
-				if (CompareArrays(this.search_desired.searchmoves, searchmoves)) {
+		let params = SearchParams(node, limit, searchmoves);
+
+		if (this.search_desired.node === params.node) {
+			if (this.search_desired.limit === params.limit) {
+				if (CompareArrays(this.search_desired.searchmoves, params.searchmoves)) {
 					return;
 				}
 			}
 		}
 
-		if (!node) {
-			this.search_desired = NoSearch;
-		} else {
-			this.search_desired = SearchParams(node, limit, searchmoves);
-		}
+		this.search_desired = params;
 
 		// If a search is running, stop it (we will send the new position after receiving bestmove).
 		// If no search is running, start the new search immediately.
