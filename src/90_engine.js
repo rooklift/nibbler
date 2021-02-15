@@ -72,15 +72,8 @@ function NewEngine() {
 		let node = this.search_desired.node;
 
 		if (!node || node.destroyed || node.terminal_reason() !== "") {
-
 			this.search_running = NoSearch;
 			this.search_desired = NoSearch;
-
-			if (this.warned_invalid_node === false) {
-				alert("send_desired() got an invalid node.");
-				this.warned_invalid_node = true;
-			}
-
 			return;
 		}
 
