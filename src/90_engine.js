@@ -148,6 +148,9 @@ function NewEngine() {
 
 		this.unresolved_stop_time = null;
 
+		// If this.search_desired === this.search_running then the search that just completed
+		// is the most recent one requested by the hub; we have nothing to replace it with.
+
 		let no_new_search = this.search_desired === this.search_running || !this.search_desired.node;
 
 		if (no_new_search) {
