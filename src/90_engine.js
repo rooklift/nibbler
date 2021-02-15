@@ -24,7 +24,6 @@ function NewEngine() {
 	eng.ever_received_uciok = false;
 
 	eng.warned_send_fail = false;
-	eng.warned_invalid_node = false;
 
 	eng.search_running = NoSearch;		// The search actually being run right now.
 	eng.search_desired = NoSearch;		// The search we want Leela to be running. Often the same object as above.
@@ -217,23 +216,23 @@ function NewEngine() {
 
 		this.scanner.on("line", (line) => {
 
-			if (config.log_info_lines || line.includes("info") === false) {
-				Log("< " + line);
-			}
-
 			if (line.includes("uciok")) {
 				this.ever_received_uciok = true;
 			}
 
-			if (line.startsWith("info")) {
+			if (config.log_info_lines || line.includes("info") === false) {
+				Log("< " + line);
+			}
+
+			if (line.includes("bestmove")) {
+
+				this.handle_bestmove_line(line);
+
+			} else if (line.startsWith("info")) {
 
 				if (this.ignoring_output === false) {
 					this.hub.info_handler.receive(line, this.search_running.node);
 				}
-
-			} else if (line.includes("bestmove")) {
-
-				this.handle_bestmove_line(line);
 
 			} else {
 
