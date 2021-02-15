@@ -14,7 +14,7 @@ function SearchParams(node = null, limit = null, searchmoves = null) {
 		node: node,
 		limit: limit,
 		searchmoves: Object.freeze(Array.isArray(searchmoves) ? Array.from(searchmoves) : [])
-	};
+	});
 }
 
 function NewEngine() {
