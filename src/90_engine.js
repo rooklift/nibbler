@@ -129,12 +129,15 @@ function NewEngine() {
 		// If a search is running, stop it (we will send the new position after receiving bestmove).
 		// If no search is running, start the new search immediately.
 
-		if (this.search_desired.node && !this.search_running.node) {
-			this.send_desired();
-		} else {
+		if (this.search_running.node) {
 			this.send("stop");
 			this.ignoring_output = true;
+		} else {
+			if (this.search_desired.node) {
+				this.send_desired();
+			}
 		}
+
 	};
 
 	eng.setoption = function(name, value) {
