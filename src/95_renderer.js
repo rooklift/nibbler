@@ -826,6 +826,7 @@ function NewRenderer() {
 		}
 
 		this.engine.set_search_desired(node, this.node_limit(), node.searchmoves);
+
 	};
 
 	renderer.soft_engine_reset = function() {
