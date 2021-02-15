@@ -10,10 +10,20 @@ function SearchParams(node = null, limit = null, searchmoves = null) {
 
 	if (!node) return NoSearch;
 
+	if (Array.isArray(searchmoves) {
+		searchmoves = node.validate_searchmoves(searchmoves);		// returns a new array
+	} else {
+		searchmoves = [];
+	}
+
+	// Whatever happened, searchmoves is now a new object, not the one passed to us, so we can freeze it safely.
+
+	Object.freeze(searchmoves);
+
 	return Object.freeze({
 		node: node,
 		limit: limit,
-		searchmoves: Object.freeze(Array.isArray(searchmoves) ? Array.from(searchmoves) : [])
+		searchmoves: searchmoves
 	});
 }
 
@@ -102,8 +112,6 @@ function NewEngine() {
 		}
 
 		if (config.searchmoves_buttons && this.search_desired.searchmoves.length > 0) {
-
-			this.search_desired.searchmoves = node.validate_searchmoves(this.search_desired.searchmoves);
 			s += " searchmoves";
 			for (let move of this.search_desired.searchmoves) {
 				s += " " + move;
