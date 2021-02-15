@@ -143,8 +143,10 @@ function NewRenderer() {
 
 	renderer.handle_searchmoves_change = function() {
 
-		if (this.engine.running && this.leela_node === this.tree.node) {
-			this.__go(this.leela_node);
+		if (this.engine.search_desired.node === this.tree.node) {
+			if (config.behaviour !== "halt") {
+				this.__go(this.tree.node);
+			}
 		}
 	};
 
@@ -821,9 +823,7 @@ function NewRenderer() {
 			return;
 		}
 
-		// FIXME - add searchmoves
-
-		this.engine.set_search_desired(node, this.node_limit(), null);
+		this.engine.set_search_desired(node, this.node_limit(), node.searchmoves);
 		this.leela_node = node;
 	};
 

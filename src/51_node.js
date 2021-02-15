@@ -340,21 +340,21 @@ const node_prototype = {
 		return this.__terminal;
 	},
 
-	validate_searchmoves: function() {
+	validate_searchmoves: function(arr) {
 
-		if (Array.isArray(this.searchmoves) === false) {
-			this.searchmoves = [];
+		if (Array.isArray(arr) === false) {
+			arr = [];
 		}
 
 		let valid_list = [];
 
-		for (let move of this.searchmoves) {
+		for (let move of arr) {
 			if (this.board.illegal(move) === "") {
 				valid_list.push(move);
 			}
 		}
 
-		this.searchmoves = valid_list;
+		return valid_list;
 	},
 
 	detach: function() {

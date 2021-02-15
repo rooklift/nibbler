@@ -1,6 +1,7 @@
 "use strict";
 
-// FIXME - remove leela_node from renderer.js if possible.
+// FIXME - remove leela_node from renderer.js if possible
+// FIXME - remove refs to engine.running
 // FIXME - searchmoves (and live adjustments)
 // FIXME - limits (and live adjustments)
 
@@ -107,7 +108,8 @@ function NewEngine() {
 		}
 
 		if (config.searchmoves_buttons && this.search_desired.searchmoves.length > 0) {
-			// node.validate_searchmoves();									// FIXME - validate the search object's searchmoves, not the node's
+
+			this.search_desired.searchmoves = node.validate_searchmoves(this.search_desired.searchmoves);
 			s += " searchmoves";
 			for (let move of this.search_desired.searchmoves) {
 				s += " " + move;
