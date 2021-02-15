@@ -138,8 +138,10 @@ function NewRenderer() {
 
 	renderer.handle_searchmoves_change = function() {
 
-		if (this.engine.search_desired.node === this.tree.node) {
-			if (config.behaviour !== "halt") {
+		// The main test here is to ensure that nothing happens if there is a locked search on some other node.
+
+		if (config.behaviour !== "halt") {
+			if (this.engine.search_desired.node === this.tree.node) {
 				this.__go(this.tree.node);
 			}
 		}
