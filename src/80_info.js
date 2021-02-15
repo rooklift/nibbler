@@ -410,7 +410,7 @@ function NewInfoHandler() {
 			`${config.behaviour}, ` +
 			`${engine.last_send}`;
 
-		} else if (engine.stop_send_time && performance.now() - engine.stop_send_time > 1000) {
+		} else if (engine.unresolved_stop_time && performance.now() - engine.unresolved_stop_time > 500) {
 
 			statusbox.innerHTML = `<span class="yellow">Desync...</span>`;
 
