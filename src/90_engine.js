@@ -4,6 +4,9 @@
 // FIXME - searchmoves (and live adjustments)
 // FIXME - limits (and live adjustments)
 
+// FIXME - go followed by F11 will immediately play the move from the first search
+// because it's understood by the renderer.receive() as being relevant.
+
 function SearchParams(node = null, limit = null, searchmoves = null) {
 	return {
 		node: node,
@@ -25,10 +28,10 @@ function NewEngine() {
 	eng.ever_received_uciok = false;
 	eng.warned_send_fail = false;
 
-	eng.search_running = NoSearch;
-	eng.search_desired = NoSearch;
+	eng.search_running = NoSearch;		// The search Leela is actually doing.
+	eng.search_desired = NoSearch;		// The search we want Leela to be doing. Possibly the same object as above.
 
-	eng.ignoring_output = false;		// If we send stop because we want to make a new search, ignore engine until after bestmove.
+	eng.bestmove_required = 0;
 
 	eng.hub = null;
 
@@ -45,6 +48,10 @@ function NewEngine() {
 		if (msg.startsWith("setoption") && msg.includes("WeightsFile")) {
 			let i = msg.indexOf("value") + 5;
 			ipcRenderer.send("ack_weightsfile", msg.slice(i).trim());
+		}
+
+		if (msg.startsWith("go")) {
+			this.bestmove_required++;
 		}
 
 		try {
@@ -133,7 +140,6 @@ function NewEngine() {
 			this.send_desired();
 		} else {
 			this.send("stop");
-			this.ignoring_output = true;
 		}
 	};
 
@@ -196,16 +202,17 @@ function NewEngine() {
 
 			if (line.startsWith("info")) {
 
-				if (this.ignoring_output === false) {
+				if (this.bestmove_required <= 1) {
 					this.hub.info_handler.receive(line, this.search_running.node);
 				}
 
 			} else if (line.includes("bestmove")) {
 
-				if (this.ignoring_output === false) {
+				this.bestmove_required--;
+				if (this.bestmove_required < 0) this.bestmove_required = 0;
+
+				if (this.bestmove_required === 0) {
 					this.hub.receive(line, this.search_running.node);
-				} else {
-					this.ignoring_output = false;
 				}
 
 				if (this.search_desired === this.search_running) {
@@ -217,6 +224,8 @@ function NewEngine() {
 				}
 
 			} else {
+
+				// This is just errors and meta stuff...
 
 				this.hub.receive(line, this.search_running.node);
 
