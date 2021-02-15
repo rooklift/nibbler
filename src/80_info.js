@@ -379,7 +379,7 @@ function NewInfoHandler() {
 		this.last_drawn_version = null;
 	};
 
-	ih.draw_statusbox = function(node, engine, syncs_needed, analysing_other) {
+	ih.draw_statusbox = function(node, engine, analysing_other) {
 
 		if (!engine.ever_received_uciok) {
 
@@ -389,16 +389,30 @@ function NewInfoHandler() {
 
 			statusbox.innerHTML = `<span class="${this.special_message_class || "yellow"}">${this.special_message}</span>`;
 
-		} else if (syncs_needed > 2 || (syncs_needed > 0 && performance.now() - engine.sync_change_time > 1000)) {
-
-			statusbox.innerHTML = `<span class="gray">Out of sync: ${syncs_needed}</span>`;
-
 		} else if (config.show_engine_state) {
 
+			let cl;
+			let status;
+
+			if (engine.search_running.node && engine.search_running === engine.search_desired) {
+				cl = "green";
+				status = "running";
+			} else if (engine.search_running !== engine.search_desired) {
+				cl = "yellow";
+				status = "desync";
+			} else {
+				cl = "yellow";
+				status = "stopped";
+			}
+
 			statusbox.innerHTML =
-			`<span class="${engine.running ? "green" : "yellow"}">${engine.running ? "running" : "stopped"}</span>, ` +
+			`<span class="${cl}">${status}</span>, ` +
 			`${config.behaviour}, ` +
 			`${engine.last_send}`;
+
+		} else if (engine.unresolved_stop_time && performance.now() - engine.unresolved_stop_time > 500) {
+
+			statusbox.innerHTML = `<span class="yellow">Desync...</span>`;
 
 		} else if (analysing_other) {
 
@@ -417,8 +431,11 @@ function NewInfoHandler() {
 			let status_string = "";
 			let can_have_limit_met_msg = false;
 
-			if (config.behaviour === "halt") {
+			if (config.behaviour === "halt" && !engine.search_running.node) {
 				status_string += `<span id="gobutton_clicker" class="yellow">HALTED (go?) </span>`;
+				can_have_limit_met_msg = true;
+			} else if (config.behaviour === "halt" && engine.search_running.node) {
+				status_string += `<span class="yellow">HALTING... </span>`;
 				can_have_limit_met_msg = true;
 			} else if (config.behaviour === "analysis_locked") {
 				status_string += `<span class="blue">Locked! </span>`;

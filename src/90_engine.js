@@ -1,57 +1,49 @@
 "use strict";
 
-/* SYNCHRONISATION NOTES
+let NoSearch = Object.freeze({
+	node: null,
+	limit: null,
+	searchmoves: Object.freeze([])
+});
 
-We need to know whether the data we're receiving relates to the current position,
-or is obsolete.
+function SearchParams(node = null, limit = null, searchmoves = null) {
 
-We have two systems...
+	if (!node) return NoSearch;
 
--- Sometimes we send "isready", and ignore all output until receiving "readyok"
--- We expect each "go" command to eventually be followed by a "bestmove" message
+	if (Array.isArray(searchmoves)) {
+		searchmoves = node.validate_searchmoves(searchmoves);		// returns a new array
+	} else {
+		searchmoves = [];
+	}
 
-Sadly, it seems "readyok" wasn't really intended for synchronisation of this sort
-(unlike XBoard's "ping" / "pong" cycle) and so some engines, including Lc0, send
-"readyok" before they've finished processing whatever came first, meaning we have to
-always assume the info could be about the wrong position. Bah! Still, Leela seems to
-send "readyok" at roughly the correct time if it is after a "position" command. But
-not after a mere "stop" command.
+	// Whatever happened, searchmoves is now a new object, not the one passed to us, so we can freeze it safely.
 
-The bestmove tracker should be OK, as long as Leela really does send a "bestmove" for
-every "go", and as long as the "bestmove" message is the very last message it sends
-about a position. Note that "ucinewgame" causes Leela to halt its analysis without
-sending "bestmove", so we must always send "stop" before sending "ucinewgame".
+	Object.freeze(searchmoves);
 
-It seems in practice either one of these is enough. The "bestmove" tracker is
-probably more reliable, so we could probably remove the "readyok" tracker.
-
-*/
+	return Object.freeze({
+		node: node,
+		limit: limit,
+		searchmoves: searchmoves
+	});
+}
 
 function NewEngine() {
 
 	let eng = Object.create(null);
 
+	eng.hub = null;
 	eng.exe = null;
-	eng.readyok_required = 0;
-	eng.bestmove_required = 0;
-	eng.sync_change_time = performance.now();
 	eng.scanner = null;
 	eng.err_scanner = null;
+
 	eng.last_send = null;
+	eng.unresolved_stop_time = null;
 	eng.ever_received_uciok = false;
+
 	eng.warned_send_fail = false;
 
-	// eng.running will be true iff we sent "go" and haven't sent "stop" or received "bestmove".
-
-	eng.running = false;
-
-	// eng.sent_limit - the node limit of the last "go" we sent (but not affected by "bestmove").
-	// Needs to match the values provided by renderer.node_limit().
-	// This 3-type var is a bit sketchy, maybe.
-
-	// Positive number for node limit; null for infinite; "n/a" for stopped *by us*.
-
-	eng.sent_limit = "n/a";
+	eng.search_running = NoSearch;		// The search actually being run right now.
+	eng.search_desired = NoSearch;		// The search we want Leela to be running. Often the same object as above.
 
 	// -------------------------------------------------------------------------------------------
 
@@ -63,11 +55,10 @@ function NewEngine() {
 
 		msg = msg.trim();
 
-		if (msg === "stop" && this.last_send === "stop") {
-			return;
+		if (msg.startsWith("setoption") && msg.includes("WeightsFile")) {
+			let i = msg.indexOf("value") + 5;
+			ipcRenderer.send("ack_weightsfile", msg.slice(i).trim());
 		}
-
-		this.send_msg_bookkeeping(msg);
 
 		try {
 			this.exe.stdin.write(msg);
@@ -83,37 +74,104 @@ function NewEngine() {
 		}
 	};
 
-	eng.send_msg_bookkeeping = function(msg) {
+	eng.send_desired = function() {
 
-		if (msg.startsWith("go")) {
+		if (this.search_running.node) {
+			throw "send_desired() called but search was running";
+		}
 
-			this.running = true;
+		let node = this.search_desired.node;
 
-			if (msg.includes("infinite")) {		// Might not end with infinite due to searchmoves.
-				this.sent_limit = null;
-			} else {
-				let tokens = msg.split(" ").map(z => z.trim()).filter(z => z !== "");
-				let i = tokens.indexOf("nodes");
-				this.sent_limit = parseInt(tokens[i + 1], 10);
+		if (!node || node.destroyed || node.terminal_reason() !== "") {
+			this.search_running = NoSearch;
+			this.search_desired = NoSearch;
+			return;
+		}
+
+		let root_fen = node.get_root().board.fen(false);
+		let setup = `fen ${root_fen}`;
+		let moves = node.history();
+
+		if (moves.length === 0) {
+			this.send(`position ${setup}`);
+		} else {
+			this.send(`position ${setup} moves ${moves.join(" ")}`);
+		}
+
+		if (config.log_positions) {
+			Log(node.board.graphic());
+		}
+
+		let s;
+		let n = this.search_desired.limit;
+
+		if (!n) {
+			s = "go infinite";
+		} else {
+			s = `go nodes ${n}`;
+		}
+
+		if (config.searchmoves_buttons && this.search_desired.searchmoves.length > 0) {
+			s += " searchmoves";
+			for (let move of this.search_desired.searchmoves) {
+				s += " " + move;
 			}
+		}
 
-			this.bestmove_required++;
-			this.sync_change_time = performance.now();
+		this.send(s);
+		this.search_running = this.search_desired;
+	};
 
-		} else if (msg === "isready") {
+	eng.set_search_desired = function(node, limit, searchmoves) {
 
-			this.readyok_required++;
-			this.sync_change_time = performance.now();
+		let params = SearchParams(node, limit, searchmoves);
 
-		} else if (msg === "stop") {
+		if (this.search_desired.node === params.node) {
+			if (this.search_desired.limit === params.limit) {
+				if (CompareArrays(this.search_desired.searchmoves, params.searchmoves)) {
+					return;
+				}
+			}
+		}
 
-			this.running = false;
-			this.sent_limit = "n/a";
+		this.search_desired = params;
 
-		} else if (msg.startsWith("setoption") && msg.includes("WeightsFile")) {
+		// If a search is running, stop it... we will send the new position (if applicable) after receiving bestmove.
+		// If no search is running, start the new search immediately.
 
-			let i = msg.indexOf("value") + 5;
-			ipcRenderer.send("ack_weightsfile", msg.slice(i).trim());
+		if (this.search_running.node) {
+			this.send("stop");
+			if (!this.unresolved_stop_time) {
+				this.unresolved_stop_time = performance.now();
+			}
+		} else {
+			if (this.search_desired.node) {
+				this.send_desired();
+			}
+		}
+
+	};
+
+	eng.handle_bestmove_line = function(line) {
+
+		this.unresolved_stop_time = null;
+
+		// If this.search_desired === this.search_running then the search that just completed
+		// is the most recent one requested by the hub; we have nothing to replace it with.
+
+		let no_new_search = this.search_desired === this.search_running || !this.search_desired.node;
+
+		if (no_new_search) {
+
+			let completed_search = this.search_running;
+			this.search_running = NoSearch;
+			this.search_desired = NoSearch;
+			this.hub.receive(line, completed_search.node);		// May trigger a new search, so do it last.
+
+		} else {
+
+			this.search_running = NoSearch;
+			this.send_desired();
 
 		}
 	};
@@ -124,26 +182,13 @@ function NewEngine() {
 		return s;			// Just so the renderer can pop s up as a message if it wants.
 	};
 
-	eng.setup = function(filepath, args, receive_fn, err_receive_fn) {
+	eng.setup = function(filepath, args, hub) {
 
 		Log("");
 		Log(`Launching ${filepath}`);
 		Log("");
 
-		// This is slightly sketchy, the passed functions get saved to our engine
-		// object in a way that makes them look like methods of this object. Hmm.
-		//
-		// Also note, everything is stored as a reference in the object. Not sure
-		// if this is needed to stop stuff getting garbage collected...?
-
-		this.receive_fn = receive_fn;
-		this.err_receive_fn = err_receive_fn;
-
-		// Precautionary / defensive coding, in case these somehow got changed
-		// before setup() is called (impossible at time of writing)...
-
-		this.readyok_required = 0;
-		this.bestmove_required = 0;
+		this.hub = hub;
 
 		try {
 			this.exe = child_process.spawn(filepath, args, {cwd: path.dirname(filepath)});
@@ -173,58 +218,35 @@ function NewEngine() {
 
 		this.err_scanner.on("line", (line) => {
 			Log(". " + line);
-			this.err_receive_fn(line);
+			this.hub.err_receive(line);
 		});
 
 		this.scanner.on("line", (line) => {
 
-			// Firstly, make sure we correct our sync counters...
-			// Do both these things before anything else.
-
-			if (line.includes("bestmove") && this.bestmove_required > 0) {
-				this.bestmove_required--;
-				this.sync_change_time = performance.now();
-			}
-
-			if (line.includes("readyok") && this.readyok_required > 0) {
-				this.readyok_required--;
-				this.sync_change_time = performance.now();
-			}
-
 			if (line.includes("uciok")) {
 				this.ever_received_uciok = true;
-			}
-
-			// We want to ignore output that is clearly obsolete...
-
-			if (this.bestmove_required > 1 || (line.includes("bestmove") && this.bestmove_required > 0)) {
-				if (config.log_info_lines || line.includes("info") === false) {
-					Log("(bestmove desync) < " + line);
-				}
-				return;
-			}
-
-			// We want to ignore all output when waiting for "readyok"...
-
-			if (this.readyok_required > 0) {
-				if (config.log_info_lines || line.includes("info") === false) {
-					Log("(readyok desync) < " + line);
-				}
-				return;
-			}
-
-			// We want relevant "bestmove" output (if synced) to make our running variable false.
-			// Note that this.sent_limit is not changed.
-
-			if (line.includes("bestmove")) {
-				this.running = false;
 			}
 
 			if (config.log_info_lines || line.includes("info") === false) {
 				Log("< " + line);
 			}
 
-			this.receive_fn(line);
+			if (line.includes("bestmove")) {
+
+				this.handle_bestmove_line(line);
+
+			} else if (line.startsWith("info")) {
+
+				if (this.search_running === this.search_desired) {
+					this.hub.info_handler.receive(line, this.search_running.node);
+				}
+
+			} else {
+
+				this.hub.receive(line, this.search_running.node);
+
+			}
+
 		});
 	};
 
