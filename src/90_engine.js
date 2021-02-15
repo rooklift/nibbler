@@ -65,9 +65,9 @@ function NewEngine() {
 
 	eng.send_desired = function() {
 
-//		if (this.search_running.node) {			// This shouldn't be possible.
-//			this.send("stop");
-//		}
+		if (this.search_running.node) {
+			throw "send_desired() called but search was running";
+		}
 
 		let node = this.search_desired.node;
 
@@ -155,7 +155,7 @@ function NewEngine() {
 		let completed_search = this.search_running;
 		this.search_running = NoSearch;
 
-		if (this.search_desired === this.search_running) {		// Search ended and we have (as yet) nothing to replace it with.
+		if (this.search_desired === completed_search) {			// Search ended and we have (as yet) nothing to replace it with.
 			this.search_desired = NoSearch;
 		} else {												// We can start a new search.
 			if (this.search_desired.node) {
