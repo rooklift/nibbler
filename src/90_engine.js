@@ -18,19 +18,20 @@ function NewEngine() {
 
 	let eng = Object.create(null);
 
+	eng.hub = null;
 	eng.exe = null;
 	eng.scanner = null;
 	eng.err_scanner = null;
+
 	eng.last_send = null;
 	eng.ever_received_uciok = false;
+
 	eng.warned_send_fail = false;
+	eng.warned_invalid_node = false;
 
 	eng.search_running = NoSearch;
 	eng.search_desired = NoSearch;
-
 	eng.ignoring_output = false;		// If we send stop because we want to make a new search, ignore engine until after bestmove.
-
-	eng.hub = null;
 
 	// -------------------------------------------------------------------------------------------
 
@@ -70,8 +71,15 @@ function NewEngine() {
 		let node = this.search_desired.node;
 
 		if (!node || node.destroyed || node.terminal_reason() !== "") {
+
 			this.search_running = NoSearch;
 			this.search_desired = NoSearch;
+
+			if (this.warned_invalid_node === false) {
+				alert("send_desired() got an invalid node.");
+				this.warned_invalid_node = true;
+			}
+
 			return;
 		}
 
@@ -140,6 +148,31 @@ function NewEngine() {
 
 	};
 
+	eng.handle_bestmove_line = function(line) {
+
+		let completed_search = this.search_running;
+		this.search_running = NoSearch;
+
+		if (this.search_desired === this.search_running) {		// Search ended and we have (as yet) nothing to replace it with.
+			this.search_desired = NoSearch;
+		} else {												// We can start a new search.
+			if (this.search_desired.node) {
+				this.send_desired();
+			} else {
+				this.search_desired = NoSearch;
+			}
+		}
+
+		// This call to hub must be done after the above, because it might itself trigger
+		// a new position, which logically must be dealt with after the above.
+
+		if (this.ignoring_output === false) {
+			this.hub.receive(line, completed_search.node);
+		} else {
+			this.ignoring_output = false;
+		}
+	};
+
 	eng.setoption = function(name, value) {
 		let s = `setoption name ${name} value ${value}`;
 		this.send(s);
@@ -195,8 +228,6 @@ function NewEngine() {
 				this.ever_received_uciok = true;
 			}
 
-			// The following is the main logic here...
-
 			if (line.startsWith("info")) {
 
 				if (this.ignoring_output === false) {
@@ -205,24 +236,7 @@ function NewEngine() {
 
 			} else if (line.includes("bestmove")) {
 
-				let relevant_node = this.search_running.node;
-
-				if (this.search_desired === this.search_running) {
-					this.search_running = NoSearch;
-					this.search_desired = NoSearch;
-				} else {
-					this.search_running = NoSearch;
-					this.send_desired();				// Must be done even if the desired node is null.
-				}
-
-				// This call to hub must be done after the above, because it might itself trigger
-				// a new position, which logically must be dealt with after the above.
-
-				if (this.ignoring_output === false) {
-					this.hub.receive(line, relevant_node);
-				} else {
-					this.ignoring_output = false;
-				}
+				this.handle_bestmove_line(line);
 
 			} else {
 
