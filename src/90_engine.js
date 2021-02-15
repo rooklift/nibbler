@@ -202,11 +202,7 @@ function NewEngine() {
 
 			} else if (line.includes("bestmove")) {
 
-				if (this.ignoring_output === false) {
-					this.hub.receive(line, this.search_running.node);
-				} else {
-					this.ignoring_output = false;
-				}
+				let relevant_node = this.search_running.node;
 
 				if (this.search_desired === this.search_running) {
 					this.search_running = NoSearch;
@@ -214,6 +210,15 @@ function NewEngine() {
 				} else {
 					this.search_running = NoSearch;
 					this.send_desired();				// Must be done even if the desired node is null.
+				}
+
+				// This call to hub must be done after the above, because it might itself trigger
+				// a new position, which logically must be dealt with after the above.
+
+				if (this.ignoring_output === false) {
+					this.hub.receive(line, relevant_node);
+				} else {
+					this.ignoring_output = false;
 				}
 
 			} else {
