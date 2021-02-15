@@ -42,17 +42,14 @@ function NewRenderer() {
 		case "analysis_free":
 		case "self_play":
 		case "auto_analysis":
-			if (!this.engine.running || this.leela_node !== this.tree.node || this.engine.search_desired.limit !== this.node_limit()) {
+			if (this.engine.search_desired.node !== this.tree.node || this.engine.search_desired.limit !== this.node_limit()) {
 				this.__go(this.tree.node);
 			}
 			break;
 
 		case "analysis_locked":
-
-			if (!this.engine.running || this.leela_node !== this.leela_lock_node || this.engine.search_desired.limit !== this.node_limit()) {
-				if (this.tree.node === this.leela_lock_node) {		// So moving around in irrelevant positions doesn't trigger.
-					this.__go(this.tree.node);
-				}
+			if (this.engine.search_desired.node !== this.leela_lock_node || this.engine.search_desired.limit !== this.node_limit()) {
+				this.__go(this.tree.node);
 			}
 			break;
 
