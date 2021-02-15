@@ -71,6 +71,8 @@ function NewRenderer() {
 
 	renderer.position_changed = function(new_game_flag, avoid_confusion) {
 
+		// Called right after this.tree.node is changed, meaning we are now drawing a different position.
+
 		this.escape();
 
 		this.hoverdraw_div = -1;
