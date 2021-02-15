@@ -49,7 +49,7 @@ function NewRenderer() {
 
 		case "analysis_locked":
 			if (this.engine.search_desired.node !== this.leela_lock_node || this.engine.search_desired.limit !== this.node_limit()) {
-				this.__go(this.tree.node);
+				this.__go(this.leela_lock_node);
 			}
 			break;
 
@@ -153,8 +153,10 @@ function NewRenderer() {
 			if (this.engine.search_desired.limit !== this.node_limit() ||
 				this.engine.search_desired.node === null		// Can happen when limit hits, causing search to end.
 			) {
-				if (this.leela_node) {
-					this.__go(this.leela_node);
+				if (this.leela_lock_node) {
+					this.__go(this.leela_lock_node);
+				} else {
+					this.__go(this.tree.node);
 				}
 			}
 		}
