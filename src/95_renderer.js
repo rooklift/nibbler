@@ -152,9 +152,13 @@ function NewRenderer() {
 
 	renderer.handle_node_limit_change = function() {
 
-		if (this.engine.search_desired.limit !== this.node_limit() || this.engine.search_desired.node === null) {
-			if (this.leela_node && config.behaviour !== "halt") {
-				this.__go(this.leela_node);
+		if (config.behaviour !== "halt") {
+			if (this.engine.search_desired.limit !== this.node_limit() ||
+				this.engine.search_desired.node === null		// Can happen when limit hits, causing search to end.
+			) {
+				if (this.leela_node) {
+					this.__go(this.leela_node);
+				}
 			}
 		}
 	};
