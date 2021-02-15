@@ -28,8 +28,6 @@ function NewEngine() {
 	eng.search_running = NoSearch;		// The search actually being run right now.
 	eng.search_desired = NoSearch;		// The search we want Leela to be running. Often the same object as above.
 
-	eng.ignoring_output = false;		// If we send stop because we want to make a new search, ignore engine until after bestmove.
-
 	// -------------------------------------------------------------------------------------------
 
 	eng.send = function(msg) {
@@ -130,7 +128,6 @@ function NewEngine() {
 
 		if (this.search_running.node) {
 			this.send("stop");
-			this.ignoring_output = true;
 			if (!this.unresolved_stop_time) {
 				this.unresolved_stop_time = performance.now();
 			}
@@ -146,26 +143,20 @@ function NewEngine() {
 
 		this.unresolved_stop_time = null;
 
-		let completed_search = this.search_running;
-		this.search_running = NoSearch;
+		let no_new_search = this.search_desired === this.search_running || !this.search_desired.node;
 
-		if (this.search_desired === completed_search) {			// Search ended and we have (as yet) nothing to replace it with.
+		if (no_new_search) {
+
+			let completed_search = this.search_running;
+			this.search_running = NoSearch;
 			this.search_desired = NoSearch;
-		} else {												// We can start a new search.
-			if (this.search_desired.node) {
-				this.send_desired();
-			} else {
-				this.search_desired = NoSearch;
-			}
-		}
+			this.hub.receive(line, completed_search.node);		// May trigger a new search, so do it last.
 
-		// This call to hub must be done after the above, because it might itself trigger
-		// a new position, which logically must be dealt with after the above.
-
-		if (this.ignoring_output === false) {
-			this.hub.receive(line, completed_search.node);
 		} else {
-			this.ignoring_output = false;
+
+			this.search_running = NoSearch;
+			this.send_desired();
+
 		}
 	};
 
@@ -230,7 +221,7 @@ function NewEngine() {
 
 			} else if (line.startsWith("info")) {
 
-				if (this.ignoring_output === false) {
+				if (this.search_running === this.search_desired) {
 					this.hub.info_handler.receive(line, this.search_running.node);
 				}
 
