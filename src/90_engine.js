@@ -128,7 +128,7 @@ function NewEngine() {
 
 		this.search_desired = params;
 
-		// If a search is running, stop it (we will send the new position after receiving bestmove).
+		// If a search is running, stop it... we will send the new position (if applicable) after receiving bestmove.
 		// If no search is running, start the new search immediately.
 
 		if (this.search_running.node) {
