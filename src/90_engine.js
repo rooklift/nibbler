@@ -89,7 +89,7 @@ function NewEngine() {
 		}
 
 		let s;
-		let n = this.search_desired.limit									// was hub.node_limit();
+		let n = this.search_desired.limit;
 
 		if (!n) {
 			s = "go infinite";
