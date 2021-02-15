@@ -32,7 +32,7 @@ function NewEngine() {
 	eng.search_running = NoSearch;
 	eng.search_desired = NoSearch;
 
-	eng.ignoring_bestmove = false;		// If we send stop because we want to make a new search, don't pass the bestmove line to hub.
+	eng.ignoring_output = false;		// If we send stop because we want to make a new search, ignore engine until after bestmove.
 
 	eng.hub = null;
 
@@ -158,7 +158,7 @@ function NewEngine() {
 			this.send_desired();
 		} else {
 			this.send("stop");
-			this.ignoring_bestmove = true;
+			this.ignoring_output = true;
 		}
 	};
 
@@ -217,10 +217,22 @@ function NewEngine() {
 				this.ever_received_uciok = true;
 			}
 
+			// The following is the main logic here...
+
 			if (line.startsWith("info")) {
-				this.hub.info_handler.receive(line, this.search_running.node);
+
+				if (this.ignoring_output === false) {
+					this.hub.info_handler.receive(line, this.search_running.node);
+				}
+
 			} else if (line.includes("bestmove")) {
-				let completed_node = this.search_running.node;
+
+				if (this.ignoring_output === false) {
+					this.hub.receive(line, this.search_running.node);
+				} else {
+					this.ignoring_output = false;
+				}
+
 				if (this.search_desired === this.search_running) {
 					this.search_running = NoSearch;
 					this.search_desired = NoSearch;
@@ -228,13 +240,11 @@ function NewEngine() {
 					this.search_running = NoSearch;
 					this.send_desired();				// Must be done even if the desired node is null.
 				}
-				if (this.ignoring_bestmove) {
-					this.ignoring_bestmove = false;
-				} else {
-					this.hub.receive(line, completed_node);
-				}
+
 			} else {
+
 				this.hub.receive(line, this.search_running.node);
+
 			}
 
 		});
