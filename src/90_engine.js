@@ -25,10 +25,6 @@ function NewEngine() {
 	eng.ever_received_uciok = false;
 	eng.warned_send_fail = false;
 
-	// FIXME - remove sent_limit
-
-	eng.sent_limit = "n/a";				// Positive number for node limit; null for infinite; "n/a" for stopped *by us*.
-
 	eng.search_running = NoSearch;
 	eng.search_desired = NoSearch;
 
@@ -46,7 +42,10 @@ function NewEngine() {
 
 		msg = msg.trim();
 
-		this.send_msg_bookkeeping(msg);
+		if (msg.startsWith("setoption") && msg.includes("WeightsFile")) {
+			let i = msg.indexOf("value") + 5;
+			ipcRenderer.send("ack_weightsfile", msg.slice(i).trim());
+		}
 
 		try {
 			this.exe.stdin.write(msg);
@@ -59,30 +58,6 @@ function NewEngine() {
 				alert(messages.send_fail);
 				this.warned_send_fail = true;
 			}
-		}
-	};
-
-	eng.send_msg_bookkeeping = function(msg) {
-
-		if (msg.startsWith("go")) {
-
-			if (msg.includes("infinite")) {		// Might not end with infinite due to searchmoves.
-				this.sent_limit = null;
-			} else {
-				let tokens = msg.split(" ").map(z => z.trim()).filter(z => z !== "");
-				let i = tokens.indexOf("nodes");
-				this.sent_limit = parseInt(tokens[i + 1], 10);
-			}
-
-		} else if (msg === "stop") {
-
-			this.sent_limit = "n/a";
-
-		} else if (msg.startsWith("setoption") && msg.includes("WeightsFile")) {
-
-			let i = msg.indexOf("value") + 5;
-			ipcRenderer.send("ack_weightsfile", msg.slice(i).trim());
-
 		}
 	};
 
