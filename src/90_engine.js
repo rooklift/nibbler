@@ -10,7 +10,7 @@ function SearchParams(node = null, limit = null, searchmoves = null) {
 
 	if (!node) return NoSearch;
 
-	if (Array.isArray(searchmoves) {
+	if (Array.isArray(searchmoves)) {
 		searchmoves = node.validate_searchmoves(searchmoves);		// returns a new array
 	} else {
 		searchmoves = [];
