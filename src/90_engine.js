@@ -25,8 +25,9 @@ function NewEngine() {
 	eng.warned_send_fail = false;
 	eng.warned_invalid_node = false;
 
-	eng.search_running = NoSearch;
-	eng.search_desired = NoSearch;
+	eng.search_running = NoSearch;		// The search actually being run right now.
+	eng.search_desired = NoSearch;		// The search we want Leela to be running. Often the same object as above.
+
 	eng.ignoring_output = false;		// If we send stop because we want to make a new search, ignore engine until after bestmove.
 
 	// -------------------------------------------------------------------------------------------
