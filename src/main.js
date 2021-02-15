@@ -3297,17 +3297,6 @@ function menu_build() {
 					type: "separator"
 				},
 				{
-					label: "Log info lines",
-					type: "checkbox",
-					checked: config.log_info_lines,
-					click: () => {
-						win.webContents.send("call", {
-							fn: "toggle",
-							args: ["log_info_lines"],
-						});
-					}
-				},
-				{
 					label: "Log illegal moves",
 					type: "checkbox",
 					checked: config.log_illegal_moves,
@@ -3326,6 +3315,17 @@ function menu_build() {
 						win.webContents.send("call", {
 							fn: "toggle",
 							args: ["log_positions"],
+						});
+					}
+				},
+				{
+					label: "Log info lines",
+					type: "checkbox",
+					checked: config.log_info_lines,
+					click: () => {
+						win.webContents.send("call", {
+							fn: "toggle",
+							args: ["log_info_lines"],
 						});
 					}
 				},
