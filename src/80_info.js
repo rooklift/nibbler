@@ -391,8 +391,22 @@ function NewInfoHandler() {
 
 		} else if (config.show_engine_state) {
 
+			let cl;
+			let status;
+
+			if (engine.search_running.node && engine.search_running === engine.search_desired) {
+				cl = "green";
+				status = "running";
+			} else if (engine.search_running !== engine.search_desired) {
+				cl = "yellow";
+				status = "desync";
+			} else {
+				cl = "yellow";
+				status = "stopped";
+			}
+
 			statusbox.innerHTML =
-			`<span class="${engine.running ? "green" : "yellow"}">${engine.running ? "running" : "stopped"}</span>, ` +
+			`<span class="${cl}">${status}</span>, ` +
 			`${config.behaviour}, ` +
 			`${engine.last_send}`;
 
