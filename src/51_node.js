@@ -342,6 +342,8 @@ const node_prototype = {
 
 	validate_searchmoves: function(arr) {
 
+		// Returns a new array with only legal searchmoves.
+
 		if (Array.isArray(arr) === false) {
 			arr = [];
 		}
