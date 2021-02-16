@@ -119,7 +119,7 @@ function NewRenderer() {
 			return;
 		}
 
-		// "analysis_locked" has its own function.
+		// "analysis_locked" has its own function. (Why? Probably some historical reason that isn't really needed now...)
 
 		if (s === "analysis_locked") {
 			throw `set_behaviour("analysis_locked") not allowed`;
