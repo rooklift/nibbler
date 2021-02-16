@@ -39,6 +39,7 @@ function NewEngine() {
 	eng.last_send = null;
 	eng.unresolved_stop_time = null;
 	eng.ever_received_uciok = false;
+	eng.have_quit = false;
 
 	eng.warned_send_fail = false;
 
@@ -217,11 +218,14 @@ function NewEngine() {
 		});
 
 		this.err_scanner.on("line", (line) => {
+			if (this.have_quit) return;
 			Log(". " + line);
 			this.hub.err_receive(line);
 		});
 
 		this.scanner.on("line", (line) => {
+
+			if (this.have_quit) return;
 
 			if (line.includes("uciok")) {
 				this.ever_received_uciok = true;
@@ -251,8 +255,7 @@ function NewEngine() {
 	};
 
 	eng.shutdown = function() {				// Note: Don't reuse the engine object.
-		this.receive_fn = () => {};
-		this.err_receive_fn = () => {};
+		this.have_quit = true;
 		this.send("quit");
 		if (this.exe) {
 			setTimeout(() => {
