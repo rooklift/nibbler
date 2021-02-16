@@ -18,11 +18,7 @@ function SearchParams(node = null, limit = null, searchmoves = null) {
 		validated = [];
 	}
 
-	// We sort the new array so that the comparison in set_search_desired() works.
-
-	validated.sort();
-
-	Object.freeze(validated);
+	Object.freeze(validated);		// under no circumstances refactor this to freeze the original searchmoves
 
 	return Object.freeze({
 		node: node,

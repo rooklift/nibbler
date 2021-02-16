@@ -1089,6 +1089,7 @@ function NewRenderer() {
 		}
 
 		this.tree.node.searchmoves = Object.keys(moveset);
+		this.tree.node.searchmoves.sort();
 		this.handle_searchmoves_change();
 	};
 
@@ -1477,6 +1478,7 @@ function NewRenderer() {
 			this.tree.node.searchmoves.push(sm);
 		}
 
+		this.tree.node.searchmoves.sort();
 		this.handle_searchmoves_change();
 	};
 
