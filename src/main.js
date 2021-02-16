@@ -3215,15 +3215,15 @@ function menu_build() {
 					type: "separator"
 				},
 				{
-					label: "Show sync status",
+					label: "Query sync status",
 					click: () => {
-						win.webContents.send("call", "show_sync_status");
+						win.webContents.send("call", "query_sync_status");
 					}
 				},
 				{
-					label: "Show dropped inputs",
+					label: "Query dropped inputs",
 					click: () => {
-						win.webContents.send("call", "show_dropped_inputs");
+						win.webContents.send("call", "query_dropped_inputs");
 					}
 				},
 				{

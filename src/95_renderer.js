@@ -1270,7 +1270,7 @@ function NewRenderer() {
 		}
 	};
 
-	renderer.show_sync_status = function() {
+	renderer.query_sync_status = function() {
 		try {
 			let running = this.engine.search_running.node ? "node " + this.engine.search_running.node.id.toString() : null;
 			let desired = this.engine.search_desired.node ? "node " + this.engine.search_desired.node.id.toString() : null;
@@ -1280,7 +1280,7 @@ function NewRenderer() {
 		}
 	};
 
-	renderer.show_dropped_inputs = function() {
+	renderer.query_dropped_inputs = function() {
 		alert(`total_dropped_inputs: ${total_dropped_inputs}`);		// This is a global variable in start.js
 	};
 
