@@ -10,20 +10,24 @@ function SearchParams(node = null, limit = null, searchmoves = null) {
 
 	if (!node) return NoSearch;
 
+	let validated;
+
 	if (Array.isArray(searchmoves)) {
-		searchmoves = node.validate_searchmoves(searchmoves);		// returns a new array
+		validated = node.validate_searchmoves(searchmoves);		// returns a new array
 	} else {
-		searchmoves = [];
+		validated = [];
 	}
 
-	// Whatever happened, searchmoves is now a new object, not the one passed to us, so we can freeze it safely.
+	// We sort the new array so that the comparison in set_search_desired() works.
 
-	Object.freeze(searchmoves);
+	validated.sort();
+
+	Object.freeze(validated);
 
 	return Object.freeze({
 		node: node,
 		limit: limit,
-		searchmoves: searchmoves
+		searchmoves: validated
 	});
 }
 
