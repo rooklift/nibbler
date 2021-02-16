@@ -1281,7 +1281,7 @@ function NewRenderer() {
 	};
 
 	renderer.query_dropped_inputs = function() {
-		alert(`total_dropped_inputs: ${total_dropped_inputs}`);		// This is a global variable in start.js
+		alert(`Total dropped inputs: ${total_dropped_inputs}`);		// This is a global variable in start.js
 	};
 
 	renderer.log_ram = function() {
