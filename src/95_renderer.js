@@ -1271,7 +1271,13 @@ function NewRenderer() {
 	};
 
 	renderer.show_sync_status = function() {
-		alert("This was removed.");
+		try {
+			let running = this.engine.search_running.node ? "node " + this.engine.search_running.node.id.toString() : null;
+			let desired = this.engine.search_desired.node ? "node " + this.engine.search_desired.node.id.toString() : null;
+			alert(`Running: ${running}\nDesired: ${desired}`);
+		} catch (err) {
+			alert(err);
+		}
 	};
 
 	renderer.show_dropped_inputs = function() {
