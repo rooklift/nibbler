@@ -142,6 +142,9 @@ function NewEngine() {
 
 		let params = SearchParams(node, limit, searchmoves);
 
+		// It is correct to check these against the *desired* search
+		// (which may or may not be the one currently running).
+
 		if (this.search_desired.node === params.node) {
 			if (this.search_desired.limit === params.limit) {
 				if (CompareArrays(this.search_desired.searchmoves, params.searchmoves)) {
