@@ -1,5 +1,20 @@
 "use strict";
 
+/*
+
+When Leela ends a search, it will send a "bestmove" line.
+
+We store:
+	- What search Leela is running
+	- Any new search we want Leela to run
+
+If we do want a new search run (while Leela is running an old one), we
+send a "stop" to trigger the "bestmove" response.
+
+When we receive a "bestmove", we start the new search (if there is one).
+
+*/
+
 let NoSearch = Object.freeze({
 	node: null,
 	limit: null,
