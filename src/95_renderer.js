@@ -82,7 +82,7 @@ function NewRenderer() {
 		if (new_game_flag) {
 			this.node_to_clean = null;
 			this.leela_lock_node = null;
-			this.set_behaviour("halt");					// Will cause "stop" to be sent
+			this.set_behaviour("halt");					// Will cause "stop" to be sent.
 			this.engine.send("ucinewgame");				// Must happen after "stop" is sent.
 			this.send_title();
 		}
@@ -830,15 +830,15 @@ function NewRenderer() {
 	};
 
 	renderer.soft_engine_reset = function() {
-		this.set_behaviour("halt");
-		this.engine.send("ucinewgame");
+		this.set_behaviour("halt");					// Will cause "stop" to be sent.
+		this.engine.send("ucinewgame");				// Must happen after "stop" is sent.
 	};
 
 	renderer.forget_analysis = function() {
 		CleanTree(this.tree.root);
 		this.info_handler.must_draw_infobox();
-		this.set_behaviour("halt");
-		this.engine.send("ucinewgame");
+		this.set_behaviour("halt");					// Will cause "stop" to be sent.
+		this.engine.send("ucinewgame");				// Must happen after "stop" is sent.
 	};
 
 	renderer.set_uci_option = function(name, val, save_to_cfg) {
