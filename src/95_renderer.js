@@ -682,11 +682,60 @@ function NewRenderer() {
 	// -------------------------------------------------------------------------------------------------------------------------
 	// Engine stuff...
 
-	renderer.receive = function(s, relevant_node) {
+	renderer.receive_bestmove = function(s, relevant_node) {
 
-		debug.receive = debug.receive ? debug.receive + 1 : 1;
+		this.update_graph_eval(relevant_node);		// Now's the last chance to update our graph eval for this node.
 
-		// Note that lines of "info" are sent directly to the info_handler by engine.js
+		switch (config.behaviour) {
+
+		case "self_play":
+		case "play_white":
+		case "play_black":
+
+			if (relevant_node === this.tree.node) {
+
+				let tokens = s.split(" ").filter(z => z !== "");
+				let ok = this.move(tokens[1]);
+
+				if (!ok) {
+					LogBoth(`BAD BESTMOVE (${tokens[1]}) IN POSITION ${this.tree.node.board.fen(true)}`);
+					if (!this.warned_bad_bestmove) {
+						alert(messages.bad_bestmove);
+						this.warned_bad_bestmove = true;
+					}
+				}
+			} else {
+				this.set_behaviour("halt");
+			}
+
+			break;
+
+		case "auto_analysis":
+
+			if (relevant_node === this.tree.node) {
+
+				if (this.tree.next()) {
+					this.position_changed(false, false);
+				} else {
+					this.set_behaviour("halt");
+				}
+
+			} else {
+				this.set_behaviour("halt");
+			}
+
+			break;
+
+		case "analysis_free":
+		case "analysis_locked":
+
+			// We hit the node limit. No need to change behaviour.
+			break;
+
+		}
+	};
+
+	renderer.receive_misc = function(s) {
 
 		if (s.startsWith("error")) {
 
@@ -711,61 +760,7 @@ function NewRenderer() {
 			} else {
 				this.info_handler.err_receive(s.slice("id name".length).trim());
 			}
-
-		} else if (s.startsWith("bestmove")) {
-
-			this.update_graph_eval(relevant_node);		// Now's the last chance to update our graph eval for this node.
-
-			switch (config.behaviour) {
-
-			case "self_play":
-			case "play_white":
-			case "play_black":
-
-				if (relevant_node === this.tree.node) {
-
-					let tokens = s.split(" ").filter(z => z !== "");
-					let ok = this.move(tokens[1]);
-
-					if (!ok) {
-						LogBoth(`BAD BESTMOVE (${tokens[1]}) IN POSITION ${this.tree.node.board.fen(true)}`);
-						if (!this.warned_bad_bestmove) {
-							alert(messages.bad_bestmove);
-							this.warned_bad_bestmove = true;
-						}
-					}
-				} else {
-					this.set_behaviour("halt");
-				}
-
-				break;
-
-			case "auto_analysis":
-
-				if (relevant_node === this.tree.node) {
-
-					if (this.tree.next()) {
-						this.position_changed(false, false);
-					} else {
-						this.set_behaviour("halt");
-					}
-
-				} else {
-					this.set_behaviour("halt");
-				}
-
-				break;
-
-			case "analysis_free":
-			case "analysis_locked":
-
-				// We hit the node limit. No need to change behaviour.
-				break;
-
-			}
 		}
-
-		debug.receive -= 1;
 	};
 
 	renderer.err_receive = function(s) {
@@ -1936,10 +1931,12 @@ function NewRenderer() {
 	};
 
 	renderer.spin = function() {
+		debug.spin = debug.spin ? debug.spin + 1 : 1;
 		this.tick++;
 		this.draw();
 		this.update_graph_eval(this.engine.search_running.node);		// Possibly null.
 		setTimeout(this.spin.bind(this), config.update_delay);
+		debug.spin -= 1;
 	};
 
 	renderer.update_graph_eval = function(node) {

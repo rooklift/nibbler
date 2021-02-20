@@ -16,7 +16,7 @@ We are in one of these states (currently implicit in the logic):
 (2) Running a search........................................................................
 
 	A "bestmove" might arrive, in which case the search ends and we go into state 1. The
-	"bestmove" line must be passed to hub.receive().
+	"bestmove" line must be passed to hub.receive_bestmove().
 
 	Alternatively, the user may demand a search with new parameters, in which case we send
 	"stop" and enter state 3. Or the user may halt, in which case we send "stop" and enter
@@ -208,7 +208,7 @@ function NewEngine() {
 			let completed_search = this.search_running;
 			this.search_running = NoSearch;
 			this.search_desired = NoSearch;
-			this.hub.receive(line, completed_search.node);		// May trigger a new search, so do it last.
+			this.hub.receive_bestmove(line, completed_search.node);		// May trigger a new search, so do it last.
 
 		} else {
 
@@ -260,13 +260,16 @@ function NewEngine() {
 
 		this.err_scanner.on("line", (line) => {
 			if (this.have_quit) return;
+			debug.err_line = debug.err_line ? debug.err_line + 1 : 1;
 			Log(". " + line);
 			this.hub.err_receive(line);
+			debug.err_line -= 1
 		});
 
 		this.scanner.on("line", (line) => {
 
 			if (this.have_quit) return;
+			debug.line = debug.line ? debug.line + 1 : 1;
 
 			if (line.includes("uciok")) {
 				this.ever_received_uciok = true;
@@ -276,19 +279,15 @@ function NewEngine() {
 				Log("< " + line);
 			}
 
-			if (line.includes("bestmove")) {
-
+			if (line.startsWith("bestmove")) {
 				this.handle_bestmove_line(line);
-
 			} else if (line.startsWith("info")) {
-
 				this.hub.info_handler.receive(line, this.search_running.node);
-
 			} else {
-
-				this.hub.receive(line, this.search_running.node);
-
+				this.hub.receive_misc(line);
 			}
+
+			debug.line -= 1;
 
 		});
 	};
