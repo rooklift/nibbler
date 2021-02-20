@@ -71,7 +71,7 @@ if (images.validate_folder(config.override_piece_directory)) {
 
 // Debug (see start.js).............................................
 
-let debug = Object.create(null);
+let debuggo = Object.create(null);
 
 // Options we generally want to send to Leela.......................
 

@@ -129,7 +129,7 @@ ipcRenderer.on("call", (event, msg) => {	// Adds stuff to the "queue" - so main 
 
 function input_loop() {
 
-	debug.input_loop = debug.input_loop ? debug.input_loop + 1 : 1;
+	debuggo.input_loop = debuggo.input_loop ? debuggo.input_loop + 1 : 1;
 
 	let fn;
 
@@ -152,7 +152,7 @@ function input_loop() {
 	}
 
 	setTimeout(input_loop, 10);
-	debug.input_loop -= 1;
+	debuggo.input_loop -= 1;
 }
 
 input_loop();
@@ -243,7 +243,7 @@ window.addEventListener("drop", (event) => {
 // so if we find a property that is non-zero, an exception has occurred.
 
 function debug_loop() {
-	for (let value of Object.values(debug)) {
+	for (let value of Object.values(debuggo)) {
 		if (value) {
 			alert(messages.uncaught_exception);
 			return;		// Return before setTimeout, thus no more warnings.

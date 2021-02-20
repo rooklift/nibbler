@@ -1864,7 +1864,7 @@ function NewRenderer() {
 
 	renderer.draw = function() {
 
-		debug.draw = debug.draw ? debug.draw + 1 : 1;
+		debuggo.draw = debuggo.draw ? debuggo.draw + 1 : 1;
 
 		// We do the :hover reaction first. This way, we are detecting hover based on the previous cycle's state.
 		// This should prevent the sort of flicker that can occur if we try to detect hover based on changes we
@@ -1894,7 +1894,7 @@ function NewRenderer() {
 
 		this.grapher.draw(this.tree.node);
 
-		debug.draw -= 1;
+		debuggo.draw -= 1;
 	};
 
 	renderer.draw_statusbox = function() {
@@ -1931,12 +1931,12 @@ function NewRenderer() {
 	};
 
 	renderer.spin = function() {
-		debug.spin = debug.spin ? debug.spin + 1 : 1;
+		debuggo.spin = debuggo.spin ? debuggo.spin + 1 : 1;
 		this.tick++;
 		this.draw();
 		this.update_graph_eval(this.engine.search_running.node);		// Possibly null.
 		setTimeout(this.spin.bind(this), config.update_delay);
-		debug.spin -= 1;
+		debuggo.spin -= 1;
 	};
 
 	renderer.update_graph_eval = function(node) {

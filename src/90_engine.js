@@ -260,16 +260,16 @@ function NewEngine() {
 
 		this.err_scanner.on("line", (line) => {
 			if (this.have_quit) return;
-			debug.err_line = debug.err_line ? debug.err_line + 1 : 1;
+			debuggo.err_line = debuggo.err_line ? debuggo.err_line + 1 : 1;
 			Log(". " + line);
 			this.hub.err_receive(line);
-			debug.err_line -= 1
+			debuggo.err_line -= 1
 		});
 
 		this.scanner.on("line", (line) => {
 
 			if (this.have_quit) return;
-			debug.line = debug.line ? debug.line + 1 : 1;
+			debuggo.line = debuggo.line ? debuggo.line + 1 : 1;
 
 			if (line.includes("uciok")) {
 				this.ever_received_uciok = true;
@@ -287,7 +287,7 @@ function NewEngine() {
 				this.hub.receive_misc(line);
 			}
 
-			debug.line -= 1;
+			debuggo.line -= 1;
 
 		});
 	};
