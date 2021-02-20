@@ -45,15 +45,21 @@ function NewInfo(board, move) {
 	// In some places elsewhere we might assume these things will have sensible values, so
 	// better not initialise most things to null. Best to use neutral-ish values, especially
 	// since some info (cp and q) can be carried (inverted) into the next step of a line...
+	//
+	// Things that are allowed to be null if not known:
+	//
+	//		d
+	//		m
+	//		v
 
 	let info = Object.create(info_prototype);
 	info.__ghost = false;			// If not false, this is temporary inferred info. Will store a string to display.
 	info.board = board;
 	info.cp = 0;
-	info.d = 0;
+	info.d = null;
 	info.depth = 0;
 	info.leelaish = false;			// Whether this info object has ever been updated from a VerboseMoveStats item.
-	info.m = 0;
+	info.m = null;
 	info.mate = 0;					// 0 can be the "not present" value.
 	info.move = move;
 	info.multipv = 1;
@@ -66,7 +72,7 @@ function NewInfo(board, move) {
 	info.seldepth = 0;
 	info.u = 1;
 	info.uci_nodes = 0;				// The number of nodes reported by the UCI info lines (i.e. for the whole position).
-	info.v = null;					// Warning: v is allowed to be null if not known.
+	info.v = null;
 	info.version = 0;
 	info.vms_order = 0;				// VerboseMoveStats order, 0 means not present, 1 is the worst, higher is better.
 	info.wdl = "??";
@@ -257,10 +263,14 @@ const info_prototype = {
 		}
 
 		if (opts.m) {
-			if (typeof this.m === "number" && this.m > 0) {
-				ret.push(`M: ${this.m.toFixed(1)}`);
+			if (typeof this.m === "number") {
+				if (this.m > 0) {
+					ret.push(`M: ${this.m.toFixed(1)}`);
+				} else {
+					ret.push(`M: 0`);
+				}
 			} else {
-				ret.push(`M: 0`);
+				ret.push(`M: ?`);
 			}
 		}
 

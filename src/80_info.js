@@ -930,7 +930,9 @@ function NewInfoHandler() {
 				s = o.info.multipv;
 				break;
 			case 4:
-				s = o.info.m.toFixed(0);
+				if (typeof o.info.m === "number") {
+					s = o.info.m.toFixed(0);
+				}
 				break;
 			default:
 				s = "!";
