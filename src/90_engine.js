@@ -2,16 +2,39 @@
 
 /*
 
-When Leela ends a search, it will send a "bestmove" line.
+We are in one of these states (currently implicit in the logic):
+	1. Inactive
+	2. Running a search
+	3. Changing the search
+	4. Ending the search
 
-We store:
-	- What search Leela is running
-	- Any new search we want Leela to run
+(1) Inactive................................................................................
 
-If we do want a new search run (while Leela is running an old one), we
-send a "stop" to trigger the "bestmove" response.
+	A "bestmove" should not arrive. If the user wants to start a search, we send it and
+	enter state 2.
 
-When we receive a "bestmove", we start the new search (if there is one).
+(2) Running a search........................................................................
+
+	A "bestmove" might arrive, in which case the search ends and we go into state 1. The
+	"bestmove" line must be passed to hub.receive().
+
+	Alternatively, the user may demand a search with new parameters, in which case we send
+	"stop" and enter state 3. Or the user may halt, in which case we send "stop" and enter
+	state 4.
+
+(3) Changing the search.....................................................................
+
+	A "stop" has been sent and we are waiting for a "bestmove" response. When it arrives,
+	we can send the new search and go back to state 2. The "bestmove" line itself can be
+	discarded since it is not relevant to the desired search.
+
+	In state 3, if the user changes the desired search, we simply replace the old desired
+	search (which never started) with the new desired search (which may be the null search,
+	in which case we have entered state 4).
+
+(4) Ending the search.......................................................................
+
+	Just like state 3, except the desired search is the null search.
 
 */
 
@@ -259,9 +282,7 @@ function NewEngine() {
 
 			} else if (line.startsWith("info")) {
 
-				if (this.search_running === this.search_desired) {
-					this.hub.info_handler.receive(line, this.search_running.node);
-				}
+				this.hub.info_handler.receive(line, this.search_running.node);
 
 			} else {
 
