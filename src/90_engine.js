@@ -34,7 +34,8 @@ We are in one of these states (currently implicit in the logic):
 
 (4) Ending the search.......................................................................
 
-	Just like state 3, except the desired search is the null search.
+	Just like state 3, except the desired search is the null search. When a "bestmove"
+	arrives, we go to state 1.
 
 */
 
