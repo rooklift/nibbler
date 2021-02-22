@@ -2059,18 +2059,6 @@ function menu_build() {
 							}
 						},
 						{
-							label: "check",
-							type: "checkbox",
-							checked: config.options.Backend === "check",
-							click: () => {
-								set_checks("Engine", "Backend", "check");
-								win.webContents.send("call", {
-									fn: "set_uci_option_permanent",
-									args: ["Backend", "check"]
-								});
-							}
-						},
-						{
 							label: "roundrobin",
 							type: "checkbox",
 							checked: config.options.Backend === "roundrobin",
