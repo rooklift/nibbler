@@ -687,8 +687,7 @@ function NewRenderer() {
 		this.update_graph_eval(relevant_node);		// Now's the last chance to update our graph eval for this node.
 
 		if (relevant_node !== this.tree.node) {
-			Log("(ignored bestmove, relevant_node !== this.tree.node)");
-			Log(`(config.behaviour was ${config.behaviour})`);
+			Log(`(ignored bestmove, relevant_node !== this.tree.node, config.behaviour was "${config.behaviour}")`);
 			this.set_behaviour("halt");
 			return;
 		}
