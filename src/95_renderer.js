@@ -1314,12 +1314,14 @@ function NewRenderer() {
 		let s = buf.toString();
 		let lines = s.split("\n").map(z => z.trim()).filter(z => z !== "");
 
-		for (let line of lines) {
-			for (let d of disallowed) {
-				if (line.startsWith(d)) {
-					this.set_special_message(`${messages.invalid_script}`, "yellow");
-					console.log(`Refused to run script: ${filename}`);
-					return;
+		if (!config.allow_arbitrary_scripts) {
+			for (let line of lines) {
+				for (let d of disallowed) {
+					if (line.startsWith(d)) {
+						this.set_special_message(`${messages.invalid_script}`, "yellow");
+						console.log(`Refused to run script: ${filename}`);
+						return;
+					}
 				}
 			}
 		}

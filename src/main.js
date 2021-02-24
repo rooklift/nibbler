@@ -3240,6 +3240,17 @@ function menu_build() {
 					}
 				},
 				{
+					label: "Allow arbitrary scripts",
+					type: "checkbox",
+					checked: config.allow_arbitrary_scripts,
+					click: () => {
+						win.webContents.send("call", {
+							fn: "toggle",
+							args: ["allow_arbitrary_scripts"],
+						});
+					}
+				},
+				{
 					type: "separator"
 				},
 				{
