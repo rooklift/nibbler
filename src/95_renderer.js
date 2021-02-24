@@ -686,17 +686,16 @@ function NewRenderer() {
 
 		this.update_graph_eval(relevant_node);		// Now's the last chance to update our graph eval for this node.
 
-		if (relevant_node !== this.tree.node) {
-			Log(`(ignored bestmove, relevant_node !== hub.tree.node, config.behaviour was "${config.behaviour}")`);
-			this.set_behaviour("halt");
-			return;
-		}
-
 		switch (config.behaviour) {
 
 		case "self_play":
 		case "play_white":
 		case "play_black":
+
+			if (relevant_node !== this.tree.node) {
+				Log(`(ignored bestmove, relevant_node !== hub.tree.node, config.behaviour was "${config.behaviour}")`);
+				break;
+			}
 
 			let tokens = s.split(" ").filter(z => z !== "");
 			let ok = this.move(tokens[1]);
@@ -712,6 +711,11 @@ function NewRenderer() {
 			break;
 
 		case "auto_analysis":
+
+			if (relevant_node !== this.tree.node) {
+				Log(`(ignored bestmove, relevant_node !== hub.tree.node, config.behaviour was "${config.behaviour}")`);
+				break;
+			}
 
 			if (this.tree.next()) {
 				this.position_changed(false, false);
