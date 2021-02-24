@@ -217,6 +217,22 @@ function NewEngine() {
 		}
 	};
 
+	eng.handle_info_line = function(line) {
+
+		if (!this.search_running.node) {
+			if (config.log_info_lines) Log("(ignore !node) < " + line);
+			return;
+		}
+
+		if (this.search_running.node.destroyed) {
+			if (config.log_info_lines) Log("(ignore destroyed) < " + line);
+			return;
+		}
+
+		if (config.log_info_lines) Log("< " + line);
+		this.hub.info_handler.receive(line, this.search_running.node);
+	};
+
 	eng.setoption = function(name, value) {
 		let s = `setoption name ${name} value ${value}`;
 		this.send(s);
@@ -275,22 +291,9 @@ function NewEngine() {
 			}
 
 			if (line.startsWith("bestmove")) {
-				this.handle_bestmove_line(line);		// Will do logging.
+				this.handle_bestmove_line(line);		// Will do logging, possibly adding a reason for rejection.
 			} else if (line.startsWith("info")) {
-				if (!this.search_running.node) {
-					if (config.log_info_lines) {
-						Log("(ignore !node) < " + line);
-					}
-				} else if (this.search_running.node.destroyed) {
-					if (config.log_info_lines) {
-						Log("(ignore destroyed) < " + line);
-					}
-				} else {
-					if (config.log_info_lines) {
-						Log("< " + line);
-					}
-					this.hub.info_handler.receive(line, this.search_running.node);
-				}
+				this.handle_info_line(line);			// Will do logging, possibly adding a reason for rejection.
 			} else {
 				Log("< " + line);
 				this.hub.receive_misc(line);
