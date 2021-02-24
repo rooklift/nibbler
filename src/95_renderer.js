@@ -730,7 +730,9 @@ function NewRenderer() {
 		case "analysis_free":
 		case "analysis_locked":
 
-			// We hit the node limit. No need to change behaviour.
+			// We hit the node limit. No need to change behaviour. Note that, for analysis_locked,
+			// relevant_node !== hub.tree.node is normal.
+
 			break;
 
 		}
