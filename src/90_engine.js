@@ -212,7 +212,7 @@ function NewEngine() {
 			this.hub.receive_bestmove(line, completed_search.node);		// May trigger a new search, so do it last.
 		} else {
 			this.search_running = NoSearch;
-			Log("(ignored, obsolete) < " + line);
+			Log("(ignore old) < " + line);
 			this.send_desired();
 		}
 	};
@@ -279,11 +279,11 @@ function NewEngine() {
 			} else if (line.startsWith("info")) {
 				if (!this.search_running.node) {
 					if (config.log_info_lines) {
-						Log("(ignored, !node) < " + line);
+						Log("(ignore !node) < " + line);
 					}
 				} else if (this.search_running.node.destroyed) {
 					if (config.log_info_lines) {
-						Log("(ignored, node.destroyed) < " + line);
+						Log("(ignore destroyed) < " + line);
 					}
 				} else {
 					if (config.log_info_lines) {
