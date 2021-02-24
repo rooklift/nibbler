@@ -694,6 +694,7 @@ function NewRenderer() {
 
 			if (relevant_node !== this.tree.node) {
 				Log(`(ignored bestmove, relevant_node !== hub.tree.node, config.behaviour was "${config.behaviour}")`);
+				this.set_behaviour("halt");
 				break;
 			}
 
@@ -714,6 +715,7 @@ function NewRenderer() {
 
 			if (relevant_node !== this.tree.node) {
 				Log(`(ignored bestmove, relevant_node !== hub.tree.node, config.behaviour was "${config.behaviour}")`);
+				this.set_behaviour("halt");
 				break;
 			}
 
