@@ -124,3 +124,7 @@ exports.invalid_pieces_directory =
 exports.about_custom_pieces =
 `To use a custom piece set, select a folder containing SVG or PNG files with names such as "Q.png" \
 (or "Q.svg") for white and "_Q.png" (or "_Q.svg") for black.`;
+
+
+exports.desync =
+`Desync... (restart engine via Engine menu)`;

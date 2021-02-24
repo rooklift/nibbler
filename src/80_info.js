@@ -412,7 +412,7 @@ function NewInfoHandler() {
 
 		} else if (engine.unresolved_stop_time && performance.now() - engine.unresolved_stop_time > 500) {
 
-			statusbox.innerHTML = `<span class="yellow">Desync...</span>`;
+			statusbox.innerHTML = `<span class="yellow">${messages.desync}</span>`;
 
 		} else if (analysing_other) {
 
