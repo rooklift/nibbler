@@ -686,40 +686,36 @@ function NewRenderer() {
 
 		this.update_graph_eval(relevant_node);		// Now's the last chance to update our graph eval for this node.
 
+		if (relevant_node !== this.tree.node) {
+			Log("(ignored bestmove, relevant_node !== this.tree.node)");
+			Log(`(config.behaviour was ${config.behaviour})`);
+			this.set_behaviour("halt");
+			return;
+		}
+
 		switch (config.behaviour) {
 
 		case "self_play":
 		case "play_white":
 		case "play_black":
 
-			if (relevant_node === this.tree.node) {
+			let tokens = s.split(" ").filter(z => z !== "");
+			let ok = this.move(tokens[1]);
 
-				let tokens = s.split(" ").filter(z => z !== "");
-				let ok = this.move(tokens[1]);
-
-				if (!ok) {
-					LogBoth(`BAD BESTMOVE (${tokens[1]}) IN POSITION ${this.tree.node.board.fen(true)}`);
-					if (!this.warned_bad_bestmove) {
-						alert(messages.bad_bestmove);
-						this.warned_bad_bestmove = true;
-					}
+			if (!ok) {
+				LogBoth(`BAD BESTMOVE (${tokens[1]}) IN POSITION ${this.tree.node.board.fen(true)}`);
+				if (!this.warned_bad_bestmove) {
+					alert(messages.bad_bestmove);
+					this.warned_bad_bestmove = true;
 				}
-			} else {
-				this.set_behaviour("halt");
 			}
 
 			break;
 
 		case "auto_analysis":
 
-			if (relevant_node === this.tree.node) {
-
-				if (this.tree.next()) {
-					this.position_changed(false, false);
-				} else {
-					this.set_behaviour("halt");
-				}
-
+			if (this.tree.next()) {
+				this.position_changed(false, false);
 			} else {
 				this.set_behaviour("halt");
 			}
