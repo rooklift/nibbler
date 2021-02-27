@@ -429,6 +429,9 @@ function __destroy_tree(node) {
 // Reset analysis and searchmove selections, recursively.
 
 function CleanTree(node) {
+	if (!node || node.destroyed) {
+		return;
+	}
 	__clean_tree(node.get_root());
 }
 
