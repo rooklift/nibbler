@@ -740,29 +740,23 @@ function NewRenderer() {
 
 	renderer.receive_misc = function(s) {
 
-		if (s.startsWith("error")) {
-
-			// If this comes at the start, we want to display it in the infobox, but if we're already
-			// drawing the infobox for real, we'll need to flash it up in the status box instead...
-
-			if (this.info_handler.ever_received_info) {
-				this.set_special_message(s, "red");
-			}
-			this.info_handler.err_receive(s);
-
-		} else if (s.startsWith("id name")) {
-
-			if (s.includes("Lc0")) {
-				for (let n = 10; n < messages.min_version; n++) {
-					if (s.includes(`v0.${n}`)) {
-						this.info_handler.err_receive("");
-						this.info_handler.err_receive(`<span class="blue">${messages.obsolete_leela}</span>`);
-						this.info_handler.err_receive("");
-					}
-				}
-			} else {
+		if (s.startsWith("id name")) {
+			if (!s.includes("Lc0") && !s.includes("Ceres")) {
 				this.info_handler.err_receive(s.slice("id name".length).trim());
 			}
+			return;
+		}
+
+		// Misc messages. Treat ones that aren't valid UCI as errors to be passed along...
+
+		if (!s.startsWith("id") &&
+			!s.startsWith("uciok") &&
+			!s.startsWith("readyok") &&
+			!s.startsWith("option") &&
+			!s.startsWith("bestmove") &&		// These messages shouldn't reach this function
+			!s.startsWith("info")				// These messages shouldn't reach this function
+		) {
+			this.info_handler.err_receive(SafeString(s));
 		}
 	};
 

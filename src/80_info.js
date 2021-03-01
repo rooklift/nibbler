@@ -72,7 +72,7 @@ function NewInfoHandler() {
 
 		let s_low = s.toLowerCase();
 
-		if (s_low.includes("warning") || s_low.includes("error") || s_low.includes("unknown") || s_low.includes("failed")) {
+		if (s_low.includes("warning") || s_low.includes("error") || s_low.includes("unknown") || s_low.includes("failed") || s_low.includes("exception")) {
 			this.stderr_log += `<span class="red">${s}</span><br>`;
 			this.ever_received_errors = true;
 		} else {
@@ -80,6 +80,7 @@ function NewInfoHandler() {
 		}
 
 		if (this.displaying_stderr() === false) {
+			this.set_special_message(s, "red")
 			console.log(s);
 		}
 	};
