@@ -278,7 +278,7 @@ function NewEngine() {
 			debuggo.err_line = debuggo.err_line ? debuggo.err_line + 1 : 1;
 			Log(". " + line);
 			this.hub.err_receive(SafeString(line));
-			debuggo.err_line -= 1
+			debuggo.err_line -= 1;
 		});
 
 		this.scanner.on("line", (line) => {
