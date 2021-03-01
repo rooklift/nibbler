@@ -19,8 +19,8 @@ function NewInfoHandler() {
 	ih.info_clickers = [];					// Elements in the infobox. Updated by draw_infobox().
 
 	ih.special_message = null;
-	ih.special_message_class = null;
-	ih.special_message_time = performance.now();
+	ih.special_message_class = "yellow";
+	ih.special_message_timeout = performance.now();
 
 	ih.last_drawn_board = null;
 	ih.last_drawn_version = null;
@@ -66,7 +66,6 @@ function NewInfoHandler() {
 		}
 
 		if (this.stderr_log.length > 50000) {
-			console.log(s);
 			return;
 		}
 
@@ -75,14 +74,16 @@ function NewInfoHandler() {
 		if (s_low.includes("warning") || s_low.includes("error") || s_low.includes("unknown") || s_low.includes("failed") || s_low.includes("exception")) {
 			this.stderr_log += `<span class="red">${s}</span><br>`;
 			this.ever_received_errors = true;
+			if (this.displaying_stderr() === false) {
+				this.set_special_message(s, "red", 5000);
+			}
 		} else {
 			this.stderr_log += `${s}<br>`;
+			if (this.displaying_stderr() === false) {
+				console.log(s);
+			}
 		}
 
-		if (this.displaying_stderr() === false) {
-			this.set_special_message(s, "red")
-			console.log(s);
-		}
 	};
 
 	ih.receive = function(s, node) {
@@ -386,9 +387,9 @@ function NewInfoHandler() {
 
 			statusbox.innerHTML = `<span class="yellow">Awaiting uciok from engine</span>`;
 
-		} else if (this.special_message && performance.now() - this.special_message_time < 3000) {
+		} else if (this.special_message && performance.now() < this.special_message_timeout) {
 
-			statusbox.innerHTML = `<span class="${this.special_message_class || "yellow"}">${this.special_message}</span>`;
+			statusbox.innerHTML = `<span class="${this.special_message_class}">${this.special_message}</span>`;
 
 		} else if (config.show_engine_state) {
 
@@ -470,6 +471,7 @@ function NewInfoHandler() {
 
 		if (this.displaying_stderr()) {
 			infobox.innerHTML = this.stderr_log;
+			this.last_drawn_version = null;
 			return;
 		}
 
@@ -948,10 +950,12 @@ function NewInfoHandler() {
 		}
 	};
 
-	ih.set_special_message = function(s, css_class) {		// Can leave css_class undefined to use a default.
+	ih.set_special_message = function(s, css_class, duration) {
+		if (!css_class) css_class = "yellow";
+		if (!duration) duration = 3000;
 		this.special_message = s;
 		this.special_message_class = css_class;
-		this.special_message_time = performance.now();
+		this.special_message_timeout = performance.now() + duration;
 	};
 
 	return ih;
