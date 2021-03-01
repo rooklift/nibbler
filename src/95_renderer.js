@@ -762,17 +762,6 @@ function NewRenderer() {
 
 	renderer.err_receive = function(s) {
 
-		// If Leela announces it's using BLAS, adjust some UCI settings that can drastically improve performance.
-		// No longer needed: https://github.com/LeelaChessZero/lc0/commit/2da50185b9581536cc1f5443f27c9c2c4414276f
-		//
-		//	if (config.options.MaxPrefetch === undefined && config.options.MinibatchSize === undefined && s.startsWith("Creating backend [blas]")) {
-		//		this.engine.setoption("MaxPrefetch", 0);
-		//		this.engine.setoption("MinibatchSize", 8);
-		//		this.info_handler.err_receive(s);
-		//		this.info_handler.err_receive(`<span class="blue">${messages.settings_for_blas}</span>`);	// Announces [MaxPrefetch = 0, MinibatchSize = 8]
-		//		return;
-		//	}
-
 		// Some highlights... this is obviously super-fragile based on the precise strings Leela sends.
 
 		if (s.startsWith("Found configuration file: ")) {
