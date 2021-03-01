@@ -756,7 +756,7 @@ function NewRenderer() {
 			!s.startsWith("bestmove") &&		// These messages shouldn't reach this function
 			!s.startsWith("info")				// These messages shouldn't reach this function
 		) {
-			this.info_handler.err_receive(SafeString(s));
+			this.info_handler.err_receive(s);
 		}
 	};
 
