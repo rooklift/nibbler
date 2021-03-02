@@ -1,0 +1,220 @@
+html {
+	height: 100%;
+}
+
+body {
+	background-color: #080808;
+	border: 0;
+	color: #eeeeee;
+	cursor: default;
+	height: calc(100% - 32px);
+	margin: 16px;
+	overflow: hidden;
+	padding: 0;
+	pointer-events: none;		/* These must be overriden for things that need pointer / select */
+	user-select: none;			/* These must be overriden for things that need pointer / select */
+}
+
+::-webkit-scrollbar {
+	pointer-events: auto;
+	background-color: #181818;
+}
+
+::-webkit-scrollbar-thumb {
+	pointer-events: auto;
+	background-color: #444444;
+}
+
+.flexible_column {
+	display: flex;
+	flex-direction: column;
+	height: 100%;
+}
+
+.flexible_row {
+	display: flex;
+	flex-direction: row;
+	width: 100%;
+}
+
+.full_growth {
+	flex-grow: 100;			/* The actual number only matters if compared to other flex-grow havers */
+}
+
+#boardsquares {
+	background-size: cover;
+	border-collapse: collapse;
+	image-rendering: pixelated;		/* Needs to be changed if loading a "real" image */
+	margin-bottom: 1em;
+	margin-right: 1em;
+	table-layout: fixed;
+	z-index: 1;
+}
+
+#canvas {
+	outline-offset: 6px;
+	position: fixed;
+	z-index: 2;
+}
+
+#boardfriends {
+	border-collapse: collapse;
+	pointer-events: auto;
+	position: fixed;
+	table-layout: fixed;
+	z-index: 3;
+}
+
+#promotiontable {
+	border-collapse: collapse;
+	display: none;
+	pointer-events: auto;
+	position: fixed;
+	table-layout: fixed;
+	z-index: 4;
+}
+
+#pgnchooser {
+	background-color: #080808;
+	display: none;						/* better than visibility: hidden - never intercepts inputs */
+	font-family: monospace, monospace;
+	font-size: 100%;
+	height: 100%;
+	left: 0;
+	overflow-y: auto;
+	pointer-events: auto;
+	position: fixed;
+	top: 0;
+	width: 100%;
+	z-index: 6;
+}
+
+td {
+	border: 0;
+	margin: 0;
+	padding: 0;
+}
+
+#statusbox {
+	border: none;
+	display: block;
+	font-family: monospace, monospace;
+	margin-bottom: 1em;
+	/* overflow: hidden; */
+	pointer-events: auto;
+	/* white-space: nowrap; */
+	width: 100%;
+}
+
+#fenbox {
+	background-color: #080808;
+	border: none;
+	caret-color: white;
+	color: #6cccee;
+	display: block;
+	float: bottom;
+	font-family: monospace, monospace;
+	font-size: 100%;
+	pointer-events: auto;
+	user-select: auto;
+	width: 100%;
+}
+
+input[type=text]:focus {
+	outline: 2px dashed gray;
+	outline-offset: 4px;
+}
+
+#infobox {
+	color: #cccccc;						/* only used for Lc0 stderr output at startup */
+	font-family: monospace, monospace;
+	margin-bottom: 10px;
+	overflow-x: hidden;
+	overflow-y: auto;
+	padding-right: 10px;				/* so the text doesn't get so near the scroll bar */
+	pointer-events: auto;
+	white-space: pre-wrap;
+}
+
+#movelist {
+	color: #999999;
+	font-family: monospace, monospace;
+	margin-top: 1em;
+	overflow-x: hidden;
+	overflow-y: auto;
+	padding-right: 10px;				/* so the text doesn't get so near the scroll bar */
+	pointer-events: auto;
+	white-space: pre-wrap;
+}
+
+#graphbox {
+	pointer-events: auto;
+}
+
+#graph {
+	pointer-events: auto;
+	width: 100%;
+}
+
+a {										/* is this even used anywhere? */
+	color: inherit;
+	text-decoration: inherit;
+}
+
+ul {
+	list-style: none;
+}
+
+span.pink {
+	color: #ffaaaa;
+}
+
+span.white {
+	color: #eeeeee;
+}
+
+span.gray {
+	color: #999999;
+}
+
+span.red {
+	color: #ff6666;
+}
+
+span.yellow {
+	color: #ffff00;
+}
+
+span.green {
+	color: #66ff66;
+}
+
+span.blue {
+	color: #6cccee;
+}
+
+.infoline {
+	margin-bottom: 1em;
+}
+
+.ocm_highlight {
+	background-color: #770000;
+}
+
+.hover_highlight {
+	background-color: #222244;
+}
+
+span.movelist_highlight_blue {
+	background-color: #222244;
+	color: #6cccee;
+}
+
+span.movelist_highlight_yellow {
+	background-color: #444422;
+	color: #ffff00;
+}
+
+span.nobr {
+	white-space: nowrap;				/* Used for O-O and O-O-O moves */
+}
