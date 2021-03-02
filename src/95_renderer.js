@@ -408,6 +408,12 @@ function NewRenderer() {
 		}
 	};
 
+	renderer.previous_sibling = function() {
+		if (this.tree.previous_sibling()) {
+			this.position_changed(false, true);
+		}
+	};
+
 	renderer.next_sibling = function() {
 		if (this.tree.next_sibling()) {
 			this.position_changed(false, true);

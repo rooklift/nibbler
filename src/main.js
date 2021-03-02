@@ -575,8 +575,15 @@ function menu_build() {
 					}
 				},
 				{
-					label: "Sibling",
-					accelerator: "CommandOrControl+B",
+					label: "Previous sibling",
+					accelerator: "Up",
+					click: () => {
+						win.webContents.send("call", "previous_sibling");
+					}
+				},
+				{
+					label: "Next sibling",
+					accelerator: "Down",
 					click: () => {
 						win.webContents.send("call", "next_sibling");
 					}
