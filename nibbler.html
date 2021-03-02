@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+	<!-- https://content-security-policy.com/ -->
+	<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'self'; style-src 'self'; img-src 'self' data:;">
+	<title>Nibbler</title>
+	<link rel="stylesheet" type="text/css" href="nibbler.css">
+</head>
+
+<body>
+
+	<!-- note to self, only use id for things the JS needs to see, they pollute the namespace -->
+
+	<div class="flexible_column">
+
+		<div class="flexible_row">
+
+			<div>											<!-- the JS sets the tables and canvas to be on top of each other -->
+				<table id="boardsquares"></table>
+				<canvas id="canvas"></canvas>
+				<table id="boardfriends"></table>
+			</div>
+
+			<div class="full_growth">
+				<div id="statusbox">Starting up...</div>	<!-- needs to have some content so it has a height when we calculate sizes -->
+				<div id="infobox"></div>
+				<div id="graphbox"><canvas id="graph"></canvas></div>
+			</div>
+
+		</div>
+
+		<input type="text" id="fenbox" value="">
+
+		<div id="movelist" class="full_growth"></div>
+
+	</div>
+
+	<!-- Special hidden items that show up when needed -->
+
+	<div id="pgnchooser"></div>
+	<table id="promotiontable"></table>
+
+	<!-- Most of our components are fairly well encapsulated and could be in
+	module form. Still, for the time being we have everything in one namespace
+	and so load them in a particular order... -->
+
+	<script src="10_globals.js"></script>
+	<script src="20_utils.js"></script>
+	<script src="30_point.js"></script>
+	<script src="31_sliders.js"></script>
+	<script src="40_position.js"></script>
+	<script src="41_fen.js"></script>
+	<script src="42_perft.js"></script>
+	<script src="43_chess960.js"></script>
+	<script src="50_table.js"></script>
+	<script src="51_node.js"></script>
+	<script src="55_winrate_graph.js"></script>
+	<script src="60_pgn.js"></script>
+	<script src="71_tree_handler.js"></script>
+	<script src="72_tree_draw.js"></script>
+	<script src="80_info.js"></script>
+	<script src="90_engine.js"></script>
+	<script src="95_renderer.js"></script>
+	<script src="99_start.js"></script>
+
+</body>
+</html>
