@@ -455,7 +455,11 @@ function NewInfoHandler() {
 				can_have_limit_met_msg = true;
 			}
 
-			status_string += `<span class="gray">Nodes: ${NString(node.table.nodes)}, N/s: ${NString(node.table.nps)}, Time: ${DurationString(node.table.time)}</span>`;
+			status_string += `<span class="gray">Nodes: ${NString(node.table.nodes)}, N/s: ${NString(node.table.nps)}, Time: ${DurationString(node.table.time)}`;
+			if (config.options.SyzygyPath) {
+				status_string += `, Tbhits: ${NString(node.table.tbhits)}`;
+			}
+			status_string += `</span>`;
 
 			if (can_have_limit_met_msg && typeof config.search_nodes === "number" && node.table.nodes >= config.search_nodes) {
 				status_string += ` <span class="blue">(limit met)</span>`;
