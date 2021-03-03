@@ -455,9 +455,9 @@ function NewInfoHandler() {
 				can_have_limit_met_msg = true;
 			}
 
-			status_string += `<span class="gray">Nodes: ${NString(node.table.nodes)}, N/s: ${NString(node.table.nps)}, Time: ${DurationString(node.table.time)}`;
+			status_string += `<span class="gray">${NString(node.table.nodes)} nodes, ${DurationString(node.table.time)} (N/s: ${NString(node.table.nps)})`;
 			if (config.options.SyzygyPath) {
-				status_string += `, Tbhits: ${NString(node.table.tbhits)}`;
+				status_string += `, ${NString(node.table.tbhits)} tbhits`;
 			}
 			status_string += `</span>`;
 
