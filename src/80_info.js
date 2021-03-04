@@ -7,7 +7,7 @@ function NewInfoHandler() {
 	ih.engine_start_time = performance.now();
 	ih.ever_received_info = false;
 	ih.ever_received_q = false;
-	ih.ever_received_multipv_2 = false;
+	ih.multipv_1_in_a_row = 0;
 	ih.ever_received_errors = false;
 	ih.stderr_log = "";
 	ih.next_vms_order_int = 1;
@@ -31,7 +31,7 @@ function NewInfoHandler() {
 		this.engine_start_time = performance.now();
 		this.ever_received_info = false;
 		this.ever_received_q = false;
-		this.ever_received_multipv_2 = false;
+		this.multipv_1_in_a_row = 0;
 		this.ever_received_errors = false;
 		this.stderr_log = "";
 		this.next_vms_order_int = 1;
@@ -125,18 +125,6 @@ function NewInfoHandler() {
 
 			let tmp;
 
-			tmp = parseInt(infovals["multipv"], 10);	// Engine's ranking of the move, starting at 1. Do this first because
-			if (Number.isNaN(tmp) === false) {			// ever_received_multipv_2 is an important variable...
-				move_info.multipv = tmp;
-				if (tmp > 1) {
-					this.ever_received_multipv_2 = true;
-				}
-			}
-
-			if (!this.ever_received_multipv_2) {		// When engine is in no-multipv mode, other move info quickly becomes
-				node.table.clear_moveinfo_except(move);	// obsolete and should be removed.
-			}
-
 			tmp = parseInt(infovals["cp"], 10);			// Score in centipawns
 			if (Number.isNaN(tmp) === false) {
 				move_info.cp = tmp;
@@ -153,6 +141,18 @@ function NewInfoHandler() {
 					move_info.q = tmp > 0 ? 1 : -1;
 					move_info.cp = tmp > 0 ? 12800 : -12800;
 				}
+			}
+
+			tmp = parseInt(infovals["multipv"], 10);	// Engine's ranking of the move, starting at 1.
+			if (Number.isNaN(tmp) === false) {
+				move_info.multipv = tmp;
+				if (tmp > 1) {
+					this.multipv_1_in_a_row = 0;
+				} else {
+					this.multipv_1_in_a_row++;
+				}
+			} else {
+				this.multipv_1_in_a_row++;
 			}
 
 			tmp = parseInt(infovals["nodes"], 10);
@@ -205,6 +205,13 @@ function NewInfoHandler() {
 				move_info.pv = new_pv;
 			}
 
+			// If the engine isn't Leela and doesn't seem to be sending MultiPV info, remove any other moves that are in the table,
+			// to keep the display clean and current.
+
+			if (this.multipv_1_in_a_row > 3 && !this.ever_received_q) {
+				node.table.clear_moveinfo_except(move);
+			}
+
 		} else if (s.startsWith("info string")) {
 
 			// info string d2d4  (293 ) N:   12005 (+169) (P: 22.38%) (WL:  0.09480) (D:  0.326)
@@ -248,7 +255,7 @@ function NewInfoHandler() {
 			this.ever_received_info = true;				// After the move legality check; i.e. we want REAL info
 			node.table.version++;						// Likewise
 
-			move_info.leelaish = true;
+			move_info.leelaish = true;					// We ever received a valid info string for this move info
 			move_info.version = node.table.version;
 			move_info.vms_order = this.next_vms_order_int++;
 
