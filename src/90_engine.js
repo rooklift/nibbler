@@ -95,9 +95,20 @@ function NewEngine() {
 
 		msg = msg.trim();
 
-		if (msg.startsWith("setoption") && msg.includes("WeightsFile")) {
-			let i = msg.indexOf("value") + 5;
-			ipcRenderer.send("ack_weightsfile", msg.slice(i).trim());
+		if (msg.startsWith("setoption")) {
+
+			let lower = msg.toLowerCase();
+
+			if (lower.includes("weightsfile")) {								// Send the main process info about the WeightsFile we are using...
+				let i = lower.indexOf("value") + 5;
+				ipcRenderer.send("ack_weightsfile", msg.slice(i).trim());		// (slice msg, not lower)
+			}
+
+			if (lower.includes("multipv") && lower.endsWith("value 1")) {		// Super-crude hack for custom scripts...
+				setTimeout(() => {												// *sigh*
+					this.hub.info_handler.ever_received_multipv_2 = false;
+				}, 1000);
+			}
 		}
 
 		try {

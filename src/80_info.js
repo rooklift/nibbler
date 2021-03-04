@@ -125,6 +125,18 @@ function NewInfoHandler() {
 
 			let tmp;
 
+			tmp = parseInt(infovals["multipv"], 10);	// Engine's ranking of the move, starting at 1. Do this first because
+			if (Number.isNaN(tmp) === false) {			// ever_received_multipv_2 is an important variable...
+				move_info.multipv = tmp;
+				if (tmp > 1) {
+					this.ever_received_multipv_2 = true;
+				}
+			}
+
+			if (!this.ever_received_multipv_2) {		// When engine is in no-multipv mode, other move info quickly becomes
+				node.table.clear_moveinfo_except(move);	// obsolete and should be removed.
+			}
+
 			tmp = parseInt(infovals["cp"], 10);			// Score in centipawns
 			if (Number.isNaN(tmp) === false) {
 				move_info.cp = tmp;
@@ -140,14 +152,6 @@ function NewInfoHandler() {
 				if (tmp !== 0) {
 					move_info.q = tmp > 0 ? 1 : -1;
 					move_info.cp = tmp > 0 ? 12800 : -12800;
-				}
-			}
-
-			tmp = parseInt(infovals["multipv"], 10);	// Leela's ranking of the move, starting at 1
-			if (Number.isNaN(tmp) === false) {
-				move_info.multipv = tmp;
-				if (tmp > 1) {
-					this.ever_received_multipv_2 = true;
 				}
 			}
 
