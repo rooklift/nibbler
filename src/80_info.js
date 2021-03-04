@@ -10,10 +10,9 @@ function NewInfoHandler() {
 	ih.ever_received_multipv_2 = false;
 	ih.ever_received_errors = false;
 	ih.stderr_log = "";
+	ih.next_vms_order_int = 1;
 
 	ih.ever_drew_infobox = false;
-
-	ih.next_vms_order_int = 1;
 
 	ih.one_click_moves = New2DArray(8, 8);	// Array of possible one-click moves. Updated by draw_arrows().
 	ih.info_clickers = [];					// Elements in the infobox. Updated by draw_infobox().
@@ -35,6 +34,7 @@ function NewInfoHandler() {
 		this.ever_received_multipv_2 = false;
 		this.ever_received_errors = false;
 		this.stderr_log = "";
+		this.next_vms_order_int = 1;
 	};
 
 	ih.displaying_stderr = function() {
@@ -250,9 +250,6 @@ function NewInfoHandler() {
 
 			tmp = parseInt(infovals["N:"], 10);
 			if (Number.isNaN(tmp) === false) {
-				if (tmp === 0 && move_info.n > 0) {		// Bailout in this exact situation - this allows engine restart
-					return;								// combined with searchmove change to work better; engine will send
-				}										// useless 0-node info which we don't let override what we had...
 				move_info.n = tmp;
 			}
 
