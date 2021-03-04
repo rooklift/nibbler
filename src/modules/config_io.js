@@ -77,6 +77,7 @@ exports.defaults = {
 	"show_d": false,
 	"show_wdl": true,
 	"infobox_stats_newline": false,
+	"infobox_pv_move_numbers": false,
 	"max_info_lines": null,
 	"hover_draw": false,
 	"hover_method": 2,

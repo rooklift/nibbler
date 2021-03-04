@@ -586,18 +586,38 @@ function NewInfoHandler() {
 			let colour = active_colour;
 			let nice_pv = info.nice_pv();
 
+			let do_dots = active_colour === "b";		// These 2 things only matter
+			let movenum = node.board.fullmove;			// if config.infobox_pv_move_numbers
+
 			for (let i = 0; i < nice_pv.length; i++) {
 				let spanclass = colour === "w" ? "white" : "pink";
 				if (nice_pv[i].includes("O-O")) {
 					spanclass += " nobr";
 				}
-				substrings.push(`<span id="infobox_${clicker_index++}" class="${spanclass}">${nice_pv[i]} </span>`);
+
+				let numstring = "";
+
+				if (config.infobox_pv_move_numbers) {
+					if (do_dots) {
+						numstring = `${movenum}... `;
+						do_dots = false;
+					} else if (colour === "w") {
+						numstring = `${movenum}. `;
+					} else {
+						numstring = "";
+					}
+				}
+
+				substrings.push(`<span id="infobox_${clicker_index++}" class="${spanclass}">${numstring}${nice_pv[i]} </span>`);
 				this.info_clickers.push({
 					move: info.pv[i],
 					is_start: i === 0,
 					is_end: i === nice_pv.length - 1,
 				});
 				colour = OppositeColour(colour);
+				if (colour === "w") {
+					movenum++;
+				}
 			}
 
 			// The extra stats...

@@ -1202,6 +1202,17 @@ function menu_build() {
 					]
 				},
 				{
+					label: "PV move numbers",
+					type: "checkbox",
+					checked: config.infobox_pv_move_numbers,
+					click: () => {
+						win.webContents.send("call", {
+							fn: "toggle",
+							args: ["infobox_pv_move_numbers"],
+						});
+					}
+				},
+				{
 					type: "separator"
 				},
 				{
