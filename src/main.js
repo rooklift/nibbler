@@ -2792,7 +2792,7 @@ function menu_build() {
 			]
 		},
 		{
-			label: "Versus",
+			label: "Play",
 			submenu: [
 				{
 					label: "Play this colour",
@@ -2834,7 +2834,7 @@ function menu_build() {
 							type: "checkbox",
 							checked: config.options.Temperature === 1.0,
 							click: () => {
-								set_checks("Versus", "Temperature", "1.0");
+								set_checks("Play", "Temperature", "1.0");
 								win.webContents.send("call", {
 									fn: "set_uci_option_permanent",
 									args: ["Temperature", 1.0]
@@ -2846,7 +2846,7 @@ function menu_build() {
 							type: "checkbox",
 							checked: config.options.Temperature === 0.9,
 							click: () => {
-								set_checks("Versus", "Temperature", "0.9");
+								set_checks("Play", "Temperature", "0.9");
 								win.webContents.send("call", {
 									fn: "set_uci_option_permanent",
 									args: ["Temperature", 0.9]
@@ -2858,7 +2858,7 @@ function menu_build() {
 							type: "checkbox",
 							checked: config.options.Temperature === 0.8,
 							click: () => {
-								set_checks("Versus", "Temperature", "0.8");
+								set_checks("Play", "Temperature", "0.8");
 								win.webContents.send("call", {
 									fn: "set_uci_option_permanent",
 									args: ["Temperature", 0.8]
@@ -2870,7 +2870,7 @@ function menu_build() {
 							type: "checkbox",
 							checked: config.options.Temperature === 0.7,
 							click: () => {
-								set_checks("Versus", "Temperature", "0.7");
+								set_checks("Play", "Temperature", "0.7");
 								win.webContents.send("call", {
 									fn: "set_uci_option_permanent",
 									args: ["Temperature", 0.7]
@@ -2882,7 +2882,7 @@ function menu_build() {
 							type: "checkbox",
 							checked: config.options.Temperature === 0.6,
 							click: () => {
-								set_checks("Versus", "Temperature", "0.6");
+								set_checks("Play", "Temperature", "0.6");
 								win.webContents.send("call", {
 									fn: "set_uci_option_permanent",
 									args: ["Temperature", 0.6]
@@ -2894,7 +2894,7 @@ function menu_build() {
 							type: "checkbox",
 							checked: config.options.Temperature === 0.5,
 							click: () => {
-								set_checks("Versus", "Temperature", "0.5");
+								set_checks("Play", "Temperature", "0.5");
 								win.webContents.send("call", {
 									fn: "set_uci_option_permanent",
 									args: ["Temperature", 0.5]
@@ -2906,7 +2906,7 @@ function menu_build() {
 							type: "checkbox",
 							checked: config.options.Temperature === 0.4,
 							click: () => {
-								set_checks("Versus", "Temperature", "0.4");
+								set_checks("Play", "Temperature", "0.4");
 								win.webContents.send("call", {
 									fn: "set_uci_option_permanent",
 									args: ["Temperature", 0.4]
@@ -2918,7 +2918,7 @@ function menu_build() {
 							type: "checkbox",
 							checked: config.options.Temperature === 0.3,
 							click: () => {
-								set_checks("Versus", "Temperature", "0.3");
+								set_checks("Play", "Temperature", "0.3");
 								win.webContents.send("call", {
 									fn: "set_uci_option_permanent",
 									args: ["Temperature", 0.3]
@@ -2930,7 +2930,7 @@ function menu_build() {
 							type: "checkbox",
 							checked: config.options.Temperature === 0.2,
 							click: () => {
-								set_checks("Versus", "Temperature", "0.2");
+								set_checks("Play", "Temperature", "0.2");
 								win.webContents.send("call", {
 									fn: "set_uci_option_permanent",
 									args: ["Temperature", 0.2]
@@ -2942,7 +2942,7 @@ function menu_build() {
 							type: "checkbox",
 							checked: config.options.Temperature === 0.1,
 							click: () => {
-								set_checks("Versus", "Temperature", "0.1");
+								set_checks("Play", "Temperature", "0.1");
 								win.webContents.send("call", {
 									fn: "set_uci_option_permanent",
 									args: ["Temperature", 0.1]
@@ -2954,7 +2954,7 @@ function menu_build() {
 							type: "checkbox",
 							checked: config.options.Temperature === 0,
 							click: () => {
-								set_checks("Versus", "Temperature", "0");
+								set_checks("Play", "Temperature", "0");
 								win.webContents.send("call", {
 									fn: "set_uci_option_permanent",
 									args: ["Temperature", 0]
@@ -2971,7 +2971,7 @@ function menu_build() {
 							type: "checkbox",
 							checked: config.options.TempDecayMoves === 0,
 							click: () => {
-								set_checks("Versus", "TempDecayMoves", "Infinite");
+								set_checks("Play", "TempDecayMoves", "Infinite");
 								win.webContents.send("call", {
 									fn: "set_uci_option_permanent",
 									args: ["TempDecayMoves", 0]
@@ -2983,7 +2983,7 @@ function menu_build() {
 							type: "checkbox",
 							checked: config.options.TempDecayMoves === 20,
 							click: () => {
-								set_checks("Versus", "TempDecayMoves", "20");
+								set_checks("Play", "TempDecayMoves", "20");
 								win.webContents.send("call", {
 									fn: "set_uci_option_permanent",
 									args: ["TempDecayMoves", 20]
@@ -2995,7 +2995,7 @@ function menu_build() {
 							type: "checkbox",
 							checked: config.options.TempDecayMoves === 18,
 							click: () => {
-								set_checks("Versus", "TempDecayMoves", "18");
+								set_checks("Play", "TempDecayMoves", "18");
 								win.webContents.send("call", {
 									fn: "set_uci_option_permanent",
 									args: ["TempDecayMoves", 18]
@@ -3007,7 +3007,7 @@ function menu_build() {
 							type: "checkbox",
 							checked: config.options.TempDecayMoves === 16,
 							click: () => {
-								set_checks("Versus", "TempDecayMoves", "16");
+								set_checks("Play", "TempDecayMoves", "16");
 								win.webContents.send("call", {
 									fn: "set_uci_option_permanent",
 									args: ["TempDecayMoves", 16]
@@ -3019,7 +3019,7 @@ function menu_build() {
 							type: "checkbox",
 							checked: config.options.TempDecayMoves === 14,
 							click: () => {
-								set_checks("Versus", "TempDecayMoves", "14");
+								set_checks("Play", "TempDecayMoves", "14");
 								win.webContents.send("call", {
 									fn: "set_uci_option_permanent",
 									args: ["TempDecayMoves", 14]
@@ -3031,7 +3031,7 @@ function menu_build() {
 							type: "checkbox",
 							checked: config.options.TempDecayMoves === 12,
 							click: () => {
-								set_checks("Versus", "TempDecayMoves", "12");
+								set_checks("Play", "TempDecayMoves", "12");
 								win.webContents.send("call", {
 									fn: "set_uci_option_permanent",
 									args: ["TempDecayMoves", 12]
@@ -3043,7 +3043,7 @@ function menu_build() {
 							type: "checkbox",
 							checked: config.options.TempDecayMoves === 10,
 							click: () => {
-								set_checks("Versus", "TempDecayMoves", "10");
+								set_checks("Play", "TempDecayMoves", "10");
 								win.webContents.send("call", {
 									fn: "set_uci_option_permanent",
 									args: ["TempDecayMoves", 10]
@@ -3055,7 +3055,7 @@ function menu_build() {
 							type: "checkbox",
 							checked: config.options.TempDecayMoves === 8,
 							click: () => {
-								set_checks("Versus", "TempDecayMoves", "8");
+								set_checks("Play", "TempDecayMoves", "8");
 								win.webContents.send("call", {
 									fn: "set_uci_option_permanent",
 									args: ["TempDecayMoves", 8]
@@ -3067,7 +3067,7 @@ function menu_build() {
 							type: "checkbox",
 							checked: config.options.TempDecayMoves === 6,
 							click: () => {
-								set_checks("Versus", "TempDecayMoves", "6");
+								set_checks("Play", "TempDecayMoves", "6");
 								win.webContents.send("call", {
 									fn: "set_uci_option_permanent",
 									args: ["TempDecayMoves", 6]
@@ -3079,7 +3079,7 @@ function menu_build() {
 							type: "checkbox",
 							checked: config.options.TempDecayMoves === 4,
 							click: () => {
-								set_checks("Versus", "TempDecayMoves", "4");
+								set_checks("Play", "TempDecayMoves", "4");
 								win.webContents.send("call", {
 									fn: "set_uci_option_permanent",
 									args: ["TempDecayMoves", 4]
@@ -3091,7 +3091,7 @@ function menu_build() {
 							type: "checkbox",
 							checked: config.options.TempDecayMoves === 2,
 							click: () => {
-								set_checks("Versus", "TempDecayMoves", "2");
+								set_checks("Play", "TempDecayMoves", "2");
 								win.webContents.send("call", {
 									fn: "set_uci_option_permanent",
 									args: ["TempDecayMoves", 2]
@@ -3104,7 +3104,7 @@ function menu_build() {
 					type: "separator"
 				},
 				{
-					label: "About versus mode",
+					label: "About play modes",
 					click: () => {
 						alert(messages.about_versus_mode);
 					}
