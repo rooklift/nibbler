@@ -105,7 +105,7 @@ function NewEngine() {
 			}
 
 			if (lower.includes("multipv") && lower.endsWith("value 1")) {		// Super-crude hack for custom scripts...
-				setTimeout(() => {												// *sigh*
+				setTimeout(() => {												// *sigh* - give time for final multipv info to come.
 					this.hub.info_handler.ever_received_multipv_2 = false;
 				}, 1000);
 			}
