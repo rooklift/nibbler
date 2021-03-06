@@ -584,10 +584,8 @@ function NewInfoHandler() {
 			// The PV...
 
 			let colour = active_colour;
+			let movenum = node.board.fullmove;			// Only matters for config.infobox_pv_move_numbers
 			let nice_pv = info.nice_pv();
-
-			let do_dots = active_colour === "b";		// These 2 things only matter
-			let movenum = node.board.fullmove;			// if config.infobox_pv_move_numbers
 
 			for (let i = 0; i < nice_pv.length; i++) {
 				let spanclass = colour === "w" ? "white" : "pink";
@@ -596,15 +594,11 @@ function NewInfoHandler() {
 				}
 
 				let numstring = "";
-
 				if (config.infobox_pv_move_numbers) {
-					if (do_dots) {
+					if (active_colour === "b" && i === 0) {
 						numstring = `${movenum}... `;
-						do_dots = false;
 					} else if (colour === "w") {
 						numstring = `${movenum}. `;
-					} else {
-						numstring = "";
 					}
 				}
 
