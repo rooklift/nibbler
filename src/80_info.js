@@ -595,10 +595,10 @@ function NewInfoHandler() {
 
 				let numstring = "";
 				if (config.infobox_pv_move_numbers) {
-					if (active_colour === "b" && i === 0) {
-						numstring = `${movenum}... `;
-					} else if (colour === "w") {
+					if (colour === "w") {
 						numstring = `${movenum}. `;
+					} else if (colour === "b" && i === 0) {
+						numstring = `${movenum}... `;
 					}
 				}
 
