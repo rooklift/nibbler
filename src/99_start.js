@@ -192,6 +192,8 @@ statusbox.addEventListener("mousedown", (event) => {
 document.addEventListener("wheel", (event) => {
 
 	// Only if the PGN chooser is closed, and the mouse is over the board or graph.
+	// (Not over the moveslist or infobox, because those can have scroll bars, which
+	// the mouse wheel should interact with.)
 
 	if (pgnchooser.style.display !== "none") {
 		return;
