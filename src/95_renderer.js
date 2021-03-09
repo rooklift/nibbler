@@ -14,7 +14,7 @@ function NewRenderer() {
 	renderer.pgn_choices = null;								// All games found when opening a PGN file.
 	renderer.friendly_draws = New2DArray(8, 8, null);			// What pieces are drawn in boardfriends. Used to skip redraws.
 	renderer.enemy_draws = New2DArray(8, 8, null);				// What pieces are drawn in boardsquares. Used to skip redraws.
-	renderer.dirty_squares = New2DArray(8, 8, false);			// What squares have some coloured background.
+	renderer.dirty_squares = New2DArray(8, 8, null);			// What squares have some coloured background.
 	renderer.active_square = null;								// Clicked square.
 	renderer.hoverdraw_div = -1;
 	renderer.hoverdraw_depth = 0;
@@ -1379,7 +1379,7 @@ function NewRenderer() {
 		if (old_point) {
 			let td = document.getElementById("underlay_" + old_point.s);
 			td.style["background-color"] = "transparent";
-			this.dirty_squares[old_point.x][old_point.y] = false;
+			this.dirty_squares[old_point.x][old_point.y] = 0;		// Lame. This is the constant for EMPTY.
 		}
 
 		this.active_square = null;
@@ -1387,7 +1387,7 @@ function NewRenderer() {
 		if (new_point) {
 			let td = document.getElementById("underlay_" + new_point.s);
 			td.style["background-color"] = config.active_square;
-			this.dirty_squares[new_point.x][new_point.y] = true;
+			this.dirty_squares[new_point.x][new_point.y] = 2;		// Lame. This is the constant for ACTIVE.
 			this.active_square = new_point;
 		}
 	};
@@ -1711,6 +1711,8 @@ function NewRenderer() {
 
 	renderer.draw_move_and_active_squares = function(move, active_square) {
 
+		// These constants are stupidly used in set_active_square() also.
+
 		const EMPTY = 0;
 		const HIGHLIGHT = 1;
 		const ACTIVE = 2;
@@ -1757,33 +1759,33 @@ function NewRenderer() {
 
 				case EMPTY:
 
-					if (this.dirty_squares[x][y]) {								// Skip if already **clean**
+					if (this.dirty_squares[x][y] !== EMPTY) {
 						let s = S(x, y);
 						let td = document.getElementById("underlay_" + s);
 						td.style["background-color"] = "transparent";
-						this.dirty_squares[x][y] = false;
+						this.dirty_squares[x][y] = EMPTY;
 					}
 
 					break;
 
 				case HIGHLIGHT:
 
-					if (!this.dirty_squares[x][y]) {							// Skip if already drawn
+					if (this.dirty_squares[x][y] !== HIGHLIGHT) {
 						let s = S(x, y);
 						let td = document.getElementById("underlay_" + s);
 						td.style["background-color"] = config.move_colour_with_alpha;
-						this.dirty_squares[x][y] = true;
+						this.dirty_squares[x][y] = HIGHLIGHT;
 					}
 
 					break;
 
 				case ACTIVE:
 
-					if (!this.dirty_squares[x][y]) {							// Skip if already drawn
+					if (this.dirty_squares[x][y] !== ACTIVE) {
 						let s = S(x, y);
 						let td = document.getElementById("underlay_" + s);
 						td.style["background-color"] = config.active_square;
-						this.dirty_squares[x][y] = true;
+						this.dirty_squares[x][y] = ACTIVE;
 					}
 
 					break;
