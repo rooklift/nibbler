@@ -13,6 +13,8 @@ function NewRenderer() {
 
 	renderer.pgn_choices = null;								// All games found when opening a PGN file.
 	renderer.friendly_draws = New2DArray(8, 8);					// What pieces are drawn in boardfriends. Used to skip redraws.
+	renderer.enemy_draws = New2DArray(8, 8);					// What pieces are drawn in boardsquares. Used to skip redraws.
+	renderer.dirty_squares = New2DArray(8, 8);					// What squares have some coloured background.
 	renderer.active_square = null;								// Clicked square.
 	renderer.hoverdraw_div = -1;
 	renderer.hoverdraw_depth = 0;
@@ -1179,6 +1181,7 @@ function NewRenderer() {
 			images.load_from(path.join(__dirname, "pieces"));
 		}
 		this.friendly_draws = New2DArray(8, 8);
+		this.enemy_draws = New2DArray(8, 8);
 		config["override_piece_directory"] = directory;
 		config_io.save(config);
 	};
@@ -1187,11 +1190,9 @@ function NewRenderer() {
 		if (file && fs.existsSync(file)) {
 			let img = new Image();
 			img.src = file;			// Automagically gets converted to "file:///C:/foo/bar/whatever.png"
-			boardsquares.style["image-rendering"] = "auto";
 			boardsquares.style["background-image"] = `url("${img.src}")`;
 		} else {
-			boardsquares.style["image-rendering"] = "pixelated";
-			boardsquares.style["background-image"] = background(config.light_square, config.dark_square);
+			boardsquares.style["background-image"] = background(config.light_square, config.dark_square, config.square_size);
 		}
 		if (config_save) {
 			config.override_board = file;
@@ -1378,6 +1379,7 @@ function NewRenderer() {
 		if (old_point) {
 			let td = document.getElementById("underlay_" + old_point.s);
 			td.style["background-color"] = "transparent";
+			this.dirty_squares[old_point.x][old_point.y] = false;
 		}
 
 		this.active_square = null;
@@ -1385,6 +1387,7 @@ function NewRenderer() {
 		if (new_point) {
 			let td = document.getElementById("underlay_" + new_point.s);
 			td.style["background-color"] = config.active_square;
+			this.dirty_squares[new_point.x][new_point.y] = true;
 			this.active_square = new_point;
 		}
 	};
@@ -1638,9 +1641,7 @@ function NewRenderer() {
 	// -------------------------------------------------------------------------------------------------------------------------
 	// General draw code...
 
-	renderer.draw_friendlies_in_table = function() {
-
-		let board = this.tree.node.board;
+	renderer.draw_friendlies_in_table = function(board) {
 
 		for (let x = 0; x < 8; x++) {
 			for (let y = 0; y < 8; y++) {
@@ -1674,52 +1675,82 @@ function NewRenderer() {
 		}
 	};
 
-	renderer.draw_move_in_canvas = function() {
-
-		if (typeof config.move_colour_alpha !== "number" || config.move_colour_alpha <= 0) {
-			return;
-		}
-
-		let move = this.tree.node.move;
-
-		if (typeof move !== "string") {
-			return;
-		}
-
-		let source = Point(move.slice(0, 2));
-		let dest = Point(move.slice(2, 4));
-
-		if (!source || !dest) {
-			return;
-		}
-
-		let points = PointsBetween(source, dest);
-
-		boardctx.fillStyle = config.move_colour;
-		boardctx.globalAlpha = config.move_colour_alpha;
-
-		for (let p of points) {
-			let cc = CanvasCoords(p.x, p.y);
-			boardctx.fillRect(cc.x1, cc.y1, config.square_size, config.square_size);
-		}
-
-		boardctx.globalAlpha = 1;
-	};
-
-	renderer.draw_enemies_in_canvas = function() {
-
-		let board = this.tree.node.board;
+	renderer.draw_enemies_in_table = function(board) {
 
 		for (let x = 0; x < 8; x++) {
 			for (let y = 0; y < 8; y++) {
 
-				if (board.state[x][y] === "" || board.colour(Point(x, y)) === board.active) {
+				let piece_to_draw = "";
+
+				if (board.colour(Point(x, y)) === OppositeColour(board.active)) {
+					piece_to_draw = board.state[x][y];
+				}
+
+				if (piece_to_draw === this.enemy_draws[x][y]) {
 					continue;
 				}
 
-				let piece = board.state[x][y];
-				let cc = CanvasCoords(x, y);
-				boardctx.drawImage(images[piece], cc.x1, cc.y1, config.square_size, config.square_size);
+				// So if we get to here, we need to draw...
+
+				this.enemy_draws[x][y] = piece_to_draw;
+
+				let s = S(x, y);
+				let td = document.getElementById("underlay_" + s);
+
+				if (piece_to_draw === "") {
+					td.style["background-image"] = "none";
+					td.draggable = false;
+				} else {
+					td.style["background-image"] = images[piece_to_draw].string_for_bg_style;
+					td.style["background-size"] = "contain";
+					td.draggable = false;
+				}
+			}
+		}
+	};
+
+	renderer.draw_move_and_active_squares = function(move, active_square) {
+
+		// 1. Cleanup backgrounds...
+
+		for (let x = 0; x < 8; x++) {
+			for (let y = 0; y < 8; y++) {
+				if (this.dirty_squares[x][y]) {												// Skip if already **clean**
+					let s = S(x, y);
+					let td = document.getElementById("underlay_" + s);
+					td.style["background-color"] = "transparent";
+					this.dirty_squares[x][y] = false;
+				}
+			}
+		}
+
+		// 2. Draw the move...
+
+		if (typeof move === "string") {
+
+			let source = Point(move.slice(0, 2));
+			let dest = Point(move.slice(2, 4));
+
+			if (source && dest) {
+				let points = PointsBetween(source, dest);
+				for (let p of points) {
+					if (!this.dirty_squares[p.x][p.y]) {										// Skip if already drawn
+						let td = document.getElementById("underlay_" + p.s);
+						td.style["background-color"] = config.move_colour_with_alpha;
+						this.dirty_squares[p.x][p.y] = true;
+					}
+				}
+			}
+		}
+
+		// 3. Draw the active square... (not this also gets done by set_active_square()
+
+		if (active_square) {
+			let p = active_square;
+			if (!this.dirty_squares[p.x][p.y]) {					// Skip if already drawn
+				let td = document.getElementById("underlay_" + p.s);
+				td.style["background-color"] = config.active_square;
+				this.dirty_squares[p.x][p.y] = true;
 			}
 		}
 	};
@@ -1840,20 +1871,9 @@ function NewRenderer() {
 	};
 
 	renderer.draw_fantasy = function(board) {
-
-		for (let x = 0; x < 8; x++) {
-			for (let y = 0; y < 8; y++) {
-
-				let piece = board.state[x][y];
-
-				if (piece === "") {
-					continue;
-				}
-
-				let cc = CanvasCoords(x, y);
-				boardctx.drawImage(images[piece], cc.x1, cc.y1, config.square_size, config.square_size);
-			}
-		}
+		this.draw_move_and_active_squares(null, null);
+		this.draw_enemies_in_table(board);
+		this.draw_friendlies_in_table(board);
 	};
 
 	renderer.draw = function() {
@@ -1871,16 +1891,15 @@ function NewRenderer() {
 		let next_move = config.next_move_arrow && this.tree.node.children.length > 0 ? this.tree.node.children[0].move : null;
 
 		if (did_hoverdraw) {
-			boardfriends.style.display = "none";
 			canvas.style.outline = "2px dashed #b4b4b4";
 		} else {
 			this.hoverdraw_div = -1;
 			boardfriends.style.display = "block";
 			canvas.style.outline = "none";
-			this.draw_move_in_canvas();
-			this.draw_enemies_in_canvas();
+			this.draw_move_and_active_squares(this.tree.node.move, this.active_square);
+			this.draw_enemies_in_table(this.tree.node.board);
 			this.info_handler.draw_arrows(this.tree.node, arrow_spotlight_square, next_move);
-			this.draw_friendlies_in_table();
+			this.draw_friendlies_in_table(this.tree.node.board);
 		}
 
 		this.draw_statusbox();
