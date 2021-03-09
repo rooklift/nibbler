@@ -242,6 +242,12 @@ function NewEngine() {
 		return s;			// Just so the renderer can pop s up as a message if it wants.
 	};
 
+	eng.pressbutton = function(name) {
+		let s = `setoption name ${name}`;
+		this.send(s);
+		return s;			// Just so the renderer can pop s up as a message if it wants.
+	};
+
 	eng.setup = function(filepath, args, hub) {
 
 		Log("");
