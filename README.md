@@ -30,12 +30,6 @@ Some Windows and Linux standalone releases are uploaded to the [Releases](https:
 
 Running Nibbler from source requires Electron, but has no other dependencies. If you have Electron installed (e.g. `npm install -g electron`) you can likely enter the `/src` directory, then do `electron .` to run it. Nibbler should be compatible with at least version 5 and above.
 
-# Aesthetic adjustments
-
-As well as the menu options, various aesthetic adjustments are possible in the `config.json` file, which can be found via the Dev menu. For example, board colour can be changed.
-
-If you like a different piece set, you can create a folder of `.png` or `.svg` files with [the right names](https://github.com/fohristiwhirl/nibbler/tree/master/src/pieces) and point the `override_piece_directory` config option to it.
-
 # Advanced engine options
 
 Most people won't need them, but all of Leela's engine options can be set in two ways:
