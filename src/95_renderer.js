@@ -1718,7 +1718,7 @@ function NewRenderer() {
 		const ACTIVE = 2;
 
 		if (!this.dmaas_scratch) {
-			this.dmaas_scratch = New2DArray(8, 8, EMPTY);
+			this.dmaas_scratch = New2DArray(8, 8, null);
 		}
 
 		// First, set each element of the array to indicate what state we want
