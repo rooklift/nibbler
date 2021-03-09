@@ -1866,12 +1866,14 @@ function NewRenderer() {
 			board = board.move(move);
 		}
 
-		this.draw_fantasy(board);
+		let move = moves[moves.length - 1];		// Possibly undefined...
+
+		this.draw_fantasy(board, move);
 		return true;
 	};
 
-	renderer.draw_fantasy = function(board) {
-		this.draw_move_and_active_squares(null, null);
+	renderer.draw_fantasy = function(board, move) {
+		this.draw_move_and_active_squares(move, null);
 		this.draw_enemies_in_table(board);
 		this.draw_friendlies_in_table(board);
 	};
