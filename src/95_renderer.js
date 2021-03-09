@@ -1370,9 +1370,8 @@ function NewRenderer() {
 
 	renderer.set_active_square = function(new_point) {
 
-		// We do things this way so it's snappy and responsive. We could do it
-		// in the canvas instead, but then we'd need a whole canvas redraw
-		// every time it changes (or accept the lag). Meh.
+		// We do this immediately so it's snappy and responsive,
+		// rather than waiting for the next draw cycle.
 
 		let old_point = this.active_square;
 
