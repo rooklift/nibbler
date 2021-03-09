@@ -1711,46 +1711,83 @@ function NewRenderer() {
 
 	renderer.draw_move_and_active_squares = function(move, active_square) {
 
-		// 1. Cleanup backgrounds...
+		const EMPTY = 0;
+		const HIGHLIGHT = 1;
+		const ACTIVE = 2;
+
+		if (!this.dmaas_scratch) {
+			this.dmaas_scratch = New2DArray(8, 8, EMPTY);
+		}
+
+		// First, set each element of the array to indicate what state we want
+		// its background-color to be in.
 
 		for (let x = 0; x < 8; x++) {
 			for (let y = 0; y < 8; y++) {
-				if (this.dirty_squares[x][y]) {									// Skip if already **clean**
-					let s = S(x, y);
-					let td = document.getElementById("underlay_" + s);
-					td.style["background-color"] = "transparent";
-					this.dirty_squares[x][y] = false;
-				}
+				this.dmaas_scratch[x][y] = EMPTY;
 			}
 		}
 
-		// 2. Draw the move...
+		let move_points = [];
 
 		if (typeof move === "string") {
-
 			let source = Point(move.slice(0, 2));
 			let dest = Point(move.slice(2, 4));
-
 			if (source && dest) {
-				let points = PointsBetween(source, dest);
-				for (let p of points) {
-					if (!this.dirty_squares[p.x][p.y]) {						// Skip if already drawn
-						let td = document.getElementById("underlay_" + p.s);
-						td.style["background-color"] = config.move_colour_with_alpha;
-						this.dirty_squares[p.x][p.y] = true;
-					}
-				}
+				move_points = PointsBetween(source, dest);
 			}
 		}
 
-		// 3. Draw the active square... (not this also gets done by set_active_square()
+		for (let p of move_points) {
+			this.dmaas_scratch[p.x][p.y] = HIGHLIGHT;
+		}
 
 		if (active_square) {
-			let p = active_square;
-			if (!this.dirty_squares[p.x][p.y]) {								// Skip if already drawn
-				let td = document.getElementById("underlay_" + p.s);
-				td.style["background-color"] = config.active_square;
-				this.dirty_squares[p.x][p.y] = true;
+			this.dmaas_scratch[active_square.x][active_square.y] = ACTIVE;
+		}
+
+		// Now the dmaas_scratch array has what we actually want.
+		// We check whether each square is already so, and change it otherwise.
+
+		for (let x = 0; x < 8; x++) {
+
+			for (let y = 0; y < 8; y++) {
+
+				switch (this.dmaas_scratch[x][y]) {
+
+				case EMPTY:
+
+					if (this.dirty_squares[x][y]) {								// Skip if already **clean**
+						let s = S(x, y);
+						let td = document.getElementById("underlay_" + s);
+						td.style["background-color"] = "transparent";
+						this.dirty_squares[x][y] = false;
+					}
+
+					break;
+
+				case HIGHLIGHT:
+
+					if (!this.dirty_squares[x][y]) {							// Skip if already drawn
+						let s = S(x, y);
+						let td = document.getElementById("underlay_" + s);
+						td.style["background-color"] = config.move_colour_with_alpha;
+						this.dirty_squares[x][y] = true;
+					}
+
+					break;
+
+				case ACTIVE:
+
+					if (!this.dirty_squares[x][y]) {							// Skip if already drawn
+						let s = S(x, y);
+						let td = document.getElementById("underlay_" + s);
+						td.style["background-color"] = config.active_square;
+						this.dirty_squares[x][y] = true;
+					}
+
+					break;
+				}
 			}
 		}
 	};
