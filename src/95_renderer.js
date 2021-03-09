@@ -1715,7 +1715,7 @@ function NewRenderer() {
 
 		for (let x = 0; x < 8; x++) {
 			for (let y = 0; y < 8; y++) {
-				if (this.dirty_squares[x][y]) {												// Skip if already **clean**
+				if (this.dirty_squares[x][y]) {									// Skip if already **clean**
 					let s = S(x, y);
 					let td = document.getElementById("underlay_" + s);
 					td.style["background-color"] = "transparent";
@@ -1734,7 +1734,7 @@ function NewRenderer() {
 			if (source && dest) {
 				let points = PointsBetween(source, dest);
 				for (let p of points) {
-					if (!this.dirty_squares[p.x][p.y]) {										// Skip if already drawn
+					if (!this.dirty_squares[p.x][p.y]) {						// Skip if already drawn
 						let td = document.getElementById("underlay_" + p.s);
 						td.style["background-color"] = config.move_colour_with_alpha;
 						this.dirty_squares[p.x][p.y] = true;
@@ -1747,7 +1747,7 @@ function NewRenderer() {
 
 		if (active_square) {
 			let p = active_square;
-			if (!this.dirty_squares[p.x][p.y]) {					// Skip if already drawn
+			if (!this.dirty_squares[p.x][p.y]) {								// Skip if already drawn
 				let td = document.getElementById("underlay_" + p.s);
 				td.style["background-color"] = config.active_square;
 				this.dirty_squares[p.x][p.y] = true;
