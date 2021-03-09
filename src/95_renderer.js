@@ -1381,14 +1381,13 @@ function NewRenderer() {
 			this.dirty_squares[old_point.x][old_point.y] = 0;		// Lame. This is the constant for EMPTY.
 		}
 
-		this.active_square = null;
-
 		if (new_point) {
 			let td = document.getElementById("underlay_" + new_point.s);
 			td.style["background-color"] = config.active_square;
 			this.dirty_squares[new_point.x][new_point.y] = 2;		// Lame. This is the constant for ACTIVE.
-			this.active_square = new_point;
 		}
+
+		this.active_square = new_point ? new_point : null;
 	};
 
 	renderer.boardfriends_click = function(event) {
