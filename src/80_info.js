@@ -14,8 +14,8 @@ function NewInfoHandler() {
 
 	ih.ever_drew_infobox = false;
 
-	ih.one_click_moves = New2DArray(8, 8);	// Array of possible one-click moves. Updated by draw_arrows().
-	ih.info_clickers = [];					// Elements in the infobox. Updated by draw_infobox().
+	ih.one_click_moves = New2DArray(8, 8, null);	// Array of possible one-click moves. Updated by draw_arrows().
+	ih.info_clickers = [];							// Elements in the infobox. Updated by draw_infobox().
 
 	ih.special_message = null;
 	ih.special_message_class = "yellow";

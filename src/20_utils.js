@@ -277,14 +277,14 @@ function LogBoth(s) {
 	Log(s);
 }
 
-function New2DArray(width, height) {
+function New2DArray(width, height, defval) {
 
 	let ret = [];
 
 	for (let x = 0; x < width; x++) {
 		ret.push([]);
 		for (let y = 0; y < height; y++) {
-			ret[x].push(null);
+			ret[x].push(defval);
 		}
 	}
 

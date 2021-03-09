@@ -10,7 +10,7 @@ function Point(a, b) {
 	// value is not null before accessing .x or .y or .s!
 
 	if (Point.xy_lookup === undefined) {
-		Point.xy_lookup = New2DArray(8, 8);
+		Point.xy_lookup = New2DArray(8, 8, null);
 		for (let x = 0; x < 8; x++) {
 			for (let y = 0; y < 8; y++) {
 				let s = S(x, y);
