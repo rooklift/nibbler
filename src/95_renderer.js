@@ -12,8 +12,8 @@ function NewRenderer() {
 	// Various state we have to keep track of...
 
 	renderer.pgn_choices = null;								// All games found when opening a PGN file.
-	renderer.friendly_draws = New2DArray(8, 8, "");				// What pieces are drawn in boardfriends. Used to skip redraws.
-	renderer.enemy_draws = New2DArray(8, 8, "");				// What pieces are drawn in boardsquares. Used to skip redraws.
+	renderer.friendly_draws = New2DArray(8, 8, null);			// What pieces are drawn in boardfriends. Used to skip redraws.
+	renderer.enemy_draws = New2DArray(8, 8, null);				// What pieces are drawn in boardsquares. Used to skip redraws.
 	renderer.dirty_squares = New2DArray(8, 8, false);			// What squares have some coloured background.
 	renderer.active_square = null;								// Clicked square.
 	renderer.hoverdraw_div = -1;
@@ -1180,8 +1180,8 @@ function NewRenderer() {
 			directory = null;
 			images.load_from(path.join(__dirname, "pieces"));
 		}
-		this.friendly_draws = New2DArray(8, 8, "");
-		this.enemy_draws = New2DArray(8, 8, "");
+		this.friendly_draws = New2DArray(8, 8, null);
+		this.enemy_draws = New2DArray(8, 8, null);
 		config["override_piece_directory"] = directory;
 		config_io.save(config);
 	};
