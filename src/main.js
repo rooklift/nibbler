@@ -2158,11 +2158,11 @@ function menu_build() {
 										key: "syzygy_dialog_folder",
 										value: path.dirname(folder)
 									});
-									// No need to set the check in the menu, engine.js will send an ack.
+									set_one_check(true, "Engine", "Syzygy", "Choose folder...");
 								} else {
 									win.webContents.send("call", {
 										fn: "send_ack_setoption",
-										args: ["syzygypath"]			// Make the renderer send an ack for this branch too.
+										args: ["SyzygyPath"]			// Query current SyzygyPath option set in engine so our check can be correct again.
 									});
 								}
 							}

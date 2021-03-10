@@ -289,10 +289,10 @@ function NewEngine() {
 
 		// These will all ack the value "" to main.js since no value has been set yet...
 
-		this.send_ack_setoption_to_main_process("weightsfile");
-		this.send_ack_setoption_to_main_process("syzygypath");
-		this.send_ack_setoption_to_main_process("threads");
-		this.send_ack_setoption_to_main_process("backend");
+		this.send_ack_setoption_to_main_process("WeightsFile");
+		this.send_ack_setoption_to_main_process("SyzygyPath");
+		this.send_ack_setoption_to_main_process("Threads");
+		this.send_ack_setoption_to_main_process("Backend");
 
 		this.exe.once("error", (err) => {
 			alert(err);

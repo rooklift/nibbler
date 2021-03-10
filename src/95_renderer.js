@@ -1360,8 +1360,8 @@ function NewRenderer() {
 		ipcRenderer.send("ack_logfile", config.logfile);
 	};
 
-	renderer.send_ack_setoption = function(key) {
-		this.engine.send_ack_setoption_to_main_process(key);
+	renderer.send_ack_setoption = function(name) {
+		this.engine.send_ack_setoption_to_main_process(name);
 	}
 
 	// -------------------------------------------------------------------------------------------------------------------------
