@@ -2140,7 +2140,7 @@ function menu_build() {
 						{
 							label: "Choose folder...",
 							type: "checkbox",
-							checked: config.options.SyzygyPath,
+							checked: typeof config.options.SyzygyPath === "string" && config.options.SyzygyPath !== "",
 							click: () => {
 								let folders = open_dialog({
 									defaultPath: config.syzygy_dialog_folder,
