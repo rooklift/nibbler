@@ -80,6 +80,8 @@ function NewEngine() {
 	eng.ever_received_uciok = false;
 	eng.have_quit = false;
 
+	eng.sent_options = Object.create(null);			// Keys are always lowercase!!
+
 	eng.warned_send_fail = false;
 
 	eng.search_running = NoSearch;		// The search actually being run right now.
@@ -95,15 +97,23 @@ function NewEngine() {
 
 		msg = msg.trim();
 
+		// Keep track of what options we have actually sent to the engine...
+
 		if (msg.startsWith("setoption")) {
+
 			let lower = msg.toLowerCase();
-			if (lower.includes("weightsfile")) {
-				let i = lower.indexOf("value") + 5;
-				ipcRenderer.send("ack_weightsfile", msg.slice(i).trim());		// (slice msg, not lower)
-			}
-			if (lower.includes("syzygypath")) {
-				let i = lower.indexOf("value") + 5;
-				ipcRenderer.send("ack_syzygypath", msg.slice(i).trim());
+			let i1 = lower.indexOf("name");
+			let i2 = lower.indexOf("value");
+
+			if (i1 !== -1 && i2 !== -1 && i2 > i1) {
+
+				let key = lower.slice(i1 + 5, i2 - 1).trim();
+				let val = msg.slice(i2 + 6);
+
+				if (key.length > 0) {
+					this.sent_options[key] = val;
+					ipcRenderer.send("ack_setoption", {key, val});
+				}
 			}
 		}
 
@@ -252,6 +262,17 @@ function NewEngine() {
 		return s;			// Just so the renderer can pop s up as a message if it wants.
 	};
 
+	eng.send_ack_setoption_to_main_process = function(name) {
+
+		let key = name.toLowerCase();		// Keys are always stored in lowercase.
+
+		if (typeof this.sent_options[key] === "string") {									// If present it can only be string.
+			ipcRenderer.send("ack_setoption", {key: key, val: this.sent_options[key]});
+		} else {
+			ipcRenderer.send("ack_setoption", {key: key, val: ""});
+		}
+	};
+
 	eng.setup = function(filepath, args, hub) {
 
 		Log("");
@@ -270,8 +291,8 @@ function NewEngine() {
 		// Main process wants to keep track of what these things are set to:
 
 		ipcRenderer.send("ack_engine_start", filepath);
-		ipcRenderer.send("ack_weightsfile", null);
-		ipcRenderer.send("ack_syzygypath", null);
+		this.send_ack_setoption_to_main_process("weightsfile");			// Will ack the value "" to main.js
+		this.send_ack_setoption_to_main_process("syzygypath");			// since no value has been set yet
 
 		this.exe.once("error", (err) => {
 			alert(err);

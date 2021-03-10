@@ -122,8 +122,20 @@ function startup() {
 		}
 	});
 
+	electron.ipcMain.on("alert", (event, msg) => {
+		alert(msg);
+	});
+
 	electron.ipcMain.on("set_title", (event, msg) => {
 		win.setTitle(msg);
+	});
+
+	electron.ipcMain.on("ack_engine_start", (event, msg) => {
+		loaded_engine = msg;
+	});
+
+	electron.ipcMain.on("ack_logfile", (event, msg) => {
+		set_one_check(msg ? true : false, "Dev", "Use logfile...");
 	});
 
 	electron.ipcMain.on("ack_node_limit", (event, msg) => {
@@ -134,24 +146,30 @@ function startup() {
 		set_checks("Engine", "Node limit - auto-eval / play", msg);
 	});
 
-	electron.ipcMain.on("ack_engine_start", (event, msg) => {
-		loaded_engine = msg;
-	});
+	electron.ipcMain.on("ack_setoption", (event, msg) => {
 
-	electron.ipcMain.on("ack_weightsfile", (event, msg) => {
-		loaded_weights = msg;
-	});
+		// Expect msg.key to be a lowercase string
+		// Expect msg.val to be a string, possibly "" (can use the fact that "" is false-ish)
 
-	electron.ipcMain.on("ack_syzygypath", (event, msg) => {
-		set_one_check(msg ? true : false, "Engine", "Syzygy", "Choose folder...");
-	});
+		switch (msg.key) {
 
-	electron.ipcMain.on("ack_logfile", (event, msg) => {
-		set_one_check(msg ? true : false, "Dev", "Use logfile...");
-	});
+		case "weightsfile":
+			loaded_weights = msg.val;
+			break;
 
-	electron.ipcMain.on("alert", (event, msg) => {
-		alert(msg);
+		case "syzygypath":
+			set_one_check(msg.val ? true : false, "Engine", "Syzygy", "Choose folder...");
+			break;
+
+		case "backend":
+			set_checks("Engine", "Backend", msg.val);
+			break;
+
+		case "threads":
+			set_checks("Engine", "Threads", msg.val);
+			break;
+
+		}
 	});
 
 	// Actually load the page last, I guess, so the event handlers above are already set up.
@@ -2142,7 +2160,10 @@ function menu_build() {
 									});
 									// No need to set the check in the menu, engine.js will send an ack.
 								} else {
-									win.webContents.send("call", "send_ack_syzygypath");		// Make the renderer send an ack for this branch too.
+									win.webContents.send("call", {
+										fn: "send_ack_setoption",
+										args: ["syzygypath"]			// Make the renderer send an ack for this branch too.
+									});
 								}
 							}
 						},
