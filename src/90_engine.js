@@ -108,7 +108,7 @@ function NewEngine() {
 			if (i1 !== -1 && i2 !== -1 && i2 > i1) {
 
 				let key = lower.slice(i1 + 5, i2 - 1).trim();
-				let val = msg.slice(i2 + 6);
+				let val = msg.slice(i2 + 6).trim();
 
 				if (key.length > 0) {
 					this.sent_options[key] = val;
