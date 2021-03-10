@@ -1204,7 +1204,6 @@ function NewRenderer() {
 
 		// This assumes everything already exists.
 		// Derived from the longer version in start.js, which it does not replace.
-		// Can be called without sz to simply recalculate everything and save (but this flickers).
 
 		boardfriends.width = canvas.width = boardsquares.width = config.board_size;
 		boardfriends.height = canvas.height = boardsquares.height = config.board_size;
