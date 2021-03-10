@@ -2140,7 +2140,7 @@ function menu_build() {
 										key: "syzygy_dialog_folder",
 										value: path.dirname(folder)
 									});
-									// No need to set the check in the menu, renderer will send an ack.
+									// No need to set the check in the menu, engine.js will send an ack.
 								} else {
 									win.webContents.send("call", "send_ack_syzygypath");		// Make the renderer send an ack for this branch too.
 								}
