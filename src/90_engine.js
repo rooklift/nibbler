@@ -264,13 +264,9 @@ function NewEngine() {
 
 	eng.send_ack_setoption_to_main_process = function(name) {
 
-		let key = name.toLowerCase();		// Keys are always stored in lowercase.
-
-		if (typeof this.sent_options[key] === "string") {									// If present it can only be string.
-			ipcRenderer.send("ack_setoption", {key: key, val: this.sent_options[key]});
-		} else {
-			ipcRenderer.send("ack_setoption", {key: key, val: ""});
-		}
+		let key = name.toLowerCase();																// Keys are always stored in lowercase.
+		let val = typeof this.sent_options[key] === "string" ? this.sent_options[key] : "";			// Values are strings, if present
+		ipcRenderer.send("ack_setoption", {key, val});
 	};
 
 	eng.setup = function(filepath, args, hub) {
