@@ -112,7 +112,7 @@ function NewEngine() {
 
 				if (key.length > 0) {
 					this.sent_options[key] = val;
-					ipcRenderer.send("ack_setoption", {key, val});
+					this.send_ack_setoption_to_main_process(key);
 				}
 			}
 		}
