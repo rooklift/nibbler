@@ -782,16 +782,12 @@ function NewRenderer() {
 			return;
 		}
 
-		// We can also send an IPC message so main.js knows what WeightsFile we have...
-
 		if (s.startsWith("Loading weights file from: ")) {
-			ipcRenderer.send("ack_weightsfile", s.slice(26).trim());
 			this.info_handler.err_receive(HighlightString(s, "Loading weights file from: ", "blue"));
 			return;
 		}
 
 		if (s.startsWith("Found pb network file: ")) {
-			ipcRenderer.send("ack_weightsfile", s.slice(22).trim());
 			this.info_handler.err_receive(HighlightString(s, "Found pb network file: ", "blue"));
 			return;
 		}
@@ -1362,6 +1358,10 @@ function NewRenderer() {
 
 	renderer.send_ack_logfile = function() {
 		ipcRenderer.send("ack_logfile", config.logfile);
+	};
+
+	renderer.send_ack_syzygypath = function() {
+		ipcRenderer.send("ack_syzygypath", config.options.SyzygyPath);
 	};
 
 	// -------------------------------------------------------------------------------------------------------------------------

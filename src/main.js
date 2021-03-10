@@ -142,12 +142,12 @@ function startup() {
 		loaded_weights = msg;
 	});
 
+	electron.ipcMain.on("ack_syzygypath", (event, msg) => {
+		set_one_check(msg ? true : false, "Engine", "Syzygy", "Choose folder...");
+	});
+
 	electron.ipcMain.on("ack_logfile", (event, msg) => {
-		if (msg) {
-			set_one_check(true, "Dev", "Use logfile...");
-		} else {
-			set_one_check(false, "Dev", "Use logfile...");
-		}
+		set_one_check(msg ? true : false, "Dev", "Use logfile...");
 	});
 
 	electron.ipcMain.on("alert", (event, msg) => {
@@ -185,7 +185,9 @@ function menu_build() {
 				{
 					label: "About",
 					click: () => {
-						alert(`Nibbler ${electron.app.getVersion()} in Electron ${process.versions.electron}\n\nEngine: ${loaded_engine}\nWeights: ${loaded_weights}`);
+						let s = `Nibbler ${electron.app.getVersion()} in Electron ${process.versions.electron}\n\n`;
+						s += `Engine: ${loaded_engine}\nWeights: ${loaded_weights || "<auto>"}`;
+						alert(s);
 					}
 				},
 				{
@@ -2119,6 +2121,8 @@ function menu_build() {
 					submenu: [
 						{
 							label: "Choose folder...",
+							type: "checkbox",
+							checked: config.options.SyzygyPath,
 							click: () => {
 								let folders = open_dialog({
 									defaultPath: config.syzygy_dialog_folder,
@@ -2136,6 +2140,9 @@ function menu_build() {
 										key: "syzygy_dialog_folder",
 										value: path.dirname(folder)
 									});
+									// No need to set the check in the menu, renderer will send an ack.
+								} else {
+									win.webContents.send("call", "send_ack_syzygypath");		// Make the renderer send an ack for this branch too.
 								}
 							}
 						},
@@ -2143,6 +2150,7 @@ function menu_build() {
 							label: "Disable",
 							click: () => {
 								win.webContents.send("call", "disable_syzygy");
+								set_one_check(false, "Engine", "Syzygy", "Choose folder...");
 							}
 						}
 					]
@@ -3298,7 +3306,7 @@ function menu_build() {
 								value: file,
 							});
 							set_one_check(true, "Dev", "Use logfile...");
-						} else {													// User cancelled.
+						} else {
 							win.webContents.send("call", "send_ack_logfile");		// Query current state of logfile so we can get our check back.
 						}
 					}

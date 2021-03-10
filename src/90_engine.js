@@ -97,9 +97,13 @@ function NewEngine() {
 
 		if (msg.startsWith("setoption")) {
 			let lower = msg.toLowerCase();
-			if (lower.includes("weightsfile")) {								// Send the main process info about the WeightsFile we are using...
+			if (lower.includes("weightsfile")) {
 				let i = lower.indexOf("value") + 5;
 				ipcRenderer.send("ack_weightsfile", msg.slice(i).trim());		// (slice msg, not lower)
+			}
+			if (lower.includes("syzygypath")) {
+				let i = lower.indexOf("value") + 5;
+				ipcRenderer.send("ack_syzygypath", msg.slice(i).trim());
 			}
 		}
 
@@ -263,8 +267,11 @@ function NewEngine() {
 			return;
 		}
 
+		// Main process wants to keep track of what these things are set to:
+
 		ipcRenderer.send("ack_engine_start", filepath);
 		ipcRenderer.send("ack_weightsfile", null);
+		ipcRenderer.send("ack_syzygypath", null);
 
 		this.exe.once("error", (err) => {
 			alert(err);
