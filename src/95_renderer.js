@@ -20,7 +20,6 @@ function NewRenderer() {
 	renderer.hoverdraw_depth = 0;
 	renderer.tick = 0;											// How many draw loops we've been through.
 	renderer.position_change_time = performance.now();			// Time of the last position change. Used for cooldown on hover draw.
-	renderer.allow_self_play_restart = false;					// Works in combination with config.continuous_self_play.
 	renderer.node_to_clean = renderer.tree.node;				// The next node to be cleaned up (done when exiting it).
 	renderer.leela_lock_node = null;							// Non-null only when in "analysis_locked" mode.
 
@@ -30,8 +29,6 @@ function NewRenderer() {
 
 		// Called when position changes.
 		// Called when behaviour changes.
-
-		this.allow_self_play_restart = false;					// So any user action cancels any pending self-play restart.
 
 		switch (config.behaviour) {
 
@@ -714,23 +711,6 @@ function NewRenderer() {
 				if (!this.warned_bad_bestmove) {
 					alert(messages.bad_bestmove);
 					this.warned_bad_bestmove = true;
-				}
-			}
-
-			if (config.behaviour === "self_play" && config.continuous_self_play) {
-				if (this.tree.node.terminal_reason() !== "") {
-					this.allow_self_play_restart = true;
-					setTimeout(() => {
-						if (this.allow_self_play_restart) {
-							this.allow_self_play_restart = false;
-							if (this.tree.node.board.normalchess) {
-								this.new_game();
-							} else {
-								this.new_960();
-							}
-							this.set_behaviour("self_play");
-						}
-					}, 3000);
 				}
 			}
 
