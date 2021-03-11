@@ -80,7 +80,7 @@ function NewEngine() {
 	eng.ever_received_uciok = false;
 	eng.have_quit = false;
 
-	eng.sent_options = Object.create(null);			// Keys are always lowercase!!
+	eng.sent_options = Object.create(null);			// Keys are always lowercase. Values are always strings.
 
 	eng.warned_send_fail = false;
 
@@ -107,7 +107,7 @@ function NewEngine() {
 
 			if (i1 !== -1 && i2 !== -1 && i2 > i1) {
 
-				let key = lower.slice(i1 + 5, i2 - 1).trim();
+				let key = lower.slice(i1 + 5, i2 - 1).trim();			// Keys are always lowercase.
 				let val = msg.slice(i2 + 6).trim();
 
 				if (key.length > 0) {
