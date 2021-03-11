@@ -3462,6 +3462,8 @@ function set_checks(...menupath) {
 
 function set_one_check(state, ...menupath) {
 
+	state = state ? true : false;
+
 	if (!menu_is_set) {
 		return;
 	}
