@@ -114,6 +114,8 @@ exports.defaults = {
 
 	"show_engine_state": false,
 
+	"continuous_self_play": false,
+
 	"save_enabled": false,
 	"override_piece_directory": null,
 	"override_board": null,
