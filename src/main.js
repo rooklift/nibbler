@@ -176,6 +176,9 @@ function startup() {
 		}
 	});
 
+	electron.Menu.setApplicationMenu(menu);
+	menu_is_set = true;
+
 	// Actually load the page last, I guess, so the event handlers above are already set up.
 	// Send some needed info as a query.
 
@@ -186,9 +189,6 @@ function startup() {
 		path.join(__dirname, "nibbler.html"),
 		{query: query}
 	);
-
-	electron.Menu.setApplicationMenu(menu);
-	menu_is_set = true;
 }
 
 // About the menu, remember that the renderer has a "queue" system (not really a queue, it drops all but 1
