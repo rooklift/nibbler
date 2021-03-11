@@ -148,6 +148,10 @@ function startup() {
 
 	electron.ipcMain.on("ack_setoption", (event, msg) => {
 
+		// These are received whenever the renderer actually sends a setoption UCI command.
+		// But we also sometimes query some option and get a response indicating what the
+		// last value we sent was, or "" if not applicable.
+
 		// Expect msg.key to be a lowercase string
 		// Expect msg.val to be a string, possibly "" (can use the fact that "" is false-ish)
 
