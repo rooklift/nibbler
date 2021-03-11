@@ -717,7 +717,7 @@ function NewRenderer() {
 				}
 			}
 
-			if (config.behaviour === "self_play") {
+			if (config.behaviour === "self_play" && config.continuous_self_play) {
 				if (this.tree.node.terminal_reason() !== "") {
 					this.allow_self_play_restart = true;
 					setTimeout(() => {
