@@ -141,6 +141,7 @@ function NewRenderer() {
 	renderer.handle_searchmoves_change = function() {
 
 		// The main test here is to ensure that nothing happens if there is a locked search on some other node.
+		// It will also prevent action if we are at the game terminus.
 
 		if (config.behaviour !== "halt") {
 			if (this.engine.search_desired.node === this.tree.node) {
@@ -152,9 +153,7 @@ function NewRenderer() {
 	renderer.handle_node_limit_change = function() {
 
 		if (config.behaviour !== "halt") {
-			if (this.engine.search_desired.limit !== this.node_limit() ||
-				this.engine.search_desired.node === null		// Can happen when limit hits, causing search to end.
-			) {
+			if (this.engine.search_desired.limit !== this.node_limit() || this.engine.search_desired.node === null) {		// 2nd part can happen when limit hits.
 				if (this.leela_lock_node) {
 					this.__go(this.leela_lock_node);
 				} else {
