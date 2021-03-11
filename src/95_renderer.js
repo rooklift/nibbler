@@ -21,6 +21,8 @@ function NewRenderer() {
 	renderer.tick = 0;											// How many draw loops we've been through.
 	renderer.position_change_time = performance.now();			// Time of the last position change. Used for cooldown on hover draw.
 
+	renderer.allow_self_play_restart = false;
+
 	renderer.node_to_clean = renderer.tree.node;				// The next node to be cleaned up (done when exiting it).
 
 	renderer.leela_lock_node = null;							// Non-null only when in "analysis_locked" mode.
@@ -31,6 +33,8 @@ function NewRenderer() {
 
 		// Called when position changes.
 		// Called when behaviour changes.
+
+		this.allow_self_play_restart = false;
 
 		switch (config.behaviour) {
 
@@ -141,6 +145,7 @@ function NewRenderer() {
 	renderer.handle_searchmoves_change = function() {
 
 		// The main test here is to ensure that nothing happens if there is a locked search on some other node.
+		// It will also prevent action if we are at the game terminus.
 
 		if (config.behaviour !== "halt") {
 			if (this.engine.search_desired.node === this.tree.node) {
@@ -152,9 +157,7 @@ function NewRenderer() {
 	renderer.handle_node_limit_change = function() {
 
 		if (config.behaviour !== "halt") {
-			if (this.engine.search_desired.limit !== this.node_limit() ||
-				this.engine.search_desired.node === null		// Can happen when limit hits, causing search to end.
-			) {
+			if (this.engine.search_desired.limit !== this.node_limit() || this.engine.search_desired.node === null) {		// 2nd part can happen when limit hits.
 				if (this.leela_lock_node) {
 					this.__go(this.leela_lock_node);
 				} else {
@@ -714,6 +717,17 @@ function NewRenderer() {
 				if (!this.warned_bad_bestmove) {
 					alert(messages.bad_bestmove);
 					this.warned_bad_bestmove = true;
+				}
+			} else {
+				if (this.tree.node.terminal_reason() !== "") {
+					this.allow_self_play_restart = true;
+					setTimeout(() => {
+						if (this.allow_self_play_restart) {
+							this.allow_self_play_restart = false;
+							this.new_game();
+							this.set_behaviour("self_play");
+						}
+					}, 3000);
 				}
 			}
 
