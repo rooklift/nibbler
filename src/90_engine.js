@@ -117,6 +117,8 @@ function NewEngine() {
 			}
 		}
 
+		// Send the message...
+
 		try {
 			this.exe.stdin.write(msg);
 			this.exe.stdin.write("\n");
