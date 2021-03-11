@@ -718,7 +718,9 @@ function NewRenderer() {
 					alert(messages.bad_bestmove);
 					this.warned_bad_bestmove = true;
 				}
-			} else {
+			}
+
+			if (config.behaviour === "self_play") {
 				if (this.tree.node.terminal_reason() !== "") {
 					this.allow_self_play_restart = true;
 					setTimeout(() => {
