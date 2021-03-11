@@ -1362,7 +1362,7 @@ function NewRenderer() {
 
 	renderer.send_ack_setoption = function(name) {
 		this.engine.send_ack_setoption_to_main_process(name);
-	}
+	};
 
 	// -------------------------------------------------------------------------------------------------------------------------
 	// Clicks, drops, mouse stuff...
