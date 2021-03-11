@@ -723,7 +723,11 @@ function NewRenderer() {
 					setTimeout(() => {
 						if (this.allow_self_play_restart) {
 							this.allow_self_play_restart = false;
-							this.new_game();
+							if (this.tree.node.board.normalchess) {
+								this.new_game();
+							} else {
+								this.new_960();
+							}
 							this.set_behaviour("self_play");
 						}
 					}, 3000);
