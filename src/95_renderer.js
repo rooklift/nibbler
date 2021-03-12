@@ -75,7 +75,7 @@ function NewRenderer() {
 
 						let move = RandChoice(moves);
 
-						if (this.tree.node.board.illegal(move) === "") {
+						if (this.tree.node.board.illegal(move) === "" && this.tree.node.terminal_reason() === "") {
 
 							this.__halt();
 
@@ -590,6 +590,31 @@ function NewRenderer() {
 		}
 		console.log(`Loading PGN: ${filename}`);
 		this.load_pgn_buffer(buf);
+	};
+
+	renderer.load_book = function(filename) {
+
+		this.book = null;
+
+		let buf;
+		try {
+			buf = fs.readFileSync(filename);
+		} catch (err) {
+			alert(err);
+			return;
+		}
+		console.log(`Loading PGN as book: ${filename}`);
+
+		let new_pgn_choices = PreParsePGN(buf);
+
+		for (let o of new_pgn_choices) {
+			try {
+				let root = LoadPGNRecord(o);
+				this.book = GenerateBook(root, this.book);
+			} catch (err) {
+				//
+			}
+		}
 	};
 
 	renderer.load_pgn_from_string = function(s) {
