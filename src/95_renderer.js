@@ -78,9 +78,15 @@ function NewRenderer() {
 						if (this.tree.node.board.illegal(move) === "" && this.tree.node.terminal_reason() === "") {
 
 							this.__halt();
+							let correct_node = this.tree.node;
+							let correct_behaviour = config.behaviour;
 
-							setTimeout(() => {			// Use a setTimeout to prevent recursion (since move() will cause a call to behave())
-								this.move(move);
+							// Use a setTimeout to prevent recursion (since move() will cause a call to behave())
+
+							setTimeout(() => {
+								if (this.tree.node === correct_node && config.behaviour === correct_behaviour) {
+									this.move(move);
+								}
 							}, 0);
 
 							break;
