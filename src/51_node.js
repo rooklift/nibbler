@@ -478,21 +478,37 @@ function __generate_book(node, book) {
 	// Non-recursive when possible...
 
 	while (node.children.length === 1) {
-		book[node.board.fen()] = [node.children[0].move];
+
+		let fen = node.board.fen();
+		let move = node.children[0].move;
+
+		if (book[fen] === undefined) {
+			book[fen] = [];
+		}
+
+		if (book[fen].includes(move) === false) {
+			book[fen].push(move);
+		}
+
 		node = node = node.children[0];
 	}
 
-	if (node.children.length === 0) {
+	if (node.children.length === 0) {		// Do this test here, not at the start, since it can become true.
 		return;
 	}
 
 	// Recursive when necessary...
 
-	let moveslist = [];
-	book[node.board.fen()] = moveslist;
+	let fen = node.board.fen();
+
+	if (book[fen] === undefined) {
+		book[fen] = [];
+	}
 
 	for (let child of node.children) {
-		moveslist.push(child.move);
+		if (book[fen].includes(child.move) === false) {
+			book[fen].push(child.move);
+		}
 		__generate_book(child, book);
 	}
 }
