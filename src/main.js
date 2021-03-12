@@ -139,7 +139,7 @@ function startup() {
 	});
 
 	electron.ipcMain.on("ack_book", (event, msg) => {
-		set_one_check(msg ? true : false, "Play", "Use book...");
+		set_one_check(msg ? true : false, "Play", "Use PGN book...");
 	});
 
 	electron.ipcMain.on("ack_node_limit", (event, msg) => {
@@ -2816,7 +2816,7 @@ function menu_build() {
 					type: "separator"
 				},
 				{
-					label: "Use book...",
+					label: "Use PGN book...",
 					type: "checkbox",
 					checked: false,				// FIXME if we store this over time.
 					click: () => {
