@@ -235,9 +235,11 @@ function NewEngine() {
 			let completed_search = this.search_running;
 			this.search_running = NoSearch;
 			this.search_desired = NoSearch;
-			Log("< " + line);
 			if (report_bestmove) {
+				Log("< " + line);
 				this.hub.receive_bestmove(line, completed_search.node);		// May trigger a new search, so do it last.
+			} else {
+				Log("(ignore halted) < " + line);
 			}
 		} else {
 			this.search_running = NoSearch;
