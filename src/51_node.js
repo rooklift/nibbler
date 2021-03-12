@@ -479,7 +479,7 @@ function __generate_book(node, book) {
 
 	while (node.children.length === 1) {
 
-		let fen = node.board.fen();
+		let fen = node.board.fen(false, true);
 		let move = node.children[0].move;
 
 		if (book[fen] === undefined) {
@@ -499,7 +499,7 @@ function __generate_book(node, book) {
 
 	// Recursive when necessary...
 
-	let fen = node.board.fen();
+	let fen = node.board.fen(false, true);
 
 	if (book[fen] === undefined) {
 		book[fen] = [];
