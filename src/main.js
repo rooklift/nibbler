@@ -177,12 +177,18 @@ function startup() {
 			set_checks("Engine", "Threads", msg.val);
 			break;
 
-		case "temperature":
-			set_checks("Play", "Temperature", msg.val);		// Sketchy because there are equivalent representations.
+		case "temperature":			// Sketchy because there are equivalent representations.
+			if (msg.val === "0" || msg.val === "0.0") {
+				set_checks("Play", "Temperature", "0");
+			} else if (msg.val === "1" || msg.val === "1.0") {
+				set_checks("Play", "Temperature", "1.0");
+			} else {
+				set_checks("Play", "Temperature", msg.val);
+			}
 			break;
 
-		case "tempdecaymoves":
-			set_checks("Play", "TempDecayMoves", msg.val === "0" ? "Infinite" : msg.val);		// Sketchy because there are equivalent representations.
+		case "tempdecaymoves":		// Not so sketchy because it should be a string of an integer.
+			set_checks("Play", "TempDecayMoves", msg.val === "0" ? "Infinite" : msg.val);
 			break;
 		}
 	});
