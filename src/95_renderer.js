@@ -30,6 +30,12 @@ function NewRenderer() {
 
 		// Called when position changes.
 		// Called when behaviour changes.
+		//
+		// Each branch should do one of the following:
+		//
+		//		Call __go() to start a new search
+		//		Call __halt() to ensure the engine isn't running
+		//		Nothing, iff the correct search is already running
 
 		switch (config.behaviour) {
 
