@@ -11,6 +11,7 @@ function NewRenderer() {
 
 	// Various state we have to keep track of...
 
+	renderer.book = null;
 	renderer.pgn_choices = null;								// All games found when opening a PGN file.
 	renderer.friendly_draws = New2DArray(8, 8, null);			// What pieces are drawn in boardfriends. Used to skip redraws.
 	renderer.enemy_draws = New2DArray(8, 8, null);				// What pieces are drawn in boardsquares. Used to skip redraws.
@@ -33,39 +34,67 @@ function NewRenderer() {
 		switch (config.behaviour) {
 
 		case "halt":
+
 			this.__halt();
 			break;
 
 		case "analysis_free":
-		case "self_play":
 		case "auto_analysis":
+
 			if (this.engine.search_desired.node !== this.tree.node || this.engine.search_desired.limit !== this.node_limit()) {
 				this.__go(this.tree.node);
 			}
 			break;
 
 		case "analysis_locked":
+
 			if (this.engine.search_desired.node !== this.leela_lock_node || this.engine.search_desired.limit !== this.node_limit()) {
 				this.__go(this.leela_lock_node);
 			}
 			break;
 
+		case "self_play":
 		case "play_white":
-			if (this.tree.node.board.active === "w") {
-				this.__go(this.tree.node);
-			} else {
-				this.__halt();
-			}
-			break;
-
 		case "play_black":
-			if (this.tree.node.board.active === "b") {
-				this.__go(this.tree.node);
-			} else {
-				this.__halt();
-			}
-			break;
 
+			if ((config.behaviour === "self_play") ||
+				(config.behaviour === "play_white" && this.tree.node.board.active === "w") ||
+				(config.behaviour === "play_black" && this.tree.node.board.active === "b")) {
+
+				if (this.book) {
+
+					let moves = this.book[this.tree.node.board.fen(false, true)];
+
+					if (Array.isArray(moves) && moves.length > 0) {
+
+						let move = RandChoice(moves);
+
+						if (this.tree.node.board.illegal(move) === "") {
+
+							this.__halt();
+
+							setTimeout(() => {			// Use a setTimeout to prevent recursion (since move() will cause a call to behave())
+								this.move(move);
+							}, 0);
+
+							break;
+						}
+					}
+				}
+
+				// If we get here we didn't play a book move...
+
+				if (this.engine.search_desired.node !== this.tree.node || this.engine.search_desired.limit !== this.node_limit()) {
+					this.__go(this.tree.node);
+				}
+
+			} else {			// Play single colour mode, wrong colour.
+
+				this.__halt();
+
+			}
+
+			break;
 		}
 	};
 
