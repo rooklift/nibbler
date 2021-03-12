@@ -91,10 +91,6 @@ function NewEngine() {
 
 	eng.send = function(msg) {
 
-		if (!this.exe) {
-			return;
-		}
-
 		msg = msg.trim();
 
 		// Keep track of what options we have actually sent to the engine...
@@ -111,10 +107,21 @@ function NewEngine() {
 				let val = msg.slice(i2 + 6).trim();
 
 				if (key.length > 0) {
-					this.sent_options[key] = val;
+
+					// Note that triggering a setoption via the menu causes send() to be called, but in the event
+					// that no engine is actually loaded, we should ack "" to cause the menu check to disappear.
+
+					if (this.exe) {
+						this.sent_options[key] = val;
+					}
+
 					this.send_ack_setoption_to_main_process(key);
 				}
 			}
+		}
+
+		if (!this.exe) {
+			return;
 		}
 
 		// Send the message...
