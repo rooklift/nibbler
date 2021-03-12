@@ -2173,13 +2173,13 @@ function menu_build() {
 										fn: "set_uci_option_permanent",
 										args: ["SyzygyPath", folder]			// FIXME: should send all folders, separated by system separator.
 									});
+									// Will receive an ack IPC which sets menu checks.
 									// Save the dir as the new default dir, in both processes.
 									config.syzygy_dialog_folder = path.dirname(folder);
 									win.webContents.send("set", {
 										key: "syzygy_dialog_folder",
 										value: path.dirname(folder)
 									});
-									// Will receive an ack IPC which sets menu checks.
 								} else {
 									win.webContents.send("call", {
 										fn: "send_ack_setoption",
@@ -2891,13 +2891,13 @@ function menu_build() {
 								fn: "load_book",
 								args: [file]
 							});
+							// Will receive an ack IPC which sets menu checks.
 							// Save the dir as the new default dir, in both processes.
 							config.book_dialog_folder = path.dirname(file);
 							win.webContents.send("set", {
 								key: "book_dialog_folder",
 								value: path.dirname(file)
 							});
-							// Will receive an ack IPC which sets menu checks.
 						} else {
 							win.webContents.send("call", "send_ack_book");		// Force an ack IPC to fix our menu check state.
 						}
