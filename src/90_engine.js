@@ -107,18 +107,14 @@ function NewEngine() {
 				let val = msg.slice(i2 + 6).trim();
 
 				if (key.length > 0) {
-
-					// Note that triggering a setoption via the menu causes send() to be called, but in the event
-					// that no engine is actually loaded, we should ack "" to cause the menu check to disappear.
-
-					if (this.exe) {
-						this.sent_options[key] = val;
-					}
-
+					this.sent_options[key] = val;
 					this.send_ack_setoption_to_main_process(key);
 				}
 			}
 		}
+
+		// Do this test here so the sent_options / ack stuff happens even when there is no engine
+		// loaded, this helps our menu check marks to be correct.
 
 		if (!this.exe) {
 			return;
@@ -305,6 +301,8 @@ function NewEngine() {
 
 		// Main process wants to keep track of what these things are set to (for menu check).
 		// These will all ack the value "" to main.js since no value has been set yet...
+
+		eng.sent_options = Object.create(null);		// Blank anything we "sent" up till now.
 
 		this.send_ack_setoption_to_main_process("WeightsFile");
 		this.send_ack_setoption_to_main_process("SyzygyPath");
