@@ -223,12 +223,18 @@ function NewEngine() {
 
 		let no_new_search = this.search_desired === this.search_running || !this.search_desired.node;
 
+		// The hub doesn't care about bestmove if it has asked for a stop.
+
+		let report_bestmove = this.search_desired === this.search_running && this.search_desired.node;
+
 		if (no_new_search) {
 			let completed_search = this.search_running;
 			this.search_running = NoSearch;
 			this.search_desired = NoSearch;
 			Log("< " + line);
-			this.hub.receive_bestmove(line, completed_search.node);		// May trigger a new search, so do it last.
+			if (report_bestmove) {
+				this.hub.receive_bestmove(line, completed_search.node);		// May trigger a new search, so do it last.
+			}
 		} else {
 			this.search_running = NoSearch;
 			Log("(ignore old) < " + line);
