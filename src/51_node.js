@@ -486,9 +486,7 @@ function __generate_book(node, book) {
 			book[fen] = [];
 		}
 
-		if (book[fen].includes(move) === false) {
-			book[fen].push(move);
-		}
+		book[fen].push(move);				// Duplicates allowed, biasing the random choice.
 
 		node = node = node.children[0];
 	}
@@ -506,9 +504,7 @@ function __generate_book(node, book) {
 	}
 
 	for (let child of node.children) {
-		if (book[fen].includes(child.move) === false) {
-			book[fen].push(child.move);
-		}
+		book[fen].push(child.move);			// Duplicates allowed, biasing the random choice.
 		__generate_book(child, book);
 	}
 }
