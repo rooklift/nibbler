@@ -607,6 +607,7 @@ function NewRenderer() {
 			buf = fs.readFileSync(filename);
 		} catch (err) {
 			alert(err);
+			this.send_ack_book();
 			return;
 		}
 		console.log(`Loading PGN as book: ${filename}`);
