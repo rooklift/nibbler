@@ -11,6 +11,7 @@ function NewRenderer() {
 
 	// Various state we have to keep track of...
 
+	renderer.book = null;
 	renderer.pgn_choices = null;								// All games found when opening a PGN file.
 	renderer.friendly_draws = New2DArray(8, 8, null);			// What pieces are drawn in boardfriends. Used to skip redraws.
 	renderer.enemy_draws = New2DArray(8, 8, null);				// What pieces are drawn in boardsquares. Used to skip redraws.
@@ -29,43 +30,83 @@ function NewRenderer() {
 
 		// Called when position changes.
 		// Called when behaviour changes.
+		//
+		// Each branch should do one of the following:
+		//
+		//		Call __go() to start a new search
+		//		Call __halt() to ensure the engine isn't running
+		//		Nothing, iff the correct search is already running
 
 		switch (config.behaviour) {
 
 		case "halt":
+
 			this.__halt();
 			break;
 
 		case "analysis_free":
-		case "self_play":
 		case "auto_analysis":
+
 			if (this.engine.search_desired.node !== this.tree.node || this.engine.search_desired.limit !== this.node_limit()) {
 				this.__go(this.tree.node);
 			}
 			break;
 
 		case "analysis_locked":
+
 			if (this.engine.search_desired.node !== this.leela_lock_node || this.engine.search_desired.limit !== this.node_limit()) {
 				this.__go(this.leela_lock_node);
 			}
 			break;
 
+		case "self_play":
 		case "play_white":
-			if (this.tree.node.board.active === "w") {
-				this.__go(this.tree.node);
-			} else {
-				this.__halt();
-			}
-			break;
-
 		case "play_black":
-			if (this.tree.node.board.active === "b") {
-				this.__go(this.tree.node);
-			} else {
-				this.__halt();
-			}
-			break;
 
+			if ((config.behaviour === "self_play") ||
+				(config.behaviour === "play_white" && this.tree.node.board.active === "w") ||
+				(config.behaviour === "play_black" && this.tree.node.board.active === "b")) {
+
+				if (this.book) {
+
+					let moves = this.book[this.tree.node.board.fen(false, true)];
+
+					if (Array.isArray(moves) && moves.length > 0) {
+
+						let move = RandChoice(moves);
+
+						if (this.tree.node.board.illegal(move) === "" && this.tree.node.terminal_reason() === "") {
+
+							this.__halt();
+							let correct_node = this.tree.node;
+							let correct_behaviour = config.behaviour;
+
+							// Use a setTimeout to prevent recursion (since move() will cause a call to behave())
+
+							setTimeout(() => {
+								if (this.tree.node === correct_node && config.behaviour === correct_behaviour) {
+									this.move(move);
+								}
+							}, 0);
+
+							break;
+						}
+					}
+				}
+
+				// If we get here we didn't play a book move...
+
+				if (this.engine.search_desired.node !== this.tree.node || this.engine.search_desired.limit !== this.node_limit()) {
+					this.__go(this.tree.node);
+				}
+
+			} else {			// Play single colour mode, wrong colour.
+
+				this.__halt();
+
+			}
+
+			break;
 		}
 	};
 
@@ -555,6 +596,34 @@ function NewRenderer() {
 		}
 		console.log(`Loading PGN: ${filename}`);
 		this.load_pgn_buffer(buf);
+	};
+
+	renderer.load_book = function(filename) {
+
+		this.book = null;
+
+		let buf;
+		try {
+			buf = fs.readFileSync(filename);
+		} catch (err) {
+			alert(err);
+			return;
+		}
+		console.log(`Loading PGN as book: ${filename}`);
+
+		let new_pgn_choices = PreParsePGN(buf);
+
+		for (let o of new_pgn_choices) {
+			try {
+				let root = LoadPGNRecord(o);
+				this.book = GenerateBook(root, this.book);
+				DestroyTree(root);
+			} catch (err) {
+				//
+			}
+		}
+
+		this.send_ack_book();
 	};
 
 	renderer.load_pgn_from_string = function(s) {
@@ -1347,14 +1416,30 @@ function NewRenderer() {
 		console.log("[\n" + text_lines.join(",\n") + "\n]");
 	};
 
+	renderer.start_logging = function(filename) {
+		config.logfile = filename;
+		config_io.save(config);
+		this.send_ack_logfile();
+	};
+
 	renderer.stop_logging = function() {
 		config.logfile = null;
 		config_io.save(config);
 		Log("Stopping log.");		// This should do nothing, but calling Log() forces it to close any open file.
+		this.send_ack_logfile();
+	};
+
+	renderer.unload_book = function() {
+		this.book = null;
+		this.send_ack_book();
 	};
 
 	renderer.send_ack_logfile = function() {
 		ipcRenderer.send("ack_logfile", config.logfile);
+	};
+
+	renderer.send_ack_book = function() {
+		ipcRenderer.send("ack_book", this.book ? true : false);		// Don't send the object...
 	};
 
 	renderer.send_ack_setoption = function(name) {

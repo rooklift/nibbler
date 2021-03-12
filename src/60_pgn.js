@@ -152,7 +152,6 @@ function PreParsePGN(buf) {
 
 function LoadPGNRecord(o) {				// Can throw, either by itself, or by allowing a throw from LoadFEN to propagate.
 
-	let start_time = performance.now();
 	let startpos;
 
 	if (o.tags.FEN) {					// && o.tags.SetUp === "1"  - but some writers don't do this.
@@ -282,8 +281,6 @@ function LoadPGNRecord(o) {				// Can throw, either by itself, or by allowing a 
 	for (let key of Object.keys(o.tags)) {
 		root.tags[key] = o.tags[key];
 	}
-
-	console.log(`PGN parsing took ${(performance.now() - start_time).toFixed(0)} ms.`);
 
 	return root;
 }

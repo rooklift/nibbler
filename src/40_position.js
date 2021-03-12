@@ -1201,7 +1201,10 @@ const position_prototype = {
 		}
 	},
 
-	fen: function(friendly_flag) {		// friendly_flag - for when the engine isn't the consumer.
+	fen: function(friendly_flag, book_flag) {
+
+		// friendly_flag - for when the engine isn't the consumer.
+		// book_flag - for when we should omit the move numbers.
 
 		let s = "";
 
@@ -1252,7 +1255,11 @@ const position_prototype = {
 			castling_string = new_castling_string;
 		}
 
-		return s + ` ${this.active} ${castling_string} ${ep_string} ${this.halfmove} ${this.fullmove}`;
+		if (book_flag) {
+			return s + ` ${this.active} ${castling_string} ${ep_string}`;
+		} else {
+			return s + ` ${this.active} ${castling_string} ${ep_string} ${this.halfmove} ${this.fullmove}`;
+		}
 	},
 
 	insufficient_material() {

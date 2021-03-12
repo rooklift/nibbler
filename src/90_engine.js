@@ -91,10 +91,6 @@ function NewEngine() {
 
 	eng.send = function(msg) {
 
-		if (!this.exe) {
-			return;
-		}
-
 		msg = msg.trim();
 
 		// Keep track of what options we have actually sent to the engine...
@@ -111,10 +107,21 @@ function NewEngine() {
 				let val = msg.slice(i2 + 6).trim();
 
 				if (key.length > 0) {
-					this.sent_options[key] = val;
+
+					// Note that triggering a setoption via the menu causes send() to be called, but in the event
+					// that no engine is actually loaded, we should ack "" to cause the menu check to disappear.
+
+					if (this.exe) {
+						this.sent_options[key] = val;
+					}
+
 					this.send_ack_setoption_to_main_process(key);
 				}
 			}
+		}
+
+		if (!this.exe) {
+			return;
 		}
 
 		// Send the message...
@@ -221,14 +228,21 @@ function NewEngine() {
 		// If this.search_desired === this.search_running then the search that just completed
 		// is the most recent one requested by the hub; we have nothing to replace it with.
 
-		let no_new_search = this.search_desired === this.search_running || !this.search_desired.node;
+		let no_new_search = (this.search_desired === this.search_running) || !this.search_desired.node;
+
+		// The hub doesn't care about bestmove if it has asked for
+		// a stop (in which case there won't be a desired node).
+
+		let report_bestmove = this.search_desired.node ? true : false;
 
 		if (no_new_search) {
 			let completed_search = this.search_running;
 			this.search_running = NoSearch;
 			this.search_desired = NoSearch;
 			Log("< " + line);
-			this.hub.receive_bestmove(line, completed_search.node);		// May trigger a new search, so do it last.
+			if (report_bestmove) {
+				this.hub.receive_bestmove(line, completed_search.node);		// May trigger a new search, so do it last.
+			}
 		} else {
 			this.search_running = NoSearch;
 			Log("(ignore old) < " + line);
@@ -287,16 +301,17 @@ function NewEngine() {
 			return;
 		}
 
-		// Main process wants to keep track of what these things are set to...
-
 		ipcRenderer.send("ack_engine_start", filepath);
 
+		// Main process wants to keep track of what these things are set to (for menu check).
 		// These will all ack the value "" to main.js since no value has been set yet...
 
 		this.send_ack_setoption_to_main_process("WeightsFile");
 		this.send_ack_setoption_to_main_process("SyzygyPath");
 		this.send_ack_setoption_to_main_process("Threads");
 		this.send_ack_setoption_to_main_process("Backend");
+		this.send_ack_setoption_to_main_process("Temperature");
+		this.send_ack_setoption_to_main_process("TempDecayMoves");
 
 		this.exe.once("error", (err) => {
 			alert(err);

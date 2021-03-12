@@ -454,3 +454,61 @@ function __clean_tree(node) {
 		__clean_tree(child);
 	}
 }
+
+// ---------------------------------------------------------------------------------------------------------
+// Generate (or add to) a book, using the given tree. A book is just a lookup table of FEN --> list of moves
+
+function GenerateBook(node, book) {
+
+	if (!book) {
+		book = Object.create(null);
+	}
+
+	if (!node || node.destroyed) {
+		return book;
+	}
+
+	__generate_book(node.get_root(), book);
+
+	return book;
+}
+
+function __generate_book(node, book) {
+
+	// Non-recursive when possible...
+
+	while (node.children.length === 1) {
+
+		let fen = node.board.fen(false, true);
+		let move = node.children[0].move;
+
+		if (book[fen] === undefined) {
+			book[fen] = [];
+		}
+
+		if (book[fen].includes(move) === false) {
+			book[fen].push(move);
+		}
+
+		node = node = node.children[0];
+	}
+
+	if (node.children.length === 0) {		// Do this test here, not at the start, since it can become true.
+		return;
+	}
+
+	// Recursive when necessary...
+
+	let fen = node.board.fen(false, true);
+
+	if (book[fen] === undefined) {
+		book[fen] = [];
+	}
+
+	for (let child of node.children) {
+		if (book[fen].includes(child.move) === false) {
+			book[fen].push(child.move);
+		}
+		__generate_book(child, book);
+	}
+}
