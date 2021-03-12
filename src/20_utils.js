@@ -225,7 +225,8 @@ function OppositeColour(s) {
 	return "";
 }
 
-function ReplaceAll(s, search, replace) {		// Fairly slow.
+function ReplaceAll(s, search, replace) {
+	if (!s.includes(search)) return s;			// Seems to improve speed overall.
 	return s.split(search).join(replace);
 }
 
