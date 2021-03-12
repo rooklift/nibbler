@@ -611,6 +611,7 @@ function NewRenderer() {
 			try {
 				let root = LoadPGNRecord(o);
 				this.book = GenerateBook(root, this.book);
+				DestroyTree(root);
 			} catch (err) {
 				//
 			}
