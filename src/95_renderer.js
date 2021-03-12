@@ -654,6 +654,8 @@ function NewRenderer() {
 
 	renderer.load_pgn_object = function(o) {				// Returns true or false - whether this actually succeeded.
 
+		let start_time = performance.now();
+
 		let root_node;
 
 		try {
@@ -665,6 +667,8 @@ function NewRenderer() {
 
 		this.tree.replace_tree(root_node);
 		this.position_changed(true, true);
+
+		console.log(`PGN parsing took ${(performance.now() - start_time).toFixed(0)} ms.`);
 
 		return true;
 	};
