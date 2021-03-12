@@ -615,6 +615,7 @@ function NewRenderer() {
 		let new_pgn_choices = PreParsePGN(buf);
 
 		let start_time = performance.now();
+		let error_flag = false;
 
 		for (let o of new_pgn_choices) {
 			try {
@@ -622,12 +623,16 @@ function NewRenderer() {
 				this.book = GenerateBook(root, this.book);
 				DestroyTree(root);
 			} catch (err) {
-				//
+				error_flag = true;
 			}
 		}
 
+		if (error_flag) {
+			this.set_special_message("Finished loading book (some errors occurred)", "yellow");
+		} else {
+			this.set_special_message("Finished loading book", "green");
+		}
 		console.log(`Book generation took ${(performance.now() - start_time).toFixed(0)} ms.`);
-
 		this.send_ack_book();
 	};
 
