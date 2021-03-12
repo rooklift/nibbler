@@ -223,7 +223,8 @@ function NewEngine() {
 
 		let no_new_search = (this.search_desired === this.search_running) || !this.search_desired.node;
 
-		// The hub doesn't care about bestmove if it has asked for a stop.
+		// The hub doesn't care about bestmove if it has asked for
+		// a stop (in which case there won't be a desired node).
 
 		let report_bestmove = this.search_desired.node ? true : false;
 
