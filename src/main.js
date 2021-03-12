@@ -1985,6 +1985,7 @@ function menu_build() {
 									fn: "set_uci_option_permanent",
 									args: ["Backend", "cudnn-auto"]
 								});
+								// Will receive an ack IPC which sets menu checks.
 							}
 						},
 						{
@@ -1996,6 +1997,7 @@ function menu_build() {
 									fn: "set_uci_option_permanent",
 									args: ["Backend", "cudnn"]
 								});
+								// Will receive an ack IPC which sets menu checks.
 							}
 						},
 						{
@@ -2007,6 +2009,7 @@ function menu_build() {
 									fn: "set_uci_option_permanent",
 									args: ["Backend", "cudnn-fp16"]
 								});
+								// Will receive an ack IPC which sets menu checks.
 							}
 						},
 						{
@@ -2021,6 +2024,7 @@ function menu_build() {
 									fn: "set_uci_option_permanent",
 									args: ["Backend", "cuda-auto"]
 								});
+								// Will receive an ack IPC which sets menu checks.
 							}
 						},
 						{
@@ -2032,6 +2036,7 @@ function menu_build() {
 									fn: "set_uci_option_permanent",
 									args: ["Backend", "cuda"]
 								});
+								// Will receive an ack IPC which sets menu checks.
 							}
 						},
 						{
@@ -2043,6 +2048,7 @@ function menu_build() {
 									fn: "set_uci_option_permanent",
 									args: ["Backend", "cuda-fp16"]
 								});
+								// Will receive an ack IPC which sets menu checks.
 							}
 						},
 						{
@@ -2057,6 +2063,7 @@ function menu_build() {
 									fn: "set_uci_option_permanent",
 									args: ["Backend", "opencl"]
 								});
+								// Will receive an ack IPC which sets menu checks.
 							}
 						},
 						{
@@ -2068,6 +2075,7 @@ function menu_build() {
 									fn: "set_uci_option_permanent",
 									args: ["Backend", "dx12"]
 								});
+								// Will receive an ack IPC which sets menu checks.
 							}
 						},
 						{
@@ -2079,6 +2087,7 @@ function menu_build() {
 									fn: "set_uci_option_permanent",
 									args: ["Backend", "blas"]
 								});
+								// Will receive an ack IPC which sets menu checks.
 							}
 						},
 						{
@@ -2090,6 +2099,7 @@ function menu_build() {
 									fn: "set_uci_option_permanent",
 									args: ["Backend", "eigen"]
 								});
+								// Will receive an ack IPC which sets menu checks.
 							}
 						},
 						{
@@ -2104,6 +2114,7 @@ function menu_build() {
 									fn: "set_uci_option_permanent",
 									args: ["Backend", "random"]
 								});
+								// Will receive an ack IPC which sets menu checks.
 							}
 						},
 						{
@@ -2115,6 +2126,7 @@ function menu_build() {
 									fn: "set_uci_option_permanent",
 									args: ["Backend", "roundrobin"]
 								});
+								// Will receive an ack IPC which sets menu checks.
 							}
 						},
 						{
@@ -2126,6 +2138,7 @@ function menu_build() {
 									fn: "set_uci_option_permanent",
 									args: ["Backend", "multiplexing"]
 								});
+								// Will receive an ack IPC which sets menu checks.
 							}
 						},
 						{
@@ -2137,6 +2150,7 @@ function menu_build() {
 									fn: "set_uci_option_permanent",
 									args: ["Backend", "demux"]
 								});
+								// Will receive an ack IPC which sets menu checks.
 							}
 						}
 					]
@@ -2165,10 +2179,11 @@ function menu_build() {
 										key: "syzygy_dialog_folder",
 										value: path.dirname(folder)
 									});
+									// Will receive an ack IPC which sets menu checks.
 								} else {
 									win.webContents.send("call", {
 										fn: "send_ack_setoption",
-										args: ["SyzygyPath"]			// Query current SyzygyPath option set in engine so our check can be correct again.
+										args: ["SyzygyPath"]					// Force an ack IPC to fix our menu check state.
 									});
 								}
 							}
@@ -2177,6 +2192,7 @@ function menu_build() {
 							label: "Disable",
 							click: () => {
 								win.webContents.send("call", "disable_syzygy");
+								// Will receive an ack IPC which sets menu checks.
 							}
 						}
 					]
@@ -2197,6 +2213,7 @@ function menu_build() {
 									fn: "set_node_limit",
 									args: [null]
 								});
+								// Will receive an ack IPC which sets menu checks.
 							}
 						},
 						{
@@ -2211,6 +2228,7 @@ function menu_build() {
 									fn: "set_node_limit",
 									args: [100 * million]
 								});
+								// Will receive an ack IPC which sets menu checks.
 							}
 						},
 						{
@@ -2222,6 +2240,7 @@ function menu_build() {
 									fn: "set_node_limit",
 									args: [10 * million]
 								});
+								// Will receive an ack IPC which sets menu checks.
 							}
 						},
 						{
@@ -2233,6 +2252,7 @@ function menu_build() {
 									fn: "set_node_limit",
 									args: [1 * million]
 								});
+								// Will receive an ack IPC which sets menu checks.
 							}
 						},
 						{
@@ -2244,6 +2264,7 @@ function menu_build() {
 									fn: "set_node_limit",
 									args: [100000]
 								});
+								// Will receive an ack IPC which sets menu checks.
 							}
 						},
 						{
@@ -2255,6 +2276,7 @@ function menu_build() {
 									fn: "set_node_limit",
 									args: [10000]
 								});
+								// Will receive an ack IPC which sets menu checks.
 							}
 						},
 						{
@@ -2266,6 +2288,7 @@ function menu_build() {
 									fn: "set_node_limit",
 									args: [1000]
 								});
+								// Will receive an ack IPC which sets menu checks.
 							}
 						},
 						{
@@ -2277,6 +2300,7 @@ function menu_build() {
 									fn: "set_node_limit",
 									args: [100]
 								});
+								// Will receive an ack IPC which sets menu checks.
 							}
 						},
 						{
@@ -2288,6 +2312,7 @@ function menu_build() {
 									fn: "set_node_limit",
 									args: [10]
 								});
+								// Will receive an ack IPC which sets menu checks.
 							}
 						},
 						{
@@ -2299,6 +2324,7 @@ function menu_build() {
 									fn: "set_node_limit",
 									args: [1]
 								});
+								// Will receive an ack IPC which sets menu checks.
 							}
 						},
 						{
@@ -2338,6 +2364,7 @@ function menu_build() {
 									fn: "set_node_limit_special",
 									args: [4 * million]
 								});
+								// Will receive an ack IPC which sets menu checks.
 							}
 						},
 						{
@@ -2349,6 +2376,7 @@ function menu_build() {
 									fn: "set_node_limit_special",
 									args: [2 * million]
 								});
+								// Will receive an ack IPC which sets menu checks.
 							}
 						},
 						{
@@ -2360,6 +2388,7 @@ function menu_build() {
 									fn: "set_node_limit_special",
 									args: [1 * million]
 								});
+								// Will receive an ack IPC which sets menu checks.
 							}
 						},
 						{
@@ -2371,6 +2400,7 @@ function menu_build() {
 									fn: "set_node_limit_special",
 									args: [400000]
 								});
+								// Will receive an ack IPC which sets menu checks.
 							}
 						},
 						{
@@ -2382,6 +2412,7 @@ function menu_build() {
 									fn: "set_node_limit_special",
 									args: [200000]
 								});
+								// Will receive an ack IPC which sets menu checks.
 							}
 						},
 						{
@@ -2393,6 +2424,7 @@ function menu_build() {
 									fn: "set_node_limit_special",
 									args: [100000]
 								});
+								// Will receive an ack IPC which sets menu checks.
 							}
 						},
 						{
@@ -2404,6 +2436,7 @@ function menu_build() {
 									fn: "set_node_limit_special",
 									args: [40000]
 								});
+								// Will receive an ack IPC which sets menu checks.
 							}
 						},
 						{
@@ -2415,6 +2448,7 @@ function menu_build() {
 									fn: "set_node_limit_special",
 									args: [20000]
 								});
+								// Will receive an ack IPC which sets menu checks.
 							}
 						},
 						{
@@ -2426,6 +2460,7 @@ function menu_build() {
 									fn: "set_node_limit_special",
 									args: [10000]
 								});
+								// Will receive an ack IPC which sets menu checks.
 							}
 						},
 						{
@@ -2437,6 +2472,7 @@ function menu_build() {
 									fn: "set_node_limit_special",
 									args: [4000]
 								});
+								// Will receive an ack IPC which sets menu checks.
 							}
 						},
 						{
@@ -2448,6 +2484,7 @@ function menu_build() {
 									fn: "set_node_limit_special",
 									args: [2000]
 								});
+								// Will receive an ack IPC which sets menu checks.
 							}
 						},
 						{
@@ -2459,6 +2496,7 @@ function menu_build() {
 									fn: "set_node_limit_special",
 									args: [1000]
 								});
+								// Will receive an ack IPC which sets menu checks.
 							}
 						},
 						{
@@ -2470,6 +2508,7 @@ function menu_build() {
 									fn: "set_node_limit_special",
 									args: [400]
 								});
+								// Will receive an ack IPC which sets menu checks.
 							}
 						},
 						{
@@ -2481,6 +2520,7 @@ function menu_build() {
 									fn: "set_node_limit_special",
 									args: [200]
 								});
+								// Will receive an ack IPC which sets menu checks.
 							}
 						},
 						{
@@ -2492,6 +2532,7 @@ function menu_build() {
 									fn: "set_node_limit_special",
 									args: [100]
 								});
+								// Will receive an ack IPC which sets menu checks.
 							}
 						},
 						{
@@ -2503,6 +2544,7 @@ function menu_build() {
 									fn: "set_node_limit_special",
 									args: [2]
 								});
+								// Will receive an ack IPC which sets menu checks.
 							}
 						},
 						{
@@ -2514,6 +2556,7 @@ function menu_build() {
 									fn: "set_node_limit_special",
 									args: [1]
 								});
+								// Will receive an ack IPC which sets menu checks.
 							}
 						},
 						{
@@ -2556,6 +2599,7 @@ function menu_build() {
 									fn: "set_uci_option_permanent",
 									args: ["Threads", 128],
 								});
+								// Will receive an ack IPC which sets menu checks.
 							}
 						},
 						{
@@ -2567,6 +2611,7 @@ function menu_build() {
 									fn: "set_uci_option_permanent",
 									args: ["Threads", 96],
 								});
+								// Will receive an ack IPC which sets menu checks.
 							}
 						},
 						{
@@ -2578,6 +2623,7 @@ function menu_build() {
 									fn: "set_uci_option_permanent",
 									args: ["Threads", 64],
 								});
+								// Will receive an ack IPC which sets menu checks.
 							}
 						},
 						{
@@ -2589,6 +2635,7 @@ function menu_build() {
 									fn: "set_uci_option_permanent",
 									args: ["Threads", 48],
 								});
+								// Will receive an ack IPC which sets menu checks.
 							}
 						},
 						{
@@ -2600,6 +2647,7 @@ function menu_build() {
 									fn: "set_uci_option_permanent",
 									args: ["Threads", 32],
 								});
+								// Will receive an ack IPC which sets menu checks.
 							}
 						},
 						{
@@ -2611,6 +2659,7 @@ function menu_build() {
 									fn: "set_uci_option_permanent",
 									args: ["Threads", 24],
 								});
+								// Will receive an ack IPC which sets menu checks.
 							}
 						},
 						{
@@ -2622,6 +2671,7 @@ function menu_build() {
 									fn: "set_uci_option_permanent",
 									args: ["Threads", 16],
 								});
+								// Will receive an ack IPC which sets menu checks.
 							}
 						},
 						{
@@ -2633,6 +2683,7 @@ function menu_build() {
 									fn: "set_uci_option_permanent",
 									args: ["Threads", 14],
 								});
+								// Will receive an ack IPC which sets menu checks.
 							}
 						},
 						{
@@ -2644,6 +2695,7 @@ function menu_build() {
 									fn: "set_uci_option_permanent",
 									args: ["Threads", 12],
 								});
+								// Will receive an ack IPC which sets menu checks.
 							}
 						},
 						{
@@ -2655,6 +2707,7 @@ function menu_build() {
 									fn: "set_uci_option_permanent",
 									args: ["Threads", 10],
 								});
+								// Will receive an ack IPC which sets menu checks.
 							}
 						},
 						{
@@ -2666,6 +2719,7 @@ function menu_build() {
 									fn: "set_uci_option_permanent",
 									args: ["Threads", 8],
 								});
+								// Will receive an ack IPC which sets menu checks.
 							}
 						},
 						{
@@ -2677,6 +2731,7 @@ function menu_build() {
 									fn: "set_uci_option_permanent",
 									args: ["Threads", 7],
 								});
+								// Will receive an ack IPC which sets menu checks.
 							}
 						},
 						{
@@ -2688,6 +2743,7 @@ function menu_build() {
 									fn: "set_uci_option_permanent",
 									args: ["Threads", 6],
 								});
+								// Will receive an ack IPC which sets menu checks.
 							}
 						},
 						{
@@ -2699,6 +2755,7 @@ function menu_build() {
 									fn: "set_uci_option_permanent",
 									args: ["Threads", 5],
 								});
+								// Will receive an ack IPC which sets menu checks.
 							}
 						},
 						{
@@ -2710,6 +2767,7 @@ function menu_build() {
 									fn: "set_uci_option_permanent",
 									args: ["Threads", 4],
 								});
+								// Will receive an ack IPC which sets menu checks.
 							}
 						},
 						{
@@ -2721,6 +2779,7 @@ function menu_build() {
 									fn: "set_uci_option_permanent",
 									args: ["Threads", 3],
 								});
+								// Will receive an ack IPC which sets menu checks.
 							}
 						},
 						{
@@ -2732,6 +2791,7 @@ function menu_build() {
 									fn: "set_uci_option_permanent",
 									args: ["Threads", 2],
 								});
+								// Will receive an ack IPC which sets menu checks.
 							}
 						},
 						{
@@ -2743,6 +2803,7 @@ function menu_build() {
 									fn: "set_uci_option_permanent",
 									args: ["Threads", 1],
 								});
+								// Will receive an ack IPC which sets menu checks.
 							}
 						},
 						{
@@ -2836,8 +2897,9 @@ function menu_build() {
 								key: "book_dialog_folder",
 								value: path.dirname(file)
 							});
+							// Will receive an ack IPC which sets menu checks.
 						} else {
-							win.webContents.send("call", "send_ack_book");		// Query if a book is loaded so we can get our check back again.
+							win.webContents.send("call", "send_ack_book");		// Force an ack IPC to fix our menu check state.
 						}
 					}
 				},
@@ -2845,6 +2907,7 @@ function menu_build() {
 					label: "Unload book",
 					click: () => {
 						win.webContents.send("call", "unload_book");
+						// Will receive an ack IPC which sets menu checks.
 					}
 				},
 				{
@@ -2862,6 +2925,7 @@ function menu_build() {
 									fn: "set_uci_option_permanent",
 									args: ["Temperature", 1.0]
 								});
+								// Will receive an ack IPC which sets menu checks.
 							}
 						},
 						{
@@ -2873,6 +2937,7 @@ function menu_build() {
 									fn: "set_uci_option_permanent",
 									args: ["Temperature", 0.9]
 								});
+								// Will receive an ack IPC which sets menu checks.
 							}
 						},
 						{
@@ -2884,6 +2949,7 @@ function menu_build() {
 									fn: "set_uci_option_permanent",
 									args: ["Temperature", 0.8]
 								});
+								// Will receive an ack IPC which sets menu checks.
 							}
 						},
 						{
@@ -2895,6 +2961,7 @@ function menu_build() {
 									fn: "set_uci_option_permanent",
 									args: ["Temperature", 0.7]
 								});
+								// Will receive an ack IPC which sets menu checks.
 							}
 						},
 						{
@@ -2906,6 +2973,7 @@ function menu_build() {
 									fn: "set_uci_option_permanent",
 									args: ["Temperature", 0.6]
 								});
+								// Will receive an ack IPC which sets menu checks.
 							}
 						},
 						{
@@ -2917,6 +2985,7 @@ function menu_build() {
 									fn: "set_uci_option_permanent",
 									args: ["Temperature", 0.5]
 								});
+								// Will receive an ack IPC which sets menu checks.
 							}
 						},
 						{
@@ -2928,6 +2997,7 @@ function menu_build() {
 									fn: "set_uci_option_permanent",
 									args: ["Temperature", 0.4]
 								});
+								// Will receive an ack IPC which sets menu checks.
 							}
 						},
 						{
@@ -2939,6 +3009,7 @@ function menu_build() {
 									fn: "set_uci_option_permanent",
 									args: ["Temperature", 0.3]
 								});
+								// Will receive an ack IPC which sets menu checks.
 							}
 						},
 						{
@@ -2950,6 +3021,7 @@ function menu_build() {
 									fn: "set_uci_option_permanent",
 									args: ["Temperature", 0.2]
 								});
+								// Will receive an ack IPC which sets menu checks.
 							}
 						},
 						{
@@ -2961,6 +3033,7 @@ function menu_build() {
 									fn: "set_uci_option_permanent",
 									args: ["Temperature", 0.1]
 								});
+								// Will receive an ack IPC which sets menu checks.
 							}
 						},
 						{
@@ -2972,6 +3045,7 @@ function menu_build() {
 									fn: "set_uci_option_permanent",
 									args: ["Temperature", 0]
 								});
+								// Will receive an ack IPC which sets menu checks.
 							}
 						},
 					]
@@ -2988,6 +3062,7 @@ function menu_build() {
 									fn: "set_uci_option_permanent",
 									args: ["TempDecayMoves", 0]
 								});
+								// Will receive an ack IPC which sets menu checks.
 							}
 						},
 						{
@@ -2999,6 +3074,7 @@ function menu_build() {
 									fn: "set_uci_option_permanent",
 									args: ["TempDecayMoves", 20]
 								});
+								// Will receive an ack IPC which sets menu checks.
 							}
 						},
 						{
@@ -3010,6 +3086,7 @@ function menu_build() {
 									fn: "set_uci_option_permanent",
 									args: ["TempDecayMoves", 18]
 								});
+								// Will receive an ack IPC which sets menu checks.
 							}
 						},
 						{
@@ -3021,6 +3098,7 @@ function menu_build() {
 									fn: "set_uci_option_permanent",
 									args: ["TempDecayMoves", 16]
 								});
+								// Will receive an ack IPC which sets menu checks.
 							}
 						},
 						{
@@ -3032,6 +3110,7 @@ function menu_build() {
 									fn: "set_uci_option_permanent",
 									args: ["TempDecayMoves", 14]
 								});
+								// Will receive an ack IPC which sets menu checks.
 							}
 						},
 						{
@@ -3043,6 +3122,7 @@ function menu_build() {
 									fn: "set_uci_option_permanent",
 									args: ["TempDecayMoves", 12]
 								});
+								// Will receive an ack IPC which sets menu checks.
 							}
 						},
 						{
@@ -3054,6 +3134,7 @@ function menu_build() {
 									fn: "set_uci_option_permanent",
 									args: ["TempDecayMoves", 10]
 								});
+								// Will receive an ack IPC which sets menu checks.
 							}
 						},
 						{
@@ -3065,6 +3146,7 @@ function menu_build() {
 									fn: "set_uci_option_permanent",
 									args: ["TempDecayMoves", 8]
 								});
+								// Will receive an ack IPC which sets menu checks.
 							}
 						},
 						{
@@ -3076,6 +3158,7 @@ function menu_build() {
 									fn: "set_uci_option_permanent",
 									args: ["TempDecayMoves", 6]
 								});
+								// Will receive an ack IPC which sets menu checks.
 							}
 						},
 						{
@@ -3087,6 +3170,7 @@ function menu_build() {
 									fn: "set_uci_option_permanent",
 									args: ["TempDecayMoves", 4]
 								});
+								// Will receive an ack IPC which sets menu checks.
 							}
 						},
 						{
@@ -3098,6 +3182,7 @@ function menu_build() {
 									fn: "set_uci_option_permanent",
 									args: ["TempDecayMoves", 2]
 								});
+								// Will receive an ack IPC which sets menu checks.
 							}
 						},
 					]
@@ -3299,8 +3384,9 @@ function menu_build() {
 								fn: "start_logging",
 								args: [file]
 							});
+							// Will receive an ack IPC which sets menu checks.
 						} else {
-							win.webContents.send("call", "send_ack_logfile");		// Query current state of logfile so we can get our check back.
+							win.webContents.send("call", "send_ack_logfile");		// Force an ack IPC to fix our menu check state.
 						}
 					}
 				},
@@ -3308,6 +3394,7 @@ function menu_build() {
 					label: "Disable logging",
 					click: () => {
 						win.webContents.send("call", "stop_logging");
+						// Will receive an ack IPC which sets menu checks.
 					}
 				},
 				{
