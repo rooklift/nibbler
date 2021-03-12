@@ -102,6 +102,7 @@ exports.defaults = {
 	"syzygy_dialog_folder": "",
 	"pieces_dialog_folder": "",
 	"background_dialog_folder": "",
+	"book_dialog_folder": "",
 
 	"update_delay": 170,
 	"animate_delay_multiplier": 4,

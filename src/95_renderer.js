@@ -622,6 +622,8 @@ function NewRenderer() {
 				//
 			}
 		}
+
+		this.send_ack_book();
 	};
 
 	renderer.load_pgn_from_string = function(s) {
@@ -1414,14 +1416,30 @@ function NewRenderer() {
 		console.log("[\n" + text_lines.join(",\n") + "\n]");
 	};
 
+	renderer.start_logging = function(filename) {
+		config.logfile = filename;
+		config_io.save(config);
+		this.send_ack_logfile();
+	};
+
 	renderer.stop_logging = function() {
 		config.logfile = null;
 		config_io.save(config);
 		Log("Stopping log.");		// This should do nothing, but calling Log() forces it to close any open file.
+		this.send_ack_logfile();
+	};
+
+	renderer.unload_book = function() {
+		this.book = null;
+		this.send_ack_book();
 	};
 
 	renderer.send_ack_logfile = function() {
 		ipcRenderer.send("ack_logfile", config.logfile);
+	};
+
+	renderer.send_ack_book = function() {
+		ipcRenderer.send("ack_book", this.book ? true : false);		// Don't send the object...
 	};
 
 	renderer.send_ack_setoption = function(name) {

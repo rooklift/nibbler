@@ -138,6 +138,10 @@ function startup() {
 		set_one_check(msg ? true : false, "Dev", "Use logfile...");
 	});
 
+	electron.ipcMain.on("ack_book", (event, msg) => {
+		set_one_check(msg ? true : false, "Play", "Use book...");
+	});
+
 	electron.ipcMain.on("ack_node_limit", (event, msg) => {
 		set_checks("Engine", "Node limit - normal", msg);
 	});
@@ -173,6 +177,13 @@ function startup() {
 			set_checks("Engine", "Threads", msg.val);
 			break;
 
+		case "temperature":
+			set_checks("Play", "Temperature", msg.val);		// Sketchy because there are equivalent representations.
+			break;
+
+		case "tempdecaymoves":
+			set_checks("Play", "TempDecayMoves", msg.val === "0" ? "Infinite" : msg.val);		// Sketchy because there are equivalent representations.
+			break;
 		}
 	});
 
@@ -1964,7 +1975,7 @@ function menu_build() {
 							type: "checkbox",
 							checked: config.options.Backend === "cudnn-auto",
 							click: () => {
-								set_checks("Engine", "Backend", "cudnn-auto");
+								// set_checks("Engine", "Backend", "cudnn-auto");
 								win.webContents.send("call", {
 									fn: "set_uci_option_permanent",
 									args: ["Backend", "cudnn-auto"]
@@ -1976,7 +1987,7 @@ function menu_build() {
 							type: "checkbox",
 							checked: config.options.Backend === "cudnn",
 							click: () => {
-								set_checks("Engine", "Backend", "cudnn");
+								// set_checks("Engine", "Backend", "cudnn");
 								win.webContents.send("call", {
 									fn: "set_uci_option_permanent",
 									args: ["Backend", "cudnn"]
@@ -1988,7 +1999,7 @@ function menu_build() {
 							type: "checkbox",
 							checked: config.options.Backend === "cudnn-fp16",
 							click: () => {
-								set_checks("Engine", "Backend", "cudnn-fp16");
+								// set_checks("Engine", "Backend", "cudnn-fp16");
 								win.webContents.send("call", {
 									fn: "set_uci_option_permanent",
 									args: ["Backend", "cudnn-fp16"]
@@ -2003,7 +2014,7 @@ function menu_build() {
 							type: "checkbox",
 							checked: config.options.Backend === "cuda-auto",
 							click: () => {
-								set_checks("Engine", "Backend", "cuda-auto");
+								// set_checks("Engine", "Backend", "cuda-auto");
 								win.webContents.send("call", {
 									fn: "set_uci_option_permanent",
 									args: ["Backend", "cuda-auto"]
@@ -2015,7 +2026,7 @@ function menu_build() {
 							type: "checkbox",
 							checked: config.options.Backend === "cuda",
 							click: () => {
-								set_checks("Engine", "Backend", "cuda");
+								// set_checks("Engine", "Backend", "cuda");
 								win.webContents.send("call", {
 									fn: "set_uci_option_permanent",
 									args: ["Backend", "cuda"]
@@ -2027,7 +2038,7 @@ function menu_build() {
 							type: "checkbox",
 							checked: config.options.Backend === "cuda-fp16",
 							click: () => {
-								set_checks("Engine", "Backend", "cuda-fp16");
+								// set_checks("Engine", "Backend", "cuda-fp16");
 								win.webContents.send("call", {
 									fn: "set_uci_option_permanent",
 									args: ["Backend", "cuda-fp16"]
@@ -2042,7 +2053,7 @@ function menu_build() {
 							type: "checkbox",
 							checked: config.options.Backend === "opencl",
 							click: () => {
-								set_checks("Engine", "Backend", "opencl");
+								// set_checks("Engine", "Backend", "opencl");
 								win.webContents.send("call", {
 									fn: "set_uci_option_permanent",
 									args: ["Backend", "opencl"]
@@ -2054,7 +2065,7 @@ function menu_build() {
 							type: "checkbox",
 							checked: config.options.Backend === "dx12",
 							click: () => {
-								set_checks("Engine", "Backend", "dx12");
+								// set_checks("Engine", "Backend", "dx12");
 								win.webContents.send("call", {
 									fn: "set_uci_option_permanent",
 									args: ["Backend", "dx12"]
@@ -2066,7 +2077,7 @@ function menu_build() {
 							type: "checkbox",
 							checked: config.options.Backend === "blas",
 							click: () => {
-								set_checks("Engine", "Backend", "blas");
+								// set_checks("Engine", "Backend", "blas");
 								win.webContents.send("call", {
 									fn: "set_uci_option_permanent",
 									args: ["Backend", "blas"]
@@ -2078,7 +2089,7 @@ function menu_build() {
 							type: "checkbox",
 							checked: config.options.Backend === "eigen",
 							click: () => {
-								set_checks("Engine", "Backend", "eigen");
+								// set_checks("Engine", "Backend", "eigen");
 								win.webContents.send("call", {
 									fn: "set_uci_option_permanent",
 									args: ["Backend", "eigen"]
@@ -2093,7 +2104,7 @@ function menu_build() {
 							type: "checkbox",
 							checked: config.options.Backend === "random",
 							click: () => {
-								set_checks("Engine", "Backend", "random");
+								// set_checks("Engine", "Backend", "random");
 								win.webContents.send("call", {
 									fn: "set_uci_option_permanent",
 									args: ["Backend", "random"]
@@ -2105,7 +2116,7 @@ function menu_build() {
 							type: "checkbox",
 							checked: config.options.Backend === "roundrobin",
 							click: () => {
-								set_checks("Engine", "Backend", "roundrobin");
+								// set_checks("Engine", "Backend", "roundrobin");
 								win.webContents.send("call", {
 									fn: "set_uci_option_permanent",
 									args: ["Backend", "roundrobin"]
@@ -2117,7 +2128,7 @@ function menu_build() {
 							type: "checkbox",
 							checked: config.options.Backend === "multiplexing",
 							click: () => {
-								set_checks("Engine", "Backend", "multiplexing");
+								// set_checks("Engine", "Backend", "multiplexing");
 								win.webContents.send("call", {
 									fn: "set_uci_option_permanent",
 									args: ["Backend", "multiplexing"]
@@ -2129,7 +2140,7 @@ function menu_build() {
 							type: "checkbox",
 							checked: config.options.Backend === "demux",
 							click: () => {
-								set_checks("Engine", "Backend", "demux");
+								// set_checks("Engine", "Backend", "demux");
 								win.webContents.send("call", {
 									fn: "set_uci_option_permanent",
 									args: ["Backend", "demux"]
@@ -2162,7 +2173,7 @@ function menu_build() {
 										key: "syzygy_dialog_folder",
 										value: path.dirname(folder)
 									});
-									set_one_check(true, "Engine", "Syzygy", "Choose folder...");
+									// set_one_check(true, "Engine", "Syzygy", "Choose folder...");
 								} else {
 									win.webContents.send("call", {
 										fn: "send_ack_setoption",
@@ -2175,7 +2186,7 @@ function menu_build() {
 							label: "Disable",
 							click: () => {
 								win.webContents.send("call", "disable_syzygy");
-								set_one_check(false, "Engine", "Syzygy", "Choose folder...");
+								// set_one_check(false, "Engine", "Syzygy", "Choose folder...");
 							}
 						}
 					]
@@ -2578,7 +2589,7 @@ function menu_build() {
 							type: "checkbox",
 							checked: config.options.Threads === 128,
 							click: () => {
-								set_checks("Engine", "Threads", "128");
+								// set_checks("Engine", "Threads", "128");
 								win.webContents.send("call", {
 									fn: "set_uci_option_permanent",
 									args: ["Threads", 128],
@@ -2590,7 +2601,7 @@ function menu_build() {
 							type: "checkbox",
 							checked: config.options.Threads === 96,
 							click: () => {
-								set_checks("Engine", "Threads", "96");
+								// set_checks("Engine", "Threads", "96");
 								win.webContents.send("call", {
 									fn: "set_uci_option_permanent",
 									args: ["Threads", 96],
@@ -2602,7 +2613,7 @@ function menu_build() {
 							type: "checkbox",
 							checked: config.options.Threads === 64,
 							click: () => {
-								set_checks("Engine", "Threads", "64");
+								// set_checks("Engine", "Threads", "64");
 								win.webContents.send("call", {
 									fn: "set_uci_option_permanent",
 									args: ["Threads", 64],
@@ -2614,7 +2625,7 @@ function menu_build() {
 							type: "checkbox",
 							checked: config.options.Threads === 48,
 							click: () => {
-								set_checks("Engine", "Threads", "48");
+								// set_checks("Engine", "Threads", "48");
 								win.webContents.send("call", {
 									fn: "set_uci_option_permanent",
 									args: ["Threads", 48],
@@ -2626,7 +2637,7 @@ function menu_build() {
 							type: "checkbox",
 							checked: config.options.Threads === 32,
 							click: () => {
-								set_checks("Engine", "Threads", "32");
+								// set_checks("Engine", "Threads", "32");
 								win.webContents.send("call", {
 									fn: "set_uci_option_permanent",
 									args: ["Threads", 32],
@@ -2638,7 +2649,7 @@ function menu_build() {
 							type: "checkbox",
 							checked: config.options.Threads === 24,
 							click: () => {
-								set_checks("Engine", "Threads", "24");
+								// set_checks("Engine", "Threads", "24");
 								win.webContents.send("call", {
 									fn: "set_uci_option_permanent",
 									args: ["Threads", 24],
@@ -2650,7 +2661,7 @@ function menu_build() {
 							type: "checkbox",
 							checked: config.options.Threads === 16,
 							click: () => {
-								set_checks("Engine", "Threads", "16");
+								// set_checks("Engine", "Threads", "16");
 								win.webContents.send("call", {
 									fn: "set_uci_option_permanent",
 									args: ["Threads", 16],
@@ -2662,7 +2673,7 @@ function menu_build() {
 							type: "checkbox",
 							checked: config.options.Threads === 14,
 							click: () => {
-								set_checks("Engine", "Threads", "14");
+								// set_checks("Engine", "Threads", "14");
 								win.webContents.send("call", {
 									fn: "set_uci_option_permanent",
 									args: ["Threads", 14],
@@ -2674,7 +2685,7 @@ function menu_build() {
 							type: "checkbox",
 							checked: config.options.Threads === 12,
 							click: () => {
-								set_checks("Engine", "Threads", "12");
+								// set_checks("Engine", "Threads", "12");
 								win.webContents.send("call", {
 									fn: "set_uci_option_permanent",
 									args: ["Threads", 12],
@@ -2686,7 +2697,7 @@ function menu_build() {
 							type: "checkbox",
 							checked: config.options.Threads === 10,
 							click: () => {
-								set_checks("Engine", "Threads", "10");
+								// set_checks("Engine", "Threads", "10");
 								win.webContents.send("call", {
 									fn: "set_uci_option_permanent",
 									args: ["Threads", 10],
@@ -2698,7 +2709,7 @@ function menu_build() {
 							type: "checkbox",
 							checked: config.options.Threads === 8,
 							click: () => {
-								set_checks("Engine", "Threads", "8");
+								// set_checks("Engine", "Threads", "8");
 								win.webContents.send("call", {
 									fn: "set_uci_option_permanent",
 									args: ["Threads", 8],
@@ -2710,7 +2721,7 @@ function menu_build() {
 							type: "checkbox",
 							checked: config.options.Threads === 7,
 							click: () => {
-								set_checks("Engine", "Threads", "7");
+								// set_checks("Engine", "Threads", "7");
 								win.webContents.send("call", {
 									fn: "set_uci_option_permanent",
 									args: ["Threads", 7],
@@ -2722,7 +2733,7 @@ function menu_build() {
 							type: "checkbox",
 							checked: config.options.Threads === 6,
 							click: () => {
-								set_checks("Engine", "Threads", "6");
+								// set_checks("Engine", "Threads", "6");
 								win.webContents.send("call", {
 									fn: "set_uci_option_permanent",
 									args: ["Threads", 6],
@@ -2734,7 +2745,7 @@ function menu_build() {
 							type: "checkbox",
 							checked: config.options.Threads === 5,
 							click: () => {
-								set_checks("Engine", "Threads", "5");
+								// set_checks("Engine", "Threads", "5");
 								win.webContents.send("call", {
 									fn: "set_uci_option_permanent",
 									args: ["Threads", 5],
@@ -2746,7 +2757,7 @@ function menu_build() {
 							type: "checkbox",
 							checked: config.options.Threads === 4,
 							click: () => {
-								set_checks("Engine", "Threads", "4");
+								// set_checks("Engine", "Threads", "4");
 								win.webContents.send("call", {
 									fn: "set_uci_option_permanent",
 									args: ["Threads", 4],
@@ -2758,7 +2769,7 @@ function menu_build() {
 							type: "checkbox",
 							checked: config.options.Threads === 3,
 							click: () => {
-								set_checks("Engine", "Threads", "3");
+								// set_checks("Engine", "Threads", "3");
 								win.webContents.send("call", {
 									fn: "set_uci_option_permanent",
 									args: ["Threads", 3],
@@ -2770,7 +2781,7 @@ function menu_build() {
 							type: "checkbox",
 							checked: config.options.Threads === 2,
 							click: () => {
-								set_checks("Engine", "Threads", "2");
+								// set_checks("Engine", "Threads", "2");
 								win.webContents.send("call", {
 									fn: "set_uci_option_permanent",
 									args: ["Threads", 2],
@@ -2782,7 +2793,7 @@ function menu_build() {
 							type: "checkbox",
 							checked: config.options.Threads === 1,
 							click: () => {
-								set_checks("Engine", "Threads", "1");
+								// set_checks("Engine", "Threads", "1");
 								win.webContents.send("call", {
 									fn: "set_uci_option_permanent",
 									args: ["Threads", 1],
@@ -2860,6 +2871,43 @@ function menu_build() {
 					type: "separator"
 				},
 				{
+					label: "Use book...",
+					type: "checkbox",
+					checked: false,				// FIXME if we store this over time.
+					click: () => {
+						let files = open_dialog({
+							defaultPath: config.book_dialog_folder,
+							properties: ["openFile"]
+						});
+						if (Array.isArray(files) && files.length > 0) {
+							let file = files[0];
+							win.webContents.send("call", {
+								fn: "load_book",
+								args: [file]
+							});
+							// Save the dir as the new default dir, in both processes.
+							config.book_dialog_folder = path.dirname(file);
+							win.webContents.send("set", {
+								key: "book_dialog_folder",
+								value: path.dirname(file)
+							});
+							// set_one_check(true, "Play", "Use book...");
+						} else {
+							win.webContents.send("call", "send_ack_book");		// Query if a book is loaded so we can get our check back again.
+						}
+					}
+				},
+				{
+					label: "Unload book",
+					click: () => {
+						win.webContents.send("call", "unload_book");
+						// set_one_check(false, "Play", "Use book...");
+					}
+				},
+				{
+					type: "separator"
+				},
+				{
 					label: "Temperature",
 					submenu: [
 						{
@@ -2867,7 +2915,7 @@ function menu_build() {
 							type: "checkbox",
 							checked: config.options.Temperature === 1.0,
 							click: () => {
-								set_checks("Play", "Temperature", "1.0");
+								// set_checks("Play", "Temperature", "1.0");
 								win.webContents.send("call", {
 									fn: "set_uci_option_permanent",
 									args: ["Temperature", 1.0]
@@ -2879,7 +2927,7 @@ function menu_build() {
 							type: "checkbox",
 							checked: config.options.Temperature === 0.9,
 							click: () => {
-								set_checks("Play", "Temperature", "0.9");
+								// set_checks("Play", "Temperature", "0.9");
 								win.webContents.send("call", {
 									fn: "set_uci_option_permanent",
 									args: ["Temperature", 0.9]
@@ -2891,7 +2939,7 @@ function menu_build() {
 							type: "checkbox",
 							checked: config.options.Temperature === 0.8,
 							click: () => {
-								set_checks("Play", "Temperature", "0.8");
+								// set_checks("Play", "Temperature", "0.8");
 								win.webContents.send("call", {
 									fn: "set_uci_option_permanent",
 									args: ["Temperature", 0.8]
@@ -2903,7 +2951,7 @@ function menu_build() {
 							type: "checkbox",
 							checked: config.options.Temperature === 0.7,
 							click: () => {
-								set_checks("Play", "Temperature", "0.7");
+								// set_checks("Play", "Temperature", "0.7");
 								win.webContents.send("call", {
 									fn: "set_uci_option_permanent",
 									args: ["Temperature", 0.7]
@@ -2915,7 +2963,7 @@ function menu_build() {
 							type: "checkbox",
 							checked: config.options.Temperature === 0.6,
 							click: () => {
-								set_checks("Play", "Temperature", "0.6");
+								// set_checks("Play", "Temperature", "0.6");
 								win.webContents.send("call", {
 									fn: "set_uci_option_permanent",
 									args: ["Temperature", 0.6]
@@ -2927,7 +2975,7 @@ function menu_build() {
 							type: "checkbox",
 							checked: config.options.Temperature === 0.5,
 							click: () => {
-								set_checks("Play", "Temperature", "0.5");
+								// set_checks("Play", "Temperature", "0.5");
 								win.webContents.send("call", {
 									fn: "set_uci_option_permanent",
 									args: ["Temperature", 0.5]
@@ -2939,7 +2987,7 @@ function menu_build() {
 							type: "checkbox",
 							checked: config.options.Temperature === 0.4,
 							click: () => {
-								set_checks("Play", "Temperature", "0.4");
+								// set_checks("Play", "Temperature", "0.4");
 								win.webContents.send("call", {
 									fn: "set_uci_option_permanent",
 									args: ["Temperature", 0.4]
@@ -2951,7 +2999,7 @@ function menu_build() {
 							type: "checkbox",
 							checked: config.options.Temperature === 0.3,
 							click: () => {
-								set_checks("Play", "Temperature", "0.3");
+								// set_checks("Play", "Temperature", "0.3");
 								win.webContents.send("call", {
 									fn: "set_uci_option_permanent",
 									args: ["Temperature", 0.3]
@@ -2963,7 +3011,7 @@ function menu_build() {
 							type: "checkbox",
 							checked: config.options.Temperature === 0.2,
 							click: () => {
-								set_checks("Play", "Temperature", "0.2");
+								// set_checks("Play", "Temperature", "0.2");
 								win.webContents.send("call", {
 									fn: "set_uci_option_permanent",
 									args: ["Temperature", 0.2]
@@ -2975,7 +3023,7 @@ function menu_build() {
 							type: "checkbox",
 							checked: config.options.Temperature === 0.1,
 							click: () => {
-								set_checks("Play", "Temperature", "0.1");
+								// set_checks("Play", "Temperature", "0.1");
 								win.webContents.send("call", {
 									fn: "set_uci_option_permanent",
 									args: ["Temperature", 0.1]
@@ -2987,7 +3035,7 @@ function menu_build() {
 							type: "checkbox",
 							checked: config.options.Temperature === 0,
 							click: () => {
-								set_checks("Play", "Temperature", "0");
+								// set_checks("Play", "Temperature", "0");
 								win.webContents.send("call", {
 									fn: "set_uci_option_permanent",
 									args: ["Temperature", 0]
@@ -3004,7 +3052,7 @@ function menu_build() {
 							type: "checkbox",
 							checked: config.options.TempDecayMoves === 0,
 							click: () => {
-								set_checks("Play", "TempDecayMoves", "Infinite");
+								// set_checks("Play", "TempDecayMoves", "Infinite");
 								win.webContents.send("call", {
 									fn: "set_uci_option_permanent",
 									args: ["TempDecayMoves", 0]
@@ -3016,7 +3064,7 @@ function menu_build() {
 							type: "checkbox",
 							checked: config.options.TempDecayMoves === 20,
 							click: () => {
-								set_checks("Play", "TempDecayMoves", "20");
+								// set_checks("Play", "TempDecayMoves", "20");
 								win.webContents.send("call", {
 									fn: "set_uci_option_permanent",
 									args: ["TempDecayMoves", 20]
@@ -3028,7 +3076,7 @@ function menu_build() {
 							type: "checkbox",
 							checked: config.options.TempDecayMoves === 18,
 							click: () => {
-								set_checks("Play", "TempDecayMoves", "18");
+								// set_checks("Play", "TempDecayMoves", "18");
 								win.webContents.send("call", {
 									fn: "set_uci_option_permanent",
 									args: ["TempDecayMoves", 18]
@@ -3040,7 +3088,7 @@ function menu_build() {
 							type: "checkbox",
 							checked: config.options.TempDecayMoves === 16,
 							click: () => {
-								set_checks("Play", "TempDecayMoves", "16");
+								// set_checks("Play", "TempDecayMoves", "16");
 								win.webContents.send("call", {
 									fn: "set_uci_option_permanent",
 									args: ["TempDecayMoves", 16]
@@ -3052,7 +3100,7 @@ function menu_build() {
 							type: "checkbox",
 							checked: config.options.TempDecayMoves === 14,
 							click: () => {
-								set_checks("Play", "TempDecayMoves", "14");
+								// set_checks("Play", "TempDecayMoves", "14");
 								win.webContents.send("call", {
 									fn: "set_uci_option_permanent",
 									args: ["TempDecayMoves", 14]
@@ -3064,7 +3112,7 @@ function menu_build() {
 							type: "checkbox",
 							checked: config.options.TempDecayMoves === 12,
 							click: () => {
-								set_checks("Play", "TempDecayMoves", "12");
+								// set_checks("Play", "TempDecayMoves", "12");
 								win.webContents.send("call", {
 									fn: "set_uci_option_permanent",
 									args: ["TempDecayMoves", 12]
@@ -3076,7 +3124,7 @@ function menu_build() {
 							type: "checkbox",
 							checked: config.options.TempDecayMoves === 10,
 							click: () => {
-								set_checks("Play", "TempDecayMoves", "10");
+								// set_checks("Play", "TempDecayMoves", "10");
 								win.webContents.send("call", {
 									fn: "set_uci_option_permanent",
 									args: ["TempDecayMoves", 10]
@@ -3088,7 +3136,7 @@ function menu_build() {
 							type: "checkbox",
 							checked: config.options.TempDecayMoves === 8,
 							click: () => {
-								set_checks("Play", "TempDecayMoves", "8");
+								// set_checks("Play", "TempDecayMoves", "8");
 								win.webContents.send("call", {
 									fn: "set_uci_option_permanent",
 									args: ["TempDecayMoves", 8]
@@ -3100,7 +3148,7 @@ function menu_build() {
 							type: "checkbox",
 							checked: config.options.TempDecayMoves === 6,
 							click: () => {
-								set_checks("Play", "TempDecayMoves", "6");
+								// set_checks("Play", "TempDecayMoves", "6");
 								win.webContents.send("call", {
 									fn: "set_uci_option_permanent",
 									args: ["TempDecayMoves", 6]
@@ -3112,7 +3160,7 @@ function menu_build() {
 							type: "checkbox",
 							checked: config.options.TempDecayMoves === 4,
 							click: () => {
-								set_checks("Play", "TempDecayMoves", "4");
+								// set_checks("Play", "TempDecayMoves", "4");
 								win.webContents.send("call", {
 									fn: "set_uci_option_permanent",
 									args: ["TempDecayMoves", 4]
@@ -3124,7 +3172,7 @@ function menu_build() {
 							type: "checkbox",
 							checked: config.options.TempDecayMoves === 2,
 							click: () => {
-								set_checks("Play", "TempDecayMoves", "2");
+								// set_checks("Play", "TempDecayMoves", "2");
 								win.webContents.send("call", {
 									fn: "set_uci_option_permanent",
 									args: ["TempDecayMoves", 2]
@@ -3326,11 +3374,10 @@ function menu_build() {
 					click: () => {
 						let file = save_dialog();
 						if (typeof file === "string" && file.length > 0) {
-							win.webContents.send("set", {
-								key: "logfile",
-								value: file,
+							win.webContents.send("call", {
+								fn: "start_logging",
+								args: [file]
 							});
-							set_one_check(true, "Dev", "Use logfile...");
 						} else {
 							win.webContents.send("call", "send_ack_logfile");		// Query current state of logfile so we can get our check back.
 						}
@@ -3340,7 +3387,6 @@ function menu_build() {
 					label: "Disable logging",
 					click: () => {
 						win.webContents.send("call", "stop_logging");
-						set_one_check(false, "Dev", "Use logfile...");
 					}
 				},
 				{
