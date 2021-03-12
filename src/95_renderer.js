@@ -613,6 +613,8 @@ function NewRenderer() {
 
 		let new_pgn_choices = PreParsePGN(buf);
 
+		let start_time = performance.now();
+
 		for (let o of new_pgn_choices) {
 			try {
 				let root = LoadPGNRecord(o);
@@ -622,6 +624,8 @@ function NewRenderer() {
 				//
 			}
 		}
+
+		console.log(`Book generation took ${(performance.now() - start_time).toFixed(0)} ms.`);
 
 		this.send_ack_book();
 	};
