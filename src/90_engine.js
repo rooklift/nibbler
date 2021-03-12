@@ -294,16 +294,17 @@ function NewEngine() {
 			return;
 		}
 
-		// Main process wants to keep track of what these things are set to...
-
 		ipcRenderer.send("ack_engine_start", filepath);
 
+		// Main process wants to keep track of what these things are set to (for menu check).
 		// These will all ack the value "" to main.js since no value has been set yet...
 
 		this.send_ack_setoption_to_main_process("WeightsFile");
 		this.send_ack_setoption_to_main_process("SyzygyPath");
 		this.send_ack_setoption_to_main_process("Threads");
 		this.send_ack_setoption_to_main_process("Backend");
+		this.send_ack_setoption_to_main_process("Temperature");
+		this.send_ack_setoption_to_main_process("TempDecayMoves");
 
 		this.exe.once("error", (err) => {
 			alert(err);
