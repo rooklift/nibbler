@@ -51,6 +51,7 @@ function NewInfo(board, move) {
 	//		d
 	//		m
 	//		v
+	//		wdl
 
 	let info = Object.create(info_prototype);
 	info.__ghost = false;			// If not false, this is temporary inferred info. Will store a string to display.
