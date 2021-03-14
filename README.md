@@ -45,8 +45,6 @@ Leela forgets much of the evaluation if the position changes. To mitigate this, 
 
 Leela running out of RAM can be a problem if searches go on too long. You might like to set a reasonable node limit (in the Engine menu), perhaps 10 million or so.
 
-Note that other UCI engines should run OK if they support Chess960 castling format, but the results will be poor because we use `MultiPV`, which cripples traditional A/B engines.
-
 # Thanks
 
 Thanks to everyone in Discord and GitHub who's offered advice and suggestions; and thanks to all Lc0 devs and GPU-hours contributors!
