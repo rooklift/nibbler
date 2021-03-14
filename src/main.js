@@ -3334,17 +3334,6 @@ function menu_build() {
 					type: "separator"
 				},
 				{
-					label: "Use VerboseMoveStats ordering",
-					type: "checkbox",
-					checked: config.vms_ordering,
-					click: () => {
-						win.webContents.send("call", {
-							fn: "toggle",
-							args: ["vms_ordering"],
-						});
-					}
-				},
-				{
 					label: "Allow arbitrary scripts",
 					type: "checkbox",
 					checked: config.allow_arbitrary_scripts,

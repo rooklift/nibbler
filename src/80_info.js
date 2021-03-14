@@ -7,7 +7,6 @@ function NewInfoHandler() {
 	ih.engine_start_time = performance.now();
 	ih.ever_received_info = false;
 	ih.ever_received_q = false;
-	ih.multipv_1_in_a_row = 0;
 	ih.ever_received_errors = false;
 	ih.stderr_log = "";
 	ih.next_vms_order_int = 1;
@@ -31,7 +30,6 @@ function NewInfoHandler() {
 		this.engine_start_time = performance.now();
 		this.ever_received_info = false;
 		this.ever_received_q = false;
-		this.multipv_1_in_a_row = 0;
 		this.ever_received_errors = false;
 		this.stderr_log = "";
 		this.next_vms_order_int = 1;
@@ -86,7 +84,7 @@ function NewInfoHandler() {
 
 	};
 
-	ih.receive = function(s, node) {
+	ih.receive = function(engine, node, s) {
 
 		if (typeof s !== "string" || !node || node.destroyed) {
 			return;
@@ -121,7 +119,10 @@ function NewInfoHandler() {
 			this.ever_received_info = true;				// After the move legality check; i.e. we want REAL info
 			node.table.version++;						// Likewise
 
+			move_info.leelaish = engine.leelaish;
+
 			move_info.version = node.table.version;
+			move_info.cycle = engine_cycles;
 
 			let tmp;
 
@@ -146,13 +147,6 @@ function NewInfoHandler() {
 			tmp = parseInt(infovals["multipv"], 10);	// Engine's ranking of the move, starting at 1.
 			if (Number.isNaN(tmp) === false) {
 				move_info.multipv = tmp;
-				if (tmp > 1) {
-					this.multipv_1_in_a_row = 0;
-				} else {
-					this.multipv_1_in_a_row++;
-				}
-			} else {
-				this.multipv_1_in_a_row++;
 			}
 
 			tmp = parseInt(infovals["nodes"], 10);
@@ -208,13 +202,6 @@ function NewInfoHandler() {
 				move_info.pv = new_pv;
 			}
 
-			// If the engine isn't Leela and doesn't seem to be sending MultiPV info, remove any other moves that are in the table,
-			// to keep the display clean and current.
-
-			if (this.multipv_1_in_a_row > 3 && !this.ever_received_q) {
-				node.table.clear_moveinfo_except(move);
-			}
-
 		} else if (s.startsWith("info string")) {
 
 			// info string d2d4  (293 ) N:   12005 (+169) (P: 22.38%) (WL:  0.09480) (D:  0.326)
@@ -258,8 +245,12 @@ function NewInfoHandler() {
 			this.ever_received_info = true;				// After the move legality check; i.e. we want REAL info
 			node.table.version++;						// Likewise
 
-			move_info.leelaish = true;					// We ever received a valid info string for this move info
+			engine.leelaish = true;
+			move_info.leelaish = true;
+
 			move_info.version = node.table.version;
+			// move_info.cycle = engine_cycles;			// Don't do this for VerboseMoveStats - we get these even when searchmoves enabled.
+
 			move_info.vms_order = this.next_vms_order_int++;
 
 			tmp = parseInt(infovals["N:"], 10);
@@ -309,83 +300,6 @@ function NewInfoHandler() {
 			}
 
 		}
-	};
-
-	ih.sorted = function(node) {
-
-		// There are a lot of subtleties around sorting the moves...
-		//
-		// - We want to allow other engines than Lc0.
-		// - We want to work with low MultiPV values.
-		// - Old and stale data can be left in our cache if MultiPV is low. Moves with only old
-		//   data are often inferior to moves with new data, regardless of stats.
-		// - We want to work with searchmoves, which is bound to leave stale info in the table.
-		// - We can try and track the age of the data by various means, but these are fallible.
-
-		if (!node || node.destroyed) {
-			return [];
-		}
-
-		let info_list = [];
-
-		for (let o of Object.values(node.table.moveinfo)) {
-			info_list.push(o);
-		}
-
-		info_list.sort((a, b) => {
-
-			const a_is_best = -1;						// return -1 to sort a to the left
-			const b_is_best = 1;						// return 1 to sort a to the right
-
-			// Ordering by VerboseMoveStats (request of Napthalin)...
-
-			if (config.vms_ordering) {
-				if (a.vms_order > b.vms_order) return a_is_best;
-				if (a.vms_order < b.vms_order) return b_is_best;
-			}
-
-			// Mate - positive good, negative bad.
-			// Note our info struct uses 0 when not given.
-
-			if (Sign(a.mate) !== Sign(b.mate)) {		// negative is worst, 0 is neutral, positive is best
-				if (a.mate > b.mate) return a_is_best;
-				if (a.mate < b.mate) return b_is_best;
-			} else {									// lower (i.e. towards -Inf) is better regardless of who's mating
-				if (a.mate < b.mate) return a_is_best;
-				if (a.mate > b.mate) return b_is_best;
-			}
-
-			// Leela N score (node count) - higher is better...
-
-			if (a.n > b.n) return a_is_best;
-			if (a.n < b.n) return b_is_best;
-
-			// Leela will give an N score, so if we're here, it's some other engine,
-			// or we're breaking ties.
-
-			// If MultiPV is the same, go with the more recent data...
-
-			if (a.multipv === b.multipv) {
-				if (a.version > b.version && a.uci_nodes > b.uci_nodes) return a_is_best;
-				if (a.version < b.version && a.uci_nodes < b.uci_nodes) return b_is_best;
-			}
-
-			// I hesitate to use multipv sort sorting because of stale data issues, but...
-
-			if (a.multipv < b.multipv) return a_is_best;
-			if (a.multipv > b.multipv) return b_is_best;
-
-			// Finally, sort by CP if needed...
-
-			if (a.cp > b.cp) return a_is_best;
-			if (a.cp < b.cp) return b_is_best;
-
-			// Who knows...
-
-			return 0;
-		});
-
-		return info_list;
 	};
 
 	ih.must_draw_infobox = function() {
@@ -494,7 +408,16 @@ function NewInfoHandler() {
 			return;
 		}
 
-		let info_list = this.sorted(node);
+		let info_list = SortedMoves(node);
+
+		// As A/B moves are always sorted to the top, if the first info is A/B we should
+		// only draw the k moves (k === config.ab_engine_multipv).
+
+		if (info_list.length > 0 && info_list[0].leelaish === false) {
+			if (info_list.length > config.ab_engine_multipv) {
+				info_list = info_list.slice(0, config.ab_engine_multipv);
+			}
+		}
 
 		if (typeof config.max_info_lines === "number" && config.max_info_lines > 0) {		// Hidden option, request of rwbc
 			info_list = info_list.slice(0, config.max_info_lines);
@@ -742,7 +665,15 @@ function NewInfoHandler() {
 		let arrows = [];
 		let heads = [];
 
-		let info_list = this.sorted(node);
+		let info_list = SortedMoves(node);
+
+		let ab_engine_mode = false;
+		if (info_list.length > 0 && info_list[0].leelaish === false) {
+			ab_engine_mode = true;
+			if (info_list.length > config.ab_engine_multipv) {
+				info_list = info_list.slice(0, config.ab_engine_multipv);
+			}
+		}
 
 		// If there's some specific move we're supposed to show, and it's not actually present in the move table,
 		// we'll need to add it...
@@ -779,44 +710,39 @@ function NewInfoHandler() {
 
 			for (let i = 0; i < info_list.length; i++) {
 
-				let good_u = true;
-				let good_n = true;
+				let ok = true;
 
-				if (config.arrow_filter_type === "top") {	// Rely on the i === 0 test, below.
-					good_u = false;
-					good_n = false;
-				}
+				if (!ab_engine_mode) {
 
-				if (config.arrow_filter_type === "U") {
-					if (typeof info_list[i].u !== "number") {
-						good_u = false;
-					} else if (info_list[i].u >= config.arrow_filter_value) {
-						good_u = false;
+					if (config.arrow_filter_type === "top") {
+						if (i !== 0) {
+							ok = false;
+						}
 					}
-				}
 
-				if (config.arrow_filter_type === "N") {
-					if (typeof info_list[i].n !== "number" || info_list[i].n === 0) {
-						good_n = false;
-					} else {
-						let n_fraction = info_list[i].n / node.table.nodes;
-						if (n_fraction < config.arrow_filter_value) {
-							good_n = false;
+					if (config.arrow_filter_type === "N") {
+						if (typeof info_list[i].n !== "number" || info_list[i].n === 0) {
+							ok = false;
+						} else {
+							let n_fraction = info_list[i].n / node.table.nodes;
+							if (n_fraction < config.arrow_filter_value) {
+								ok = false;
+							}
+						}
+					}
+
+					// Moves proven to lose...
+
+					if (typeof info_list[i].u === "number" && info_list[i].u === 0 && info_list[i].value() === 0) {
+						if (config.arrow_filter_type !== "all") {
+							ok = false;
 						}
 					}
 				}
 
-				// Doomed flag, for moves proven to lose...
-
-				let doomed = typeof info_list[i].u === "number" && info_list[i].u === 0 && info_list[i].value() === 0;
-
-				if (config.arrow_filter_type === "all") {
-					doomed = false;
-				}
-
 				// Go ahead, if the various tests don't filter the move out...
 
-				if (specific_source || i === 0 || (good_u && good_n && !doomed) || info_list[i].move === show_move) {
+				if (ok || i === 0 || specific_source || info_list[i].move === show_move) {
 
 					let [x1, y1] = XY(info_list[i].move.slice(0, 2));
 					let [x2, y2] = XY(info_list[i].move.slice(2, 4));
@@ -829,20 +755,16 @@ function NewInfoHandler() {
 
 					let colour;
 
-					if (info_list[i].move === show_move && typeof config.next_move_colour === "string") {
-						if (info_list[i] === best_info && !info_list[i].__arrow_temp) {
-							colour = config.best_colour;
-						} else {
-							colour = config.next_move_colour;
-						}
+					if (info_list[i].__arrow_temp) {
+						colour = config.next_move_colour;
 					} else if (info_list[i] === best_info) {
 						colour = config.best_colour;
-					} else if (loss > config.terrible_move_threshold) {
-						colour = config.terrible_colour;
-					} else if (loss > config.bad_move_threshold) {
+					} else if (loss < config.bad_move_threshold) {
+						colour = config.good_colour;
+					} else if (loss < config.terrible_move_threshold) {
 						colour = config.bad_colour;
 					} else {
-						colour = config.good_colour;
+						colour = config.terrible_colour;
 					}
 
 					let x_head_adjustment = 0;				// Adjust head of arrow for castling moves...

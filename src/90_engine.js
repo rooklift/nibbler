@@ -83,7 +83,7 @@ function NewEngine() {
 	eng.sent_options = Object.create(null);			// Keys are always lowercase. Values are always strings.
 
 	eng.warned_send_fail = false;
-	eng.stockfish = false;				// Stupid hack; directly set by hub; affects whether info is relayed during transition.
+	eng.leelaish = false;				// Set by the info handler if a VerboseMoveStats line is received.
 
 	eng.search_running = NoSearch;		// The search actually being run right now.
 	eng.search_desired = NoSearch;		// The search we want Leela to be running. Often the same object as above.
@@ -183,6 +183,7 @@ function NewEngine() {
 
 		this.send(s);
 		this.search_running = this.search_desired;
+		engine_cycles++;
 	};
 
 	eng.set_search_desired = function(node, limit, searchmoves) {
@@ -264,13 +265,13 @@ function NewEngine() {
 		// Stockfish has a nasty habit of sending super short PVs when you stop its search.
 		// To get around that, we ignore info from SF if it comes during transition.
 
-		if (this.stockfish && this.search_desired.node !== this.search_running.node) {
-			if (config.log_info_lines) Log("(ignore SF late) < " + line);
+		if (!this.leelaish && this.search_desired.node !== this.search_running.node) {
+			if (config.log_info_lines) Log("(ignore A/B late) < " + line);
 			return;
 		}
 
 		if (config.log_info_lines) Log("< " + line);
-		this.hub.info_handler.receive(line, this.search_running.node);
+		this.hub.info_handler.receive(this, this.search_running.node, line);
 	};
 
 	eng.setoption = function(name, value) {

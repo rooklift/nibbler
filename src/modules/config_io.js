@@ -64,6 +64,8 @@ exports.defaults = {
 	"cp_white_pov": false,
 	"wdl_white_pov": false,
 
+	"ab_engine_multipv": 3,
+
 	"show_cp": false,
 	"show_n": true,
 	"show_n_abs": true,
@@ -107,7 +109,6 @@ exports.defaults = {
 	"update_delay": 170,
 	"animate_delay_multiplier": 4,
 
-	"vms_ordering": false,
 	"allow_arbitrary_scripts": false,
 
 	"search_nodes": null,

@@ -408,7 +408,7 @@ function NewRenderer() {
 	};
 
 	renderer.play_info_index = function(n) {
-		let info_list = this.info_handler.sorted(this.tree.node);
+		let info_list = SortedMoves(this.tree.node);
 		if (typeof n === "number" && n >= 0 && n < info_list.length) {
 			this.move(info_list[n].move);
 		}
@@ -829,12 +829,21 @@ function NewRenderer() {
 	renderer.receive_misc = function(s) {
 
 		if (s.startsWith("id name")) {
-			if (s.includes("Stockfish")) {
-				this.engine.stockfish = true;
+
+			// Send a reasonable MultiPV option...
+
+			if (s.includes("Lc0") || s.includes("Leela") ||s.includes("Ceres")) {
+				this.engine.setoption("MultiPV", 500);
+			} else {
+				this.engine.setoption("MultiPV", config.ab_engine_multipv);
 			}
-			if (!s.includes("Lc0") && !s.includes("Ceres")) {
+
+			// Pass unknown engines to the error handler to be displayed...
+
+			if (!s.includes("Lc0") && !s.includes("Ceres") && !s.includes("Stockfish")) {
 				this.info_handler.err_receive(s.slice("id name".length).trim());
 			}
+
 			return;
 		}
 
@@ -1915,7 +1924,7 @@ function NewRenderer() {
 			return false;
 		}
 
-		let info = this.info_handler.sorted(this.tree.node)[div_index];			// Possibly undefined
+		let info = SortedMoves(this.tree.node)[div_index];			// Possibly undefined
 
 		if (!info || Array.isArray(info.pv) === false || info.pv.length === 0) {
 			return false;
@@ -2095,7 +2104,7 @@ function NewRenderer() {
 			return;
 		}
 
-		let info = this.info_handler.sorted(node)[0];					// Possibly undefined.
+		let info = SortedMoves(node)[0];								// Possibly undefined.
 		if (info) {
 			node.table.update_eval_from_move(info.move);
 		}

@@ -17,16 +17,8 @@ const table_prototype = {
 		this.nps = 0;							// Stat sent by engine
 		this.tbhits = 0;						// Stat sent by engine
 		this.time = 0;							// Stat sent by engine
-		this.eval = null;						// Used by grapher only. Value from White's POV.
-		this.eval_nodes = 0;					// Number of search nodes used to generate the eval.
-	},
-
-	clear_moveinfo_except: function(move_to_keep) {			// For single PV engines (i.e. Stockfish normally)
-		for (let key of Object.keys(this.moveinfo)) {
-			if (key !== move_to_keep) {
-				delete this.moveinfo[key];
-			}
-		}
+		this.eval = null;						// Used by grapher only, value from White's POV
+		this.eval_nodes = 0;					// Number of search nodes used to generate the eval
 	},
 
 	update_eval_from_move: function(move) {
@@ -64,9 +56,10 @@ function NewInfo(board, move) {
 	info.__ghost = false;			// If not false, this is temporary inferred info. Will store a string to display.
 	info.board = board;
 	info.cp = 0;
+	info.cycle = 0;					// How many "go" commands Nibbler has emitted.
 	info.d = null;
 	info.depth = 0;
-	info.leelaish = false;			// Whether this info object has ever been updated from a VerboseMoveStats item.
+	info.leelaish = false;			// Whether the most recent update to this info was from an engine considered Leelaish.
 	info.m = null;
 	info.mate = 0;					// 0 can be the "not present" value.
 	info.move = move;
