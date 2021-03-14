@@ -3348,6 +3348,74 @@ function menu_build() {
 					type: "separator"
 				},
 				{
+					label: "A/B MultiPV",
+					submenu: [
+						{
+							label: "5",
+							type: "checkbox",
+							checked: config.ab_engine_multipv === 5,
+							click: () => {
+								win.webContents.send("call", {
+									fn: "set_ab_engine_multipv",
+									args: [5]
+								});
+								set_checks("Dev", "A/B MultiPV", "5");
+							}
+						},
+						{
+							label: "4",
+							type: "checkbox",
+							checked: config.ab_engine_multipv === 4,
+							click: () => {
+								win.webContents.send("call", {
+									fn: "set_ab_engine_multipv",
+									args: [4]
+								});
+								set_checks("Dev", "A/B MultiPV", "4");
+							}
+						},
+						{
+							label: "3",
+							type: "checkbox",
+							checked: config.ab_engine_multipv === 3,
+							click: () => {
+								win.webContents.send("call", {
+									fn: "set_ab_engine_multipv",
+									args: [3]
+								});
+								set_checks("Dev", "A/B MultiPV", "3");
+							}
+						},
+						{
+							label: "2",
+							type: "checkbox",
+							checked: config.ab_engine_multipv === 2,
+							click: () => {
+								win.webContents.send("call", {
+									fn: "set_ab_engine_multipv",
+									args: [2]
+								});
+								set_checks("Dev", "A/B MultiPV", "2");
+							}
+						},
+						{
+							label: "1",
+							type: "checkbox",
+							checked: config.ab_engine_multipv === 1,
+							click: () => {
+								win.webContents.send("call", {
+									fn: "set_ab_engine_multipv",
+									args: [1]
+								});
+								set_checks("Dev", "A/B MultiPV", "1");
+							}
+						},
+					]
+				},
+				{
+					type: "separator"
+				},
+				{
 					label: "Log RAM state to console",
 					click: () => {
 						win.webContents.send("call", "log_ram");
