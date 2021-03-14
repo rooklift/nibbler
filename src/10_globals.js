@@ -75,15 +75,15 @@ if (images.validate_folder(config.override_piece_directory)) {
 
 let debuggo = Object.create(null);
 
-// Options we generally want to send to Leela.......................
+// Options we generally want to send to engines.....................
 
-const leela_normal_options = {
-	"VerboseMoveStats": true,
+const standard_engine_options = {
 	"LogLiveStats": true,
 	"MultiPV": 500,
-	"SmartPruningFactor": 0,
 	"ScoreType": "centipawn",
+	"SmartPruningFactor": 0,
 	"UCI_ShowWDL": true,
+	"VerboseMoveStats": true,
 };
 
 // Yeah this seemed a good idea at the time.........................

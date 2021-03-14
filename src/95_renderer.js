@@ -830,12 +830,13 @@ function NewRenderer() {
 
 		if (s.startsWith("id name")) {
 
-			// Send a reasonable MultiPV option...
+			// Send some specific Leelaish or A/B options...
 
 			if (s.includes("Lc0") || s.includes("Leela") ||s.includes("Ceres")) {
 				this.engine.setoption("MultiPV", 500);
 			} else {
 				this.engine.setoption("MultiPV", config.ab_engine_multipv);
+				this.engine.setoption("Contempt", 0);
 			}
 
 			// Pass unknown engines to the error handler to be displayed...
@@ -1077,10 +1078,8 @@ function NewRenderer() {
 
 		this.engine.send("uci");
 
-		// Here we send the leela_normal_options...
-
-		for (let key of Object.keys(leela_normal_options)) {
-			this.engine.setoption(key, leela_normal_options[key]);
+		for (let key of Object.keys(standard_engine_options)) {
+			this.engine.setoption(key, standard_engine_options[key]);
 		}
 
 		for (let key of Object.keys(options)) {
