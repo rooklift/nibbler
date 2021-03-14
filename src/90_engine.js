@@ -83,6 +83,7 @@ function NewEngine() {
 	eng.sent_options = Object.create(null);			// Keys are always lowercase. Values are always strings.
 
 	eng.warned_send_fail = false;
+	eng.stockfish = false;				// Stupid hack; directly set by hub; affects whether info is relayed during transition.
 
 	eng.search_running = NoSearch;		// The search actually being run right now.
 	eng.search_desired = NoSearch;		// The search we want Leela to be running. Often the same object as above.
@@ -257,6 +258,14 @@ function NewEngine() {
 
 		if (this.search_running.node.destroyed) {
 			if (config.log_info_lines) Log("(ignore destroyed) < " + line);
+			return;
+		}
+
+		// Stockfish has a nasty habit of sending super short PVs when you stop its search.
+		// To get around that, we ignore info from SF if it comes during transition.
+
+		if (this.stockfish && this.search_desired.node !== this.search_running.node) {
+			if (config.log_info_lines) Log("(ignore SF late) < " + line);
 			return;
 		}
 

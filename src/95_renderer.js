@@ -829,6 +829,9 @@ function NewRenderer() {
 	renderer.receive_misc = function(s) {
 
 		if (s.startsWith("id name")) {
+			if (s.includes("Stockfish")) {
+				this.engine.stockfish = true;
+			}
 			if (!s.includes("Lc0") && !s.includes("Ceres")) {
 				this.info_handler.err_receive(s.slice("id name".length).trim());
 			}
