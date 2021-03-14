@@ -125,6 +125,7 @@ function NewInfoHandler() {
 			move_info.version = node.table.version;
 			move_info.cycle = engine_cycles;
 
+			let did_set_q_from_mate = false;
 			let tmp;
 
 			tmp = parseInt(infovals["cp"], 10);			// Score in centipawns
@@ -142,6 +143,7 @@ function NewInfoHandler() {
 				if (tmp !== 0) {
 					move_info.q = tmp > 0 ? 1 : -1;
 					move_info.cp = tmp > 0 ? 12800 : -12800;
+					did_set_q_from_mate = true;
 				}
 			}
 
@@ -182,7 +184,7 @@ function NewInfoHandler() {
 			}
 
 			move_info.wdl = InfoWDL(s);
-			if (this.ever_received_q === false && move_info.q !== 1 && Array.isArray(move_info.wdl)) {		// move_info.q was maybe set to 1 if we saw mate.
+			if (this.ever_received_q === false && !did_set_q_from_mate && Array.isArray(move_info.wdl)) {
 				move_info.q = QfromWDL(move_info.wdl);
 			}
 

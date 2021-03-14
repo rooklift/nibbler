@@ -434,12 +434,12 @@ function QfromPawns(pawns) {
 	}
 
 	let winrate = 1 / (1 + Math.pow(10, -pawns / 4));
+	let q = winrate * 2 - 1;
 
-	if (winrate > 0.999) {
-		winrate = 0.999;
-	}
+	if (q > 0.998) q = 0.998;
+	if (q < -0.998) q = -0.998;
 
-	return winrate * 2 - 1;
+	return q;
 }
 
 function QfromWDL(wdl) {
@@ -449,12 +449,12 @@ function QfromWDL(wdl) {
 	}
 
 	let winrate = (wdl[0] + (wdl[1] * 0.5)) / 1000;
+	let q = winrate * 2 - 1;
 
-	if (winrate > 0.999) {
-		winrate = 0.999;
-	}
+	if (q > 0.998) q = 0.998;
+	if (q < -0.998) q = -0.998;
 
-	return winrate * 2 - 1;
+	return q;
 }
 
 function Value(q) {					// Rescale Q to 0..1 range.
