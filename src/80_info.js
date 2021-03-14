@@ -446,7 +446,7 @@ function NewInfoHandler() {
 		// We can skip the draw if:
 		//
 		// - The last drawn board matches (implying node matches)
-		// - The last drawn version matches
+		// - The last drawn table version matches
 		// - The last drawn highlight matches
 		// - The last drawn highlight class matches
 		// - The last drawn length of the list matches
