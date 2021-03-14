@@ -107,7 +107,6 @@ exports.defaults = {
 	"update_delay": 170,
 	"animate_delay_multiplier": 4,
 
-	"vms_ordering": false,
 	"allow_arbitrary_scripts": false,
 
 	"search_nodes": null,

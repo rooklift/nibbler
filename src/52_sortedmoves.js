@@ -6,8 +6,7 @@ function SortedMoves(node) {
 	//
 	// - We want to allow other engines than Lc0.
 	// - We want to work with low MultiPV values.
-	// - Old and stale data can be left in our cache if MultiPV is low. Moves with only old
-	//   data are often inferior to moves with new data, regardless of stats.
+	// - Old and stale data can be left in our cache if MultiPV is low.
 	// - We want to work with searchmoves, which is bound to leave stale info in the table.
 	// - We can try and track the age of the data by various means, but these are fallible.
 
@@ -26,12 +25,10 @@ function SortedMoves(node) {
 		const a_is_best = -1;						// return -1 to sort a to the left
 		const b_is_best = 1;						// return 1 to sort a to the right
 
-		// Ordering by VerboseMoveStats (request of Napthalin)...
+		// Ordering by VerboseMoveStats (suggestion of Napthalin)...
 
-		if (config.vms_ordering) {
-			if (a.vms_order > b.vms_order) return a_is_best;
-			if (a.vms_order < b.vms_order) return b_is_best;
-		}
+		if (a.vms_order > b.vms_order) return a_is_best;
+		if (a.vms_order < b.vms_order) return b_is_best;
 
 		// Mate - positive good, negative bad.
 		// Note our info struct uses 0 when not given.
