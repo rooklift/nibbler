@@ -77,6 +77,9 @@ function SortedMoves(node) {
 			if (a.cp < b.cp) return b_is_best;
 		}
 
+		// It shouldn't be possible to get here. If one info is leelaish and the other isn't, they must
+		// have come from different cycles, and so should have been sorted by the cycle test at the top.
+
 		return 0;
 	});
 
