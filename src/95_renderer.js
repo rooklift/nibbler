@@ -917,7 +917,6 @@ function NewRenderer() {
 
 	renderer.forget_analysis = function() {
 		CleanTree(this.tree.root);
-		this.info_handler.must_draw_infobox();
 		this.set_behaviour("halt");					// Will cause "stop" to be sent.
 		this.engine.send("ucinewgame");				// Must happen after "stop" is sent.
 	};
