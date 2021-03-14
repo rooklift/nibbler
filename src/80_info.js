@@ -7,7 +7,6 @@ function NewInfoHandler() {
 	ih.engine_start_time = performance.now();
 	ih.ever_received_info = false;
 	ih.ever_received_q = false;
-	ih.multipv_1_in_a_row = 0;
 	ih.ever_received_errors = false;
 	ih.stderr_log = "";
 	ih.next_vms_order_int = 1;
@@ -31,7 +30,6 @@ function NewInfoHandler() {
 		this.engine_start_time = performance.now();
 		this.ever_received_info = false;
 		this.ever_received_q = false;
-		this.multipv_1_in_a_row = 0;
 		this.ever_received_errors = false;
 		this.stderr_log = "";
 		this.next_vms_order_int = 1;
@@ -146,13 +144,6 @@ function NewInfoHandler() {
 			tmp = parseInt(infovals["multipv"], 10);	// Engine's ranking of the move, starting at 1.
 			if (Number.isNaN(tmp) === false) {
 				move_info.multipv = tmp;
-				if (tmp > 1) {
-					this.multipv_1_in_a_row = 0;
-				} else {
-					this.multipv_1_in_a_row++;
-				}
-			} else {
-				this.multipv_1_in_a_row++;
 			}
 
 			tmp = parseInt(infovals["nodes"], 10);
@@ -206,13 +197,6 @@ function NewInfoHandler() {
 			if (CompareArrays(new_pv, move_info.pv) === false) {
 				move_info.nice_pv_cache = null;
 				move_info.pv = new_pv;
-			}
-
-			// If the engine isn't Leela and doesn't seem to be sending MultiPV info, remove any other moves that are in the table,
-			// to keep the display clean and current.
-
-			if (this.multipv_1_in_a_row > 3 && !this.ever_received_q) {
-				node.table.clear_moveinfo_except(move);
 			}
 
 		} else if (s.startsWith("info string")) {
