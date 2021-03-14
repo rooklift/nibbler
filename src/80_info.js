@@ -24,6 +24,7 @@ function NewInfoHandler() {
 	ih.last_drawn_version = null;
 	ih.last_drawn_highlight = null;
 	ih.last_drawn_highlight_class = null;
+	ih.last_drawn_length = 0;
 	ih.last_drawn_searchmoves = [];
 
 	ih.reset_engine_info = function() {
@@ -448,12 +449,14 @@ function NewInfoHandler() {
 		// - The last drawn version matches
 		// - The last drawn highlight matches
 		// - The last drawn highlight class matches
+		// - The last drawn length of the list matches
 		// - The searchmoves match (some possibility of false negatives due to re-ordering, but that's OK)
 
 		if (node.board === this.last_drawn_board &&
 			node.table.version === this.last_drawn_version &&
 			highlight_move === this.last_drawn_highlight_move &&
 			highlight_class === this.last_drawn_highlight_class &&
+			info_list.length === this.last_drawn_length &&
 			CompareArrays(searchmoves, this.last_drawn_searchmoves)
 		) {
 				return;
@@ -463,6 +466,7 @@ function NewInfoHandler() {
 		this.last_drawn_version = node.table.version;
 		this.last_drawn_highlight_move = highlight_move;
 		this.last_drawn_highlight_class = highlight_class;
+		this.last_drawn_length = info_list.length;
 		this.last_drawn_searchmoves = Array.from(searchmoves);
 
 		this.info_clickers = [];

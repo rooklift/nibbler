@@ -928,7 +928,6 @@ function NewRenderer() {
 		if (!this.engine.leelaish) {
 			this.engine.setoption("MultiPV", val);
 		}
-		this.info_handler.must_draw_infobox();
 	};
 
 	renderer.set_uci_option = function(name, val, save_to_cfg) {
