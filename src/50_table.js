@@ -21,14 +21,6 @@ const table_prototype = {
 		this.eval_nodes = 0;					// Number of search nodes used to generate the eval
 	},
 
-	clear_moveinfo_except: function(move_to_keep) {			// For single PV engines (i.e. Stockfish normally)
-		for (let key of Object.keys(this.moveinfo)) {
-			if (key !== move_to_keep) {
-				delete this.moveinfo[key];
-			}
-		}
-	},
-
 	update_eval_from_move: function(move) {
 
 		// move should be the best move
