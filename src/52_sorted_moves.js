@@ -25,13 +25,6 @@ function SortedMoves(node) {
 		const a_is_best = -1;						// return -1 to sort a to the left
 		const b_is_best = 1;						// return 1 to sort a to the right
 
-		// If one info is leelaish and the other isn't, that can only mean that the A/B engine
-		// is the one now running (since Lc0 will cause all info to become leelaish), therefore
-		// any moves the A/B engine has touched must be "better".
-
-		if (a.leelaish && !b.leelaish) return b_is_best;
-		if (b.leelaish && !a.leelaish) return a_is_best;
-
 		// Always prefer info from more recent "go".
 		// As well as being correct generally, it also moves searchmoves to the top.
 
