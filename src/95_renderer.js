@@ -2044,7 +2044,7 @@ function NewRenderer() {
 			canvas.style.outline = "none";
 			this.draw_move_and_active_squares(this.tree.node.move, this.active_square);
 			this.draw_enemies_in_table(this.tree.node.board);
-			this.info_handler.draw_arrows(this.tree.node, arrow_spotlight_square, next_move);
+			this.info_handler.draw_arrows(this.tree.node, arrow_spotlight_square, next_move, this.engine.sent_multipv());
 			this.draw_friendlies_in_table(this.tree.node.board);
 		}
 
@@ -2081,7 +2081,8 @@ function NewRenderer() {
 			this.mouse_point(),
 			this.active_square,
 			this.tree.node.board.active,
-			this.hoverdraw_div);
+			this.hoverdraw_div,
+			this.engine.sent_multipv());
 	};
 
 	renderer.set_special_message = function(s, css_class) {

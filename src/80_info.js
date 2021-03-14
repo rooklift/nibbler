@@ -394,7 +394,7 @@ function NewInfoHandler() {
 		}
 	};
 
-	ih.draw_infobox = function(node, mouse_point, active_square, active_colour, hoverdraw_div) {
+	ih.draw_infobox = function(node, mouse_point, active_square, active_colour, hoverdraw_div, sent_multipv) {
 
 		let searchmoves = node.searchmoves;
 
@@ -411,11 +411,11 @@ function NewInfoHandler() {
 		let info_list = SortedMoves(node);
 
 		// As A/B moves are always sorted to the top, if the first info is A/B we should
-		// only draw the k moves (k === config.ab_engine_multipv).
+		// only draw the k moves (k === sent_multipv).
 
 		if (info_list.length > 0 && info_list[0].leelaish === false) {
-			if (info_list.length > config.ab_engine_multipv) {
-				info_list = info_list.slice(0, config.ab_engine_multipv);
+			if (info_list.length > sent_multipv) {
+				info_list = info_list.slice(0, sent_multipv);
 			}
 		}
 
@@ -643,7 +643,7 @@ function NewInfoHandler() {
 		return null;
 	};
 
-	ih.draw_arrows = function(node, specific_source = null, show_move = null) {		// point and movestring
+	ih.draw_arrows = function(node, specific_source = null, show_move = null, sent_multipv = 500) {
 
 		// This function also sets up the one_click_moves array.
 
@@ -670,8 +670,8 @@ function NewInfoHandler() {
 		let ab_engine_mode = false;
 		if (info_list.length > 0 && info_list[0].leelaish === false) {
 			ab_engine_mode = true;
-			if (info_list.length > config.ab_engine_multipv) {
-				info_list = info_list.slice(0, config.ab_engine_multipv);
+			if (info_list.length > sent_multipv) {
+				info_list = info_list.slice(0, sent_multipv);
 			}
 		}
 

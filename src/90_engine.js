@@ -294,6 +294,17 @@ function NewEngine() {
 		return o;
 	};
 
+	eng.sent_multipv = function() {
+		let raw = this.sent_options["multipv"];
+		if (typeof raw === "string" && raw !== "") {
+			let tmp = parseInt(raw, 10);
+			if (Number.isNaN(tmp) === false) {
+				return tmp;
+			}
+		}
+		return 1;
+	};
+
 	eng.setup = function(filepath, args, hub) {
 
 		Log("");
