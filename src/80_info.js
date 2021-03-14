@@ -697,7 +697,7 @@ function NewInfoHandler() {
 
 			let best_info = info_list[0];		// Note that, since we may filter the list, it might not contain best_info later.
 
-			if (specific_source) {
+			if (specific_source) {				// The above has to be done before this...
 
 				let new_info_list = info_list.filter(o => o.move.slice(0, 2) === specific_source.s);
 
