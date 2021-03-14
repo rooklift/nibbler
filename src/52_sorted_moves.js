@@ -15,9 +15,13 @@ function SortedMoves(node) {
 	}
 
 	let info_list = [];
+	let latest_cycle = 0;
 
 	for (let o of Object.values(node.table.moveinfo)) {
 		info_list.push(o);
+		if (o.cycle > latest_cycle) {
+			latest_cycle = o.cycle;
+		}
 	}
 
 	info_list.sort((a, b) => {
@@ -25,11 +29,18 @@ function SortedMoves(node) {
 		const a_is_best = -1;						// return -1 to sort a to the left
 		const b_is_best = 1;						// return 1 to sort a to the right
 
-		// Always prefer info from more recent "go".
+		// Always prefer info from the current "go" specifically.
 		// As well as being correct generally, it also moves searchmoves to the top.
 
-		if (a.cycle > b.cycle) return a_is_best;
-		if (a.cycle < b.cycle) return b_is_best;
+		if (a.cycle === latest_cycle && b.cycle !== latest_cycle) return a_is_best;
+		if (a.cycle !== latest_cycle && b.cycle === latest_cycle) return b_is_best;
+
+		// If one info is leelaish and the other isn't, that can only mean that the A/B
+		// engine is the one that ran last (since Lc0 will cause all info to become
+		// leelaish), therefore any moves the A/B engine has touched must be "better".
+
+		if (a.leelaish && !b.leelaish) return b_is_best;
+		if (!a.leelaish && b.leelaish) return a_is_best;
 
 		// ----------------------------------- LEELA AND LEELA-LIKE ENGINES ----------------------------------- //
 
@@ -76,9 +87,6 @@ function SortedMoves(node) {
 			if (a.cp > b.cp) return a_is_best;
 			if (a.cp < b.cp) return b_is_best;
 		}
-
-		// It shouldn't be possible to get here. If one info is leelaish and the other isn't, they must
-		// have come from different cycles, and so should have been sorted by the cycle test at the top.
 
 		return 0;
 	});
