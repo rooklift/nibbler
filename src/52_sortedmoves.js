@@ -22,13 +22,12 @@ function SortedMoves(node) {
 
 	info_list.sort((a, b) => {
 
+
+		// FIXME - various tests here only apply if leelaish
+
+
 		const a_is_best = -1;						// return -1 to sort a to the left
 		const b_is_best = 1;						// return 1 to sort a to the right
-
-		// Ordering by VerboseMoveStats (suggestion of Napthalin)...
-
-		if (a.vms_order > b.vms_order) return a_is_best;
-		if (a.vms_order < b.vms_order) return b_is_best;
 
 		// Mate - positive good, negative bad.
 		// Note our info struct uses 0 when not given.
@@ -40,6 +39,11 @@ function SortedMoves(node) {
 			if (a.mate < b.mate) return a_is_best;
 			if (a.mate > b.mate) return b_is_best;
 		}
+
+		// Ordering by VerboseMoveStats (suggestion of Napthalin)...
+
+		if (a.vms_order > b.vms_order) return a_is_best;
+		if (a.vms_order < b.vms_order) return b_is_best;
 
 		// Leela N score (node count) - higher is better...
 

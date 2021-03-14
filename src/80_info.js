@@ -84,7 +84,7 @@ function NewInfoHandler() {
 
 	};
 
-	ih.receive = function(s, node) {
+	ih.receive = function(engine, node, s) {
 
 		if (typeof s !== "string" || !node || node.destroyed) {
 			return;
@@ -118,6 +118,8 @@ function NewInfoHandler() {
 
 			this.ever_received_info = true;				// After the move legality check; i.e. we want REAL info
 			node.table.version++;						// Likewise
+
+			move_info.leelaish = engine.leelaish;
 
 			move_info.version = node.table.version;
 
@@ -242,7 +244,9 @@ function NewInfoHandler() {
 			this.ever_received_info = true;				// After the move legality check; i.e. we want REAL info
 			node.table.version++;						// Likewise
 
-			move_info.leelaish = true;					// We ever received a valid info string for this move info
+			engine.leelaish = true;
+			move_info.leelaish = true;
+
 			move_info.version = node.table.version;
 			move_info.vms_order = this.next_vms_order_int++;
 

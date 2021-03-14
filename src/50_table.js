@@ -66,7 +66,7 @@ function NewInfo(board, move) {
 	info.cp = 0;
 	info.d = null;
 	info.depth = 0;
-	info.leelaish = false;			// Whether this info object has ever been updated from a VerboseMoveStats item.
+	info.leelaish = false;			// Whether the most recent update to this info was from an engine considered Leelaish.
 	info.m = null;
 	info.mate = 0;					// 0 can be the "not present" value.
 	info.move = move;
