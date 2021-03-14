@@ -66,7 +66,7 @@ function SortedMoves(node) {
 			if (a.depth > b.depth) return a_is_best;
 			if (a.depth < b.depth) return b_is_best;
 
-			// When depth is equal, the cp score should accurately break ties. (?)
+			// When depth is equal, the multipv score should accurately break ties. (?)
 
 			if (a.multipv < b.multipv) return a_is_best;
 			if (a.multipv > b.multipv) return b_is_best;
