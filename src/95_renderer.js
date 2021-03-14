@@ -830,13 +830,16 @@ function NewRenderer() {
 
 		if (s.startsWith("id name")) {
 
-			// Send some specific Leelaish or A/B options...
+			// Note that we do need to set the leelaish flag on the engine here so
+			// that set_ab_engine_multipv() works even if we've never received info.
 
-			if (s.includes("Lc0") || s.includes("Leela") ||s.includes("Ceres")) {
+			if (s.includes("Lc0") || s.includes("Leela") || s.includes("Ceres")) {
 				this.engine.setoption("MultiPV", 500);
+				this.engine.leelaish = true;
 			} else {
 				this.engine.setoption("MultiPV", config.ab_engine_multipv);
 				this.engine.setoption("Contempt", 0);
+				this.engine.leelaish = false;
 			}
 
 			// Pass unknown engines to the error handler to be displayed...
@@ -917,6 +920,14 @@ function NewRenderer() {
 		this.info_handler.must_draw_infobox();
 		this.set_behaviour("halt");					// Will cause "stop" to be sent.
 		this.engine.send("ucinewgame");				// Must happen after "stop" is sent.
+	};
+
+	renderer.set_ab_engine_multipv = function(val) {
+		config.ab_engine_multipv = val;
+		config_io.save(config);
+		if (!this.engine.leelaish) {
+			this.engine.setoption("MultiPV", val);
+		}
 	};
 
 	renderer.set_uci_option = function(name, val, save_to_cfg) {
