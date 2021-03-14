@@ -755,20 +755,16 @@ function NewInfoHandler() {
 
 					let colour;
 
-					if (info_list[i].move === show_move && typeof config.next_move_colour === "string") {
-						if (info_list[i] === best_info && !info_list[i].__arrow_temp) {
-							colour = config.best_colour;
-						} else {
-							colour = config.next_move_colour;
-						}
+					if (info_list[i].__arrow_temp) {
+						colour = config.next_move_colour;
 					} else if (info_list[i] === best_info) {
 						colour = config.best_colour;
-					} else if (loss > config.terrible_move_threshold) {
-						colour = config.terrible_colour;
-					} else if (loss > config.bad_move_threshold) {
+					} else if (loss < config.bad_move_threshold) {
+						colour = config.good_colour;
+					} else if (loss < config.terrible_move_threshold) {
 						colour = config.bad_colour;
 					} else {
-						colour = config.good_colour;
+						colour = config.terrible_colour;
 					}
 
 					let x_head_adjustment = 0;				// Adjust head of arrow for castling moves...
