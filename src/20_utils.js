@@ -432,15 +432,29 @@ function QfromPawns(pawns) {
 	if (typeof (pawns) !== "number") {
 		return 0.5;
 	}
+
 	let winrate = 1 / (1 + Math.pow(10, -pawns / 4));
+
+	if (winrate > 0.999) {
+		winrate = 0.999;
+	}
+
 	return winrate * 2 - 1;
 }
 
 function QfromWDL(wdl) {
+
 	if (Array.isArray(wdl) === false || wdl.length !== 3) {
 		return 0;
 	}
-	return (((wdl[0] + (wdl[1] * 0.5)) / 1000) * 2) - 1;
+
+	let winrate = (wdl[0] + (wdl[1] * 0.5)) / 1000;
+
+	if (winrate > 0.999) {
+		winrate = 0.999;
+	}
+
+	return winrate * 2 - 1;
 }
 
 function Value(q) {					// Rescale Q to 0..1 range.

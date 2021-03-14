@@ -182,7 +182,7 @@ function NewInfoHandler() {
 			}
 
 			move_info.wdl = InfoWDL(s);
-			if (this.ever_received_q === false && Array.isArray(move_info.wdl)) {
+			if (this.ever_received_q === false && move_info.q !== 1 && Array.isArray(move_info.wdl)) {		// move_info.q was maybe set to 1 if we saw mate.
 				move_info.q = QfromWDL(move_info.wdl);
 			}
 
