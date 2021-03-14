@@ -829,9 +829,21 @@ function NewRenderer() {
 	renderer.receive_misc = function(s) {
 
 		if (s.startsWith("id name")) {
+
+			// Send a reasonable MultiPV option...
+
+			if (s.includes("Lc0") || s.includes("Ceres")) {
+				this.engine.setoption("MultiPV", 500);
+			} else {
+				this.engine.setoption("MultiPV", config.ab_engine_multipv);
+			}
+
+			// Pass unknown engines to the error handler to be displayed...
+
 			if (!s.includes("Lc0") && !s.includes("Ceres") && !s.includes("Stockfish")) {
 				this.info_handler.err_receive(s.slice("id name".length).trim());
 			}
+
 			return;
 		}
 

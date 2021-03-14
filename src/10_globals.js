@@ -80,7 +80,6 @@ let debuggo = Object.create(null);
 const leela_normal_options = {
 	"VerboseMoveStats": true,
 	"LogLiveStats": true,
-	"MultiPV": 500,
 	"SmartPruningFactor": 0,
 	"ScoreType": "centipawn",
 	"UCI_ShowWDL": true,
