@@ -83,7 +83,7 @@ function NewInfo(board, move) {
 	info.v = null;
 	info.version = 0;
 	info.vms_order = 0;				// VerboseMoveStats order, 0 means not present, 1 is the worst, higher is better.
-	info.wdl = "??";
+	info.wdl = null;				// Either null or a length 3 array of ints.
 	return info;
 }
 
@@ -139,14 +139,14 @@ const info_prototype = {
 	},
 
 	wdl_string: function(white_pov) {
-		if (typeof this.wdl !== "string") {
+		if (Array.isArray(this.wdl) === false || this.wdl.length !== 3) {
 			return "?";
 		}
-		let s = this.wdl;
 		if (white_pov && this.board.active === "b") {
-			s = s.split(" ").reverse().join(" ");
+			return `${this.wdl[2]} ${this.wdl[1]} ${this.wdl[0]}`;
+		} else {
+			return `${this.wdl[0]} ${this.wdl[1]} ${this.wdl[2]}`;
 		}
-		return s;
 	},
 
 	cp_string: function(white_pov) {

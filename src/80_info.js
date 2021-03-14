@@ -129,7 +129,7 @@ function NewInfoHandler() {
 			if (Number.isNaN(tmp) === false) {
 				move_info.cp = tmp;
 				if (this.ever_received_q === false) {
-					move_info.q = QfromPawns(tmp / 100);
+					move_info.q = QfromPawns(tmp / 100);		// Potentially overwritten later by the better QfromWDL()
 				}
 				move_info.mate = 0;						// Engines will send one of cp or mate, so mate gets reset when receiving cp
 			}
@@ -187,6 +187,9 @@ function NewInfoHandler() {
 			}
 
 			move_info.wdl = InfoWDL(s);
+			if (this.ever_received_q === false && Array.isArray(move_info.wdl)) {
+				move_info.q = QfromWDL(move_info.wdl);
+			}
 
 			// If the engine isn't respecting Chess960 castling format, the PV
 			// may contain old-fashioned castling moves...

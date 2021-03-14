@@ -164,21 +164,34 @@ function C960_PV_Converter(pv, board) {
 
 function InfoWDL(s) {
 
-	// Pull the WDL out as a string.
-
 	if (typeof s !== "string") {
-		return "??";
+		return null;
 	}
 
 	let tokens = s.split(" ").filter(z => z !== "");
 
-	for (let i = 0; i < tokens.length - 1; i++) {
+	let ret = null;
+
+	for (let i = 0; i < tokens.length - 3; i++) {
 		if (tokens[i] === "wdl") {
-			return tokens.slice(i + 1, i + 4).join(" ");
+			ret = tokens.slice(i + 1, i + 4);
+			break;
 		}
 	}
 
-	return "??";
+	if (Array.isArray(ret) === false || ret.length !== 3) {
+		return null;
+	}
+
+	for (let n = 0; n < 3; n++) {
+		let tmp = parseInt(ret[n], 10);
+		if (Number.isNaN(tmp)) {
+			return null;
+		}
+		ret[n] = tmp;
+	}
+
+	return ret;
 }
 
 function CompareArrays(a, b) {
@@ -421,6 +434,13 @@ function QfromPawns(pawns) {
 	}
 	let winrate = 1 / (1 + Math.pow(10, -pawns / 4));
 	return winrate * 2 - 1;
+}
+
+function QfromWDL(wdl) {
+	if (Array.isArray(wdl) === false || wdl.length !== 3) {
+		return 0;
+	}
+	return (((wdl[0] + (wdl[1] * 0.5)) / 1000) * 2) - 1;
 }
 
 function Value(q) {					// Rescale Q to 0..1 range.
