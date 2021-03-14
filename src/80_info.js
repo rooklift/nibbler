@@ -410,6 +410,15 @@ function NewInfoHandler() {
 
 		let info_list = SortedMoves(node);
 
+		// As A/B moves are always sorted to the top, if the first info is A/B we should
+		// only draw the k moves (k === config.ab_engine_multipv).
+
+		if (info_list.length > 0 && info_list[0].leelaish === false) {
+			if (info_list.length > config.ab_engine_multipv) {
+				info_list = info_list.slice(0, config.ab_engine_multipv);
+			}
+		}
+
 		if (typeof config.max_info_lines === "number" && config.max_info_lines > 0) {		// Hidden option, request of rwbc
 			info_list = info_list.slice(0, config.max_info_lines);
 		}
@@ -658,6 +667,14 @@ function NewInfoHandler() {
 
 		let info_list = SortedMoves(node);
 
+		let ab_engine_mode = false;
+		if (info_list.length > 0 && info_list[0].leelaish === false) {
+			ab_engine_mode = true;
+			if (info_list.length > config.ab_engine_multipv) {
+				info_list = info_list.slice(0, config.ab_engine_multipv);
+			}
+		}
+
 		// If there's some specific move we're supposed to show, and it's not actually present in the move table,
 		// we'll need to add it...
 
@@ -693,44 +710,39 @@ function NewInfoHandler() {
 
 			for (let i = 0; i < info_list.length; i++) {
 
-				let good_u = true;
-				let good_n = true;
+				let ok = true;
 
-				if (config.arrow_filter_type === "top") {	// Rely on the i === 0 test, below.
-					good_u = false;
-					good_n = false;
-				}
+				if (!ab_engine_mode) {
 
-				if (config.arrow_filter_type === "U") {
-					if (typeof info_list[i].u !== "number") {
-						good_u = false;
-					} else if (info_list[i].u >= config.arrow_filter_value) {
-						good_u = false;
+					if (config.arrow_filter_type === "top") {
+						if (i !== 0) {
+							ok = false;
+						}
 					}
-				}
 
-				if (config.arrow_filter_type === "N") {
-					if (typeof info_list[i].n !== "number" || info_list[i].n === 0) {
-						good_n = false;
-					} else {
-						let n_fraction = info_list[i].n / node.table.nodes;
-						if (n_fraction < config.arrow_filter_value) {
-							good_n = false;
+					if (config.arrow_filter_type === "N") {
+						if (typeof info_list[i].n !== "number" || info_list[i].n === 0) {
+							ok = false;
+						} else {
+							let n_fraction = info_list[i].n / node.table.nodes;
+							if (n_fraction < config.arrow_filter_value) {
+								ok = false;
+							}
+						}
+					}
+
+					// Moves proven to lose...
+
+					if (typeof info_list[i].u === "number" && info_list[i].u === 0 && info_list[i].value() === 0) {
+						if (config.arrow_filter_type !== "all") {
+							ok = false;
 						}
 					}
 				}
 
-				// Doomed flag, for moves proven to lose...
-
-				let doomed = typeof info_list[i].u === "number" && info_list[i].u === 0 && info_list[i].value() === 0;
-
-				if (config.arrow_filter_type === "all") {
-					doomed = false;
-				}
-
 				// Go ahead, if the various tests don't filter the move out...
 
-				if (specific_source || i === 0 || (good_u && good_n && !doomed) || info_list[i].move === show_move) {
+				if (ok || i === 0 || specific_source || info_list[i].move === show_move) {
 
 					let [x1, y1] = XY(info_list[i].move.slice(0, 2));
 					let [x2, y2] = XY(info_list[i].move.slice(2, 4));
