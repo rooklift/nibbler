@@ -832,7 +832,7 @@ function NewRenderer() {
 
 			// Send a reasonable MultiPV option...
 
-			if (s.includes("Lc0") || s.includes("Ceres")) {
+			if (s.includes("Lc0") || s.includes("Leela") ||s.includes("Ceres")) {
 				this.engine.setoption("MultiPV", 500);
 			} else {
 				this.engine.setoption("MultiPV", config.ab_engine_multipv);
