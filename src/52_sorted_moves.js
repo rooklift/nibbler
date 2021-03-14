@@ -32,13 +32,11 @@ function SortedMoves(node) {
 		if (a.leelaish && !b.leelaish) return b_is_best;
 		if (b.leelaish && !a.leelaish) return a_is_best;
 
-		// ---------------------------------------- ALPHA-BETA ENGINES ---------------------------------------- //
+		// Always prefer info from more recent "go".
+		// As well as being correct generally, it also moves searchmoves to the top.
 
-		if (a.leelaish === false && b.leelaish === false) {
-
-			// How to reliably sort A/B output? TODO
-
-		}
+		if (a.cycle > b.cycle) return a_is_best;
+		if (a.cycle < b.cycle) return b_is_best;
 
 		// ----------------------------------- LEELA AND LEELA-LIKE ENGINES ----------------------------------- //
 
@@ -59,6 +57,31 @@ function SortedMoves(node) {
 
 			if (a.vms_order > b.vms_order) return a_is_best;
 			if (a.vms_order < b.vms_order) return b_is_best;
+
+			// Leela N score (node count) - higher is better (shouldn't be possible to get here now)...
+
+			if (a.n > b.n) return a_is_best;
+			if (a.n < b.n) return b_is_best;
+		}
+
+		// ---------------------------------------- ALPHA-BETA ENGINES ---------------------------------------- //
+
+		if (a.leelaish === false && b.leelaish === false) {
+
+			// If one move has better depth, the other move wasn't reported, because it dropped out of the best-k moves.
+
+			if (a.depth > b.depth) return a_is_best;
+			if (a.depth < b.depth) return b_is_best;
+
+			// When depth is equal, the cp score should accurately break ties. (?)
+
+			if (a.multipv < b.multipv) return a_is_best;
+			if (a.multipv > b.multipv) return b_is_best;
+
+			// Sort by CP if we somehow get here.
+
+			if (a.cp > b.cp) return a_is_best;
+			if (a.cp < b.cp) return b_is_best;
 		}
 
 		return 0;
@@ -66,36 +89,3 @@ function SortedMoves(node) {
 
 	return info_list;
 };
-
-
-
-
-
-/*
-
-			// Leela N score (node count) - higher is better...
-
-			if (a.n > b.n) return a_is_best;
-			if (a.n < b.n) return b_is_best;
-
-			// If MultiPV is the same, go with the more recent data...
-
-			if (a.multipv === b.multipv) {
-				if (a.version > b.version && a.uci_nodes > b.uci_nodes) return a_is_best;
-				if (a.version < b.version && a.uci_nodes < b.uci_nodes) return b_is_best;
-			}
-
-			// I hesitate to use multipv sort sorting because of stale data issues, but...
-
-			if (a.multipv < b.multipv) return a_is_best;
-			if (a.multipv > b.multipv) return b_is_best;
-
-			// Finally, sort by CP if needed...
-
-			if (a.cp > b.cp) return a_is_best;
-			if (a.cp < b.cp) return b_is_best;
-
-			// Who knows...
-
-			return 0;
-*/

@@ -183,6 +183,7 @@ function NewEngine() {
 
 		this.send(s);
 		this.search_running = this.search_desired;
+		engine_cycles++;
 	};
 
 	eng.set_search_desired = function(node, limit, searchmoves) {

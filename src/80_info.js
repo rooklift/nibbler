@@ -122,6 +122,7 @@ function NewInfoHandler() {
 			move_info.leelaish = engine.leelaish;
 
 			move_info.version = node.table.version;
+			move_info.cycle = engine_cycles;
 
 			let tmp;
 
@@ -248,6 +249,8 @@ function NewInfoHandler() {
 			move_info.leelaish = true;
 
 			move_info.version = node.table.version;
+			// move_info.cycle = engine_cycles;			// Don't do this for VerboseMoveStats - we get these even when searchmoves enabled.
+
 			move_info.vms_order = this.next_vms_order_int++;
 
 			tmp = parseInt(infovals["N:"], 10);
