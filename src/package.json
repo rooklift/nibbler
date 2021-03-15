@@ -1,6 +1,6 @@
 {
 	"name": "Nibbler",
-	"version": "1.7.2",
+	"version": "1.7.2-rc1",
 	"author": "Fohristiwhirl",
 	"description": "Leela Chess Zero (Lc0) interface",
 	"license": "GPL-3.0",
