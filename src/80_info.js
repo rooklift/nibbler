@@ -94,10 +94,6 @@ function NewInfoHandler() {
 			return;
 		}
 
-		if (node.table.already_autopopulated === false) {
-			node.table.autopopulate(node);
-		}
-
 		let board = node.board;
 
 		if (s.startsWith("info") && s.includes(" pv ") && !s.includes("lowerbound") && !s.includes("upperbound")) {
@@ -685,11 +681,6 @@ function NewInfoHandler() {
 			return;
 		}
 
-		boardctx.lineWidth = config.arrow_width;
-		boardctx.textAlign = "center";
-		boardctx.textBaseline = "middle";
-		boardctx.font = config.board_font;
-
 		let arrows = [];
 		let heads = [];
 
@@ -851,6 +842,8 @@ function NewInfoHandler() {
 			}
 		}
 
+		// ------------------------------------------------------------------------------------------------------------
+
 		// It looks best if the longest arrows are drawn underneath. Manhattan distance is good enough.
 		// For the sake of displaying the best pawn promotion (of the 4 possible), sort ties are broken
 		// by node counts, with lower drawn first.
@@ -870,6 +863,11 @@ function NewInfoHandler() {
 			}
 			return 0;
 		});
+
+		boardctx.lineWidth = config.arrow_width;
+		boardctx.textAlign = "center";
+		boardctx.textBaseline = "middle";
+		boardctx.font = config.board_font;
 
 		for (let o of arrows) {
 			let cc1 = CanvasCoords(o.x1, o.y1);
