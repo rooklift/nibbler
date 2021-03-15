@@ -118,8 +118,12 @@ const DrawArrows = function(node, specific_source = null, show_move = null) {
 
 				let colour;
 
-				if (info_list[i].__touched === false) {
-					colour = config.next_move_colour;
+				if (info_list[i].__touched === false) {		// There are 2 reasons this could be so...
+					if (mode === "specific") {				// 1: Showing all moves for source
+						colour = config.terrible_colour;	//
+					} else {								// 2: Showing "known next move"
+						colour = config.next_move_colour;
+					}
 				} else if (info_list[i] === best_info) {
 					colour = config.best_colour;
 				} else if (loss < config.bad_move_threshold) {
