@@ -16,12 +16,12 @@ function SortedMoves(node) {
 
 	let info_list = [];
 	let latest_cycle = 0;
+	let latest_subcycle = 0;
 
 	for (let o of Object.values(node.table.moveinfo)) {
 		info_list.push(o);
-		if (o.cycle > latest_cycle) {
-			latest_cycle = o.cycle;
-		}
+		if (o.cycle > latest_cycle) latest_cycle = o.cycle;
+		if (o.subcycle > latest_subcycle) latest_subcycle = o.subcycle;
 	}
 
 	info_list.sort((a, b) => {
@@ -35,11 +35,10 @@ function SortedMoves(node) {
 		if (a.cycle === latest_cycle && b.cycle !== latest_cycle) return a_is_best;
 		if (a.cycle !== latest_cycle && b.cycle === latest_cycle) return b_is_best;
 
-		// Prefer info from more recent "blocks" (delineated by multipv 1 info).
-		// Note that conceivably the subcycle is stuck at 0, so don't rely on this.
+		// Prefer info from the current "block" of info specifically.
 
-		if (a.subcycle > b.subcycle) return a_is_best;
-		if (a.subcycle < b.subcycle) return b_is_best;
+		if (a.subcycle === latest_subcycle && b.subcycle !== latest_subcycle) return a_is_best;
+		if (a.subcycle !== latest_subcycle && b.subcycle === latest_subcycle) return b_is_best;
 
 		// If one info is leelaish and the other isn't, that can only mean that the A/B
 		// engine is the one that ran last (since Lc0 will cause all info to become
