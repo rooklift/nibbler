@@ -36,6 +36,7 @@ function SortedMoves(node) {
 		if (a.cycle !== latest_cycle && b.cycle === latest_cycle) return b_is_best;
 
 		// Prefer info from more recent "blocks" (delineated by multipv 1 info).
+		// Note that conceivably the subcycle is stuck at 0, so don't rely on this.
 
 		if (a.subcycle > b.subcycle) return a_is_best;
 		if (a.subcycle < b.subcycle) return b_is_best;
