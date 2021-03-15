@@ -317,10 +317,6 @@ function NewInfoHandler() {
 		}
 	};
 
-	ih.must_draw_infobox = function() {
-		this.last_drawn_version = null;
-	};
-
 	ih.draw_statusbox = function(node, engine, analysing_other) {
 
 		if (!engine.ever_received_uciok) {
@@ -593,6 +589,10 @@ function NewInfoHandler() {
 
 		infobox.innerHTML = substrings.join("");
 		this.ever_drew_infobox = true;
+	};
+
+	ih.must_draw_infobox = function() {
+		this.last_drawn_version = null;
 	};
 
 	ih.moves_from_click = function(event) {
