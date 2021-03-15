@@ -39,8 +39,8 @@ function SortedMoves(node) {
 		// engine is the one that ran last (since Lc0 will cause all info to become
 		// leelaish), therefore any moves the A/B engine has touched must be "better".
 
-		if (a.leelaish && !b.leelaish) return b_is_best;
 		if (!a.leelaish && b.leelaish) return a_is_best;
+		if (a.leelaish && !b.leelaish) return b_is_best;
 
 		// ----------------------------------- LEELA AND LEELA-LIKE ENGINES ----------------------------------- //
 
