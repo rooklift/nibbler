@@ -19,6 +19,7 @@ const table_prototype = {
 		this.time = 0;							// Stat sent by engine
 		this.eval = null;						// Used by grapher only, value from White's POV
 		this.eval_nodes = 0;					// Number of search nodes used to generate the eval
+		this.already_autopopulated = false;
 	},
 
 	update_eval_from_move: function(move) {
@@ -34,6 +35,25 @@ const table_prototype = {
 		this.eval = info.board.active === "w" ? info.value() : 1 - info.value();
 		this.eval_nodes = info.uci_nodes;
 	},
+
+	autopopulate: function(node) {
+
+		if (this.already_autopopulated) {
+			return;
+		}
+
+		if (!node || node.destroyed) {
+			return;
+		}
+
+		let moves = node.board.movegen();
+
+		for (let move of moves) {
+			if (node.table.moveinfo[move] === undefined) {
+				node.table.moveinfo[move] = NewInfo(node.board, move);
+			}
+		}
+	}
 };
 
 // --------------------------------------------------------------------------------------------

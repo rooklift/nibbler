@@ -94,6 +94,10 @@ function NewInfoHandler() {
 			return;
 		}
 
+		if (node.table.already_autopopulated === false) {
+			node.table.autopopulate(node);
+		}
+
 		let board = node.board;
 
 		if (s.startsWith("info") && s.includes(" pv ") && !s.includes("lowerbound") && !s.includes("upperbound")) {
@@ -268,6 +272,7 @@ function NewInfoHandler() {
 			node.table.version++;						// Likewise
 			move_info.version = node.table.version;
 			// move_info.cycle = this.engine_cycle;		// No... we get VMS lines even when excluded by searchmoves.
+			// move_info.subcycle = this.engine_subcycle;
 
 			// ---------------------------------------------------------------------------------------------------------------------
 
@@ -421,14 +426,7 @@ function NewInfoHandler() {
 
 		let info_list = SortedMoves(node);
 
-		// As A/B moves are always sorted to the top, if the first info is A/B we should
-		// only draw the k moves (k === config.ab_engine_multipv).
-
-		if (info_list.length > 0 && info_list[0].leelaish === false) {
-			if (info_list.length > config.ab_engine_multipv) {
-				info_list = info_list.slice(0, config.ab_engine_multipv);
-			}
-		}
+		let best_subcycle = info_list.length > 0 ? info_list[0].subcycle : 0;
 
 		if (typeof config.max_info_lines === "number" && config.max_info_lines > 0) {		// Hidden option, request of rwbc
 			info_list = info_list.slice(0, config.max_info_lines);
@@ -491,6 +489,10 @@ function NewInfoHandler() {
 
 			let divclass = "infoline";
 
+			if (info.subcycle !== best_subcycle) {
+				divclass += " " + "gray";
+			}
+
 			if (info.move === highlight_move) {
 				divclass += " " + highlight_class;
 			}
@@ -519,7 +521,11 @@ function NewInfoHandler() {
 				}
 			}
 
-			substrings.push(`<span class="blue">${value_string} </span>`);
+			if (info.subcycle === best_subcycle) {
+				substrings.push(`<span class="blue">${value_string} </span>`);
+			} else {
+				substrings.push(`${value_string} `);
+			}
 
 			// The PV...
 
@@ -528,9 +534,12 @@ function NewInfoHandler() {
 			let nice_pv = info.nice_pv();
 
 			for (let i = 0; i < nice_pv.length; i++) {
-				let spanclass = colour === "w" ? "white" : "pink";
+				let spanclass = "";
+				if (info.subcycle === best_subcycle) {
+					spanclass = colour === "w" ? "white" : "pink";
+				}
 				if (nice_pv[i].includes("O-O")) {
-					spanclass += " nobr";
+					spanclass += (spanclass.length > 0) ? " nobr" : "nobr";
 				}
 
 				let numstring = "";
