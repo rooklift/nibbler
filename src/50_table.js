@@ -53,6 +53,8 @@ const table_prototype = {
 				node.table.moveinfo[move] = NewInfo(node.board, move);
 			}
 		}
+
+		this.already_autopopulated = true;
 	}
 };
 
