@@ -569,6 +569,7 @@ function NewInfoHandler() {
 				{
 					n:             config.show_n,
 					n_abs:         config.show_n_abs,
+					depth:         config.show_depth,
 					wdl:           config.show_wdl,
 					wdl_white_pov: config.wdl_white_pov,
 					p:             config.show_p,

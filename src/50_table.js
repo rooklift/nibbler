@@ -231,6 +231,14 @@ const info_prototype = {
 
 		// Everything else...
 
+		if (opts.depth) {
+			if (typeof this.depth === "number" && this.depth > 0) {
+				ret.push(`depth: ${this.depth}`);
+			} else {
+				ret.push(`depth: 0`);
+			}
+		}
+
 		if (opts.p) {
 			if (typeof this.p === "number" && this.p > 0) {
 				ret.push(`P: ${this.p}%`);

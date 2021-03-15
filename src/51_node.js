@@ -280,6 +280,7 @@ const node_prototype = {
 			n:             config.pgn_n,
 			n_abs:         config.pgn_n_abs,
 			of_n:          config.pgn_of_n,
+			depth:         config.pgn_depth,
 			wdl:           config.pgn_wdl,
 			p:             config.pgn_p,
 			m:             config.pgn_m,
