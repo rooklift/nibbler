@@ -2,6 +2,8 @@
 
 // DrawArrows is attached as a method to the info_handler... "this" refers to that.
 
+let draw_arrows_last_mode = null;		// For debugging.
+
 const DrawArrows = function(node, specific_source = null, show_move = null) {
 
 	// Function also sets up the one_click_moves array.
@@ -22,16 +24,19 @@ const DrawArrows = function(node, specific_source = null, show_move = null) {
 		return;
 	}
 
+	let best_info = full_list[0];		// Note that, since we may filter the list, it might not contain best_info later.
+
 	let info_list = [];
 	let arrows = [];
 	let heads = [];
 
 	let mode = "normal";
 	if (full_list[0].leelaish === false) mode = "ab";
+	if (full_list[0].__ghost) mode = "ghost";
 	if (full_list[0].__touched === false) mode = "untouched";
 	if (specific_source) mode = "specific";
 
-	let best_info = full_list[0];		// Note that, since we may filter the list, it might not contain best_info later.
+	draw_arrows_last_mode = mode;		// For debugging only.
 
 	switch (mode) {
 
@@ -44,6 +49,15 @@ const DrawArrows = function(node, specific_source = null, show_move = null) {
 
 		for (let info of full_list) {
 			if ((info.__touched && info_list.length < config.ab_engine_multipv) || info.move === show_move) {
+				info_list.push(info);
+			}
+		}
+		break;
+
+	case "ghost":
+
+		for (let info of full_list) {
+			if (info.__ghost || info.move === show_move) {
 				info_list.push(info);
 			}
 		}
@@ -68,6 +82,8 @@ const DrawArrows = function(node, specific_source = null, show_move = null) {
 		break;
 
 	}
+
+	// ------------------------------------------------------------------------------------------------------------
 
 	if (info_list.length > 0) {
 
