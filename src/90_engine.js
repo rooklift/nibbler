@@ -184,6 +184,7 @@ function NewEngine(hub) {
 		this.send(s);
 		this.search_running = this.search_desired;
 		this.hub.info_handler.engine_cycle++;
+		this.hub.info_handler.engine_subcycle++;
 	};
 
 	eng.set_search_desired = function(node, limit, searchmoves) {
