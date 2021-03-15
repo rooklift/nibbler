@@ -427,6 +427,9 @@ function NewInfoHandler() {
 		let info_list = SortedMoves(node);
 
 		let best_subcycle = info_list.length > 0 ? info_list[0].subcycle : 0;
+		if (best_subcycle === 0) {		// Because all info was autopopulated
+			best_subcycle = -1;
+		}
 
 		if (typeof config.max_info_lines === "number" && config.max_info_lines > 0) {		// Hidden option, request of rwbc
 			info_list = info_list.slice(0, config.max_info_lines);

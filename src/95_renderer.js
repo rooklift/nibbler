@@ -299,6 +299,7 @@ function NewRenderer() {
 
 		new_info.__ghost = true;
 		new_info.__touched = true;
+		new_info.subcycle = 1;		// Crude hack, makes draw_infobox() make other moves gray.
 		new_info.pv = pv;
 		new_info.q = oldinfo.q;
 		new_info.cp = oldinfo.cp;
