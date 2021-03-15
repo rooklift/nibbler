@@ -185,6 +185,10 @@ const info_prototype = {
 
 	stats_list: function(opts, total_nodes) {		// We pass total_nodes rather than use this.uci_nodes which can be obsolete (e.g. due to searchmoves)
 
+		if (this.__ghost) {
+			return ["Inferred"];
+		}
+
 		let ret = [];
 
 		if (opts.ev) {
