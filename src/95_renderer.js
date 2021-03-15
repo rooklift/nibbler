@@ -1056,8 +1056,8 @@ function NewRenderer() {
 
 	renderer.engine_start = function(filepath, args) {
 
-		this.engine.shutdown();
-		this.engine = NewEngine(this);				// Don't reuse engine objects, even a dummy object that had no exe.
+		this.engine.shutdown();						// Don't reuse engine objects, not even a dummy object
+		this.engine = NewEngine(this);				// that had no exe (sync issues due to fake "go" sends)
 
 		this.info_handler.reset_engine_info();
 		this.info_handler.must_draw_infobox();		// To displace the new stderr log that appears.
