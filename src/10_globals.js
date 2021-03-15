@@ -55,8 +55,6 @@ let config = config_io.load();
 let next_node_id = 1;
 let live_nodes = Object.create(null);
 
-let engine_cycles = 0;		// Count of "go" commands emitted. Since Engine can change, can't store this in Engine objects
-
 // Replace the renderer's built-in alert()..........................
 
 let alert = (msg) => {

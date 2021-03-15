@@ -66,11 +66,11 @@ function SearchParams(node = null, limit = null, searchmoves = null) {
 	});
 }
 
-function NewEngine() {
+function NewEngine(hub) {
 
 	let eng = Object.create(null);
 
-	eng.hub = null;
+	eng.hub = hub;
 	eng.exe = null;
 	eng.scanner = null;
 	eng.err_scanner = null;
@@ -183,7 +183,7 @@ function NewEngine() {
 
 		this.send(s);
 		this.search_running = this.search_desired;
-		engine_cycles++;
+		this.hub.info_handler.engine_cycle++;
 	};
 
 	eng.set_search_desired = function(node, limit, searchmoves) {
@@ -305,13 +305,11 @@ function NewEngine() {
 		return 1;
 	};
 
-	eng.setup = function(filepath, args, hub) {
+	eng.setup = function(filepath, args) {
 
 		Log("");
 		Log(`Launching ${filepath}`);
 		Log("");
-
-		this.hub = hub;
 
 		try {
 			this.exe = child_process.spawn(filepath, args, {cwd: path.dirname(filepath)});

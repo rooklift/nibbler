@@ -4,7 +4,7 @@ function NewRenderer() {
 
 	let renderer = Object.create(null);
 
-	renderer.engine = NewEngine();								// Still needs its setup() called.
+	renderer.engine = NewEngine(renderer);						// Just a dummy object with no exe. Fixed by start.js later.
 	renderer.tree = NewTreeHandler();
 	renderer.grapher = NewGrapher();
 	renderer.info_handler = NewInfoHandler();
@@ -1056,10 +1056,8 @@ function NewRenderer() {
 
 	renderer.engine_start = function(filepath, args) {
 
-		if (this.engine.exe) {						// We already have an engine connection (possibly non-functioning, but still...)
-			this.engine.shutdown();
-			this.engine = NewEngine();
-		}
+		this.engine.shutdown();
+		this.engine = NewEngine(this);				// Don't reuse engine objects, even a dummy object that had no exe.
 
 		this.info_handler.reset_engine_info();
 		this.info_handler.must_draw_infobox();		// To displace the new stderr log that appears.

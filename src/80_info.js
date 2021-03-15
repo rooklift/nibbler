@@ -11,6 +11,8 @@ function NewInfoHandler() {
 	ih.stderr_log = "";
 	ih.next_vms_order_int = 1;
 
+	ih.engine_cycle = 0;		// Count of "go" commands emitted. Since Engine can change, can't store this in Engine objects
+
 	ih.ever_drew_infobox = false;
 
 	ih.one_click_moves = New2DArray(8, 8, null);	// Array of possible one-click moves. Updated by draw_arrows().
@@ -128,7 +130,7 @@ function NewInfoHandler() {
 			this.ever_received_info = true;				// After the move legality check; i.e. we want REAL info
 			node.table.version++;						// Likewise
 			move_info.version = node.table.version;
-			move_info.cycle = engine_cycles;
+			move_info.cycle = this.engine_cycle;
 
 			// ---------------------------------------------------------------------------------------------------------------------
 
@@ -259,7 +261,7 @@ function NewInfoHandler() {
 			this.ever_received_info = true;				// After the move legality check; i.e. we want REAL info
 			node.table.version++;						// Likewise
 			move_info.version = node.table.version;
-			// move_info.cycle = engine_cycles;			// No... we get VMS lines even when excluded by searchmoves.
+			// move_info.cycle = this.engine_cycle;		// No... we get VMS lines even when excluded by searchmoves.
 
 			// ---------------------------------------------------------------------------------------------------------------------
 
