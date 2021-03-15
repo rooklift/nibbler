@@ -2,9 +2,9 @@
 
 // DrawArrows is attached as a method to the info_handler... "this" refers to that.
 
-ih.draw_arrows = function(node, specific_source = null, show_move = null) {
+const DrawArrows = function(node, specific_source = null, show_move = null) {
 
-	// This function also sets up the one_click_moves array.
+	// Function also sets up the one_click_moves array.
 
 	for (let x = 0; x < 8; x++) {
 		for (let y = 0; y < 8; y++) {
@@ -16,58 +16,66 @@ ih.draw_arrows = function(node, specific_source = null, show_move = null) {
 		return;
 	}
 
+	let full_list = SortedMoves(node);
+
+	if (full_list.length === 0) {		// Keep this test early so we can assume full_list[0] exists later.
+		return;
+	}
+
+	let info_list = [];
 	let arrows = [];
 	let heads = [];
 
-	let info_list = SortedMoves(node);
+	let mode = "normal";
+	if (full_list[0].leelaish === false) mode = "ab";
+	if (full_list[0].__touched === false) mode = "untouched";
+	if (specific_source) mode = "specific";
 
-	let ab_engine_mode = false;
+	let best_info = full_list[0];		// Note that, since we may filter the list, it might not contain best_info later.
 
-	if (!specific_source && info_list.length > 0 && info_list[0].leelaish === false) {
-		ab_engine_mode = true;
-		if (info_list.length > config.ab_engine_multipv) {
-			info_list = info_list.slice(0, config.ab_engine_multipv);
-		}
-	}
+	switch (mode) {
 
-	// If there's some specific move we're supposed to show, and it's not actually present in the move table,
-	// we'll need to add it...
+	case "normal":
 
-	if (show_move) {
-		let present = false;
-		for (let info of info_list) {
-			if (info.move === show_move) {
-				present = true;
-				break;
+		info_list = full_list;
+		break;
+
+	case "ab":
+
+		for (let info of full_list) {
+			if ((info.__touched && info_list.length < config.ab_engine_multipv) || info.move === show_move) {
+				info_list.push(info);
 			}
 		}
-		if (present === false) {
-			let temp_info = NewInfo(node.board, show_move);
-			temp_info.__arrow_temp = true;
-			info_list.push(temp_info);
+		break;
+
+	case "untouched":
+
+		for (let info of full_list) {
+			if (info.move === show_move) {
+				info_list.push(info);
+			}
 		}
+		break;
+
+	case "specific":
+
+		for (let info of full_list) {
+			if (info.move.slice(0, 2) === specific_source.s || info.move === show_move) {
+				info_list.push(info);
+			}
+		}
+		break;
+
 	}
 
 	if (info_list.length > 0) {
-
-		let best_info = info_list[0];		// Note that, since we may filter the list, it might not contain best_info later.
-
-		if (specific_source) {				// The above has to be done before this...
-
-			let new_info_list = info_list.filter(o => o.move.slice(0, 2) === specific_source.s);
-
-			if (new_info_list.length > 0) {
-				info_list = new_info_list;
-			} else {
-				specific_source = null;
-			}
-		}
 
 		for (let i = 0; i < info_list.length; i++) {
 
 			let ok = true;
 
-			if (!ab_engine_mode) {
+			if (mode !== "ab") {
 
 				if (config.arrow_filter_type === "top") {
 					if (i !== 0) {
@@ -110,7 +118,7 @@ ih.draw_arrows = function(node, specific_source = null, show_move = null) {
 
 				let colour;
 
-				if (info_list[i].__arrow_temp) {
+				if (info_list[i].__touched === false) {
 					colour = config.next_move_colour;
 				} else if (info_list[i] === best_info) {
 					colour = config.best_colour;
@@ -255,7 +263,7 @@ ih.draw_arrows = function(node, specific_source = null, show_move = null) {
 			break;
 		}
 
-		if (o.info.__arrow_temp) {							// The info was created above just to have an arrow.
+		if (o.info.__touched === false) {
 			s = "?";
 		}
 
