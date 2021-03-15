@@ -285,7 +285,6 @@ const node_prototype = {
 			m:             config.pgn_m,
 			v:             config.pgn_v,
 			q:             config.pgn_q,
-			d:             config.pgn_d,
 			u:             config.pgn_u,
 			s:             config.pgn_s,
 		}, total_nodes);

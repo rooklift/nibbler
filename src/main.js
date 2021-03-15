@@ -485,17 +485,6 @@ function menu_build() {
 							}
 						},
 						{
-							label: "D",
-							type: "checkbox",
-							checked: config.pgn_d,
-							click: () => {
-								win.webContents.send("call", {
-									fn: "toggle",
-									args: ["pgn_d"],
-								});
-							}
-						},
-						{
 							label: "WDL",
 							type: "checkbox",
 							checked: config.pgn_wdl,
@@ -1201,17 +1190,6 @@ function menu_build() {
 								win.webContents.send("call", {
 									fn: "toggle",
 									args: ["show_m"],
-								});
-							}
-						},
-						{
-							label: "D - draw chance",
-							type: "checkbox",
-							checked: config.show_d,
-							click: () => {
-								win.webContents.send("call", {
-									fn: "toggle",
-									args: ["show_d"],
 								});
 							}
 						},

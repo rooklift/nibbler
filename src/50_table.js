@@ -58,7 +58,6 @@ function NewInfo(board, move) {
 	info.board = board;
 	info.cp = 0;
 	info.cycle = 0;					// How many "go" commands Nibbler has emitted.
-	info.d = null;
 	info.depth = 0;
 	info.leelaish = false;			// Whether the most recent update to this info was from an engine considered Leelaish.
 	info.m = null;
@@ -273,14 +272,6 @@ const info_prototype = {
 				}
 			} else {
 				ret.push(`M: ?`);
-			}
-		}
-
-		if (opts.d) {
-			if (typeof this.d === "number") {
-				ret.push(`D: ${this.d.toFixed(3)}`);
-			} else {
-				ret.push(`D: ?`);
 			}
 		}
 

@@ -75,7 +75,6 @@ exports.defaults = {
 	"show_u": false,
 	"show_s": false,
 	"show_m": false,
-	"show_d": false,
 	"show_wdl": true,
 	"infobox_stats_newline": false,
 	"infobox_pv_move_numbers": false,
@@ -95,7 +94,6 @@ exports.defaults = {
 	"pgn_u": false,
 	"pgn_s": false,
 	"pgn_m": false,
-	"pgn_d": false,
 	"pgn_wdl": false,
 
 	"pgn_dialog_folder": "",

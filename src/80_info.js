@@ -261,11 +261,6 @@ function NewInfoHandler() {
 				move_info.n = tmp;
 			}
 
-			tmp = parseFloat(infovals["(D:"]);
-			if (Number.isNaN(tmp) === false) {
-				move_info.d = tmp;
-			}
-
 			tmp = parseFloat(infovals["(U:"]);
 			if (Number.isNaN(tmp) === false) {
 				move_info.u = tmp;
@@ -558,7 +553,6 @@ function NewInfoHandler() {
 					m:             config.show_m,
 					v:             config.show_v,
 					q:             config.show_q,
-					d:             config.show_d,
 					u:             config.show_u,
 					s:             config.show_s,
 				}, node.table.nodes);
