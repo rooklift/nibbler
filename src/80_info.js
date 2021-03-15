@@ -565,26 +565,29 @@ function NewInfoHandler() {
 
 			// The extra stats...
 
-			let extra_stat_strings = info.stats_list(
-				{
-					n:             config.show_n,
-					n_abs:         config.show_n_abs,
-					depth:         config.show_depth,
-					wdl:           config.show_wdl,
-					wdl_white_pov: config.wdl_white_pov,
-					p:             config.show_p,
-					m:             config.show_m,
-					v:             config.show_v,
-					q:             config.show_q,
-					u:             config.show_u,
-					s:             config.show_s,
-				}, node.table.nodes);
+			if (info.__touched) {
 
-			if (extra_stat_strings.length > 0) {
-				if (config.infobox_stats_newline) {
-					substrings.push("<br>");
+				let extra_stat_strings = info.stats_list(
+					{
+						n:             config.show_n,
+						n_abs:         config.show_n_abs,
+						depth:         config.show_depth,
+						wdl:           config.show_wdl,
+						wdl_white_pov: config.wdl_white_pov,
+						p:             config.show_p,
+						m:             config.show_m,
+						v:             config.show_v,
+						q:             config.show_q,
+						u:             config.show_u,
+						s:             config.show_s,
+					}, node.table.nodes);
+
+				if (extra_stat_strings.length > 0) {
+					if (config.infobox_stats_newline) {
+						substrings.push("<br>");
+					}
+					substrings.push(`<span class="gray">(${extra_stat_strings.join(', ')})</span>`);
 				}
-				substrings.push(`<span class="gray">(${extra_stat_strings.join(', ')})</span>`);
 			}
 
 			// Close the whole div...
