@@ -29,6 +29,11 @@ function SortedMoves(node) {
 		const a_is_best = -1;						// return -1 to sort a to the left
 		const b_is_best = 1;						// return 1 to sort a to the right
 
+		// Info that hasn't been touched must be worse...
+
+		if (a.__touched && !b.__touched) return a_is_best;
+		if (!a.__touched && b.__touched) return b_is_best;
+
 		// Always prefer info from the current "go" specifically.
 		// As well as being correct generally, it also moves searchmoves to the top.
 

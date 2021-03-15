@@ -19,6 +19,7 @@ function NewTreeHandler() {
 	Object.assign(handler, tree_draw_props);
 	handler.root = NewRoot();
 	handler.node = handler.root;
+	handler.node.table.autopopulate(handler.root);
 	return handler;
 }
 
@@ -37,6 +38,7 @@ let tree_manipulation_props = {
 		DestroyTree(this.root);
 		this.root = root;
 		this.node = root;
+		this.node.table.autopopulate(this.root);
 		this.tree_version++;
 		this.dom_from_scratch();
 		return true;

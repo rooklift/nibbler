@@ -38,11 +38,15 @@ const table_prototype = {
 
 	autopopulate: function(node) {
 
+		if (!node) {
+			throw "autopopulate() requires node argument";
+		}
+
 		if (this.already_autopopulated) {
 			return;
 		}
 
-		if (!node || node.destroyed) {
+		if (node.destroyed) {
 			return;
 		}
 
