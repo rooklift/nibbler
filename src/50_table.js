@@ -69,6 +69,7 @@ function NewInfo(board, move) {
 	info.board = board;
 	info.move = move;
 	info.__ghost = false;			// If not false, this is temporary inferred info. Will store a string to display.
+	info.__touched = false;			// Has this ever actually been updated?
 	info.leelaish = false;			// Whether the most recent update to this info was from an engine considered Leelaish.
 	info.pv = [move];				// Warning: never assume this is a legal sequence.
 	info.nice_pv_cache = null;
@@ -136,7 +137,7 @@ const info_prototype = {
 	},
 
 	value_string: function(dp, white_pov) {
-		if (typeof this.q !== "number") {
+		if (!this.__touched || typeof this.q !== "number") {
 			return "?";
 		}
 		if (this.leelaish && this.n === 0) {
@@ -149,19 +150,8 @@ const info_prototype = {
 		return (val * 100).toFixed(dp);
 	},
 
-	wdl_string: function(white_pov) {
-		if (Array.isArray(this.wdl) === false || this.wdl.length !== 3) {
-			return "?";
-		}
-		if (white_pov && this.board.active === "b") {
-			return `${this.wdl[2]} ${this.wdl[1]} ${this.wdl[0]}`;
-		} else {
-			return `${this.wdl[0]} ${this.wdl[1]} ${this.wdl[2]}`;
-		}
-	},
-
 	cp_string: function(white_pov) {
-		if (typeof this.cp !== "number") {
+		if (!this.__touched || typeof this.cp !== "number") {
 			return "?";
 		}
 		if (this.leelaish && this.n === 0) {
@@ -178,18 +168,14 @@ const info_prototype = {
 		return ret;
 	},
 
-	mate_string: function(white_pov) {
-		if (typeof this.mate !== "number" || this.mate === 0) {
+	wdl_string: function(white_pov) {
+		if (Array.isArray(this.wdl) === false || this.wdl.length !== 3) {
 			return "?";
 		}
-		let mate = this.mate;
-		if (white_pov && this.board.active === "b") {	// Is this the convention? Should check some time...
-			mate = 0 - mate;
-		}
-		if (mate < 0) {
-			return "-M" + (0 - mate).toString();
+		if (white_pov && this.board.active === "b") {
+			return `${this.wdl[2]} ${this.wdl[1]} ${this.wdl[0]}`;
 		} else {
-			return "M" + mate.toString();
+			return `${this.wdl[0]} ${this.wdl[1]} ${this.wdl[2]}`;
 		}
 	},
 

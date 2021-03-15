@@ -284,6 +284,7 @@ function NewRenderer() {
 		let new_info = NewInfo(node.board, nextmove);
 
 		new_info.__ghost = true;
+		new_info.__touched = true;
 		new_info.pv = pv;
 		new_info.q = oldinfo.q;
 		new_info.cp = oldinfo.cp;
