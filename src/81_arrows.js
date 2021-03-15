@@ -93,121 +93,118 @@ function DrawArrows(node, specific_source = null, show_move = null) {
 
 	// ------------------------------------------------------------------------------------------------------------
 
-	if (info_list.length > 0) {
+	for (let i = 0; i < info_list.length; i++) {
 
-		for (let i = 0; i < info_list.length; i++) {
+		let ok = true;
 
-			let ok = true;
+		if (mode !== "ab") {
 
-			if (mode !== "ab") {
-
-				if (config.arrow_filter_type === "top") {
-					if (i !== 0) {
-						ok = false;
-					}
+			if (config.arrow_filter_type === "top") {
+				if (i !== 0) {
+					ok = false;
 				}
+			}
 
-				if (config.arrow_filter_type === "N") {
-					if (typeof info_list[i].n !== "number" || info_list[i].n === 0) {
-						ok = false;
-					} else {
-						let n_fraction = info_list[i].n / node.table.nodes;
-						if (n_fraction < config.arrow_filter_value) {
-							ok = false;
-						}
-					}
-				}
-
-				// Moves proven to lose...
-
-				if (typeof info_list[i].u === "number" && info_list[i].u === 0 && info_list[i].value() === 0) {
-					if (config.arrow_filter_type !== "all") {
+			if (config.arrow_filter_type === "N") {
+				if (typeof info_list[i].n !== "number" || info_list[i].n === 0) {
+					ok = false;
+				} else {
+					let n_fraction = info_list[i].n / node.table.nodes;
+					if (n_fraction < config.arrow_filter_value) {
 						ok = false;
 					}
 				}
 			}
 
-			// Go ahead, if the various tests don't filter the move out...
+			// Moves proven to lose...
 
-			if (ok || i === 0 || specific_source || info_list[i].move === show_move) {
+			if (typeof info_list[i].u === "number" && info_list[i].u === 0 && info_list[i].value() === 0) {
+				if (config.arrow_filter_type !== "all") {
+					ok = false;
+				}
+			}
+		}
 
-				let [x1, y1] = XY(info_list[i].move.slice(0, 2));
-				let [x2, y2] = XY(info_list[i].move.slice(2, 4));
+		// Go ahead, if the various tests don't filter the move out...
 
-				let loss = 0;
+		if (ok || i === 0 || specific_source || info_list[i].move === show_move) {
 
-				if (typeof best_info.q === "number" && typeof info_list[i].q === "number") {
-					loss = best_info.value() - info_list[i].value();
+			let [x1, y1] = XY(info_list[i].move.slice(0, 2));
+			let [x2, y2] = XY(info_list[i].move.slice(2, 4));
+
+			let loss = 0;
+
+			if (typeof best_info.q === "number" && typeof info_list[i].q === "number") {
+				loss = best_info.value() - info_list[i].value();
+			}
+
+			let colour;
+
+			if (info_list[i].__touched === false) {		// There are 2 reasons this could be so...
+				if (mode === "specific") {				// 1: Showing all moves for source
+					colour = config.terrible_colour;	//
+				} else {								// 2: Showing "known next move"
+					colour = config.next_move_colour;
+				}
+			} else if (info_list[i] === best_info) {
+				colour = config.best_colour;
+			} else if (loss < config.bad_move_threshold) {
+				colour = config.good_colour;
+			} else if (loss < config.terrible_move_threshold) {
+				colour = config.bad_colour;
+			} else {
+				colour = config.terrible_colour;
+			}
+
+			let x_head_adjustment = 0;				// Adjust head of arrow for castling moves...
+			let normal_castling_flag = false;
+
+			if (node.board && node.board.colour(Point(x1, y1)) === node.board.colour(Point(x2, y2))) {
+
+				// So the move is a castling move (reminder: as of 1.1.6 castling format is king-onto-rook).
+
+				if (node.board.normalchess) {
+					normal_castling_flag = true;	// ...and we are playing normal Chess (not 960).
 				}
 
-				let colour;
-
-				if (info_list[i].__touched === false) {		// There are 2 reasons this could be so...
-					if (mode === "specific") {				// 1: Showing all moves for source
-						colour = config.terrible_colour;	//
-					} else {								// 2: Showing "known next move"
-						colour = config.next_move_colour;
-					}
-				} else if (info_list[i] === best_info) {
-					colour = config.best_colour;
-				} else if (loss < config.bad_move_threshold) {
-					colour = config.good_colour;
-				} else if (loss < config.terrible_move_threshold) {
-					colour = config.bad_colour;
+				if (x2 > x1) {
+					x_head_adjustment = normal_castling_flag ? -1 : -0.5;
 				} else {
-					colour = config.terrible_colour;
+					x_head_adjustment = normal_castling_flag ? 2 : 0.5;
 				}
+			}
 
-				let x_head_adjustment = 0;				// Adjust head of arrow for castling moves...
-				let normal_castling_flag = false;
+			arrows.push({
+				colour: colour,
+				x1: x1,
+				y1: y1,
+				x2: x2 + x_head_adjustment,
+				y2: y2,
+				info: info_list[i]
+			});
 
-				if (node.board && node.board.colour(Point(x1, y1)) === node.board.colour(Point(x2, y2))) {
+			// If there is no one_click_move set for the target square, then set it
+			// and also set an arrowhead to be drawn later.
 
-					// So the move is a castling move (reminder: as of 1.1.6 castling format is king-onto-rook).
-
-					if (node.board.normalchess) {
-						normal_castling_flag = true;	// ...and we are playing normal Chess (not 960).
-					}
-
-					if (x2 > x1) {
-						x_head_adjustment = normal_castling_flag ? -1 : -0.5;
-					} else {
-						x_head_adjustment = normal_castling_flag ? 2 : 0.5;
-					}
+			if (normal_castling_flag) {
+				if (!this.one_click_moves[x2 + x_head_adjustment][y2]) {
+					heads.push({
+						colour: colour,
+						x2: x2 + x_head_adjustment,
+						y2: y2,
+						info: info_list[i]
+					});
+					this.one_click_moves[x2 + x_head_adjustment][y2] = info_list[i].move;
 				}
-
-				arrows.push({
-					colour: colour,
-					x1: x1,
-					y1: y1,
-					x2: x2 + x_head_adjustment,
-					y2: y2,
-					info: info_list[i]
-				});
-
-				// If there is no one_click_move set for the target square, then set it
-				// and also set an arrowhead to be drawn later.
-
-				if (normal_castling_flag) {
-					if (!this.one_click_moves[x2 + x_head_adjustment][y2]) {
-						heads.push({
-							colour: colour,
-							x2: x2 + x_head_adjustment,
-							y2: y2,
-							info: info_list[i]
-						});
-						this.one_click_moves[x2 + x_head_adjustment][y2] = info_list[i].move;
-					}
-				} else {
-					if (!this.one_click_moves[x2][y2]) {
-						heads.push({
-							colour: colour,
-							x2: x2 + x_head_adjustment,
-							y2: y2,
-							info: info_list[i]
-						});
-						this.one_click_moves[x2][y2] = info_list[i].move;
-					}
+			} else {
+				if (!this.one_click_moves[x2][y2]) {
+					heads.push({
+						colour: colour,
+						x2: x2 + x_head_adjustment,
+						y2: y2,
+						info: info_list[i]
+					});
+					this.one_click_moves[x2][y2] = info_list[i].move;
 				}
 			}
 		}
