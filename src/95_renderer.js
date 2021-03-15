@@ -830,11 +830,11 @@ function NewRenderer() {
 
 		if (s.startsWith("id name")) {
 
-			// Note that we do need to set the leelaish flag on the engine here so
-			// that set_ab_engine_multipv() works even if we've never received info.
+			// Note that we do need to set the leelaish flag on the engine here (rather than relying on the
+			// autodetection in info.js) so that hub.set_ab_engine_multipv() works even if we've never received info.
 
 			if (s.includes("Lc0") || s.includes("Leela") || s.includes("Ceres")) {
-				this.engine.setoption("MultiPV", 500);
+				this.engine.setoption("MultiPV", 500);		// Although this is default, best assume some wrong setoption might be sent some time.
 				this.engine.leelaish = true;
 			} else {
 				this.engine.setoption("MultiPV", config.ab_engine_multipv);

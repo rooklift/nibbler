@@ -253,7 +253,7 @@ function NewInfoHandler() {
 
 			// ---------------------------------------------------------------------------------------------------------------------
 
-			engine.leelaish = true;
+			engine.leelaish = true;						// Note this isn't the main way engine.leelaish gets set (because reasons)
 			move_info.leelaish = true;
 
 			this.ever_received_info = true;				// After the move legality check; i.e. we want REAL info
