@@ -197,61 +197,67 @@ const info_prototype = {
 
 		// N is fairly complicated...
 
-		if (typeof this.n === "number" && total_nodes) {		// i.e. total_nodes is not zero or undefined
+		if (this.leelaish) {
 
-			let n_string = "";
+			if (typeof this.n === "number" && total_nodes) {		// i.e. total_nodes is not zero or undefined
 
-			if (opts.n) {
-				n_string += ` N: ${(100 * this.n / total_nodes).toFixed(2)}%`;
-			}
+				let n_string = "";
 
-			if (opts.n_abs) {
 				if (opts.n) {
-					n_string += ` [${NString(this.n)}]`;
-				} else {
-					n_string += ` N: ${NString(this.n)}`;
+					n_string += ` N: ${(100 * this.n / total_nodes).toFixed(2)}%`;
 				}
+
+				if (opts.n_abs) {
+					if (opts.n) {
+						n_string += ` [${NString(this.n)}]`;
+					} else {
+						n_string += ` N: ${NString(this.n)}`;
+					}
+				}
+
+				if (opts.of_n) {
+					n_string += ` of ${NString(total_nodes)}`;
+				}
+
+				if (n_string !== "") {
+					ret.push(n_string.trim());
+				}
+
+			} else {
+
+				if (opts.n || opts.n_abs || opts.of_n) {
+					ret.push("N: ?");
+				}
+
 			}
-
-			if (opts.of_n) {
-				n_string += ` of ${NString(total_nodes)}`;
-			}
-
-			if (n_string !== "") {
-				ret.push(n_string.trim());
-			}
-
-		} else {
-
-			if (opts.n || opts.n_abs || opts.of_n) {
-				ret.push("N: ?");
-			}
-
 		}
 
 		// Everything else...
 
-		if (opts.depth) {
-			if (typeof this.depth === "number" && this.depth > 0) {
-				ret.push(`depth: ${this.depth}`);
-			} else {
-				ret.push(`depth: 0`);
+		if (!this.leelaish) {
+			if (opts.depth) {
+				if (typeof this.depth === "number" && this.depth > 0) {
+					ret.push(`Depth: ${this.depth}`);
+				} else {
+					ret.push(`Depth: 0`);
+				}
 			}
 		}
 
-		if (opts.p) {
-			if (typeof this.p === "number" && this.p > 0) {
-				ret.push(`P: ${this.p}%`);
-			} else {
-				ret.push(`P: ?`);
+		if (this.leelaish) {
+			if (opts.p) {
+				if (typeof this.p === "number" && this.p > 0) {
+					ret.push(`P: ${this.p}%`);
+				} else {
+					ret.push(`P: ?`);
+				}
 			}
-		}
-
-		if (opts.v) {
-			if (typeof this.v === "number") {
-				ret.push(`V: ${this.v.toFixed(3)}`);
-			} else {
-				ret.push(`V: ?`);
+			if (opts.v) {
+				if (typeof this.v === "number") {
+					ret.push(`V: ${this.v.toFixed(3)}`);
+				} else {
+					ret.push(`V: ?`);
+				}
 			}
 		}
 
@@ -263,31 +269,31 @@ const info_prototype = {
 			}
 		}
 
-		if (opts.u) {
-			if (typeof this.u === "number" && this.n > 0) {						// Checking n is correct.
-				ret.push(`U: ${this.u.toFixed(3)}`);
-			} else {
-				ret.push(`U: ?`);
-			}
-		}
-
-		if (opts.s) {
-			if (typeof this.s === "number" && this.n > 0) {						// Checking n is correct.
-				ret.push(`S: ${this.s.toFixed(5)}`);
-			} else {
-				ret.push(`S: ?`);
-			}
-		}
-
-		if (opts.m) {
-			if (typeof this.m === "number") {
-				if (this.m > 0) {
-					ret.push(`M: ${this.m.toFixed(1)}`);
+		if (this.leelaish) {
+			if (opts.u) {
+				if (typeof this.u === "number" && this.n > 0) {						// Checking n is correct.
+					ret.push(`U: ${this.u.toFixed(3)}`);
 				} else {
-					ret.push(`M: 0`);
+					ret.push(`U: ?`);
 				}
-			} else {
-				ret.push(`M: ?`);
+			}
+			if (opts.s) {
+				if (typeof this.s === "number" && this.n > 0) {						// Checking n is correct.
+					ret.push(`S: ${this.s.toFixed(5)}`);
+				} else {
+					ret.push(`S: ?`);
+				}
+			}
+			if (opts.m) {
+				if (typeof this.m === "number") {
+					if (this.m > 0) {
+						ret.push(`M: ${this.m.toFixed(1)}`);
+					} else {
+						ret.push(`M: 0`);
+					}
+				} else {
+					ret.push(`M: ?`);
+				}
 			}
 		}
 

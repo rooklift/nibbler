@@ -410,7 +410,7 @@ function menu_build() {
 							}
 						},
 						{
-							label: "Depth",
+							label: "Depth (A/B only)",
 							type: "checkbox",
 							checked: config.pgn_depth,
 							click: () => {
@@ -1130,7 +1130,7 @@ function menu_build() {
 							}
 						},
 						{
-							label: "Depth",
+							label: "Depth (A/B only)",
 							type: "checkbox",
 							checked: config.show_depth,
 							click: () => {

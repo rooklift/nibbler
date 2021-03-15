@@ -69,7 +69,7 @@ exports.defaults = {
 	"show_cp": false,
 	"show_n": true,
 	"show_n_abs": true,
-	"show_depth": false,
+	"show_depth": true,
 	"show_p": true,
 	"show_v": false,
 	"show_q": false,
