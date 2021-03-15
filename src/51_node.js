@@ -267,7 +267,7 @@ const node_prototype = {
 		let info = this.parent.table.moveinfo[this.move];
 		let total_nodes = this.parent.table.nodes;
 
-		if (!info || info.__ghost) {
+		if (!info || info.__ghost || info.__touched === false) {
 			return "";
 		}
 
