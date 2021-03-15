@@ -51,6 +51,7 @@ function NewInfo(board, move) {
 	info.pv = [move];				// Warning: never assume this is a legal sequence.
 	info.nice_pv_cache = null;
 	info.cycle = 0;					// How many "go" commands Nibbler has emitted.
+	info.subcycle = 0;				// How many "blocks" of info we have seen (delineated by multipv 1 info).
 	info.version = 0;				// Actually the version of the whole table upon last update to the info.
 
 	info.clear_stats();

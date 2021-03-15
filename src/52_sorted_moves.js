@@ -35,6 +35,11 @@ function SortedMoves(node) {
 		if (a.cycle === latest_cycle && b.cycle !== latest_cycle) return a_is_best;
 		if (a.cycle !== latest_cycle && b.cycle === latest_cycle) return b_is_best;
 
+		// Prefer info from more recent "blocks" (delineated by multipv 1 info).
+
+		if (a.subcycle > b.subcycle) return a_is_best;
+		if (a.subcycle < b.subcycle) return b_is_best;
+
 		// If one info is leelaish and the other isn't, that can only mean that the A/B
 		// engine is the one that ran last (since Lc0 will cause all info to become
 		// leelaish), therefore any moves the A/B engine has touched must be "better".

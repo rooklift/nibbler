@@ -12,6 +12,7 @@ function NewInfoHandler() {
 	ih.next_vms_order_int = 1;
 
 	ih.engine_cycle = 0;		// Count of "go" commands emitted. Since Engine can change, can't store this in Engine objects
+	ih.engine_subcycle = 0;		// Count of how many times we have seen "multipv 1" - each time it's a new "block" of info
 
 	ih.ever_drew_infobox = false;
 
@@ -131,18 +132,19 @@ function NewInfoHandler() {
 			node.table.version++;						// Likewise
 			move_info.version = node.table.version;
 			move_info.cycle = this.engine_cycle;
+			move_info.subcycle = this.engine_subcycle;
 
 			// ---------------------------------------------------------------------------------------------------------------------
 
 			let did_set_q_from_mate = false;
 
-			tmp = parseInt(infovals["cp"], 10);			// Score in centipawns
+			tmp = parseInt(infovals["cp"], 10);
 			if (Number.isNaN(tmp) === false) {
 				move_info.cp = tmp;
 				if (this.ever_received_q === false) {
 					move_info.q = QfromPawns(tmp / 100);		// Potentially overwritten later by the better QfromWDL()
 				}
-				move_info.mate = 0;						// Engines will send one of cp or mate, so mate gets reset when receiving cp
+				move_info.mate = 0;								// Engines will send one of cp or mate, so mate gets reset when receiving cp
 			}
 
 			tmp = parseInt(infovals["mate"], 10);
@@ -155,9 +157,13 @@ function NewInfoHandler() {
 				}
 			}
 
-			tmp = parseInt(infovals["multipv"], 10);	// Engine's ranking of the move, starting at 1.
+			tmp = parseInt(infovals["multipv"], 10);
 			if (Number.isNaN(tmp) === false) {
 				move_info.multipv = tmp;
+				if (tmp === 1) {
+					this.engine_subcycle++;
+					move_info.subcycle = this.engine_subcycle;	// Correcting the wrong value set earlier
+				}
 			}
 
 			tmp = parseInt(infovals["nodes"], 10);
