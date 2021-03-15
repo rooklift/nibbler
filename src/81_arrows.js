@@ -4,7 +4,7 @@
 
 let draw_arrows_last_mode = null;		// For debugging.
 
-const DrawArrows = function(node, specific_source = null, show_move = null) {
+function DrawArrows(node, specific_source = null, show_move = null) {
 
 	// Function also sets up the one_click_moves array.
 
@@ -30,11 +30,19 @@ const DrawArrows = function(node, specific_source = null, show_move = null) {
 	let arrows = [];
 	let heads = [];
 
-	let mode = "normal";
-	if (full_list[0].leelaish === false) mode = "ab";
-	if (full_list[0].__ghost) mode = "ghost";
-	if (full_list[0].__touched === false) mode = "untouched";
-	if (specific_source) mode = "specific";
+	let mode;
+
+	if (specific_source) {
+		mode = "specific";
+	} else if (full_list[0].__ghost) {
+		mode = "ghost";
+	} else if (full_list[0].__touched === false) {
+		mode = "untouched";
+	} else if (full_list[0].leelaish === false) {
+		mode = "ab";
+	} else {
+		mode = "normal";
+	}
 
 	draw_arrows_last_mode = mode;		// For debugging only.
 
