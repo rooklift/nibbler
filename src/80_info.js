@@ -100,6 +100,7 @@ function NewInfoHandler() {
 
 			let infovals = InfoValMany(s, ["pv", "cp", "mate", "multipv", "nodes", "nps", "time", "depth", "seldepth", "tbhits"]);
 
+			let tmp;
 			let move_info;
 			let move = infovals["pv"];
 			move = board.c960_castling_converter(move);
@@ -117,16 +118,21 @@ function NewInfoHandler() {
 				node.table.moveinfo[move] = move_info;
 			}
 
-			this.ever_received_info = true;				// After the move legality check; i.e. we want REAL info
-			node.table.version++;						// Likewise
+			// ---------------------------------------------------------------------------------------------------------------------
 
 			move_info.leelaish = engine.leelaish;
+			if (!engine.leelaish) {
+				move_info.clear_stats();				// The stats we get this way are all that the engine has, so clear everything.
+			}
 
+			this.ever_received_info = true;				// After the move legality check; i.e. we want REAL info
+			node.table.version++;						// Likewise
 			move_info.version = node.table.version;
 			move_info.cycle = engine_cycles;
 
+			// ---------------------------------------------------------------------------------------------------------------------
+
 			let did_set_q_from_mate = false;
-			let tmp;
 
 			tmp = parseInt(infovals["cp"], 10);			// Score in centipawns
 			if (Number.isNaN(tmp) === false) {
@@ -245,14 +251,17 @@ function NewInfoHandler() {
 				node.table.moveinfo[move] = move_info;
 			}
 
-			this.ever_received_info = true;				// After the move legality check; i.e. we want REAL info
-			node.table.version++;						// Likewise
+			// ---------------------------------------------------------------------------------------------------------------------
 
 			engine.leelaish = true;
 			move_info.leelaish = true;
 
+			this.ever_received_info = true;				// After the move legality check; i.e. we want REAL info
+			node.table.version++;						// Likewise
 			move_info.version = node.table.version;
-			// move_info.cycle = engine_cycles;			// Don't do this for VerboseMoveStats - we get these even when searchmoves enabled.
+			// move_info.cycle = engine_cycles;			// No... we get VMS lines even when excluded by searchmoves.
+
+			// ---------------------------------------------------------------------------------------------------------------------
 
 			move_info.vms_order = this.next_vms_order_int++;
 
@@ -392,7 +401,7 @@ function NewInfoHandler() {
 		}
 	};
 
-	ih.draw_infobox = function(node, mouse_point, active_square, active_colour, hoverdraw_div, sent_multipv) {
+	ih.draw_infobox = function(node, mouse_point, active_square, active_colour, hoverdraw_div) {
 
 		let searchmoves = node.searchmoves;
 
@@ -409,11 +418,11 @@ function NewInfoHandler() {
 		let info_list = SortedMoves(node);
 
 		// As A/B moves are always sorted to the top, if the first info is A/B we should
-		// only draw the k moves (k === sent_multipv).
+		// only draw the k moves (k === config.ab_engine_multipv).
 
 		if (info_list.length > 0 && info_list[0].leelaish === false) {
-			if (info_list.length > sent_multipv) {
-				info_list = info_list.slice(0, sent_multipv);
+			if (info_list.length > config.ab_engine_multipv) {
+				info_list = info_list.slice(0, config.ab_engine_multipv);
 			}
 		}
 
@@ -643,7 +652,7 @@ function NewInfoHandler() {
 		return null;
 	};
 
-	ih.draw_arrows = function(node, specific_source = null, show_move = null, sent_multipv = 500) {
+	ih.draw_arrows = function(node, specific_source = null, show_move = null) {
 
 		// This function also sets up the one_click_moves array.
 
@@ -670,8 +679,8 @@ function NewInfoHandler() {
 		let ab_engine_mode = false;
 		if (info_list.length > 0 && info_list[0].leelaish === false) {
 			ab_engine_mode = true;
-			if (info_list.length > sent_multipv) {
-				info_list = info_list.slice(0, sent_multipv);
+			if (info_list.length > config.ab_engine_multipv) {
+				info_list = info_list.slice(0, config.ab_engine_multipv);
 			}
 		}
 

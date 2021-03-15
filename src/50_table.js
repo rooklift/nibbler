@@ -42,45 +42,40 @@ const table_prototype = {
 
 function NewInfo(board, move) {
 
-	// In some places elsewhere we might assume these things will have sensible values, so
-	// better not initialise most things to null. Best to use neutral-ish values, especially
-	// since some info (cp and q) can be carried (inverted) into the next step of a line...
-	//
-	// Things that are allowed to be null if not known:
-	//
-	//		d
-	//		m
-	//		v
-	//		wdl
-
 	let info = Object.create(info_prototype);
-	info.__ghost = false;			// If not false, this is temporary inferred info. Will store a string to display.
+
 	info.board = board;
-	info.cp = 0;
-	info.cycle = 0;					// How many "go" commands Nibbler has emitted.
-	info.depth = 0;
-	info.leelaish = false;			// Whether the most recent update to this info was from an engine considered Leelaish.
-	info.m = null;
-	info.mate = 0;					// 0 can be the "not present" value.
 	info.move = move;
-	info.multipv = 1;
-	info.n = 0;
-	info.p = 0;						// Note P is received and stored as a percent, e.g. 31.76 is a reasonable P.
+	info.__ghost = false;			// If not false, this is temporary inferred info. Will store a string to display.
+	info.leelaish = false;			// Whether the most recent update to this info was from an engine considered Leelaish.
 	info.pv = [move];				// Warning: never assume this is a legal sequence.
 	info.nice_pv_cache = null;
-	info.q = 0;
-	info.s = 1;						// Known as Q+U before Lc0 v0.25-rc2
-	info.seldepth = 0;
-	info.u = 1;
-	info.uci_nodes = 0;				// The number of nodes reported by the UCI info lines (i.e. for the whole position).
-	info.v = null;
-	info.version = 0;
-	info.vms_order = 0;				// VerboseMoveStats order, 0 means not present, 1 is the worst, higher is better.
-	info.wdl = null;				// Either null or a length 3 array of ints.
+	info.cycle = 0;					// How many "go" commands Nibbler has emitted.
+	info.version = 0;				// Actually the version of the whole table upon last update to the info.
+
+	info.clear_stats();
 	return info;
 }
 
 const info_prototype = {
+
+	clear_stats: function() {
+		this.cp = 0;
+		this.depth = 0;
+		this.m = null;
+		this.mate = 0;				// 0 can be the "not present" value.
+		this.multipv = 1;
+		this.n = 0;
+		this.p = 0;					// Note P is received and stored as a percent, e.g. 31.76 is a reasonable P.
+		this.q = 0;
+		this.s = 1;					// Known as Q+U before Lc0 v0.25-rc2
+		this.seldepth = 0;
+		this.u = 1;
+		this.uci_nodes = 0;			// The number of nodes reported by the UCI info lines (i.e. for the whole position).
+		this.v = null;
+		this.vms_order = 0;			// VerboseMoveStats order, 0 means not present, 1 is the worst, higher is better.
+		this.wdl = null;			// Either null or a length 3 array of ints.
+	},
 
 	nice_pv: function() {
 
