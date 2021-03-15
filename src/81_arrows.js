@@ -61,7 +61,7 @@ const DrawArrows = function(node, specific_source = null, show_move = null) {
 	case "specific":
 
 		for (let info of full_list) {
-			if (info.move.slice(0, 2) === specific_source.s || info.move === show_move) {
+			if (info.move.slice(0, 2) === specific_source.s) {
 				info_list.push(info);
 			}
 		}
