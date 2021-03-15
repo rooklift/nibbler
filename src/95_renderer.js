@@ -128,6 +128,10 @@ function NewRenderer() {
 			this.send_title();
 		}
 
+		if (this.tree.node.table.already_autopopulated === false) {
+			this.tree.node.table.autopopulate(this.tree.node);
+		}
+
 		// When entering a position, clear its searchmoves, unless it's the analysis_locked node.
 
 		if (this.leela_lock_node !== this.tree.node) {
@@ -230,11 +234,13 @@ function NewRenderer() {
 			return;
 		}
 
-		if (Object.keys(node.table.moveinfo).length > 0) {
-			return;
+		for (let info of Object.values(node.table.moveinfo)) {
+			if (info.__touched) {
+				return;
+			}
 		}
 
-		// So the current node has no info.
+		// So the current node has no real info.
 
 		let moves = [node.move];
 		let ancestor = null;
@@ -242,12 +248,20 @@ function NewRenderer() {
 		let foo = node.parent;
 
 		while (foo) {
-			if (Object.keys(foo.table.moveinfo).length > 0) {
-				ancestor = foo;
+
+			for (let info of Object.values(foo.table.moveinfo)) {
+				if (info.__touched) {
+					ancestor = foo;
+					break;
+				}
+			}
+
+			if (!ancestor) {
+				moves.push(foo.move);
+				foo = foo.parent;
+			} else {
 				break;
 			}
-			moves.push(foo.move);
-			foo = foo.parent;
 		}
 
 		if (!ancestor) {
@@ -284,6 +298,7 @@ function NewRenderer() {
 		let new_info = NewInfo(node.board, nextmove);
 
 		new_info.__ghost = true;
+		new_info.__touched = true;
 		new_info.pv = pv;
 		new_info.q = oldinfo.q;
 		new_info.cp = oldinfo.cp;
@@ -310,10 +325,11 @@ function NewRenderer() {
 		}
 
 		// Remove ghost info; which is only allowed in the node we're currently looking at...
+		// By remove, I mean, replace it with a neutral info object.
 
 		for (let key of Object.keys(this.node_to_clean.table.moveinfo)) {
 			if (this.node_to_clean.table.moveinfo[key].__ghost) {
-				delete this.node_to_clean.table.moveinfo[key];
+				this.node_to_clean.table.moveinfo[key] = NewInfo(this.node_to_clean.board, key);
 			}
 		}
 

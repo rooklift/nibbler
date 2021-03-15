@@ -19,6 +19,7 @@ const table_prototype = {
 		this.time = 0;							// Stat sent by engine
 		this.eval = null;						// Used by grapher only, value from White's POV
 		this.eval_nodes = 0;					// Number of search nodes used to generate the eval
+		this.already_autopopulated = false;
 	},
 
 	update_eval_from_move: function(move) {
@@ -34,6 +35,31 @@ const table_prototype = {
 		this.eval = info.board.active === "w" ? info.value() : 1 - info.value();
 		this.eval_nodes = info.uci_nodes;
 	},
+
+	autopopulate: function(node) {
+
+		if (!node) {
+			throw "autopopulate() requires node argument";
+		}
+
+		if (this.already_autopopulated) {
+			return;
+		}
+
+		if (node.destroyed) {
+			return;
+		}
+
+		let moves = node.board.movegen();
+
+		for (let move of moves) {
+			if (node.table.moveinfo[move] === undefined) {
+				node.table.moveinfo[move] = NewInfo(node.board, move);
+			}
+		}
+
+		this.already_autopopulated = true;
+	}
 };
 
 // --------------------------------------------------------------------------------------------
@@ -47,6 +73,7 @@ function NewInfo(board, move) {
 	info.board = board;
 	info.move = move;
 	info.__ghost = false;			// If not false, this is temporary inferred info. Will store a string to display.
+	info.__touched = false;			// Has this ever actually been updated?
 	info.leelaish = false;			// Whether the most recent update to this info was from an engine considered Leelaish.
 	info.pv = [move];				// Warning: never assume this is a legal sequence.
 	info.nice_pv_cache = null;
@@ -114,7 +141,7 @@ const info_prototype = {
 	},
 
 	value_string: function(dp, white_pov) {
-		if (typeof this.q !== "number") {
+		if (!this.__touched || typeof this.q !== "number") {
 			return "?";
 		}
 		if (this.leelaish && this.n === 0) {
@@ -127,19 +154,8 @@ const info_prototype = {
 		return (val * 100).toFixed(dp);
 	},
 
-	wdl_string: function(white_pov) {
-		if (Array.isArray(this.wdl) === false || this.wdl.length !== 3) {
-			return "?";
-		}
-		if (white_pov && this.board.active === "b") {
-			return `${this.wdl[2]} ${this.wdl[1]} ${this.wdl[0]}`;
-		} else {
-			return `${this.wdl[0]} ${this.wdl[1]} ${this.wdl[2]}`;
-		}
-	},
-
 	cp_string: function(white_pov) {
-		if (typeof this.cp !== "number") {
+		if (!this.__touched || typeof this.cp !== "number") {
 			return "?";
 		}
 		if (this.leelaish && this.n === 0) {
@@ -156,18 +172,14 @@ const info_prototype = {
 		return ret;
 	},
 
-	mate_string: function(white_pov) {
-		if (typeof this.mate !== "number" || this.mate === 0) {
+	wdl_string: function(white_pov) {
+		if (Array.isArray(this.wdl) === false || this.wdl.length !== 3) {
 			return "?";
 		}
-		let mate = this.mate;
-		if (white_pov && this.board.active === "b") {	// Is this the convention? Should check some time...
-			mate = 0 - mate;
-		}
-		if (mate < 0) {
-			return "-M" + (0 - mate).toString();
+		if (white_pov && this.board.active === "b") {
+			return `${this.wdl[2]} ${this.wdl[1]} ${this.wdl[0]}`;
 		} else {
-			return "M" + mate.toString();
+			return `${this.wdl[0]} ${this.wdl[1]} ${this.wdl[2]}`;
 		}
 	},
 
@@ -218,6 +230,14 @@ const info_prototype = {
 		}
 
 		// Everything else...
+
+		if (opts.depth) {
+			if (typeof this.depth === "number" && this.depth > 0) {
+				ret.push(`depth: ${this.depth}`);
+			} else {
+				ret.push(`depth: 0`);
+			}
+		}
 
 		if (opts.p) {
 			if (typeof this.p === "number" && this.p > 0) {

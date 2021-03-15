@@ -410,6 +410,17 @@ function menu_build() {
 							}
 						},
 						{
+							label: "Depth",
+							type: "checkbox",
+							checked: config.pgn_depth,
+							click: () => {
+								win.webContents.send("call", {
+									fn: "toggle",
+									args: ["pgn_depth"],
+								});
+							}
+						},
+						{
 							type: "separator"
 						},
 						{
@@ -1115,6 +1126,17 @@ function menu_build() {
 								win.webContents.send("call", {
 									fn: "toggle",
 									args: ["show_n_abs"],
+								});
+							}
+						},
+						{
+							label: "Depth",
+							type: "checkbox",
+							checked: config.show_depth,
+							click: () => {
+								win.webContents.send("call", {
+									fn: "toggle",
+									args: ["show_depth"],
 								});
 							}
 						},

@@ -164,31 +164,31 @@ ul {
 	list-style: none;
 }
 
-span.pink {
+.pink {
 	color: #ffaaaa;
 }
 
-span.white {
+.white {
 	color: #eeeeee;
 }
 
-span.gray {
+.gray {
 	color: #999999;
 }
 
-span.red {
+.red {
 	color: #ff6666;
 }
 
-span.yellow {
+.yellow {
 	color: #ffff00;
 }
 
-span.green {
+.green {
 	color: #66ff66;
 }
 
-span.blue {
+.blue {
 	color: #6cccee;
 }
 
