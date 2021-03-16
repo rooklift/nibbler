@@ -101,6 +101,8 @@ function NewInfoHandler() {
 
 		if (s.startsWith("info") && s.includes(" pv ") && !s.includes("lowerbound") && !s.includes("upperbound")) {
 
+			if (config.log_info_lines) Log("< " + s);
+
 			// info depth 8 seldepth 31 time 3029 nodes 23672 score cp 27 wdl 384 326 290 nps 7843 tbhits 0 multipv 1
 			// pv d2d4 g8f6 c2c4 e7e6 g1f3 d7d5 b1c3 f8b4 c1g5 d5c4 e2e4 c7c5 f1c4 h7h6 g5f6 d8f6 e1h1 c5d4 e4e5 f6d8 c3e4
 
@@ -225,6 +227,8 @@ function NewInfoHandler() {
 
 		} else if (s.startsWith("info string")) {
 
+			if (config.log_info_lines) Log("< " + s);
+
 			// info string d2d4  (293 ) N:   12005 (+169) (P: 22.38%) (WL:  0.09480) (D:  0.326)
 			// (M:  7.4) (Q:  0.09480) (U: 0.01211) (Q+U:  0.10691) (V:  0.0898)
 
@@ -319,6 +323,10 @@ function NewInfoHandler() {
 			if (Number.isNaN(tmp) === false) {
 				move_info.m = tmp;
 			}
+
+		} else {
+
+			if (config.log_useless_info) Log("< " + s);
 
 		}
 	};

@@ -3490,6 +3490,17 @@ function menu_build() {
 						});
 					}
 				},
+				{
+					label: "...including useless lines",
+					type: "checkbox",
+					checked: config.log_useless_info,
+					click: () => {
+						win.webContents.send("call", {
+							fn: "toggle",
+							args: ["log_useless_info"],
+						});
+					}
+				},
 			]
 		}
 	];

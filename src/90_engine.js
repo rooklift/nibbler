@@ -271,7 +271,7 @@ function NewEngine(hub) {
 			return;
 		}
 
-		if (config.log_info_lines) Log("< " + line);
+		// if (config.log_info_lines) Log("< " + line);		// Logging of lines seen by the info_handler is now there.
 		this.hub.info_handler.receive(this, this.search_running.node, line);
 	};
 

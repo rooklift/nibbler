@@ -122,6 +122,7 @@ exports.defaults = {
 
 	"logfile": null,
 	"log_info_lines": false,
+	"log_useless_info": false,
 	"log_illegal_moves": true,
 	"log_positions": true,
 };
