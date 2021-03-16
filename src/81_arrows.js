@@ -145,7 +145,11 @@ function DrawArrows(node, specific_source = null, show_move = null) {
 			let colour;
 
 			if (show_move_was_forced && info_list[i].move === show_move) {
-				colour = config.next_move_colour;
+				if (mode === "untouched") {
+					colour = config.best_colour;
+				} else {
+					colour = config.next_move_colour;
+				}
 			} else if (info_list[i].__touched === false) {
 				colour = config.terrible_colour;
 			} else if (info_list[i] === best_info) {
