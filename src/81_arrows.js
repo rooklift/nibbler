@@ -99,7 +99,15 @@ function DrawArrows(node, specific_source = null, show_move = null) {		// node, 
 
 	for (let i = 0; i < info_list.length; i++) {
 
+		let loss = 0;
+
+		if (typeof best_info.q === "number" && typeof info_list[i].q === "number") {
+			loss = best_info.value() - info_list[i].value();
+		}
+
 		let ok = true;
+
+		// Filter for normal / ghost / untouched mode...
 
 		if (mode !== "ab" && mode !== "specific") {
 
@@ -129,6 +137,17 @@ function DrawArrows(node, specific_source = null, show_move = null) {		// node, 
 			}
 		}
 
+		// Filter for ab mode...
+
+		if (mode === "ab") {
+
+			if (loss >= config.ab_filter_threshold) {
+				ok = false;
+			}
+		}
+
+		// If the show_move would be filtered out, note that fact...
+
 		if (!ok && info_list[i].move === show_move) {
 			show_move_was_forced = true;
 		}
@@ -139,12 +158,6 @@ function DrawArrows(node, specific_source = null, show_move = null) {		// node, 
 
 			let [x1, y1] = XY(info_list[i].move.slice(0, 2));
 			let [x2, y2] = XY(info_list[i].move.slice(2, 4));
-
-			let loss = 0;
-
-			if (typeof best_info.q === "number" && typeof info_list[i].q === "number") {
-				loss = best_info.value() - info_list[i].value();
-			}
 
 			let colour;
 

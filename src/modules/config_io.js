@@ -51,6 +51,7 @@ exports.defaults = {
 
 	"bad_move_threshold": 0.02,
 	"terrible_move_threshold": 0.04,
+	"ab_filter_threshold": 0.1,
 
 	"arrow_filter_type": "N",
 	"arrow_filter_value": 0.01,
