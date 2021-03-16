@@ -29,6 +29,7 @@ function NewInfoHandler() {
 	ih.last_drawn_highlight_class = null;
 	ih.last_drawn_length = 0;
 	ih.last_drawn_searchmoves = [];
+	ih.last_drawn_allow_inactive_focus = null;
 
 	ih.draw_arrows = DrawArrows;					// In arrows.js
 
@@ -410,7 +411,7 @@ function NewInfoHandler() {
 		}
 	};
 
-	ih.draw_infobox = function(node, mouse_point, active_square, active_colour, hoverdraw_div, draw_inactive_focus_flag) {
+	ih.draw_infobox = function(node, mouse_point, active_square, active_colour, hoverdraw_div, allow_inactive_focus) {
 
 		let searchmoves = node.searchmoves;
 
@@ -461,22 +462,22 @@ function NewInfoHandler() {
 		}
 
 		// We can skip the draw if:
-		//
-		// - The last drawn board matches (implying node matches)
-		// - The last drawn table version matches
-		// - The last drawn highlight matches
-		// - The last drawn highlight class matches
-		// - The last drawn length of the list matches
-		// - The searchmoves match (some possibility of false negatives due to re-ordering, but that's OK)
 
-		if (node.board === this.last_drawn_board &&
-			node.table.version === this.last_drawn_version &&
-			highlight_move === this.last_drawn_highlight_move &&
-			highlight_class === this.last_drawn_highlight_class &&
-			info_list.length === this.last_drawn_length &&
-			CompareArrays(searchmoves, this.last_drawn_searchmoves)
-		) {
-				return;
+		let no_skip_reasons = [];
+
+		if (node.board !== this.last_drawn_board)                               no_skip_reasons.push("board");
+		if (node.table.version !== this.last_drawn_version)                     no_skip_reasons.push("table version");
+		if (highlight_move !== this.last_drawn_highlight_move)                  no_skip_reasons.push("highlight move");
+		if (highlight_class !== this.last_drawn_highlight_class)                no_skip_reasons.push("highlight class");
+		if (info_list.length !== this.last_drawn_length)                        no_skip_reasons.push("info list length");
+		if (allow_inactive_focus !== this.last_drawn_allow_inactive_focus)      no_skip_reasons.push("allow inactive focus");
+		if (CompareArrays(searchmoves, this.last_drawn_searchmoves) === false)  no_skip_reasons.push("searchmoves");
+
+		draw_infobox_no_skip_reasons = no_skip_reasons.join(", ");	// For debugging only.
+
+		if (no_skip_reasons.length === 0) {
+			draw_infobox_total_skips++;
+			return;
 		}
 
 		this.last_drawn_board = node.board;
@@ -484,6 +485,7 @@ function NewInfoHandler() {
 		this.last_drawn_highlight_move = highlight_move;
 		this.last_drawn_highlight_class = highlight_class;
 		this.last_drawn_length = info_list.length;
+		this.last_drawn_allow_inactive_focus = allow_inactive_focus;
 		this.last_drawn_searchmoves = Array.from(searchmoves);
 
 		this.info_clickers = [];
@@ -514,7 +516,7 @@ function NewInfoHandler() {
 				if (searchmoves.includes(info.move)) {
 					substrings.push(`<span id="searchmove_${info.move}" class="yellow">${config.focus_on_text} </span>`);
 				} else {
-					if (draw_inactive_focus_flag) {
+					if (allow_inactive_focus) {
 						substrings.push(`<span id="searchmove_${info.move}" class="gray">${config.focus_off_text} </span>`);
 					}
 				}
@@ -690,3 +692,8 @@ function NewInfoHandler() {
 
 	return ih;
 }
+
+
+// For debugging...
+let draw_infobox_total_skips = 0;
+let draw_infobox_no_skip_reasons = "";
