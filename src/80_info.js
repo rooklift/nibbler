@@ -461,7 +461,7 @@ function NewInfoHandler() {
 			highlight_class = "hover_highlight";
 		}
 
-		// We can skip the draw if:
+		// We cannot skip the draw if...
 
 		let no_skip_reasons = [];
 
