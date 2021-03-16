@@ -2,8 +2,6 @@
 
 // DrawArrows is attached as a method to the info_handler... "this" refers to that.
 
-let draw_arrows_last_mode = null;		// For debugging.
-
 function DrawArrows(node, specific_source = null, show_move = null) {
 
 	// Function also sets up the one_click_moves array.
@@ -31,6 +29,7 @@ function DrawArrows(node, specific_source = null, show_move = null) {
 	let heads = [];
 
 	let mode;
+	let show_move_was_forced = false;	// Will become true if the show_move is only in the list because of the show_move arg
 
 	if (specific_source) {
 		mode = "specific";
@@ -44,8 +43,6 @@ function DrawArrows(node, specific_source = null, show_move = null) {
 		mode = "normal";
 	}
 
-	draw_arrows_last_mode = mode;		// For debugging only.
-
 	switch (mode) {
 
 	case "normal":
@@ -56,8 +53,11 @@ function DrawArrows(node, specific_source = null, show_move = null) {
 	case "ab":
 
 		for (let info of full_list) {
-			if ((info.__touched && info_list.length < config.ab_engine_multipv) || info.move === show_move) {
+			if (info.__touched && info_list.length < config.ab_engine_multipv) {
 				info_list.push(info);
+			} else if (info.move === show_move) {
+				info_list.push(info);
+				show_move_was_forced = true;
 			}
 		}
 		break;
@@ -65,8 +65,11 @@ function DrawArrows(node, specific_source = null, show_move = null) {
 	case "ghost":
 
 		for (let info of full_list) {
-			if (info.__ghost || info.move === show_move) {
+			if (info.__ghost) {
 				info_list.push(info);
+			} else if (info.move === show_move) {
+				info_list.push(info);
+				show_move_was_forced = true;
 			}
 		}
 		break;
@@ -76,6 +79,7 @@ function DrawArrows(node, specific_source = null, show_move = null) {
 		for (let info of full_list) {
 			if (info.move === show_move) {
 				info_list.push(info);
+				show_move_was_forced = true;
 			}
 		}
 		break;
@@ -140,12 +144,10 @@ function DrawArrows(node, specific_source = null, show_move = null) {
 
 			let colour;
 
-			if (info_list[i].__touched === false) {		// There are 2 reasons this could be so...
-				if (mode === "specific") {				// 1: Showing all moves for source
-					colour = config.terrible_colour;	//
-				} else {								// 2: Showing "known next move"
-					colour = config.next_move_colour;
-				}
+			if (show_move_was_forced && info_list[i].move === show_move) {
+				colour = config.next_move_colour;
+			} else if (info_list[i].__touched === false) {
+				colour = config.terrible_colour;
 			} else if (info_list[i] === best_info) {
 				colour = config.best_colour;
 			} else if (loss < config.bad_move_threshold) {
@@ -292,6 +294,16 @@ function DrawArrows(node, specific_source = null, show_move = null) {
 			s = "?";
 		}
 
+		if (show_move_was_forced && o.info.move === show_move) {
+			s = "?";
+		}
+
 		boardctx.fillText(s, cc2.cx, cc2.cy + 1);
 	}
+
+	draw_arrows_last_mode = mode;		// For debugging only.
 };
+
+
+// For debugging...
+let draw_arrows_last_mode = null;
