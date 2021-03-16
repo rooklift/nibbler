@@ -101,7 +101,7 @@ function DrawArrows(node, specific_source = null, show_move = null) {
 
 		let ok = true;
 
-		if (mode !== "ab") {
+		if (mode !== "ab" && mode !== "specific") {
 
 			if (config.arrow_filter_type === "top") {
 				if (i !== 0) {
@@ -131,7 +131,7 @@ function DrawArrows(node, specific_source = null, show_move = null) {
 
 		// Go ahead, if the various tests don't filter the move out...
 
-		if (ok || i === 0 || specific_source || info_list[i].move === show_move) {
+		if (ok || i === 0 || info_list[i].move === show_move) {
 
 			let [x1, y1] = XY(info_list[i].move.slice(0, 2));
 			let [x2, y2] = XY(info_list[i].move.slice(2, 4));
