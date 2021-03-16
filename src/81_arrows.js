@@ -129,6 +129,10 @@ function DrawArrows(node, specific_source = null, show_move = null) {
 			}
 		}
 
+		if (!ok && info_list[i].move === show_move) {
+			show_move_was_forced = true;
+		}
+
 		// Go ahead, if the various tests don't filter the move out...
 
 		if (ok || i === 0 || info_list[i].move === show_move) {
