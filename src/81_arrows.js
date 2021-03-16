@@ -2,7 +2,7 @@
 
 // DrawArrows is attached as a method to the info_handler... "this" refers to that.
 
-function DrawArrows(node, specific_source = null, show_move = null) {
+function DrawArrows(node, specific_source = null, show_move = null) {		// node, Point(), string
 
 	// Function also sets up the one_click_moves array.
 
