@@ -224,12 +224,15 @@ function NewRenderer() {
 		//
 		// The whole thing is a bit sketchy, maybe.
 
-		if (config.behaviour !== "halt" && config.behaviour !== "analysis_locked") {
+		if (config.behaviour === "play_white" || config.behaviour === "play_black") {
 			return;
 		}
 
 		let node = this.tree.node;
 
+		if (node.terminal_reason() !== "") {
+			return;
+		}
 		if (!node.parent) {
 			return;
 		}
@@ -296,7 +299,6 @@ function NewRenderer() {
 		pv = pv.slice(moves.length);
 
 		let new_info = NewInfo(node.board, nextmove);
-
 
 		new_info.__ghost = true;
 		new_info.__touched = true;
