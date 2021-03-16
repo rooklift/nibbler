@@ -2107,7 +2107,8 @@ function NewRenderer() {
 			this.mouse_point(),
 			this.active_square,
 			this.tree.node.board.active,
-			this.hoverdraw_div);
+			this.hoverdraw_div,
+			config.behaviour === "halt");
 	};
 
 	renderer.set_special_message = function(s, css_class) {

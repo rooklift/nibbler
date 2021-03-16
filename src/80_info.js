@@ -410,7 +410,7 @@ function NewInfoHandler() {
 		}
 	};
 
-	ih.draw_infobox = function(node, mouse_point, active_square, active_colour, hoverdraw_div) {
+	ih.draw_infobox = function(node, mouse_point, active_square, active_colour, hoverdraw_div, draw_inactive_focus_flag) {
 
 		let searchmoves = node.searchmoves;
 
@@ -514,7 +514,9 @@ function NewInfoHandler() {
 				if (searchmoves.includes(info.move)) {
 					substrings.push(`<span id="searchmove_${info.move}" class="yellow">${config.focus_on_text} </span>`);
 				} else {
-					substrings.push(`<span id="searchmove_${info.move}" class="gray">${config.focus_off_text} </span>`);
+					if (draw_inactive_focus_flag) {
+						substrings.push(`<span id="searchmove_${info.move}" class="gray">${config.focus_off_text} </span>`);
+					}
 				}
 			}
 
@@ -603,10 +605,6 @@ function NewInfoHandler() {
 
 			substrings.push("</div>");
 
-		}
-
-		if (info_list.length === 1 && info_list[0].__ghost) {
-			substrings.push(`<div><span id="ancestor_return_clicker" class="gray">${messages.inferred_info} (return?)</span></div>`);
 		}
 
 		infobox.innerHTML = substrings.join("");
