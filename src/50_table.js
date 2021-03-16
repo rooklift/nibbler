@@ -76,10 +76,11 @@ function NewInfo(board, move) {
 	info.__touched = false;			// Has this ever actually been updated?
 	info.leelaish = false;			// Whether the most recent update to this info was from an engine considered Leelaish.
 	info.pv = [move];				// Warning: never assume this is a legal sequence.
-	info.nice_pv_cache = null;
 	info.cycle = 0;					// How many "go" commands Nibbler has emitted.
 	info.subcycle = 0;				// How many "blocks" of info we have seen (delineated by multipv 1 info).
 	info.version = 0;				// Actually the version of the whole table upon last update to the info.
+
+	info.nice_pv_cache = [board.nice_string(move)];
 
 	info.clear_stats();
 	return info;
