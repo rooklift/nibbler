@@ -165,7 +165,7 @@ function DrawArrows(node, specific_source = null, show_move = null) {		// node, 
 				if (mode === "untouched") {
 					colour = config.best_colour;
 				} else {
-					colour = config.next_move_colour;
+					colour = config.terrible_colour;
 				}
 			} else if (info_list[i].__touched === false) {
 				colour = config.terrible_colour;
