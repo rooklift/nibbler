@@ -424,7 +424,13 @@ function NewInfoHandler() {
 			return;
 		}
 
-		let info_list = SortedMoves(node);
+		let info_list;
+
+		if (node.terminal_reason() !== "") {
+			info_list = [];
+		} else {
+			info_list = SortedMoves(node);
+		}
 
 		let best_subcycle = info_list.length > 0 ? info_list[0].subcycle : 0;
 		if (best_subcycle === 0) {		// Because all info was autopopulated
