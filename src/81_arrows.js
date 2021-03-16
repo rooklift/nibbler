@@ -140,7 +140,6 @@ function DrawArrows(node, specific_source = null, show_move = null) {		// node, 
 		// Filter for ab mode...
 
 		if (mode === "ab") {
-
 			if (loss >= config.ab_filter_threshold) {
 				ok = false;
 			}
