@@ -173,6 +173,21 @@ const info_prototype = {
 		return ret;
 	},
 
+	mate_string: function(white_pov) {
+		if (typeof this.mate !== "number" || this.mate === 0) {
+			return "?";
+		}
+		let mate = this.mate;
+		if (white_pov && this.board.active === "b") {
+			mate = 0 - mate;
+		}
+		if (mate < 0) {
+			return `(-M${0 - mate})`;
+		} else {
+			return `(+M${mate})`;
+		}
+	},
+
 	wdl_string: function(white_pov) {
 		if (Array.isArray(this.wdl) === false || this.wdl.length !== 3) {
 			return "?";

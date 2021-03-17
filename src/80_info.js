@@ -158,7 +158,7 @@ function NewInfoHandler() {
 				move_info.mate = tmp;
 				if (tmp !== 0) {
 					move_info.q = tmp > 0 ? 1 : -1;
-					move_info.cp = tmp > 0 ? 12800 : -12800;
+					move_info.cp = tmp > 0 ? 32000 : -32000;
 					did_set_q_from_mate = true;
 				}
 			}
@@ -534,7 +534,11 @@ function NewInfoHandler() {
 
 			let value_string = "?";
 			if (config.show_cp) {
-				value_string = info.cp_string(config.cp_white_pov);
+				if (typeof info.mate === "number" && info.mate !== 0) {
+					value_string = info.mate_string(config.cp_white_pov);
+				} else {
+					value_string = info.cp_string(config.cp_white_pov);
+				}
 			} else {
 				value_string = info.value_string(1, config.ev_white_pov);
 				if (value_string !== "?") {
