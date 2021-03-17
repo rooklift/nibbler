@@ -74,6 +74,9 @@ if (images.validate_folder(config.override_piece_directory)) {
 let debuggo = Object.create(null);
 
 // Standard options, for either type of engine......................
+// The following are sent to all engines unless present in the
+// suppressed lists below. Do not put MultiPV or UCI_Chess960
+// in this list because they are handled as special cases.
 
 const standard_engine_options = {
 	"Contempt": 0,
