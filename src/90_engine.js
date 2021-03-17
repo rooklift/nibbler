@@ -338,7 +338,7 @@ function NewEngine(hub) {
 
 		eng.sent_options = Object.create(null);		// Blank anything we "sent" up till now.
 
-		for (let key of ["WeightsFile", "SyzygyPath", "Threads", "Hash", "Backend", "Temperature", "TempDecayMoves"]) {
+		for (let key of ["WeightsFile", "SyzygyPath", "Threads", "Hash", "MultiPV", "Backend", "Temperature", "TempDecayMoves"]) {
 			this.send_ack_setoption_to_main_process(key);
 		}
 
