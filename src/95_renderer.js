@@ -939,6 +939,7 @@ function NewRenderer() {
 
 	renderer.forget_analysis = function() {
 		CleanTree(this.tree.root);
+		this.tree.node.table.autopopulate(this.tree.node);
 		this.set_behaviour("halt");					// Will cause "stop" to be sent.
 		this.engine.send("ucinewgame");				// Must happen after "stop" is sent.
 	};
