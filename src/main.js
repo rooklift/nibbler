@@ -182,6 +182,8 @@ function startup() {
 			if (Number.isNaN(mb) === false) {
 				let gb = Math.floor(mb / 1024);
 				set_checks("Engine", "Hash (A/B)", `${gb} GB`);
+			} else {
+				set_checks("Engine", "Hash (A/B)", "");		// i.e. clear all
 			}
 			break;
 
