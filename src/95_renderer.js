@@ -946,9 +946,8 @@ function NewRenderer() {
 	renderer.set_ab_engine_multipv = function(val) {
 		config.ab_engine_multipv = val;
 		config_io.save(config);
-		if (!this.engine.leelaish) {
-			this.engine.setoption("MultiPV", val);
-		}
+		let sent = this.engine.maybe_setoption("MultiPV", val);
+		this.set_special_message(sent, "blue");
 	};
 
 	renderer.set_uci_option = function(name, val, save_to_cfg) {
@@ -1119,13 +1118,16 @@ function NewRenderer() {
 			this.engine.maybe_setoption("Hash", delayed_hash_val);
 		}
 
+		// The following use setoption() not maybe_setoption().
+		// The keys are present in one or both of the suppressed lists.
+
 		if (this.engine.leelaish) {
 			this.engine.setoption("MultiPV", 500);
 		} else {
 			this.engine.setoption("MultiPV", config.ab_engine_multipv);
 		}
 
-		this.engine.setoption("UCI_Chess960", true);	// We always use Chess 960 mode, it's here so user can't override it.
+		this.engine.setoption("UCI_Chess960", true);
 	}
 
 	// -------------------------------------------------------------------------------------------------------------------------

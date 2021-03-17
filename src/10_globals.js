@@ -91,6 +91,8 @@ const standard_engine_options = {
 const suppressed_options_lc0 = {
 	"contempt": true,
 	"hash": true,
+	"multipv": true,				// Does get set to 500, but can't be changed by normal routes.
+	"uci_chess960": true,			// Does get set to true, but can't be changed by normal routes.
 };
 
 const suppressed_options_ab = {
@@ -100,6 +102,7 @@ const suppressed_options_ab = {
 	"smartpruningfactor": true,
 	"tempdecaymoves": true,
 	"temperature": true,
+	"uci_chess960": true,			// Does get set to true, but can't be changed by normal routes.
 	"verbosemovestats": true,
 	"weightsfile": true,
 }
