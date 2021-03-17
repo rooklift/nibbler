@@ -338,12 +338,9 @@ function NewEngine(hub) {
 
 		eng.sent_options = Object.create(null);		// Blank anything we "sent" up till now.
 
-		this.send_ack_setoption_to_main_process("WeightsFile");
-		this.send_ack_setoption_to_main_process("SyzygyPath");
-		this.send_ack_setoption_to_main_process("Threads");
-		this.send_ack_setoption_to_main_process("Backend");
-		this.send_ack_setoption_to_main_process("Temperature");
-		this.send_ack_setoption_to_main_process("TempDecayMoves");
+		for (let key of ["WeightsFile", "SyzygyPath", "Threads", "Hash", "Backend", "Temperature", "TempDecayMoves"]) {
+			this.send_ack_setoption_to_main_process(key);
+		}
 
 		this.exe.once("error", (err) => {
 			alert(err);
