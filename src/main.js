@@ -3010,7 +3010,7 @@ function menu_build() {
 					]
 				},
 				{
-					label: "MultiPV (A/B)",
+					label: "MultiPV (A/B)",			// Don't use config.options for this, it's too much of a special-case.
 					submenu: [
 						{
 							label: "5",
