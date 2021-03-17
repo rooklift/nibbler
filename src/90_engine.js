@@ -284,11 +284,11 @@ function NewEngine(hub) {
 	eng.maybe_setoption = function(name, value) {
 		if (this.leelaish && suppressed_options_lc0[name.toLowerCase()]) {
 			this.send_ack_setoption_to_main_process(name);					// Send ack for the old (prevailing) value. For check marks.
-			return "(not sent)";
+			return "(not sent, wrong engine type)";
 		}
 		if (!this.leelaish && suppressed_options_ab[name.toLowerCase()]) {
 			this.send_ack_setoption_to_main_process(name);					// Send ack for the old (prevailing) value. For check marks.
-			return "(not sent)";
+			return "(not sent, wrong engine type)";
 		}
 		return this.setoption(name, value);									// Will cause an ack for the new value.
 	};
