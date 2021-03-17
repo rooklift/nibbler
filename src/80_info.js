@@ -225,7 +225,7 @@ function NewInfoHandler() {
 				move_info.pv = new_pv;
 			}
 
-		} else if (s.startsWith("info string")) {
+		} else if (s.startsWith("info string") && !s.includes("NNUE evaluation")) {
 
 			if (config.log_info_lines) Log("< " + s);
 
@@ -326,7 +326,7 @@ function NewInfoHandler() {
 
 		} else {
 
-			if (config.log_useless_info) Log("< " + s);
+			if (config.log_info_lines && config.log_useless_info) Log("< " + s);
 
 		}
 	};
