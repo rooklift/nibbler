@@ -177,6 +177,14 @@ function startup() {
 			set_checks("Engine", "Threads", msg.val);
 			break;
 
+		case "hash":
+			let mb = parseInt(msg.val, 10);
+			if (Number.isNaN(mb) === false) {
+				let gb = Math.floor(mb / 1024);
+				set_checks("Engine", "Hash (A/B)", `${gb} GB`);
+			}
+			break;
+
 		case "temperature":			// Sketchy because there are equivalent representations.
 			if (msg.val === "0" || msg.val === "0.0") {
 				set_checks("Play", "Temperature", "0");
@@ -2857,6 +2865,119 @@ function menu_build() {
 							label: "Warning about threads",
 							click: () => {
 								alert(messages.thread_warning);
+							}
+						},
+					]
+				},
+				{
+					label: "Hash (A/B)",
+					submenu: [
+						{
+							label: "24 GB",
+							type: "checkbox",
+							checked: config.options.Hash === 24 * 1024,
+							click: () => {
+								win.webContents.send("call", {
+									fn: "set_uci_option_permanent",
+									args: ["Hash", 24 * 1024]
+								});
+								// Will receive an ack IPC which sets menu checks.
+							}
+						},
+						{
+							label: "16 GB",
+							type: "checkbox",
+							checked: config.options.Hash === 16 * 1024,
+							click: () => {
+								win.webContents.send("call", {
+									fn: "set_uci_option_permanent",
+									args: ["Hash", 16 * 1024]
+								});
+								// Will receive an ack IPC which sets menu checks.
+							}
+						},
+						{
+							label: "12 GB",
+							type: "checkbox",
+							checked: config.options.Hash === 12 * 1024,
+							click: () => {
+								win.webContents.send("call", {
+									fn: "set_uci_option_permanent",
+									args: ["Hash", 12 * 1024]
+								});
+								// Will receive an ack IPC which sets menu checks.
+							}
+						},
+						{
+							label: "8 GB",
+							type: "checkbox",
+							checked: config.options.Hash === 8 * 1024,
+							click: () => {
+								win.webContents.send("call", {
+									fn: "set_uci_option_permanent",
+									args: ["Hash", 8 * 1024]
+								});
+								// Will receive an ack IPC which sets menu checks.
+							}
+						},
+						{
+							label: "6 GB",
+							type: "checkbox",
+							checked: config.options.Hash === 6 * 1024,
+							click: () => {
+								win.webContents.send("call", {
+									fn: "set_uci_option_permanent",
+									args: ["Hash", 6 * 1024]
+								});
+								// Will receive an ack IPC which sets menu checks.
+							}
+						},
+						{
+							label: "4 GB",
+							type: "checkbox",
+							checked: config.options.Hash === 4 * 1024,
+							click: () => {
+								win.webContents.send("call", {
+									fn: "set_uci_option_permanent",
+									args: ["Hash", 4 * 1024]
+								});
+								// Will receive an ack IPC which sets menu checks.
+							}
+						},
+						{
+							label: "2 GB",
+							type: "checkbox",
+							checked: config.options.Hash === 2 * 1024,
+							click: () => {
+								win.webContents.send("call", {
+									fn: "set_uci_option_permanent",
+									args: ["Hash", 2 * 1024]
+								});
+								// Will receive an ack IPC which sets menu checks.
+							}
+						},
+						{
+							label: "1 GB",
+							type: "checkbox",
+							checked: config.options.Hash === 1 * 1024,
+							click: () => {
+								win.webContents.send("call", {
+									fn: "set_uci_option_permanent",
+									args: ["Hash", 1 * 1024]
+								});
+								// Will receive an ack IPC which sets menu checks.
+							}
+						},
+						{
+							label: "0 GB",
+							type: "checkbox",
+							checked: config.options.Hash === 0 * 1024,
+							click: () => {
+								win.webContents.send("call", {
+									fn: "set_uci_option_permanent",
+									args: ["Hash", 0 * 1024]
+								});
+								// Will receive an ack IPC which sets menu checks.
 							}
 						},
 					]
