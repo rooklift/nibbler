@@ -73,16 +73,36 @@ if (images.validate_folder(config.override_piece_directory)) {
 
 let debuggo = Object.create(null);
 
-// Options we generally want to send to engines.....................
+// Standard options, for either type of engine......................
 
 const standard_engine_options = {
+	"Contempt": 0,
 	"LogLiveStats": true,
-	"MultiPV": 500,
 	"ScoreType": "centipawn",
 	"SmartPruningFactor": 0,
 	"UCI_ShowWDL": true,
 	"VerboseMoveStats": true,
 };
+
+// Options we don't want to send to specific engine types.
+// (just use true as the val, it's the key that matters).
+// LOWERCASE!
+
+const suppressed_options_lc0 = {
+	"contempt": true,
+	"hash": true,
+};
+
+const suppressed_options_ab = {
+	"backend": true,
+	"loglivestats": true,
+	"scoretype": true,
+	"smartpruningfactor": true,
+	"tempdecaymoves": true,
+	"temperature": true,
+	"verbosemovestats": true,
+	"weightsfile": true,
+}
 
 // Yeah this seemed a good idea at the time.........................
 

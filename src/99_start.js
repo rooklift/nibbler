@@ -11,8 +11,7 @@ Log("===========================================================================
 Log(`Nibbler startup at ${new Date().toUTCString()}`);
 
 let hub = NewRenderer();
-hub.engine_start(config.path, config.args);		// This obliterates any error log, so
-hub.engine_initial_comms(config.options);		// must come before the following...
+hub.engine_start(config.path, config.args);		// This obliterates any error log, so must come before the following...
 
 if (config.failure) {
 	hub.err_receive(`<span class="blue">While loading config file: ${config.failure}</span>`);

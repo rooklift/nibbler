@@ -281,6 +281,18 @@ function NewEngine(hub) {
 		return s;			// Just so the renderer can pop s up as a message if it wants.
 	};
 
+	eng.maybe_setoption = function(name, value) {
+		if (this.leelaish && suppressed_options_lc0[name.toLowerCase()]) {
+			this.send_ack_setoption_to_main_process(name);					// Send ack for the old (prevailing) value. For check marks.
+			return "(not sent)";
+		}
+		if (!this.leelaish && suppressed_options_ab[name.toLowerCase()]) {
+			this.send_ack_setoption_to_main_process(name);					// Send ack for the old (prevailing) value. For check marks.
+			return "(not sent)";
+		}
+		return this.setoption(name, value);									// Will cause an ack for the new value.
+	};
+
 	eng.pressbutton = function(name) {
 		let s = `setoption name ${name}`;
 		this.send(s);

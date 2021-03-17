@@ -855,13 +855,14 @@ function NewRenderer() {
 			// autodetection in info.js) so that hub.set_ab_engine_multipv() works even if we've never received info.
 
 			if (s.includes("Lc0") || s.includes("Leela") || s.includes("Ceres")) {
-				this.engine.setoption("MultiPV", 500);		// Although this is default, best assume some wrong setoption might be sent some time.
 				this.engine.leelaish = true;
 			} else {
-				this.engine.setoption("MultiPV", config.ab_engine_multipv);
-				this.engine.setoption("Contempt", 0);
 				this.engine.leelaish = false;
 			}
+
+			this.engine_send_all_options();				// Relies on the engine.leelaish flag being correct.
+			this.set_behaviour("halt");					// Will cause "stop" to be sent.
+			this.engine.send("ucinewgame");				// Must happen after "stop" is sent.
 
 			// Pass unknown engines to the error handler to be displayed...
 
@@ -962,7 +963,7 @@ function NewRenderer() {
 		if (val === null || val === undefined) {
 			val = "";
 		}
-		let sent = this.engine.setoption(name, val);
+		let sent = this.engine.maybe_setoption(name, val);
 		this.set_special_message(sent, "blue");
 	};
 
@@ -1066,13 +1067,11 @@ function NewRenderer() {
 		config.path = filename;
 		config_io.save(config);
 		this.engine_start(config.path, config.args);
-		this.engine_initial_comms(config.options);
 	};
 
 	renderer.restart_engine = function() {
 		this.set_behaviour("halt");
 		this.engine_start(config.path, config.args);
-		this.engine_initial_comms(config.options);
 	};
 
 	renderer.engine_start = function(filepath, args) {
@@ -1097,28 +1096,27 @@ function NewRenderer() {
 		}
 
 		this.engine.setup(filepath, args, this);
+		this.engine.send("uci");
 	};
 
-	renderer.engine_initial_comms = function(options) {
-
-		if (typeof options !== "object" || options === null) {
-			options = {};
-		}
-
-		this.engine.send("uci");
+	renderer.engine_send_all_options = function() {		// Relies on the engine.leelaish flag being correct.
 
 		for (let key of Object.keys(standard_engine_options)) {
-			this.engine.setoption(key, standard_engine_options[key]);
+			this.engine.maybe_setoption(key, standard_engine_options[key]);
 		}
 
-		for (let key of Object.keys(options)) {
-			this.engine.setoption(key, options[key]);	// Allowing user to override even the above normal options.
+		for (let key of Object.keys(config.options)) {
+			this.engine.maybe_setoption(key, config.options[key]);
 		}
 
-		this.engine.setoption("UCI_Chess960", true);	// We always use Chess 960 mode now, for consistency.
+		if (this.engine.leelaish) {
+			this.engine.setoption("MultiPV", 500);
+		} else {
+			this.engine.setoption("MultiPV", config.ab_engine_multipv);
+		}
 
-		this.engine.send("ucinewgame");
-	};
+		this.engine.setoption("UCI_Chess960", true);	// We always use Chess 960 mode, it's here so user can't override it.
+	}
 
 	// -------------------------------------------------------------------------------------------------------------------------
 	// Settings etc...
