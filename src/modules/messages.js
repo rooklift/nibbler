@@ -63,6 +63,11 @@ exports.about_sizes =
 Nibbler's config file (which can be found via the Dev menu).`;
 
 
+exports.about_hashes =
+`You can set the Hash value directly via Nibbler's config file (which can be found via \
+the Dev menu).`;
+
+
 exports.thread_warning =
 `Note that, for systems using a GPU, 2 threads is usually sufficient, and increasing \
 this number can actually make Leela weaker! More threads should probably only be used \

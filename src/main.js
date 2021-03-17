@@ -2887,6 +2887,18 @@ function menu_build() {
 							}
 						},
 						{
+							label: "20 GB",
+							type: "checkbox",
+							checked: config.options.Hash === 20 * 1024,
+							click: () => {
+								win.webContents.send("call", {
+									fn: "set_uci_option_permanent",
+									args: ["Hash", 20 * 1024]
+								});
+								// Will receive an ack IPC which sets menu checks.
+							}
+						},
+						{
 							label: "16 GB",
 							type: "checkbox",
 							checked: config.options.Hash === 16 * 1024,
@@ -2982,6 +2994,15 @@ function menu_build() {
 								// Will receive an ack IPC which sets menu checks.
 							}
 						},
+						{
+							type: "separator"
+						},
+						{
+							label: "I want other hash options!",
+							click: () => {
+								alert(messages.about_hashes);
+							}
+						}
 					]
 				},
 				{
