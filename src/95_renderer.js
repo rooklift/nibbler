@@ -1105,8 +1105,18 @@ function NewRenderer() {
 			this.engine.maybe_setoption(key, standard_engine_options[key]);
 		}
 
+		let delayed_hash_val = null;
+
 		for (let key of Object.keys(config.options)) {
-			this.engine.maybe_setoption(key, config.options[key]);
+			if (key.toLowerCase() !== "hash") {			// "It is recommended to set Hash after setting Threads."
+				this.engine.maybe_setoption(key, config.options[key]);
+			} else {
+				delayed_hash_val = config.options[key];
+			}
+		}
+
+		if (delayed_hash_val !== null) {
+			this.engine.maybe_setoption("Hash", delayed_hash_val);
 		}
 
 		if (this.engine.leelaish) {
