@@ -1,14 +1,12 @@
 "use strict";
 
-// DrawArrows is attached as a method to the info_handler... "this" refers to that.
+function DrawArrows(node, one_click_moves, specific_source, show_move) {		// specific_source is a Point(), show_move is a string
 
-function DrawArrows(node, specific_source = null, show_move = null) {		// node, Point(), string
-
-	// Function also sets up the one_click_moves array.
+	// Function is responsible for updating the one_click_moves array.
 
 	for (let x = 0; x < 8; x++) {
 		for (let y = 0; y < 8; y++) {
-			this.one_click_moves[x][y] = null;
+			one_click_moves[x][y] = null;
 		}
 	}
 
@@ -211,24 +209,24 @@ function DrawArrows(node, specific_source = null, show_move = null) {		// node, 
 			// and also set an arrowhead to be drawn later.
 
 			if (normal_castling_flag) {
-				if (!this.one_click_moves[x2 + x_head_adjustment][y2]) {
+				if (!one_click_moves[x2 + x_head_adjustment][y2]) {
 					heads.push({
 						colour: colour,
 						x2: x2 + x_head_adjustment,
 						y2: y2,
 						info: info_list[i]
 					});
-					this.one_click_moves[x2 + x_head_adjustment][y2] = info_list[i].move;
+					one_click_moves[x2 + x_head_adjustment][y2] = info_list[i].move;
 				}
 			} else {
-				if (!this.one_click_moves[x2][y2]) {
+				if (!one_click_moves[x2][y2]) {
 					heads.push({
 						colour: colour,
 						x2: x2 + x_head_adjustment,
 						y2: y2,
 						info: info_list[i]
 					});
-					this.one_click_moves[x2][y2] = info_list[i].move;
+					one_click_moves[x2][y2] = info_list[i].move;
 				}
 			}
 		}

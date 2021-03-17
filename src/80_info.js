@@ -31,7 +31,9 @@ function NewInfoHandler() {
 	ih.last_drawn_searchmoves = [];
 	ih.last_drawn_allow_inactive_focus = null;
 
-	ih.draw_arrows = DrawArrows;					// In arrows.js
+	ih.draw_arrows = function(node, specific_source, show_move) {
+		DrawArrows(node, this.one_click_moves, specific_source, show_move);				// In arrows.js
+	};
 
 	ih.reset_engine_info = function() {
 		this.engine_start_time = performance.now();
