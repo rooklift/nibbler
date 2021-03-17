@@ -183,8 +183,12 @@ function startup() {
 				let gb = Math.floor(mb / 1024);
 				set_checks("Engine", "Hash (A/B)", `${gb} GB`);
 			} else {
-				set_checks("Engine", "Hash (A/B)", "");		// i.e. clear all
+				set_checks("Engine", "Hash (A/B)", "");			// i.e. clear all
 			}
+			break;
+
+		case "multipv":
+			set_checks("Engine", "MultiPV (A/B)", msg.val);		// If it's 500 it will clear all.
 			break;
 
 		case "temperature":			// Sketchy because there are equivalent representations.
@@ -3006,6 +3010,71 @@ function menu_build() {
 					]
 				},
 				{
+					label: "MultiPV (A/B)",
+					submenu: [
+						{
+							label: "5",
+							type: "checkbox",
+							checked: config.ab_engine_multipv === 5,
+							click: () => {
+								win.webContents.send("call", {
+									fn: "set_ab_engine_multipv",
+									args: [5]
+								});
+								// Will receive an ack IPC which sets menu checks.
+							}
+						},
+						{
+							label: "4",
+							type: "checkbox",
+							checked: config.ab_engine_multipv === 4,
+							click: () => {
+								win.webContents.send("call", {
+									fn: "set_ab_engine_multipv",
+									args: [4]
+								});
+								// Will receive an ack IPC which sets menu checks.
+							}
+						},
+						{
+							label: "3",
+							type: "checkbox",
+							checked: config.ab_engine_multipv === 3,
+							click: () => {
+								win.webContents.send("call", {
+									fn: "set_ab_engine_multipv",
+									args: [3]
+								});
+								// Will receive an ack IPC which sets menu checks.
+							}
+						},
+						{
+							label: "2",
+							type: "checkbox",
+							checked: config.ab_engine_multipv === 2,
+							click: () => {
+								win.webContents.send("call", {
+									fn: "set_ab_engine_multipv",
+									args: [2]
+								});
+								// Will receive an ack IPC which sets menu checks.
+							}
+						},
+						{
+							label: "1",
+							type: "checkbox",
+							checked: config.ab_engine_multipv === 1,
+							click: () => {
+								win.webContents.send("call", {
+									fn: "set_ab_engine_multipv",
+									args: [1]
+								});
+								// Will receive an ack IPC which sets menu checks.
+							}
+						},
+					]
+				},
+				{
 					type: "separator"
 				},
 				{
@@ -3531,74 +3600,6 @@ function menu_build() {
 							args: ["allow_arbitrary_scripts"],
 						});
 					}
-				},
-				{
-					type: "separator"
-				},
-				{
-					label: "A/B MultiPV",
-					submenu: [
-						{
-							label: "5",
-							type: "checkbox",
-							checked: config.ab_engine_multipv === 5,
-							click: () => {
-								win.webContents.send("call", {
-									fn: "set_ab_engine_multipv",
-									args: [5]
-								});
-								set_checks("Dev", "A/B MultiPV", "5");
-							}
-						},
-						{
-							label: "4",
-							type: "checkbox",
-							checked: config.ab_engine_multipv === 4,
-							click: () => {
-								win.webContents.send("call", {
-									fn: "set_ab_engine_multipv",
-									args: [4]
-								});
-								set_checks("Dev", "A/B MultiPV", "4");
-							}
-						},
-						{
-							label: "3",
-							type: "checkbox",
-							checked: config.ab_engine_multipv === 3,
-							click: () => {
-								win.webContents.send("call", {
-									fn: "set_ab_engine_multipv",
-									args: [3]
-								});
-								set_checks("Dev", "A/B MultiPV", "3");
-							}
-						},
-						{
-							label: "2",
-							type: "checkbox",
-							checked: config.ab_engine_multipv === 2,
-							click: () => {
-								win.webContents.send("call", {
-									fn: "set_ab_engine_multipv",
-									args: [2]
-								});
-								set_checks("Dev", "A/B MultiPV", "2");
-							}
-						},
-						{
-							label: "1",
-							type: "checkbox",
-							checked: config.ab_engine_multipv === 1,
-							click: () => {
-								win.webContents.send("call", {
-									fn: "set_ab_engine_multipv",
-									args: [1]
-								});
-								set_checks("Dev", "A/B MultiPV", "1");
-							}
-						},
-					]
 				},
 				{
 					type: "separator"
