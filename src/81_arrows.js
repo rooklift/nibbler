@@ -135,20 +135,22 @@ function DrawArrows(node, specific_source = null, show_move = null) {		// node, 
 					ok = false;
 				}
 			}
+
+			// If the show_move would be filtered out, note that fact...
+
+			if (!ok && info_list[i].move === show_move) {
+				show_move_was_forced = true;
+			}
 		}
 
 		// Filter for ab mode...
+		// Note that we don't set show_move_was_forced for ab mode.
+		// If it wasn't already set, then we have good info for this move.
 
 		if (mode === "ab") {
 			if (loss >= config.ab_filter_threshold) {
 				ok = false;
 			}
-		}
-
-		// If the show_move would be filtered out, note that fact...
-
-		if (!ok && info_list[i].move === show_move) {
-			show_move_was_forced = true;
 		}
 
 		// Go ahead, if the various tests don't filter the move out...
