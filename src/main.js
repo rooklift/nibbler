@@ -188,7 +188,7 @@ function startup() {
 			break;
 
 		case "multipv":
-			set_checks("Engine", "MultiPV (A/B)", msg.val);		// If it's 500 it will clear all.
+			set_checks("Engine", "MultiPV (A/B)", msg.val);		// If it's "500" it will clear all.
 			break;
 
 		case "temperature":			// Sketchy because there are equivalent representations.
