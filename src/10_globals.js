@@ -75,14 +75,14 @@ let debuggo = Object.create(null);
 
 // Standard options, for either type of engine......................
 // The following are sent to all engines unless present in the
-// suppressed lists below. Do not put MultiPV or UCI_Chess960
-// in this list because they are handled as special cases.
+// suppressed lists below.
 
 const standard_engine_options = {
 	"Contempt": 0,
 	"LogLiveStats": true,
 	"ScoreType": "centipawn",
 	"SmartPruningFactor": 0,
+	"UCI_Chess960": true,
 	"UCI_ShowWDL": true,
 	"VerboseMoveStats": true,
 };
@@ -95,7 +95,6 @@ const suppressed_options_lc0 = {
 	"contempt": true,
 	"hash": true,
 	"multipv": true,				// Does get set to 500, but can't be changed by normal routes.
-	"uci_chess960": true,			// Does get set to true, but can't be changed by normal routes.
 };
 
 const suppressed_options_ab = {
@@ -105,7 +104,6 @@ const suppressed_options_ab = {
 	"smartpruningfactor": true,
 	"tempdecaymoves": true,
 	"temperature": true,
-	"uci_chess960": true,			// Does get set to true, but can't be changed by normal routes.
 	"verbosemovestats": true,
 	"weightsfile": true,
 }

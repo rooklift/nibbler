@@ -1119,15 +1119,12 @@ function NewRenderer() {
 		}
 
 		// The following use setoption() not maybe_setoption().
-		// The keys are present in one or both of the suppressed lists.
 
 		if (this.engine.leelaish) {
 			this.engine.setoption("MultiPV", 500);
 		} else {
 			this.engine.setoption("MultiPV", config.ab_engine_multipv);
 		}
-
-		this.engine.setoption("UCI_Chess960", true);
 	}
 
 	// -------------------------------------------------------------------------------------------------------------------------
