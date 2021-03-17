@@ -238,16 +238,17 @@ function debork_json(s) {
 exports.load = () => {
 
 	let cfg = {};
+	let defaults_copy = JSON.parse(JSON.stringify(exports.defaults));
 
 	try {
 		if (fs.existsSync(exports.filepath)) {
 			cfg = JSON.parse(debork_json(fs.readFileSync(exports.filepath, "utf8")));
 		}
 	} catch (err) {
-		cfg.failure = err.toString();		// alert() might not be available.
+		cfg.failure = err.toString();					// alert() might not be available.
 	}
 
-	assign_without_overwrite(cfg, exports.defaults);
+	assign_without_overwrite(cfg, defaults_copy);		// We use a copy so that any objects that are assigned are not the default objects.
 	fix(cfg);
 
 	return cfg;
