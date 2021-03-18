@@ -111,11 +111,11 @@ exports.defaults = {
 	"animate_delay_multiplier": 4,
 
 	"allow_arbitrary_scripts": false,
+	"suppress_chess960": false,
+	"show_engine_state": false,
 
 	"search_nodes": null,
 	"search_nodes_special": 4000,
-
-	"show_engine_state": false,
 
 	"save_enabled": false,
 	"override_piece_directory": null,

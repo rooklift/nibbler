@@ -151,7 +151,7 @@ function NewEngine(hub) {
 			return;
 		}
 
-		let root_fen = node.get_root().board.fen(false);
+		let root_fen = node.get_root().board.fen(config.suppress_chess960);
 		let setup = `fen ${root_fen}`;
 		let moves = node.history();
 
@@ -282,6 +282,10 @@ function NewEngine(hub) {
 	};
 
 	eng.maybe_setoption = function(name, value) {
+		if (name.toLowerCase() === "uci_chess960" && config.suppress_chess960) {
+			this.send_ack_setoption_to_main_process(name);
+			return "Not sent, Chess960 suppressed";
+		}
 		if (this.leelaish && suppressed_options_lc0[name.toLowerCase()]) {
 			this.send_ack_setoption_to_main_process(name);					// Send ack for the old (prevailing) value. For check marks.
 			return "Not sent, wrong engine type";

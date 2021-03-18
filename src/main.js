@@ -3613,6 +3613,17 @@ function menu_build() {
 					}
 				},
 				{
+					label: "Suppress Chess 960 format",
+					type: "checkbox",
+					checked: config.suppress_chess960,
+					click: () => {
+						win.webContents.send("call", {
+							fn: "toggle",
+							args: ["suppress_chess960"],
+						});
+					}
+				},
+				{
 					type: "separator"
 				},
 				{
