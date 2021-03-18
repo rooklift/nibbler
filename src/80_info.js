@@ -438,7 +438,7 @@ function NewInfoHandler() {
 		if (node.terminal_reason() !== "") {
 			info_list = [];
 		} else {
-			info_list = SortedMoves(node);
+			info_list = SortedMoveInfo(node);
 		}
 
 		let best_subcycle = info_list.length > 0 ? info_list[0].subcycle : 0;

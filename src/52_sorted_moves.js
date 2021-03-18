@@ -1,6 +1,6 @@
 "use strict";
 
-function SortedMoves(node) {
+function SortedMoveInfo(node) {
 
 	// There are a lot of subtleties around sorting the moves...
 	//

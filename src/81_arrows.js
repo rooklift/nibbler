@@ -14,7 +14,7 @@ function DrawArrows(node, one_click_moves, specific_source, show_move) {		// spe
 		return;
 	}
 
-	let full_list = SortedMoves(node);
+	let full_list = SortedMoveInfo(node);
 
 	if (full_list.length === 0) {		// Keep this test early so we can assume full_list[0] exists later.
 		return;
