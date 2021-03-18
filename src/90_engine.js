@@ -153,7 +153,13 @@ function NewEngine(hub) {
 
 		let root_fen = node.get_root().board.fen(config.suppress_chess960);
 		let setup = `fen ${root_fen}`;
-		let moves = node.history();
+		let moves;
+
+		if (config.suppress_chess960) {
+			moves = node.history_old_format();
+		} else {
+			moves = node.history();
+		}
 
 		if (moves.length === 0) {
 			this.send(`position ${setup}`);

@@ -86,6 +86,29 @@ const node_prototype = {
 		return ret;
 	},
 
+	history_old_format: function() {		// For engines that can't handle Chess960 format stuff.
+
+		let ret = [];
+		let node = this;
+
+		while (node.move) {
+			ret.push(node.move_old_format());
+			node = node.parent;
+		}
+
+		ret.reverse();
+		return ret;
+	},
+
+	move_old_format: function() {
+		let move = this.move;
+		if (move === "e1h1" && this.parent.board.state[4][7] === "K") move = "e1g1";
+		if (move === "e1a1" && this.parent.board.state[4][7] === "K") move = "e1c1";
+		if (move === "e8h8" && this.parent.board.state[4][0] === "k") move = "e8g8";
+		if (move === "e8a8" && this.parent.board.state[4][0] === "k") move = "e8c8";
+		return move;
+	},
+
 	node_history: function() {
 
 		let ret = [];
