@@ -947,7 +947,7 @@ function NewRenderer() {
 	renderer.set_ab_engine_multipv = function(val) {
 		config.ab_engine_multipv = val;
 		config_io.save(config);
-		let sent = this.engine.maybe_setoption("MultiPV", val);
+		let sent = this.engine.maybe_setoption("MultiPV", val);		// Suppressed for Leelaish engines in suppressed_options_lc0 list.
 		this.set_special_message(sent, "blue");
 	};
 
