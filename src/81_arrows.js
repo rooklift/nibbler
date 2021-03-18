@@ -199,12 +199,10 @@ function DrawArrows(node, one_click_moves, specific_source, show_move) {		// spe
 
 			arrows.push({
 				colour: colour,
-				// i: i,				// Saving the order in the original SortedMoveInfo array
 				x1: x1,
 				y1: y1,
 				x2: x2 + x_head_adjustment,
 				y2: y2,
-				// knight_flag: Math.abs(x2 - x1) + Math.abs(y2 - y1) === 3 && (Math.abs(x2 - x1) === 2 || Math.abs(x2 - x1) === 1),
 				info: info_list[i]
 			});
 
