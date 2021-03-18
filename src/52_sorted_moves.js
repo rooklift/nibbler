@@ -24,6 +24,8 @@ function SortedMoveInfo(node) {
 		if (o.subcycle > latest_subcycle) latest_subcycle = o.subcycle;
 	}
 
+	// It's important that the sort be transitive. I believe it is.
+
 	info_list.sort((a, b) => {
 
 		const a_is_best = -1;						// return -1 to sort a to the left
