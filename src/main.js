@@ -3621,6 +3621,7 @@ function menu_build() {
 							fn: "toggle",
 							args: ["suppress_chess960"],
 						});
+						alert(messages.restart_the_engine);
 					}
 				},
 				{
