@@ -2070,7 +2070,7 @@ function NewRenderer() {
 		let did_hoverdraw = this.hoverdraw();
 
 		let arrow_spotlight_square = config.click_spotlight ? this.active_square : null;
-		let next_move = config.next_move_arrow && this.tree.node.children.length > 0 ? this.tree.node.children[0].move : null;
+		let next_move = (config.next_move_arrow && this.tree.node.children.length > 0) ? this.tree.node.children[0].move : null;
 
 		if (did_hoverdraw) {
 			canvas.style.outline = "2px dashed #b4b4b4";
