@@ -895,7 +895,7 @@ function menu_build() {
 					}
 				},
 				{
-					label: "...with piece-click spotlight",
+					label: "Piece-click spotlight",
 					type: "checkbox",
 					checked: config.click_spotlight,
 					click: () => {
@@ -906,13 +906,24 @@ function menu_build() {
 					}
 				},
 				{
-					label: "...always show actual move (if known)",
+					label: "Always show actual move (if known)",
 					type: "checkbox",
 					checked: config.next_move_arrow,
 					click: () => {
 						win.webContents.send("call", {
 							fn: "toggle",
 							args: ["next_move_arrow"],
+						});
+					}
+				},
+				{
+					label: "...with outline",
+					type: "checkbox",
+					checked: config.next_move_outline,
+					click: () => {
+						win.webContents.send("call", {
+							fn: "toggle",
+							args: ["next_move_outline"],
 						});
 					}
 				},

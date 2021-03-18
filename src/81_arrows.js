@@ -236,7 +236,7 @@ function DrawArrows(node, one_click_moves, specific_source, show_move) {		// spe
 
 	// It looks best if the longest arrows are drawn underneath. Manhattan distance is good enough.
 	// For the sake of displaying the best pawn promotion (of the 4 possible), sort ties are broken
-	// by node counts, with lower drawn first.
+	// by node counts, with lower drawn first. FIXME: what about Stockfish?
 
 	arrows.sort((a, b) => {
 		if (Math.abs(a.x2 - a.x1) + Math.abs(a.y2 - a.y1) < Math.abs(b.x2 - b.x1) + Math.abs(b.y2 - b.y1)) {
@@ -253,6 +253,37 @@ function DrawArrows(node, one_click_moves, specific_source, show_move) {		// spe
 		}
 		return 0;
 	});
+
+	if (show_move && config.next_move_outline) {		// Draw the underlying arrow which becomes the outline.
+
+		boardctx.strokeStyle = "#000000";
+		boardctx.fillStyle = "#000000";
+		boardctx.lineWidth = config.arrow_width + 4;
+
+		for (let o of arrows) {
+			if (o.info.move !== show_move) {
+				continue;
+			}
+			let cc1 = CanvasCoords(o.x1, o.y1);
+			let cc2 = CanvasCoords(o.x2, o.y2);
+			boardctx.beginPath();
+			boardctx.moveTo(cc1.cx, cc1.cy);
+			boardctx.lineTo(cc2.cx, cc2.cy);
+			boardctx.stroke();
+			break;
+		}
+
+		for (let o of heads) {
+			if (o.info.move !== show_move) {
+				continue;
+			}
+			let cc2 = CanvasCoords(o.x2, o.y2);
+			boardctx.beginPath();
+			boardctx.arc(cc2.cx, cc2.cy, config.arrowhead_radius + 2, 0, 2 * Math.PI);
+			boardctx.fill();
+			break;
+		}
+	}
 
 	boardctx.lineWidth = config.arrow_width;
 	boardctx.textAlign = "center";

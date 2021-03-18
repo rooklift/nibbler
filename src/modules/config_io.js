@@ -58,6 +58,7 @@ exports.defaults = {
 	"arrows_enabled": true,
 	"click_spotlight": true,
 	"next_move_arrow": false,
+	"next_move_outline": false,
 	"arrowhead_type": 0,
 
 	"ev_white_pov": false,
