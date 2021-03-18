@@ -117,7 +117,7 @@ function NewInfoHandler() {
 
 			if (node.table.moveinfo[move] && !node.table.moveinfo[move].__ghost) {		// We already have move info for this move.
 				move_info = node.table.moveinfo[move];
-			} else {									// We don't.
+			} else {																	// We don't.
 				if (board.illegal(move) !== "") {
 					if (config.log_illegal_moves) {
 						Log(`INVALID / ILLEGAL MOVE RECEIVED: ${move}`);
