@@ -3638,7 +3638,7 @@ function menu_build() {
 						let file = save_dialog();
 						if (typeof file === "string" && file.length > 0) {
 							win.webContents.send("call", {
-								fn: "start_logging",
+								fn: "set_logfile",
 								args: [file]
 							});
 							// Will receive an ack IPC which sets menu checks.
@@ -3650,7 +3650,10 @@ function menu_build() {
 				{
 					label: "Disable logging",
 					click: () => {
-						win.webContents.send("call", "stop_logging");
+						win.webContents.send("call", {
+							fn: "set_logfile",
+							args: [null]
+						});
 						// Will receive an ack IPC which sets menu checks.
 					}
 				},

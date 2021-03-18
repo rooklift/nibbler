@@ -1478,17 +1478,10 @@ function NewRenderer() {
 		console.log("[\n" + text_lines.join(",\n") + "\n]");
 	};
 
-	renderer.start_logging = function(filename) {
+	renderer.set_logfile = function(filename) {		// Arg can be null to stop logging.
 		config.logfile = null;
-		Log("Stopping log.");		// This will do nothing, but calling Log() forces it to close any open file.
+		Log("Stopping log.");			// This will do nothing, but calling Log() forces it to close any open file.
 		config.logfile = filename;
-		config_io.save(config);
-		this.send_ack_logfile();
-	};
-
-	renderer.stop_logging = function() {
-		config.logfile = null;
-		Log("Stopping log.");		// This will do nothing, but calling Log() forces it to close any open file.
 		config_io.save(config);
 		this.send_ack_logfile();
 	};
