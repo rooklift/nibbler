@@ -28,6 +28,7 @@ function DrawArrows(node, one_click_moves, specific_source, show_move) {		// spe
 
 	let mode;
 	let show_move_was_forced = false;	// Will become true if the show_move is only in the list because of the show_move arg
+	let show_move_head_exists = false;
 
 	if (specific_source) {
 		mode = "specific";
@@ -198,10 +199,12 @@ function DrawArrows(node, one_click_moves, specific_source, show_move) {		// spe
 
 			arrows.push({
 				colour: colour,
+				// i: i,				// Saving the order in the original SortedMoveInfo array
 				x1: x1,
 				y1: y1,
 				x2: x2 + x_head_adjustment,
 				y2: y2,
+				// knight_flag: Math.abs(x2 - x1) + Math.abs(y2 - y1) === 3 && (Math.abs(x2 - x1) === 2 || Math.abs(x2 - x1) === 1),
 				info: info_list[i]
 			});
 
@@ -217,6 +220,9 @@ function DrawArrows(node, one_click_moves, specific_source, show_move) {		// spe
 						info: info_list[i]
 					});
 					one_click_moves[x2 + x_head_adjustment][y2] = info_list[i].move;
+					if (info_list[i].move === show_move) {
+						show_move_head_exists = true;
+					}
 				}
 			} else {
 				if (!one_click_moves[x2][y2]) {
@@ -227,6 +233,9 @@ function DrawArrows(node, one_click_moves, specific_source, show_move) {		// spe
 						info: info_list[i]
 					});
 					one_click_moves[x2][y2] = info_list[i].move;
+					if (info_list[i].move === show_move) {
+						show_move_head_exists = true;
+					}
 				}
 			}
 		}
@@ -254,45 +263,33 @@ function DrawArrows(node, one_click_moves, specific_source, show_move) {		// spe
 		return 0;
 	});
 
-	if (show_move && config.next_move_outline) {		// Draw the underlying arrow which becomes the outline.
-
-		boardctx.strokeStyle = "#000000";
-		boardctx.fillStyle = "#000000";
-		boardctx.lineWidth = config.arrow_width + 4;
-
-		for (let o of arrows) {
-			if (o.info.move !== show_move) {
-				continue;
-			}
-			let cc1 = CanvasCoords(o.x1, o.y1);
-			let cc2 = CanvasCoords(o.x2, o.y2);
-			boardctx.beginPath();
-			boardctx.moveTo(cc1.cx, cc1.cy);
-			boardctx.lineTo(cc2.cx, cc2.cy);
-			boardctx.stroke();
-			break;
-		}
-
-		for (let o of heads) {
-			if (o.info.move !== show_move) {
-				continue;
-			}
-			let cc2 = CanvasCoords(o.x2, o.y2);
-			boardctx.beginPath();
-			boardctx.arc(cc2.cx, cc2.cy, config.arrowhead_radius + 2, 0, 2 * Math.PI);
-			boardctx.fill();
-			break;
-		}
-	}
-
 	boardctx.lineWidth = config.arrow_width;
 	boardctx.textAlign = "center";
 	boardctx.textBaseline = "middle";
 	boardctx.font = config.board_font;
 
 	for (let o of arrows) {
+
 		let cc1 = CanvasCoords(o.x1, o.y1);
 		let cc2 = CanvasCoords(o.x2, o.y2);
+
+		if (o.info.move === show_move && config.next_move_outline) {		// Draw the outline at the layer just below the actual arrow.
+			boardctx.strokeStyle = "black";
+			boardctx.fillStyle = "black";
+			boardctx.lineWidth = config.arrow_width + 4;
+			boardctx.beginPath();
+			boardctx.moveTo(cc1.cx, cc1.cy);
+			boardctx.lineTo(cc2.cx, cc2.cy);
+			boardctx.stroke();
+			boardctx.lineWidth = config.arrow_width;
+
+			if (show_move_head_exists) {			// This is the best layer to draw the head outline.
+				boardctx.beginPath();
+				boardctx.arc(cc2.cx, cc2.cy, config.arrowhead_radius + 2, 0, 2 * Math.PI);
+				boardctx.fill();
+			}
+		}
+
 		boardctx.strokeStyle = o.colour;
 		boardctx.fillStyle = o.colour;
 		boardctx.beginPath();
@@ -302,7 +299,9 @@ function DrawArrows(node, one_click_moves, specific_source, show_move) {		// spe
 	}
 
 	for (let o of heads) {
+
 		let cc2 = CanvasCoords(o.x2, o.y2);
+
 		boardctx.fillStyle = o.colour;
 		boardctx.beginPath();
 		boardctx.arc(cc2.cx, cc2.cy, config.arrowhead_radius, 0, 2 * Math.PI);
