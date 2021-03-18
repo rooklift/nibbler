@@ -101,7 +101,7 @@ const node_prototype = {
 	},
 
 	move_old_format: function() {
-		let move = move;
+		let move = this.move;
 		if (move === "e1h1" && this.parent.board.state[4][7] === "K") return "e1g1";
 		if (move === "e1a1" && this.parent.board.state[4][7] === "K") return "e1c1";
 		if (move === "e8h8" && this.parent.board.state[4][0] === "k") return "e8g8";
