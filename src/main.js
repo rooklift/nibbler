@@ -3011,11 +3011,11 @@ function menu_build() {
 						{
 							label: "0 GB",
 							type: "checkbox",
-							checked: config.options.Hash === 0 * 1024,
+							checked: config.options.Hash === 1,
 							click: () => {
 								win.webContents.send("call", {
 									fn: "set_uci_option_permanent",
-									args: ["Hash", 0 * 1024]
+									args: ["Hash", 1]					// 1 MB is Stockfish actual minimum.
 								});
 								// Will receive an ack IPC which sets menu checks.
 							}
