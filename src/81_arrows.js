@@ -161,7 +161,9 @@ function DrawArrows(node, one_click_moves, specific_source, show_move) {		// spe
 
 			let colour;
 
-			if (show_move_was_forced && info_list[i].move === show_move) {
+			if (info_list[i].move === show_move && config.next_move_unique_colour) {
+				colour = config.actual_move_colour;
+			} else if (info_list[i].move === show_move && show_move_was_forced) {
 				if (mode === "untouched") {
 					colour = config.best_colour;
 				} else {

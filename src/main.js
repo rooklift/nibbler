@@ -917,6 +917,17 @@ function menu_build() {
 					}
 				},
 				{
+					label: "...with unique colour",
+					type: "checkbox",
+					checked: config.next_move_unique_colour,
+					click: () => {
+						win.webContents.send("call", {
+							fn: "toggle",
+							args: ["next_move_unique_colour"],
+						});
+					}
+				},
+				{
 					label: "...with outline",
 					type: "checkbox",
 					checked: config.next_move_outline,

@@ -38,11 +38,13 @@ exports.defaults = {
 	"light_square": "#dadada",
 	"dark_square": "#b4b4b4",
 	"active_square": "#66aaaa",
-	"move_colour_with_alpha": "#ffff0026",
+	"move_squares_with_alpha": "#ffff0026",
+
 	"best_colour": "#66aaaa",
 	"good_colour": "#66aa66",
 	"bad_colour": "#cccc66",
 	"terrible_colour": "#cc6666",
+	"actual_move_colour": "#ffffff",
 
 	"searchmoves_buttons": true,
 	"focus_on_text": "focused:",
@@ -59,6 +61,7 @@ exports.defaults = {
 	"click_spotlight": true,
 	"next_move_arrow": false,
 	"next_move_outline": false,
+	"next_move_unique_colour": false,
 	"arrowhead_type": 0,
 
 	"ev_white_pov": false,

@@ -1921,7 +1921,7 @@ function NewRenderer() {
 					if (this.dirty_squares[x][y] !== HIGHLIGHT) {
 						let s = S(x, y);
 						let td = document.getElementById("underlay_" + s);
-						td.style["background-color"] = config.move_colour_with_alpha;
+						td.style["background-color"] = config.move_squares_with_alpha;
 						this.dirty_squares[x][y] = HIGHLIGHT;
 					}
 
