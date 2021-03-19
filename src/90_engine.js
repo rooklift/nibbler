@@ -230,12 +230,14 @@ function NewEngine(hub) {
 
 	};
 
-	eng.handle_bestmove_line = function(line) {
-
+	eng.send_queued_setoptions = function() {
 		for (let msg of this.setoption_queue) {
-			this.send(msg, true);					// Use the force flag as we haven't actually set search_running to its correct value.
+			this.send(msg, true);					// Use the force flag in case we haven't set search_running to its correct value.
 		}
 		this.setoption_queue = [];
+	};
+
+	eng.handle_bestmove_line = function(line) {
 
 		this.unresolved_stop_time = null;
 
@@ -259,13 +261,16 @@ function NewEngine(hub) {
 			this.search_desired = NoSearch;
 			if (report_bestmove) {
 				Log("< " + line);
+				this.send_queued_setoptions();								// After logging the incoming.
 				this.hub.receive_bestmove(line, completed_search.node);		// May trigger a new search, so do it last.
 			} else {
 				Log("(ignore halted) < " + line);
+				this.send_queued_setoptions();								// After logging the incoming.
 			}
 		} else {
 			this.search_running = NoSearch;
 			Log("(ignore old) < " + line);
+			this.send_queued_setoptions();									// After logging the incoming.
 			this.send_desired();
 		}
 	};
