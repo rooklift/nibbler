@@ -1454,7 +1454,11 @@ function NewRenderer() {
 		console.log(`Running script: ${filename}`);
 
 		for (let line of lines) {
-			this.engine.send(line);
+			if (config.allow_arbitrary_scripts) {
+				this.engine.send(line, true);			// Force mode, so setoptions don't get held back
+			} else {
+				this.engine.send(line);
+			}
 			console.log(line);
 		}
 		this.set_special_message(`${path.basename(filename)}: Sent ${lines.length} lines`, "blue");
