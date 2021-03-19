@@ -948,7 +948,7 @@ function NewRenderer() {
 	};
 
 	renderer.set_ab_engine_multipv = function(val) {
-		config.ab_engine_multipv = val;				// This is stored outside the normal options object, it's too special.
+		config.ab_engine_multipv = val;				// This is stored outside the normal options object, it's too special, various things access it.
 		config_io.save(config);
 		this.set_uci_option("MultiPV", val);
 	};
