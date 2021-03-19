@@ -241,6 +241,10 @@ function NewEngine(hub) {
 
 		// If this.search_desired === this.search_running then the search that just completed
 		// is the most recent one requested by the hub; we have nothing to replace it with.
+		//
+		// Note that, in certain cases, search_desired and search_running will have identical
+		// properties but be different objects; in that case it is correct to send the desired
+		// object as a new search.
 
 		let no_new_search = (this.search_desired === this.search_running) || !this.search_desired.node;
 
