@@ -411,8 +411,14 @@ function NewInfoHandler() {
 			}
 			status_string += `</span>`;
 
-			if (can_have_limit_met_msg && typeof config.search_nodes === "number" && node.table.nodes >= config.search_nodes) {
-				status_string += ` <span class="blue">(limit met)</span>`;
+			if (!engine.search_running.node) {
+				if (can_have_limit_met_msg && typeof config.search_nodes === "number" && node.table.nodes >= config.search_nodes) {
+					status_string += ` <span class="blue">(limit met)</span>`;
+				} else {
+					if (config.behaviour !== "halt") {
+						status_string += ` <span class="blue">(engine stopped)</span>`;
+					}
+				}
 			}
 
 			statusbox.innerHTML = status_string;
