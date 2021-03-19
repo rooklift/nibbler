@@ -948,10 +948,9 @@ function NewRenderer() {
 	};
 
 	renderer.set_ab_engine_multipv = function(val) {
-		config.ab_engine_multipv = val;
+		config.ab_engine_multipv = val;				// This is stored outside the normal options object, it's too special.
 		config_io.save(config);
-		let sent = this.engine.maybe_setoption("MultiPV", val);		// Suppressed for Leelaish engines in suppressed_options_lc0 list.
-		this.set_special_message(sent, "blue");
+		this.set_uci_option("MultiPV", val);
 	};
 
 	renderer.set_uci_option = function(name, val, save_to_cfg) {
@@ -966,12 +965,19 @@ function NewRenderer() {
 		if (val === null || val === undefined) {
 			val = "";
 		}
+		this.halt_if_maybe_setoption_will_succeed(name, val);
 		let sent = this.engine.maybe_setoption(name, val);
 		this.set_special_message(sent, "blue");
 	};
 
 	renderer.set_uci_option_permanent = function(name, val) {
 		this.set_uci_option(name, val, true);
+	};
+
+	renderer.halt_if_maybe_setoption_will_succeed = function(name, val) {			// Maybe needs a nicer name...
+		if (this.engine.maybe_setoption_fail_reason(name, val) === "") {
+			this.set_behaviour("halt");
+		}
 	};
 
 	renderer.toggle_uci_option = function(name, save_to_cfg) {
@@ -1102,7 +1108,10 @@ function NewRenderer() {
 		this.engine.send("uci");
 	};
 
-	renderer.engine_send_all_options = function() {		// Relies on the engine.leelaish flag being correct.
+	renderer.engine_send_all_options = function() {
+
+		// Relies on the engine.leelaish flag being correct.
+		// Also, the engine should be halted before calling this.
 
 		for (let key of Object.keys(standard_engine_options)) {
 			this.engine.maybe_setoption(key, standard_engine_options[key]);

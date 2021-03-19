@@ -287,18 +287,24 @@ function NewEngine(hub) {
 		return s;			// Just so the renderer can pop s up as a message if it wants.
 	};
 
-	eng.maybe_setoption = function(name, value) {
+	eng.maybe_setoption_fail_reason = function(name, value) {
 		if (name.toLowerCase() === "uci_chess960" && config.suppress_chess960) {
-			this.send_ack_setoption_to_main_process(name);
 			return "Not sent, Chess960 suppressed";
 		}
 		if (this.leelaish && suppressed_options_lc0[name.toLowerCase()]) {
-			this.send_ack_setoption_to_main_process(name);					// Send ack for the old (prevailing) value. For check marks.
 			return "Not sent, wrong engine type";
 		}
 		if (!this.leelaish && suppressed_options_ab[name.toLowerCase()]) {
-			this.send_ack_setoption_to_main_process(name);					// Send ack for the old (prevailing) value. For check marks.
 			return "Not sent, wrong engine type";
+		}
+		return "";
+	};
+
+	eng.maybe_setoption = function(name, value) {
+		let fail_reason = this.maybe_setoption_fail_reason(name, value);
+		if (fail_reason) {
+			this.send_ack_setoption_to_main_process(name);					// Send ack for the old (prevailing) value. For check marks.
+			return fail_reason;
 		}
 		return this.setoption(name, value);									// Will cause an ack for the new value.
 	};
