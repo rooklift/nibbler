@@ -863,8 +863,8 @@ function NewRenderer() {
 				this.engine.leelaish = false;
 			}
 
-			this.engine_send_all_options();				// Relies on the engine.leelaish flag being correct.
 			this.set_behaviour("halt");					// Will cause "stop" to be sent.
+			this.engine_send_all_options();				// Relies on the engine.leelaish flag being correct.
 			this.engine.send("ucinewgame");				// Must happen after "stop" is sent.
 
 			// Pass unknown engines to the error handler to be displayed...
