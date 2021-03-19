@@ -950,10 +950,10 @@ function NewRenderer() {
 	renderer.set_ab_engine_multipv = function(val) {
 		config.ab_engine_multipv = val;				// This is stored outside the normal options object, it's too special, various things access it.
 		config_io.save(config);
-		this.set_uci_option("MultiPV", val);
+		this.set_uci_option("MultiPV", val);		// Gets suppressed for Leelaish engines by suppressed_options_lc0 list.
 	};
 
-	renderer.set_uci_option = function(name, val, save_to_cfg) {
+	renderer.set_uci_option = function(name, val, save_to_cfg) {					// Uses maybe_setoption() to filter unacceptable options
 		if (save_to_cfg) {
 			if (val === null || val === undefined) {
 				delete config.options[name];
