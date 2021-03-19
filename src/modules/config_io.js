@@ -50,6 +50,9 @@ exports.defaults = {
 	"focus_on_text": "focused:",
 	"focus_off_text": "focus?",
 
+	"max_info_lines": null,						// Hidden option
+	"always_show_searchmoves": false,			// Hidden option
+
 	"bad_move_threshold": 0.02,
 	"terrible_move_threshold": 0.04,
 	"ab_filter_threshold": 0.1,
@@ -83,7 +86,6 @@ exports.defaults = {
 	"show_wdl": true,
 	"infobox_stats_newline": false,
 	"infobox_pv_move_numbers": false,
-	"max_info_lines": null,
 	"hover_draw": false,
 	"hover_method": 2,
 
