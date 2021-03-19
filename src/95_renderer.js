@@ -1567,15 +1567,26 @@ function NewRenderer() {
 		if (this.active_square) {
 			let move = this.active_square.s + p.s;		// e.g. "e2e4" - note promotion char is handled by renderer.move()
 			this.set_active_square(null);
-			this.move(move);
+			let ok = this.move(move);
+			if (!ok && config.click_spotlight) {		// No need to worry about spotlight arrows if the move actually happened
+				this.draw_canvas_arrows();
+			}
 			return;
 		}
 
+		// So there is no active_square... create one?
+
 		if (board.active === "w" && board.is_white(p)) {
 			this.set_active_square(p);
+			if (config.click_spotlight) {
+				this.draw_canvas_arrows();
+			}
 		}
 		if (board.active === "b" && board.is_black(p)) {
 			this.set_active_square(p);
+			if (config.click_spotlight) {
+				this.draw_canvas_arrows();
+			}
 		}
 	};
 
@@ -2066,6 +2077,7 @@ function NewRenderer() {
 	renderer.draw_fantasy = function(board, move) {
 		this.draw_move_and_active_squares(move, null);
 		this.draw_enemies_in_table(board);
+		boardctx.clearRect(0, 0, canvas.width, canvas.height);		// Clearing the canvas arrows.
 		this.draw_friendlies_in_table(board);
 	};
 
@@ -2077,11 +2089,7 @@ function NewRenderer() {
 		// This should prevent the sort of flicker that can occur if we try to detect hover based on changes we
 		// just made (i.e. if we drew then detected hover instantly).
 
-		boardctx.clearRect(0, 0, canvas.width, canvas.height);
 		let did_hoverdraw = this.hoverdraw();
-
-		let arrow_spotlight_square = config.click_spotlight ? this.active_square : null;
-		let next_move = (config.next_move_arrow && this.tree.node.children.length > 0) ? this.tree.node.children[0].move : null;
 
 		if (did_hoverdraw) {
 			canvas.style.outline = "2px dashed #b4b4b4";
@@ -2091,7 +2099,7 @@ function NewRenderer() {
 			canvas.style.outline = "none";
 			this.draw_move_and_active_squares(this.tree.node.move, this.active_square);
 			this.draw_enemies_in_table(this.tree.node.board);
-			this.info_handler.draw_arrows(this.tree.node, arrow_spotlight_square, next_move);
+			this.draw_canvas_arrows();
 			this.draw_friendlies_in_table(this.tree.node.board);
 		}
 
@@ -2101,6 +2109,13 @@ function NewRenderer() {
 		this.grapher.draw(this.tree.node);
 
 		debuggo.draw -= 1;
+	};
+
+	renderer.draw_canvas_arrows = function() {
+		boardctx.clearRect(0, 0, canvas.width, canvas.height);
+		let arrow_spotlight_square = config.click_spotlight ? this.active_square : null;
+		let next_move = (config.next_move_arrow && this.tree.node.children.length > 0) ? this.tree.node.children[0].move : null;
+		this.info_handler.draw_arrows(this.tree.node, arrow_spotlight_square, next_move);
 	};
 
 	renderer.draw_statusbox = function() {
