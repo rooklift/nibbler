@@ -28,7 +28,7 @@ function DrawArrows(node, one_click_moves, specific_source, show_move) {		// spe
 
 	let mode;
 	let show_move_was_forced = false;	// Will become true if the show_move is only in the list because of the show_move arg
-	let show_move_head_exists = false;
+	let show_move_head = null;
 
 	if (specific_source) {
 		mode = "specific";
@@ -221,7 +221,7 @@ function DrawArrows(node, one_click_moves, specific_source, show_move) {		// spe
 					});
 					one_click_moves[x2 + x_head_adjustment][y2] = info_list[i].move;
 					if (info_list[i].move === show_move) {
-						show_move_head_exists = true;
+						show_move_head = heads[heads.length - 1];
 					}
 				}
 			} else {
@@ -234,7 +234,7 @@ function DrawArrows(node, one_click_moves, specific_source, show_move) {		// spe
 					});
 					one_click_moves[x2][y2] = info_list[i].move;
 					if (info_list[i].move === show_move) {
-						show_move_head_exists = true;
+						show_move_head = heads[heads.length - 1];
 					}
 				}
 			}
@@ -283,7 +283,7 @@ function DrawArrows(node, one_click_moves, specific_source, show_move) {		// spe
 			boardctx.stroke();
 			boardctx.lineWidth = config.arrow_width;
 
-			if (show_move_head_exists) {			// This is the best layer to draw the head outline.
+			if (show_move_head) {			// This is the best layer to draw the head outline.
 				boardctx.beginPath();
 				boardctx.arc(cc2.cx, cc2.cy, config.arrowhead_radius + 2, 0, 2 * Math.PI);
 				boardctx.fill();
