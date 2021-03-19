@@ -44,7 +44,7 @@ exports.defaults = {
 	"good_colour": "#66aa66",
 	"bad_colour": "#cccc66",
 	"terrible_colour": "#cc6666",
-	"actual_move_colour": "#ffffff",
+	"actual_move_colour": "#cc9966",
 
 	"searchmoves_buttons": true,
 	"focus_on_text": "focused:",
