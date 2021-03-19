@@ -81,6 +81,7 @@ function NewEngine(hub) {
 	eng.have_quit = false;
 
 	eng.sent_options = Object.create(null);			// Keys are always lowercase. Values are always strings.
+	eng.setoption_queue = [];
 
 	eng.warned_send_fail = false;
 	eng.leelaish = false;				// Set by the info handler if a VerboseMoveStats line is received.
@@ -90,13 +91,16 @@ function NewEngine(hub) {
 
 	// -------------------------------------------------------------------------------------------
 
-	eng.send = function(msg) {
+	eng.send = function(msg, force) {
 
 		msg = msg.trim();
 
-		// Keep track of what options we have actually sent to the engine...
-
 		if (msg.startsWith("setoption")) {
+
+			if (this.search_running.node && !force) {
+				this.setoption_queue.push(msg);
+				return;
+			}
 
 			let lower = msg.toLowerCase();
 			let i1 = lower.indexOf("name");
@@ -227,6 +231,11 @@ function NewEngine(hub) {
 	};
 
 	eng.handle_bestmove_line = function(line) {
+
+		for (let msg of this.setoption_queue) {
+			this.send(msg, true);					// Use the force flag as we haven't actually set search_running to its correct value.
+		}
+		this.setoption_queue = [];
 
 		this.unresolved_stop_time = null;
 
