@@ -126,6 +126,8 @@ exports.defaults = {
 	"override_piece_directory": null,
 	"override_board": null,
 
+	"known_leelaish_names": ["Lc0", "Leela", "Ceres"],
+
 	"logfile": null,
 	"log_info_lines": false,
 	"log_useless_info": false,
@@ -141,13 +143,16 @@ function fix(cfg) {
 	cfg.behaviour = "halt";
 	cfg.square_size = Math.floor(cfg.board_size / 8);
 
-	// Make sure options and args at least exist...
+	// Make sure objectish things at least exist...
 
 	if (typeof cfg.options !== "object" || cfg.options === null) {
 		cfg.options = {};
 	}
 	if (Array.isArray(cfg.args) === false) {
 		cfg.args = [];
+	}
+	if (Array.isArray(cfg.known_leelaish_names) === false) {
+		cfg.known_leelaish_names = Array.from(exports.defaults.known_leelaish_names);
 	}
 
 	// Fix the board size...

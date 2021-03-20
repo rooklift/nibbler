@@ -857,10 +857,13 @@ function NewRenderer() {
 			// Note that we do need to set the leelaish flag on the engine here (rather than relying on the
 			// autodetection in info.js) so that hub.set_ab_engine_multipv() works even if we've never received info.
 
-			if (s.includes("Lc0") || s.includes("Leela") || s.includes("Ceres")) {
-				this.engine.leelaish = true;
-			} else {
-				this.engine.leelaish = false;
+			this.engine.leelaish = false;
+
+			for (let name of config.known_leelaish_names) {
+				if (s.includes(name)) {
+					this.engine.leelaish = true;
+					break;
+				}
 			}
 
 			this.set_behaviour("halt");					// Will cause "stop" to be sent.
