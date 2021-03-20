@@ -859,7 +859,7 @@ function NewRenderer() {
 
 			this.engine.leelaish = false;
 
-			for (let name of config.known_leelaish_names) {
+			for (let name of config.leelaish_names) {
 				if (s.includes(name)) {
 					this.engine.leelaish = true;
 					break;

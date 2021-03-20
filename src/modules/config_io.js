@@ -126,7 +126,7 @@ exports.defaults = {
 	"override_piece_directory": null,
 	"override_board": null,
 
-	"known_leelaish_names": ["Lc0", "Leela", "Ceres"],		// If this gets updated, will need to fix old config files.
+	"leelaish_names": ["Lc0", "Leela", "Ceres"],		// If this gets updated, will need to fix old config files.
 
 	"logfile": null,
 	"log_info_lines": false,
@@ -151,8 +151,8 @@ function fix(cfg) {
 	if (Array.isArray(cfg.args) === false) {
 		cfg.args = [];
 	}
-	if (Array.isArray(cfg.known_leelaish_names) === false) {
-		cfg.known_leelaish_names = Array.from(exports.defaults.known_leelaish_names);
+	if (Array.isArray(cfg.leelaish_names) === false) {
+		cfg.leelaish_names = Array.from(exports.defaults.leelaish_names);
 	}
 
 	// Fix the board size...
