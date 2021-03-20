@@ -1465,32 +1465,8 @@ function NewRenderer() {
 	};
 
 	renderer.generate_simple_book = function() {		// For https://github.com/fohristiwhirl/lc0_lichess
-
-		let node_histories = this.tree.root.end_nodes().map(end => end.node_history().slice(1));
-
-		let text_lines = node_histories.map(node_history => {
-
-			let elements = [];
-
-			for (let node of node_history) {
-
-				let s = node.move;
-
-				// Convert castling moves from e1h1 format to standard...
-				// Do this by detecting that nothing landed on the nominal target square.
-
-				if (s === "e1h1" && node.board.state[7][7] === "") s = "e1g1";
-				if (s === "e1a1" && node.board.state[0][7] === "") s = "e1c1";
-				if (s === "e8h8" && node.board.state[7][0] === "") s = "e8g8";
-				if (s === "e8a8" && node.board.state[0][0] === "") s = "e8c8";
-
-				elements.push(s);
-			}
-
-			return "\t\"" + elements.join(" ") + "\"";
-
-		});
-
+		let histories = this.tree.root.end_nodes().map(end => end.history_old_format());
+		let text_lines = histories.map(h => "\t\"" + h.join(" ") + "\"");
 		console.log("[\n" + text_lines.join(",\n") + "\n]");
 	};
 
