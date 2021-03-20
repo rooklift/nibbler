@@ -139,6 +139,3 @@ exports.suppressed_960_warning =
 `We appear to have entered a game of Chess960, however Chess960 format comms with the engine have \
 been suppressed via the Dev menu. This may lead to weird results.`;
 
-
-exports.restart_the_engine =
-`It is recommended that you now restart the engine.`;

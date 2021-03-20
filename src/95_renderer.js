@@ -1168,6 +1168,10 @@ function NewRenderer() {
 			this.tree.node.searchmoves = [];		// This is reasonable regardless of which way the toggle went.
 			this.handle_searchmoves_change();
 		}
+
+		if (option === "suppress_chess960") {
+			this.restart_engine();
+		}
 	};
 
 	renderer.toggle_flip = function() {				// config.flip should not be directly set, call this function instead.
