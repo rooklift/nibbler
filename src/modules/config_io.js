@@ -126,7 +126,7 @@ exports.defaults = {
 	"override_piece_directory": null,
 	"override_board": null,
 
-	"known_leelaish_names": ["Lc0", "Leela", "Ceres"],
+	"known_leelaish_names": ["Lc0", "Leela", "Ceres"],		// If this gets updated, will need to fix old config files.
 
 	"logfile": null,
 	"log_info_lines": false,
