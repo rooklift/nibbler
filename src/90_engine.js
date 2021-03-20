@@ -93,6 +93,8 @@ function NewEngine(hub) {
 
 	eng.send = function(msg, force) {
 
+		// Importantly, setoption messages are normally held back until the engine is not running.
+
 		msg = msg.trim();
 
 		if (msg.startsWith("setoption")) {
