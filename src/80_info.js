@@ -128,8 +128,6 @@ function NewInfoHandler() {
 				node.table.moveinfo[move] = move_info;
 			}
 
-			let move_cycle_pre_update = move_info.cycle;
-
 			// ---------------------------------------------------------------------------------------------------------------------
 
 			if (!engine.leelaish) {
@@ -216,18 +214,16 @@ function NewInfoHandler() {
 
 			let new_pv = InfoPV(s);
 			C960_PV_Converter(new_pv, board);
-			new_pv[0] = move;		// This was partial mitigation for wrong-format castling, should now be redundant with C960_PV_Converter().
 
-			// Update the PV, but not if the info comes from the same "go" command AND the new PV is entirely contained within the old one.
-			// i.e. if the engine has shortened its PV during a search for some reason. Stockfish can do this.
+			// Note: we used to ignore PV of length 1 on account of Stockfish sending
+			// such PVs sometimes, but this does lead to actual PVs of length 1 being
+			// ignored, which can lead to stale long PVs in the infobox.
+
+			new_pv[0] = move;		// This was partial mitigation for wrong-format castling. It's now redundant with C960_PV_Converter().
 
 			if (CompareArrays(new_pv, move_info.pv) === false) {
-				if (move_cycle_pre_update === move_info.cycle && ArrayStartsWith(move_info.pv, new_pv)) {
-					// Skip the update.
-				} else {
-					move_info.nice_pv_cache = null;
-					move_info.pv = new_pv;
-				}
+				move_info.nice_pv_cache = null;
+				move_info.pv = new_pv;
 			}
 
 		} else if (s.startsWith("info string") && !s.includes("NNUE evaluation")) {
