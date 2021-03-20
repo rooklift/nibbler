@@ -1579,7 +1579,6 @@ function NewRenderer() {
 
 		if (!moves || moves.length === 0) {				// We do assume length > 0 below.
 			this.maybe_searchmove_click(event);
-			this.maybe_return_ancestor_click(event);
 			return;
 		}
 
@@ -1618,36 +1617,6 @@ function NewRenderer() {
 
 		this.tree.node.searchmoves.sort();
 		this.handle_searchmoves_change();
-	};
-
-	renderer.maybe_return_ancestor_click = function(event) {
-
-		// This rather relies on the details of the inference system.
-		// Instead, perhaps we should just pre-store the ancestor node in some variable.
-
-		if (!EventPathString(event, "ancestor_return")) {
-			return;
-		}
-
-		let ancestor = null;
-
-		let foo = this.tree.node.parent;
-
-		while (foo) {
-			if (Object.keys(foo.table.moveinfo).length > 0) {
-				ancestor = foo;
-				break;
-			}
-			foo = foo.parent;
-		}
-
-		if (!ancestor) {
-			return;
-		}
-
-		if (this.tree.set_node(ancestor)) {
-			this.position_changed(false, true);
-		}
 	};
 
 	renderer.movelist_click = function(event) {
