@@ -155,9 +155,8 @@ input[type=text]:focus {
 	width: 100%;
 }
 
-a {										/* is this even used anywhere? */
-	color: inherit;
-	text-decoration: inherit;
+a, a:link, a:visited, a:hover, a:active {	/* I think this is now only used for the "Nibbler in normal browser" message. */
+	color: #6cccee;
 }
 
 ul {
