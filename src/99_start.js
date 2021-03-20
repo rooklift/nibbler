@@ -22,8 +22,8 @@ fenbox.value = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1";
 
 // We have 3 main things that get drawn to:
 //
-//		- boardsquares, a table with the actual squares of the board.
-//		- canvas, which gets enemy pieces and arrows drawn on it.
+//		- boardsquares, lowest z-level table with enemy pieces and coloured squares.
+//		- canvas, which gets arrows drawn on it.
 //		- boardfriends, a table with friendly pieces.
 //
 // boardsquares has its natural position, while the other three get
