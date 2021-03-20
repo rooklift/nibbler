@@ -291,11 +291,12 @@ function NewEngine(hub) {
 
 		// Stockfish has a nasty habit of sending super short PVs when you stop its search.
 		// To get around that, we ignore info from SF if it comes during transition.
-
-		if (!this.leelaish && this.search_desired.node !== this.search_running.node) {
-			if (config.log_info_lines) Log("(ignore A/B late) < " + line);
-			return;
-		}
+		// No longer needed after change in how receive() deals with PVs.
+		//
+		//	if (!this.leelaish && this.search_desired.node !== this.search_running.node) {
+		//		if (config.log_info_lines) Log("(ignore A/B late) < " + line);
+		//		return;
+		//	}
 
 		this.hub.info_handler.receive(this, this.search_running.node, line);		// Responsible for logging lines that get this far.
 	};
