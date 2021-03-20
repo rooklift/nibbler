@@ -229,13 +229,13 @@ function replace_all(s, search, replace) {
 
 function debork_json(s) {
 
-	// Enough people are going to use single backslashes in their paths that we should just fix it.
+	// In olden times, editing these things via the text file was normal. Nowadays it's unlikely to matter much.
 
 	let lines = s.split("\n").map(z => z.trim());
 
 	for (let n = 0; n < lines.length; n++) {
 		let line = lines[n];
-		if (line.includes(`"path"`) || line.includes(`"WeightsFile"`) || line.includes(`"override_piece_directory"`)) {
+		if (line.includes(`"path"`) || line.includes(`"WeightsFile"`) || line.includes(`"SyzygyPath"`) || line.includes(`"EvalFile"`)) {
 			line = replace_all(line, "\\\\", "__nibbler__blackslash__replacement__in__progress__");
 			line = replace_all(line, "\\", "\\\\");
 			line = replace_all(line, "__nibbler__blackslash__replacement__in__progress__", "\\\\");
