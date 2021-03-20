@@ -1524,8 +1524,8 @@ function NewRenderer() {
 
 	renderer.set_active_square = function(new_point) {
 
-		// We do this immediately so it's snappy and responsive,
-		// rather than waiting for the next draw cycle.
+		// We do this immediately so it's snappy and responsive, rather than waiting for the next draw cycle. But we don't
+		// want to actually call draw() here since whatever called this may well end up triggering a draw anyway.
 
 		let old_point = this.active_square;
 
