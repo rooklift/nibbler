@@ -832,7 +832,7 @@ function NewRenderer() {
 		case "play_black":
 
 			if (relevant_node !== this.tree.node) {
-				Log(`(ignored bestmove, relevant_node !== hub.tree.node, config.behaviour was "${config.behaviour}")`);
+				LogBoth(`(ignored bestmove, relevant_node !== hub.tree.node, config.behaviour was "${config.behaviour}")`);
 				this.set_behaviour("halt");
 				break;
 			}
@@ -853,7 +853,7 @@ function NewRenderer() {
 		case "auto_analysis":
 
 			if (relevant_node !== this.tree.node) {
-				Log(`(ignored bestmove, relevant_node !== hub.tree.node, config.behaviour was "${config.behaviour}")`);
+				LogBoth(`(ignored bestmove, relevant_node !== hub.tree.node, config.behaviour was "${config.behaviour}")`);
 				this.set_behaviour("halt");
 				break;
 			}
