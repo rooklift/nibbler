@@ -406,7 +406,7 @@ function NString(n) {
 		return (n / thousand).toFixed(1) + "k";
 	}
 
-	if (n < million) {
+	if (n < 999.5 * thousand) {
 		return (n / thousand).toFixed(0) + "k";
 	}
 
@@ -414,7 +414,7 @@ function NString(n) {
 		return (n / million).toFixed(1) + "M";
 	}
 
-	if (n < billion) {
+	if (n < 999.5 * million) {
 		return (n / million).toFixed(0) + "M";
 	}
 
