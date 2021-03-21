@@ -47,6 +47,10 @@ function NewRenderer() {
 		case "analysis_free":
 		case "auto_analysis":
 
+			// Note that the 2nd part of the condition is needed because changing behaviour can change what node_limit()
+			// returns, therefore we might already be running a search for the right node but with the wrong limit.
+			// THIS IS TRUE THROUGHOUT THIS FUNCTION.
+
 			if (this.engine.search_desired.node !== this.tree.node || this.engine.search_desired.limit !== this.node_limit()) {
 				this.__go(this.tree.node);
 			}
@@ -184,33 +188,53 @@ function NewRenderer() {
 		this.behave();
 	};
 
-	renderer.handle_searchmoves_change = function() {
+	renderer.handle_search_params_change = function() {
 
-		// The main test here is to ensure that nothing happens if there is a locked search on some other node.
-		// It will also prevent action if we are at the game terminus.
+		// If there's already a search desired, we can just let __go() figure out what the new parameters should be.
+		// If they match what is already desired then set_search_desired() will ignore the call.
 
-		if (config.behaviour !== "halt") {
-			if (this.engine.search_desired.node === this.tree.node) {
-				this.__go(this.tree.node);
+		if (this.engine.search_desired.node) {
+			this.__go(this.engine.search_desired.node);
+		} else {
+
+			// There is no search desired in the engine object. But if our behaviour is free analysis
+			// or similar, that means the search ran to completion. We should maybe redo the search
+			// with the new params...?
+
+			if (config.behaviour !== "analysis_free" && config.behaviour !== "analysis_locked") {
+				return;
 			}
-		}
-	};
 
-	renderer.handle_node_limit_change = function() {
+			let relevant_node = config.behaviour === "analysis_free" ? this.tree.node : this.leela_lock_node;		// Maybe null
 
-		if (config.behaviour !== "halt") {
-			if (this.engine.search_desired.limit !== this.node_limit() || this.engine.search_desired.node === null) {		// 2nd part can happen when limit hits.
-				if (this.leela_lock_node) {
-					this.__go(this.leela_lock_node);
-				} else {
-					this.__go(this.tree.node);
+			if (!relevant_node || relevant_node !== this.engine.search_completed.node) {
+				return;
+			}
+
+			let node_limit = this.node_limit();
+			let needs_redo = false;
+
+			if (CompareArrays(relevant_node.searchmoves, this.engine.search_completed.searchmoves) === false) {
+				needs_redo = true;
+			}
+
+			if (node_limit === null && this.engine.search_completed.limit !== null) {
+				needs_redo = true;
+			}
+
+			if (typeof node_limit === "number" && typeof this.engine.search_completed.limit === "number") {
+				if (node_limit > this.engine.search_completed.limit) {
+					needs_redo = true;
 				}
+			}
+
+			if (needs_redo) {
+				this.__go(this.engine.search_completed.node)
 			}
 		}
 	};
 
 	renderer.play_this_colour = function() {
-
 		if (this.tree.node.board.active === "w") {
 			this.set_behaviour("play_white");
 		} else {
@@ -840,11 +864,17 @@ function NewRenderer() {
 			break;
 
 		case "analysis_free":
+
+			// We hit the node limit. No need to change behaviour.
+			break;
+
 		case "analysis_locked":
 
-			// We hit the node limit. No need to change behaviour. Note that, for analysis_locked,
-			// relevant_node !== hub.tree.node is normal.
+			// We hit the node limit. We must set behaviour to "halt" because when the user moves around in the tree,
+			// we will enter a new node, causing behave() to be called, which would redo the search (because, as of
+			// now, engine.search_desired.node === null.
 
+			this.set_behaviour("halt");
 			break;
 
 		}
@@ -1065,7 +1095,7 @@ function NewRenderer() {
 			config.search_nodes = val;
 		}
 		config_io.save(config);
-		this.handle_node_limit_change();
+		this.handle_search_params_change();
 
 		if (val) {
 			ipcRenderer.send(ack_type, CommaNum(val));
@@ -1166,7 +1196,7 @@ function NewRenderer() {
 
 		if (option === "searchmoves_buttons") {
 			this.tree.node.searchmoves = [];		// This is reasonable regardless of which way the toggle went.
-			this.handle_searchmoves_change();
+			this.handle_search_params_change();
 		}
 
 		if (option === "suppress_chess960") {
@@ -1222,12 +1252,12 @@ function NewRenderer() {
 
 		this.tree.node.searchmoves = Object.keys(moveset);
 		this.tree.node.searchmoves.sort();
-		this.handle_searchmoves_change();
+		this.handle_search_params_change();
 	};
 
 	renderer.clear_searchmoves = function() {
 		this.tree.node.searchmoves = [];
-		this.handle_searchmoves_change();
+		this.handle_search_params_change();
 	};
 
 	renderer.escape = function() {					// Set things into a clean state.
@@ -1616,7 +1646,7 @@ function NewRenderer() {
 		}
 
 		this.tree.node.searchmoves.sort();
-		this.handle_searchmoves_change();
+		this.handle_search_params_change();
 	};
 
 	renderer.movelist_click = function(event) {

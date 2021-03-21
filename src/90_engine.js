@@ -88,6 +88,7 @@ function NewEngine(hub) {
 
 	eng.search_running = NoSearch;		// The search actually being run right now.
 	eng.search_desired = NoSearch;		// The search we want Leela to be running. Often the same object as above.
+	eng.search_completed = NoSearch;
 
 	// -------------------------------------------------------------------------------------------
 
@@ -241,6 +242,9 @@ function NewEngine(hub) {
 
 	eng.handle_bestmove_line = function(line) {
 
+		this.search_completed = this.search_running;
+		this.search_running = NoSearch;
+
 		this.unresolved_stop_time = null;
 
 		// If this.search_desired === this.search_running then the search that just completed
@@ -250,29 +254,26 @@ function NewEngine(hub) {
 		// properties but be different objects; in that case it is correct to send the desired
 		// object as a new search.
 
-		let no_new_search = (this.search_desired === this.search_running) || !this.search_desired.node;
+		let no_new_search = (this.search_desired === this.search_completed) || !this.search_desired.node;
 
-		// The hub doesn't care about bestmove if it has asked for
-		// a stop (in which case there won't be a desired node).
+		// I think the following var should just be set to (this.search_desired === this.search_completed)
+		// for clarity, but I'm too tired to think about it. FIXME.
 
-		let report_bestmove = this.search_desired.node ? true : false;
+		let report_bestmove = this.search_desired.node;
 
 		if (no_new_search) {
-			let completed_search = this.search_running;
-			this.search_running = NoSearch;
 			this.search_desired = NoSearch;
 			if (report_bestmove) {
 				Log("< " + line);
-				this.send_queued_setoptions();								// After logging the incoming.
-				this.hub.receive_bestmove(line, completed_search.node);		// May trigger a new search, so do it last.
+				this.send_queued_setoptions();									// After logging the incoming.
+				this.hub.receive_bestmove(line, this.search_completed.node);	// May trigger a new search, so do it last.
 			} else {
 				Log("(ignore halted) < " + line);
-				this.send_queued_setoptions();								// After logging the incoming.
+				this.send_queued_setoptions();									// After logging the incoming.
 			}
 		} else {
-			this.search_running = NoSearch;
 			Log("(ignore old) < " + line);
-			this.send_queued_setoptions();									// After logging the incoming.
+			this.send_queued_setoptions();										// After logging the incoming.
 			this.send_desired();
 		}
 	};
