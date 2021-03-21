@@ -47,7 +47,7 @@ const position_prototype = {
 		let white_flag = ret.is_white(Point(x1, y1));
 		let pawn_flag = ret.state[x1][y1] === "P" || ret.state[x1][y1] === "p";
 		let castle_flag = (ret.state[x2][y2] === "R" && white_flag) || (ret.state[x2][y2] === "r" && white_flag === false);
-		let capture_flag = castle_flag === false && ret.state[x2][y2] !== "";
+		let capture_flag = castle_flag === false && ret.state[x2][y2];
 
 		if (pawn_flag && x1 !== x2) {		// Make sure capture_flag is set even for enpassant captures
 			capture_flag = true;
@@ -276,7 +276,7 @@ const position_prototype = {
 		if (["P", "p"].includes(this.state[x1][y1])) {
 
 			if (Math.abs(x2 - x1) === 0) {
-				if (this.state[x2][y2] !== "") {
+				if (this.state[x2][y2]) {
 					return "pawn cannot capture forwards";
 				}
 			}
@@ -432,7 +432,7 @@ const position_prototype = {
 			if (x === x1 || x === x2) {
 				continue;					// After checking for checks
 			}
-			if (this.state[x][y1] !== "") {
+			if (this.state[x][y1]) {
 				return "castling blocked for king movement";
 			}
 		}
@@ -441,7 +441,7 @@ const position_prototype = {
 			if (x === x1 || x === x2) {
 				continue;
 			}
-			if (this.state[x][y1] !== "") {
+			if (this.state[x][y1]) {
 				return "castling blocked for rook movement";
 			}
 		}
@@ -464,7 +464,7 @@ const position_prototype = {
 
 		for (let s of moves) {
 			let reason = pos.illegal(s);
-			if (reason !== "") {
+			if (reason) {
 				return `${s} - ${reason}`;
 			}
 			pos = pos.move(s);
@@ -540,7 +540,7 @@ const position_prototype = {
 				return true;
 			}
 
-			if (this.state[x][y] !== "") {
+			if (this.state[x][y]) {
 				return false;
 			}
 		}
@@ -776,7 +776,7 @@ const position_prototype = {
 
 			let mv = this.find_castling_move(false);
 
-			if (mv !== "" && this.illegal(mv) === "") {
+			if (mv && !this.illegal(mv)) {
 				return [mv, ""];
 			} else {
 				return ["", "illegal castling"];
@@ -787,7 +787,7 @@ const position_prototype = {
 
 			let mv = this.find_castling_move(true);
 
-			if (mv !== "" && this.illegal(mv) === "") {
+			if (mv && !this.illegal(mv)) {
 				return [mv, ""];
 			} else {
 				return ["", "illegal castling"];
@@ -1352,7 +1352,7 @@ function NewPosition(state = null, active = "w", castling = "", enpassant = null
 		for (let x = 0; x < 8; x++) {
 			for (let y = 0; y < 8; y++) {
 				let piece = state[x][y];
-				if (piece !== "") {
+				if (piece) {
 					p.state[x][y] = piece;
 				}
 			}

@@ -152,7 +152,7 @@ function NewEngine(hub) {
 
 		let node = this.search_desired.node;
 
-		if (!node || node.destroyed || node.terminal_reason() !== "") {
+		if (!node || node.destroyed || node.terminal_reason()) {
 			this.search_running = NoSearch;
 			this.search_desired = NoSearch;
 			return;

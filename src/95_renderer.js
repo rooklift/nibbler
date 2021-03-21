@@ -260,7 +260,7 @@ function NewRenderer() {
 
 		let node = this.tree.node;
 
-		if (node.terminal_reason() !== "") {
+		if (node.terminal_reason()) {
 			return;
 		}
 		if (!node.parent) {
@@ -397,7 +397,7 @@ function NewRenderer() {
 		if (s.length === 4) {
 			if ((board.piece(source) === "P" && source.y === 1) || (board.piece(source) === "p" && source.y === 6)) {
 				let illegal_reason = board.illegal(s + "q");
-				if (illegal_reason !== "") {
+				if (illegal_reason) {
 					console.log(`renderer.move(${s}) - ${illegal_reason}`);
 				} else {
 					this.show_promotiontable(s);
@@ -409,7 +409,7 @@ function NewRenderer() {
 		// The promised legality check...
 
 		let illegal_reason = board.illegal(s);
-		if (illegal_reason !== "") {
+		if (illegal_reason) {
 			console.log(`renderer.move(${s}) - ${illegal_reason}`);
 			return false;
 		}
@@ -966,7 +966,7 @@ function NewRenderer() {
 
 		this.hide_pgn_chooser();
 
-		if (!node || node.destroyed || node.terminal_reason() !== "") {
+		if (!node || node.destroyed || node.terminal_reason()) {
 			this.engine.set_search_desired(null);
 			return;
 		}
@@ -1620,7 +1620,7 @@ function NewRenderer() {
 		}
 
 		let illegal_reason = this.tree.node.board.sequence_illegal(moves);
-		if (illegal_reason !== "") {
+		if (illegal_reason) {
 			console.log("infobox_click(): " + illegal_reason);
 			return;
 		}
@@ -2051,7 +2051,7 @@ function NewRenderer() {
 
 		for (let move of moves) {
 			let illegal_reason = board.illegal(move);
-			if (illegal_reason !== "") {
+			if (illegal_reason) {
 				return false;
 			}
 			board = board.move(move);

@@ -118,7 +118,7 @@ function NewInfoHandler() {
 			if (node.table.moveinfo[move] && !node.table.moveinfo[move].__ghost) {		// We already have move info for this move.
 				move_info = node.table.moveinfo[move];
 			} else {																	// We don't.
-				if (board.illegal(move) !== "") {
+				if (board.illegal(move)) {
 					if (config.log_illegal_moves) {
 						Log(`INVALID / ILLEGAL MOVE RECEIVED: ${move}`);
 					}
@@ -258,7 +258,7 @@ function NewInfoHandler() {
 			if (node.table.moveinfo[move] && !node.table.moveinfo[move].__ghost) {		// We already have move info for this move.
 				move_info = node.table.moveinfo[move];
 			} else {																	// We don't.
-				if (board.illegal(move) !== "") {
+				if (board.illegal(move)) {
 					if (config.log_illegal_moves) {
 						Log(`INVALID / ILLEGAL MOVE RECEIVED: ${move}`);
 					}
@@ -370,7 +370,7 @@ function NewInfoHandler() {
 
 			statusbox.innerHTML = `<span id="lock_return_clicker" class="blue">Locked to ${analysing_other} (return?)</span>`;
 
-		} else if (node.terminal_reason() !== "") {
+		} else if (node.terminal_reason()) {
 
 			statusbox.innerHTML = `<span class="yellow">${node.terminal_reason()}</span>`;
 
@@ -441,7 +441,7 @@ function NewInfoHandler() {
 
 		let info_list;
 
-		if (node.terminal_reason() !== "") {
+		if (node.terminal_reason()) {
 			info_list = [];
 		} else {
 			info_list = SortedMoveInfo(node);

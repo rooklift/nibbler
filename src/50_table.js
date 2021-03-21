@@ -130,7 +130,7 @@ const info_prototype = {
 		let ret = [];
 
 		for (let move of this.pv) {
-			if (tmp_board.illegal(move) !== "") {
+			if (tmp_board.illegal(move)) {
 				break;
 			}
 			ret.push(tmp_board.nice_string(move));
