@@ -79,6 +79,7 @@ function NewEngine(hub) {
 	eng.unresolved_stop_time = null;
 	eng.ever_received_uciok = false;
 	eng.have_quit = false;
+	eng.suppress_cycle_info = null;		// Stupid hack to allow "forget all analysis" to work; info lines from this cycle are ignored.
 
 	eng.sent_options = Object.create(null);			// Keys are always lowercase. Values are always strings.
 	eng.setoption_queue = [];
@@ -291,6 +292,14 @@ function NewEngine(hub) {
 
 		if (!this.leelaish && this.search_desired.node !== this.search_running.node) {
 			if (config.log_info_lines) Log("(ignore A/B late) < " + line);
+			return;
+		}
+
+		// Hub can set a cycle to be suppressed (e.g. for the sake of making "forget all analysis" work).
+		// This feels a bit sketchy, but will be OK as long as the next "go" is guaranteed to increment the cycle number.
+
+		if (this.suppress_cycle_info === this.hub.info_handler.engine_cycle) {
+			if (config.log_info_lines) Log("(ignore suppressed) < " + line);
 			return;
 		}
 

@@ -985,6 +985,7 @@ function NewRenderer() {
 		this.tree.node.table.autopopulate(this.tree.node);
 		this.set_behaviour("halt");					// Will cause "stop" to be sent.
 		this.engine.send("ucinewgame");				// Must happen after "stop" is sent.
+		this.engine.suppress_cycle_info = this.info_handler.engine_cycle;			// Ignore further info updates from this cycle.
 	};
 
 	renderer.set_ab_engine_multipv = function(val) {
