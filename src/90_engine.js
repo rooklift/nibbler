@@ -88,7 +88,7 @@ function NewEngine(hub) {
 
 	eng.search_running = NoSearch;		// The search actually being run right now.
 	eng.search_desired = NoSearch;		// The search we want Leela to be running. Often the same object as above.
-	eng.search_completed = NoSearch;
+	eng.search_completed = NoSearch;	// Whatever object search_running was when the last "bestmove" came.
 
 	// -------------------------------------------------------------------------------------------
 
