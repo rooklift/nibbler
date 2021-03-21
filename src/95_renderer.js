@@ -58,6 +58,9 @@ function NewRenderer() {
 
 		case "analysis_locked":
 
+			// Sadly this logic requires that analysis_locked be halted upon receiving bestmove (which happens if there's a limit),
+			// otherwise changing nodes will cause the search to be redone.
+
 			if (this.engine.search_desired.node !== this.leela_lock_node || this.engine.search_desired.limit !== this.node_limit()) {
 				this.__go(this.leela_lock_node);
 			}
