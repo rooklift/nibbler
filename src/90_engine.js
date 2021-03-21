@@ -259,7 +259,7 @@ function NewEngine(hub) {
 		// I think the following var should just be set to (this.search_desired === this.search_completed)
 		// for clarity, but I'm too tired to think about it. FIXME.
 
-		let report_bestmove = this.search_desired.node;
+		let report_bestmove = this.search_desired.node ? true : false;
 
 		if (no_new_search) {
 			this.search_desired = NoSearch;
