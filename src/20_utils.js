@@ -390,27 +390,39 @@ function SwapElements(obj1, obj2) {
 
 function NString(n) {
 
+	const thousand = 1000;
+	const million = 1000000;
+	const billion = 1000000000;
+
 	if (typeof n !== "number") {
 		return "?";
 	}
 
-	if (n < 1000) {
+	if (n < thousand) {
 		return n.toString();
 	}
 
-	if (n < 100000) {
-		return (n / 1000).toFixed(1) + "k";
+	if (n < 100 * thousand) {
+		return (n / thousand).toFixed(1) + "k";
 	}
 
-	if (n < 1000000) {
-		return (n / 1000).toFixed(0) + "k";
+	if (n < million) {
+		return (n / thousand).toFixed(0) + "k";
 	}
 
-	if (n < 100000000) {
-		return (n / 1000000).toFixed(1) + "M";
+	if (n < 100 * million) {
+		return (n / million).toFixed(1) + "M";
 	}
 
-	return (n / 1000000).toFixed(0) + "M";
+	if (n < billion) {
+		return (n / million).toFixed(0) + "M";
+	}
+
+	if (n < 100 * billion) {
+		return (n / billion).toFixed(1) + "B";
+	}
+
+	return (n / billion).toFixed(0) + "B";
 }
 
 function DateString(dt) {
