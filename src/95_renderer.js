@@ -846,6 +846,10 @@ function NewRenderer() {
 					alert(messages.bad_bestmove);
 					this.warned_bad_bestmove = true;
 				}
+			} else {
+				if (this.tree.node.terminal_reason()) {
+					this.set_behaviour("halt");
+				}
 			}
 
 			break;
