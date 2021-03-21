@@ -1,12 +1,12 @@
 {
 	"name": "Nibbler",
 	"version": "1.8.2",
-	"author": "Fohristiwhirl",
+	"author": "Rooklift",
 	"description": "Leela Chess Zero (Lc0) interface",
 	"license": "GPL-3.0",
 	"main": "main.js",
 	"repository": {
 		"type": "git",
-		"url": "https://github.com/fohristiwhirl/nibbler"
+		"url": "https://github.com/rooklift/nibbler"
 	}
 }
