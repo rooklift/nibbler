@@ -1504,7 +1504,7 @@ function NewRenderer() {
 		this.set_special_message(`${path.basename(filename)}: Sent ${lines.length} lines`, "blue");
 	};
 
-	renderer.generate_simple_book = function() {		// For https://github.com/fohristiwhirl/lc0_lichess
+	renderer.generate_simple_book = function() {		// For https://github.com/rooklift/lc0_lichess
 		let histories = this.tree.root.end_nodes().map(end => end.history_old_format());
 		let text_lines = histories.map(h => "\t\"" + h.join(" ") + "\"");
 		console.log("[\n" + text_lines.join(",\n") + "\n]");
