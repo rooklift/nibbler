@@ -641,6 +641,7 @@ function NewRenderer() {
 		let buf;
 		try {
 			if (!fs.existsSync(filename)) {		// Silently return in this case.
+				console.log(`open(${filename}) failed (existsSync).`);
 				return;
 			}
 			buf = fs.readFileSync(filename);
