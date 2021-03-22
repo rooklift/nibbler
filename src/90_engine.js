@@ -197,6 +197,7 @@ function NewEngine(hub) {
 
 		this.send(s);
 		this.search_running = this.search_desired;
+		this.suppress_cycle_info = null;
 		this.hub.info_handler.engine_cycle++;
 		this.hub.info_handler.engine_subcycle++;
 	};
