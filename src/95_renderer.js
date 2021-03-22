@@ -1709,7 +1709,6 @@ function NewRenderer() {
 			td.width = config.square_size;
 			td.height = config.square_size;
 			td.style["background-image"] = images[piece].string_for_bg_style;
-			td.style["background-size"] = "contain";
 
 			// This isn't a memory leak is it? The handlers are deleted when the element is deleted, right?
 
@@ -1821,7 +1820,6 @@ function NewRenderer() {
 					td.draggable = false;
 				} else {
 					td.style["background-image"] = images[piece_to_draw].string_for_bg_style;
-					td.style["background-size"] = "contain";
 					td.draggable = true;
 				}
 			}
@@ -1855,7 +1853,6 @@ function NewRenderer() {
 					td.draggable = false;
 				} else {
 					td.style["background-image"] = images[piece_to_draw].string_for_bg_style;
-					td.style["background-size"] = "contain";
 					td.draggable = false;
 				}
 			}

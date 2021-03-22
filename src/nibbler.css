@@ -90,6 +90,7 @@ body {
 
 td {
 	background-color: transparent;
+	background-size: contain;
 	border: 0;
 	margin: 0;
 	padding: 0;
