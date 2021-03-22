@@ -638,17 +638,26 @@ function NewRenderer() {
 	};
 
 	renderer.open = function(filename) {
+
 		let buf;
+
 		try {
-			if (!fs.existsSync(filename)) {		// Silently return in this case.
+			if (!fs.existsSync(filename)) {								// Silently return if file doesn't exist.
 				console.log(`open(${filename}) failed (existsSync).`);
 				return;
 			}
+		} catch (err) {
+			console.log(`open(${filename}) failed (existsSync exception).`);
+			return;
+		}
+
+		try {
 			buf = fs.readFileSync(filename);
 		} catch (err) {
 			alert(err);
 			return;
 		}
+
 		console.log(`Loading PGN: ${filename}`);
 		this.load_pgn_buffer(buf);
 	};
