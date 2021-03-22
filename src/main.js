@@ -227,7 +227,8 @@ function startup() {
 
 function menu_build() {
 
-	const million = 1000000;
+	const million = 1000 * 1000;
+	const billion = 1000 * million;
 
 	let scriptlist_in_menu = [];
 
@@ -2303,6 +2304,18 @@ function menu_build() {
 							type: "separator"
 						},
 						{
+							label: "1,000,000,000",
+							type: "checkbox",
+							checked: config.search_nodes === 1 * billion,
+							click: () => {
+								win.webContents.send("call", {
+									fn: "set_node_limit",
+									args: [1 * billion]
+								});
+								// Will receive an ack IPC which sets menu checks.
+							}
+						},
+						{
 							label: "100,000,000",
 							type: "checkbox",
 							checked: config.search_nodes === 100 * million,
@@ -2439,25 +2452,37 @@ function menu_build() {
 					label: "Node limit - auto-eval / play",
 					submenu: [
 						{
-							label: "4,000,000",
+							label: "1,000,000,000",
 							type: "checkbox",
-							checked: config.search_nodes_special === 4 * million,
+							checked: config.search_nodes_special === 1 * billion,
 							click: () => {
 								win.webContents.send("call", {
 									fn: "set_node_limit_special",
-									args: [4 * million]
+									args: [1 * billion]
 								});
 								// Will receive an ack IPC which sets menu checks.
 							}
 						},
 						{
-							label: "2,000,000",
+							label: "100,000,000",
 							type: "checkbox",
-							checked: config.search_nodes_special === 2 * million,
+							checked: config.search_nodes_special === 100 * million,
 							click: () => {
 								win.webContents.send("call", {
 									fn: "set_node_limit_special",
-									args: [2 * million]
+									args: [100 * million]
+								});
+								// Will receive an ack IPC which sets menu checks.
+							}
+						},
+						{
+							label: "10,000,000",
+							type: "checkbox",
+							checked: config.search_nodes_special === 10 * million,
+							click: () => {
+								win.webContents.send("call", {
+									fn: "set_node_limit_special",
+									args: [10 * million]
 								});
 								// Will receive an ack IPC which sets menu checks.
 							}
@@ -2475,30 +2500,6 @@ function menu_build() {
 							}
 						},
 						{
-							label: "400,000",
-							type: "checkbox",
-							checked: config.search_nodes_special === 400000,
-							click: () => {
-								win.webContents.send("call", {
-									fn: "set_node_limit_special",
-									args: [400000]
-								});
-								// Will receive an ack IPC which sets menu checks.
-							}
-						},
-						{
-							label: "200,000",
-							type: "checkbox",
-							checked: config.search_nodes_special === 200000,
-							click: () => {
-								win.webContents.send("call", {
-									fn: "set_node_limit_special",
-									args: [200000]
-								});
-								// Will receive an ack IPC which sets menu checks.
-							}
-						},
-						{
 							label: "100,000",
 							type: "checkbox",
 							checked: config.search_nodes_special === 100000,
@@ -2506,30 +2507,6 @@ function menu_build() {
 								win.webContents.send("call", {
 									fn: "set_node_limit_special",
 									args: [100000]
-								});
-								// Will receive an ack IPC which sets menu checks.
-							}
-						},
-						{
-							label: "40,000",
-							type: "checkbox",
-							checked: config.search_nodes_special === 40000,
-							click: () => {
-								win.webContents.send("call", {
-									fn: "set_node_limit_special",
-									args: [40000]
-								});
-								// Will receive an ack IPC which sets menu checks.
-							}
-						},
-						{
-							label: "20,000",
-							type: "checkbox",
-							checked: config.search_nodes_special === 20000,
-							click: () => {
-								win.webContents.send("call", {
-									fn: "set_node_limit_special",
-									args: [20000]
 								});
 								// Will receive an ack IPC which sets menu checks.
 							}
@@ -2547,30 +2524,6 @@ function menu_build() {
 							}
 						},
 						{
-							label: "4,000",
-							type: "checkbox",
-							checked: config.search_nodes_special === 4000,
-							click: () => {
-								win.webContents.send("call", {
-									fn: "set_node_limit_special",
-									args: [4000]
-								});
-								// Will receive an ack IPC which sets menu checks.
-							}
-						},
-						{
-							label: "2,000",
-							type: "checkbox",
-							checked: config.search_nodes_special === 2000,
-							click: () => {
-								win.webContents.send("call", {
-									fn: "set_node_limit_special",
-									args: [2000]
-								});
-								// Will receive an ack IPC which sets menu checks.
-							}
-						},
-						{
 							label: "1,000",
 							type: "checkbox",
 							checked: config.search_nodes_special === 1000,
@@ -2578,30 +2531,6 @@ function menu_build() {
 								win.webContents.send("call", {
 									fn: "set_node_limit_special",
 									args: [1000]
-								});
-								// Will receive an ack IPC which sets menu checks.
-							}
-						},
-						{
-							label: "400",
-							type: "checkbox",
-							checked: config.search_nodes_special === 400,
-							click: () => {
-								win.webContents.send("call", {
-									fn: "set_node_limit_special",
-									args: [400]
-								});
-								// Will receive an ack IPC which sets menu checks.
-							}
-						},
-						{
-							label: "200",
-							type: "checkbox",
-							checked: config.search_nodes_special === 200,
-							click: () => {
-								win.webContents.send("call", {
-									fn: "set_node_limit_special",
-									args: [200]
 								});
 								// Will receive an ack IPC which sets menu checks.
 							}
@@ -2619,13 +2548,13 @@ function menu_build() {
 							}
 						},
 						{
-							label: "2",
+							label: "10",
 							type: "checkbox",
-							checked: config.search_nodes_special === 2,
+							checked: config.search_nodes_special === 10,
 							click: () => {
 								win.webContents.send("call", {
 									fn: "set_node_limit_special",
-									args: [2]
+									args: [10]
 								});
 								// Will receive an ack IPC which sets menu checks.
 							}
