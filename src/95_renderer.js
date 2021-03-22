@@ -640,7 +640,7 @@ function NewRenderer() {
 	renderer.open = function(filename) {
 		let buf;
 		try {
-			if (!fs.existsSync(filename) {		// Silently return in this case.
+			if (!fs.existsSync(filename)) {		// Silently return in this case.
 				return;
 			}
 			buf = fs.readFileSync(filename);
