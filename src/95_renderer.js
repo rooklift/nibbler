@@ -58,8 +58,17 @@ function NewRenderer() {
 
 		case "analysis_locked":
 
-			// Sadly this logic requires that analysis_locked be halted upon receiving bestmove (which happens if there's a limit),
-			// otherwise changing nodes will cause the search to be redone.
+			// Moving into other nodes shouldn't trigger anything:
+
+			if (this.tree.node !== this.leela_lock_node) {
+				break;
+			}
+
+			// Sadly there's still a problem - if a search ends due to a limit, and we re-enter the leela_lock_node, the test below
+			// will trigger a new search (because search_desired.node has become null). This isn't really a problem for Leela (the
+			// new search completes instantly) but is awful for Stockfish.
+			//
+			// Therefore, receive_bestmove() switches behaviour to "halt" to avoid this.
 
 			if (this.engine.search_desired.node !== this.leela_lock_node || this.engine.search_desired.limit !== this.node_limit()) {
 				this.__go(this.leela_lock_node);
@@ -876,16 +885,11 @@ function NewRenderer() {
 
 			break;
 
-		case "analysis_free":
+		case "analysis_free":			// We hit the node limit. No need to change behaviour.
 
-			// We hit the node limit. No need to change behaviour.
 			break;
 
-		case "analysis_locked":
-
-			// We hit the node limit. We must set behaviour to "halt" because when the user moves around in the tree,
-			// we will enter a new node, causing behave() to be called, which would redo the search (because, as of
-			// now, engine.search_desired.node === null.
+		case "analysis_locked":			// We hit the node limit. We must set behaviour to "halt" -- see comments in behave().
 
 			this.set_behaviour("halt");
 			break;
