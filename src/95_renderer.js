@@ -171,10 +171,21 @@ function NewRenderer() {
 
 		// Don't do anything if behaviour is already correct. But
 		// "halt" always triggers a behave() call for safety reasons,
-		// though engine.js may filter duplicates.
+		// and "analysis_locked" needs to check if we're in a new position.
 
-		if (s !== "halt" && s === config.behaviour) {
-			return;
+		if (s === config.behaviour) {
+			switch (s) {
+			case "halt":
+				break;					// i.e. do NOT immediately return
+			case "analysis_locked":
+				if (this.leela_lock_node !== this.tree.node) {
+					break;				// i.e. do NOT immediately return
+				} else {
+					return;
+				}
+			default:
+				return;
+			}
 		}
 
 		this.leela_lock_node = (s === "analysis_locked") ? this.tree.node : null;
