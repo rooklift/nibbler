@@ -734,7 +734,10 @@ function menu_build() {
 					label: "Go and lock engine",
 					accelerator: "CommandOrControl+Shift+G",
 					click: () => {
-						win.webContents.send("call", "go_and_lock");
+						win.webContents.send("call", {
+							fn: "set_behaviour",
+							args: ["analysis_locked"],
+						});
 					}
 				},
 				{

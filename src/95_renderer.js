@@ -26,7 +26,7 @@ function NewRenderer() {
 
 	// -------------------------------------------------------------------------------------------------------------------------
 
-	renderer.behave = function() {
+	renderer.behave = function(reason) {		// reason should be "position" or "behaviour"
 
 		// Called when position changes.
 		// Called when behaviour changes.
@@ -58,17 +58,11 @@ function NewRenderer() {
 
 		case "analysis_locked":
 
-			// Moving into other nodes shouldn't trigger anything:
+			// Moving shouldn't trigger anything...
 
-			if (this.tree.node !== this.leela_lock_node) {
+			if (reason === "position") {
 				break;
 			}
-
-			// Sadly there's still a problem - if a search ends due to a limit, and we re-enter the leela_lock_node, the test below
-			// will trigger a new search (because search_desired.node has become null). This isn't really a problem for Leela (the
-			// new search completes instantly) but is awful for Stockfish.
-			//
-			// Therefore, receive_bestmove() switches behaviour to "halt" to avoid this.
 
 			if (this.engine.search_desired.node !== this.leela_lock_node || this.engine.search_desired.limit !== this.node_limit()) {
 				this.__go(this.leela_lock_node);
@@ -166,7 +160,7 @@ function NewRenderer() {
 		}
 
 		this.maybe_infer_info();						// Before node_exit_cleanup() so that previous ghost info is available when moving forwards.
-		this.behave();
+		this.behave("position");
 		this.draw();
 
 		this.node_exit_cleanup();						// This feels like the right time to do this.
@@ -183,21 +177,9 @@ function NewRenderer() {
 			return;
 		}
 
-		// "analysis_locked" has its own function. (Why? Probably some historical reason that isn't really needed now...)
-
-		if (s === "analysis_locked") {
-			throw `set_behaviour("analysis_locked") not allowed`;
-		}
-
-		this.leela_lock_node = null;
+		this.leela_lock_node = (s === "analysis_locked") ? this.tree.node : null;
 		config.behaviour = s;
-		this.behave();
-	};
-
-	renderer.go_and_lock = function() {
-		this.leela_lock_node = this.tree.node;
-		config.behaviour = "analysis_locked";
-		this.behave();
+		this.behave("behaviour");
 	};
 
 	renderer.handle_search_params_change = function() {
@@ -886,12 +868,8 @@ function NewRenderer() {
 			break;
 
 		case "analysis_free":			// We hit the node limit. No need to change behaviour.
+		case "analysis_locked":
 
-			break;
-
-		case "analysis_locked":			// We hit the node limit. We must set behaviour to "halt" -- see comments in behave().
-
-			this.set_behaviour("halt");
 			break;
 
 		}
