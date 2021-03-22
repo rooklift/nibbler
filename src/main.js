@@ -270,7 +270,8 @@ function menu_build() {
 					click: () => {
 						let files = open_dialog({
 							defaultPath: config.pgn_dialog_folder,
-							properties: ["openFile"]
+							properties: ["openFile"],
+							filters: [{name: "PGN", extensions: ["pgn"]}, {name: "All files", extensions: ["*"]}]
 						});
 						if (Array.isArray(files) && files.length > 0) {
 							let file = files[0];
@@ -292,7 +293,8 @@ function menu_build() {
 					click: () => {
 						let files = open_dialog({
 							defaultPath: config.pgn_dialog_folder,
-							properties: ["openFile"]
+							properties: ["openFile"],
+							filters: [{name: "PGN", extensions: ["pgn"]}, {name: "All files", extensions: ["*"]}]
 						});
 						if (Array.isArray(files) && files.length > 0) {
 							let file = files[0];
@@ -3094,7 +3096,8 @@ function menu_build() {
 					click: () => {
 						let files = open_dialog({
 							defaultPath: config.book_dialog_folder,
-							properties: ["openFile"]
+							properties: ["openFile"],
+							filters: [{name: "PGN", extensions: ["pgn"]}, {name: "All files", extensions: ["*"]}]
 						});
 						if (Array.isArray(files) && files.length > 0) {
 							let file = files[0];
