@@ -58,10 +58,19 @@ function NewRenderer() {
 
 		case "analysis_locked":
 
-			// Moving shouldn't trigger anything...
+			// Moving shouldn't trigger anything, except that re-entering the correct node changes behaviour to halt
+			// iff the search is completed.
 
 			if (reason === "position") {
-				break;
+
+				if (this.tree.node === this.leela_lock_node) {
+					if (!this.engine.search_desired.node) {
+						config.behaviour = "halt";					// This direct adjustment with
+						this.leela_lock_node = null;				// these things is sketchy.
+					}
+				}
+
+				break;		// No further actions when reason === "position"
 			}
 
 			if (this.engine.search_desired.node !== this.leela_lock_node || this.engine.search_desired.limit !== this.node_limit()) {
@@ -200,43 +209,12 @@ function NewRenderer() {
 
 		if (this.engine.search_desired.node) {
 			this.__go(this.engine.search_desired.node);
-		} else {
-
-			// There is no search desired in the engine object. But if our behaviour is free analysis
-			// or similar, that means the search ran to completion. We should maybe redo the search
-			// with the new params...?
-
-			if (config.behaviour !== "analysis_free" && config.behaviour !== "analysis_locked") {
-				return;
-			}
-
-			let relevant_node = config.behaviour === "analysis_free" ? this.tree.node : this.leela_lock_node;		// Maybe null
-
-			if (!relevant_node || relevant_node !== this.engine.search_completed.node) {
-				return;
-			}
-
-			let node_limit = this.node_limit();
-			let needs_redo = false;
-
-			if (CompareArrays(relevant_node.searchmoves, this.engine.search_completed.searchmoves) === false) {
-				needs_redo = true;
-			}
-
-			if (node_limit === null && this.engine.search_completed.limit !== null) {
-				needs_redo = true;
-			}
-
-			if (typeof node_limit === "number" && typeof this.engine.search_completed.limit === "number") {
-				if (node_limit > this.engine.search_completed.limit) {
-					needs_redo = true;
-				}
-			}
-
-			if (needs_redo) {
-				this.__go(this.engine.search_completed.node)
-			}
 		}
+
+		// If there's no search desired, changing params probably shouldn't start one. As of 1.8.3, when a search
+		// completes due to hitting the (normal) node limit, behaviour gets changed back to "halt" in one way or
+		// another.
+
 	};
 
 	renderer.play_this_colour = function() {
@@ -878,9 +856,19 @@ function NewRenderer() {
 
 			break;
 
-		case "analysis_free":			// We hit the node limit. No need to change behaviour.
+		case "analysis_free":			// We hit the node limit.
+
+			this.set_behaviour("halt");
+			break;
+
 		case "analysis_locked":
 
+			// We hit the node limit. If the node we're looking at isn't the locked node, don't
+			// change behaviour. (It will get changed when we enter the locked node.)
+
+			if (this.tree.node === this.leela_lock_node) {
+				this.set_behaviour("halt");
+			}
 			break;
 
 		}
