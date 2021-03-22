@@ -638,11 +638,14 @@ function NewRenderer() {
 	};
 
 	renderer.open = function(filename) {
-		if (filename === __dirname || filename === ".") {		// Can happen with some weird situation in main process.
-			return;
-		}
 		let buf;
 		try {
+			if (filename === __dirname || filename === ".") {		// Can happen when extra args are passed to main process. Silently return.
+				return;
+			}
+			if (fs.existsSync(filename) === false) {				// Can happen when extra args are passed to main process. Silently return.
+				return;
+			}
 			buf = fs.readFileSync(filename);
 		} catch (err) {
 			alert(err);
