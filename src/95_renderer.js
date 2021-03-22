@@ -638,6 +638,9 @@ function NewRenderer() {
 	};
 
 	renderer.open = function(filename) {
+		if (filename === __dirname || filename === ".") {		// Can happen with some weird situation in main process.
+			return;
+		}
 		let buf;
 		try {
 			buf = fs.readFileSync(filename);
