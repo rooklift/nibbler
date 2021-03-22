@@ -65,8 +65,7 @@ function NewRenderer() {
 
 				if (this.tree.node === this.leela_lock_node) {
 					if (!this.engine.search_desired.node) {
-						config.behaviour = "halt";					// This direct adjustment with
-						this.leela_lock_node = null;				// these things is sketchy.
+						this.set_behaviour_direct("halt");
 					}
 				}
 
@@ -197,9 +196,13 @@ function NewRenderer() {
 			}
 		}
 
+		this.set_behaviour_direct(s);
+		this.behave("behaviour");
+	};
+
+	renderer.set_behaviour_direct = function(s) {
 		this.leela_lock_node = (s === "analysis_locked") ? this.tree.node : null;
 		config.behaviour = s;
-		this.behave("behaviour");
 	};
 
 	renderer.handle_search_params_change = function() {
