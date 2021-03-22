@@ -1850,11 +1850,11 @@ function NewRenderer() {
 
 				if (piece_to_draw === "") {
 					td.style["background-image"] = "none";
-					td.draggable = false;
 				} else {
 					td.style["background-image"] = images[piece_to_draw].string_for_bg_style;
-					td.draggable = false;
 				}
+
+				td.draggable = false;
 			}
 		}
 	};
