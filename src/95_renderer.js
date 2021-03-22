@@ -758,11 +758,11 @@ function NewRenderer() {
 			let s;
 
 			if (p.tags.Result === "1-0") {
-				s = `${padding}${n + 1}. <span class="blue">${p.tags.White}</span> - ${p.tags.Black}`;
+				s = `${padding}${n + 1}. <span class="blue">${p.tags.White || "Unknown"}</span> - ${p.tags.Black || "Unknown"}`;
 			} else if (p.tags.Result === "0-1") {
-				s = `${padding}${n + 1}. ${p.tags.White} - <span class="blue">${p.tags.Black}</span>`;
+				s = `${padding}${n + 1}. ${p.tags.White || "Unknown"} - <span class="blue">${p.tags.Black || "Unknown"}</span>`;
 			} else {
-				s = `${padding}${n + 1}. ${p.tags.White} - ${p.tags.Black}`;
+				s = `${padding}${n + 1}. ${p.tags.White || "Unknown"} - ${p.tags.Black || "Unknown"}`;
 			}
 
 			if (p.tags.Opening) {
