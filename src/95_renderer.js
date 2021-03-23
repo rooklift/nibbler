@@ -1261,7 +1261,12 @@ function NewRenderer() {
 	renderer.escape = function() {					// Set things into a clean state.
 		this.hide_pgn_chooser();
 		this.hide_promotiontable();
-		this.set_active_square(null);
+		if (this.active_square) {
+			this.set_active_square(null);
+			if (config.click_spotlight) {
+				this.draw_canvas_arrows();
+			}
+		}
 	};
 
 	renderer.toggle_debug_css = function() {
@@ -1754,7 +1759,10 @@ function NewRenderer() {
 			}
 
 			if (source && dest) {
-				this.move(source.s + dest.s);
+				let ok = this.move(source.s + dest.s);
+				if (!ok && config.click_spotlight) {		// No need to worry about spotlight arrows if the move actually happened
+					this.draw_canvas_arrows();
+				}
 			}
 
 			return;
