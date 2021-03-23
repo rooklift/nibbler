@@ -18,6 +18,7 @@ function NewInfoHandler() {
 
 	ih.one_click_moves = New2DArray(8, 8, null);	// Array of possible one-click moves. Updated by draw_arrows().
 	ih.info_clickers = [];							// Elements in the infobox. Updated by draw_infobox().
+	ih.info_clickers_node_id = null;
 
 	ih.special_message = null;
 	ih.special_message_class = "yellow";
@@ -508,6 +509,7 @@ function NewInfoHandler() {
 		this.last_drawn_searchmoves = Array.from(searchmoves);
 
 		this.info_clickers = [];
+		this.info_clickers_node_id = node.id;
 
 		let substrings = [];
 		let clicker_index = 0;
@@ -638,6 +640,13 @@ function NewInfoHandler() {
 
 	ih.must_draw_infobox = function() {
 		this.last_drawn_version = null;
+	};
+
+	ih.clickers_are_valid_for_node = function(node) {
+		if (!node || !this.info_clickers_node_id) {
+			return false;
+		}
+		return node.id === this.info_clickers_node_id;
 	};
 
 	ih.moves_from_click = function(event) {

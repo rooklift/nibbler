@@ -1616,6 +1616,10 @@ function NewRenderer() {
 
 	renderer.infobox_click = function(event) {
 
+		if (this.info_handler.clickers_are_valid_for_node(this.tree.node) === false) {
+			return;
+		}
+
 		let moves = this.info_handler.moves_from_click(event);
 
 		if (!moves || moves.length === 0) {				// We do assume length > 0 below.
@@ -1623,8 +1627,7 @@ function NewRenderer() {
 			return;
 		}
 
-		// Note added 1.8.4 - I'm not sure now whether it's possible for moves to be
-		// an illegal sequence. There might be some races that could make it so?
+		// I doubt moves can be an illegal sequence now but it's not too expensive here...
 
 		let illegal_reason = this.tree.node.board.sequence_illegal(moves);
 		if (illegal_reason) {
@@ -1955,7 +1958,7 @@ function NewRenderer() {
 
 	renderer.hoverdraw = function() {
 
-		if (!config.hover_draw) {
+		if (!config.hover_draw || this.info_handler.clickers_are_valid_for_node(this.tree.node) === false) {
 			return false;
 		}
 
@@ -1978,7 +1981,7 @@ function NewRenderer() {
 			return false;
 		}
 
-		let info = SortedMoveInfo(this.tree.node)[div_index];			// Possibly undefined
+		let info = SortedMoveInfo(this.tree.node)[div_index];		// Possibly undefined
 
 		if (!info || Array.isArray(info.pv) === false || info.pv.length === 0) {
 			return false;
@@ -2048,9 +2051,8 @@ function NewRenderer() {
 
 	renderer.draw_fantasy_from_moves = function(moves) {
 
-		// Don't assume moves is an array of legal moves, or even an array. Not sure how our incoming-PV-validation in 1.8.4 affects this?
-		// There could still be races that lead to some illegal sequence? In particular, hoverdraw_single() gets its moves from a source
-		// other than this.tree.node...
+		// We don't assume moves is an array of legal moves, or even an array.
+		// This is probably paranoid at this point but meh.
 
 		if (Array.isArray(moves) === false) {
 			return false;
