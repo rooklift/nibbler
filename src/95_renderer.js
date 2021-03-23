@@ -2047,6 +2047,7 @@ function NewRenderer() {
 	renderer.draw_fantasy_from_moves = function(moves) {
 
 		// Don't assume moves is an array of legal moves, or even an array.
+		// (After 1.8.4 it might be possible to make such an assumption? Not sure.)
 
 		if (Array.isArray(moves) === false) {
 			return false;
