@@ -135,7 +135,7 @@ function startup() {
 	});
 
 	electron.ipcMain.on("ack_logfile", (event, msg) => {
-		set_one_check(msg ? true : false, "Dev", "Use logfile...");
+		set_one_check(msg ? true : false, "Dev", "Logging", "Use logfile...");
 	});
 
 	electron.ipcMain.on("ack_book", (event, msg) => {
@@ -3612,78 +3612,83 @@ function menu_build() {
 					type: "separator"
 				},
 				{
-					label: "Use logfile...",
-					type: "checkbox",
-					checked: typeof config.logfile === "string" && config.logfile !== "",
-					click: () => {
-						let file = save_dialog();
-						if (typeof file === "string" && file.length > 0) {
-							win.webContents.send("call", {
-								fn: "set_logfile",
-								args: [file]
-							});
-							// Will receive an ack IPC which sets menu checks.
-						} else {
-							win.webContents.send("call", "send_ack_logfile");		// Force an ack IPC to fix our menu check state.
-						}
-					}
-				},
-				{
-					label: "Disable logging",
-					click: () => {
-						win.webContents.send("call", {
-							fn: "set_logfile",
-							args: [null]
-						});
-						// Will receive an ack IPC which sets menu checks.
-					}
-				},
-				{
-					type: "separator"
-				},
-				{
-					label: "Log illegal moves",
-					type: "checkbox",
-					checked: config.log_illegal_moves,
-					click: () => {
-						win.webContents.send("call", {
-							fn: "toggle",
-							args: ["log_illegal_moves"],
-						});
-					}
-				},
-				{
-					label: "Log positions",
-					type: "checkbox",
-					checked: config.log_positions,
-					click: () => {
-						win.webContents.send("call", {
-							fn: "toggle",
-							args: ["log_positions"],
-						});
-					}
-				},
-				{
-					label: "Log info lines",
-					type: "checkbox",
-					checked: config.log_info_lines,
-					click: () => {
-						win.webContents.send("call", {
-							fn: "toggle",
-							args: ["log_info_lines"],
-						});
-					}
-				},
-				{
-					label: "...including useless lines",
-					type: "checkbox",
-					checked: config.log_useless_info,
-					click: () => {
-						win.webContents.send("call", {
-							fn: "toggle",
-							args: ["log_useless_info"],
-						});
-					}
+					label: "Logging",
+					submenu: [
+						{
+							label: "Use logfile...",
+							type: "checkbox",
+							checked: typeof config.logfile === "string" && config.logfile !== "",
+							click: () => {
+								let file = save_dialog();
+								if (typeof file === "string" && file.length > 0) {
+									win.webContents.send("call", {
+										fn: "set_logfile",
+										args: [file]
+									});
+									// Will receive an ack IPC which sets menu checks.
+								} else {
+									win.webContents.send("call", "send_ack_logfile");		// Force an ack IPC to fix our menu check state.
+								}
+							}
+						},
+						{
+							label: "Disable logging",
+							click: () => {
+								win.webContents.send("call", {
+									fn: "set_logfile",
+									args: [null]
+								});
+								// Will receive an ack IPC which sets menu checks.
+							}
+						},
+						{
+							type: "separator"
+						},
+						{
+							label: "Log illegal moves",
+							type: "checkbox",
+							checked: config.log_illegal_moves,
+							click: () => {
+								win.webContents.send("call", {
+									fn: "toggle",
+									args: ["log_illegal_moves"],
+								});
+							}
+						},
+						{
+							label: "Log positions",
+							type: "checkbox",
+							checked: config.log_positions,
+							click: () => {
+								win.webContents.send("call", {
+									fn: "toggle",
+									args: ["log_positions"],
+								});
+							}
+						},
+						{
+							label: "Log info lines",
+							type: "checkbox",
+							checked: config.log_info_lines,
+							click: () => {
+								win.webContents.send("call", {
+									fn: "toggle",
+									args: ["log_info_lines"],
+								});
+							}
+						},
+						{
+							label: "...including useless lines",
+							type: "checkbox",
+							checked: config.log_useless_info,
+							click: () => {
+								win.webContents.send("call", {
+									fn: "toggle",
+									args: ["log_useless_info"],
+								});
+							}
+						},
+					]
 				},
 			]
 		}
