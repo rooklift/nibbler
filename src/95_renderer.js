@@ -906,6 +906,12 @@ function NewRenderer() {
 			return;
 		}
 
+		if (s.startsWith("uciok")) {
+			if (!this.engine.ever_received_option_uci_chess960) {
+				this.info_handler.err_receive(messages.engine_no_960_support);
+			}
+		}
+
 		// Misc messages. Treat ones that aren't valid UCI as errors to be passed along...
 
 		if (!s.startsWith("id") &&

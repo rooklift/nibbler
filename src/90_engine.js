@@ -78,6 +78,7 @@ function NewEngine(hub) {
 	eng.last_send = null;
 	eng.unresolved_stop_time = null;
 	eng.ever_received_uciok = false;
+	eng.ever_received_option_uci_chess960 = false;
 	eng.have_quit = false;
 	eng.suppress_cycle_info = null;		// Stupid hack to allow "forget all analysis" to work; info lines from this cycle are ignored.
 
@@ -409,6 +410,10 @@ function NewEngine(hub) {
 
 			if (line.includes("uciok")) {
 				this.ever_received_uciok = true;
+			}
+
+			if (line.toLowerCase().includes("option name uci_chess960")) {
+				this.ever_received_option_uci_chess960 = true;
 			}
 
 			if (line.startsWith("bestmove")) {
