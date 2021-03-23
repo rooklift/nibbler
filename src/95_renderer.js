@@ -1620,7 +1620,8 @@ function NewRenderer() {
 			return;
 		}
 
-		let moves = this.info_handler.moves_from_click(event);
+		let n = EventPathN(event, "infobox_");
+		let moves = this.info_handler.moves_from_click_n(n);
 
 		if (!moves || moves.length === 0) {				// We do assume length > 0 below.
 			this.maybe_searchmove_click(event);

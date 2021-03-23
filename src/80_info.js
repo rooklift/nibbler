@@ -649,11 +649,6 @@ function NewInfoHandler() {
 		return node.id === this.info_clickers_node_id;
 	};
 
-	ih.moves_from_click = function(event) {
-		let n = EventPathN(event, "infobox_");
-		return this.moves_from_click_n(n);
-	};
-
 	ih.moves_from_click_n = function(n) {
 
 		if (typeof n !== "number" || Number.isNaN(n)) {
@@ -677,31 +672,6 @@ function NewInfoHandler() {
 		}
 
 		move_list.reverse();
-
-		return move_list;
-	};
-
-	ih.entire_pv_from_click_n = function(n) {
-
-		let move_list = this.moves_from_click_n(n);		// Does all the sanity checks.
-
-		if (move_list.length === 0) {
-			return move_list;
-		}
-
-		if (this.info_clickers[n].is_end) {				// Do we already have the whole thing?
-			return move_list;
-		}
-
-		n++;
-
-		for (; n < this.info_clickers.length; n++) {
-			let object = this.info_clickers[n];
-			move_list.push(object.move);
-			if (object.is_end) {
-				break;
-			}
-		}
 
 		return move_list;
 	};
