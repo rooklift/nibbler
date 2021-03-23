@@ -833,10 +833,7 @@ function NewRenderer() {
 
 			if (!ok) {
 				LogBoth(`BAD BESTMOVE (${tokens[1]}) IN POSITION ${this.tree.node.board.fen(true)}`);
-				if (!this.warned_bad_bestmove) {
-					alert(messages.bad_bestmove);
-					this.warned_bad_bestmove = true;
-				}
+				this.set_special_message(`WARNING! Bad bestmove (${tokens[1]}) received!`, "yellow", 15000);
 			} else {
 				if (this.tree.node.terminal_reason()) {
 					this.set_behaviour("halt");
@@ -2140,8 +2137,8 @@ function NewRenderer() {
 			config.behaviour === "halt" || config.always_show_searchmoves);
 	};
 
-	renderer.set_special_message = function(s, css_class) {
-		this.info_handler.set_special_message(s, css_class);
+	renderer.set_special_message = function(s, css_class, duration) {
+		this.info_handler.set_special_message(s, css_class, duration);
 		this.draw_statusbox();
 	};
 
