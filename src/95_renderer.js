@@ -1623,8 +1623,8 @@ function NewRenderer() {
 			return;
 		}
 
-		// It's probably impossible for the sequence to be illegal now?
-		// Could there be races that make it so?
+		// Note added 1.8.4 - I'm not sure now whether it's possible for moves to be
+		// an illegal sequence. There might be some races that could make it so?
 
 		let illegal_reason = this.tree.node.board.sequence_illegal(moves);
 		if (illegal_reason) {
