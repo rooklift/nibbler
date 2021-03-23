@@ -136,6 +136,6 @@ exports.desync =
 
 
 exports.c960_warning =
-`We appear to have entered a game of Chess960, however this engine probably does not support Chess960. \
-Who knows what will happen.`;
+`We appear to have entered a game of Chess960, however this engine does not support Chess960. \
+Who knows what will happen. Probably not good things. Maybe bad things.`;
 
