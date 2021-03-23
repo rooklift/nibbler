@@ -909,7 +909,7 @@ function NewRenderer() {
 		}
 
 		if (s.startsWith("uciok")) {
-			if (!this.engine.ever_received_option_uci_chess960) {
+			if (!config.suppress_chess960 && !this.engine.ever_received_option_uci_chess960) {
 				this.info_handler.err_receive(messages.engine_no_960_support);
 			}
 		}
