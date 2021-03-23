@@ -78,7 +78,6 @@ function NewEngine(hub) {
 	eng.last_send = null;
 	eng.unresolved_stop_time = null;
 	eng.ever_received_uciok = false;
-	eng.ever_received_option_uci_chess960 = false;
 	eng.have_quit = false;
 	eng.suppress_cycle_info = null;		// Stupid hack to allow "forget all analysis" to work; info lines from this cycle are ignored.
 
@@ -160,16 +159,16 @@ function NewEngine(hub) {
 			return;
 		}
 
-		let root_fen = node.get_root().board.fen(config.suppress_chess960);
+		let root_fen = node.get_root().board.fen(!this.in_960_mode());
 		let setup = `fen ${root_fen}`;
 
-		if (config.suppress_chess960 && setup === "fen rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1") {
+		if (!this.in_960_mode() && setup === "fen rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1") {
 			setup = "startpos";		// May as well send this format if we're not in 960 mode.
 		}
 
 		let moves;
 
-		if (config.suppress_chess960) {
+		if (!this.in_960_mode()) {
 			moves = node.history_old_format();
 		} else {
 			moves = node.history();
@@ -209,6 +208,10 @@ function NewEngine(hub) {
 	};
 
 	eng.set_search_desired = function(node, limit, searchmoves) {
+
+		if (!this.ever_received_uciok) {
+			return;		// This is OK. When we actually get it, hub will enter state "halt".
+		}
 
 		let params = SearchParams(node, limit, searchmoves);
 
@@ -320,9 +323,6 @@ function NewEngine(hub) {
 	};
 
 	eng.maybe_setoption_fail_reason = function(name, value) {
-		if (name.toLowerCase() === "uci_chess960" && config.suppress_chess960) {
-			return "Not sent, Chess960 suppressed";
-		}
 		if (this.leelaish && suppressed_options_lc0[name.toLowerCase()]) {
 			return "Not sent, wrong engine type";
 		}
@@ -353,6 +353,10 @@ function NewEngine(hub) {
 		let o = {key, val};
 		ipcRenderer.send("ack_setoption", o);
 		return o;
+	};
+
+	eng.in_960_mode = function() {
+		return this.sent_options["uci_chess960"] === "true";				// The string "true" since these values are always strings.
 	};
 
 	eng.setup = function(filepath, args) {
@@ -408,12 +412,12 @@ function NewEngine(hub) {
 			if (this.have_quit) return;
 			debuggo.line = debuggo.line ? debuggo.line + 1 : 1;
 
-			if (line.includes("uciok")) {
-				this.ever_received_uciok = true;
+			if (line.startsWith("option") && line.toLowerCase().includes("uci_chess960")) {
+				this.setoption("UCI_Chess960", true);
 			}
 
-			if (line.toLowerCase().includes("option name uci_chess960")) {
-				this.ever_received_option_uci_chess960 = true;
+			if (line.startsWith("uciok")) {
+				this.ever_received_uciok = true;
 			}
 
 			if (line.startsWith("bestmove")) {

@@ -144,9 +144,6 @@ function NewRenderer() {
 			this.set_behaviour("halt");					// Will cause "stop" to be sent.
 			this.engine.send("ucinewgame");				// Must happen after "stop" is sent.
 			this.send_title();
-			if (config.suppress_chess960 && this.tree.node.board.normalchess === false) {
-				alert(messages.suppressed_960_warning);
-			}
 		}
 
 		if (this.tree.node.table.already_autopopulated === false) {
@@ -895,10 +892,6 @@ function NewRenderer() {
 				}
 			}
 
-			this.set_behaviour("halt");					// Will cause "stop" to be sent.
-			this.engine_send_all_options();				// Relies on the engine.leelaish flag being correct.
-			this.engine.send("ucinewgame");				// Must happen after "stop" is sent.
-
 			// Pass unknown engines to the error handler to be displayed...
 
 			if (!s.includes("Lc0") && !s.includes("Ceres") && !s.includes("Stockfish")) {
@@ -909,19 +902,19 @@ function NewRenderer() {
 		}
 
 		if (s.startsWith("uciok")) {
-			if (!config.suppress_chess960 && !this.engine.ever_received_option_uci_chess960) {
-				this.info_handler.err_receive(messages.engine_no_960_support);
-			}
+			this.set_behaviour("halt");					// Up till now, set_search_desired() was ignoring our calls.
+			this.engine_send_all_options();				// Relies on the engine.leelaish flag being correct.
+			this.engine.send("ucinewgame");				// Relies on the engine not running.
+			return;
 		}
 
 		// Misc messages. Treat ones that aren't valid UCI as errors to be passed along...
 
 		if (!s.startsWith("id") &&
-			!s.startsWith("uciok") &&
 			!s.startsWith("readyok") &&
 			!s.startsWith("option") &&
-			!s.startsWith("bestmove") &&		// These messages shouldn't reach this function
-			!s.startsWith("info")				// These messages shouldn't reach this function
+			!s.startsWith("bestmove") &&				// These messages shouldn't reach this function
+			!s.startsWith("info")						// These messages shouldn't reach this function
 		) {
 			this.info_handler.err_receive(s);
 		}
@@ -1203,10 +1196,6 @@ function NewRenderer() {
 		if (option === "searchmoves_buttons") {
 			this.tree.node.searchmoves = [];		// This is reasonable regardless of which way the toggle went.
 			this.handle_search_params_change();
-		}
-
-		if (option === "suppress_chess960") {
-			this.restart_engine();
 		}
 	};
 

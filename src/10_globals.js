@@ -82,7 +82,7 @@ const standard_engine_options = {
 	"LogLiveStats": true,
 	"ScoreType": "centipawn",
 	"SmartPruningFactor": 0,
-	"UCI_Chess960": true,
+	// "UCI_Chess960": true,		// No, this is handled specially in engine.js
 	"UCI_ShowWDL": true,
 	"VerboseMoveStats": true,
 };
