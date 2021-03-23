@@ -134,6 +134,9 @@ function C960_PV_Converter(pv, board) {
 	let fix_e8g8 = board.state[4][0] === "k" && !board.castling.includes("g");
 	let fix_e8c8 = board.state[4][0] === "k" && !board.castling.includes("c");
 
+	// Those are the best tests to use here (especially considering that we
+	// seem to be allowing arbitrary / weird castling rights like GHgh).
+
 	for (let i = 0; i < pv.length; i++) {
 
 		let token = pv[i];
