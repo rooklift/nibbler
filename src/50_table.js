@@ -127,7 +127,9 @@ const info_prototype = {
 		let ret = [];
 
 		for (let move of this.pv) {
-			// if (tmp_board.illegal(move)) break;		// Should be impossible as of 1.8.4.
+
+			// if (tmp_board.illegal(move)) break;		// Should be impossible as of 1.8.4: PVs are validated upon reception, and the only other
+														// way they can get changed is by maybe_infer_info(), which hopefully is sound.
 			ret.push(tmp_board.nice_string(move));
 			tmp_board = tmp_board.move(move);
 		}
