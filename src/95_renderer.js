@@ -2048,8 +2048,9 @@ function NewRenderer() {
 
 	renderer.draw_fantasy_from_moves = function(moves) {
 
-		// Don't assume moves is an array of legal moves, or even an array.
-		// (After 1.8.4 it might be possible to make such an assumption? Not sure.)
+		// Don't assume moves is an array of legal moves, or even an array. Not sure how our incoming-PV-validation in 1.8.4 affects this?
+		// There could still be races that lead to some illegal sequence? In particular, hoverdraw_single() gets its moves from a source
+		// other than this.tree.node...
 
 		if (Array.isArray(moves) === false) {
 			return false;
