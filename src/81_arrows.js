@@ -352,7 +352,7 @@ function DrawArrows(node, one_click_moves, specific_source, show_move) {		// spe
 	}
 
 	draw_arrows_last_mode = mode;		// For debugging only.
-};
+}
 
 
 // For debugging...

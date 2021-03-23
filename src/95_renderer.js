@@ -1177,7 +1177,7 @@ function NewRenderer() {
 		} else {
 			this.engine.setoption("MultiPV", config.ab_engine_multipv);
 		}
-	}
+	};
 
 	// -------------------------------------------------------------------------------------------------------------------------
 	// Settings etc...

@@ -107,7 +107,7 @@ const suppressed_options_ab = {
 	"temperature": true,
 	"verbosemovestats": true,
 	"weightsfile": true,
-}
+};
 
 // Yeah this seemed a good idea at the time.........................
 

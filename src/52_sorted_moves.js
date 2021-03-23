@@ -109,4 +109,4 @@ function SortedMoveInfo(node) {
 	});
 
 	return info_list;
-};
+}
