@@ -144,6 +144,9 @@ function NewRenderer() {
 			this.set_behaviour("halt");					// Will cause "stop" to be sent.
 			this.engine.send("ucinewgame");				// Must happen after "stop" is sent.
 			this.send_title();
+			if (!this.engine.in_960_mode() && this.tree.node.board.normalchess === false) {
+				alert(messages.960_warning);
+			}
 		}
 
 		if (this.tree.node.table.already_autopopulated === false) {

@@ -135,11 +135,7 @@ exports.desync =
 `Desync... (restart engine via Engine menu)`;
 
 
-exports.suppressed_960_warning =
-`We appear to have entered a game of Chess960, however Chess960 format comms with the engine have \
-been suppressed via the Dev menu. This may lead to weird results.`;
+exports.960_warning =
+`We appear to have entered a game of Chess960, however this engine probably does not support Chess960. \
+Who knows what will happen.`;
 
-
-exports.engine_no_960_support =
-`<span class="blue">This engine probably doesn't support Chess960 format, which Nibbler uses by \
-default (even in normal games). You should probably use the Suppress 960 option in the Dev menu.</span>`;
