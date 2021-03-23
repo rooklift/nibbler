@@ -2414,6 +2414,18 @@ function menu_build() {
 							}
 						},
 						{
+							label: "2",
+							type: "checkbox",
+							checked: config.search_nodes === 2,
+							click: () => {
+								win.webContents.send("call", {
+									fn: "set_node_limit",
+									args: [2]
+								});
+								// Will receive an ack IPC which sets menu checks.
+							}
+						},
+						{
 							label: "1",
 							type: "checkbox",
 							checked: config.search_nodes === 1,
@@ -2557,6 +2569,18 @@ function menu_build() {
 								win.webContents.send("call", {
 									fn: "set_node_limit_special",
 									args: [10]
+								});
+								// Will receive an ack IPC which sets menu checks.
+							}
+						},
+						{
+							label: "2",
+							type: "checkbox",
+							checked: config.search_nodes_special === 2,
+							click: () => {
+								win.webContents.send("call", {
+									fn: "set_node_limit_special",
+									args: [2]
 								});
 								// Will receive an ack IPC which sets menu checks.
 							}
