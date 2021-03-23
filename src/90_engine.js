@@ -161,6 +161,11 @@ function NewEngine(hub) {
 
 		let root_fen = node.get_root().board.fen(config.suppress_chess960);
 		let setup = `fen ${root_fen}`;
+
+		if (config.suppress_chess960 && setup === "fen rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1") {
+			setup = "startpos";		// May as well send this format if we're not in 960 mode.
+		}
+
 		let moves;
 
 		if (config.suppress_chess960) {
