@@ -24,7 +24,7 @@ function NewInfoHandler() {
 	ih.special_message_class = "yellow";
 	ih.special_message_timeout = performance.now();
 
-	ih.last_drawn_board = null;
+	ih.last_drawn_node_id = null;
 	ih.last_drawn_version = null;
 	ih.last_drawn_highlight = null;
 	ih.last_drawn_highlight_class = null;
@@ -485,7 +485,7 @@ function NewInfoHandler() {
 
 		let no_skip_reasons = [];
 
-		if (node.board !== this.last_drawn_board)                               no_skip_reasons.push("board");
+		if (node.id !== this.last_drawn_node_id)                                no_skip_reasons.push("node");
 		if (node.table.version !== this.last_drawn_version)                     no_skip_reasons.push("table version");
 		if (highlight_move !== this.last_drawn_highlight_move)                  no_skip_reasons.push("highlight move");
 		if (highlight_class !== this.last_drawn_highlight_class)                no_skip_reasons.push("highlight class");
@@ -500,7 +500,7 @@ function NewInfoHandler() {
 			return;
 		}
 
-		this.last_drawn_board = node.board;
+		this.last_drawn_node_id = node.id;
 		this.last_drawn_version = node.table.version;
 		this.last_drawn_highlight_move = highlight_move;
 		this.last_drawn_highlight_class = highlight_class;
