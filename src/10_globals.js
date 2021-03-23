@@ -93,6 +93,7 @@ const standard_engine_options = {
 
 const suppressed_options_lc0 = {
 	"contempt": true,
+	"evalfile": true,
 	"hash": true,
 	"multipv": true,				// Does get set to 500, but can't be changed by normal routes.
 };
