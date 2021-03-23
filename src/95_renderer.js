@@ -145,7 +145,7 @@ function NewRenderer() {
 			this.engine.send("ucinewgame");				// Must happen after "stop" is sent.
 			this.send_title();
 			if (!this.engine.in_960_mode() && this.tree.node.board.normalchess === false) {
-				alert(messages.960_warning);
+				alert(messages.c960_warning);
 			}
 		}
 
