@@ -412,20 +412,18 @@ function NewEngine(hub) {
 			if (this.have_quit) return;
 			debuggo.line = debuggo.line ? debuggo.line + 1 : 1;
 
-			if (line.startsWith("option") && line.toLowerCase().includes("uci_chess960")) {
-				this.setoption("UCI_Chess960", true);
-			}
-
-			if (line.startsWith("uciok")) {
-				this.ever_received_uciok = true;
-			}
-
 			if (line.startsWith("bestmove")) {
 				this.handle_bestmove_line(line);		// Will do logging, possibly adding a reason for rejection.
 			} else if (line.startsWith("info")) {
 				this.handle_info_line(line);			// Will do logging, possibly adding a reason for rejection.
 			} else {
 				Log("< " + line);
+				if (line.startsWith("option") && line.toLowerCase().includes("uci_chess960")) {
+					this.setoption("UCI_Chess960", true);
+				}
+				if (line.startsWith("uciok")) {
+					this.ever_received_uciok = true;
+				}
 				this.hub.receive_misc(SafeString(line));
 			}
 
