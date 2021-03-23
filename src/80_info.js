@@ -138,7 +138,6 @@ function NewInfoHandler() {
 			this.ever_received_info = true;				// After the move legality check; i.e. we want REAL info
 			node.table.version++;						// Likewise
 			move_info.cycle = this.engine_cycle;
-			move_info.subcycle = this.engine_subcycle;
 			move_info.__touched = true;
 
 			// ---------------------------------------------------------------------------------------------------------------------
@@ -169,9 +168,11 @@ function NewInfoHandler() {
 				move_info.multipv = tmp;
 				if (tmp === 1) {
 					this.engine_subcycle++;
-					move_info.subcycle = this.engine_subcycle;	// Correcting the wrong value set earlier
 				}
+			} else {
+				this.engine_subcycle++;
 			}
+			move_info.subcycle = this.engine_subcycle;
 
 			tmp = parseInt(infovals["nodes"], 10);
 			if (Number.isNaN(tmp) === false) {
