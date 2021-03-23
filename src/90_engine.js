@@ -189,6 +189,8 @@ function NewEngine(hub) {
 
 		if (!n) {
 			s = "go infinite";
+		} else if (config.use_movetime) {			// Super-secret option for now. Not saved to config file.
+			s = `go movetime ${n}`;
 		} else {
 			s = `go nodes ${n}`;
 		}
