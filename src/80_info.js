@@ -223,8 +223,12 @@ function NewInfoHandler() {
 			new_pv[0] = move;		// This was partial mitigation for wrong-format castling. It's now redundant with C960_PV_Converter().
 
 			if (CompareArrays(new_pv, move_info.pv) === false) {
+				if (!board.sequence_illegal(new_pv)) {
+					move_info.pv = new_pv;
+				} else {
+					move_info.pv = [move];
+				}
 				move_info.nice_pv_cache = null;
-				move_info.pv = new_pv;
 			}
 
 		} else if (s.startsWith("info string") && !s.includes("NNUE evaluation")) {

@@ -1621,6 +1621,9 @@ function NewRenderer() {
 			return;
 		}
 
+		// It's probably impossible for the sequence to be illegal now?
+		// Could there be races that make it so?
+
 		let illegal_reason = this.tree.node.board.sequence_illegal(moves);
 		if (illegal_reason) {
 			console.log("infobox_click(): " + illegal_reason);

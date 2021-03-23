@@ -75,7 +75,7 @@ function NewInfo(board, move) {
 	info.__ghost = false;			// If not false, this is temporary inferred info. Will store a string to display.
 	info.__touched = false;			// Has this ever actually been updated?
 	info.leelaish = false;			// Whether the most recent update to this info was from an engine considered Leelaish.
-	info.pv = [move];				// Warning: never assume this is a legal sequence.
+	info.pv = [move];				// Validated as a legal sequence upon reception.
 	info.cycle = 0;					// How many "go" commands Nibbler has emitted.
 	info.subcycle = 0;				// How many "blocks" of info we have seen (delineated by multipv 1 info).
 
@@ -112,10 +112,7 @@ const info_prototype = {
 
 	nice_pv: function() {
 
-		// Human readable moves. Since there's no real guarantee that our
-		// moves list is legal, we legality check them. Also note that
-		// our stored PV might conceivably contain old-fashioned castling
-		// moves.
+		// Human readable moves.
 
 		if (this.nice_pv_cache) {
 			return Array.from(this.nice_pv_cache);
@@ -123,16 +120,14 @@ const info_prototype = {
 
 		let tmp_board = this.board;
 
-		if (!this.pv || this.pv.length === 0) {		// Should be impossible.
+		if (!this.pv || this.pv.length === 0) {			// Should be impossible.
 			this.pv = [this.move];
 		}
 
 		let ret = [];
 
 		for (let move of this.pv) {
-			if (tmp_board.illegal(move)) {
-				break;
-			}
+			// if (tmp_board.illegal(move)) break;		// Should be impossible as of 1.8.4.
 			ret.push(tmp_board.nice_string(move));
 			tmp_board = tmp_board.move(move);
 		}
