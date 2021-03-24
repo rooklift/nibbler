@@ -3583,6 +3583,17 @@ function menu_build() {
 					}
 				},
 				{
+					label: "Ethereal multi-arrow hack",
+					type: "checkbox",
+					checked: config.ethereal_hack,
+					click: () => {
+						win.webContents.send("call", {
+							fn: "toggle",
+							args: ["ethereal_hack"],
+						});
+					}
+				},
+				{
 					type: "separator"
 				},
 				{

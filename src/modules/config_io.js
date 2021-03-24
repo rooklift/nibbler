@@ -116,6 +116,7 @@ exports.defaults = {
 	"animate_delay_multiplier": 4,
 
 	"allow_arbitrary_scripts": false,
+	"ethereal_hack": false,
 	"show_engine_state": false,
 
 	"search_nodes": null,
