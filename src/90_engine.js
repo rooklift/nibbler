@@ -78,6 +78,7 @@ function NewEngine(hub) {
 	eng.last_send = null;
 	eng.unresolved_stop_time = null;
 	eng.ever_received_uciok = false;
+	eng.ever_received_readyok = false;
 	eng.have_quit = false;
 	eng.suppress_cycle_info = null;		// Stupid hack to allow "forget all analysis" to work; info lines from this cycle are ignored.
 
@@ -211,7 +212,7 @@ function NewEngine(hub) {
 
 	eng.set_search_desired = function(node, limit, searchmoves) {
 
-		if (!this.ever_received_uciok) {
+		if (!this.ever_received_uciok || !this.ever_received_readyok) {
 			return;		// This is OK. When we actually get it, hub will enter state "halt".
 		}
 
@@ -425,6 +426,9 @@ function NewEngine(hub) {
 				}
 				if (line.startsWith("uciok")) {
 					this.ever_received_uciok = true;
+				}
+				if (line.startsWith("readyok")) {
+					this.ever_received_readyok = true;
 				}
 				this.hub.receive_misc(SafeString(line));
 			}

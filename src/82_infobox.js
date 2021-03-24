@@ -4,15 +4,7 @@ let infobox_props = {
 
 	draw_statusbox: function(node, engine, analysing_other) {
 
-		if (!engine.ever_received_uciok) {
-
-			statusbox.innerHTML = `<span class="yellow">Awaiting uciok from engine</span>`;
-
-		} else if (this.special_message && performance.now() < this.special_message_timeout) {
-
-			statusbox.innerHTML = `<span class="${this.special_message_class}">${this.special_message}</span>`;
-
-		} else if (config.show_engine_state) {
+		if (config.show_engine_state) {
 
 			let cl;
 			let status;
@@ -32,6 +24,18 @@ let infobox_props = {
 			`<span class="${cl}">${status}</span>, ` +
 			`${config.behaviour}, ` +
 			`${engine.last_send}`;
+
+		} else if (!engine.ever_received_uciok) {
+
+			statusbox.innerHTML = `<span class="yellow">Awaiting uciok from engine</span>`;
+
+		} else if (!engine.ever_received_readyok) {
+
+			statusbox.innerHTML = `<span class="yellow">Awaiting readyok from engine</span>`;
+
+		} else if (this.special_message && performance.now() < this.special_message_timeout) {
+
+			statusbox.innerHTML = `<span class="${this.special_message_class}">${this.special_message}</span>`;
 
 		} else if (engine.unresolved_stop_time && performance.now() - engine.unresolved_stop_time > 500) {
 

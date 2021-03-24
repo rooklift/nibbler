@@ -902,10 +902,20 @@ function NewRenderer() {
 		}
 
 		if (s.startsWith("uciok")) {
-			this.set_behaviour("halt");					// Up till now, set_search_desired() was ignoring our calls.
-			this.engine_send_all_options();				// Relies on the engine.leelaish flag being correct.
-			this.engine.send("ucinewgame");				// Relies on the engine not running.
+
+			// Until we receive uciok and then readyok, set_search_desired() ignores our calls, so "go" will not have been sent.
+
+			this.engine_send_all_options();
+			this.engine.send("isready");
 			return;
+		}
+
+		if (s.startsWith("readyok")) {
+
+			// Until we receive uciok and then readyok, set_search_desired() ignores our calls, so "go" will not have been sent.
+
+			this.set_behaviour("halt");					// For the sake of getting the hub in a sane state.
+			this.engine.send("ucinewgame");				// Relies on the engine not running.
 		}
 
 		// Misc messages. Treat ones that aren't valid UCI as errors to be passed along...
@@ -1143,7 +1153,7 @@ function NewRenderer() {
 	renderer.engine_send_all_options = function() {
 
 		// Relies on the engine.leelaish flag being correct.
-		// Also, the engine should be halted before calling this.
+		// Also, the engine should never have been given a "go" before this.
 
 		for (let key of Object.keys(standard_engine_options)) {
 			this.engine.maybe_setoption(key, standard_engine_options[key]);
