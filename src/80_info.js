@@ -337,6 +337,29 @@ function NewInfoHandler() {
 				move_info.m = tmp;
 			}
 
+		} else if (s.startsWith("info") && s.includes(" pv ") && (s.includes("lowerbound") || s.includes("upperbound"))) {
+
+			if (config.log_info_lines) Log("< " + s);
+
+			let infovals = InfoValMany(s, ["pv", "multipv"]);
+
+			let tmp;
+			let move_info;
+			let move = infovals["pv"];
+			move = board.c960_castling_converter(move);
+
+			if (node.table.moveinfo[move] && !node.table.moveinfo[move].__ghost) {		// We already have move info for this move.
+				move_info = node.table.moveinfo[move];
+			}
+
+			if (move_info) {
+				let tmp = parseInt(infovals["multipv"], 10);
+				if (Number.isNaN(tmp) === false) {
+					move_info.multipv = tmp;
+					move_info.subcycle = this.engine_subcycle;
+				}
+			}
+
 		} else {
 
 			if (config.log_info_lines && config.log_useless_info) Log("< " + s);
