@@ -368,7 +368,7 @@ let info_receiver_props = {
 			}
 
 			if (move_info) {
-				let tmp = parseInt(infovals["multipv"], 10);
+				tmp = parseInt(infovals["multipv"], 10);
 				if (Number.isNaN(tmp) === false) {
 					move_info.multipv = tmp;
 					move_info.subcycle = this.engine_subcycle;
