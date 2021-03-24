@@ -52,6 +52,7 @@ exports.defaults = {
 
 	"max_info_lines": null,						// Hidden option
 	"always_show_searchmoves": false,			// Hidden option
+	"allow_stopped_analysis": false,			// Hidden option
 
 	"bad_move_threshold": 0.02,
 	"terrible_move_threshold": 0.04,

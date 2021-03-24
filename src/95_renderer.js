@@ -860,7 +860,9 @@ function NewRenderer() {
 
 		case "analysis_free":			// We hit the node limit.
 
-			this.set_behaviour("halt");
+			if (!config.allow_stopped_analysis) {
+				this.set_behaviour("halt");
+			}
 			break;
 
 		case "analysis_locked":
