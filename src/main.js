@@ -1181,6 +1181,7 @@ function menu_build() {
 					submenu: [
 						{
 							label: "Centipawns",
+							accelerator: "CommandOrControl+T",
 							type: "checkbox",
 							checked: config.show_cp,
 							click: () => {
