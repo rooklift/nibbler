@@ -100,6 +100,7 @@ let info_receiver_props = {
 			this.stderr_log += `<span class="red">${s}</span><br>`;
 			if (this.displaying_stderr() === false) {
 				this.set_special_message(s, "red", 5000);
+				console.log(s);
 			}
 		} else {
 			this.stderr_log += `${s}<br>`;
