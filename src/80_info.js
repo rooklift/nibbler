@@ -70,10 +70,10 @@ let info_misc_props = {
 		// So we've not received info from this engine, but we have drawn the infobox,
 		// meaning the engine was recently restarted or replaced...
 
-		if (performance.now() - ih.engine_start_time > 5000 && ih.ever_received_errors === false) {
+		if (performance.now() - this.engine_start_time > 5000 && this.ever_received_errors === false) {
 			return false;
 		}
-		if (performance.now() - ih.engine_start_time > 20000) {
+		if (performance.now() - this.engine_start_time > 20000) {
 			return false;
 		}
 
