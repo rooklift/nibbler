@@ -52,7 +52,7 @@ function DrawArrows(node, one_click_moves, specific_source, show_move) {		// spe
 	case "ab":
 
 		for (let info of full_list) {
-			if (info.__touched && info_list.length < config.ab_engine_multipv) {
+			if (info.__touched && info_list.length < config.ab_engine_multipv) {		// Would prefer to do info.subcycle >= full_list[0].subcycle - but Ethereal.
 				info_list.push(info);
 			} else if (info.move === show_move) {
 				info_list.push(info);
