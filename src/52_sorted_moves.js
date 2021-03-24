@@ -47,6 +47,13 @@ function SortedMoveInfo(node) {
 		if (a.subcycle === latest_subcycle && b.subcycle !== latest_subcycle) return a_is_best;
 		if (a.subcycle !== latest_subcycle && b.subcycle === latest_subcycle) return b_is_best;
 
+		// Specifically within the latest subcycle, prefer lower multipv.
+
+		if (a.subcycle === latest_subcycle && b.subcycle === latest_subcycle) {
+			if (a.multipv < b.multipv) return a_is_best;
+			if (a.multipv > b.multipv) return b_is_best;
+		}
+
 		// If one info is leelaish and the other isn't, that can only mean that the A/B
 		// engine is the one that ran last (since Lc0 will cause all info to become
 		// leelaish), therefore any moves the A/B engine has touched must be "better".
@@ -88,11 +95,6 @@ function SortedMoveInfo(node) {
 
 			if (a.depth > b.depth) return a_is_best;
 			if (a.depth < b.depth) return b_is_best;
-
-			// When depth is equal, the multipv score should accurately break ties. (?)
-
-			if (a.multipv < b.multipv) return a_is_best;
-			if (a.multipv > b.multipv) return b_is_best;
 
 			// Sort by CP if we somehow get here.
 
