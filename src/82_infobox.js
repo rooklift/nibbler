@@ -91,7 +91,7 @@ let infobox_props = {
 					status_string += ` <span class="blue">(limit met)</span>`;
 				} else {
 					if (config.behaviour !== "halt") {
-						status_string += ` <span class="blue">(engine stopped)</span>`;
+						status_string += ` <span class="blue">(stopped)</span>`;
 					}
 				}
 			}

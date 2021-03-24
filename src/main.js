@@ -3585,37 +3585,53 @@ function menu_build() {
 					type: "separator"
 				},
 				{
-					label: "Allow arbitrary scripts",
-					type: "checkbox",
-					checked: config.allow_arbitrary_scripts,
-					click: () => {
-						win.webContents.send("call", {
-							fn: "toggle",
-							args: ["allow_arbitrary_scripts"],
-						});
-					}
-				},
-				{
-					label: "Allow stopped analysis",
-					type: "checkbox",
-					checked: config.allow_stopped_analysis,
-					click: () => {
-						win.webContents.send("call", {
-							fn: "toggle",
-							args: ["allow_stopped_analysis"],
-						});
-					}
-				},
-				{
-					label: "Ethereal multi-arrow hack",
-					type: "checkbox",
-					checked: config.ethereal_hack,
-					click: () => {
-						win.webContents.send("call", {
-							fn: "toggle",
-							args: ["ethereal_hack"],
-						});
-					}
+					label: "Non-recommended options",
+					submenu: [
+						{
+							label: "Allow arbitrary scripts",
+							type: "checkbox",
+							checked: config.allow_arbitrary_scripts,
+							click: () => {
+								win.webContents.send("call", {
+									fn: "toggle",
+									args: ["allow_arbitrary_scripts"],
+								});
+							}
+						},
+						{
+							label: "Allow stopped analysis",
+							type: "checkbox",
+							checked: config.allow_stopped_analysis,
+							click: () => {
+								win.webContents.send("call", {
+									fn: "toggle",
+									args: ["allow_stopped_analysis"],
+								});
+							}
+						},
+						{
+							label: "Always show searchmoves",
+							type: "checkbox",
+							checked: config.always_show_searchmoves,
+							click: () => {
+								win.webContents.send("call", {
+									fn: "toggle",
+									args: ["always_show_searchmoves"],
+								});
+							}
+						},
+						{
+							label: "Ethereal multi-arrow hack",
+							type: "checkbox",
+							checked: config.ethereal_hack,
+							click: () => {
+								win.webContents.send("call", {
+									fn: "toggle",
+									args: ["ethereal_hack"],
+								});
+							}
+						},
+					]
 				},
 				{
 					type: "separator"
