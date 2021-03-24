@@ -213,7 +213,7 @@ function NewEngine(hub) {
 	eng.set_search_desired = function(node, limit, searchmoves) {
 
 		if (!this.ever_received_uciok || !this.ever_received_readyok) {
-			return;		// This is OK. When we actually get it, hub will enter state "halt".
+			return;		// This is OK. When we actually get these, hub will enter state "halt".
 		}
 
 		let params = SearchParams(node, limit, searchmoves);
@@ -252,6 +252,13 @@ function NewEngine(hub) {
 			this.send(msg, true);					// Use the force flag in case we haven't set search_running to its correct value.
 		}
 		this.setoption_queue = [];
+	};
+
+	eng.send_ucinewgame = function() {				// Engine should be halted before calling this.
+		if (!this.ever_received_uciok || !this.ever_received_readyok) {
+			return;				// This is OK. When we actually get these, hub will send ucinewgame.
+		}
+		this.send("ucinewgame");
 	};
 
 	eng.handle_bestmove_line = function(line) {

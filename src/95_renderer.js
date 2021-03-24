@@ -142,7 +142,7 @@ function NewRenderer() {
 			this.node_to_clean = null;
 			this.leela_lock_node = null;
 			this.set_behaviour("halt");					// Will cause "stop" to be sent.
-			this.engine.send("ucinewgame");				// Must happen after "stop" is sent.
+			this.engine.send_ucinewgame();				// Must happen after "stop" is sent.
 			this.send_title();
 			if (!this.engine.in_960_mode() && this.tree.node.board.normalchess === false) {
 				alert(messages.c960_warning);
@@ -915,7 +915,7 @@ function NewRenderer() {
 			// Until we receive uciok and then readyok, set_search_desired() ignores our calls, so "go" will not have been sent.
 
 			this.set_behaviour("halt");					// For the sake of getting the hub in a sane state.
-			this.engine.send("ucinewgame");				// Relies on the engine not running.
+			this.engine.send_ucinewgame();				// Relies on the engine not running.
 		}
 
 		// Misc messages. Treat ones that aren't valid UCI as errors to be passed along...
@@ -978,14 +978,14 @@ function NewRenderer() {
 
 	renderer.soft_engine_reset = function() {
 		this.set_behaviour("halt");					// Will cause "stop" to be sent.
-		this.engine.send("ucinewgame");				// Must happen after "stop" is sent.
+		this.engine.send_ucinewgame();				// Must happen after "stop" is sent.
 	};
 
 	renderer.forget_analysis = function() {
 		CleanTree(this.tree.root);
 		this.tree.node.table.autopopulate(this.tree.node);
 		this.set_behaviour("halt");					// Will cause "stop" to be sent.
-		this.engine.send("ucinewgame");				// Must happen after "stop" is sent.
+		this.engine.send_ucinewgame();				// Must happen after "stop" is sent.
 		this.engine.suppress_cycle_info = this.info_handler.engine_cycle;			// Ignore further info updates from this cycle.
 	};
 
