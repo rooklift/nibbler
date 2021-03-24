@@ -47,13 +47,6 @@ function SortedMoveInfo(node) {
 		if (a.subcycle === latest_subcycle && b.subcycle !== latest_subcycle) return a_is_best;
 		if (a.subcycle !== latest_subcycle && b.subcycle === latest_subcycle) return b_is_best;
 
-		// Specifically within the latest subcycle, prefer lower multipv.
-
-		if (a.subcycle === latest_subcycle && b.subcycle === latest_subcycle) {
-			if (a.multipv < b.multipv) return a_is_best;
-			if (a.multipv > b.multipv) return b_is_best;
-		}
-
 		// If one info is leelaish and the other isn't, that can only mean that the A/B
 		// engine is the one that ran last (since Lc0 will cause all info to become
 		// leelaish), therefore any moves the A/B engine has touched must be "better".
@@ -91,7 +84,15 @@ function SortedMoveInfo(node) {
 
 		if (a.leelaish === false && b.leelaish === false) {
 
-			// If one move has better depth, the other move wasn't reported, because it dropped out of the best-k moves.
+			// Specifically within the latest subcycle, prefer lower multipv. I don't think this
+			// breaks transitivity because the latest subcycle is always sorted left (see above).
+
+			if (a.subcycle === latest_subcycle && b.subcycle === latest_subcycle) {
+				if (a.multipv < b.multipv) return a_is_best;
+				if (a.multipv > b.multipv) return b_is_best;
+			}
+
+			// Otherwise sort by depth.
 
 			if (a.depth > b.depth) return a_is_best;
 			if (a.depth < b.depth) return b_is_best;
