@@ -1,6 +1,6 @@
 {
 	"name": "Nibbler",
-	"version": "2.0.0-rc2",
+	"version": "2.0.0-rc3",
 	"author": "Rooklift",
 	"description": "Leela Chess Zero (Lc0) interface",
 	"license": "GPL-3.0",
