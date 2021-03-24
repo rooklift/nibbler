@@ -1640,9 +1640,8 @@ function NewRenderer() {
 
 	renderer.maybe_searchmove_click = function(event) {
 
-		let sm = this.info_handler.searchmove_from_click(event);
-
-		if (!sm) {
+		let sm = EventPathString(event, "searchmove_");
+		if (typeof sm !== "string" || (sm.length < 4 || sm.length > 5)) {
 			return;
 		}
 
