@@ -918,12 +918,12 @@ function NewRenderer() {
 
 			this.set_behaviour("halt");					// For the sake of getting the hub in a sane state.
 			this.engine.send_ucinewgame();				// Relies on the engine not running.
+			return;
 		}
 
 		// Misc messages. Treat ones that aren't valid UCI as errors to be passed along...
 
 		if (!s.startsWith("id") &&
-			!s.startsWith("readyok") &&
 			!s.startsWith("option") &&
 			!s.startsWith("bestmove") &&				// These messages shouldn't reach this function
 			!s.startsWith("info")						// These messages shouldn't reach this function
