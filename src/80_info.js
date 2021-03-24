@@ -129,6 +129,8 @@ function NewInfoHandler() {
 				node.table.moveinfo[move] = move_info;
 			}
 
+			let move_cycle_pre_update = move_info.cycle;
+
 			// ---------------------------------------------------------------------------------------------------------------------
 
 			if (!engine.leelaish) {
@@ -225,11 +227,16 @@ function NewInfoHandler() {
 
 			if (CompareArrays(new_pv, move_info.pv) === false) {
 				if (!board.sequence_illegal(new_pv)) {
-					move_info.pv = new_pv;
+					if (move_cycle_pre_update === move_info.cycle && ArrayStartsWith(move_info.pv, new_pv)) {
+						// Skip the update. This partially mitigates Stockfish sending unresolved PVs.
+					} else {
+						move_info.pv = new_pv;
+						move_info.nice_pv_cache = null;
+					}
 				} else {
 					move_info.pv = [move];
+					move_info.nice_pv_cache = null;
 				}
-				move_info.nice_pv_cache = null;
 			}
 
 		} else if (s.startsWith("info string") && !s.includes("NNUE evaluation")) {
