@@ -3,6 +3,8 @@
 function NewInfoHandler() {
 
 	let ih = Object.create(null);
+	Object.assign(ih, info_misc_props);
+	Object.assign(ih, info_receiver_props);
 	Object.assign(ih, arrow_props);
 	Object.assign(ih, infobox_props);
 
@@ -34,24 +36,29 @@ function NewInfoHandler() {
 	ih.last_drawn_searchmoves = [];
 	ih.last_drawn_allow_inactive_focus = null;
 
-	ih.set_special_message = function(s, css_class, duration) {
+	return ih;
+}
+
+let info_misc_props = {
+
+	set_special_message: function(s, css_class, duration) {
 		if (!css_class) css_class = "yellow";
 		if (!duration) duration = 3000;
 		this.special_message = s;
 		this.special_message_class = css_class;
 		this.special_message_timeout = performance.now() + duration;
-	};
+	},
 
-	ih.reset_engine_info = function() {
+	reset_engine_info: function() {
 		this.engine_start_time = performance.now();
 		this.ever_received_info = false;
 		this.ever_received_q = false;
 		this.ever_received_errors = false;
 		this.stderr_log = "";
 		this.next_vms_order_int = 1;
-	};
+	},
 
-	ih.displaying_stderr = function() {
+	displaying_stderr: function() {
 
 		if (this.ever_received_info) {
 			return false;
@@ -71,9 +78,12 @@ function NewInfoHandler() {
 		}
 
 		return true;
-	};
+	},
+};
 
-	ih.err_receive = function(s) {
+let info_receiver_props = {
+
+	err_receive: function(s) {
 
 		if (typeof s !== "string") {
 			return;
@@ -97,10 +107,9 @@ function NewInfoHandler() {
 				console.log(s);
 			}
 		}
+	},
 
-	};
-
-	ih.receive = function(engine, node, s) {
+	receive: function(engine, node, s) {
 
 		if (typeof s !== "string" || !node || node.destroyed) {
 			return;
@@ -371,8 +380,5 @@ function NewInfoHandler() {
 			if (config.log_info_lines && config.log_useless_info) Log("< " + s);
 
 		}
-	};
-
-	return ih;
-}
-
+	},
+};
