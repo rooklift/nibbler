@@ -3596,6 +3596,17 @@ function menu_build() {
 					}
 				},
 				{
+					label: "Allow stopped analysis",
+					type: "checkbox",
+					checked: config.allow_stopped_analysis,
+					click: () => {
+						win.webContents.send("call", {
+							fn: "toggle",
+							args: ["allow_stopped_analysis"],
+						});
+					}
+				},
+				{
 					label: "Ethereal multi-arrow hack",
 					type: "checkbox",
 					checked: config.ethereal_hack,

@@ -52,7 +52,6 @@ exports.defaults = {
 
 	"max_info_lines": null,						// Hidden option
 	"always_show_searchmoves": false,			// Hidden option
-	"allow_stopped_analysis": false,			// Hidden option
 
 	"bad_move_threshold": 0.02,
 	"terrible_move_threshold": 0.04,
@@ -117,7 +116,9 @@ exports.defaults = {
 	"animate_delay_multiplier": 4,
 
 	"allow_arbitrary_scripts": false,
+	"allow_stopped_analysis": false,
 	"ethereal_hack": false,
+
 	"show_engine_state": false,
 
 	"search_nodes": null,
