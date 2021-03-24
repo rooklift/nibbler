@@ -3540,6 +3540,18 @@ function menu_build() {
 								});
 							}
 						},
+						{
+							label: "Lazy",
+							type: "checkbox",
+							checked: config.update_delay === 250,
+							click: () => {
+								set_checks("Dev", "Spin rate", "Lazy");
+								win.webContents.send("set", {
+									key: "update_delay",
+									value: 250,
+								});
+							}
+						},
 					]
 				},
 				{
