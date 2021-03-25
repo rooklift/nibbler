@@ -210,12 +210,6 @@ const PolyglotPromotions = {
 	0: "", 1: "n", 2: "b", 3: "r", 4: "q", 5: "", 6: "", 7: "",
 };
 
-function BigIntToHex(big) {
-	let s = big.toString(16);
-	while (s.length < 16) s = "0" + s;
-	return s;
-}
-
 function KeyFromBoard(board) {		// Returns a string like "463b96181691fc9c"
 
 	let ret = BigInt(0);
@@ -253,32 +247,32 @@ function KeyFromBoard(board) {		// Returns a string like "463b96181691fc9c"
 	return BigIntToHex(ret);
 }
 
+function KeyFromFEN(fen) {
+	let board = LoadFEN(fen);
+	return KeyFromBoard(board);
+}
+
+function BigIntToHex(big) {
+	let s = big.toString(16);
+	while (s.length < 16) s = "0" + s;
+	return s;
+}
+
 function ExtractInfo(arr) {
 
-	// Given 16 bytes, extract the needed stuff. Resist the temptation to use
-	// much << in this, JavaScript bit fiddling is a pain.
-
 	if (arr.length !== 16 || !(arr instanceof Uint8Array)) {
-		throw "ExtractInfo bad arg";
+		throw "Wat1";
 	}
 
-	// Bytes 0-7 represent the key as a big-endian number.
+	let key = BigInt(0);
 
-	let hi = (arr[0] * 16777216) + (arr[1] * 65536) + (arr[2] * 256) + arr[3];
-	let lo = (arr[4] * 16777216) + (arr[5] * 65536) + (arr[6] * 256) + arr[7];
-	let key = (BigInt(hi) << BigInt(32)) + BigInt(lo);
+	for (let i = 0; i < 8; i++) {
+		key += BigInt(arr[i]) << BigInt((8 * (8 - i)) - 8);
+	}
 
-	// Bytes 8-9 represent the move as a big-endian bitfield, uh...
+	let move = ExtractMove((arr[8] << 8) + arr[9]);
 
-	let move = ExtractMove((arr[8] * 256) + arr[9]);
-
-	// Bytes 10-11 represent the quality as a big-endian number.
-
-	let weight = (arr[10] * 256) + arr[11];
-
-	// Bytes 12-15 are ignored by us.
-
-	return [BigIntToHex(key), move, weight];
+	return [BigIntToHex(key), move];
 }
 
 function ExtractMove(num) {
@@ -290,7 +284,7 @@ function ExtractMove(num) {
 	// Bits 12-14  :  Promotion
 
 	if (num < 0 || num > 65535) {
-		throw "ExtractMove bad arg";
+		throw "Wat2";
 	}
 
 	let to_file    =  (num >>  0) & 0x07;
@@ -313,11 +307,11 @@ function LoadPolyglotBook(filename) {
 	let buf = fs.readFileSync(filename);
 	for (let n = 0; n + 15 < buf.length; n += 16) {
 		let slice = Uint8Array.from(buf.slice(n, n + 16));
-		let [key, move, weight] = ExtractInfo(slice);
+		let [key, move] = ExtractInfo(slice);
 		if (book[key]) {
-			book[key].push({move, weight});
+			book[key].push(move);
 		} else {
-			book[key] = [{move, weight}];
+			book[key] = [move];
 		}
 	}
 	return book;

@@ -176,24 +176,7 @@ function NewRenderer() {
 			}
 		}
 
-		let key = KeyFromBoard(this.tree.node.board);
-		if (!this.book || !this.book[key] || Array.isArray(this.book[key]) === false || this.book[key].length === 0) {
-			this.maybe_infer_info();					// Before node_exit_cleanup() so that previous ghost info is available when moving forwards.
-		} else {
-			let objects = this.book[key];
-			let total_score = 0;
-			for (let o of objects) {
-				total_score += o.weight;
-			}
-			for (let o of objects) {
-				let info = this.tree.node.table.moveinfo[o.move];
-				if (info && info.__touched === false) {
-					info.__touched = true;
-					info.__ghost = true;
-					info.bookweight = o.weight / total_score;
-				}
-			}
-		}
+		this.maybe_infer_info();						// Before node_exit_cleanup() so that previous ghost info is available when moving forwards.
 		this.behave("position");
 		this.draw();
 
