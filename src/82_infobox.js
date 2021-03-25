@@ -190,7 +190,7 @@ let infobox_props = {
 
 			let divclass = "infoline";
 
-			if (info.subcycle !== best_subcycle) {
+			if (info.subcycle !== best_subcycle && !config.never_grayout_infolines) {
 				divclass += " " + "gray";
 			}
 
@@ -228,7 +228,7 @@ let infobox_props = {
 				}
 			}
 
-			if (info.subcycle === best_subcycle) {
+			if (info.subcycle === best_subcycle || config.never_grayout_infolines) {
 				substrings.push(`<span class="blue">${value_string} </span>`);
 			} else {
 				substrings.push(`${value_string} `);
@@ -242,7 +242,7 @@ let infobox_props = {
 
 			for (let i = 0; i < nice_pv.length; i++) {
 				let spanclass = "";
-				if (info.subcycle === best_subcycle) {
+				if (info.subcycle === best_subcycle || config.never_grayout_infolines) {
 					spanclass = colour === "w" ? "white" : "pink";
 				}
 				if (nice_pv[i].includes("O-O")) {

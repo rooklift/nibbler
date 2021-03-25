@@ -118,6 +118,7 @@ exports.defaults = {
 	"allow_arbitrary_scripts": false,
 	"allow_stopped_analysis": false,
 	"never_suppress_searchmoves": true,
+	"never_grayout_infolines": false,
 	"ethereal_hack": false,
 
 	"show_engine_state": false,

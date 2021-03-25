@@ -3640,13 +3640,24 @@ function menu_build() {
 							}
 						},
 						{
-							label: "Always show searchmoves",
+							label: "Never hide searchmoves",
 							type: "checkbox",
 							checked: config.never_suppress_searchmoves,
 							click: () => {
 								win.webContents.send("call", {
 									fn: "toggle",
 									args: ["never_suppress_searchmoves"],
+								});
+							}
+						},
+						{
+							label: "Never grayout move info",
+							type: "checkbox",
+							checked: config.never_grayout_infolines,
+							click: () => {
+								win.webContents.send("call", {
+									fn: "toggle",
+									args: ["never_grayout_infolines"],
 								});
 							}
 						},
