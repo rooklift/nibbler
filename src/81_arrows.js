@@ -168,11 +168,7 @@ let arrow_props = {
 				if (info_list[i].move === show_move && config.next_move_unique_colour) {
 					colour = config.actual_move_colour;
 				} else if (info_list[i].move === show_move && show_move_was_forced) {
-					if (mode === "untouched") {
-						colour = config.best_colour;
-					} else {
-						colour = config.terrible_colour;
-					}
+					colour = config.terrible_colour;
 				} else if (info_list[i].__touched === false) {
 					colour = config.terrible_colour;
 				} else if (info_list[i] === best_info) {
