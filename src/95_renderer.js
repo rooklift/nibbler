@@ -1629,7 +1629,8 @@ function NewRenderer() {
 			return;
 		}
 
-		// I doubt moves can be an illegal sequence now but it's not too expensive here...
+		// So it appears to be a real click in the infobox.........................................
+		// I doubt moves can be an illegal sequence now but this check is not too expensive here...
 
 		let illegal_reason = this.tree.node.board.sequence_illegal(moves);
 		if (illegal_reason) {
@@ -1637,17 +1638,20 @@ function NewRenderer() {
 			return;
 		}
 
-		// Normal version...
+		switch (config.pv_click_event) {
 
-		if (!config.serious_analysis_mode) {
+		case 0:
+			return;
+
+		case 1:
 			this.tree.make_move_sequence(moves);
 			this.position_changed(false, true);
 			return;
+
+		case 2:
+			this.tree.add_move_sequence(moves);
+			return;
 		}
-
-		// OK, so we're in Serious Analysis Mode (tm). We don't change our place in the tree.
-
-		this.tree.add_move_sequence(moves);
 	};
 
 	renderer.maybe_searchmove_click = function(event) {

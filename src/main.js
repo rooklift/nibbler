@@ -842,15 +842,45 @@ function menu_build() {
 					type: "separator"
 				},
 				{
-					label: "PV clicks add to tree instead of moving",
-					type: "checkbox",
-					checked: config.serious_analysis_mode,
-					click: () => {
-						win.webContents.send("call", {
-							fn: "toggle",
-							args: ["serious_analysis_mode"],
-						});
-					}
+					label: "PV clicks",
+					submenu: [
+						{
+							label: "Do nothing",
+							type: "checkbox",
+							checked: config.pv_click_event === 0,
+							click: () => {
+								set_checks("Analysis", "PV clicks", "Do nothing");
+								win.webContents.send("set", {
+									key: "pv_click_event",
+									value: 0,
+								});
+							}
+						},
+						{
+							label: "Go there",
+							type: "checkbox",
+							checked: config.pv_click_event === 1,
+							click: () => {
+								set_checks("Analysis", "PV clicks", "Go there");
+								win.webContents.send("set", {
+									key: "pv_click_event",
+									value: 1,
+								});
+							}
+						},
+						{
+							label: "Add to tree",
+							type: "checkbox",
+							checked: config.pv_click_event === 2,
+							click: () => {
+								set_checks("Analysis", "PV clicks", "Add to tree");
+								win.webContents.send("set", {
+									key: "pv_click_event",
+									value: 2,
+								});
+							}
+						},
+					]
 				},
 				{
 					type: "separator"

@@ -88,7 +88,8 @@ exports.defaults = {
 	"hover_draw": false,
 	"hover_method": 2,
 
-	"serious_analysis_mode": false,
+	"pv_click_event": 1,		// 0: nothing, 1: goto, 2: tree
+
 	"pgn_ev": true,
 	"pgn_cp": false,
 	"pgn_n": true,
