@@ -353,40 +353,6 @@ let arrow_props = {
 
 		draw_arrows_last_mode = mode;		// For debugging only.
 	},
-
-	clickers_are_valid_for_node: function(node) {
-		if (!node || !this.info_clickers_node_id) {
-			return false;
-		}
-		return node.id === this.info_clickers_node_id;
-	},
-
-	moves_from_click_n: function(n) {
-
-		if (typeof n !== "number" || Number.isNaN(n)) {
-			return [];
-		}
-
-		if (!this.info_clickers || n < 0 || n >= this.info_clickers.length) {
-			return [];
-		}
-
-		let move_list = [];
-
-		// Work backwards until we get to the start of the line...
-
-		for (; n >= 0; n--) {
-			let object = this.info_clickers[n];
-			move_list.push(object.move);
-			if (object.is_start) {
-				break;
-			}
-		}
-
-		move_list.reverse();
-
-		return move_list;
-	},
 };
 
 
