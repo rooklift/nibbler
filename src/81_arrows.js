@@ -335,6 +335,11 @@ let arrow_props = {
 					s = o.info.m.toFixed(0);
 				}
 				break;
+			case 5:
+				if (typeof o.info.bookweight === "number") {
+					s = (100 * o.info.bookweight).toFixed(0);
+				}
+				break;
 			default:
 				s = "!";
 				break;

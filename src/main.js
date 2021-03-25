@@ -1044,6 +1044,18 @@ function menu_build() {
 								});
 							}
 						},
+						{
+							label: "Book weight",
+							type: "checkbox",
+							checked: config.arrowhead_type === 5,
+							click: () => {
+								set_checks("Display", "Arrowhead type", "Book weight");
+								win.webContents.send("set", {
+									key: "arrowhead_type",
+									value: 5,
+								});
+							}
+						},
 					]
 				},
 				{
