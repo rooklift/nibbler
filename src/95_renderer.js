@@ -87,20 +87,36 @@ function NewRenderer() {
 
 				if (this.book) {
 
-					let moves;
+					let objects;
+					let total_weight = 0;
+					let move;
 
 					if (this.book.type === "polyglot") {
 						let key = KeyFromBoard(this.tree.node.board);
 						if (this.book[key]) {
-							moves = this.book[key];
+							objects = this.book[key];
 						}
-					} else {
-						moves = this.book[this.tree.node.board.fen(false, true)];
 					}
 
-					if (Array.isArray(moves) && moves.length > 0) {
+					if (Array.isArray(objects) && objects.length > 0) {
+						for (let o of objects) {
+							total_weight += o.weight;
+						}
+					}
 
-						let move = RandChoice(moves);
+					if (total_weight > 0) {
+						let rng = RandInt(0, total_weight);
+						let weight_seen = 0;
+						for (let o of objects) {
+							weight_seen += o.weight;
+							if (rng < weight_seen) {
+								move = o.move;
+								break;
+							}
+						}
+					}
+
+					if (move) {
 
 						if (this.tree.node.board.illegal(move) === "" && this.tree.node.terminal_reason() === "") {
 
@@ -116,7 +132,7 @@ function NewRenderer() {
 								}
 							}, 0);
 
-							break;
+							break;		// Break the switch.
 						}
 					}
 				}
