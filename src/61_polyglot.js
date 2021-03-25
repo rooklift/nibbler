@@ -201,9 +201,7 @@ const PolyglotZobristVals = BigUint64Array.from([
 	BigInt("0xf8d626aaaf278509")
 ]);
 
-const PolyglotPieceKinds = {
-	"p": 0, "P": 1, "n": 2, "N": 3, "b": 4, "B": 5, "r": 6, "R": 7, "q": 8, "Q": 9, "k": 10, "K": 11,
-};
+const PolyglotPieceKinds = ["p", "P", "n", "N", "b", "B", "r", "R", "q", "Q", "k", "K"];		// The index is what matters, e.g. N is 3.
 
 const PolyglotPromotions = ["", "n", "b", "r", "q", "", "", ""];		// Values in indices 5-7 just in case.
 
@@ -225,7 +223,7 @@ function KeyFromBoard(board) {		// Returns a string like "463b96181691fc9c"
 			if (!board.state[x][y]) {
 				continue;
 			}
-			let piecekind = PolyglotPieceKinds[board.state[x][y]];
+			let piecekind = PolyglotPieceKinds.indexOf(board.state[x][y]);
 			let index = (64 * piecekind) + (8 * (7 - y)) + x;		// I mean here.
 			ret ^= PolyglotZobristVals[index];
 		}
