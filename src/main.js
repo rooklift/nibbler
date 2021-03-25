@@ -3612,11 +3612,11 @@ function menu_build() {
 						{
 							label: "Always show searchmoves",
 							type: "checkbox",
-							checked: config.always_show_searchmoves,
+							checked: config.never_suppress_searchmoves,
 							click: () => {
 								win.webContents.send("call", {
 									fn: "toggle",
-									args: ["always_show_searchmoves"],
+									args: ["never_suppress_searchmoves"],
 								});
 							}
 						},

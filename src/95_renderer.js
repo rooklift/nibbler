@@ -2145,7 +2145,7 @@ function NewRenderer() {
 			this.active_square,
 			this.tree.node.board.active,
 			this.hoverdraw_div,
-			config.behaviour === "halt" || config.always_show_searchmoves);
+			config.behaviour === "halt" || config.never_suppress_searchmoves);
 	};
 
 	renderer.set_special_message = function(s, css_class, duration) {
