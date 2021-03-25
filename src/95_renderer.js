@@ -833,7 +833,7 @@ function NewRenderer() {
 
 			if (!ok) {
 				LogBoth(`BAD BESTMOVE (${tokens[1]}) IN POSITION ${this.tree.node.board.fen(true)}`);
-				this.set_special_message(`WARNING! Bad bestmove (${tokens[1]}) received!`, "yellow", 15000);
+				this.set_special_message(`WARNING! Bad bestmove (${tokens[1]}) received!`, "yellow", 10000);
 			} else {
 				if (this.tree.node.terminal_reason()) {
 					this.set_behaviour("halt");
