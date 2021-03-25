@@ -110,9 +110,9 @@ let arrow_props = {
 
 			let ok = true;
 
-			// Filter for normal / ghost / untouched mode...
+			// Filter for normal (Leelaish) mode...
 
-			if (mode !== "ab" && mode !== "specific") {
+			if (mode === "normal") {
 
 				if (config.arrow_filter_type === "top") {
 					if (i !== 0) {
