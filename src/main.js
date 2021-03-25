@@ -139,7 +139,7 @@ function startup() {
 	});
 
 	electron.ipcMain.on("ack_book", (event, msg) => {
-		set_one_check(msg ? true : false, "Play", "Use PGN book...");
+		set_one_check(msg ? true : false, "Play", "Use Polyglot book...");
 	});
 
 	electron.ipcMain.on("ack_node_limit", (event, msg) => {
@@ -3145,14 +3145,14 @@ function menu_build() {
 					type: "separator"
 				},
 				{
-					label: "Use PGN book...",
+					label: "Use Polyglot book...",
 					type: "checkbox",
 					checked: false,				// FIXME if we store this over time.
 					click: () => {
 						let files = open_dialog({
 							defaultPath: config.book_dialog_folder,
 							properties: ["openFile"],
-							filters: [{name: "PGN", extensions: ["pgn"]}, {name: "All files", extensions: ["*"]}]
+							filters: [{name: "Polyglot", extensions: ["bin"]}, {name: "All files", extensions: ["*"]}]
 						});
 						if (Array.isArray(files) && files.length > 0) {
 							let file = files[0];

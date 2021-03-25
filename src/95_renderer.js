@@ -87,7 +87,16 @@ function NewRenderer() {
 
 				if (this.book) {
 
-					let moves = this.book[this.tree.node.board.fen(false, true)];
+					let moves;
+
+					if (this.book.type === "polyglot") {
+						let key = KeyFromBoard(this.tree.node.board);
+						if (this.book[key]) {
+							moves = this.book[key];
+						}
+					} else {
+						moves = this.book[this.tree.node.board.fen(false, true)];
+					}
 
 					if (Array.isArray(moves) && moves.length > 0) {
 
@@ -644,36 +653,19 @@ function NewRenderer() {
 
 		this.book = null;
 
+		let start_time = performance.now();
+		console.log(`Loading Polyglot book: ${filename}`);
+
 		let buf;
 		try {
-			buf = fs.readFileSync(filename);
+			this.book = LoadPolyglotBook(filename);
 		} catch (err) {
 			alert(err);
 			this.send_ack_book();
 			return;
 		}
-		console.log(`Loading PGN as book: ${filename}`);
 
-		let new_pgn_choices = PreParsePGN(buf);
-
-		let start_time = performance.now();
-		let error_flag = false;
-
-		for (let o of new_pgn_choices) {
-			try {
-				let root = LoadPGNRecord(o);
-				this.book = GenerateBook(root, this.book);
-				DestroyTree(root);
-			} catch (err) {
-				error_flag = true;
-			}
-		}
-
-		if (error_flag) {
-			this.set_special_message("Finished loading book (some errors occurred)", "yellow");
-		} else {
-			this.set_special_message("Finished loading book", "green");
-		}
+		this.set_special_message("Finished loading book", "green");
 		console.log(`Book generation took ${(performance.now() - start_time).toFixed(0)} ms.`);
 		this.send_ack_book();
 	};
