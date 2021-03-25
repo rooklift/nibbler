@@ -215,7 +215,7 @@ function KeyFromBoard(board) {		// Returns a string like "463b96181691fc9c"
 
 	let ret = BigInt(0);
 
-	// Note to anyone reading this trying to make their own Polyglot parser:
+	// Note to anyone reading this trying to make their own Polyglot routines:
 	// My board (0,0) is a8, not a1. Otherwise, you'd use y and not (7 - y) in the index calc.
 
 	for (let x = 0; x < 8; x++) {
@@ -224,7 +224,7 @@ function KeyFromBoard(board) {		// Returns a string like "463b96181691fc9c"
 				continue;
 			}
 			let piecekind = PolyglotPieceKinds.indexOf(board.state[x][y]);
-			let index = (64 * piecekind) + (8 * (7 - y)) + x;		// I mean here.
+			let index = (64 * piecekind) + (8 * (7 - y)) + x;					// I mean here.
 			ret ^= PolyglotZobristVals[index];
 		}
 	}
