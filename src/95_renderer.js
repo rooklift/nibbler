@@ -93,9 +93,7 @@ function NewRenderer() {
 
 					if (this.book.type === "polyglot") {
 						let key = KeyFromBoard(this.tree.node.board);
-						if (this.book[key]) {
-							objects = this.book[key];
-						}
+						objects = this.book[key];
 					}
 
 					if (Array.isArray(objects) && objects.length > 0) {
@@ -107,7 +105,7 @@ function NewRenderer() {
 					if (total_weight > 0) {
 						let rng = RandInt(0, total_weight);
 						let weight_seen = 0;
-						for (let o of objects) {
+						for (let o of objects) {			// The order doesn't matter at all when you think about it. No need to sort.
 							weight_seen += o.weight;
 							if (rng < weight_seen) {
 								move = o.move;
