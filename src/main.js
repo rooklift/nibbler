@@ -3640,7 +3640,7 @@ function menu_build() {
 							}
 						},
 						{
-							label: "Never hide searchmoves",
+							label: "Never hide focus buttons",
 							type: "checkbox",
 							checked: config.never_suppress_searchmoves,
 							click: () => {
