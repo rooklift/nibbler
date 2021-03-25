@@ -1,16 +1,21 @@
 import json, os, shutil, zipfile
 
-# https://electronjs.org/docs/tutorial/application-distribution
-
-with open("package.json") as f:
-	version = json.load(f)["version"]
-
-# Location of zipped electron distributions...
+# To build Nibbler:
+#
+# Obtain the 2 Electron assets named below, from https://github.com/electron/electron/releases
+# Create a folder called ./electron_zipped
+# Place the 2 Electron assets in it
+# Run ./builder.py
+#
+# For more info, see https://electronjs.org/docs/tutorial/application-distribution
 
 linux_electron = "electron_zipped/electron-v9.4.4-linux-x64.zip"
 windows_electron = "electron_zipped/electron-v9.4.4-win32-x64.zip"
 
 # Setup directories...
+
+with open("package.json") as f:
+	version = json.load(f)["version"]
 
 linux_dir = "dist/nibbler-{}-linux".format(version)
 windows_dir = "dist/nibbler-{}-windows".format(version)
