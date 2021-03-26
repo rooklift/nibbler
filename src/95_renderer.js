@@ -69,11 +69,12 @@ function NewRenderer() {
 					}
 				}
 
-				break;		// No further actions when reason === "position"
-			}
+			} else {
 
-			if (this.engine.search_desired.node !== this.leela_lock_node || this.engine.search_desired.limit !== this.node_limit()) {
-				this.__go(this.leela_lock_node);
+				if (this.engine.search_desired.node !== this.leela_lock_node || this.engine.search_desired.limit !== this.node_limit()) {
+					this.__go(this.leela_lock_node);
+				}
+
 			}
 			break;
 
@@ -85,9 +86,7 @@ function NewRenderer() {
 				(config.behaviour === "play_white" && this.tree.node.board.active === "w") ||
 				(config.behaviour === "play_black" && this.tree.node.board.active === "b")) {
 
-				let book_move_will_happen = this.maybe_setup_book_move();
-
-				if (book_move_will_happen) {
+				if (this.maybe_setup_book_move()) {
 					this.__halt();
 					break;
 				}
