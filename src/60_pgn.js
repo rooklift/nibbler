@@ -217,11 +217,11 @@ function LoadPGNRecord(o) {				// Can throw, either by itself, or by allowing a 
 				continue;
 			}
 
-			// So, we are not in a brace nor a parenthesis...
+			// So...
 
 			token.push(c);
 
-			// It the current token complete?
+			// Is the current token complete?
 			// We'll start a new token when we see any of the following...
 
 			let peek = rawline[i + 1];
