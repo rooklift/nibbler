@@ -218,7 +218,7 @@ function NewRenderer() {
 
 		let move;
 
-		let objects = PolyglotProbe(this.tree.node.board, this.book);
+		let objects = PolyglotProbe(this.tree.node.key(), this.book);
 		let total_weight = 0;
 
 		if (Array.isArray(objects)) {

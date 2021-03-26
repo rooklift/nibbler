@@ -326,7 +326,7 @@ function SortPolyglotBook(book) {
 	});
 }
 
-function PolyglotProbe(board, book) {
+function PolyglotProbe(key, book) {
 
 	// The book is stored as a sorted array (using an object as a dict is too big / slow).
 	// So we have to find things by binary search...
@@ -334,8 +334,6 @@ function PolyglotProbe(board, book) {
 	if (!book || Array.isArray(book) === false || book.length === 0) {
 		return [];
 	}
-
-	let key = KeyFromBoard(board);
 
 	if (!key) {
 		return [];

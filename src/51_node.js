@@ -28,6 +28,7 @@ function NewNode(parent, move, board_for_root) {		// move must be legal; board i
 	node.table = NewTable();
 	node.searchmoves = [];
 	node.__nice_move = null;
+	node.__key_cache = null;
 	node.__terminal = null;
 	node.destroyed = false;
 	node.children = [];
@@ -70,6 +71,13 @@ const node_prototype = {
 		}
 
 		return NewNode(this, s, null);
+	},
+
+	key: function() {
+		if (!this.__key_cache) {
+			this.__key_cache = KeyFromBoard(this.board);
+		}
+		return this.__key_cache;
 	},
 
 	history: function() {
