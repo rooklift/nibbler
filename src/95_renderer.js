@@ -85,53 +85,12 @@ function NewRenderer() {
 				(config.behaviour === "play_white" && this.tree.node.board.active === "w") ||
 				(config.behaviour === "play_black" && this.tree.node.board.active === "b")) {
 
-				if (this.book) {
+				let book_move_will_happen = this.maybe_setup_book_move();
 
-					let move;
-
-					let objects = PolyglotProbe(this.tree.node.board, this.book);
-					let total_weight = 0;
-
-					if (Array.isArray(objects)) {
-						for (let o of objects) {
-							total_weight += o.weight;
-						}
-					}
-
-					if (total_weight > 0) {
-						let rng = RandInt(0, total_weight);
-						let weight_seen = 0;
-						for (let o of objects) {			// The order doesn't matter at all when you think about it. No need to sort.
-							weight_seen += o.weight;
-							if (rng < weight_seen) {
-								move = o.move;
-								break;
-							}
-						}
-					}
-
-					if (move) {
-
-						if (this.tree.node.board.illegal(move) === "" && this.tree.node.terminal_reason() === "") {
-
-							this.__halt();
-							let correct_node = this.tree.node;
-							let correct_behaviour = config.behaviour;
-
-							// Use a setTimeout to prevent recursion (since move() will cause a call to behave())
-
-							setTimeout(() => {
-								if (this.tree.node === correct_node && config.behaviour === correct_behaviour) {
-									this.move(move);
-								}
-							}, 0);
-
-							break;		// Break the switch.
-						}
-					}
+				if (book_move_will_happen) {
+					this.__halt();
+					break;
 				}
-
-				// If we get here we didn't play a book move...
 
 				if (this.engine.search_desired.node !== this.tree.node || this.engine.search_desired.limit !== this.node_limit()) {
 					this.__go(this.tree.node);
@@ -246,6 +205,59 @@ function NewRenderer() {
 			this.set_behaviour("play_black");
 		}
 	};
+
+	renderer.maybe_setup_book_move = function() {
+
+		if (!this.book || this.tree.node.terminal_reason()) {
+			return false;
+		}
+
+		let move;
+
+		let objects = PolyglotProbe(this.tree.node.board, this.book);
+		let total_weight = 0;
+
+		if (Array.isArray(objects)) {
+			for (let o of objects) {
+				total_weight += o.weight;
+			}
+		}
+
+		if (total_weight <= 0) {
+			return false;
+		}
+
+		let rng = RandInt(0, total_weight);
+		let weight_seen = 0;
+		for (let o of objects) {			// The order doesn't matter at all when you think about it. No need to sort.
+			weight_seen += o.weight;
+			if (rng < weight_seen) {
+				move = o.move;
+				break;
+			}
+		}
+
+		if (!move) {
+			return false;
+		}
+
+		if (this.tree.node.board.illegal(move)) {
+			return false;
+		}
+
+		let correct_node = this.tree.node;
+		let correct_behaviour = config.behaviour;
+
+		// Use a setTimeout to prevent recursion (since move() will cause a call to behave())
+
+		setTimeout(() => {
+			if (this.tree.node === correct_node && config.behaviour === correct_behaviour) {
+				this.move(move);
+			}
+		}, 0);
+
+		return true;
+	}
 
 	// -------------------------------------------------------------------------------------------------------------------------
 
