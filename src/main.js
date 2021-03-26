@@ -3778,6 +3778,17 @@ function menu_build() {
 					}
 				},
 				{
+					label: "Polyglot explorer",
+					type: "checkbox",
+					checked: config.book_explorer,
+					click: () => {
+						win.webContents.send("call", {
+							fn: "toggle",
+							args: ["book_explorer"]
+						});
+					}
+				},
+				{
 					type: "separator"
 				},
 				{

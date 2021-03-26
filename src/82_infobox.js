@@ -80,18 +80,25 @@ let infobox_props = {
 				can_have_limit_met_msg = true;
 			}
 
-			status_string += `<span class="gray">${NString(node.table.nodes)} nodes, ${DurationString(node.table.time)} (N/s: ${NString(node.table.nps)})`;
-			if (config.options.SyzygyPath) {
-				status_string += `, ${NString(node.table.tbhits)} tbhits`;
-			}
-			status_string += `</span>`;
+			if (config.book_explorer) {
 
-			if (!engine.search_running.node) {
-				if (can_have_limit_met_msg && typeof config.search_nodes === "number" && node.table.nodes >= config.search_nodes) {
-					status_string += ` <span class="blue">(limit met)</span>`;
-				} else {
-					if (config.behaviour !== "halt") {
-						status_string += ` <span class="blue">(stopped)</span>`;
+				status_string += `<span class="blue">BOOK EXPLORER MODE</span>`;
+
+			} else {
+
+				status_string += `<span class="gray">${NString(node.table.nodes)} nodes, ${DurationString(node.table.time)} (N/s: ${NString(node.table.nps)})`;
+				if (config.options.SyzygyPath) {
+					status_string += `, ${NString(node.table.tbhits)} tbhits`;
+				}
+				status_string += `</span>`;
+
+				if (!engine.search_running.node) {
+					if (can_have_limit_met_msg && typeof config.search_nodes === "number" && node.table.nodes >= config.search_nodes) {
+						status_string += ` <span class="blue">(limit met)</span>`;
+					} else {
+						if (config.behaviour !== "halt") {
+							status_string += ` <span class="blue">(stopped)</span>`;
+						}
 					}
 				}
 			}

@@ -2,7 +2,7 @@
 
 let arrow_props = {
 
-	draw_arrows: function (node, specific_source, show_move) {		// specific_source is a Point(), show_move is a string
+	draw_arrows: function(node, specific_source, show_move) {		// specific_source is a Point(), show_move is a string
 
 		// Function is responsible for updating the one_click_moves array.
 
@@ -353,6 +353,131 @@ let arrow_props = {
 
 		draw_arrows_last_mode = mode;		// For debugging only.
 	},
+
+
+	// The crudest of copy/paste hatchet jobs...
+	// Note that info_list here should not be modified. It is already sorted by weight.
+
+	draw_explorer_arrows: function(node, info_list) {
+
+		for (let x = 0; x < 8; x++) {
+			for (let y = 0; y < 8; y++) {
+				this.one_click_moves[x][y] = null;
+			}
+		}
+
+		if (!node || node.destroyed) {
+			return;
+		}
+
+		let arrows = [];
+		let heads = [];
+
+		for (let i = 0; i < info_list.length; i++) {
+
+			let [x1, y1] = XY(info_list[i].move.slice(0, 2));
+			let [x2, y2] = XY(info_list[i].move.slice(2, 4));
+
+			let colour = config.good_colour;
+
+			let x_head_adjustment = 0;				// Adjust head of arrow for castling moves...
+			let normal_castling_flag = false;
+
+			if (node.board && node.board.colour(Point(x1, y1)) === node.board.colour(Point(x2, y2))) {
+
+				if (node.board.normalchess) {
+					normal_castling_flag = true;	// ...and we are playing normal Chess (not 960).
+				}
+
+				if (x2 > x1) {
+					x_head_adjustment = normal_castling_flag ? -1 : -0.5;
+				} else {
+					x_head_adjustment = normal_castling_flag ? 2 : 0.5;
+				}
+			}
+
+			arrows.push({
+				colour: colour,
+				x1: x1,
+				y1: y1,
+				x2: x2 + x_head_adjustment,
+				y2: y2,
+				info: info_list[i]
+			});
+
+			// If there is no one_click_move set for the target square, then set it
+			// and also set an arrowhead to be drawn later.
+
+			if (normal_castling_flag) {
+				if (!this.one_click_moves[x2 + x_head_adjustment][y2]) {
+					heads.push({
+						colour: colour,
+						x2: x2 + x_head_adjustment,
+						y2: y2,
+						info: info_list[i]
+					});
+					this.one_click_moves[x2 + x_head_adjustment][y2] = info_list[i].move;
+				}
+			} else {
+				if (!this.one_click_moves[x2][y2]) {
+					heads.push({
+						colour: colour,
+						x2: x2 + x_head_adjustment,
+						y2: y2,
+						info: info_list[i]
+					});
+					this.one_click_moves[x2][y2] = info_list[i].move;
+				}
+			}
+		}
+
+		arrows.sort((a, b) => {
+			if (Math.abs(a.x2 - a.x1) + Math.abs(a.y2 - a.y1) < Math.abs(b.x2 - b.x1) + Math.abs(b.y2 - b.y1)) {
+				return 1;
+			}
+			if (Math.abs(a.x2 - a.x1) + Math.abs(a.y2 - a.y1) > Math.abs(b.x2 - b.x1) + Math.abs(b.y2 - b.y1)) {
+				return -1;
+			}
+			return 0;
+		});
+
+		boardctx.lineWidth = config.arrow_width;
+		boardctx.textAlign = "center";
+		boardctx.textBaseline = "middle";
+		boardctx.font = config.board_font;
+
+		for (let o of arrows) {
+
+			let cc1 = CanvasCoords(o.x1, o.y1);
+			let cc2 = CanvasCoords(o.x2, o.y2);
+
+			boardctx.strokeStyle = o.colour;
+			boardctx.fillStyle = o.colour;
+			boardctx.beginPath();
+			boardctx.moveTo(cc1.cx, cc1.cy);
+			boardctx.lineTo(cc2.cx, cc2.cy);
+			boardctx.stroke();
+		}
+
+		for (let o of heads) {
+
+			let cc2 = CanvasCoords(o.x2, o.y2);
+
+			boardctx.fillStyle = o.colour;
+			boardctx.beginPath();
+			boardctx.arc(cc2.cx, cc2.cy, config.arrowhead_radius, 0, 2 * Math.PI);
+			boardctx.fill();
+			boardctx.fillStyle = "black";
+
+			let s = "?";
+
+			if (typeof o.info.weight === "number") {
+				s = (100 * o.info.weight).toFixed(0);
+			}
+
+			boardctx.fillText(s, cc2.cx, cc2.cy + 1);
+		}
+	}
 };
 
 
