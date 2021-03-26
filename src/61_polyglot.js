@@ -250,21 +250,20 @@ function KeyFromBoard(board) {		// Returns a string like "463b96181691fc9c"
 	if (board.castling.includes("A")) keynum ^= PolyglotCastleXorVals[1];
 	if (board.castling.includes("h")) keynum ^= PolyglotCastleXorVals[2];
 	if (board.castling.includes("a")) keynum ^= PolyglotCastleXorVals[3];
-
+/*
 	if (board.castling.includes("B")) keynum ^= PolyglotCastleXorVals[4];
 	if (board.castling.includes("C")) keynum ^= PolyglotCastleXorVals[5];
 	if (board.castling.includes("D")) keynum ^= PolyglotCastleXorVals[6];
 	if (board.castling.includes("E")) keynum ^= PolyglotCastleXorVals[7];
 	if (board.castling.includes("F")) keynum ^= PolyglotCastleXorVals[8];
 	if (board.castling.includes("G")) keynum ^= PolyglotCastleXorVals[9];
-
 	if (board.castling.includes("b")) keynum ^= PolyglotCastleXorVals[10];
 	if (board.castling.includes("c")) keynum ^= PolyglotCastleXorVals[11];
 	if (board.castling.includes("d")) keynum ^= PolyglotCastleXorVals[12];
 	if (board.castling.includes("e")) keynum ^= PolyglotCastleXorVals[13];
 	if (board.castling.includes("f")) keynum ^= PolyglotCastleXorVals[14];
 	if (board.castling.includes("g")) keynum ^= PolyglotCastleXorVals[15];
-
+*/
 	// Happily, the format's idea of when an en passant square should be included is identical to mine...
 	// "If the opponent has performed a double pawn push and there is now a pawn next to it belonging to the player to move."
 
