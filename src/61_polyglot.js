@@ -199,8 +199,8 @@ const PolyglotPieceXorVals = BigUint64Array.from([
 
 const PolyglotCastleXorVals = BigUint64Array.from([
 	BigInt("0x31d71dce64b2c310"), BigInt("0xf165b587df898190"), BigInt("0xa57e6339dd2cf3a0"), BigInt("0x1ef6e6dbb1961ec9"),
-	BigInt("0x0000000000000000"), BigInt("0x0000000000000000"), BigInt("0x0000000000000000"), BigInt("0x0000000000000000"),
-	BigInt("0x0000000000000000"), BigInt("0x0000000000000000"), BigInt("0x0000000000000000"), BigInt("0x0000000000000000"),
+	BigInt("0x0000000000000000"), BigInt("0x0000000000000000"), BigInt("0x0000000000000000"), BigInt("0x0000000000000000"),		// FIXME: what are the
+	BigInt("0x0000000000000000"), BigInt("0x0000000000000000"), BigInt("0x0000000000000000"), BigInt("0x0000000000000000"),		// right values here??
 ]);
 
 const PolyglotEnPassantXorVals = BigUint64Array.from([
