@@ -505,7 +505,7 @@ function __add_tree_to_book(node, book) {
 		let key = KeyFromBoard(node.board);
 		let move = node.children[0].move;
 
-		book.push({							// Duplicates allowed.
+		book.push({							// Duplicates allowed. This is improper.
 			key: key,
 			move: move,
 			weight: 1,
@@ -524,7 +524,7 @@ function __add_tree_to_book(node, book) {
 
 	for (let child of node.children) {
 
-		book.push({							// Duplicates allowed.
+		book.push({							// Duplicates allowed. This is improper.
 			key: key,
 			move: child.move,
 			weight: 1,
