@@ -678,9 +678,10 @@ function NewRenderer() {
 	renderer.load_polyglot_book = function(filename) {
 		this.book = null;
 		this.send_ack_book();
-		if (this.loaders.filter(o => o.running).length > 0) {
-			alert(messages.load_in_progress);
-			return;
+		for (let loader of this.loaders) {
+			if (loader.type === "book") {
+				loader.abort();
+			}
 		}
 		console.log(`Loading Polyglot book: ${filename}`);
 		let loader = NewPolyglotBookLoader(this);
@@ -691,9 +692,10 @@ function NewRenderer() {
 	renderer.load_pgn_book = function(filename) {
 		this.book = null;
 		this.send_ack_book();
-		if (this.loaders.filter(o => o.running).length > 0) {
-			alert(messages.load_in_progress);
-			return;
+		for (let loader of this.loaders) {
+			if (loader.type === "book") {
+				loader.abort();
+			}
 		}
 		console.log(`Loading PGN book: ${filename}`);
 		let loader = NewPGNBookLoader(this);
