@@ -25,25 +25,6 @@ function NewPolyglotBookLoader(hub) {
 		this.continue();
 	};
 
-	loader.finish = function() {
-		this.running = false;
-		this.buf = null;
-		if (this.book) {
-			if (!this.book_is_sorted) {
-				this.book.sort((a, b) => {
-					if (a.key < b.key) return -1;
-					if (a.key > b.key) return 1;
-					return 0;
-				});
-			}
-			this.hub.book = this.book;
-			this.hub.send_ack_book();
-			this.hub.set_special_message(`Finished loading book (moves: ${this.book.length})`, "green");
-		}
-		console.log(`Polyglot book load ended after ${performance.now() - this.starttime} ms.`);
-		this.book = null;
-	};
-
 	loader.abort = function() {
 		this.running = false;
 		this.buf = null;
@@ -75,7 +56,7 @@ function NewPolyglotBookLoader(hub) {
 
 			this.n += 16;
 
-			if (this.n % 1000 === 0) {
+			if (this.n % 16000 === 0) {
 				if (performance.now() - continuetime > 20) {
 					this.hub.set_special_message(`Loading... ${(100 * (this.n / this.buf.length)).toFixed(0)}%`);
 					setTimeout(() => {this.continue()}, 5);
@@ -83,6 +64,25 @@ function NewPolyglotBookLoader(hub) {
 				}
 			}
 		}
+	};
+
+	loader.finish = function() {
+		this.running = false;
+		this.buf = null;
+		if (this.book) {
+			if (!this.book_is_sorted) {
+				this.book.sort((a, b) => {
+					if (a.key < b.key) return -1;
+					if (a.key > b.key) return 1;
+					return 0;
+				});
+			}
+			this.hub.book = this.book;
+			this.hub.send_ack_book();
+			this.hub.set_special_message(`Finished loading book (moves: ${this.book.length})`, "green");
+		}
+		console.log(`Polyglot book load ended after ${performance.now() - this.starttime} ms.`);
+		this.book = null;
 	};
 
 	return loader;
@@ -114,27 +114,6 @@ function NewPGNBookLoader(hub) {
 		}
 		this.running = true;
 		this.continue();
-	};
-
-	loader.finish = function() {
-		this.running = false;
-		this.buf = null;
-		if (this.book) {
-			this.book.sort((a, b) => {
-				if (a.key < b.key) return -1;
-				if (a.key > b.key) return 1;
-				return 0;
-			});
-			this.hub.book = this.book;
-			this.hub.send_ack_book();
-			if (this.error_flag) {
-				this.hub.set_special_message("Finished loading book (some errors occurred)", "yellow");
-			} else {
-				this.hub.set_special_message(`Finished loading book (moves: ${this.book.length})`, "green");
-			}
-		}
-		console.log(`PGN book load ended after ${performance.now() - this.starttime} ms.`);
-		this.book = null;
 	};
 
 	loader.abort = function() {
@@ -183,6 +162,27 @@ function NewPGNBookLoader(hub) {
 				}
 			}
 		}
+	};
+
+	loader.finish = function() {
+		this.running = false;
+		this.buf = null;
+		if (this.book) {
+			this.book.sort((a, b) => {
+				if (a.key < b.key) return -1;
+				if (a.key > b.key) return 1;
+				return 0;
+			});
+			this.hub.book = this.book;
+			this.hub.send_ack_book();
+			if (this.error_flag) {
+				this.hub.set_special_message("Finished loading book (some errors occurred)", "yellow");
+			} else {
+				this.hub.set_special_message(`Finished loading book (moves: ${this.book.length})`, "green");
+			}
+		}
+		console.log(`PGN book load ended after ${performance.now() - this.starttime} ms.`);
+		this.book = null;
 	};
 
 	return loader;
