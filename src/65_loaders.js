@@ -1,5 +1,8 @@
 "use strict";
 
+// Non-blocking loader objects.
+// Currently just for books; we can dream about normal PGN files.
+
 function NewPolyglotBookLoader(hub) {
 
 	let loader = Object.create(null);
