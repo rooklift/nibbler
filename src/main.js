@@ -316,19 +316,11 @@ function menu_build() {
 					type: "separator"
 				},
 				{
-					label: "Load PGN from clipboard",
+					label: "Load FEN/PGN from clipboard",
+					accelerator: "CommandOrControl+Shift+V",
 					click: () => {
 						win.webContents.send("call", {
-							fn: "load_pgn_from_string",
-							args: [electron.clipboard.readText()]
-						});
-					}
-				},
-				{
-					label: "Load FEN from clipboard",
-					click: () => {
-						win.webContents.send("call", {
-							fn: "load_fen",
+							fn: "load_fen_or_pgn_from_string",
 							args: [electron.clipboard.readText()]
 						});
 					}
