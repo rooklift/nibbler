@@ -671,31 +671,15 @@ function NewRenderer() {
 	};
 
 	renderer.load_polyglot_book = function(filename) {
-
 		this.book = null;
-		this.book_type = "polyglot";								// Only used to make an ack message.
-
-		let start_time = performance.now();
 		console.log(`Loading Polyglot book: ${filename}`);
-
-		let buf;
-		try {
-			this.book = LoadPolyglotBook(filename);
-		} catch (err) {
-			alert(err);
-			this.send_ack_book();
-			return;
-		}
-
-		this.set_special_message(`Finished loading book (moves: ${this.book.length})`, "green");
-		console.log(`Book generation took ${(performance.now() - start_time).toFixed(0)} ms.`);
-		this.send_ack_book();
+		this.loader = NewPolyglotBookLoader(this);
+		this.loader.load(filename);
 	};
 
 	renderer.load_pgn_book = function(filename) {
 
 		this.book = null;
-		this.book_type = "pgn";										// Only used to make an ack message.
 
 		let buf;
 		try {
@@ -733,6 +717,8 @@ function NewRenderer() {
 			if (a.key > b.key) return 1;
 			return 0;
 		});
+
+		this.book.type = "pgn";
 
 		console.log(`Book generation took ${(performance.now() - start_time).toFixed(0)} ms.`);
 		this.send_ack_book();
@@ -1597,7 +1583,7 @@ function NewRenderer() {
 	};
 
 	renderer.send_ack_book = function() {
-		ipcRenderer.send("ack_book", this.book ? this.book_type : false);		// Don't send the object...
+		ipcRenderer.send("ack_book", this.book ? this.book.type : false);		// Don't send the object...
 	};
 
 	renderer.send_ack_setoption = function(name) {
