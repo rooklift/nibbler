@@ -35,7 +35,6 @@ function NewPolyglotBookLoader(hub) {
 					if (a.key > b.key) return 1;
 					return 0;
 				});
-				this.book_is_sorted = true;
 			}
 			this.hub.book = this.book;
 			this.hub.send_ack_book();
@@ -77,9 +76,9 @@ function NewPolyglotBookLoader(hub) {
 			this.n += 16;
 
 			if (this.n % 1000 === 0) {
-				if (performance.now() - continuetime > 10) {
+				if (performance.now() - continuetime > 20) {
 					this.hub.set_special_message(`Loading... ${(100 * (this.n / this.buf.length)).toFixed(0)}%`);
-					setTimeout(() => {this.continue()}, 0);
+					setTimeout(() => {this.continue()}, 5);
 					return;
 				}
 			}
