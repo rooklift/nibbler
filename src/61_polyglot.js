@@ -318,6 +318,14 @@ function ExtractMove(num) {
 	return source.s + dest.s + promch;
 }
 
+function SortPolyglotBook(book) {
+	book.sort((a, b) => {
+		if (a.key < b.key) return -1;
+		if (a.key > b.key) return 1;
+		return 0;
+	});
+}
+
 function PolyglotProbe(board, book) {
 
 	// The book is stored as a sorted array (using an object as a dict is too big / slow).

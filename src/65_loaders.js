@@ -75,11 +75,7 @@ function NewPolyglotBookLoader(hub) {
 		if (this.book) {
 			console.log("Polyglot book was pre-sorted?", this.book_is_sorted);
 			if (!this.book_is_sorted) {
-				this.book.sort((a, b) => {
-					if (a.key < b.key) return -1;
-					if (a.key > b.key) return 1;
-					return 0;
-				});
+				SortPolyglotBook(this.book);
 			}
 			this.hub.book = this.book;
 			this.hub.send_ack_book();
@@ -172,11 +168,7 @@ function NewPGNBookLoader(hub) {
 		this.running = false;
 		this.buf = null;
 		if (this.book) {
-			this.book.sort((a, b) => {
-				if (a.key < b.key) return -1;
-				if (a.key > b.key) return 1;
-				return 0;
-			});
+			SortPolyglotBook(this.book);
 			this.hub.book = this.book;
 			this.hub.send_ack_book();
 			if (this.error_flag) {
