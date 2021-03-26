@@ -81,7 +81,7 @@ function NewPolyglotBookLoader(hub) {
 			this.hub.send_ack_book();
 			this.hub.set_special_message(`Finished loading book (moves: ${this.book.length})`, "green");
 		}
-		console.log(`Polyglot book load ended after ${performance.now() - this.starttime} ms.`);
+		console.log(`Polyglot book load ended after ${(performance.now() - this.starttime).toFixed(0)} ms.`);
 		this.book = null;
 	};
 
@@ -181,7 +181,7 @@ function NewPGNBookLoader(hub) {
 				this.hub.set_special_message(`Finished loading book (moves: ${this.book.length})`, "green");
 			}
 		}
-		console.log(`PGN book load ended after ${performance.now() - this.starttime} ms.`);
+		console.log(`PGN book load ended after ${(performance.now() - this.starttime).toFixed(0)} ms.`);
 		this.book = null;
 	};
 
