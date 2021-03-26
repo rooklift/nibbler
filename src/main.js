@@ -3202,7 +3202,7 @@ function menu_build() {
 					}
 				},
 				{
-					label: "Unload book",
+					label: "Unload book / abort load",
 					click: () => {
 						win.webContents.send("call", "unload_book");
 						// Will receive an ack IPC which sets menu checks.
