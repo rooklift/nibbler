@@ -52,7 +52,7 @@ function NewPolyglotBookLoader(hub) {
 
 			let slice = Uint8Array.from(this.buf.slice(this.n, this.n + 16));
 			let o = ExtractInfo(slice);
-			if (this.n > 0 && o.key < this.book[this.book.length - 1]) {
+			if (this.n > 0 && CompareKeys(o.key, this.book[this.book.length - 1].key) < 0) {
 				this.book_is_sorted = false;
 			}
 			this.book.push(o);
@@ -74,11 +74,7 @@ function NewPolyglotBookLoader(hub) {
 		this.buf = null;
 		if (this.book) {
 			if (!this.book_is_sorted) {
-				this.book.sort((a, b) => {
-					if (a.key < b.key) return -1;
-					if (a.key > b.key) return 1;
-					return 0;
-				});
+				this.book.sort((a, b) => CompareKeys(a.key, b.key));
 			}
 			this.hub.book = this.book;
 			this.hub.send_ack_book();
@@ -171,11 +167,7 @@ function NewPGNBookLoader(hub) {
 		this.running = false;
 		this.buf = null;
 		if (this.book) {
-			this.book.sort((a, b) => {
-				if (a.key < b.key) return -1;
-				if (a.key > b.key) return 1;
-				return 0;
-			});
+			this.book.sort((a, b) => CompareKeys(a.key, b.key));
 			this.hub.book = this.book;
 			this.hub.send_ack_book();
 			if (this.error_flag) {

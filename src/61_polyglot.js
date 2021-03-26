@@ -223,7 +223,7 @@ function BigIntToHex(big) {
 	return s;
 }
 
-function KeyFromBoard(board) {		// Returns a string like "463b96181691fc9c"
+function KeyFromBoard(board) {
 
 	if (!board) return "";
 
@@ -276,7 +276,17 @@ function KeyFromBoard(board) {		// Returns a string like "463b96181691fc9c"
 		keynum ^= PolyglotActiveXorVal;
 	}
 
-	return BigIntToHex(keynum);
+	let key = new Uint8Array(8);
+	key[0] = Number(keynum >> BigInt(56) & BigInt(0xff));
+	key[1] = Number(keynum >> BigInt(48) & BigInt(0xff));
+	key[2] = Number(keynum >> BigInt(40) & BigInt(0xff));
+	key[3] = Number(keynum >> BigInt(32) & BigInt(0xff));
+	key[4] = Number(keynum >> BigInt(24) & BigInt(0xff));
+	key[5] = Number(keynum >> BigInt(16) & BigInt(0xff));
+	key[6] = Number(keynum >> BigInt( 8) & BigInt(0xff));
+	key[7] = Number(keynum               & BigInt(0xff));
+
+	return key;
 }
 
 function ExtractInfo(arr) {
@@ -293,7 +303,16 @@ function ExtractInfo(arr) {
 	let hi = (arr[0] * 16777216) + (arr[1] * 65536) + (arr[2] * 256) + arr[3];
 	let lo = (arr[4] * 16777216) + (arr[5] * 65536) + (arr[6] * 256) + arr[7];
 	let keynum = (BigInt(hi) << BigInt(32)) + BigInt(lo);
-	let key = BigIntToHex(keynum);
+
+	let key = new Uint8Array(8);
+	key[0] = Number(keynum >> BigInt(56) & BigInt(0xff));
+	key[1] = Number(keynum >> BigInt(48) & BigInt(0xff));
+	key[2] = Number(keynum >> BigInt(40) & BigInt(0xff));
+	key[3] = Number(keynum >> BigInt(32) & BigInt(0xff));
+	key[4] = Number(keynum >> BigInt(24) & BigInt(0xff));
+	key[5] = Number(keynum >> BigInt(16) & BigInt(0xff));
+	key[6] = Number(keynum >> BigInt( 8) & BigInt(0xff));
+	key[7] = Number(keynum               & BigInt(0xff));
 
 	// Bytes 8-9 represent the move as a big-endian bitfield, uh...
 
@@ -334,36 +353,6 @@ function ExtractMove(num) {
 	return source.s + dest.s + promch;
 }
 
-function LoadPolyglotBook(filename) {
-	let book = [];
-	let previous_key = null;
-	let is_sorted = true;
-	try {
-		let buf = fs.readFileSync(filename);
-		for (let n = 0; n + 15 < buf.length; n += 16) {
-			let slice = Uint8Array.from(buf.slice(n, n + 16));
-			let o = ExtractInfo(slice);
-			book.push(o);
-			if (previous_key && o.key < previous_key) {
-				is_sorted = false;
-			}
-			previous_key = o.key;
-		}
-	} catch (err) {
-		book = [];
-		console.log(err);
-	}
-	console.log("Book was already sorted?", is_sorted);
-	if (!is_sorted) {
-		book.sort((a, b) => {
-			if (a.key < b.key) return -1;
-			if (a.key > b.key) return 1;
-			return 0;
-		});
-	}
-	return book;
-}
-
 function PolyglotProbe(board, book) {
 
 	if (!book || Array.isArray(book) === false || book.length === 0) {
@@ -391,7 +380,8 @@ function PolyglotProbe(board, book) {
 
 		} else if (lowerbound === upperbound) {
 
-			if (book[lowerbound].key === key) {
+			cur = book[lowerbound];
+			if (CompareKeys(cur.key, key) === 0) {
 				hit = lowerbound;
 			}
 			break;
@@ -401,12 +391,12 @@ function PolyglotProbe(board, book) {
 			mid = Math.floor((upperbound + lowerbound) / 2);		// If upper and lower are neighbours, mid is the left one.
 			cur = book[mid];
 
-			if (cur.key === key) {
+			if (CompareKeys(cur.key, key) === 0) {
 				hit = mid;
 				break;
 			}
 
-			if (cur.key < key) {
+			if (CompareKeys(cur.key, key) < 0) {
 				lowerbound = mid + 1;		// +1 is used here so the neighbours case does change lower.
 			} else {
 				upperbound = mid;			// In the neighbours case, upper becomes equal to lower. Can't do -1 or it would go to the left of lower.
@@ -439,4 +429,26 @@ function PolyglotProbe(board, book) {
 	}
 
 	return book.slice(left, right + 1);
+}
+
+function CompareKeys(a, b) {						// Return -1 / 0 / 1
+
+	if (a[0] < b[0]) return -1;
+	if (a[0] > b[0]) return 1;
+	if (a[1] < b[1]) return -1;
+	if (a[1] > b[1]) return 1;
+	if (a[2] < b[2]) return -1;
+	if (a[2] > b[2]) return 1;
+	if (a[3] < b[3]) return -1;
+	if (a[3] > b[3]) return 1;
+	if (a[4] < b[4]) return -1;
+	if (a[4] > b[4]) return 1;
+	if (a[5] < b[5]) return -1;
+	if (a[5] > b[5]) return 1;
+	if (a[6] < b[6]) return -1;
+	if (a[6] > b[6]) return 1;
+	if (a[7] < b[7]) return -1;
+	if (a[7] > b[7]) return 1;
+
+	return 0;
 }
