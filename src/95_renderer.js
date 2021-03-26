@@ -676,7 +676,7 @@ function NewRenderer() {
 			return;
 		}
 
-		this.set_special_message("Finished loading book", "green");
+		this.set_special_message(`Finished loading book (moves: ${this.book.length})`, "green");
 		console.log(`Book generation took ${(performance.now() - start_time).toFixed(0)} ms.`);
 		this.send_ack_book();
 	};
@@ -714,7 +714,7 @@ function NewRenderer() {
 		if (error_flag) {
 			this.set_special_message("Finished loading book (some errors occurred)", "yellow");
 		} else {
-			this.set_special_message("Finished loading book", "green");
+			this.set_special_message(`Finished loading book (moves: ${this.book.length})`, "green");
 		}
 
 		this.book.sort((a, b) => {
