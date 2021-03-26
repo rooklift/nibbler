@@ -52,7 +52,7 @@ function NewPolyglotBookLoader(hub) {
 
 			let slice = Uint8Array.from(this.buf.slice(this.n, this.n + 16));
 			let o = ExtractInfo(slice);
-			if (this.n > 0 && o.key < this.book[this.book.length - 1]) {
+			if (this.n > 0 && o.key < this.book[this.book.length - 1].key) {
 				this.book_is_sorted = false;
 			}
 			this.book.push(o);
