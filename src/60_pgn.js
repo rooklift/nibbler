@@ -63,6 +63,10 @@ function new_byte_pusher(size) {
 			this.length++;
 		},
 
+		reset: function() {
+			this.length = 0;
+		},
+
 		bytes: function() {
 			return this.storage.slice(0, this.length);
 		},
@@ -235,7 +239,7 @@ function LoadPGNRecord(o) {				// Can throw, either by itself, or by allowing a 
 			peek === 123) {						// {
 
 				let s = token.string().trim();
-				token = new_byte_pusher();			// For the next round.
+				token.reset();					// For the next round.
 
 				// The above conditional means "." can only appear as the first character.
 
