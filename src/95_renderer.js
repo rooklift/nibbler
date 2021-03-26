@@ -679,55 +679,16 @@ function NewRenderer() {
 		this.loaders.push(loader);
 	};
 
-	renderer.purge_finished_loaders = function() {
-		this.loaders = this.loaders.filter(o => o.running);
+	renderer.load_pgn_book = function(filename) {
+		this.book = null;
+		console.log(`Loading PGN book: ${filename}`);
+		let loader = NewPGNBookLoader(this);
+		loader.load(filename);
+		this.loaders.push(loader);
 	};
 
-	renderer.load_pgn_book = function(filename) {
-
-		this.book = null;
-
-		let buf;
-		try {
-			buf = fs.readFileSync(filename);
-		} catch (err) {
-			alert(err);
-			this.send_ack_book();
-			return;
-		}
-		console.log(`Loading PGN as book: ${filename}`);
-
-		let pgn_choices = PreParsePGN(buf);
-
-		let start_time = performance.now();
-		let error_flag = false;
-
-		for (let o of pgn_choices) {
-			try {
-				let root = LoadPGNRecord(o);
-				this.book = GenerateBook(root, this.book);
-				DestroyTree(root);
-			} catch (err) {
-				error_flag = true;
-			}
-		}
-
-		if (error_flag) {
-			this.set_special_message("Finished loading book (some errors occurred)", "yellow");
-		} else {
-			this.set_special_message(`Finished loading book (moves: ${this.book.length})`, "green");
-		}
-
-		this.book.sort((a, b) => {
-			if (a.key < b.key) return -1;
-			if (a.key > b.key) return 1;
-			return 0;
-		});
-
-		this.book.type = "pgn";
-
-		console.log(`Book generation took ${(performance.now() - start_time).toFixed(0)} ms.`);
-		this.send_ack_book();
+	renderer.purge_finished_loaders = function() {
+		this.loaders = this.loaders.filter(o => o.running);
 	};
 
 	renderer.load_pgn_from_string = function(s) {
