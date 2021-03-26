@@ -157,7 +157,7 @@ function NewPGNBookLoader(hub) {
 
 			this.n++;
 
-			if (this.n % 1000 === 0) {
+			if (this.n % 100 === 0) {
 				if (performance.now() - continuetime > 20) {
 					this.hub.set_special_message(`Loading... ${(100 * (this.n / this.pgn_choices.length)).toFixed(0)}%`);
 					setTimeout(() => {this.continue()}, 5);
