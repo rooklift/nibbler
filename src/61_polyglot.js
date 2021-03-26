@@ -215,7 +215,7 @@ function KeyFromBoard(board) {		// Returns a string like "463b96181691fc9c"
 
 	if (!board) return "";
 
-	let ret = BigInt(0);
+	let keynum = BigInt(0);
 
 	// Note to anyone reading this trying to make their own Polyglot routines:
 	// My board (0,0) is a8, not a1. Otherwise, you'd use y and not (7 - y) in the index calc.
@@ -227,27 +227,27 @@ function KeyFromBoard(board) {		// Returns a string like "463b96181691fc9c"
 			}
 			let piecekind = PolyglotPieceKinds.indexOf(board.state[x][y]);
 			let index = (64 * piecekind) + (8 * (7 - y)) + x;					// I mean here.
-			ret ^= PolyglotZobristVals[index];
+			keynum ^= PolyglotZobristVals[index];
 		}
 	}
 
-	if (board.castling.includes("H")) ret ^= PolyglotZobristVals[768];
-	if (board.castling.includes("A")) ret ^= PolyglotZobristVals[769];
-	if (board.castling.includes("h")) ret ^= PolyglotZobristVals[770];
-	if (board.castling.includes("a")) ret ^= PolyglotZobristVals[771];
+	if (board.castling.includes("H")) keynum ^= PolyglotZobristVals[768];
+	if (board.castling.includes("A")) keynum ^= PolyglotZobristVals[769];
+	if (board.castling.includes("h")) keynum ^= PolyglotZobristVals[770];
+	if (board.castling.includes("a")) keynum ^= PolyglotZobristVals[771];
 
 	// Happily, the format's idea of when an en passant square should be included is identical to mine...
 	// "If the opponent has performed a double pawn push and there is now a pawn next to it belonging to the player to move."
 
 	if (board.enpassant) {
-		ret ^= PolyglotZobristVals[772 + board.enpassant.x];
+		keynum ^= PolyglotZobristVals[772 + board.enpassant.x];
 	}
 
 	if (board.active === "w") {
-		ret ^= PolyglotZobristVals[780];
+		keynum ^= PolyglotZobristVals[780];
 	}
 
-	return BigIntToHex(ret);
+	return BigIntToHex(keynum);
 }
 
 function ExtractInfo(arr) {
@@ -263,7 +263,7 @@ function ExtractInfo(arr) {
 
 	let hi = (arr[0] * 16777216) + (arr[1] * 65536) + (arr[2] * 256) + arr[3];
 	let lo = (arr[4] * 16777216) + (arr[5] * 65536) + (arr[6] * 256) + arr[7];
-	let key = (BigInt(hi) << BigInt(32)) + BigInt(lo);
+	let keynum = (BigInt(hi) << BigInt(32)) + BigInt(lo);
 
 	// Bytes 8-9 represent the move as a big-endian bitfield, uh...
 
@@ -275,7 +275,7 @@ function ExtractInfo(arr) {
 
 	// Bytes 12-15 are ignored by us.
 
-	return [BigIntToHex(key), move, weight];
+	return [BigIntToHex(keynum), move, weight];
 }
 
 function ExtractMove(num) {
@@ -304,11 +304,8 @@ function ExtractMove(num) {
 	return source.s + dest.s + promch;
 }
 
-
 function LoadPolyglotBook(filename) {
-	let book = Object.create(null);
-	book.type = "polyglot";
-	book.array = [];
+	let book = [];
 	let previous_key = null;
 	let is_sorted = true;
 	try {
@@ -316,19 +313,19 @@ function LoadPolyglotBook(filename) {
 		for (let n = 0; n + 15 < buf.length; n += 16) {
 			let slice = Uint8Array.from(buf.slice(n, n + 16));
 			let [key, move, weight] = ExtractInfo(slice);
-			book.array.push({key, move, weight});
+			book.push({key, move, weight});
 			if (previous_key && key < previous_key) {
 				is_sorted = false;
 			}
 			previous_key = key;
 		}
 	} catch (err) {
-		book.array = [];
+		book = [];
 		console.log(err);
 	}
 	console.log("Book was already sorted?", is_sorted);
 	if (!is_sorted) {
-		book.array.sort((a, b) => {
+		book.sort((a, b) => {
 			if (a.key < b.key) return -1;
 			if (a.key > b.key) return 1;
 			return 0;
@@ -339,7 +336,7 @@ function LoadPolyglotBook(filename) {
 
 function PolyglotProbe(board, book) {
 
-	if (!book || !book.array || Array.isArray(book.array) === false || book.array.length === 0) {
+	if (!book || Array.isArray(book) === false || book.length === 0) {
 		return [];
 	}
 
@@ -353,7 +350,7 @@ function PolyglotProbe(board, book) {
 	let hit;
 	let cur;
 	let lowerbound = 0;
-	let upperbound = book.array.length - 1;
+	let upperbound = book.length - 1;
 
 	while (true) {
 
@@ -364,7 +361,7 @@ function PolyglotProbe(board, book) {
 
 		} else if (lowerbound === upperbound) {
 
-			if (book.array[lowerbound].key === key) {
+			if (book[lowerbound].key === key) {
 				hit = lowerbound;
 			}
 			break;
@@ -372,7 +369,7 @@ function PolyglotProbe(board, book) {
 		} else {
 
 			mid = Math.floor((upperbound + lowerbound) / 2);		// If upper and lower are neighbours, mid is the left one.
-			cur = book.array[mid];
+			cur = book[mid];
 
 			if (cur.key === key) {
 				hit = mid;
@@ -382,7 +379,7 @@ function PolyglotProbe(board, book) {
 			if (cur.key < key) {
 				lowerbound = mid + 1;		// +1 is used here so the neighbours case does change lower.
 			} else {
-				upperbound = mid;			// In the neighbours case, upper now equals lower. Can't do -1 or it would go to the left of lower.
+				upperbound = mid;			// In the neighbours case, upper becomes equal to lower. Can't do -1 or it would go to the left of lower.
 			}
 			continue;
 		}
@@ -396,20 +393,20 @@ function PolyglotProbe(board, book) {
 	let right = hit;
 
 	while (left > 0) {
-		if (book.array[left - 1].key === key) {
+		if (book[left - 1].key === key) {
 			left--;
 		} else {
 			break;
 		}
 	}
 
-	while (right < book.array.length - 1) {
-		if (book.array[right + 1].key === key) {
+	while (right < book.length - 1) {
+		if (book[right + 1].key === key) {
 			right++;
 		} else {
 			break;
 		}
 	}
 
-	return book.array.slice(left, right + 1);
+	return book.slice(left, right + 1);
 }

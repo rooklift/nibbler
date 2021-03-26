@@ -477,3 +477,59 @@ function __clean_tree(node) {
 		__clean_tree(child);
 	}
 }
+
+// ------------------------------------------------------------------------------------------------------
+// Generate (or add to) a book, using the given tree. No sorting here, needs to be done after completion.
+
+function GenerateBook(node, book) {
+
+	if (!book) {
+		book = []
+	}
+
+	if (!node || node.destroyed) {
+		return book;
+	}
+
+	__generate_book(node.get_root(), book);
+
+	return book;
+}
+
+function __generate_book(node, book) {
+
+	// Non-recursive when possible...
+
+	while (node.children.length === 1) {
+
+		let key = KeyFromBoard(node.board);
+		let move = node.children[0].move;
+
+		book.push({							// Duplicates allowed.
+			key: key,
+			move: move,
+			weight: 1,
+		});
+
+		node = node.children[0];
+	}
+
+	if (node.children.length === 0) {		// Do this test here, not at the start, since it can become true.
+		return;
+	}
+
+	// Recursive when necessary...
+
+	let key = KeyFromBoard(node.board);
+
+	for (let child of node.children) {
+
+		book.push({							// Duplicates allowed.
+			key: key,
+			move: child.move,
+			weight: 1,
+		});
+
+		__generate_book(child, book);
+	}
+}

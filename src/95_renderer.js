@@ -87,13 +87,10 @@ function NewRenderer() {
 
 				if (this.book) {
 
-					let objects;
-					let total_weight = 0;
 					let move;
 
-					if (this.book.type === "polyglot") {
-						objects = PolyglotProbe(this.tree.node.board, this.book);
-					}
+					let objects = PolyglotProbe(this.tree.node.board, this.book);
+					let total_weight = 0;
 
 					if (Array.isArray(objects) && objects.length > 0) {
 						for (let o of objects) {
@@ -662,9 +659,10 @@ function NewRenderer() {
 		this.load_pgn_buffer(buf);
 	};
 
-	renderer.load_book = function(filename) {
+	renderer.load_polyglot_book = function(filename) {
 
 		this.book = null;
+		this.book_type = "polyglot";								// Only used to make an ack message.
 
 		let start_time = performance.now();
 		console.log(`Loading Polyglot book: ${filename}`);
@@ -679,6 +677,52 @@ function NewRenderer() {
 		}
 
 		this.set_special_message("Finished loading book", "green");
+		console.log(`Book generation took ${(performance.now() - start_time).toFixed(0)} ms.`);
+		this.send_ack_book();
+	};
+
+	renderer.load_pgn_book = function(filename) {
+
+		this.book = null;
+		this.book_type = "pgn";										// Only used to make an ack message.
+
+		let buf;
+		try {
+			buf = fs.readFileSync(filename);
+		} catch (err) {
+			alert(err);
+			this.send_ack_book();
+			return;
+		}
+		console.log(`Loading PGN as book: ${filename}`);
+
+		let pgn_choices = PreParsePGN(buf);
+
+		let start_time = performance.now();
+		let error_flag = false;
+
+		for (let o of pgn_choices) {
+			try {
+				let root = LoadPGNRecord(o);
+				this.book = GenerateBook(root, this.book);
+				DestroyTree(root);
+			} catch (err) {
+				error_flag = true;
+			}
+		}
+
+		if (error_flag) {
+			this.set_special_message("Finished loading book (some errors occurred)", "yellow");
+		} else {
+			this.set_special_message("Finished loading book", "green");
+		}
+
+		this.book.sort((a, b) => {
+			if (a.key < b.key) return -1;
+			if (a.key > b.key) return 1;
+			return 0;
+		});
+
 		console.log(`Book generation took ${(performance.now() - start_time).toFixed(0)} ms.`);
 		this.send_ack_book();
 	};
@@ -1542,7 +1586,7 @@ function NewRenderer() {
 	};
 
 	renderer.send_ack_book = function() {
-		ipcRenderer.send("ack_book", this.book ? true : false);		// Don't send the object...
+		ipcRenderer.send("ack_book", this.book ? this.book_type : false);		// Don't send the object...
 	};
 
 	renderer.send_ack_setoption = function(name) {

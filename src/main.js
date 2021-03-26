@@ -139,7 +139,8 @@ function startup() {
 	});
 
 	electron.ipcMain.on("ack_book", (event, msg) => {
-		set_one_check(msg ? true : false, "Play", "Use Polyglot book...");
+		set_one_check(msg === "polyglot", "Play", "Use Polyglot book...");
+		set_one_check(msg === "pgn", "Play", "Use PGN book...");
 	});
 
 	electron.ipcMain.on("ack_node_limit", (event, msg) => {
@@ -3157,7 +3158,35 @@ function menu_build() {
 						if (Array.isArray(files) && files.length > 0) {
 							let file = files[0];
 							win.webContents.send("call", {
-								fn: "load_book",
+								fn: "load_polyglot_book",
+								args: [file]
+							});
+							// Will receive an ack IPC which sets menu checks.
+							// Save the dir as the new default dir, in both processes.
+							config.book_dialog_folder = path.dirname(file);
+							win.webContents.send("set", {
+								key: "book_dialog_folder",
+								value: path.dirname(file)
+							});
+						} else {
+							win.webContents.send("call", "send_ack_book");		// Force an ack IPC to fix our menu check state.
+						}
+					}
+				},
+				{
+					label: "Use PGN book...",
+					type: "checkbox",
+					checked: false,				// FIXME if we store this over time.
+					click: () => {
+						let files = open_dialog({
+							defaultPath: config.book_dialog_folder,
+							properties: ["openFile"],
+							filters: [{name: "PGN", extensions: ["pgn"]}, {name: "All files", extensions: ["*"]}]
+						});
+						if (Array.isArray(files) && files.length > 0) {
+							let file = files[0];
+							win.webContents.send("call", {
+								fn: "load_pgn_book",
 								args: [file]
 							});
 							// Will receive an ack IPC which sets menu checks.
