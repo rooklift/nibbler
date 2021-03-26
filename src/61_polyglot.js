@@ -334,36 +334,6 @@ function ExtractMove(num) {
 	return source.s + dest.s + promch;
 }
 
-function LoadPolyglotBook(filename) {
-	let book = [];
-	let previous_key = null;
-	let is_sorted = true;
-	try {
-		let buf = fs.readFileSync(filename);
-		for (let n = 0; n + 15 < buf.length; n += 16) {
-			let slice = Uint8Array.from(buf.slice(n, n + 16));
-			let o = ExtractInfo(slice);
-			book.push(o);
-			if (previous_key && o.key < previous_key) {
-				is_sorted = false;
-			}
-			previous_key = o.key;
-		}
-	} catch (err) {
-		book = [];
-		console.log(err);
-	}
-	console.log("Book was already sorted?", is_sorted);
-	if (!is_sorted) {
-		book.sort((a, b) => {
-			if (a.key < b.key) return -1;
-			if (a.key > b.key) return 1;
-			return 0;
-		});
-	}
-	return book;
-}
-
 function PolyglotProbe(board, book) {
 
 	if (!book || Array.isArray(book) === false || book.length === 0) {
