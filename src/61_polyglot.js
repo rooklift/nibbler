@@ -213,6 +213,8 @@ function BigIntToHex(big) {
 
 function KeyFromBoard(board) {		// Returns a string like "463b96181691fc9c"
 
+	if (!board) return "";
+
 	let ret = BigInt(0);
 
 	// Note to anyone reading this trying to make their own Polyglot routines:
@@ -302,18 +304,97 @@ function ExtractMove(num) {
 	return source.s + dest.s + promch;
 }
 
-function LoadPolyglotBook(filename) {
+function LoadPolyglotBook(filename) {		// FIXME: check that it's sorted while loading.
 	let book = Object.create(null);
 	book.type = "polyglot";
-	let buf = fs.readFileSync(filename);
-	for (let n = 0; n + 15 < buf.length; n += 16) {
-		let slice = Uint8Array.from(buf.slice(n, n + 16));
-		let [key, move, weight] = ExtractInfo(slice);
-		if (book[key]) {
-			book[key].push({move, weight});
-		} else {
-			book[key] = [{move, weight}];
+	book.array = [];
+	try {
+		let buf = fs.readFileSync(filename);
+		for (let n = 0; n + 15 < buf.length; n += 16) {
+			let slice = Uint8Array.from(buf.slice(n, n + 16));
+			let [key, move, weight] = ExtractInfo(slice);
+			book.array.push({key, move, weight});
 		}
+	} catch (err) {
+		book.array = [];
+		console.log(err);
 	}
 	return book;
+}
+
+function PolyglotProbe(board, book) {
+
+	if (!book || !book.array || Array.isArray(book.array) === false || book.array.length === 0) {
+		return [];
+	}
+
+	let key = KeyFromBoard(board);
+
+	if (!key) {
+		return [];
+	}
+
+	let mid;
+	let hit;
+	let cur;
+	let lowerbound = 0;
+	let upperbound = book.array.length - 1;
+
+	while (true) {
+
+		if (lowerbound > upperbound) {
+
+			console.log("PolyglotProbe(): lowerbound > upperbound");
+			break;
+
+		} else if (lowerbound === upperbound) {
+
+			if (book.array[lowerbound].key === key) {
+				hit = lowerbound;
+			}
+			break;
+
+		} else {
+
+			mid = Math.floor((upperbound + lowerbound) / 2);		// If upper and lower are neighbours, mid is the left one.
+			cur = book.array[mid];
+
+			if (cur.key === key) {
+				hit = mid;
+				break;
+			}
+
+			if (cur.key < key) {
+				lowerbound = mid + 1;		// +1 is used here so the neighbours case does change lower.
+			} else {
+				upperbound = mid;			// In the neighbours case, upper now equals lower. Can't do -1 or it would go to the left of lower.
+			}
+			continue;
+		}
+	}
+
+	if (hit === undefined) {
+		return [];
+	}
+
+	let left = hit;
+	let right = hit;
+
+	while (left > 0) {
+		if (book.array[left - 1].key === key) {
+			left--;
+		} else {
+			break;
+		}
+	}
+
+	while (right < book.array.length - 1) {
+		if (book.array[right + 1].key === key) {
+			right++;
+		} else {
+			break;
+		}
+	}
+
+	return book.array.slice(left, right + 1);
 }

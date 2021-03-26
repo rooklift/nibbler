@@ -92,8 +92,7 @@ function NewRenderer() {
 					let move;
 
 					if (this.book.type === "polyglot") {
-						let key = KeyFromBoard(this.tree.node.board);
-						objects = this.book[key];
+						objects = PolyglotProbe(this.tree.node.board, this.book);
 					}
 
 					if (Array.isArray(objects) && objects.length > 0) {
