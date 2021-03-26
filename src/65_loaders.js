@@ -10,9 +10,9 @@ function NewPolyglotBookLoader(hub) {
 
 	loader.book = [];
 	loader.book.type = "polyglot";
+	loader.book_is_sorted = true;
 	loader.buf = null;
 	loader.n = 0;
-	loader.is_sorted = true;
 
 	loader.load = function(filename) {
 		try {
@@ -29,6 +29,14 @@ function NewPolyglotBookLoader(hub) {
 		this.running = false;
 		this.buf = null;
 		if (this.book) {
+			if (!this.book_is_sorted) {
+				this.book.sort((a, b) => {
+					if (a.key < b.key) return -1;
+					if (a.key > b.key) return 1;
+					return 0;
+				});
+				this.book_is_sorted = true;
+			}
 			this.hub.book = this.book;
 			this.hub.send_ack_book();
 			this.hub.set_special_message(`Finished loading book (moves: ${this.book.length})`, "green");
@@ -62,7 +70,7 @@ function NewPolyglotBookLoader(hub) {
 			let slice = Uint8Array.from(this.buf.slice(this.n, this.n + 16));
 			let o = ExtractInfo(slice);
 			if (this.n > 0 && o.key < this.book[this.book.length - 1]) {
-				this.is_sorted = false;
+				this.book_is_sorted = false;
 			}
 			this.book.push(o);
 
