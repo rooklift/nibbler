@@ -92,7 +92,7 @@ function NewRenderer() {
 					let objects = PolyglotProbe(this.tree.node.board, this.book);
 					let total_weight = 0;
 
-					if (Array.isArray(objects) && objects.length > 0) {
+					if (Array.isArray(objects)) {
 						for (let o of objects) {
 							total_weight += o.weight;
 						}
