@@ -3,7 +3,7 @@
 function NewPolyglotBookLoader(hub) {
 
 	let loader = Object.create(null);
-	loader.type = "polyglot";
+	loader.type = "book";
 	loader.running = false;
 	loader.hub = hub;
 	loader.starttime = performance.now();
@@ -93,7 +93,7 @@ function NewPolyglotBookLoader(hub) {
 function NewPGNBookLoader(hub) {
 
 	let loader = Object.create(null);
-	loader.type = "pgnbook";
+	loader.type = "book";
 	loader.running = false;
 	loader.hub = hub;
 	loader.starttime = performance.now();
