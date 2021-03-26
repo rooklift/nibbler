@@ -481,7 +481,7 @@ function __clean_tree(node) {
 // ------------------------------------------------------------------------------------------------------
 // Generate (or add to) a book, using the given tree. No sorting here, needs to be done after completion.
 
-function GenerateBook(node, book) {
+function AddTreeToBook(node, book) {
 
 	if (!book) {
 		book = []
@@ -491,12 +491,12 @@ function GenerateBook(node, book) {
 		return book;
 	}
 
-	__generate_book(node.get_root(), book);
+	__add_tree_to_book(node.get_root(), book);
 
 	return book;
 }
 
-function __generate_book(node, book) {
+function __add_tree_to_book(node, book) {
 
 	// Non-recursive when possible...
 
@@ -530,6 +530,6 @@ function __generate_book(node, book) {
 			weight: 1,
 		});
 
-		__generate_book(child, book);
+		__add_tree_to_book(child, book);
 	}
 }

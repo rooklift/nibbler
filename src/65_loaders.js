@@ -167,7 +167,7 @@ function NewPGNBookLoader(hub) {
 
 			try {
 				let root = LoadPGNRecord(o);
-				this.book = GenerateBook(root, this.book);
+				this.book = AddTreeToBook(root, this.book);
 				DestroyTree(root);
 			} catch (err) {
 				this.error_flag = true;
