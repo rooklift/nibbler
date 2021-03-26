@@ -146,7 +146,6 @@ function NewRenderer() {
 		}
 
 		this.maybe_infer_info();						// Before node_exit_cleanup() so that previous ghost info is available when moving forwards.
-		this.maybe_add_bookscores();
 		this.behave("position");
 		this.draw();
 
@@ -370,48 +369,6 @@ function NewRenderer() {
 		}
 
 		node.table.moveinfo[nextmove] = new_info;
-	};
-
-	renderer.maybe_add_bookscores = function() {
-
-		if (config.behaviour === "play_white" || config.behaviour === "play_black") {
-			return;
-		}
-
-		let node = this.tree.node;
-
-		if (node.terminal_reason()) {
-			return;
-		}
-
-		for (let info of Object.values(node.table.moveinfo)) {
-			if (info.__touched) {
-				return;
-			}
-		}
-
-		// So the current node has no real info.
-
-		let objects = PolyglotProbe(this.tree.node.key(), this.book);
-
-		let total_weight = 0;
-
-		for (let o of objects) {
-			total_weight += o.weight;
-		}
-
-		if (total_weight <= 0) {
-			return;
-		}
-
-		for (let o of objects) {
-			let info = (node.table.moveinfo[o.move]);
-			if (info) {
-				info.q = (o.weight / total_weight) * 2 - 1;
-				info.__ghost = true;
-				info.__touched = true;
-			}
-		}
 	};
 
 	renderer.node_exit_cleanup = function() {
