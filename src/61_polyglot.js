@@ -399,3 +399,9 @@ function PolyglotProbe(key, book) {
 
 	return book.slice(left, right + 1);
 }
+
+
+// For debugging...
+function HubProbe() {
+	return PolyglotProbe(KeyFromBoard(hub.tree.node.board), hub.book);
+}
