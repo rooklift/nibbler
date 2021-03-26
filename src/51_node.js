@@ -479,12 +479,12 @@ function __clean_tree(node) {
 }
 
 // ------------------------------------------------------------------------------------------------------
-// Generate (or add to) a book, using the given tree. No sorting here, needs to be done after completion.
+// Add positions to a book, using the given tree. No sorting here, needs to be done after completion.
 
 function AddTreeToBook(node, book) {
 
-	if (!book) {
-		book = []
+	if (!book || Array.isArray(book) === false) {
+		throw "AddTreeToBook called without valid array";
 	}
 
 	if (!node || node.destroyed) {
