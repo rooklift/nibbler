@@ -73,6 +73,7 @@ function NewPolyglotBookLoader(hub) {
 		this.running = false;
 		this.buf = null;
 		if (this.book) {
+			console.log("Polyglot book was pre-sorted?", this.book_is_sorted);
 			if (!this.book_is_sorted) {
 				this.book.sort((a, b) => {
 					if (a.key < b.key) return -1;
