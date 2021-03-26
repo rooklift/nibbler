@@ -139,7 +139,8 @@ function startup() {
 	});
 
 	electron.ipcMain.on("ack_book", (event, msg) => {
-		set_one_check(msg ? true : false, "Play", "Use PGN book...");
+		set_one_check(msg === "polyglot", "Play", "Use Polyglot book...");
+		set_one_check(msg === "pgn", "Play", "Use PGN book...");
 	});
 
 	electron.ipcMain.on("ack_node_limit", (event, msg) => {
@@ -3145,19 +3146,19 @@ function menu_build() {
 					type: "separator"
 				},
 				{
-					label: "Use PGN book...",
+					label: "Use Polyglot book...",
 					type: "checkbox",
-					checked: false,				// FIXME if we store this over time.
+					checked: false,
 					click: () => {
 						let files = open_dialog({
 							defaultPath: config.book_dialog_folder,
 							properties: ["openFile"],
-							filters: [{name: "PGN", extensions: ["pgn"]}, {name: "All files", extensions: ["*"]}]
+							filters: [{name: "Polyglot", extensions: ["bin"]}, {name: "All files", extensions: ["*"]}]
 						});
 						if (Array.isArray(files) && files.length > 0) {
 							let file = files[0];
 							win.webContents.send("call", {
-								fn: "load_book",
+								fn: "load_polyglot_book",
 								args: [file]
 							});
 							// Will receive an ack IPC which sets menu checks.
@@ -3173,11 +3174,176 @@ function menu_build() {
 					}
 				},
 				{
-					label: "Unload book",
+					label: "Use PGN book...",
+					type: "checkbox",
+					checked: false,
+					click: () => {
+						let files = open_dialog({
+							defaultPath: config.book_dialog_folder,
+							properties: ["openFile"],
+							filters: [{name: "PGN", extensions: ["pgn"]}, {name: "All files", extensions: ["*"]}]
+						});
+						if (Array.isArray(files) && files.length > 0) {
+							let file = files[0];
+							win.webContents.send("call", {
+								fn: "load_pgn_book",
+								args: [file]
+							});
+							// Will receive an ack IPC which sets menu checks.
+							// Save the dir as the new default dir, in both processes.
+							config.book_dialog_folder = path.dirname(file);
+							win.webContents.send("set", {
+								key: "book_dialog_folder",
+								value: path.dirname(file)
+							});
+						} else {
+							win.webContents.send("call", "send_ack_book");		// Force an ack IPC to fix our menu check state.
+						}
+					}
+				},
+				{
+					label: "Unload book / abort load",
 					click: () => {
 						win.webContents.send("call", "unload_book");
 						// Will receive an ack IPC which sets menu checks.
 					}
+				},
+				{
+					label: "Book depth limit",
+					submenu: [
+						{
+							label: "Unlimited",
+							type: "checkbox",
+							checked: typeof config.book_depth !== "number",
+							click: () => {
+								set_checks("Play", "Book depth limit", "Unlimited");
+								win.webContents.send("set", {
+									key: "book_depth",
+									value: null,
+								});
+							}
+						},
+						{
+							label: "20",
+							type: "checkbox",
+							checked: config.book_depth === 20,
+							click: () => {
+								set_checks("Play", "Book depth limit", "20");
+								win.webContents.send("set", {
+									key: "book_depth",
+									value: 20,
+								});
+							}
+						},
+						{
+							label: "18",
+							type: "checkbox",
+							checked: config.book_depth === 18,
+							click: () => {
+								set_checks("Play", "Book depth limit", "18");
+								win.webContents.send("set", {
+									key: "book_depth",
+									value: 18,
+								});
+							}
+						},
+						{
+							label: "16",
+							type: "checkbox",
+							checked: config.book_depth === 16,
+							click: () => {
+								set_checks("Play", "Book depth limit", "16");
+								win.webContents.send("set", {
+									key: "book_depth",
+									value: 16,
+								});
+							}
+						},
+						{
+							label: "14",
+							type: "checkbox",
+							checked: config.book_depth === 14,
+							click: () => {
+								set_checks("Play", "Book depth limit", "14");
+								win.webContents.send("set", {
+									key: "book_depth",
+									value: 14,
+								});
+							}
+						},
+						{
+							label: "12",
+							type: "checkbox",
+							checked: config.book_depth === 12,
+							click: () => {
+								set_checks("Play", "Book depth limit", "12");
+								win.webContents.send("set", {
+									key: "book_depth",
+									value: 12,
+								});
+							}
+						},
+						{
+							label: "10",
+							type: "checkbox",
+							checked: config.book_depth === 10,
+							click: () => {
+								set_checks("Play", "Book depth limit", "10");
+								win.webContents.send("set", {
+									key: "book_depth",
+									value: 10,
+								});
+							}
+						},
+						{
+							label: "8",
+							type: "checkbox",
+							checked: config.book_depth === 8,
+							click: () => {
+								set_checks("Play", "Book depth limit", "8");
+								win.webContents.send("set", {
+									key: "book_depth",
+									value: 8,
+								});
+							}
+						},
+						{
+							label: "6",
+							type: "checkbox",
+							checked: config.book_depth === 6,
+							click: () => {
+								set_checks("Play", "Book depth limit", "6");
+								win.webContents.send("set", {
+									key: "book_depth",
+									value: 6,
+								});
+							}
+						},
+						{
+							label: "4",
+							type: "checkbox",
+							checked: config.book_depth === 4,
+							click: () => {
+								set_checks("Play", "Book depth limit", "4");
+								win.webContents.send("set", {
+									key: "book_depth",
+									value: 4,
+								});
+							}
+						},
+						{
+							label: "2",
+							type: "checkbox",
+							checked: config.book_depth === 2,
+							click: () => {
+								set_checks("Play", "Book depth limit", "2");
+								win.webContents.send("set", {
+									key: "book_depth",
+									value: 2,
+								});
+							}
+						},
+					]
 				},
 				{
 					type: "separator"

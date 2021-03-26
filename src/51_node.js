@@ -478,40 +478,40 @@ function __clean_tree(node) {
 	}
 }
 
-// ---------------------------------------------------------------------------------------------------------
-// Generate (or add to) a book, using the given tree. A book is just a lookup table of FEN --> list of moves
+// ------------------------------------------------------------------------------------------------------
+// Add positions to a book, using the given tree. No sorting here, needs to be done after completion.
 
-function GenerateBook(node, book) {
+function AddTreeToBook(node, book) {
 
-	if (!book) {
-		book = Object.create(null);
+	if (!book || Array.isArray(book) === false) {
+		throw "AddTreeToBook called without valid array";
 	}
 
 	if (!node || node.destroyed) {
 		return book;
 	}
 
-	__generate_book(node.get_root(), book);
+	__add_tree_to_book(node.get_root(), book);
 
 	return book;
 }
 
-function __generate_book(node, book) {
+function __add_tree_to_book(node, book) {
 
 	// Non-recursive when possible...
 
 	while (node.children.length === 1) {
 
-		let fen = node.board.fen(false, true);
+		let key = KeyFromBoard(node.board);
 		let move = node.children[0].move;
 
-		if (book[fen] === undefined) {
-			book[fen] = [];
-		}
+		book.push({							// Duplicates allowed.
+			key: key,
+			move: move,
+			weight: 1,
+		});
 
-		book[fen].push(move);				// Duplicates allowed, biasing the random choice.
-
-		node = node = node.children[0];
+		node = node.children[0];
 	}
 
 	if (node.children.length === 0) {		// Do this test here, not at the start, since it can become true.
@@ -520,14 +520,16 @@ function __generate_book(node, book) {
 
 	// Recursive when necessary...
 
-	let fen = node.board.fen(false, true);
-
-	if (book[fen] === undefined) {
-		book[fen] = [];
-	}
+	let key = KeyFromBoard(node.board);
 
 	for (let child of node.children) {
-		book[fen].push(child.move);			// Duplicates allowed, biasing the random choice.
-		__generate_book(child, book);
+
+		book.push({							// Duplicates allowed.
+			key: key,
+			move: child.move,
+			weight: 1,
+		});
+
+		__add_tree_to_book(child, book);
 	}
 }

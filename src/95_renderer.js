@@ -11,6 +11,7 @@ function NewRenderer() {
 
 	// Various state we have to keep track of...
 
+	renderer.loaders = [];										// This is just so I can be sure loaders don't get GC'd while running.
 	renderer.book = null;
 	renderer.pgn_choices = null;								// All games found when opening a PGN file.
 	renderer.friendly_draws = New2DArray(8, 8, null);			// What pieces are drawn in boardfriends. Used to skip redraws.
@@ -69,11 +70,12 @@ function NewRenderer() {
 					}
 				}
 
-				break;		// No further actions when reason === "position"
-			}
+			} else {
 
-			if (this.engine.search_desired.node !== this.leela_lock_node || this.engine.search_desired.limit !== this.node_limit()) {
-				this.__go(this.leela_lock_node);
+				if (this.engine.search_desired.node !== this.leela_lock_node || this.engine.search_desired.limit !== this.node_limit()) {
+					this.__go(this.leela_lock_node);
+				}
+
 			}
 			break;
 
@@ -85,34 +87,10 @@ function NewRenderer() {
 				(config.behaviour === "play_white" && this.tree.node.board.active === "w") ||
 				(config.behaviour === "play_black" && this.tree.node.board.active === "b")) {
 
-				if (this.book) {
-
-					let moves = this.book[this.tree.node.board.fen(false, true)];
-
-					if (Array.isArray(moves) && moves.length > 0) {
-
-						let move = RandChoice(moves);
-
-						if (this.tree.node.board.illegal(move) === "" && this.tree.node.terminal_reason() === "") {
-
-							this.__halt();
-							let correct_node = this.tree.node;
-							let correct_behaviour = config.behaviour;
-
-							// Use a setTimeout to prevent recursion (since move() will cause a call to behave())
-
-							setTimeout(() => {
-								if (this.tree.node === correct_node && config.behaviour === correct_behaviour) {
-									this.move(move);
-								}
-							}, 0);
-
-							break;
-						}
-					}
+				if (this.maybe_setup_book_move()) {
+					this.__halt();
+					break;
 				}
-
-				// If we get here we didn't play a book move...
 
 				if (this.engine.search_desired.node !== this.tree.node || this.engine.search_desired.limit !== this.node_limit()) {
 					this.__go(this.tree.node);
@@ -227,6 +205,63 @@ function NewRenderer() {
 			this.set_behaviour("play_black");
 		}
 	};
+
+	renderer.maybe_setup_book_move = function() {
+
+		if (!this.book || this.tree.node.terminal_reason()) {
+			return false;
+		}
+
+		if (typeof config.book_depth === "number" && this.tree.node.depth >= config.book_depth * 2) {
+			return false;
+		}
+
+		let move;
+
+		let objects = PolyglotProbe(KeyFromBoard(this.tree.node.board), this.book);
+		let total_weight = 0;
+
+		if (Array.isArray(objects)) {
+			for (let o of objects) {
+				total_weight += o.weight;
+			}
+		}
+
+		if (total_weight <= 0) {
+			return false;
+		}
+
+		let rng = RandInt(0, total_weight);
+		let weight_seen = 0;
+		for (let o of objects) {			// The order doesn't matter at all when you think about it. No need to sort.
+			weight_seen += o.weight;
+			if (rng < weight_seen) {
+				move = o.move;
+				break;
+			}
+		}
+
+		if (!move) {
+			return false;
+		}
+
+		if (this.tree.node.board.illegal(move)) {
+			return false;
+		}
+
+		let correct_node = this.tree.node;
+		let correct_behaviour = config.behaviour;
+
+		// Use a setTimeout to prevent recursion (since move() will cause a call to behave())
+
+		setTimeout(() => {
+			if (this.tree.node === correct_node && config.behaviour === correct_behaviour) {
+				this.move(move);
+			}
+		}, 0);
+
+		return true;
+	}
 
 	// -------------------------------------------------------------------------------------------------------------------------
 
@@ -640,42 +675,36 @@ function NewRenderer() {
 		this.load_pgn_buffer(buf);
 	};
 
-	renderer.load_book = function(filename) {
-
+	renderer.load_polyglot_book = function(filename) {
 		this.book = null;
-
-		let buf;
-		try {
-			buf = fs.readFileSync(filename);
-		} catch (err) {
-			alert(err);
-			this.send_ack_book();
-			return;
-		}
-		console.log(`Loading PGN as book: ${filename}`);
-
-		let new_pgn_choices = PreParsePGN(buf);
-
-		let start_time = performance.now();
-		let error_flag = false;
-
-		for (let o of new_pgn_choices) {
-			try {
-				let root = LoadPGNRecord(o);
-				this.book = GenerateBook(root, this.book);
-				DestroyTree(root);
-			} catch (err) {
-				error_flag = true;
+		this.send_ack_book();
+		for (let loader of this.loaders) {
+			if (loader.type === "book") {
+				loader.abort();
 			}
 		}
+		console.log(`Loading Polyglot book: ${filename}`);
+		let loader = NewPolyglotBookLoader(this);
+		loader.load(filename);
+		this.loaders.push(loader);
+	};
 
-		if (error_flag) {
-			this.set_special_message("Finished loading book (some errors occurred)", "yellow");
-		} else {
-			this.set_special_message("Finished loading book", "green");
-		}
-		console.log(`Book generation took ${(performance.now() - start_time).toFixed(0)} ms.`);
+	renderer.load_pgn_book = function(filename) {
+		this.book = null;
 		this.send_ack_book();
+		for (let loader of this.loaders) {
+			if (loader.type === "book") {
+				loader.abort();
+			}
+		}
+		console.log(`Loading PGN book: ${filename}`);
+		let loader = NewPGNBookLoader(this);
+		loader.load(filename);
+		this.loaders.push(loader);
+	};
+
+	renderer.purge_finished_loaders = function() {
+		this.loaders = this.loaders.filter(o => o.running);
 	};
 
 	renderer.load_pgn_from_string = function(s) {
@@ -1529,6 +1558,11 @@ function NewRenderer() {
 
 	renderer.unload_book = function() {
 		this.book = null;
+		for (let loader of this.loaders) {
+			if (loader.type === "book") {
+				loader.abort();
+			}
+		}
 		this.send_ack_book();
 	};
 
@@ -1537,7 +1571,7 @@ function NewRenderer() {
 	};
 
 	renderer.send_ack_book = function() {
-		ipcRenderer.send("ack_book", this.book ? true : false);		// Don't send the object...
+		ipcRenderer.send("ack_book", this.book ? this.book.type : false);		// Don't send the object...
 	};
 
 	renderer.send_ack_setoption = function(name) {
@@ -2161,6 +2195,7 @@ function NewRenderer() {
 		debuggo.spin = debuggo.spin ? debuggo.spin + 1 : 1;
 		this.tick++;
 		this.draw();
+		this.purge_finished_loaders();
 		this.update_graph_eval(this.engine.search_running.node);		// Possibly null.
 		setTimeout(this.spin.bind(this), config.update_delay);
 		debuggo.spin -= 1;

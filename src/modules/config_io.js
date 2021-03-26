@@ -126,6 +126,8 @@ exports.defaults = {
 	"search_nodes": null,
 	"search_nodes_special": 10000,
 
+	"book_depth": 10,
+
 	"save_enabled": false,
 	"override_piece_directory": null,
 	"override_board": null,
