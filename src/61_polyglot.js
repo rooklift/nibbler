@@ -2,7 +2,7 @@
 
 // http://hgm.nubati.net/book_format.html
 
-const PolyglotZobristVals = BigUint64Array.from([
+const PolyglotPieceXorVals = BigUint64Array.from([
 	BigInt("0x9d39247e33776d41"), BigInt("0x2af7398005aaa5c7"), BigInt("0x44db015024623547"), BigInt("0x9c15f73e62a76ae2"),
 	BigInt("0x75834465489c0c89"), BigInt("0x3290ac3a203001bf"), BigInt("0x0fbbad1f61042279"), BigInt("0xe83a908ff2fb60ca"),
 	BigInt("0x0d7e765d58755c10"), BigInt("0x1a083822ceafe02d"), BigInt("0x9605d5f0e25ec3b0"), BigInt("0xd021ff5cd13a2ed5"),
@@ -195,15 +195,27 @@ const PolyglotZobristVals = BigUint64Array.from([
 	BigInt("0x0c335248857fa9e7"), BigInt("0x0a9c32d5eae45305"), BigInt("0xe6c42178c4bbb92e"), BigInt("0x71f1ce2490d20b07"),
 	BigInt("0xf1bcc3d275afe51a"), BigInt("0xe728e8c83c334074"), BigInt("0x96fbf83a12884624"), BigInt("0x81a1549fd6573da5"),
 	BigInt("0x5fa7867caf35e149"), BigInt("0x56986e2ef3ed091b"), BigInt("0x917f1dd5f8886c61"), BigInt("0xd20d8c88c8ffe65f"),
-	BigInt("0x31d71dce64b2c310"), BigInt("0xf165b587df898190"), BigInt("0xa57e6339dd2cf3a0"), BigInt("0x1ef6e6dbb1961ec9"),
-	BigInt("0x70cc73d90bc26e24"), BigInt("0xe21a6b35df0c3ad7"), BigInt("0x003a93d8b2806962"), BigInt("0x1c99ded33cb890a1"),
-	BigInt("0xcf3145de0add4289"), BigInt("0xd0e4427a5514fb72"), BigInt("0x77c621cc9fb3a483"), BigInt("0x67a34dac4356550b"),
-	BigInt("0xf8d626aaaf278509")
 ]);
 
-const PolyglotPieceKinds = ["p", "P", "n", "N", "b", "B", "r", "R", "q", "Q", "k", "K"];		// The index is what matters, e.g. N is 3.
+const PolyglotCastleXorVals = BigUint64Array.from([
+	BigInt("0x31d71dce64b2c310"), BigInt("0xf165b587df898190"), BigInt("0xa57e6339dd2cf3a0"), BigInt("0x1ef6e6dbb1961ec9"),
+	BigInt("0x0000000000000000"), BigInt("0x0000000000000000"), BigInt("0x0000000000000000"), BigInt("0x0000000000000000"),
+	BigInt("0x0000000000000000"), BigInt("0x0000000000000000"), BigInt("0x0000000000000000"), BigInt("0x0000000000000000"),
+]);
 
+const PolyglotEnPassantXorVals = BigUint64Array.from([
+	BigInt("0x70cc73d90bc26e24"), BigInt("0xe21a6b35df0c3ad7"), BigInt("0x003a93d8b2806962"), BigInt("0x1c99ded33cb890a1"),
+	BigInt("0xcf3145de0add4289"), BigInt("0xd0e4427a5514fb72"), BigInt("0x77c621cc9fb3a483"), BigInt("0x67a34dac4356550b"),
+]);
+
+const PolyglotActiveXorVal = BigInt("0xf8d626aaaf278509");
+
+// ------------------------------------------------------------------------------------------------------------------------
+
+const PolyglotPieceKinds = "pPnNbBrRqQkK";								// The index is what matters, e.g. N is 3.
 const PolyglotPromotions = ["", "n", "b", "r", "q", "", "", ""];		// Values in indices 5-7 just in case.
+
+// ------------------------------------------------------------------------------------------------------------------------
 
 function BigIntToHex(big) {
 	let s = big.toString(16);
@@ -226,25 +238,42 @@ function KeyFromBoard(board) {		// Returns a string like "463b96181691fc9c"
 				continue;
 			}
 			let piecekind = PolyglotPieceKinds.indexOf(board.state[x][y]);
+			if (piecekind === -1) {
+				continue;
+			}
 			let index = (64 * piecekind) + (8 * (7 - y)) + x;					// I mean here.
-			keynum ^= PolyglotZobristVals[index];
+			keynum ^= PolyglotPieceXorVals[index];
 		}
 	}
 
-	if (board.castling.includes("H")) keynum ^= PolyglotZobristVals[768];
-	if (board.castling.includes("A")) keynum ^= PolyglotZobristVals[769];
-	if (board.castling.includes("h")) keynum ^= PolyglotZobristVals[770];
-	if (board.castling.includes("a")) keynum ^= PolyglotZobristVals[771];
+	if (board.castling.includes("H")) keynum ^= PolyglotCastleXorVals[0];
+	if (board.castling.includes("A")) keynum ^= PolyglotCastleXorVals[1];
+	if (board.castling.includes("h")) keynum ^= PolyglotCastleXorVals[2];
+	if (board.castling.includes("a")) keynum ^= PolyglotCastleXorVals[3];
+
+	if (board.castling.includes("B")) keynum ^= PolyglotCastleXorVals[4];
+	if (board.castling.includes("C")) keynum ^= PolyglotCastleXorVals[5];
+	if (board.castling.includes("D")) keynum ^= PolyglotCastleXorVals[6];
+	if (board.castling.includes("E")) keynum ^= PolyglotCastleXorVals[7];
+	if (board.castling.includes("F")) keynum ^= PolyglotCastleXorVals[8];
+	if (board.castling.includes("G")) keynum ^= PolyglotCastleXorVals[9];
+
+	if (board.castling.includes("b")) keynum ^= PolyglotCastleXorVals[10];
+	if (board.castling.includes("c")) keynum ^= PolyglotCastleXorVals[11];
+	if (board.castling.includes("d")) keynum ^= PolyglotCastleXorVals[12];
+	if (board.castling.includes("e")) keynum ^= PolyglotCastleXorVals[13];
+	if (board.castling.includes("f")) keynum ^= PolyglotCastleXorVals[14];
+	if (board.castling.includes("g")) keynum ^= PolyglotCastleXorVals[15];
 
 	// Happily, the format's idea of when an en passant square should be included is identical to mine...
 	// "If the opponent has performed a double pawn push and there is now a pawn next to it belonging to the player to move."
 
 	if (board.enpassant) {
-		keynum ^= PolyglotZobristVals[772 + board.enpassant.x];
+		keynum ^= PolyglotEnPassantXorVals[board.enpassant.x];
 	}
 
 	if (board.active === "w") {
-		keynum ^= PolyglotZobristVals[780];
+		keynum ^= PolyglotActiveXorVal;
 	}
 
 	return BigIntToHex(keynum);
