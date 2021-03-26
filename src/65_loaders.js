@@ -30,8 +30,8 @@ function NewPolyglotBookLoader(hub) {
 
 	loader.abort = function() {
 		this.running = false;
-		this.buf = null;
-		this.book = null;
+		this.buf = null;			// For the GC's benefit
+		this.book = null;			// For the GC's benefit
 		this.hub.set_special_message(`Book load failed or was aborted.`);
 	};
 
@@ -121,8 +121,8 @@ function NewPGNBookLoader(hub) {
 
 	loader.abort = function() {
 		this.running = false;
-		this.buf = null;
-		this.book = null;
+		this.buf = null;			// For the GC's benefit
+		this.book = null;			// For the GC's benefit
 		this.hub.set_special_message(`Book load failed or was aborted.`);
 	};
 
