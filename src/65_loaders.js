@@ -148,7 +148,7 @@ function NewPGNBookLoader(hub) {
 			let o = this.pgn_choices[this.n];
 
 			try {
-				let root = LoadPGNRecord(o);
+				let root = LoadPGNRecord(o);					// Note that this calls DestroyTree() itself if needed.
 				this.book = AddTreeToBook(root, this.book);
 				DestroyTree(root);
 			} catch (err) {
