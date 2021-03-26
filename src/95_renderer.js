@@ -1550,6 +1550,11 @@ function NewRenderer() {
 
 	renderer.unload_book = function() {
 		this.book = null;
+		for (let loader of this.loaders) {
+			if (loader.type === "book") {
+				loader.abort();
+			}
+		}
 		this.send_ack_book();
 	};
 
