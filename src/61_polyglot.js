@@ -264,6 +264,7 @@ function ExtractInfo(arr) {
 	let hi = (arr[0] * 16777216) + (arr[1] * 65536) + (arr[2] * 256) + arr[3];
 	let lo = (arr[4] * 16777216) + (arr[5] * 65536) + (arr[6] * 256) + arr[7];
 	let keynum = (BigInt(hi) << BigInt(32)) + BigInt(lo);
+	let key = BigIntToHex(keynum);
 
 	// Bytes 8-9 represent the move as a big-endian bitfield, uh...
 
@@ -275,7 +276,7 @@ function ExtractInfo(arr) {
 
 	// Bytes 12-15 are ignored by us.
 
-	return [BigIntToHex(keynum), move, weight];
+	return {key, move, weight};
 }
 
 function ExtractMove(num) {
@@ -312,12 +313,12 @@ function LoadPolyglotBook(filename) {
 		let buf = fs.readFileSync(filename);
 		for (let n = 0; n + 15 < buf.length; n += 16) {
 			let slice = Uint8Array.from(buf.slice(n, n + 16));
-			let [key, move, weight] = ExtractInfo(slice);
-			book.push({key, move, weight});
-			if (previous_key && key < previous_key) {
+			let o = ExtractInfo(slice);
+			book.push(o);
+			if (previous_key && o.key < previous_key) {
 				is_sorted = false;
 			}
-			previous_key = key;
+			previous_key = o.key;
 		}
 	} catch (err) {
 		book = [];
