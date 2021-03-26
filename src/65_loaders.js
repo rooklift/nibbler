@@ -40,8 +40,6 @@ function NewPolyglotBookLoader(hub) {
 			this.hub.book = this.book;
 			this.hub.send_ack_book();
 			this.hub.set_special_message(`Finished loading book (moves: ${this.book.length})`, "green");
-		} else {
-			this.hub.set_special_message(`Book load failed or was aborted.`);
 		}
 		console.log(`Polyglot book load ended after ${performance.now() - this.starttime} ms.`);
 		this.book = null;
