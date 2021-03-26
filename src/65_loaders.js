@@ -48,13 +48,15 @@ function NewPolyglotBookLoader(hub) {
 	};
 
 	loader.abort = function() {
+		this.running = false;
+		this.buf = null;
 		this.book = null;
-		this.finish();
+		this.hub.set_special_message(`Book load failed or was aborted.`);
 	};
 
 	loader.continue = function() {
 
-		if (!this.buf || !this.book) {
+		if (!this.running) {
 			return;
 		}
 
