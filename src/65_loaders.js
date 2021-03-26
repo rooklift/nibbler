@@ -127,7 +127,11 @@ function NewPGNBookLoader(hub) {
 			});
 			this.hub.book = this.book;
 			this.hub.send_ack_book();
-			this.hub.set_special_message(`Finished loading book (moves: ${this.book.length})`, "green");
+			if (this.error_flag) {
+				this.hub.set_special_message("Finished loading book (some errors occurred)", "yellow");
+			} else {
+				this.hub.set_special_message(`Finished loading book (moves: ${this.book.length})`, "green");
+			}
 		}
 		console.log(`PGN book load ended after ${performance.now() - this.starttime} ms.`);
 		this.book = null;
