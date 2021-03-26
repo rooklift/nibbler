@@ -212,6 +212,10 @@ function NewRenderer() {
 			return false;
 		}
 
+		if (this.tree.node.depth >= config.book_depth * 2) {
+			return false;
+		}
+
 		let move;
 
 		let objects = PolyglotProbe(this.tree.node.board, this.book);
