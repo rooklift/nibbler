@@ -58,7 +58,7 @@ function NewPolyglotBookLoader(hub) {
 			return;
 		}
 
-		let starttime = performance.now();
+		let continuetime = performance.now();
 
 		while (true) {
 
@@ -77,7 +77,7 @@ function NewPolyglotBookLoader(hub) {
 			this.n += 16;
 
 			if (this.n % 1000 === 0) {
-				if (performance.now() - starttime > 10) {
+				if (performance.now() - continuetime > 10) {
 					this.hub.set_special_message(`Loading... ${(100 * (this.n / this.buf.length)).toFixed(0)}%`);
 					setTimeout(() => {this.continue()}, 0);
 					return;
