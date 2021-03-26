@@ -11,6 +11,7 @@ function NewRenderer() {
 
 	// Various state we have to keep track of...
 
+	renderer.loaders = [];										// This is just so I can be sure loaders don't get GC'd while running.
 	renderer.book = null;
 	renderer.pgn_choices = null;								// All games found when opening a PGN file.
 	renderer.friendly_draws = New2DArray(8, 8, null);			// What pieces are drawn in boardfriends. Used to skip redraws.
@@ -673,8 +674,13 @@ function NewRenderer() {
 	renderer.load_polyglot_book = function(filename) {
 		this.book = null;
 		console.log(`Loading Polyglot book: ${filename}`);
-		this.loader = NewPolyglotBookLoader(this);
-		this.loader.load(filename);
+		let loader = NewPolyglotBookLoader(this);
+		loader.load(filename);
+		this.loaders.push(loader);
+	};
+
+	renderer.purge_finished_loaders = function() {
+		this.loaders = this.loaders.filter(o => o.running);
 	};
 
 	renderer.load_pgn_book = function(filename) {
@@ -2207,6 +2213,7 @@ function NewRenderer() {
 		debuggo.spin = debuggo.spin ? debuggo.spin + 1 : 1;
 		this.tick++;
 		this.draw();
+		this.purge_finished_loaders();
 		this.update_graph_eval(this.engine.search_running.node);		// Possibly null.
 		setTimeout(this.spin.bind(this), config.update_delay);
 		debuggo.spin -= 1;
