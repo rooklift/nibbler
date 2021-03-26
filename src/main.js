@@ -3148,7 +3148,7 @@ function menu_build() {
 				{
 					label: "Use Polyglot book...",
 					type: "checkbox",
-					checked: false,				// FIXME if we store this over time.
+					checked: false,
 					click: () => {
 						let files = open_dialog({
 							defaultPath: config.book_dialog_folder,
@@ -3176,7 +3176,7 @@ function menu_build() {
 				{
 					label: "Use PGN book...",
 					type: "checkbox",
-					checked: false,				// FIXME if we store this over time.
+					checked: false,
 					click: () => {
 						let files = open_dialog({
 							defaultPath: config.book_dialog_folder,
