@@ -3209,6 +3209,143 @@ function menu_build() {
 					}
 				},
 				{
+					label: "Book depth limit",
+					submenu: [
+						{
+							label: "Unlimited",
+							type: "checkbox",
+							checked: typeof config.book_depth !== "number",
+							click: () => {
+								set_checks("Play", "Book depth limit", "Unlimited");
+								win.webContents.send("set", {
+									key: "book_depth",
+									value: null,
+								});
+							}
+						},
+						{
+							label: "20",
+							type: "checkbox",
+							checked: config.book_depth === 20,
+							click: () => {
+								set_checks("Play", "Book depth limit", "20");
+								win.webContents.send("set", {
+									key: "book_depth",
+									value: 20,
+								});
+							}
+						},
+						{
+							label: "18",
+							type: "checkbox",
+							checked: config.book_depth === 18,
+							click: () => {
+								set_checks("Play", "Book depth limit", "18");
+								win.webContents.send("set", {
+									key: "book_depth",
+									value: 18,
+								});
+							}
+						},
+						{
+							label: "16",
+							type: "checkbox",
+							checked: config.book_depth === 16,
+							click: () => {
+								set_checks("Play", "Book depth limit", "16");
+								win.webContents.send("set", {
+									key: "book_depth",
+									value: 16,
+								});
+							}
+						},
+						{
+							label: "14",
+							type: "checkbox",
+							checked: config.book_depth === 14,
+							click: () => {
+								set_checks("Play", "Book depth limit", "14");
+								win.webContents.send("set", {
+									key: "book_depth",
+									value: 14,
+								});
+							}
+						},
+						{
+							label: "12",
+							type: "checkbox",
+							checked: config.book_depth === 12,
+							click: () => {
+								set_checks("Play", "Book depth limit", "12");
+								win.webContents.send("set", {
+									key: "book_depth",
+									value: 12,
+								});
+							}
+						},
+						{
+							label: "10",
+							type: "checkbox",
+							checked: config.book_depth === 10,
+							click: () => {
+								set_checks("Play", "Book depth limit", "10");
+								win.webContents.send("set", {
+									key: "book_depth",
+									value: 10,
+								});
+							}
+						},
+						{
+							label: "8",
+							type: "checkbox",
+							checked: config.book_depth === 8,
+							click: () => {
+								set_checks("Play", "Book depth limit", "8");
+								win.webContents.send("set", {
+									key: "book_depth",
+									value: 8,
+								});
+							}
+						},
+						{
+							label: "6",
+							type: "checkbox",
+							checked: config.book_depth === 6,
+							click: () => {
+								set_checks("Play", "Book depth limit", "6");
+								win.webContents.send("set", {
+									key: "book_depth",
+									value: 6,
+								});
+							}
+						},
+						{
+							label: "4",
+							type: "checkbox",
+							checked: config.book_depth === 4,
+							click: () => {
+								set_checks("Play", "Book depth limit", "4");
+								win.webContents.send("set", {
+									key: "book_depth",
+									value: 4,
+								});
+							}
+						},
+						{
+							label: "2",
+							type: "checkbox",
+							checked: config.book_depth === 2,
+							click: () => {
+								set_checks("Play", "Book depth limit", "2");
+								win.webContents.send("set", {
+									key: "book_depth",
+									value: 2,
+								});
+							}
+						},
+					]
+				},
+				{
 					type: "separator"
 				},
 				{

@@ -212,7 +212,7 @@ function NewRenderer() {
 			return false;
 		}
 
-		if (this.tree.node.depth >= config.book_depth * 2) {
+		if (typeof config.book_depth === "number" && this.tree.node.depth >= config.book_depth * 2) {
 			return false;
 		}
 
