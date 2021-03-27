@@ -214,11 +214,7 @@ const PolyglotActiveXorVal = 0xf8d626aaaf278509n;
 
 // ------------------------------------------------------------------------------------------------------------------------
 
-const PolyglotPieceKinds = "pPnNbBrRqQkK";								// The index is what matters, e.g. N is 3.
-
-const PolyglotPromotions = ["", "n", "b", "r", "q", "", "", ""];		// Values in indices 5-7 in case of bad data.
-
-const PolyglotMoveLookup = [];											// Lookup table for book blob bytes 8-9.
+const PolyglotMoveLookup = [];						// Lookup table for book blob bytes 8-9.
 
 for (let n = 0; n < 65536; n++) {
 
@@ -231,7 +227,7 @@ for (let n = 0; n < 65536; n++) {
 	let source = Point(from_file, 7 - from_row);
 	let dest   = Point(to_file,   7 - to_row);
 
-	let promch = PolyglotPromotions[promval];
+	let promch = ["", "n", "b", "r", "q", "", "", ""][promval];
 
 	PolyglotMoveLookup.push(source.s + dest.s + promch);
 }
@@ -258,7 +254,7 @@ function KeyFromBoard(board) {		// Returns a string like "463b96181691fc9c"
 			if (!board.state[x][y]) {
 				continue;
 			}
-			let piecekind = PolyglotPieceKinds.indexOf(board.state[x][y]);
+			let piecekind = "pPnNbBrRqQkK".indexOf(board.state[x][y]);
 			if (piecekind === -1) {
 				continue;
 			}
