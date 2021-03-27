@@ -61,7 +61,7 @@ function NewPolyglotBookLoader(hub) {
 			if (this.n % 16000 === 0) {
 				if (performance.now() - continuetime > 20) {
 					this.hub.set_special_message(`Loading... ${(100 * (this.n / this.buf.length)).toFixed(0)}%`);
-					setTimeout(() => {this.continue()}, 5);
+					setTimeout(() => {this.continue();}, 5);
 					return;
 				}
 			}
@@ -157,7 +157,7 @@ function NewPGNBookLoader(hub) {
 			if (this.n % 100 === 0) {
 				if (performance.now() - continuetime > 20) {
 					this.hub.set_special_message(`Loading... ${(100 * (this.n / this.pgn_choices.length)).toFixed(0)}%`);
-					setTimeout(() => {this.continue()}, 5);
+					setTimeout(() => {this.continue();}, 5);
 					return;
 				}
 			}
