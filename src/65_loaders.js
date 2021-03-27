@@ -100,7 +100,7 @@ function NewPGNBookLoader(hub) {
 	loader.starttime = performance.now();
 
 	loader.book = [];
-	loader.book.type = "pgn";
+	loader.book.type = "pgn";		// This just identifies the source, it will be converted to Polyglot internally.
 	loader.pgn_choices = null;
 	loader.error_flag = false;
 	loader.buf = null;
