@@ -2214,5 +2214,27 @@ function NewRenderer() {
 
 	};
 
+	renderer.load_fen_or_pgn_from_string = function (s) {
+		const str = typeof s === 'string' ? s.trim() : '';
+		let isFen = false;
+		if (str) {
+			try {
+				isFen = LoadFEN(str)
+			} catch (err) {
+				console.log("Load from clipboard: no FEN game, will try as PGN...");
+			}
+
+			if (isFen) {
+				this.load_fen(str);
+				console.log("Clipboard loaded as FEN");
+			} else {
+				this.load_pgn_from_string(s);
+			}
+		} else {
+			console.log("Empty clipboard, game load ignored; input: [%s]", JSON.stringify(s));
+			return;
+		}
+	};
+
 	return renderer;
 }
