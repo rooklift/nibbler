@@ -32,6 +32,8 @@ Some Windows and Linux standalone releases are uploaded to the [Releases](https:
 
 Running Nibbler from source requires Electron, but has no other dependencies. If you have Electron installed (e.g. `npm install -g electron`) you can likely enter the `/src` directory, then do `electron .` to run it. Nibbler should be compatible with at least version 5 and above.
 
+You could also build a standalone app. See comments inside the Python script `builder.py` for info.
+
 # Advanced engine options
 
 Most people won't need them, but all of Leela's engine options can be set in two ways:
