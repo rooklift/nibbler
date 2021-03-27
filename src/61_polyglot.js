@@ -267,30 +267,22 @@ function KeyFromBoard(board) {		// Returns a string like "463b96181691fc9c"
 	return BigIntToHex(keynum);
 }
 
-function ExtractInfo(arr) {
-
-	// Given 16 bytes, extract the needed stuff.
-
-	if (arr.length !== 16) {
-		throw "ExtractInfo bad arg";
-	}
+function ExtractInfo(buf, i) {
 
 	// Bytes 0-7 represent the key as a big-endian number.
 
-	let hi = (arr[0] * 16777216) + (arr[1] * 65536) + (arr[2] * 256) + arr[3];
-	let lo = (arr[4] * 16777216) + (arr[5] * 65536) + (arr[6] * 256) + arr[7];
+	let hi = (buf[i++] * 16777216) + (buf[i++] * 65536) + (buf[i++] * 256) + buf[i++];
+	let lo = (buf[i++] * 16777216) + (buf[i++] * 65536) + (buf[i++] * 256) + buf[i++];
 	let keynum = (BigInt(hi) << 32n) + BigInt(lo);
 	let key = BigIntToHex(keynum);
 
 	// Bytes 8-9 represent the move as a big-endian bitfield, uh...
 
-	let move = ExtractMove((arr[8] * 256) + arr[9]);
+	let move = ExtractMove((buf[i++] * 256) + buf[i++]);
 
 	// Bytes 10-11 represent the quality as a big-endian number.
 
-	let weight = (arr[10] * 256) + arr[11];
-
-	// Bytes 12-15 are ignored by us.
+	let weight = (buf[i++] * 256) + buf[i++];
 
 	return {key, move, weight};
 }
