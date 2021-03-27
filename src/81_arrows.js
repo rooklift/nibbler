@@ -380,7 +380,7 @@ let arrow_props = {
 			let [x1, y1] = XY(info_list[i].move.slice(0, 2));
 			let [x2, y2] = XY(info_list[i].move.slice(2, 4));
 
-			let colour = config.good_colour;
+			let colour = i === 0 ? config.best_colour : config.good_colour;
 
 			let x_head_adjustment = 0;				// Adjust head of arrow for castling moves...
 			let normal_castling_flag = false;
