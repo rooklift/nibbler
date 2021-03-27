@@ -240,11 +240,11 @@ function BigIntToHex(big) {
 	return s;
 }
 
-function KeyFromBoard(board) {		// Returns a string like "463b96181691fc9c"
+function KeyFromBoard(board) {
 
 	if (!board) return "";
 
-	let keynum = 0n;
+	let key = 0n;
 
 	// Note to anyone reading this trying to make their own Polyglot routines:
 	// My board (0,0) is a8, not a1. Otherwise, you'd use y and not (7 - y) in the index calc.
@@ -259,27 +259,27 @@ function KeyFromBoard(board) {		// Returns a string like "463b96181691fc9c"
 				continue;
 			}
 			let index = (64 * piecekind) + (8 * (7 - y)) + x;					// I mean here.
-			keynum ^= PolyglotPieceXorVals[index];
+			key ^= PolyglotPieceXorVals[index];
 		}
 	}
 
-	if (board.castling.includes("H")) keynum ^= PolyglotCastleXorVals[0];
-	if (board.castling.includes("A")) keynum ^= PolyglotCastleXorVals[1];
-	if (board.castling.includes("h")) keynum ^= PolyglotCastleXorVals[2];
-	if (board.castling.includes("a")) keynum ^= PolyglotCastleXorVals[3];
+	if (board.castling.includes("H")) key ^= PolyglotCastleXorVals[0];
+	if (board.castling.includes("A")) key ^= PolyglotCastleXorVals[1];
+	if (board.castling.includes("h")) key ^= PolyglotCastleXorVals[2];
+	if (board.castling.includes("a")) key ^= PolyglotCastleXorVals[3];
 
 	// Happily, the format's idea of when an en passant square should be included is identical to mine...
 	// "If the opponent has performed a double pawn push and there is now a pawn next to it belonging to the player to move."
 
 	if (board.enpassant) {
-		keynum ^= PolyglotEnPassantXorVals[board.enpassant.x];
+		key ^= PolyglotEnPassantXorVals[board.enpassant.x];
 	}
 
 	if (board.active === "w") {
-		keynum ^= PolyglotActiveXorVal;
+		key ^= PolyglotActiveXorVal;
 	}
 
-	return BigIntToHex(keynum);
+	return key;
 }
 
 function ParsePolyglotBlob(buf, i) {		// Args are Buffer + offset.
@@ -288,8 +288,7 @@ function ParsePolyglotBlob(buf, i) {		// Args are Buffer + offset.
 
 	let hi = (buf[i++] * 16777216) + (buf[i++] * 65536) + (buf[i++] * 256) + buf[i++];
 	let lo = (buf[i++] * 16777216) + (buf[i++] * 65536) + (buf[i++] * 256) + buf[i++];
-	let keynum = (BigInt(hi) << 32n) + BigInt(lo);
-	let key = BigIntToHex(keynum);
+	let key = (BigInt(hi) << 32n) + BigInt(lo);
 
 	// Bytes 8-9 represent the move as a big-endian bitfield, uh...
 
