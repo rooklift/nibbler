@@ -3,7 +3,8 @@
 // http://hgm.nubati.net/book_format.html
 
 // Note on bitwise operations on BigInt values: everything is treated as infinite-length twos-compliment,
-// which means negatives will never be accidentally introduced.
+// which means negatives will never be accidentally introduced. (For normal Numbers, bitwise operations
+// coerce to 32-bit signed.)
 
 const PolyglotPieceXorVals = [		// the trailing n here means BigInt
 	0x9d39247e33776d41n, 0x2af7398005aaa5c7n, 0x44db015024623547n, 0x9c15f73e62a76ae2n,
@@ -268,8 +269,7 @@ function KeyFromBoard(board) {		// Returns a string like "463b96181691fc9c"
 
 function ExtractInfo(arr) {
 
-	// Given 16 bytes, extract the needed stuff. Resist the temptation to use
-	// much << in this, JavaScript bit fiddling is a pain.
+	// Given 16 bytes, extract the needed stuff.
 
 	if (arr.length !== 16) {
 		throw "ExtractInfo bad arg";
