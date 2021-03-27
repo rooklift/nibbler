@@ -139,3 +139,6 @@ exports.c960_warning =
 `We appear to have entered a game of Chess960, however this engine does not support Chess960. \
 Who knows what will happen. Probably not good things. Maybe bad things.`;
 
+
+exports.file_too_big =
+`Sorry, this file is probably too large to be safely loaded in Nibbler.`

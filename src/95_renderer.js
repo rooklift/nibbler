@@ -687,6 +687,17 @@ function NewRenderer() {
 	};
 
 	renderer.load_polyglot_book = function(filename) {
+
+		try {
+			let filesize = fs.statSync(filename).size;				// File size in bytes
+			if (filesize >= 1073741824) {							// Lets say a 1 GB limit
+				alert(messages.file_too_big);
+				return;
+			}
+		} catch (err) {
+			console.log("While checking file size: ", err.toString());
+		}
+
 		this.book = null;
 		this.send_ack_book();
 		for (let loader of this.loaders) {
