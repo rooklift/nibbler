@@ -628,6 +628,17 @@ function NewRenderer() {
 		this.position_changed(true, true);
 	};
 
+	renderer.load_fen_or_pgn_from_string = function(s) {
+		if (typeof s !== "string") return;
+		s = s.trim();
+		try {
+			LoadFEN(s);			// Used as a test. Throws on any error.
+			this.load_fen(s);
+		} catch (err) {
+			this.load_pgn_from_string(s);
+		}
+	};
+
 	renderer.new_game = function() {
 		this.load_fen("rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1");
 	};
@@ -2212,28 +2223,6 @@ function NewRenderer() {
 			node.table.update_eval_from_move(info.move);
 		}
 
-	};
-
-	renderer.load_fen_or_pgn_from_string = function (s) {
-		const str = typeof s === 'string' ? s.trim() : '';
-		let isFen = false;
-		if (str) {
-			try {
-				isFen = LoadFEN(str)
-			} catch (err) {
-				console.log("Load from clipboard: no FEN game, will try as PGN...");
-			}
-
-			if (isFen) {
-				this.load_fen(str);
-				console.log("Clipboard loaded as FEN");
-			} else {
-				this.load_pgn_from_string(s);
-			}
-		} else {
-			console.log("Empty clipboard, game load ignored; input: [%s]", JSON.stringify(s));
-			return;
-		}
 	};
 
 	return renderer;
