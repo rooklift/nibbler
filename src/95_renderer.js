@@ -2176,7 +2176,7 @@ function NewRenderer() {
 
 		// This is all pretty isolated from everything else. Keep it that way.
 
-		if (!this.book || this.book.type === "pgn") {
+		if (!this.book) {
 			return;
 		}
 
