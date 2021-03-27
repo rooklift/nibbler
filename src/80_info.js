@@ -235,12 +235,6 @@ let info_receiver_props = {
 			let new_pv = InfoPV(s);
 			C960_PV_Converter(new_pv, board);
 
-			// Note: we used to ignore PV of length 1 on account of Stockfish sending
-			// such PVs sometimes, but this does lead to actual PVs of length 1 being
-			// ignored, which can lead to stale long PVs in the infobox.
-
-			new_pv[0] = move;		// This was partial mitigation for wrong-format castling. It's now redundant with C960_PV_Converter().
-
 			if (CompareArrays(new_pv, move_info.pv) === false) {
 				if (!board.sequence_illegal(new_pv)) {
 					if (move_cycle_pre_update === move_info.cycle && ArrayStartsWith(move_info.pv, new_pv)) {
