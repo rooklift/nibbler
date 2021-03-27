@@ -282,7 +282,7 @@ function KeyFromBoard(board) {		// Returns a string like "463b96181691fc9c"
 	return BigIntToHex(keynum);
 }
 
-function ExtractInfo(buf, i) {		// Used when reading a Polyglot file, to extract the useful info. Args are Buffer + offset.
+function ParsePolyglotBlob(buf, i) {		// Args are Buffer + offset.
 
 	// Bytes 0-7 represent the key as a big-endian number.
 

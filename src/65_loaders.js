@@ -50,7 +50,7 @@ function NewPolyglotBookLoader(hub) {
 				return;
 			}
 
-			let o = ExtractInfo(this.buf, this.n);
+			let o = ParsePolyglotBlob(this.buf, this.n);
 			if (this.n > 0 && o.key < this.book[this.book.length - 1].key) {
 				this.book_is_sorted = false;
 			}
