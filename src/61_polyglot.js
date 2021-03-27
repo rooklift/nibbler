@@ -271,7 +271,7 @@ function ExtractInfo(arr) {
 	// Given 16 bytes, extract the needed stuff. Resist the temptation to use
 	// much << in this, JavaScript bit fiddling is a pain.
 
-	if (arr.length !== 16 || !(arr instanceof Uint8Array)) {
+	if (arr.length !== 16) {
 		throw "ExtractInfo bad arg";
 	}
 
