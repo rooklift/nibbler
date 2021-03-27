@@ -1509,7 +1509,7 @@ function menu_build() {
 				{
 					label: "Book explorer mode",
 					type: "checkbox",
-					checked: config.book_explorer,
+					checked: config.book_explorer,			// But this is never saved in the config file.
 					click: () => {
 						win.webContents.send("call", {
 							fn: "toggle",
