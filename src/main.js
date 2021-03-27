@@ -3770,7 +3770,7 @@ function menu_build() {
 					}
 				},
 				{
-					label: "Polyglot explorer",
+					label: "Book explorer",
 					type: "checkbox",
 					checked: config.book_explorer,
 					click: () => {
