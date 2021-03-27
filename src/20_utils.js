@@ -590,3 +590,17 @@ function StringIsNumeric(s) {
 	}
 	return true;
 }
+
+function FileExceedsGigabyte(filename) {
+	try {
+		let filesize = fs.statSync(filename).size;
+		if (filesize >= 1073741824) {
+			return true;
+		} else {
+			return false;
+		}
+	} catch (err) {
+		console.log("While checking file size: ", err.toString());
+		return false;		// Eh, who knows
+	}
+}

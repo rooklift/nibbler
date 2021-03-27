@@ -669,6 +669,12 @@ function NewRenderer() {
 	};
 
 	renderer.open = function(filename) {
+
+		if (FileExceedsGigabyte(filename)) {
+			alert(messages.file_too_big);
+			return;
+		}
+
 		let buf;
 		try {
 			if (filename === __dirname || filename === ".") {		// Can happen when extra args are passed to main process. Silently return.
@@ -688,14 +694,9 @@ function NewRenderer() {
 
 	renderer.load_polyglot_book = function(filename) {
 
-		try {
-			let filesize = fs.statSync(filename).size;				// File size in bytes
-			if (filesize >= 1073741824) {							// Lets say a 1 GB limit
-				alert(messages.file_too_big);
-				return;
-			}
-		} catch (err) {
-			console.log("While checking file size: ", err.toString());
+		if (FileExceedsGigabyte(filename)) {
+			alert(messages.file_too_big);
+			return;
 		}
 
 		this.book = null;
@@ -712,6 +713,12 @@ function NewRenderer() {
 	};
 
 	renderer.load_pgn_book = function(filename) {
+
+		if (FileExceedsGigabyte(filename)) {
+			alert(messages.file_too_big);
+			return;
+		}
+
 		this.book = null;
 		this.send_ack_book();
 		for (let loader of this.loaders) {
@@ -833,6 +840,11 @@ function NewRenderer() {
 	};
 
 	renderer.validate_pgn = function(filename) {
+
+		if (FileExceedsGigabyte(filename)) {
+			alert(messages.file_too_big);
+			return;
+		}
 
 		let buf;
 		try {
