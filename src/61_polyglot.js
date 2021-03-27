@@ -214,7 +214,7 @@ const PolyglotActiveXorVal = 0xf8d626aaaf278509n;
 
 // ------------------------------------------------------------------------------------------------------------------------
 
-const PolyglotMoveLookup = [];						// Lookup table for book blob bytes 8-9.
+const PolyglotMoveLookup = [];		// Lookup table for book blob bytes 8-9. Most of the moves are impossible, but meh.
 
 for (let n = 0; n < 65536; n++) {
 
