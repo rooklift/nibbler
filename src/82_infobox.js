@@ -82,7 +82,7 @@ let infobox_props = {
 
 			if (config.book_explorer) {
 
-				status_string += `<span class="blue">BOOK EXPLORER MODE</span>`;
+				status_string += `<span class="blue">Book explorer arrows only!</span>`;
 
 			} else {
 
