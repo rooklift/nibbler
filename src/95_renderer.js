@@ -2190,6 +2190,9 @@ function NewRenderer() {
 					total_weight += o.weight;
 				}
 			}
+			if (total_weight <= 0) {
+				total_weight = 1;		// Avoid div by zero.
+			}
 			let tmp = {};
 			for (let o of objects) {
 				if (!this.tree.node.board.illegal(o.move)) {
