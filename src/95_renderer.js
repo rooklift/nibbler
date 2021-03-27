@@ -2179,6 +2179,7 @@ function NewRenderer() {
 		if (!this.book) {
 			this.explorer_objects_cache = null;
 			this.explorer_cache_node_id = null;
+			this.info_handler.draw_explorer_arrows(this.tree.node, []);		// Needs to happen, to update the one_click_moves.
 			return;
 		}
 
