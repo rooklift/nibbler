@@ -215,7 +215,26 @@ const PolyglotActiveXorVal = 0xf8d626aaaf278509n;
 // ------------------------------------------------------------------------------------------------------------------------
 
 const PolyglotPieceKinds = "pPnNbBrRqQkK";								// The index is what matters, e.g. N is 3.
-const PolyglotPromotions = ["", "n", "b", "r", "q", "", "", ""];		// Values in indices 5-7 just in case.
+
+const PolyglotPromotions = ["", "n", "b", "r", "q", "", "", ""];		// Values in indices 5-7 in case of bad data.
+
+const PolyglotMoveLookup = [];											// Lookup table for book blob bytes 8-9.
+
+for (let n = 0; n < 65536; n++) {
+
+	let to_file    =  (n >>  0) & 0x07;
+	let to_row     =  (n >>  3) & 0x07;
+	let from_file  =  (n >>  6) & 0x07;
+	let from_row   =  (n >>  9) & 0x07;
+	let promval    =  (n >> 12) & 0x07;
+
+	let source = Point(from_file, 7 - from_row);
+	let dest   = Point(to_file,   7 - to_row);
+
+	let promch = PolyglotPromotions[promval];
+
+	PolyglotMoveLookup.push(source.s + dest.s + promch);
+}
 
 // ------------------------------------------------------------------------------------------------------------------------
 
@@ -278,39 +297,13 @@ function ExtractInfo(buf, i) {		// Used when reading a Polyglot file, to extract
 
 	// Bytes 8-9 represent the move as a big-endian bitfield, uh...
 
-	let move = ExtractMove((buf[i++] * 256) + buf[i++]);
+	let move = PolyglotMoveLookup[(buf[i++] * 256) + buf[i++]];
 
 	// Bytes 10-11 represent the quality as a big-endian number.
 
 	let weight = (buf[i++] * 256) + buf[i++];
 
 	return {key, move, weight};
-}
-
-function ExtractMove(num) {
-
-	// Bits  0-2   :  To file			(0-2 means the rightmost bits)
-	// Bits  3-5   :  To row
-	// Bits  6-8   :  From file
-	// Bits  9-11  :  From row
-	// Bits 12-14  :  Promotion
-
-	if (num < 0 || num > 65535) {
-		throw "ExtractMove bad arg";
-	}
-
-	let to_file    =  (num >>  0) & 0x07;
-	let to_row     =  (num >>  3) & 0x07;
-	let from_file  =  (num >>  6) & 0x07;
-	let from_row   =  (num >>  9) & 0x07;
-	let promval    =  (num >> 12) & 0x07;
-
-	let source = Point(from_file, 7 - from_row);
-	let dest = Point(to_file, 7 - to_row);
-
-	let promch = PolyglotPromotions[promval];
-
-	return source.s + dest.s + promch;
 }
 
 function SortPolyglotBook(book) {
