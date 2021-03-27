@@ -2,7 +2,7 @@
 
 // http://hgm.nubati.net/book_format.html
 
-// Note on bitwise operations on BigInt values: everything is treated as infinite-length twos-compliement,
+// Note on bitwise operations on BigInt values: everything is treated as infinite-length twos-compliment,
 // which means negatives will never be accidentally introduced.
 
 const PolyglotPieceXorVals = [		// the trailing n here means BigInt
