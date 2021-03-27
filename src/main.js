@@ -1502,7 +1502,21 @@ function menu_build() {
 							}
 						},
 					]
-				}
+				},
+				{
+					type: "separator"
+				},
+				{
+					label: "Book explorer mode",
+					type: "checkbox",
+					checked: config.book_explorer,
+					click: () => {
+						win.webContents.send("call", {
+							fn: "toggle",
+							args: ["book_explorer"]
+						});
+					}
+				},
 			]
 		},
 		{
@@ -3766,17 +3780,6 @@ function menu_build() {
 						win.webContents.send("call", {
 							fn: "toggle",
 							args: ["show_engine_state"]
-						});
-					}
-				},
-				{
-					label: "Book explorer",
-					type: "checkbox",
-					checked: config.book_explorer,
-					click: () => {
-						win.webContents.send("call", {
-							fn: "toggle",
-							args: ["book_explorer"]
 						});
 					}
 				},
