@@ -354,9 +354,12 @@ let arrow_props = {
 		draw_arrows_last_mode = mode;		// For debugging only.
 	},
 
-
-	// The crudest of copy/paste hatchet jobs...
-	// Note that info_list here should not be modified. It is already sorted by weight.
+	// ----------------------------------------------------------------------------------------------------------
+	// We have a special function for the book explorer mode. Explorer mode is very nicely isolated from the rest
+	// of the app. The info_list here is just a list of objects each containing only "move" and "weight" - where
+	// the weights have been normalised to the 0-1 scale and the list has been sorted.
+	//
+	// Note that info_list here should not be modified.
 
 	draw_explorer_arrows: function(node, info_list) {
 
