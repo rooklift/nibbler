@@ -439,3 +439,31 @@ function HubProbe() {
 	}
 	return ret;
 }
+
+function PolyglotStressTest() {
+
+	// Given a randomly chosen singleton (position with 1 move),
+	// does PolyglotProbe() actually find it?
+
+	if (!hub.book) return "Need hub to have a book!";
+
+	let trials = 0;
+	let successes = 0;
+
+	for (let n = 0; n < 100000; n++) {
+		let i = RandInt(1, hub.book.length - 2);
+		let object = hub.book[i];
+		if (hub.book[i - 1].key === object.key || hub.book[i + 1].key === object.key) {
+			continue;
+		}
+		trials++;
+		let proberesults = PolyglotProbe(object.key, hub.book);
+		if (proberesults.length === 1) {
+			successes++;
+		} else {
+			console.log("Missed:", object.key);
+		}
+	}
+
+	return `${trials} trials, ${successes} successes, ${trials - successes} failures.`;
+}
