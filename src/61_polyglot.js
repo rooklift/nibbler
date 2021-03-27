@@ -228,7 +228,7 @@ function KeyFromBoard(board) {		// Returns a string like "463b96181691fc9c"
 
 	if (!board) return "";
 
-	let keynum = BigInt(0);
+	let keynum = 0n;
 
 	// Note to anyone reading this trying to make their own Polyglot routines:
 	// My board (0,0) is a8, not a1. Otherwise, you'd use y and not (7 - y) in the index calc.
@@ -279,7 +279,7 @@ function ExtractInfo(arr) {
 
 	let hi = (arr[0] * 16777216) + (arr[1] * 65536) + (arr[2] * 256) + arr[3];
 	let lo = (arr[4] * 16777216) + (arr[5] * 65536) + (arr[6] * 256) + arr[7];
-	let keynum = (BigInt(hi) << BigInt(32)) + BigInt(lo);
+	let keynum = (BigInt(hi) << 32n) + BigInt(lo);
 	let key = BigIntToHex(keynum);
 
 	// Bytes 8-9 represent the move as a big-endian bitfield, uh...
