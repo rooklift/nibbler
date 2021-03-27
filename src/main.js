@@ -316,7 +316,7 @@ function menu_build() {
 					type: "separator"
 				},
 				{
-					label: "Load FEN/PGN from clipboard",
+					label: "Load FEN / PGN from clipboard",
 					accelerator: "CommandOrControl+Shift+V",
 					click: () => {
 						win.webContents.send("call", {
