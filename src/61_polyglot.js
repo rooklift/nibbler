@@ -427,5 +427,15 @@ function PolyglotProbe(key, book) {
 
 // For debugging...
 function HubProbe() {
-	return PolyglotProbe(KeyFromBoard(hub.tree.node.board), hub.book);
+	let objects = PolyglotProbe(KeyFromBoard(hub.tree.node.board), hub.book);
+	let ret = [];
+	for (let o of objects) {
+		ret.push({
+			hex: BigIntToHex(o.key),
+			key: o.key,
+			move: o.move,
+			weight: o.weight,
+		});
+	}
+	return ret;
 }
