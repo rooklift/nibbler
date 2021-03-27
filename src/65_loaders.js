@@ -78,6 +78,7 @@ function NewPolyglotBookLoader(hub) {
 				SortPolyglotBook(this.book);
 			}
 			this.hub.book = this.book;
+			this.hub.explorer_objects_cache = null;
 			this.hub.send_ack_book();
 			this.hub.set_special_message(`Finished loading book (moves: ${this.book.length})`, "green");
 		}
@@ -170,6 +171,7 @@ function NewPGNBookLoader(hub) {
 		if (this.book) {
 			SortAndDeclutter(this.book);
 			this.hub.book = this.book;
+			this.hub.explorer_objects_cache = null;
 			this.hub.send_ack_book();
 			if (this.error_flag) {
 				this.hub.set_special_message("Finished loading book (some errors occurred)", "yellow");
