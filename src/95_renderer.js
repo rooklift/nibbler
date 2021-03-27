@@ -670,17 +670,17 @@ function NewRenderer() {
 
 	renderer.open = function(filename) {
 
-		if (FileExceedsGigabyte(filename)) {
-			alert(messages.file_too_big);
-			return;
-		}
-
 		let buf;
+
 		try {
 			if (filename === __dirname || filename === ".") {		// Can happen when extra args are passed to main process. Silently return.
 				return;
 			}
 			if (fs.existsSync(filename) === false) {				// Can happen when extra args are passed to main process. Silently return.
+				return;
+			}
+			if (FileExceedsGigabyte(filename)) {
+				alert(messages.file_too_big);
 				return;
 			}
 			buf = fs.readFileSync(filename);
