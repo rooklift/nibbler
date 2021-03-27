@@ -2,6 +2,10 @@
 
 function LoadFEN(fen) {
 
+	if (fen.length > 200) {
+		throw "Invalid FEN - size";
+	}
+
 	let ret = NewPosition();
 
 	fen = ReplaceAll(fen, "\t", " ");

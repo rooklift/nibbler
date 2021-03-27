@@ -168,7 +168,7 @@ function NewPGNBookLoader(hub) {
 		this.running = false;
 		this.buf = null;
 		if (this.book) {
-			SortPolyglotBook(this.book);
+			SortAndDeclutter(this.book);
 			this.hub.book = this.book;
 			this.hub.send_ack_book();
 			if (this.error_flag) {

@@ -326,6 +326,47 @@ function SortPolyglotBook(book) {
 	});
 }
 
+function SortAndDeclutter(book) {
+
+	if (book.length === 0) {
+		return;
+	}
+
+	book.sort((a, b) => {					// Sort by key AND move to make deduplication possible.
+		if (a.key < b.key) return -1;
+		if (a.key > b.key) return 1;
+		if (a.move < b.move) return -1;
+		if (a.move > b.move) return 1;
+		return 0;
+	});
+
+	// Now we deduplicate the book in place...
+
+	let i = 0;			// Slow index
+	let j = 1;			// Fast index
+
+	while (true) {
+
+		if (j >= book.length) {
+			book.length = i + 1;
+			break;
+		}
+
+		if (book[i].key === book[j].key && book[i].move === book[j].move) {
+
+			book[i].weight++;
+			j++;
+
+		} else {
+
+			book[i + 1] = book[j];
+			i++;
+			j++;
+
+		}
+	}
+}
+
 function PolyglotProbe(key, book) {
 
 	// The book is stored as a sorted array (using an object as a dict is too big / slow).

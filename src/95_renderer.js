@@ -628,6 +628,17 @@ function NewRenderer() {
 		this.position_changed(true, true);
 	};
 
+	renderer.load_fen_or_pgn_from_string = function(s) {
+		if (typeof s !== "string") return;
+		s = s.trim();
+		try {
+			LoadFEN(s);			// Used as a test. Throws on any error.
+			this.load_fen(s);
+		} catch (err) {
+			this.load_pgn_from_string(s);
+		}
+	};
+
 	renderer.new_game = function() {
 		this.load_fen("rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1");
 	};
