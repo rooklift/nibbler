@@ -2177,6 +2177,8 @@ function NewRenderer() {
 		// This is all pretty isolated from everything else. Keep it that way.
 
 		if (!this.book) {
+			this.explorer_objects_cache = null;
+			this.explorer_cache_node_id = null;
 			return;
 		}
 
