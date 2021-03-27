@@ -241,11 +241,10 @@ let arrow_props = {
 			}
 		}
 
-		// ------------------------------------------------------------------------------------------------------------
-
 		// It looks best if the longest arrows are drawn underneath. Manhattan distance is good enough.
 		// For the sake of displaying the best pawn promotion (of the 4 possible), sort ties are broken
-		// by node counts, with lower drawn first. FIXME: what about Stockfish?
+		// by node counts, with lower drawn first. [Eh, what about Stockfish? Meh, it doesn't affect
+		// the heads, merely the colour of the lines, so it's not a huge problem I think.]
 
 		arrows.sort((a, b) => {
 			if (Math.abs(a.x2 - a.x1) + Math.abs(a.y2 - a.y1) < Math.abs(b.x2 - b.x1) + Math.abs(b.y2 - b.y1)) {
