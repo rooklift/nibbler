@@ -3770,6 +3770,17 @@ function menu_build() {
 					}
 				},
 				{
+					label: "Book explorer",
+					type: "checkbox",
+					checked: config.book_explorer,
+					click: () => {
+						win.webContents.send("call", {
+							fn: "toggle",
+							args: ["book_explorer"]
+						});
+					}
+				},
+				{
 					type: "separator"
 				},
 				{

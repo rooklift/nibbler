@@ -2163,9 +2163,50 @@ function NewRenderer() {
 
 	renderer.draw_canvas_arrows = function() {
 		boardctx.clearRect(0, 0, canvas.width, canvas.height);
+		if (config.book_explorer) {
+			this.draw_explorer_arrows();
+			return;
+		}
 		let arrow_spotlight_square = config.click_spotlight ? this.active_square : null;
 		let next_move = (config.next_move_arrow && this.tree.node.children.length > 0) ? this.tree.node.children[0].move : null;
 		this.info_handler.draw_arrows(this.tree.node, arrow_spotlight_square, next_move);
+	};
+
+	renderer.draw_explorer_arrows = function() {
+
+		// This is all pretty isolated from everything else. Keep it that way.
+
+		if (!this.book) {
+			this.explorer_objects_cache = null;
+			this.explorer_cache_node_id = null;
+			return;
+		}
+
+		if (!this.explorer_objects_cache || this.explorer_cache_node_id !== this.tree.node.id) {
+			let objects = PolyglotProbe(KeyFromBoard(this.tree.node.board), this.book);
+			let total_weight = 0;
+			if (Array.isArray(objects)) {
+				for (let o of objects) {
+					total_weight += o.weight;
+				}
+			}
+			if (total_weight <= 0) {
+				total_weight = 1;		// Avoid div by zero.
+			}
+			let tmp = {};
+			for (let o of objects) {
+				if (!this.tree.node.board.illegal(o.move)) {
+					if (tmp[o.move] === undefined) {
+						tmp[o.move] = {move: o.move, weight: o.weight / total_weight};
+					}
+				}
+			}
+			this.explorer_cache_node_id = this.tree.node.id;
+			this.explorer_objects_cache = Object.values(tmp);
+			this.explorer_objects_cache.sort((a, b) => b.weight - a.weight);
+		}
+
+		this.info_handler.draw_explorer_arrows(this.tree.node, this.explorer_objects_cache);
 	};
 
 	renderer.draw_statusbox = function() {
