@@ -696,6 +696,7 @@ function NewRenderer() {
 
 		if (FileExceedsGigabyte(filename)) {
 			alert(messages.file_too_big);
+			this.send_ack_book();
 			return;
 		}
 
@@ -716,6 +717,7 @@ function NewRenderer() {
 
 		if (FileExceedsGigabyte(filename)) {
 			alert(messages.file_too_big);
+			this.send_ack_book();
 			return;
 		}
 
