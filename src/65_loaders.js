@@ -21,13 +21,10 @@ function NewPolyglotBookLoader(filename, callback) {
 		fs.readFile(filename, (err, data) => {
 			if (err) {
 				console.log(err);
-				this.shutdown();
-				return;
-			}
-			if (this.callback) {
+			} else if (this.callback) {
 				let cb = this.callback; cb(data);
-				this.callback = null;
 			}
+			this.shutdown();
 		});
 	};
 
@@ -68,9 +65,7 @@ function NewPGNBookLoader(filename, callback) {
 			if (err) {
 				console.log(err);
 				this.shutdown();
-				return;
-			}
-			if (this.callback) {					// We might already have aborted
+			} else if (this.callback) {				// We might already have aborted
 				this.buf = data;
 				this.continue();
 			}
@@ -167,7 +162,7 @@ function NewPGNPreParser(buf, callback) {		// Cannot fail unless aborted.
 		}
 
 		if (!this.lines) {
-			this.lines = split_buffer(this.buf);
+			this.lines = split_buffer(this.buf);		// FIXME / TODO - make this async too.
 		}
 
 		let continuetime = performance.now();
@@ -278,9 +273,7 @@ function NewPGNFileLoader(filename, callback) {
 			if (err) {
 				console.log(err);
 				this.shutdown();
-				return;
-			}
-			if (this.callback) {					// We might already have aborted
+			} else if (this.callback) {					// We might already have aborted
 				this.buf = data;
 				this.continue();
 			}
