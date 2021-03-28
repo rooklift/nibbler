@@ -448,7 +448,8 @@ function BookProbe(key, book) {
 	return ret;
 }
 
-// For debugging...
+// For debugging...........................................................................................................
+
 function HubProbe() {
 	let objects = BookProbe(KeyFromBoard(hub.tree.node.board), hub.book);
 	let ret = [];
@@ -487,8 +488,6 @@ function BookStressTest() {
 		let left_o = BookAtLogicalIndex(hub.book, i - 1);
 		let mid_o = BookAtLogicalIndex(hub.book, i);
 		let right_o = BookAtLogicalIndex(hub.book, i + 1);
-
-
 
 		if (left_o.key === mid_o.key || right_o.key === mid_o.key) {
 			continue;
