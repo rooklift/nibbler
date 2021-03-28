@@ -305,6 +305,8 @@ function ParsePolyglotBlob(buf, off) {		// Args are Buffer + offset.
 
 function SortAndDeclutterPGNBook(book) {
 
+	// book must be an array of objects of form {key, move, weight}
+
 	if (book instanceof Buffer) {
 		throw "Cannot call SortAndDeclutterPGNBook() on a Buffer.";
 	}
