@@ -81,6 +81,7 @@ function NewPGNBookLoader(filename, callback) {
 		if (!this.pgn_choices) {
 			this.pgn_choices = PreParsePGN(this.buf);			// FIXME? Whole thing can still lock up here! Meh.
 			setTimeout(() => {this.continue();}, 5);
+			return;
 		}
 
 		while (true) {
@@ -104,8 +105,8 @@ function NewPGNBookLoader(filename, callback) {
 
 			if (this.n % 100 === 0) {
 				if (performance.now() - continuetime > 20) {
-					setTimeout(() => {this.continue();}, 5);
 					this.msg = `Loading book... ${(100 * (this.n / this.pgn_choices.length)).toFixed(0)}%`;
+					setTimeout(() => {this.continue();}, 5);
 					return;
 				}
 			}
