@@ -361,7 +361,6 @@ function BookAtLogicalIndex(book, i) {
 }
 
 function BookLogicalLength(book) {
-	if (!book) throw "BookLength() bad book";
 	if (book instanceof Buffer) {
 		return Math.floor(book.length / 16);
 	}
@@ -503,4 +502,3 @@ function BookStressTest() {
 
 	return `${trials} trials, ${successes} successes, ${trials - successes} failures.`;
 }
-
