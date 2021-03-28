@@ -694,16 +694,7 @@ function NewRenderer() {
 		console.log(`Loading PGN: ${filename}`);
 
 		let loader = NewPGNFileLoader(filename, (games) => {
-			let new_pgn_choices = games;
-			if (new_pgn_choices.length === 1) {
-				let success = this.load_pgn_object(new_pgn_choices[0]);
-				if (success) {
-					this.pgn_choices = new_pgn_choices;		// We only want to set this to a 1 value array if it actually worked.
-				}
-			} else {
-				this.pgn_choices = new_pgn_choices;			// Setting it to a multi-value array is "always" OK.
-				this.show_pgn_chooser();					// Now we need to have the user choose a game.
-			}
+			this.handle_games_from_loader(games);
 		});
 
 		this.loaders.push(loader);
@@ -786,20 +777,23 @@ function NewRenderer() {
 		}
 
 		let loader = NewPGNPreParser(buf, (games) => {
-			let new_pgn_choices = games;
-			if (new_pgn_choices.length === 1) {
-				let success = this.load_pgn_object(new_pgn_choices[0]);
-				if (success) {
-					this.pgn_choices = new_pgn_choices;		// We only want to set this to a 1 value array if it actually worked.
-				}
-			} else {
-				this.pgn_choices = new_pgn_choices;			// Setting it to a multi-value array is "always" OK.
-				this.show_pgn_chooser();					// Now we need to have the user choose a game.
-			}
+			this.handle_games_from_loader(games);
 		});
 
 		this.loaders.push(loader);
+	};
 
+	renderer.handle_games_from_loader = function(games) {
+		let new_pgn_choices = games;
+		if (new_pgn_choices.length === 1) {
+			let success = this.load_pgn_object(new_pgn_choices[0]);
+			if (success) {
+				this.pgn_choices = new_pgn_choices;		// We only want to set this to a 1 value array if it actually worked.
+			}
+		} else {
+			this.pgn_choices = new_pgn_choices;			// Setting it to a multi-value array is "always" OK.
+			this.show_pgn_chooser();					// Now we need to have the user choose a game.
+		}
 	};
 
 	renderer.load_pgn_object = function(o) {				// Returns true or false - whether this actually succeeded.
