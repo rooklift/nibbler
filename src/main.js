@@ -290,29 +290,6 @@ function menu_build() {
 					}
 				},
 				{
-					label: "Validate PGN...",
-					click: () => {
-						let files = open_dialog({
-							defaultPath: config.pgn_dialog_folder,
-							properties: ["openFile"],
-							filters: [{name: "PGN", extensions: ["pgn"]}, {name: "All files", extensions: ["*"]}]
-						});
-						if (Array.isArray(files) && files.length > 0) {
-							let file = files[0];
-							win.webContents.send("call", {
-								fn: "validate_pgn",
-								args: [file]
-							});
-							// Save the dir as the new default dir, in both processes.
-							config.pgn_dialog_folder = path.dirname(file);
-							win.webContents.send("set", {
-								key: "pgn_dialog_folder",
-								value: path.dirname(file)
-							});
-						}
-					}
-				},
-				{
 					type: "separator"
 				},
 				{

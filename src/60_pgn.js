@@ -90,14 +90,12 @@ function new_pgn_record() {
 	};
 }
 
+/*
 function PreParsePGN(buf) {
 
 	// Returns an array of pgn_record objects which have
 	//		- a tags object
 	//		- a movebuf list which contains the movetext lines for that game, as binary buffers.
-	//
-	// FIXME? In an ideal world, this would be non blocking and use a callback upon completion.
-	// (Note to self: make sure any useful objects don't get GC'd if we do that... or is that impossible?)
 
 	let games = [new_pgn_record()];
 	let lines = split_buffer(buf);
@@ -160,6 +158,7 @@ function PreParsePGN(buf) {
 
 	return games;
 }
+*/
 
 function LoadPGNRecord(o) {				// Can throw, either by itself, or by allowing a throw from LoadFEN to propagate.
 

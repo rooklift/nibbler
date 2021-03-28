@@ -884,48 +884,6 @@ function NewRenderer() {
 		}
 	};
 
-	renderer.validate_pgn = function(filename) {
-
-		if (FileExceedsGigabyte(filename, 0.1)) {
-			alert(messages.file_too_big);
-			return;
-		}
-
-		for (let loader of this.loaders) {
-			if (loader.type === "pgn") {
-				loader.shutdown();
-			}
-		}
-
-		let buf;
-		try {
-			buf = fs.readFileSync(filename);		// This bit is still sync.
-		} catch (err) {
-			alert(err);
-			return;
-		}
-
-		let loader = NewPGNPreParser(buf, (records) => {
-
-			for (let n = 0; n < records.length; n++) {
-
-				let o = records[n];
-
-				try {
-					LoadPGNRecord(o);
-				} catch (err) {
-					alert(`Game ${n + 1} - ${err.toString()}`);
-					return false;
-				}
-			}
-
-			alert(`This file seems OK. ${records.length} ${records.length === 1 ? "game" : "games"} checked.`);
-			return true;
-		});
-
-		this.loaders.push(loader);
-	};
-
 	// -------------------------------------------------------------------------------------------------------------------------
 	// Engine stuff...
 

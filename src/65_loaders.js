@@ -147,6 +147,7 @@ function NewPGNPreParser(buf, callback) {		// Cannot fail unless aborted.
 
 	loader.shutdown = function() {
 		this.callback = null;
+		this.msg = "";
 		this.games = null;
 		this.lines = null;
 		this.buf = null;
