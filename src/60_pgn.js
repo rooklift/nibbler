@@ -1,5 +1,6 @@
 "use strict";
 
+/*
 function split_buffer(buf) {
 
 	let start_time = performance.now();
@@ -41,6 +42,7 @@ function split_buffer(buf) {
 
 	return lines;
 }
+*/
 
 function new_byte_pusher(size) {
 

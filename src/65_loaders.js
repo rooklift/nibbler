@@ -82,7 +82,7 @@ function NewPGNBookLoader(filename, callback) {
 			this.msg = "Preparsing...";
 			this.preparser = NewPGNPreParser(this.buf, (games) => {
 				this.pgn_choices = games;
-				loader.continue();
+				this.continue();
 			});
 			return;
 		}
@@ -140,6 +140,7 @@ function NewPGNPreParser(buf, callback) {		// Cannot fail unless aborted.
 	loader.games = null;
 	loader.lines = null;
 	loader.buf = buf;
+	loader.splitter = null;
 
 	loader.n = 0;
 
@@ -149,6 +150,10 @@ function NewPGNPreParser(buf, callback) {		// Cannot fail unless aborted.
 		this.games = null;
 		this.lines = null;
 		this.buf = null;
+		if (this.splitter) {
+			this.splitter.shutdown();
+			this.splitter = null;
+		}
 	};
 
 	loader.continue = function() {
@@ -161,8 +166,13 @@ function NewPGNPreParser(buf, callback) {		// Cannot fail unless aborted.
 			this.games = [new_pgn_record()];
 		}
 
-		if (!this.lines) {
-			this.lines = split_buffer(this.buf);		// FIXME / TODO - make this async too.
+		if (!this.splitter && !this.lines) {
+			this.msg = "Splitting...";
+			this.splitter = NewLineSplitter(this.buf, (lines) => {
+				this.lines = lines;
+				this.continue();
+			});
+			return;
 		}
 
 		let continuetime = performance.now();
@@ -236,7 +246,7 @@ function NewPGNPreParser(buf, callback) {		// Cannot fail unless aborted.
 	};
 
 	loader.finish = function() {
-		if (this.games && this.callback) {
+		if (this.callback) {
 			let cb = this.callback; cb(this.games);
 		}
 		this.shutdown();
@@ -300,5 +310,89 @@ function NewPGNFileLoader(filename, callback) {
 	};
 
 	loader.load(filename);
+	return loader;
+}
+
+// ------------------------------------------------------------------------------------------------------------------------------
+
+function NewLineSplitter(buf, callback) {
+
+	let loader = Object.create(null);
+	loader.type = "?";
+
+	loader.callback = callback;
+	loader.msg = "Splitting...";
+	loader.lines = [];
+	loader.buf = buf;
+
+	loader.a = 0;
+	loader.b = 0;
+
+	if (buf.length > 3 && buf[0] === 239 && buf[1] === 187 && buf[2] === 191) {
+		loader.a = 3;		// 1st slice will skip byte order mark (BOM).
+	}
+
+	loader.shutdown = function() {
+		this.callback = null;
+		this.msg = "";
+		this.lines = null;
+		this.buf = null;
+	};
+
+	loader.append = function(arr) {
+		if (arr.length > 0 && arr[arr.length - 1] === 13) {		// Discard \r
+			this.lines.push(Buffer.from(arr.slice(0, -1)));
+		} else {
+			this.lines.push(Buffer.from(arr));
+		}
+	};
+
+	loader.continue = function() {
+
+		if (!this.callback) {
+			return;
+		}
+
+		let continuetime = performance.now();
+
+		while (true) {
+
+			if (this.b >= this.buf.length) {
+				this.finish();
+				return;
+			}
+
+			let ch = this.buf[this.b];
+			if (ch === 10) {					// Split on \n
+				let line = buf.slice(this.a, this.b);
+				this.append(line);
+				this.a = this.b + 1;
+			}
+
+			this.b++;
+
+			if (this.lines.length % 1000 === 0) {
+				if (performance.now() - continuetime > 20) {
+					setTimeout(() => {this.continue();}, 5);
+					return;
+				}
+			}
+		}
+	};
+
+	loader.finish = function() {
+
+		if (this.a !== this.b) {		// We haven't added the last line before EOF.
+			let line = this.buf.slice(this.a, this.b);
+			this.append(line);
+		}
+
+		if (this.callback) {
+			let cb = this.callback; cb(this.lines);
+		}
+		this.shutdown();
+	};
+
+	loader.continue();
 	return loader;
 }
