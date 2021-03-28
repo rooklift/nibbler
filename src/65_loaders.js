@@ -1,24 +1,26 @@
 "use strict";
 
 // Non-blocking loader objects. Currently just for books. The callback is only called if data is successfully gathered.
-// Implementation rule: The callback property is non-null iff it's possible that the load will succeed.
+// Implementation rule: The callback property is non-null iff it's still possible that the load will succeed.
 // ------------------------------------------------------------------------------------------------------------------------------
 
 function NewPolyglotBookLoader(filename, callback) {
 
 	let loader = Object.create(null);
-	loader.type = "book";							// hub looks at this
+	loader.type = "book";
 	loader.callback = callback;
+	loader.msg = "Loading book...";
 
-	loader.abort = function() {
+	loader.shutdown = function() {
 		this.callback = null;
+		this.msg = "";
 	};
 
 	loader.load = function(filename) {
 		fs.readFile(filename, (err, data) => {		// Docs: "If no encoding is specified, then the raw buffer is returned."
 			if (err) {
 				console.log(err);
-				this.abort();
+				this.shutdown();
 				return;
 			}
 			if (this.callback) {
@@ -39,15 +41,18 @@ function NewPGNBookLoader(filename, callback) {
 	let loader = Object.create(null);
 	loader.type = "book";							// hub looks at this
 	loader.callback = callback;
+	loader.msg = "Loading book...";
 
 	loader.buf = null;
 	loader.book = [];
 	loader.pgn_choices = null;
 	loader.n = 0;
 
-	loader.abort = function() {
+	loader.shutdown = function() {
 		this.callback = null;
+		this.msg = "";
 		this.buf = null;							// For the GC's benefit
+		this.pgn_choices = null;					// For the GC's benefit
 		this.book = null;							// For the GC's benefit
 	};
 
@@ -55,7 +60,7 @@ function NewPGNBookLoader(filename, callback) {
 		fs.readFile(filename, (err, data) => {
 			if (err) {
 				console.log(err);
-				this.abort();
+				this.shutdown();
 				return;
 			}
 			if (this.callback) {					// We might already have aborted
@@ -100,6 +105,7 @@ function NewPGNBookLoader(filename, callback) {
 			if (this.n % 100 === 0) {
 				if (performance.now() - continuetime > 20) {
 					setTimeout(() => {this.continue();}, 5);
+					this.msg = `Loading book... ${(100 * (this.n / this.pgn_choices.length)).toFixed(0)}%`;
 					return;
 				}
 			}
@@ -111,7 +117,7 @@ function NewPGNBookLoader(filename, callback) {
 			SortAndDeclutterPGNBook(this.book);
 			let cb = this.callback; cb(this.book);
 		}
-		this.abort();
+		this.shutdown();
 	};
 
 	loader.load(filename);

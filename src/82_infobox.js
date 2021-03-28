@@ -2,11 +2,11 @@
 
 let infobox_props = {
 
-	draw_statusbox: function(node, engine, analysing_other, just_say_loading) {
+	draw_statusbox: function(node, engine, analysing_other, forced_message) {
 
-		if (just_say_loading) {
+		if (forced_message) {
 
-			statusbox.innerHTML = `<span class="yellow">Loading...</span>`;
+			statusbox.innerHTML = `<span class="yellow">${forced_message}</span>`;
 
 		} else if (config.show_engine_state) {
 

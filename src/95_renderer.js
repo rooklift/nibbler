@@ -704,7 +704,7 @@ function NewRenderer() {
 
 		for (let loader of this.loaders) {
 			if (loader.type === "book") {
-				loader.abort();
+				loader.shutdown();
 			}
 		}
 
@@ -733,7 +733,7 @@ function NewRenderer() {
 
 		for (let loader of this.loaders) {
 			if (loader.type === "book") {
-				loader.abort();
+				loader.shutdown();
 			}
 		}
 
@@ -1611,7 +1611,7 @@ function NewRenderer() {
 		this.book = null;
 		for (let loader of this.loaders) {
 			if (loader.type === "book") {
-				loader.abort();
+				loader.shutdown();
 			}
 		}
 		this.send_ack_book();
@@ -2266,13 +2266,20 @@ function NewRenderer() {
 			}
 		}
 
-		let needs_loading_msg_from_hub = this.loaders.filter(o => o.callback).length > 0;
+		let forced_message = null;
+
+		for (let loader of this.loaders) {
+			if (loader.callback) {				// By our rules, can only exist if the load is still pending...
+				forced_message = loader.msg;
+				break;
+			}
+		}
 
 		this.info_handler.draw_statusbox(
 			this.tree.node,
 			this.engine,
 			analysing_other,
-			needs_loading_msg_from_hub
+			forced_message,
 		);
 	};
 
