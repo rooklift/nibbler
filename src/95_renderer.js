@@ -694,7 +694,7 @@ function NewRenderer() {
 
 	renderer.load_polyglot_book = function(filename) {
 
-		if (FileExceedsGigabyte(filename)) {
+		if (FileExceedsGigabyte(filename, 2)) {
 			alert(messages.file_too_big);
 			this.send_ack_book();
 			return;
