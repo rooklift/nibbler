@@ -373,7 +373,7 @@ function BookLogicalLength(book) {
 
 function BookProbe(key, book) {
 
-	// book is either the raw buffer, of an array of objects of form {key, move, weight}
+	// book is either the raw buffer, or an array of objects of form {key, move, weight}
 
 	let logical_length = BookLogicalLength(book);			// returns 0 on most bad args
 
