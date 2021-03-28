@@ -63,6 +63,7 @@ function NewPGNBookLoader(hub) {
 		this.running = true;
 		fs.readFile(filename, (err, data) => {
 			if (err) {
+				console.log(err);
 				this.running = false;
 				this.hub.set_special_message(`Book load failed or was aborted.`);
 				return;
