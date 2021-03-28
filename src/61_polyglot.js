@@ -428,20 +428,18 @@ function BookProbe(key, book) {
 	let right = mid;
 
 	while (left > 0) {
-		cur = BookAtLogicalIndex(book, left - 1);
+		cur = BookAtLogicalIndex(book, --left);
 		if (cur.key === key) {
 			ret.unshift(cur);
-			left--;
 		} else {
 			break;
 		}
 	}
 
 	while (right < logical_length - 1) {
-		cur = BookAtLogicalIndex(book, right + 1);
+		cur = BookAtLogicalIndex(book, ++right);
 		if (cur.key === key) {
 			ret.push(cur);
-			right++;
 		} else {
 			break;
 		}
@@ -484,7 +482,7 @@ function BookStressTest() {
 
 	for (let n = 0; n < 100000; n++) {
 
-		let i = RandInt(1, logical_length - 1);
+		let i = RandInt(1, logical_length - 1);		// So that's actually a value between 1 and logical_length - 2, inclusive.
 
 		let left_o = BookAtLogicalIndex(hub.book, i - 1);
 		let mid_o = BookAtLogicalIndex(hub.book, i);
