@@ -9,14 +9,17 @@ function NewPolyglotBookLoader(hub) {
 	// use the raw buffer as the book.
 
 	let loader = Object.create(null);
-	loader.type = "book";
+	loader.type = "book";					// hub looks at this
+	loader.running = false;					// hub looks at this
 
 	loader.hub = hub;
 	loader.aborted = false;
 	loader.starttime = performance.now();
 
 	loader.load = function(filename) {
+		this.running = true;
 		fs.readFile(filename, (err, data) => {		// If no encoding is specified, then the raw buffer is returned.
+			this.running = false;
 			if (err) {
 				console.log(err);
 				return;
@@ -45,10 +48,10 @@ function NewPolyglotBookLoader(hub) {
 function NewPGNBookLoader(hub) {
 
 	let loader = Object.create(null);
-	loader.type = "book";
+	loader.type = "book";					// hub looks at this
+	loader.running = false;					// hub looks at this
 
 	loader.hub = hub;
-	loader.can_continue = false;
 	loader.starttime = performance.now();
 	loader.book = [];
 	loader.pgn_choices = null;
@@ -57,19 +60,20 @@ function NewPGNBookLoader(hub) {
 	loader.n = 0;
 
 	loader.load = function(filename) {
+		this.running = true;
 		fs.readFile(filename, (err, data) => {
 			if (err) {
+				this.running = false;
 				this.hub.set_special_message(`Book load failed or was aborted.`);
 				return;
 			}
 			this.buf = data;
-			this.can_continue = true;
 			this.continue();
 		});
 	};
 
 	loader.abort = function() {
-		this.can_continue = false;
+		this.running = false;
 		this.buf = null;			// For the GC's benefit
 		this.book = null;			// For the GC's benefit
 		this.hub.set_special_message(`Book load failed or was aborted.`);
@@ -77,7 +81,7 @@ function NewPGNBookLoader(hub) {
 
 	loader.continue = function() {
 
-		if (!this.can_continue) {
+		if (!this.running) {
 			return;
 		}
 
@@ -117,7 +121,7 @@ function NewPGNBookLoader(hub) {
 	};
 
 	loader.finish = function() {
-		this.can_continue = false;
+		this.running = false;
 		this.buf = null;
 		if (this.book) {
 			SortAndDeclutterPGNBook(this.book);
