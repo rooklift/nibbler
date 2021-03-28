@@ -166,9 +166,8 @@ function NewRenderer() {
 			case "analysis_locked":
 				if (this.leela_lock_node !== this.tree.node) {
 					break;				// i.e. do NOT immediately return
-				} else {
-					return;
 				}
+				return;
 			default:
 				return;
 			}
