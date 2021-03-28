@@ -91,6 +91,9 @@ function PreParsePGN(buf) {
 	// Returns an array of pgn_record objects which have
 	//		- a tags object
 	//		- a movebuf list which contains the movetext lines for that game, as binary buffers.
+	//
+	// FIXME? In an ideal world, this would be non blocking and use a callback upon completion.
+	// (Note to self: make sure any useful objects don't get GC'd if we do that...)
 
 	let start_time = performance.now();
 
