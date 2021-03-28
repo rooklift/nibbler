@@ -6,7 +6,7 @@
 function NewPolyglotBookLoader(hub) {
 
 	// In 2.0.1 this was vastly more complex, then I realised one can "simply"
-	// use the raw buffer as the book.
+	// use the raw buffer as the book for 2.0.2.
 
 	let loader = Object.create(null);
 	loader.type = "book";					// hub looks at this
