@@ -39,7 +39,7 @@ function NewPolyglotBookLoader(filename, callback) {
 function NewPGNBookLoader(filename, callback) {
 
 	let loader = Object.create(null);
-	loader.type = "book";							// hub looks at this
+	loader.type = "book";
 	loader.callback = callback;
 	loader.msg = "Loading book...";
 
