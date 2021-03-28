@@ -234,12 +234,6 @@ for (let n = 0; n < 65536; n++) {
 
 // ------------------------------------------------------------------------------------------------------------------------
 
-function BigIntToHex(big) {
-	let s = big.toString(16);
-	while (s.length < 16) s = "0" + s;
-	return s;
-}
-
 function KeyFromBoard(board) {
 
 	if (!board) return "";
@@ -456,15 +450,6 @@ function BookProbe(key, book) {
 	return ret;
 }
 
-
-
-
-
-
-
-
-
-
 // For debugging...
 function HubProbe() {
 	let objects = BookProbe(KeyFromBoard(hub.tree.node.board), hub.book);
@@ -480,9 +465,13 @@ function HubProbe() {
 	return ret;
 }
 
-/*
+function BigIntToHex(big) {
+	let s = big.toString(16);
+	while (s.length < 16) s = "0" + s;
+	return s;
+}
 
-function PolyglotStressTest() {
+function BookStressTest() {
 
 	// Given a randomly chosen singleton (position with 1 move),
 	// does BookProbe() actually find it?
@@ -491,23 +480,30 @@ function PolyglotStressTest() {
 
 	let trials = 0;
 	let successes = 0;
+	let logical_length = BookLogicalLength(hub.book);
 
 	for (let n = 0; n < 100000; n++) {
-		let i = RandInt(1, hub.book.length - 2);
-		let object = BookAtLogicalIndex(hub.book, i);
-		if (hub.book[i - 1].key === object.key || hub.book[i + 1].key === object.key) {
+
+		let i = RandInt(1, logical_length - 1);
+
+		let left_o = BookAtLogicalIndex(hub.book, i - 1);
+		let mid_o = BookAtLogicalIndex(hub.book, i);
+		let right_o = BookAtLogicalIndex(hub.book, i + 1);
+
+
+
+		if (left_o.key === mid_o.key || right_o.key === mid_o.key) {
 			continue;
 		}
 		trials++;
-		let proberesults = BookProbe(object.key, hub.book);
+		let proberesults = BookProbe(mid_o.key, hub.book);
 		if (proberesults.length === 1) {
 			successes++;
 		} else {
-			console.log("Missed:", object.key);
+			console.log("Missed:", mid_o.key);
 		}
 	}
 
 	return `${trials} trials, ${successes} successes, ${trials - successes} failures.`;
 }
 
-*/
