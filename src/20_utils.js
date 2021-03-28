@@ -560,7 +560,14 @@ function NumbersBetween(a, b) {
 }
 
 function RandInt(min, max) {
-	return Math.floor(Math.random() * (max - min)) + min;
+	if (min >= max) {
+		return min;
+	}
+	let ret = Math.floor(Math.random() * (max - min)) + min;
+	if (ret >= max) {		// Probably impossible.
+		ret = min;
+	}
+	return ret;
 }
 
 function RandChoice(arr) {
