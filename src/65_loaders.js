@@ -13,6 +13,7 @@ function NewPolyglotBookLoader(hub) {
 
 	loader.hub = hub;
 	loader.aborted = false;
+	loader.starttime = performance.now();
 
 	loader.load = function(filename) {
 		fs.readFile(filename, (err, data) => {		// If no encoding is specified, then the raw buffer is returned.
@@ -27,6 +28,7 @@ function NewPolyglotBookLoader(hub) {
 			this.hub.explorer_objects_cache = null;
 			this.hub.send_ack_book();
 			this.hub.set_special_message(`Finished loading book (moves: ${Math.floor(data.length / 16)})`, "green");
+			console.log(`Polyglot book load ended after ${(performance.now() - this.starttime).toFixed(0)} ms.`);
 		});
 	};
 
