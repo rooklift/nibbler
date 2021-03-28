@@ -18,7 +18,7 @@ function NewPolyglotBookLoader(hub) {
 
 	loader.load = function(filename) {
 		this.running = true;
-		fs.readFile(filename, (err, data) => {		// If no encoding is specified, then the raw buffer is returned.
+		fs.readFile(filename, (err, data) => {		// Docs: "If no encoding is specified, then the raw buffer is returned."
 			this.running = false;
 			if (err) {
 				console.log(err);
