@@ -669,8 +669,6 @@ function NewRenderer() {
 
 	renderer.open = function(filename) {
 
-		let buf;
-
 		try {
 			if (filename === __dirname || filename === ".") {		// Can happen when extra args are passed to main process. Silently return.
 				return;
@@ -678,17 +676,37 @@ function NewRenderer() {
 			if (fs.existsSync(filename) === false) {				// Can happen when extra args are passed to main process. Silently return.
 				return;
 			}
-			if (FileExceedsGigabyte(filename)) {
+			if (FileExceedsGigabyte(filename, 0.1)) {
 				alert(messages.file_too_big);
 				return;
 			}
-			buf = fs.readFileSync(filename);
 		} catch (err) {
 			alert(err);
 			return;
 		}
+
+		for (let loader of this.loaders) {
+			if (loader.type === "pgn") {
+				loader.shutdown();
+			}
+		}
+
 		console.log(`Loading PGN: ${filename}`);
-		this.load_pgn_buffer(buf);
+
+		let loader = NewPGNFileLoader(filename, (games) => {
+			let new_pgn_choices = games;
+			if (new_pgn_choices.length === 1) {
+				let success = this.load_pgn_object(new_pgn_choices[0]);
+				if (success) {
+					this.pgn_choices = new_pgn_choices;		// We only want to set this to a 1 value array if it actually worked.
+				}
+			} else {
+				this.pgn_choices = new_pgn_choices;			// Setting it to a multi-value array is "always" OK.
+				this.show_pgn_chooser();					// Now we need to have the user choose a game.
+			}
+		});
+
+		this.loaders.push(loader);
 	};
 
 	renderer.load_polyglot_book = function(filename) {
@@ -761,17 +779,27 @@ function NewRenderer() {
 
 	renderer.load_pgn_buffer = function(buf) {
 
-		let new_pgn_choices = PreParsePGN(buf);
-
-		if (new_pgn_choices.length === 1) {
-			let success = this.load_pgn_object(new_pgn_choices[0]);
-			if (success) {
-				this.pgn_choices = new_pgn_choices;			// We only want to set this to a 1 value array if it actually worked.
+		for (let loader of this.loaders) {
+			if (loader.type === "pgn") {
+				loader.shutdown();
 			}
-		} else {
-			this.pgn_choices = new_pgn_choices;				// Setting it to a multi-value array is "always" OK.
-			this.show_pgn_chooser();						// Now we need to have the user choose a game.
 		}
+
+		let loader = NewPGNPreParser(buf, (games) => {
+			let new_pgn_choices = games;
+			if (new_pgn_choices.length === 1) {
+				let success = this.load_pgn_object(new_pgn_choices[0]);
+				if (success) {
+					this.pgn_choices = new_pgn_choices;		// We only want to set this to a 1 value array if it actually worked.
+				}
+			} else {
+				this.pgn_choices = new_pgn_choices;			// Setting it to a multi-value array is "always" OK.
+				this.show_pgn_chooser();					// Now we need to have the user choose a game.
+			}
+		});
+
+		this.loaders.push(loader);
+
 	};
 
 	renderer.load_pgn_object = function(o) {				// Returns true or false - whether this actually succeeded.
@@ -858,35 +886,44 @@ function NewRenderer() {
 
 	renderer.validate_pgn = function(filename) {
 
-		if (FileExceedsGigabyte(filename)) {
+		if (FileExceedsGigabyte(filename, 0.1)) {
 			alert(messages.file_too_big);
 			return;
 		}
 
+		for (let loader of this.loaders) {
+			if (loader.type === "pgn") {
+				loader.shutdown();
+			}
+		}
+
 		let buf;
 		try {
-			buf = fs.readFileSync(filename);		// i.e. binary buffer object
+			buf = fs.readFileSync(filename);		// This bit is still sync.
 		} catch (err) {
 			alert(err);
 			return;
 		}
 
-		let pgn_list = PreParsePGN(buf);
+		let loader = NewPGNPreParser(buf, (records) => {
 
-		for (let n = 0; n < pgn_list.length; n++) {
+			for (let n = 0; n < records.length; n++) {
 
-			let o = pgn_list[n];
+				let o = records[n];
 
-			try {
-				LoadPGNRecord(o);
-			} catch (err) {
-				alert(`Game ${n + 1} - ${err.toString()}`);
-				return false;
+				try {
+					LoadPGNRecord(o);
+				} catch (err) {
+					alert(`Game ${n + 1} - ${err.toString()}`);
+					return false;
+				}
 			}
-		}
 
-		alert(`This file seems OK. ${pgn_list.length} ${pgn_list.length === 1 ? "game" : "games"} checked.`);
-		return true;
+			alert(`This file seems OK. ${records.length} ${records.length === 1 ? "game" : "games"} checked.`);
+			return true;
+		});
+
+		this.loaders.push(loader);
 	};
 
 	// -------------------------------------------------------------------------------------------------------------------------
