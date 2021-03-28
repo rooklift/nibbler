@@ -81,8 +81,6 @@ function NewPGNBookLoader(filename, callback) {
 			return;
 		}
 
-		let continuetime = performance.now();
-
 		if (!this.pgn_choices && !this.preparser) {
 			this.msg = "Preparsing...";
 			this.preparser = NewPGNPreParser(this.buf, (games) => {
@@ -91,6 +89,8 @@ function NewPGNBookLoader(filename, callback) {
 			});
 			return;
 		}
+
+		let continuetime = performance.now();
 
 		while (true) {
 
@@ -158,8 +158,6 @@ function NewPGNPreParser(buf, callback) {		// Cannot fail unless aborted.
 			return;
 		}
 
-		let continuetime = performance.now();
-
 		if (!this.games) {
 			this.games = [new_pgn_record()];
 		}
@@ -167,6 +165,8 @@ function NewPGNPreParser(buf, callback) {		// Cannot fail unless aborted.
 		if (!this.lines) {
 			this.lines = split_buffer(this.buf);
 		}
+
+		let continuetime = performance.now();
 
 		while (true) {
 
