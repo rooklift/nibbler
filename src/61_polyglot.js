@@ -353,7 +353,6 @@ function SortAndDeclutterPGNBook(book) {
 }
 
 function BookAtLogicalIndex(book, i) {
-	if (!book) throw "BookAtLogicalIndex() bad book";
 	if (book instanceof Buffer) {
 		return ParsePolyglotBlob(book, i * 16);
 	}
