@@ -8,6 +8,7 @@ function NewPolyglotBookLoader(filename, callback) {
 
 	let loader = Object.create(null);
 	loader.type = "book";
+
 	loader.callback = callback;
 	loader.msg = "Loading book...";
 
@@ -40,13 +41,14 @@ function NewPGNBookLoader(filename, callback) {
 
 	let loader = Object.create(null);
 	loader.type = "book";
+
 	loader.callback = callback;
 	loader.msg = "Loading book...";
-
 	loader.buf = null;
 	loader.book = [];
 	loader.pgn_choices = null;
 	loader.preparser = null;
+
 	loader.n = 0;
 
 	loader.shutdown = function() {					// Some of this is potentially to the GC's benefit? Who knows.
@@ -136,13 +138,14 @@ function NewPGNBookLoader(filename, callback) {
 function NewPGNPreParser(buf, callback) {		// Cannot fail unless aborted.
 
 	let loader = Object.create(null);
-	loader.type = "pgn";						// FIXME? any calls to this type left in renderer?
+	loader.type = "pgn";
+
 	loader.callback = callback;
 	loader.msg = "Preparsing...";
-
 	loader.games = null;
 	loader.lines = null;
 	loader.buf = buf;
+
 	loader.n = 0;
 
 	loader.shutdown = function() {
@@ -254,9 +257,9 @@ function NewPGNFileLoader(filename, callback) {
 
 	let loader = Object.create(null);
 	loader.type = "pgn";
+
 	loader.callback = callback;
 	loader.msg = "Loading PGN...";
-
 	loader.buf = null;
 	loader.preparser = null;
 
