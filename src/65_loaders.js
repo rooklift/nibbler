@@ -1,6 +1,6 @@
 "use strict";
 
-// Non-blocking loader objects. Currently just for books. The callback is only called if data is successfully gathered.
+// Non-blocking loader objects. The callback is only called if data is successfully gathered.
 // Implementation rule: The callback property is non-null iff it's still possible that the load will succeed.
 // ------------------------------------------------------------------------------------------------------------------------------
 
@@ -46,14 +46,19 @@ function NewPGNBookLoader(filename, callback) {
 	loader.buf = null;
 	loader.book = [];
 	loader.pgn_choices = null;
+	loader.preparser = null;
 	loader.n = 0;
 
-	loader.shutdown = function() {
+	loader.shutdown = function() {					// Some of this is potentially to the GC's benefit? Who knows.
 		this.callback = null;
 		this.msg = "";
-		this.buf = null;							// For the GC's benefit
-		this.pgn_choices = null;					// For the GC's benefit
-		this.book = null;							// For the GC's benefit
+		this.buf = null;
+		this.book = null;
+		this.pgn_choices = null;
+		if (this.preparser) {
+			this.preparser.shutdown();
+			this.preparser = null;
+		}
 	};
 
 	loader.load = function(filename) {
@@ -78,9 +83,12 @@ function NewPGNBookLoader(filename, callback) {
 
 		let continuetime = performance.now();
 
-		if (!this.pgn_choices) {
-			this.pgn_choices = PreParsePGN(this.buf);			// FIXME? Whole thing can still lock up here! Meh.
-			setTimeout(() => {this.continue();}, 5);
+		if (!this.pgn_choices && !this.preparser) {
+			this.msg = "Preparsing...";
+			this.preparser = NewPGNPreParser(this.buf, (games) => {
+				this.pgn_choices = games;
+				loader.continue();
+			});
 			return;
 		}
 
@@ -91,7 +99,7 @@ function NewPGNBookLoader(filename, callback) {
 				return;
 			}
 
-			let o = this.pgn_choices[this.n];
+			let o = this.pgn_choices[this.n++];
 
 			try {
 				let root = LoadPGNRecord(o);					// Note that this calls DestroyTree() itself if needed.
@@ -100,8 +108,6 @@ function NewPGNBookLoader(filename, callback) {
 			} catch (err) {
 				//
 			}
-
-			this.n++;
 
 			if (this.n % 100 === 0) {
 				if (performance.now() - continuetime > 20) {
@@ -122,5 +128,121 @@ function NewPGNBookLoader(filename, callback) {
 	};
 
 	loader.load(filename);
+	return loader;
+}
+
+// ------------------------------------------------------------------------------------------------------------------------------
+
+function NewPGNPreParser(buf, callback) {		// Cannot fail unless aborted.
+
+	let loader = Object.create(null);
+	loader.type = "pgn";
+	loader.callback = callback;
+	loader.msg = "Preparsing...";
+
+	loader.games = null;
+	loader.lines = null;
+	loader.buf = buf;
+	loader.n = 0;
+
+	loader.shutdown = function() {
+		this.callback = null;
+		this.games = null;
+		this.lines = null;
+		this.buf = null;
+	};
+
+	loader.continue = function() {
+
+		if (!this.callback) {
+			return;
+		}
+
+		let continuetime = performance.now();
+
+		if (!this.games) {
+			this.games = [new_pgn_record()];
+		}
+
+		if (!this.lines) {
+			this.lines = split_buffer(this.buf);
+		}
+
+		while (true) {
+
+			if (this.n >= this.lines.length) {
+				this.finish();
+				return;
+			}
+
+			let rawline = this.lines[this.n++];
+
+			if (rawline.length === 0) {
+				continue;
+			}
+
+			if (rawline[0] === 37) {			// Percent % sign is a special comment type.
+				continue;
+			}
+
+			let tagline = "";
+
+			if (rawline[0] === 91) {
+				let s = decoder.decode(rawline).trim();
+				if (s.endsWith(`"]`)) {
+					tagline = s;
+				}
+			}
+
+			if (tagline !== "") {
+
+				if (this.games[this.games.length - 1].movebufs.length > 0) {
+					// We have movetext already, so this must be a new game. Start it.
+					this.games.push(new_pgn_record());
+				}
+
+				// Parse the tag line...
+
+				tagline = tagline.slice(1, -1);								// So now it's like:		Foo "bar etc"
+
+				let quote_i = tagline.indexOf(`"`);
+
+				if (quote_i === -1) {
+					continue;
+				}
+
+				let key = tagline.slice(0, quote_i).trim();
+				let value = tagline.slice(quote_i + 1).trim();
+
+				if (value.endsWith(`"`)) {
+					value = value.slice(0, -1);
+				}
+
+				this.games[this.games.length - 1].tags[key] = SafeString(value);		// Escape evil characters. IMPORTANT!
+
+			} else {
+
+				this.games[this.games.length - 1].movebufs.push(rawline);
+
+			}
+
+			if (this.n % 1000 === 0) {
+				if (performance.now() - continuetime > 20) {
+					this.msg = `Preparsing... ${(100 * (this.n / this.lines.length)).toFixed(0)}%`;
+					setTimeout(() => {this.continue();}, 5);
+					return;
+				}
+			}
+		}
+	};
+
+	loader.finish = function() {
+		if (this.games && this.callback) {
+			let cb = this.callback; cb(this.games);
+		}
+		this.shutdown();
+	};
+
+	loader.continue();
 	return loader;
 }
