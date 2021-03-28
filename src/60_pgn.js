@@ -2,6 +2,8 @@
 
 function split_buffer(buf) {
 
+	let start_time = performance.now();
+
 	// Split a binary buffer into an array of binary buffers corresponding to lines.
 
 	let lines = [];
@@ -34,6 +36,8 @@ function split_buffer(buf) {
 		let line = buf.slice(a, b);
 		push(line);
 	}
+
+	console.log(`PGN buffer-splitting took ${(performance.now() - start_time).toFixed(0)} ms.`);
 
 	return lines;
 }
@@ -95,10 +99,10 @@ function PreParsePGN(buf) {
 	// FIXME? In an ideal world, this would be non blocking and use a callback upon completion.
 	// (Note to self: make sure any useful objects don't get GC'd if we do that...)
 
-	let start_time = performance.now();
-
 	let games = [new_pgn_record()];
 	let lines = split_buffer(buf);
+
+	let start_time = performance.now();		// After split_buffer(), which has its own timer.
 
 	for (let rawline of lines) {
 
