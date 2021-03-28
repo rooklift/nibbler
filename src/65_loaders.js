@@ -1,94 +1,73 @@
 "use strict";
 
-// Non-blocking loader objects. Currently just for books.
+// Non-blocking loader objects. Currently just for books. The callback is only called if data is successfully gathered.
+// Implementation rule: The callback property is non-null iff it's possible that the load will succeed.
 // ------------------------------------------------------------------------------------------------------------------------------
 
-function NewPolyglotBookLoader(hub) {
-
-	// In 2.0.1 this was vastly more complex, then I realised one can "simply"
-	// use the raw buffer as the book for 2.0.2.
+function NewPolyglotBookLoader(filename, callback) {
 
 	let loader = Object.create(null);
-	loader.type = "book";					// hub looks at this
-	loader.running = false;					// hub looks at this
-	loader.can_update_status = false;		// hub looks at this
+	loader.type = "book";							// hub looks at this
+	loader.callback = callback;
 
-	loader.hub = hub;
-	loader.aborted = false;
-	loader.starttime = performance.now();
+	loader.abort = function() {
+		this.callback = null;
+	};
 
 	loader.load = function(filename) {
-		this.running = true;
 		fs.readFile(filename, (err, data) => {		// Docs: "If no encoding is specified, then the raw buffer is returned."
-			this.running = false;
 			if (err) {
 				console.log(err);
+				this.abort();
 				return;
 			}
-			if (this.aborted) {
-				return;
+			if (this.callback) {
+				let cb = this.callback; cb(data);
+				this.callback = null;
 			}
-			this.hub.book = data;
-			this.hub.explorer_objects_cache = null;
-			this.hub.send_ack_book();
-			this.hub.set_special_message(`Finished loading book (moves: ${Math.floor(data.length / 16)})`, "green");
-			console.log(`Polyglot book load ended after ${(performance.now() - this.starttime).toFixed(0)} ms.`);
 		});
 	};
 
-	loader.abort = function() {
-		this.aborted = true;
-		this.hub.set_special_message(`Book load failed or was aborted.`);
-	};
-
+	loader.load(filename);
 	return loader;
 }
 
 // ------------------------------------------------------------------------------------------------------------------------------
 
-function NewPGNBookLoader(hub) {
+function NewPGNBookLoader(filename, callback) {
 
 	let loader = Object.create(null);
-	loader.type = "book";					// hub looks at this
-	loader.running = false;					// hub looks at this
-	loader.can_update_status = false;		// hub looks at this - true if we are showing progress reports via set_special_message()
+	loader.type = "book";							// hub looks at this
+	loader.callback = callback;
 
-	loader.hub = hub;
-	loader.starttime = performance.now();
+	loader.buf = null;
 	loader.book = [];
 	loader.pgn_choices = null;
-	loader.error_flag = false;
-	loader.buf = null;
 	loader.n = 0;
 
+	loader.abort = function() {
+		this.callback = null;
+		this.buf = null;							// For the GC's benefit
+		this.book = null;							// For the GC's benefit
+	};
+
 	loader.load = function(filename) {
-		this.running = true;
 		fs.readFile(filename, (err, data) => {
 			if (err) {
 				console.log(err);
-				this.running = false;
-				this.hub.set_special_message(`Book load failed or was aborted.`);
+				this.abort();
 				return;
 			}
-			if (this.running) {		// Might have been set false by abort()
+			if (this.callback) {					// We might already have aborted
 				this.buf = data;
-				this.can_update_status = true;
 				this.continue();
 			}
 		});
 	};
 
-	loader.abort = function() {
-		this.running = false;
-		this.can_update_status = false;
-		this.buf = null;			// For the GC's benefit
-		this.book = null;			// For the GC's benefit
-		this.hub.set_special_message(`Book load failed or was aborted.`);
-	};
-
 	loader.continue = function() {
 
-		if (!this.running) {
+		if (!this.callback) {
 			return;
 		}
 
@@ -96,6 +75,7 @@ function NewPGNBookLoader(hub) {
 
 		if (!this.pgn_choices) {
 			this.pgn_choices = PreParsePGN(this.buf);
+			setTimeout(() => {this.continue();}, 5);
 		}
 
 		while (true) {
@@ -112,14 +92,13 @@ function NewPGNBookLoader(hub) {
 				this.book = AddTreeToBook(root, this.book);
 				DestroyTree(root);
 			} catch (err) {
-				this.error_flag = true;
+				//
 			}
 
 			this.n++;
 
 			if (this.n % 100 === 0) {
 				if (performance.now() - continuetime > 20) {
-					this.hub.set_special_message(`Loading... ${(100 * (this.n / this.pgn_choices.length)).toFixed(0)}%`);
 					setTimeout(() => {this.continue();}, 5);
 					return;
 				}
@@ -128,23 +107,13 @@ function NewPGNBookLoader(hub) {
 	};
 
 	loader.finish = function() {
-		this.running = false;
-		this.can_update_status = false;
-		this.buf = null;
-		if (this.book) {
+		if (this.book && this.callback) {
 			SortAndDeclutterPGNBook(this.book);
-			this.hub.book = this.book;
-			this.hub.explorer_objects_cache = null;
-			this.hub.send_ack_book();
-			if (this.error_flag) {
-				this.hub.set_special_message("Finished loading book (some errors occurred)", "yellow");
-			} else {
-				this.hub.set_special_message(`Finished loading book (moves: ${this.book.length})`, "green");
-			}
+			let cb = this.callback; cb(this.book);
 		}
-		console.log(`PGN book load ended after ${(performance.now() - this.starttime).toFixed(0)} ms.`);
-		this.book = null;
+		this.abort();
 	};
 
+	loader.load(filename);
 	return loader;
 }

@@ -701,14 +701,22 @@ function NewRenderer() {
 
 		this.book = null;
 		this.send_ack_book();
+
 		for (let loader of this.loaders) {
 			if (loader.type === "book") {
 				loader.abort();
 			}
 		}
+
 		console.log(`Loading Polyglot book: ${filename}`);
-		let loader = NewPolyglotBookLoader(this);
-		loader.load(filename);
+
+		let loader = NewPolyglotBookLoader(filename, (data) => {
+			this.book = data;
+			this.explorer_objects_cache = null;
+			this.send_ack_book();
+			this.set_special_message(`Finished loading book (moves: ${Math.floor(data.length / 16)})`, "green");
+		});
+
 		this.loaders.push(loader);
 	};
 
@@ -722,19 +730,27 @@ function NewRenderer() {
 
 		this.book = null;
 		this.send_ack_book();
+
 		for (let loader of this.loaders) {
 			if (loader.type === "book") {
 				loader.abort();
 			}
 		}
+
 		console.log(`Loading PGN book: ${filename}`);
-		let loader = NewPGNBookLoader(this);
-		loader.load(filename);
+
+		let loader = NewPGNBookLoader(filename, (data) => {
+			this.book = data;
+			this.explorer_objects_cache = null;
+			this.send_ack_book();
+			this.set_special_message(`Finished loading book (moves: ${data.length})`, "green");
+		});
+
 		this.loaders.push(loader);
 	};
 
 	renderer.purge_finished_loaders = function() {
-		this.loaders = this.loaders.filter(o => o.running);
+		this.loaders = this.loaders.filter(o => o.callback);
 	};
 
 	renderer.load_pgn_from_string = function(s) {
@@ -2250,10 +2266,7 @@ function NewRenderer() {
 			}
 		}
 
-		// This flag is for when there's an active loader that isn't (or isn't yet) capable of
-		// calling set_special_message() to display a progress update...
-
-		let needs_loading_msg_from_hub = this.loaders.filter(o => o.running && !o.can_update_status).length > 0;
+		let needs_loading_msg_from_hub = this.loaders.filter(o => o.callback).length > 0;
 
 		this.info_handler.draw_statusbox(
 			this.tree.node,
