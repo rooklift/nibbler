@@ -331,7 +331,7 @@ function SortAndDeclutterPGNBook(book) {
 		return 0;
 	});
 
-	// Now we deduplicate the book in place... algorithm is correct even for the zero-length case.
+	// Now we deduplicate the book in place... (algorithm relies on length >= 1)
 
 	let i = 0;			// Slow index
 	let j = 1;			// Fast index
