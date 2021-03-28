@@ -1,88 +1,43 @@
 "use strict";
 
-// Non-blocking loader objects.
-// Currently just for books; we can dream about normal PGN files.
+// Non-blocking loader objects. Currently just for books.
+// ------------------------------------------------------------------------------------------------------------------------------
 
 function NewPolyglotBookLoader(hub) {
 
+	// In 2.0.1 this was vastly more complex, then I realised one can "simply"
+	// use the raw buffer as the book for 2.0.2.
+
 	let loader = Object.create(null);
-	loader.type = "book";
-	loader.running = false;
+	loader.type = "book";					// hub looks at this
+	loader.running = false;					// hub looks at this
+
 	loader.hub = hub;
+	loader.aborted = false;
 	loader.starttime = performance.now();
 
-	loader.book = [];
-	loader.book.type = "polyglot";
-	loader.book_is_sorted = true;
-	loader.buf = null;
-	loader.n = 0;
-
 	loader.load = function(filename) {
-		try {
-			this.buf = fs.readFileSync(filename);
-		} catch (err) {
-			this.abort();
-			return;
-		}
 		this.running = true;
-		this.continue();
+		fs.readFile(filename, (err, data) => {		// Docs: "If no encoding is specified, then the raw buffer is returned."
+			this.running = false;
+			if (err) {
+				console.log(err);
+				return;
+			}
+			if (this.aborted) {
+				return;
+			}
+			this.hub.book = data;
+			this.hub.explorer_objects_cache = null;
+			this.hub.send_ack_book();
+			this.hub.set_special_message(`Finished loading book (moves: ${Math.floor(data.length / 16)})`, "green");
+			console.log(`Polyglot book load ended after ${(performance.now() - this.starttime).toFixed(0)} ms.`);
+		});
 	};
 
 	loader.abort = function() {
-		this.running = false;
-		this.buf = null;			// For the GC's benefit
-		this.book = null;			// For the GC's benefit
+		this.aborted = true;
 		this.hub.set_special_message(`Book load failed or was aborted.`);
-	};
-
-	loader.continue = function() {
-
-		if (!this.running) {
-			return;
-		}
-
-		let continuetime = performance.now();
-
-		while (true) {
-
-			if (this.n > this.buf.length - 16) {
-				this.finish();
-				return;
-			}
-
-			let o = ParsePolyglotBlob(this.buf, this.n);
-			if (this.n > 0 && o.key < this.book[this.book.length - 1].key) {
-				this.book_is_sorted = false;
-			}
-			this.book.push(o);
-
-			this.n += 16;
-
-			if (this.n % 16000 === 0) {
-				if (performance.now() - continuetime > 20) {
-					this.hub.set_special_message(`Loading... ${(100 * (this.n / this.buf.length)).toFixed(0)}%`);
-					setTimeout(() => {this.continue();}, 5);
-					return;
-				}
-			}
-		}
-	};
-
-	loader.finish = function() {
-		this.running = false;
-		this.buf = null;
-		if (this.book) {
-			console.log("Polyglot book was pre-sorted?", this.book_is_sorted);
-			if (!this.book_is_sorted) {
-				SortPolyglotBook(this.book);
-			}
-			this.hub.book = this.book;
-			this.hub.explorer_objects_cache = null;
-			this.hub.send_ack_book();
-			this.hub.set_special_message(`Finished loading book (moves: ${this.book.length})`, "green");
-		}
-		console.log(`Polyglot book load ended after ${(performance.now() - this.starttime).toFixed(0)} ms.`);
-		this.book = null;
 	};
 
 	return loader;
@@ -93,27 +48,28 @@ function NewPolyglotBookLoader(hub) {
 function NewPGNBookLoader(hub) {
 
 	let loader = Object.create(null);
-	loader.type = "book";
-	loader.running = false;
+	loader.type = "book";					// hub looks at this
+	loader.running = false;					// hub looks at this
+
 	loader.hub = hub;
 	loader.starttime = performance.now();
-
 	loader.book = [];
-	loader.book.type = "pgn";		// This just identifies the source, it will be converted to Polyglot internally.
 	loader.pgn_choices = null;
 	loader.error_flag = false;
 	loader.buf = null;
 	loader.n = 0;
 
 	loader.load = function(filename) {
-		try {
-			this.buf = fs.readFileSync(filename);
-		} catch (err) {
-			this.abort();
-			return;
-		}
 		this.running = true;
-		this.continue();
+		fs.readFile(filename, (err, data) => {
+			if (err) {
+				this.running = false;
+				this.hub.set_special_message(`Book load failed or was aborted.`);
+				return;
+			}
+			this.buf = data;
+			this.continue();
+		});
 	};
 
 	loader.abort = function() {
@@ -168,7 +124,7 @@ function NewPGNBookLoader(hub) {
 		this.running = false;
 		this.buf = null;
 		if (this.book) {
-			SortAndDeclutter(this.book);
+			SortAndDeclutterPGNBook(this.book);
 			this.hub.book = this.book;
 			this.hub.explorer_objects_cache = null;
 			this.hub.send_ack_book();

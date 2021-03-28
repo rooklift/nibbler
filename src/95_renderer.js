@@ -218,7 +218,7 @@ function NewRenderer() {
 
 		let move;
 
-		let objects = PolyglotProbe(KeyFromBoard(this.tree.node.board), this.book);
+		let objects = BookProbe(KeyFromBoard(this.tree.node.board), this.book);
 		let total_weight = 0;
 
 		if (Array.isArray(objects)) {
@@ -694,7 +694,7 @@ function NewRenderer() {
 
 	renderer.load_polyglot_book = function(filename) {
 
-		if (FileExceedsGigabyte(filename)) {
+		if (FileExceedsGigabyte(filename, 2)) {
 			alert(messages.file_too_big);
 			this.send_ack_book();
 			return;
@@ -1607,7 +1607,11 @@ function NewRenderer() {
 	};
 
 	renderer.send_ack_book = function() {
-		ipcRenderer.send("ack_book", this.book ? this.book.type : false);		// Don't send the object...
+		let msg = false;
+		if (this.book) {
+			msg = this.book instanceof Buffer ? "polyglot" : "pgn";
+		}
+		ipcRenderer.send("ack_book", msg);
 	};
 
 	renderer.send_ack_setoption = function(name) {
@@ -2209,7 +2213,7 @@ function NewRenderer() {
 		}
 
 		if (!this.explorer_objects_cache || this.explorer_cache_node_id !== this.tree.node.id) {
-			let objects = PolyglotProbe(KeyFromBoard(this.tree.node.board), this.book);
+			let objects = BookProbe(KeyFromBoard(this.tree.node.board), this.book);
 			let total_weight = 0;
 			if (Array.isArray(objects)) {
 				for (let o of objects) {

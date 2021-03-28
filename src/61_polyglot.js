@@ -234,12 +234,6 @@ for (let n = 0; n < 65536; n++) {
 
 // ------------------------------------------------------------------------------------------------------------------------
 
-function BigIntToHex(big) {
-	let s = big.toString(16);
-	while (s.length < 16) s = "0" + s;
-	return s;
-}
-
 function KeyFromBoard(board) {
 
 	if (!board) return "";
@@ -282,34 +276,44 @@ function KeyFromBoard(board) {
 	return key;
 }
 
-function ParsePolyglotBlob(buf, i) {		// Args are Buffer + offset.
+function ParsePolyglotBlob(buf, off) {		// Args are Buffer + offset.
+
+	if (buf instanceof Buffer === false) {
+		throw "ParsePolyglotBlob() bad book";
+	}
+
+	if (off < 0 || off > buf.length - 16) {
+		throw "ParsePolyglotBlob() bad offset";
+	}
 
 	// Bytes 0-7 represent the key as a big-endian number.
 
-	let hi = (buf[i++] * 16777216) + (buf[i++] * 65536) + (buf[i++] * 256) + buf[i++];
-	let lo = (buf[i++] * 16777216) + (buf[i++] * 65536) + (buf[i++] * 256) + buf[i++];
+	let hi = (buf[off++] * 16777216) + (buf[off++] * 65536) + (buf[off++] * 256) + buf[off++];
+	let lo = (buf[off++] * 16777216) + (buf[off++] * 65536) + (buf[off++] * 256) + buf[off++];
 	let key = (BigInt(hi) << 32n) + BigInt(lo);
 
 	// Bytes 8-9 represent the move as a big-endian bitfield, uh...
 
-	let move = PolyglotMoveLookup[(buf[i++] * 256) + buf[i++]];
+	let move = PolyglotMoveLookup[(buf[off++] * 256) + buf[off++]];
 
 	// Bytes 10-11 represent the quality as a big-endian number.
 
-	let weight = (buf[i++] * 256) + buf[i++];
+	let weight = (buf[off++] * 256) + buf[off++];
 
 	return {key, move, weight};
 }
 
-function SortPolyglotBook(book) {
-	book.sort((a, b) => {
-		if (a.key < b.key) return -1;
-		if (a.key > b.key) return 1;
-		return 0;
-	});
-}
+function SortAndDeclutterPGNBook(book) {
 
-function SortAndDeclutter(book) {
+	// book must be an array of objects of form {key, move, weight}
+
+	if (book instanceof Buffer) {
+		throw "Cannot call SortAndDeclutterPGNBook() on a Buffer.";
+	}
+
+	if (Array.isArray(book) === false) {
+		throw "SortAndDeclutterPGNBook() bad arg";
+	}
 
 	if (book.length === 0) {
 		return;
@@ -323,7 +327,7 @@ function SortAndDeclutter(book) {
 		return 0;
 	});
 
-	// Now we deduplicate the book in place...
+	// Now we deduplicate the book in place... (algorithm relies on length >= 1)
 
 	let i = 0;			// Slow index
 	let j = 1;			// Fast index
@@ -350,42 +354,58 @@ function SortAndDeclutter(book) {
 	}
 }
 
-function PolyglotProbe(key, book) {
+function BookAtLogicalIndex(book, i) {
+	if (book instanceof Buffer) {
+		return ParsePolyglotBlob(book, i * 16);
+	}
+	return book[i];
+}
 
-	// The book is stored as a sorted array (using an object as a dict is too big / slow).
-	// So we have to find things by binary search...
+function BookLogicalLength(book) {
+	if (book instanceof Buffer) {
+		return Math.floor(book.length / 16);
+	} else if (Array.isArray(book)) {
+		return book.length;
+	} else {
+		return 0;
+	}
+}
 
-	if (!key || !book || Array.isArray(book) === false || book.length === 0) {
+function BookProbe(key, book) {
+
+	// book is either the raw buffer, of an array of objects of form {key, move, weight}
+
+	let logical_length = BookLogicalLength(book);			// returns 0 on most bad args
+
+	if (!key || logical_length === 0) {
 		return [];
 	}
 
-	let mid;
 	let hit;
 	let cur;
+
+	let mid;
 	let lowerbound = 0;
-	let upperbound = book.length - 1;
+	let upperbound = logical_length - 1;
 
 	while (true) {
 
 		if (lowerbound > upperbound) {
 
-			console.log("PolyglotProbe(): lowerbound > upperbound");
-			break;
-
-		} else if (lowerbound === upperbound) {
-
-			if (book[lowerbound].key === key) {
-				hit = lowerbound;
-			}
+			console.log("BookProbe(): lowerbound > upperbound");
 			break;
 
 		} else {
 
 			mid = Math.floor((upperbound + lowerbound) / 2);		// If upper and lower are neighbours, mid is the left one.
-			cur = book[mid];
+			cur = BookAtLogicalIndex(book, mid);
 
 			if (cur.key === key) {
-				hit = mid;
+				hit = cur;
+				break;
+			}
+
+			if (lowerbound === upperbound) {
 				break;
 			}
 
@@ -402,32 +422,36 @@ function PolyglotProbe(key, book) {
 		return [];
 	}
 
-	let left = hit;
-	let right = hit;
+	let ret = [hit];
+
+	let left = mid;
+	let right = mid;
 
 	while (left > 0) {
-		if (book[left - 1].key === key) {
-			left--;
+		cur = BookAtLogicalIndex(book, --left);
+		if (cur.key === key) {
+			ret.unshift(cur);
 		} else {
 			break;
 		}
 	}
 
-	while (right < book.length - 1) {
-		if (book[right + 1].key === key) {
-			right++;
+	while (right < logical_length - 1) {
+		cur = BookAtLogicalIndex(book, ++right);
+		if (cur.key === key) {
+			ret.push(cur);
 		} else {
 			break;
 		}
 	}
 
-	return book.slice(left, right + 1);
+	return ret;
 }
 
+// For debugging...........................................................................................................
 
-// For debugging...
 function HubProbe() {
-	let objects = PolyglotProbe(KeyFromBoard(hub.tree.node.board), hub.book);
+	let objects = BookProbe(KeyFromBoard(hub.tree.node.board), hub.book);
 	let ret = [];
 	for (let o of objects) {
 		ret.push({
@@ -440,28 +464,40 @@ function HubProbe() {
 	return ret;
 }
 
-function PolyglotStressTest() {
+function BigIntToHex(big) {
+	let s = big.toString(16);
+	while (s.length < 16) s = "0" + s;
+	return s;
+}
+
+function BookStressTest() {
 
 	// Given a randomly chosen singleton (position with 1 move),
-	// does PolyglotProbe() actually find it?
+	// does BookProbe() actually find it?
 
 	if (!hub.book) return "Need hub to have a book!";
 
 	let trials = 0;
 	let successes = 0;
+	let logical_length = BookLogicalLength(hub.book);
 
 	for (let n = 0; n < 100000; n++) {
-		let i = RandInt(1, hub.book.length - 2);
-		let object = hub.book[i];
-		if (hub.book[i - 1].key === object.key || hub.book[i + 1].key === object.key) {
+
+		let i = RandInt(1, logical_length - 1);		// So that's actually a value between 1 and logical_length - 2, inclusive.
+
+		let left_o = BookAtLogicalIndex(hub.book, i - 1);
+		let mid_o = BookAtLogicalIndex(hub.book, i);
+		let right_o = BookAtLogicalIndex(hub.book, i + 1);
+
+		if (left_o.key === mid_o.key || right_o.key === mid_o.key) {
 			continue;
 		}
 		trials++;
-		let proberesults = PolyglotProbe(object.key, hub.book);
+		let proberesults = BookProbe(mid_o.key, hub.book);
 		if (proberesults.length === 1) {
 			successes++;
 		} else {
-			console.log("Missed:", object.key);
+			console.log("Missed:", mid_o.key);
 		}
 	}
 

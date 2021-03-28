@@ -560,7 +560,14 @@ function NumbersBetween(a, b) {
 }
 
 function RandInt(min, max) {
-	return Math.floor(Math.random() * (max - min)) + min;
+	if (min >= max) {
+		return min;
+	}
+	let ret = Math.floor(Math.random() * (max - min)) + min;
+	if (ret >= max) {		// Probably impossible.
+		ret = min;
+	}
+	return ret;
 }
 
 function RandChoice(arr) {
@@ -591,10 +598,10 @@ function StringIsNumeric(s) {
 	return true;
 }
 
-function FileExceedsGigabyte(filename) {
+function FileExceedsGigabyte(filename, multiplier = 1) {
 	try {
 		let filesize = fs.statSync(filename).size;
-		if (filesize >= 1073741824) {
+		if (filesize >= 1073741824 * multiplier) {
 			return true;
 		} else {
 			return false;
