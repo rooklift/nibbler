@@ -364,7 +364,7 @@ function NewLineSplitter(buf, callback) {
 
 			let ch = this.buf[this.b];
 			if (ch === 10) {					// Split on \n
-				let line = buf.slice(this.a, this.b);
+				let line = this.buf.slice(this.a, this.b);
 				this.append(line);
 				this.a = this.b + 1;
 			}
