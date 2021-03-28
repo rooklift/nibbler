@@ -79,7 +79,7 @@ function NewPGNBookLoader(filename, callback) {
 		let continuetime = performance.now();
 
 		if (!this.pgn_choices) {
-			this.pgn_choices = PreParsePGN(this.buf);
+			this.pgn_choices = PreParsePGN(this.buf);			// FIXME? Whole thing can still lock up here! Meh.
 			setTimeout(() => {this.continue();}, 5);
 		}
 
