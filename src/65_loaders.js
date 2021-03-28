@@ -68,8 +68,10 @@ function NewPGNBookLoader(hub) {
 				this.hub.set_special_message(`Book load failed or was aborted.`);
 				return;
 			}
-			this.buf = data;
-			this.continue();
+			if (this.running) {		// Might have been set false by abort()
+				this.buf = data;
+				this.continue();
+			}
 		});
 	};
 
