@@ -319,6 +319,10 @@ function SortAndDeclutterPGNBook(book) {
 		throw "SortAndDeclutterPGNBook() bad arg";
 	}
 
+	if (book.length === 0) {
+		return;
+	}
+
 	book.sort((a, b) => {					// Sort by key AND move to make deduplication possible.
 		if (a.key < b.key) return -1;
 		if (a.key > b.key) return 1;
@@ -329,8 +333,8 @@ function SortAndDeclutterPGNBook(book) {
 
 	// Now we deduplicate the book in place... algorithm is correct even for the zero-length case.
 
-	let i = -1;			// Slow index
-	let j = 0;			// Fast index
+	let i = 0;			// Slow index
+	let j = 1;			// Fast index
 
 	while (true) {
 
