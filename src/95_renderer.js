@@ -2250,10 +2250,16 @@ function NewRenderer() {
 			}
 		}
 
+		// This flag is for when there's an active loader that isn't (or isn't yet) capable of
+		// calling set_special_message() to display a progress update...
+
+		let needs_loading_msg_from_hub = this.loaders.filter(o => o.running && !o.can_update_status).length > 0;
+
 		this.info_handler.draw_statusbox(
 			this.tree.node,
 			this.engine,
-			analysing_other
+			analysing_other,
+			needs_loading_msg_from_hub
 		);
 	};
 

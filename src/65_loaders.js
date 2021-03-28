@@ -11,6 +11,7 @@ function NewPolyglotBookLoader(hub) {
 	let loader = Object.create(null);
 	loader.type = "book";					// hub looks at this
 	loader.running = false;					// hub looks at this
+	loader.can_update_status = false;		// hub looks at this
 
 	loader.hub = hub;
 	loader.aborted = false;
@@ -50,6 +51,7 @@ function NewPGNBookLoader(hub) {
 	let loader = Object.create(null);
 	loader.type = "book";					// hub looks at this
 	loader.running = false;					// hub looks at this
+	loader.can_update_status = false;		// hub looks at this - true if we are showing progress reports via set_special_message()
 
 	loader.hub = hub;
 	loader.starttime = performance.now();
@@ -70,6 +72,7 @@ function NewPGNBookLoader(hub) {
 			}
 			if (this.running) {		// Might have been set false by abort()
 				this.buf = data;
+				this.can_update_status = true;
 				this.continue();
 			}
 		});
@@ -77,6 +80,7 @@ function NewPGNBookLoader(hub) {
 
 	loader.abort = function() {
 		this.running = false;
+		this.can_update_status = false;
 		this.buf = null;			// For the GC's benefit
 		this.book = null;			// For the GC's benefit
 		this.hub.set_special_message(`Book load failed or was aborted.`);
@@ -125,6 +129,7 @@ function NewPGNBookLoader(hub) {
 
 	loader.finish = function() {
 		this.running = false;
+		this.can_update_status = false;
 		this.buf = null;
 		if (this.book) {
 			SortAndDeclutterPGNBook(this.book);
