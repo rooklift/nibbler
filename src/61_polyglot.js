@@ -364,11 +364,11 @@ function BookAtLogicalIndex(book, i) {
 function BookLogicalLength(book) {
 	if (book instanceof Buffer) {
 		return Math.floor(book.length / 16);
-	}
-	if (Array.isArray(book) === false) {
+	} else if (Array.isArray(book)) {
+		return book.length;
+	} else {
 		return 0;
 	}
-	return book.length;
 }
 
 function BookProbe(key, book) {
