@@ -72,8 +72,8 @@ function NewFastPGNLoader(foo, callback) {
 
 			if (index === -1) {
 				if (this.search === "\n\n[") {
-					this.search = "\r\n\r\n[";
-					this.fix = 4;
+					this.search = "\n\r\n[";
+					this.fix = 3;
 					this.off = 0;
 					continue;
 				} else {
@@ -175,6 +175,11 @@ function NewPGNBookLoader(filename, callback) {
 			this.fastloader = NewFastPGNLoader(this.filename, (pgndata) => {
 				this.pgndata = pgndata;
 			});
+		}
+
+		if (!this.pgndata && !this.fastloader.callback) {		// Means the fastloader failed. I should pass errors, huh.
+			this.shutdown();
+			return;
 		}
 
 		if (!this.pgndata) {
