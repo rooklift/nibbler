@@ -807,6 +807,7 @@ function NewRenderer() {
 
 	renderer.handle_loaded_pgndata = function(pgndata) {
 		if (!pgndata || pgndata.count() === 0) {
+			alert("No data found.");
 			return;
 		}
 		if (pgndata.count() === 1) {
