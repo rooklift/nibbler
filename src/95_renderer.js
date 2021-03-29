@@ -849,7 +849,7 @@ function NewRenderer() {
 		const interval = 100;
 
 		if (!this.pgndata || this.pgndata.count() === 0) {
-			alert("No PGN loaded");
+			alert("No PGN loaded.");
 			return;
 		}
 
