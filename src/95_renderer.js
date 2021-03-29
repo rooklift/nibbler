@@ -677,7 +677,7 @@ function NewRenderer() {
 			if (fs.existsSync(filename) === false) {				// Can happen when extra args are passed to main process. Silently return.
 				return;
 			}
-			if (FileExceedsGigabyte(filename, 0.2)) {
+			if (FileExceedsGigabyte(filename) {
 				alert(messages.file_too_big);
 				return;
 			}
