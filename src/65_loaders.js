@@ -192,7 +192,7 @@ function NewPGNBookLoader(filename, callback) {
 				break;
 			}
 
-			let o = this.pgndata.game(this.n++);
+			let o = this.pgndata.getrecord(this.n++);
 
 			try {
 				let root = LoadPGNRecord(o);					// Note that this calls DestroyTree() itself if needed.

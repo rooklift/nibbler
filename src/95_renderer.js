@@ -794,7 +794,7 @@ function NewRenderer() {
 			return;
 		}
 		if (pgndata.count() === 1) {
-			let success = this.load_pgn_object(pgndata.game(0));
+			let success = this.load_pgn_object(pgndata.getrecord(0));
 			if (success) {
 				this.pgndata = pgndata;
 				this.pgn_choices_start = 0;
@@ -871,7 +871,7 @@ function NewRenderer() {
 
 			let pad = n < 10 ? "&nbsp;" : "";
 
-			let p = this.pgndata.game(n);
+			let p = this.pgndata.getrecord(n);
 
 			let s;
 
@@ -907,7 +907,7 @@ function NewRenderer() {
 			return;
 		}
 		if (this.pgndata && n >= 0 && n < this.pgndata.count()) {
-			this.load_pgn_object(this.pgndata.game(n));
+			this.load_pgn_object(this.pgndata.getrecord(n));
 		}
 	};
 

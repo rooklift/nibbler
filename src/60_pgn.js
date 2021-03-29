@@ -290,7 +290,7 @@ function new_pgndata(buf, indices) {		// Made by the PGN file loader. Used by th
 		return this.indices.length;
 	};
 
-	ret.game = function(n) {
+	ret.getrecord = function(n) {
 		if (typeof n !== "number" || n < 0 || n >= this.indices.length) {
 			return null;
 		}
