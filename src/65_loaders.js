@@ -99,8 +99,7 @@ function NewPGNBookLoader(filename, callback) {
 		while (true) {
 
 			if (this.n >= this.pgn_choices.length) {
-				this.finish();
-				return;
+				break;
 			}
 
 			let o = this.pgn_choices[this.n++];
@@ -121,13 +120,11 @@ function NewPGNBookLoader(filename, callback) {
 				}
 			}
 		}
-	};
 
-	loader.finish = function() {
-		if (this.book && this.callback) {
-			SortAndDeclutterPGNBook(this.book);
-			let cb = this.callback; cb(this.book);
-		}
+		// Once, after the while loop is broken...
+
+		SortAndDeclutterPGNBook(this.book);
+		let cb = this.callback; cb(this.book);
 		this.shutdown();
 	};
 
@@ -247,8 +244,7 @@ function NewPGNPreParser(buf, callback) {		// Cannot fail unless aborted.
 		while (true) {
 
 			if (this.n >= this.lines.length) {
-				this.finish();
-				return;
+				break;
 			}
 
 			let rawline = this.lines[this.n++];
@@ -310,12 +306,10 @@ function NewPGNPreParser(buf, callback) {		// Cannot fail unless aborted.
 				}
 			}
 		}
-	};
 
-	loader.finish = function() {
-		if (this.callback) {
-			let cb = this.callback; cb(this.games);
-		}
+		// Once, after the while loop is broken...
+
+		let cb = this.callback; cb(this.games);
 		this.shutdown();
 	};
 
@@ -368,8 +362,7 @@ function NewLineSplitter(buf, callback) {
 		while (true) {
 
 			if (this.b >= this.buf.length) {
-				this.finish();
-				return;
+				break;
 			}
 
 			let ch = this.buf[this.b];
@@ -389,18 +382,15 @@ function NewLineSplitter(buf, callback) {
 				}
 			}
 		}
-	};
 
-	loader.finish = function() {
+		// Once, after the while loop is broken...
 
-		if (this.a !== this.b) {		// We haven't added the last line before EOF.
+		if (this.a !== this.b) {							// We haven't added the last line before EOF.
 			let line = this.buf.slice(this.a, this.b);
 			this.append(line);
 		}
 
-		if (this.callback) {
-			let cb = this.callback; cb(this.lines);
-		}
+		let cb = this.callback; cb(this.lines);
 		this.shutdown();
 	};
 
