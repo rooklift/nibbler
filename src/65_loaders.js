@@ -198,7 +198,7 @@ function NewPGNPreParser(buf, callback) {		// Cannot fail unless aborted.
 
 	loader.callback = callback;
 	loader.msg = "Preparsing...";
-	loader.games = null;
+	loader.games = [new_pgn_record()];
 	loader.lines = null;
 	loader.buf = buf;
 	loader.splitter = null;
@@ -221,10 +221,6 @@ function NewPGNPreParser(buf, callback) {		// Cannot fail unless aborted.
 
 		if (!this.callback) {
 			return;
-		}
-
-		if (!this.games) {
-			this.games = [new_pgn_record()];
 		}
 
 		if (!this.splitter) {
