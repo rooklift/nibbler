@@ -1,6 +1,6 @@
 "use strict";
 
-// Non-blocking loader objects. The callback is only called if data is successfully gathered.
+// Non-blocking loader objects.
 //
 // Implementation rule: The callback property is non-null iff it's still possible that the load will succeed.
 // If callback === null this implies that shutdown() has already been called at least once.
