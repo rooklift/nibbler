@@ -854,6 +854,8 @@ function NewRenderer() {
 		    `<span id="setchooserstart_${this.pgn_choices.length}"> End</span>` +
 		    `</p>`;
 
+		let prevnextfoo2 = ReplaceAll(prevnextfoo, "setchooserstart", "setchooserstartbottom");		// id is supposed to be unique for each element.
+
 		if (this.pgn_choices.length > 1000) lines.push(prevnextfoo);
 		lines.push("<ul>");
 		for (let n = this.pgn_choices_start; n < this.pgn_choices.length && n < this.pgn_choices_start + 1000; n++) {
@@ -881,7 +883,7 @@ function NewRenderer() {
 			lines.push(`<li id="chooser_${n}">${s}</li>`);
 		}
 		lines.push("</ul>");
-		if (this.pgn_choices.length > 1000) lines.push(prevnextfoo);
+		if (this.pgn_choices.length > 1000) lines.push(prevnextfoo2);
 
 		pgnchooser.innerHTML = lines.join("");
 		pgnchooser.style.display = "block";
@@ -904,6 +906,9 @@ function NewRenderer() {
 
 	renderer.maybe_setchooserstart_click = function(event) {
 		let n = EventPathN(event, "setchooserstart_");
+		if (typeof n !== "number") {
+			n = EventPathN(event, "setchooserstartbottom_");
+		}
 		if (typeof n !== "number") {
 			return;
 		}
