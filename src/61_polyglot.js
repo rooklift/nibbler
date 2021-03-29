@@ -448,6 +448,40 @@ function BookProbe(key, book) {
 	return ret;
 }
 
+function BookSortedTest(book) {		// Returns true if a cursory inspection suggests the book is sorted.
+
+	let logical_length = BookLogicalLength(book);
+
+	if (logical_length === 0) {
+		return true;
+	}
+
+	let indices = [];
+
+	for (let n = 0; n < 100; n++) {
+		indices.push(RandInt(0, logical_length));
+	}
+
+	indices.sort((a, b) => {
+		return a - b;
+	});
+
+	let check = 0n;
+
+	for (let index of indices) {
+
+		let object = BookAtLogicalIndex(book, index);
+
+		if (object.key < check) {
+			return false;
+		}
+
+		check = object.key;
+	}
+
+	return true;
+}
+
 // For debugging...........................................................................................................
 
 function HubProbe() {

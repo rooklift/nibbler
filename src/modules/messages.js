@@ -142,3 +142,8 @@ Who knows what will happen. Probably not good things. Maybe bad things.`;
 
 exports.file_too_big =
 `Sorry, this file is probably too large to be safely loaded in Nibbler.`
+
+
+exports.bad_bin_book =
+`This book contained unsorted keys and is therefore not a valid Polyglot book.`;
+

@@ -721,10 +721,14 @@ function NewRenderer() {
 		console.log(`Loading Polyglot book: ${filename}`);
 
 		let loader = NewPolyglotBookLoader(filename, (data) => {
-			this.book = data;
-			this.explorer_objects_cache = null;
-			this.send_ack_book();
-			this.set_special_message(`Finished loading book (moves: ${Math.floor(data.length / 16)})`, "green");
+			if (BookSortedTest(data)) {
+				this.book = data;
+				this.explorer_objects_cache = null;
+				this.send_ack_book();
+				this.set_special_message(`Finished loading book (moves: ${Math.floor(data.length / 16)})`, "green");
+			} else {
+				alert(messages.bad_bin_book);
+			}
 		});
 
 		this.loaders.push(loader);
