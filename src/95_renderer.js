@@ -877,7 +877,7 @@ function NewRenderer() {
 			`<span id="setchooserstart_${this.pgn_choices_start + 100}"> >> </span>|` +
 		    `<span id="setchooserstart_${this.pgn_choices_start + 1000}"> >>> </span>|` +
 		    `<span id="setchooserstart_${this.pgn_choices_start + 10000}"> >>>> </span>|` +
-		    `<span id="setchooserstart_99999999"> End</span>` +
+		    `<span id="setchooserstart_99999999"> End (${count})</span>` +
 		    `</p>`;
 
 		let prevnextfoo2 = ReplaceAll(prevnextfoo, "setchooserstart", "setchooserstartbottom");		// id is supposed to be unique for each element.
