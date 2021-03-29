@@ -8,13 +8,13 @@
 // This prevents some weird inconsistency with order-of-events (whether it matters I don't know).
 // ------------------------------------------------------------------------------------------------------------------------------
 
-function NewPolyglotBookLoader(filename, callback) {
+function NewBinaryLoader(filename, type, msg, callback) {
 
 	let loader = Object.create(null);
-	loader.type = "book";
+	loader.type = type;
 
 	loader.callback = callback;
-	loader.msg = "Loading book...";
+	loader.msg = msg;
 
 	loader.shutdown = function() {
 		this.callback = null;
@@ -34,6 +34,14 @@ function NewPolyglotBookLoader(filename, callback) {
 
 	setTimeout(() => {loader.load(filename);}, 0);
 	return loader;
+}
+
+function NewPolyglotBookLoader(filename, callback) {
+	return NewBinaryLoader(filename, "book", "Loading book...", callback);
+}
+
+function NewFastPGNLoader(filename, callback) {
+	return NewBinaryLoader(filename, "pgn", "Loading PGN...", callback);
 }
 
 // ------------------------------------------------------------------------------------------------------------------------------
