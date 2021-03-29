@@ -297,6 +297,13 @@ function new_pgndata(buf, indices) {		// Made by the PGN file loader. Used by th
 		return PreParsePGN(this.buf.slice(this.indices[n], this.indices[n + 1]));		// if n + 1 is out-of-bounds, still works.
 	};
 
+	ret.string = function(n) {
+		if (typeof n !== "number" || n < 0 || n >= this.indices.length) {
+			return "";
+		}
+		return this.buf.slice(this.indices[n], this.indices[n + 1]).toString();			// For debugging.
+	};
+
 	return ret;
 }
 
