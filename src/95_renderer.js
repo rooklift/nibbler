@@ -668,6 +668,10 @@ function NewRenderer() {
 		SavePGN(filename, this.tree.node);
 	};
 
+	renderer.purge_finished_loaders = function() {
+		this.loaders = this.loaders.filter(o => o.callback);
+	};
+
 	renderer.open = function(filename) {
 
 		try {
@@ -763,17 +767,14 @@ function NewRenderer() {
 		this.loaders.push(loader);
 	};
 
-	renderer.purge_finished_loaders = function() {
-		this.loaders = this.loaders.filter(o => o.callback);
-	};
-
 	renderer.load_pgn_from_string = function(s) {
+
+		if (typeof s !== "string") {
+			return;
+		}
+
 		let buf = Buffer.from(s);
 		console.log(`Loading PGN from string...`);
-		this.load_pgn_buffer(buf);
-	};
-
-	renderer.load_pgn_buffer = function(buf) {
 
 		for (let loader of this.loaders) {
 			if (loader.type === "pgn") {
