@@ -36,7 +36,13 @@ function NewPolyglotBookLoader(filename, callback) {
 	return loader;
 }
 
-function NewFastPGNLoader(filename, callback) {
+function NewFastPGNLoader(foo, callback) {
+
+	// foo is allowed to be filepath or Buffer
+
+	if (typeof foo !== "string" && foo instanceof Buffer === false) {
+		throw "NewFastPGNLoader() bad call";
+	}
 
 	let loader = Object.create(null);
 	loader.type = "pgn";
@@ -57,16 +63,23 @@ function NewFastPGNLoader(filename, callback) {
 		this.indices = null;
 	};
 
-	loader.load = function(filename) {
-		fs.readFile(filename, (err, data) => {
-			if (err) {
-				console.log(err);
-				this.shutdown();
-			} else if (this.callback) {
-				this.buf = data;
+	loader.load = function(foo) {
+		if (foo instanceof Buffer) {
+			if (this.callback) {
+				this.buf = foo;
 				this.continue();
 			}
-		});
+		} else {
+			fs.readFile(foo, (err, data) => {
+				if (err) {
+					console.log(err);
+					this.shutdown();
+				} else if (this.callback) {
+					this.buf = data;
+					this.continue();
+				}
+			});
+		}
 	};
 
 	loader.continue = function() {
@@ -117,7 +130,7 @@ function NewFastPGNLoader(filename, callback) {
 		this.shutdown();
 	};
 
-	setTimeout(() => {loader.load(filename);}, 0);
+	setTimeout(() => {loader.load(foo);}, 0);
 	return loader;
 }
 

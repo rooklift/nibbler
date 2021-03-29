@@ -773,7 +773,7 @@ function NewRenderer() {
 		this.load_pgn_buffer(buf);
 	};
 
-	renderer.load_pgn_buffer = function(buf) {				// FIXME
+	renderer.load_pgn_buffer = function(buf) {
 
 		for (let loader of this.loaders) {
 			if (loader.type === "pgn") {
@@ -781,26 +781,11 @@ function NewRenderer() {
 			}
 		}
 
-		let loader = NewPGNPreParser(buf, (games) => {
-			this.handle_games_from_loader(games);
+		let loader = NewFastPGNLoader(buf, (pgndata) => {
+			this.handle_loaded_pgndata(pgndata);
 		});
 
 		this.loaders.push(loader);
-	};
-
-	renderer.handle_games_from_loader = function(games) {		// FIXME delete?
-		let new_pgn_choices = games;
-		if (new_pgn_choices.length === 1) {
-			let success = this.load_pgn_object(new_pgn_choices[0]);
-			if (success) {
-				this.pgn_choices = new_pgn_choices;		// We only want to set this to a 1 value array if it actually worked.
-				this.pgn_choices_start = 0;
-			}
-		} else {
-			this.pgn_choices = new_pgn_choices;			// Setting it to a multi-value array is "always" OK.
-			this.pgn_choices_start = 0;
-			this.show_pgn_chooser();					// Now we need to have the user choose a game.
-		}
 	};
 
 	renderer.handle_loaded_pgndata = function(pgndata) {
@@ -808,7 +793,6 @@ function NewRenderer() {
 			return;
 		}
 		if (pgndata.count() === 1) {
-			let object = PreParsePGN(pgndata.buf);
 			let success = this.load_pgn_object(pgndata.game(0));
 			if (success) {
 				this.pgndata = pgndata;
