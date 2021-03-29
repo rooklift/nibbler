@@ -73,7 +73,9 @@ function NewFastPGNLoader(filename, callback) {
 			return;
 		}
 
-		this.indices.push(0);					// FIXME probably, can cause a bad entry at start.
+		if (this.buf.length > 0) {
+			this.indices.push(0);					// FIXME probably, can cause a bad entry at start.
+		}
 
 		for (let search of [Buffer.from("\n\n["), Buffer.from("\r\n\r\n[")]) {
 			let off = 0;
@@ -90,7 +92,8 @@ function NewFastPGNLoader(filename, callback) {
 
 		this.indices.sort((a, b) => a - b);
 
-		let cb = this.callback; cb({buf: this.buf, indices: this.indices});
+		let ret = new_pgndata(this.buf, this.indices);
+		let cb = this.callback; cb(ret);
 		this.shutdown();
 	};
 

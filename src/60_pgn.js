@@ -1,5 +1,113 @@
 "use strict";
 
+function split_buffer(buf) {
+
+	// Split a binary buffer into an array of binary buffers corresponding to lines.
+
+	let lines = [];
+
+	let push = (arr) => {
+		if (arr.length > 0 && arr[arr.length - 1] === 13) {		// Discard \r
+			lines.push(Buffer.from(arr.slice(0, -1)));
+		} else {
+			lines.push(Buffer.from(arr));
+		}
+	};
+
+	let a = 0;
+	let b;
+
+	if (buf.length > 3 && buf[0] === 239 && buf[1] === 187 && buf[2] === 191) {
+		a = 3;			// 1st slice will skip byte order mark (BOM).
+	}
+
+	for (b = 0; b < buf.length; b++) {
+		let ch = buf[b];
+		if (ch === 10) {					// Split on \n
+			let line = buf.slice(a, b);
+			push(line);
+			a = b + 1;
+		}
+	}
+
+	if (a !== b) {		// We haven't added the last line before EOF.
+		let line = buf.slice(a, b);
+		push(line);
+	}
+
+	return lines;
+}
+
+function new_pgn_record() {				// These things are made by NewPGNPreParser(), used by LoadPGNRecord()
+	return {
+		tags: Object.create(null),
+		movebufs: []
+	};
+}
+
+function PreParsePGN(buf) {
+
+	// CHANGED in 2.0.3 - returns a single game.
+	// Cannot fail.
+
+	let game = new_pgn_record();
+	let lines = split_buffer(buf);
+
+	for (let rawline of lines) {
+
+		if (rawline.length === 0) {
+			continue;
+		}
+
+		if (rawline[0] === 37) {			// Percent % sign is a special comment type.
+			continue;
+		}
+
+		let tagline = "";
+
+		if (rawline[0] === 91) {
+			let s = decoder.decode(rawline).trim();
+			if (s.endsWith(`"]`)) {
+				tagline = s;
+			}
+		}
+
+		if (tagline !== "") {
+
+			if (game.movebufs.length > 0) {
+				// We have movetext already. Return the game we have.
+				return game;
+			}
+
+			// Parse the tag line...
+
+			tagline = tagline.slice(1, -1);								// So now it's like:		Foo "bar etc"
+
+			let quote_i = tagline.indexOf(`"`);
+
+			if (quote_i === -1) {
+				continue;
+			}
+
+			let key = tagline.slice(0, quote_i).trim();
+			let value = tagline.slice(quote_i + 1).trim();
+
+			if (value.endsWith(`"`)) {
+				value = value.slice(0, -1);
+			}
+
+			game.tags[key] = SafeString(value);		// Escape evil characters. IMPORTANT!
+
+		} else {
+
+			game.movebufs.push(rawline);
+
+		}
+	}
+
+	return game;
+}
+
 function new_byte_pusher(size) {
 
 	if (!size || size <= 0) {
@@ -36,13 +144,6 @@ function new_byte_pusher(size) {
 		string: function() {
 			return decoder.decode(this.bytes());
 		}
-	};
-}
-
-function new_pgn_record() {				// These things are made by NewPGNPreParser(), used by LoadPGNRecord()
-	return {
-		tags: Object.create(null),
-		movebufs: []
 	};
 }
 
@@ -179,6 +280,24 @@ function LoadPGNRecord(o) {				// Can throw, either by itself, or by allowing a 
 	}
 
 	return root;
+}
+
+function new_pgndata(buf, indices) {		// Made by the PGN file loader. Used by the hub.
+
+	let ret = {buf, indices};
+
+	ret.count = function() {
+		return this.indices.length;
+	};
+
+	ret.game = function(n) {
+		if (typeof n !== "number" || n < 0 || n >= this.indices.length) {
+			return null;
+		}
+		return PreParsePGN(this.buf.slice(this.indices[n], this.indices[n + 1]));		// if n + 1 is out-of-bounds, still works.
+	};
+
+	return ret;
 }
 
 // -------------------------------------------------------------------------
