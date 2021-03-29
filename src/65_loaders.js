@@ -1,7 +1,11 @@
 "use strict";
 
 // Non-blocking loader objects. The callback is only called if data is successfully gathered.
+//
 // Implementation rule: The callback property is non-null iff it's still possible that the load will succeed.
+//
+// Also, every loader starts itself via setTimeout so that the caller can finish whatever it was doing first.
+// This prevents some weird inconsistency with order-of-events (whether it matters I don't know).
 // ------------------------------------------------------------------------------------------------------------------------------
 
 function NewPolyglotBookLoader(filename, callback) {
@@ -28,7 +32,7 @@ function NewPolyglotBookLoader(filename, callback) {
 		});
 	};
 
-	loader.load(filename);
+	setTimeout(() => {loader.load(filename);}, 0);
 	return loader;
 }
 
@@ -124,7 +128,7 @@ function NewPGNBookLoader(filename, callback) {
 		this.shutdown();
 	};
 
-	loader.load(filename);
+	setTimeout(() => {loader.load(filename);}, 0);
 	return loader;
 }
 
@@ -252,7 +256,7 @@ function NewPGNPreParser(buf, callback) {		// Cannot fail unless aborted.
 		this.shutdown();
 	};
 
-	loader.continue();
+	setTimeout(() => {loader.continue();}, 0);		// setTimeout especially required here since there's no async load() function in this one.
 	return loader;
 }
 
@@ -309,7 +313,7 @@ function NewPGNFileLoader(filename, callback) {
 		setTimeout(() => {this.continue();}, 20);	// Just to update these messages.
 	};
 
-	loader.load(filename);
+	setTimeout(() => {loader.load(filename);}, 0);
 	return loader;
 }
 
@@ -393,6 +397,6 @@ function NewLineSplitter(buf, callback) {
 		this.shutdown();
 	};
 
-	loader.continue();
+	setTimeout(() => {loader.continue();}, 0);		// setTimeout especially required here since there's no async load() function in this one.
 	return loader;
 }
