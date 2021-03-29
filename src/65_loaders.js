@@ -191,6 +191,13 @@ function NewPGNFileLoader(filename, callback) {
 
 // ------------------------------------------------------------------------------------------------------------------------------
 
+function new_pgn_record() {
+	return {
+		tags: Object.create(null),
+		movebufs: []
+	};
+}
+
 function NewPGNPreParser(buf, callback) {		// Cannot fail unless aborted.
 
 	let loader = Object.create(null);
@@ -321,6 +328,8 @@ function NewPGNPreParser(buf, callback) {		// Cannot fail unless aborted.
 
 function NewLineSplitter(buf, callback) {
 
+	// The original sync version of this is in misc/scraps.js and is easier to read.
+
 	let loader = Object.create(null);
 	loader.type = "?";
 
@@ -365,8 +374,7 @@ function NewLineSplitter(buf, callback) {
 				break;
 			}
 
-			let ch = this.buf[this.b];
-			if (ch === 10) {					// Split on \n
+			if (this.buf[this.b] === 10) {					// Split on \n
 				let line = this.buf.slice(this.a, this.b);
 				this.append(line);
 				this.a = this.b + 1;
