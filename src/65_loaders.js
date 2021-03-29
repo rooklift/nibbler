@@ -8,13 +8,13 @@
 // This prevents some weird inconsistency with order-of-events (whether it matters I don't know).
 // ------------------------------------------------------------------------------------------------------------------------------
 
-function NewBinaryLoader(filename, type, msg, callback) {
+function NewPolyglotBookLoader(filename, callback) {
 
 	let loader = Object.create(null);
-	loader.type = type;
+	loader.type = "book";
 
 	loader.callback = callback;
-	loader.msg = msg;
+	loader.msg = "Loading book...";
 
 	loader.shutdown = function() {
 		this.callback = null;
@@ -36,12 +36,66 @@ function NewBinaryLoader(filename, type, msg, callback) {
 	return loader;
 }
 
-function NewPolyglotBookLoader(filename, callback) {
-	return NewBinaryLoader(filename, "book", "Loading book...", callback);
-}
-
 function NewFastPGNLoader(filename, callback) {
-	return NewBinaryLoader(filename, "pgn", "Loading PGN...", callback);
+
+	let loader = Object.create(null);
+	loader.type = "pgn";
+
+	loader.callback = callback;
+	loader.msg = "Loading PGN...";
+	loader.buf = null;
+	loader.indices = [];
+
+	loader.shutdown = function() {
+		this.callback = null;
+		this.msg = "";
+		this.buf = null;
+		this.indices = null;
+	};
+
+	loader.load = function(filename) {
+		fs.readFile(filename, (err, data) => {
+			if (err) {
+				console.log(err);
+				this.shutdown();
+			} else if (this.callback) {
+				this.buf = data;
+				this.continue();
+			}
+		});
+	};
+
+	loader.continue = function() {
+
+		// Currently just synchronous.
+
+		if (!this.callback) {
+			return;
+		}
+
+		this.indices.push(0);					// FIXME probably, can cause a bad entry at start.
+
+		for (let search of [Buffer.from("\n\n["), Buffer.from("\r\n\r\n[")]) {
+			let off = 0;
+			let fix = search.length - 1;		// Where the [ char will be
+			while (true) {
+				let index = this.buf.indexOf(search, off);
+				if (index === -1) {
+					break;
+				}
+				this.indices.push(index + fix);
+				off = index + 1;
+			}
+		}
+
+		this.indices.sort((a, b) => a - b);
+
+		let cb = this.callback; cb({buf: this.buf, indices: this.indices});
+		this.shutdown();
+	};
+
+	setTimeout(() => {loader.load(filename);}, 0);
+	return loader;
 }
 
 // ------------------------------------------------------------------------------------------------------------------------------

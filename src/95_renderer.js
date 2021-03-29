@@ -694,8 +694,9 @@ function NewRenderer() {
 
 		console.log(`Loading PGN: ${filename}`);
 
-		let loader = NewPGNFileLoader(filename, (games) => {
-			this.handle_games_from_loader(games);
+		let loader = NewFastPGNLoader(filename, (pgn_data) => {
+			console.log(pgn_data.buf.length, pgn_data.indices);
+			// this.handle_games_from_loader(games);
 		});
 
 		this.loaders.push(loader);
