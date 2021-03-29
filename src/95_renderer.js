@@ -701,6 +701,8 @@ function NewRenderer() {
 		let loader = NewFastPGNLoader(filename, (err, pgndata) => {
 			if (!err) {
 				this.handle_loaded_pgndata(pgndata);
+			} else {
+				console.log(err);
 			}
 		});
 
@@ -736,6 +738,8 @@ function NewRenderer() {
 				} else {
 					alert(messages.bad_bin_book);
 				}
+			} else {
+				console.log(err);
 			}
 		});
 
@@ -767,6 +771,8 @@ function NewRenderer() {
 				this.explorer_objects_cache = null;
 				this.send_ack_book();
 				this.set_special_message(`Finished loading book (moves: ${data.length})`, "green");
+			} else {
+				console.log(err);
 			}
 		});
 
@@ -791,6 +797,8 @@ function NewRenderer() {
 		let loader = NewFastPGNLoader(buf, (err, pgndata) => {
 			if (!err) {
 				this.handle_loaded_pgndata(pgndata);
+			} else {
+				console.log(err);
 			}
 		});
 
