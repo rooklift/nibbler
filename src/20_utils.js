@@ -560,6 +560,10 @@ function NumbersBetween(a, b) {
 }
 
 function RandInt(min, max) {
+	if (typeof max !== "number") {		// DWIM.
+		max = min;
+		min = 0;
+	}
 	if (min >= max) {
 		return min;
 	}
