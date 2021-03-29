@@ -14,6 +14,7 @@ function NewRenderer() {
 	renderer.loaders = [];										// This is just so I can be sure loaders don't get GC'd while running.
 	renderer.book = null;
 	renderer.pgn_choices = null;								// All games found when opening a PGN file.
+	renderer.pgn_choices_start = 0;
 	renderer.friendly_draws = New2DArray(8, 8, null);			// What pieces are drawn in boardfriends. Used to skip redraws.
 	renderer.enemy_draws = New2DArray(8, 8, null);				// What pieces are drawn in boardsquares. Used to skip redraws.
 	renderer.dirty_squares = New2DArray(8, 8, null);			// What squares have some coloured background.
@@ -676,7 +677,7 @@ function NewRenderer() {
 			if (fs.existsSync(filename) === false) {				// Can happen when extra args are passed to main process. Silently return.
 				return;
 			}
-			if (FileExceedsGigabyte(filename, 0.1)) {
+			if (FileExceedsGigabyte(filename, 0.2)) {
 				alert(messages.file_too_big);
 				return;
 			}
@@ -789,9 +790,11 @@ function NewRenderer() {
 			let success = this.load_pgn_object(new_pgn_choices[0]);
 			if (success) {
 				this.pgn_choices = new_pgn_choices;		// We only want to set this to a 1 value array if it actually worked.
+				this.pgn_choices_start = 0;
 			}
 		} else {
 			this.pgn_choices = new_pgn_choices;			// Setting it to a multi-value array is "always" OK.
+			this.pgn_choices_start = 0;
 			this.show_pgn_chooser();					// Now we need to have the user choose a game.
 		}
 	};
@@ -819,12 +822,19 @@ function NewRenderer() {
 
 	renderer.show_pgn_chooser = function() {
 
-		if (!this.pgn_choices) {
+		if (Array.isArray(this.pgn_choices) === false || this.pgn_choices.length === 0) {
 			alert("No PGN loaded");
 			return;
 		}
 
-		this.hide_promotiontable();		// Just in case it's up.
+		if (this.pgn_choices_start >= this.pgn_choices.length) {
+			this.pgn_choices_start = Math.floor((this.pgn_choices.length - 1) / 1000) * 1000;
+		}
+		if (this.pgn_choices_start < 0) {		// The most important thing, values < 0 will crash.
+			this.pgn_choices_start = 0;
+		}
+
+		this.hide_promotiontable();				// Just in case it's up.
 		this.set_behaviour("halt");
 
 		let lines = [];
@@ -835,9 +845,20 @@ function NewRenderer() {
 			padding += "&nbsp;";
 		}
 
-		for (let n = 0; n < this.pgn_choices.length; n++) {
+		let prevnextfoo = `<p>&nbsp;&nbsp;` +						// All these values get fixed on function entry if they're out-of-bounds.
+			`<span id="setchooserstart_0">Start </span>|` +
+			`<span id="setchooserstart_${this.pgn_choices_start - 10000}"> <<<< </span>|` +
+			`<span id="setchooserstart_${this.pgn_choices_start - 1000}"> << </span>|` +
+		    `<span id="setchooserstart_${this.pgn_choices_start + 1000}"> >> </span>|` +
+		    `<span id="setchooserstart_${this.pgn_choices_start + 10000}"> >>>> </span>|` +
+		    `<span id="setchooserstart_${this.pgn_choices.length}"> End</span>` +
+		    `</p>`;
 
-			if (n === 9 || n === 99 || n === 999 || n === 9999 || n === 99999 || n === 999999) {
+		if (this.pgn_choices.length > 1000) lines.push(prevnextfoo);
+		lines.push("<ul>");
+		for (let n = this.pgn_choices_start; n < this.pgn_choices.length && n < this.pgn_choices_start + 1000; n++) {
+
+			if (n === 10 || n === 100 || n === 1000 || n === 10000 || n === 100000 || n === 1000000) {
 				padding = padding.slice(0, -6);
 			}
 
@@ -846,11 +867,11 @@ function NewRenderer() {
 			let s;
 
 			if (p.tags.Result === "1-0") {
-				s = `${padding}${n + 1}. <span class="blue">${p.tags.White || "Unknown"}</span> - ${p.tags.Black || "Unknown"}`;
+				s = `${padding}${n}. <span class="blue">${p.tags.White || "Unknown"}</span> - ${p.tags.Black || "Unknown"}`;
 			} else if (p.tags.Result === "0-1") {
-				s = `${padding}${n + 1}. ${p.tags.White || "Unknown"} - <span class="blue">${p.tags.Black || "Unknown"}</span>`;
+				s = `${padding}${n}. ${p.tags.White || "Unknown"} - <span class="blue">${p.tags.Black || "Unknown"}</span>`;
 			} else {
-				s = `${padding}${n + 1}. ${p.tags.White || "Unknown"} - ${p.tags.Black || "Unknown"}`;
+				s = `${padding}${n}. ${p.tags.White || "Unknown"} - ${p.tags.Black || "Unknown"}`;
 			}
 
 			if (p.tags.Opening) {
@@ -859,8 +880,10 @@ function NewRenderer() {
 
 			lines.push(`<li id="chooser_${n}">${s}</li>`);
 		}
+		lines.push("</ul>");
+		if (this.pgn_choices.length > 1000) lines.push(prevnextfoo);
 
-		pgnchooser.innerHTML = "<ul>" + lines.join("") + "</ul>";
+		pgnchooser.innerHTML = lines.join("");
 		pgnchooser.style.display = "block";
 	};
 
@@ -871,11 +894,21 @@ function NewRenderer() {
 	renderer.pgnchooser_click = function(event) {
 		let n = EventPathN(event, "chooser_");
 		if (typeof n !== "number") {
+			this.maybe_setchooserstart_click(event);
 			return;
 		}
 		if (this.pgn_choices && n >= 0 && n < this.pgn_choices.length) {
 			this.load_pgn_object(this.pgn_choices[n]);
 		}
+	};
+
+	renderer.maybe_setchooserstart_click = function(event) {
+		let n = EventPathN(event, "setchooserstart_");
+		if (typeof n !== "number") {
+			return;
+		}
+		this.pgn_choices_start = n;
+		this.show_pgn_chooser();
 	};
 
 	// -------------------------------------------------------------------------------------------------------------------------
