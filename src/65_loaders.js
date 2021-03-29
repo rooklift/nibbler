@@ -46,6 +46,10 @@ function NewFastPGNLoader(filename, callback) {
 	loader.buf = null;
 	loader.indices = [];
 
+	loader.off = 0;
+	loader.search = "\n\n[";
+	loader.fix = 2;				// Where the [ char will be
+
 	loader.shutdown = function() {
 		this.callback = null;
 		this.msg = "";
@@ -67,28 +71,44 @@ function NewFastPGNLoader(filename, callback) {
 
 	loader.continue = function() {
 
-		// Currently just synchronous.
-
 		if (!this.callback) {
 			return;
 		}
 
-		if (this.buf.length > 0) {
-			this.indices.push(0);					// FIXME probably, can cause a bad entry at start.
+		if (this.indices.length === 0 && this.buf.length > 0) {
+			this.indices.push(0);
 		}
 
-		for (let search of [Buffer.from("\n\n["), Buffer.from("\r\n\r\n[")]) {
-			let off = 0;
-			let fix = search.length - 1;		// Where the [ char will be
-			while (true) {
-				let index = this.buf.indexOf(search, off);
-				if (index === -1) {
-					break;
+		let continuetime = performance.now();
+
+		while (true) {
+
+			let index = this.buf.indexOf(this.search, this.off);
+
+			if (index === -1) {
+				if (this.search === "\n\n[") {
+					this.search = "\r\n\r\n[";
+					this.fix = 4;
+					this.off = 0;
+					continue;
+				} else {
+					break
 				}
-				this.indices.push(index + fix);
-				off = index + 1;
+			}
+
+			this.indices.push(index + this.fix);
+			this.off = index + 1;
+
+			if (this.indices.length % 1000 === 0) {
+				if (performance.now() - continuetime > 20) {
+					this.msg = `Loading PGN... ${this.indices.length} games`;
+					setTimeout(() => {this.continue();}, 20);
+					return;
+				}
 			}
 		}
+
+		// Once, after the while loop is broken...
 
 		this.indices.sort((a, b) => a - b);
 
@@ -191,63 +211,6 @@ function NewPGNBookLoader(filename, callback) {
 		SortAndDeclutterPGNBook(this.book);
 		let cb = this.callback; cb(this.book);
 		this.shutdown();
-	};
-
-	setTimeout(() => {loader.load(filename);}, 0);
-	return loader;
-}
-
-// ------------------------------------------------------------------------------------------------------------------------------
-
-function NewPGNFileLoader(filename, callback) {
-
-	let loader = Object.create(null);
-	loader.type = "pgn";
-
-	loader.callback = callback;
-	loader.msg = "Loading PGN...";
-	loader.buf = null;
-	loader.preparser = null;
-
-	loader.shutdown = function() {
-		this.callback = null;
-		this.msg = "";
-		this.buf = null;
-		if (this.preparser) {
-			this.preparser.shutdown();
-			this.preparser = null;
-		}
-	};
-
-	loader.load = function(filename) {
-		fs.readFile(filename, (err, data) => {
-			if (err) {
-				console.log(err);
-				this.shutdown();
-			} else if (this.callback) {					// We might already have aborted
-				this.buf = data;
-				this.continue();
-			}
-		});
-	};
-
-	loader.continue = function() {
-
-		if (!this.callback) {
-			return;
-		}
-
-		if (!this.preparser) {
-			this.preparser = NewPGNPreParser(this.buf, (games) => {
-				if (this.callback) {
-					let cb = this.callback; cb(games);
-				}
-				this.shutdown();
-			});
-		}
-
-		this.msg = this.preparser.msg;
-		setTimeout(() => {this.continue();}, 20);		// Just to update these messages.
 	};
 
 	setTimeout(() => {loader.load(filename);}, 0);
