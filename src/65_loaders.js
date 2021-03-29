@@ -191,13 +191,6 @@ function NewPGNFileLoader(filename, callback) {
 
 // ------------------------------------------------------------------------------------------------------------------------------
 
-function new_pgn_record() {
-	return {
-		tags: Object.create(null),
-		movebufs: []
-	};
-}
-
 function NewPGNPreParser(buf, callback) {		// Cannot fail unless aborted.
 
 	let loader = Object.create(null);

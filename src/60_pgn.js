@@ -39,6 +39,13 @@ function new_byte_pusher(size) {
 	};
 }
 
+function new_pgn_record() {				// These things are made by NewPGNPreParser(), used by LoadPGNRecord()
+	return {
+		tags: Object.create(null),
+		movebufs: []
+	};
+}
+
 function LoadPGNRecord(o) {				// Can throw, either by itself, or by allowing a throw from LoadFEN to propagate.
 
 	let startpos;
