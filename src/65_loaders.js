@@ -163,6 +163,18 @@ function NewPGNBookLoader(filename, callback) {
 
 	loader.n = 0;
 
+	loader.shutdown = function() {
+		this.callback = null;
+		this.msg = "";
+		this.buf = null;
+		this.book = null;
+		this.pgndata = null;
+		if (this.fastloader) {
+			this.fastloader.shutdown();
+			this.fastloader = null;
+		}
+	};
+
 	loader.load = function(filename) {
 		if (this.callback) {
 			this.fastloader = NewFastPGNLoader(filename, (err, pgndata) => {
@@ -176,18 +188,6 @@ function NewPGNBookLoader(filename, callback) {
 					}
 				}
 			});
-		}
-	};
-
-	loader.shutdown = function() {
-		this.callback = null;
-		this.msg = "";
-		this.buf = null;
-		this.book = null;
-		this.pgndata = null;
-		if (this.fastloader) {
-			this.fastloader.shutdown();
-			this.fastloader = null;
 		}
 	};
 
