@@ -161,10 +161,25 @@ function NewPGNBookLoader(filename, callback) {
 	loader.pgndata = null;
 	loader.fastloader = null;
 
-	loader.filename = filename;
 	loader.n = 0;
 
-	loader.shutdown = function() {					// Some of this is potentially to the GC's benefit? Who knows.
+	loader.load = function(filename) {
+		if (this.callback) {
+			this.fastloader = NewFastPGNLoader(filename, (err, pgndata) => {
+				if (this.callback) {					// Must test again, because this is later.
+					if (err) {
+						let cb = this.callback; cb(err, null);
+						this.shutdown();
+					} else {
+						this.pgndata = pgndata;
+						this.continue();
+					}
+				}
+			});
+		}
+	};
+
+	loader.shutdown = function() {
 		this.callback = null;
 		this.msg = "";
 		this.buf = null;
@@ -179,25 +194,6 @@ function NewPGNBookLoader(filename, callback) {
 	loader.continue = function() {
 
 		if (!this.callback) {
-			return;
-		}
-
-		if (!this.fastloader) {
-			this.fastloader = NewFastPGNLoader(this.filename, (err, pgndata) => {
-				if (this.callback) {
-					if (err) {
-						let cb = this.callback; cb(err, null);
-						this.shutdown();
-					} else {
-						this.pgndata = pgndata;
-					}
-				}
-			});
-		}
-
-		if (!this.pgndata) {
-			this.msg = this.fastloader.msg;
-			setTimeout(() => {this.continue();}, 20);
 			return;
 		}
 
@@ -236,6 +232,6 @@ function NewPGNBookLoader(filename, callback) {
 		this.shutdown();
 	};
 
-	setTimeout(() => {loader.continue();}, 0);
+	setTimeout(() => {loader.load(filename);}, 0);
 	return loader;
 }
