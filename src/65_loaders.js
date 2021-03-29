@@ -82,12 +82,16 @@ function NewPGNBookLoader(filename, callback) {
 			return;
 		}
 
-		if (!this.pgn_choices && !this.preparser) {
+		if (!this.preparser) {
 			this.msg = "PGN: Preparsing...";
 			this.preparser = NewPGNPreParser(this.buf, (games) => {
 				this.pgn_choices = games;
-				this.continue();
 			});
+		}
+
+		if (!this.pgn_choices) {
+			this.msg = this.preparser.msg;
+			setTimeout(() => {this.continue();}, 20);
 			return;
 		}
 
@@ -227,12 +231,16 @@ function NewPGNPreParser(buf, callback) {		// Cannot fail unless aborted.
 			this.games = [new_pgn_record()];
 		}
 
-		if (!this.splitter && !this.lines) {
+		if (!this.splitter) {
 			this.msg = "PGN: Splitting...";
 			this.splitter = NewLineSplitter(this.buf, (lines) => {
 				this.lines = lines;
-				this.continue();
 			});
+		}
+
+		if (!this.lines) {
+			this.msg = this.splitter.msg;
+			setTimeout(() => {this.continue();}, 20);
 			return;
 		}
 
@@ -377,6 +385,7 @@ function NewLineSplitter(buf, callback) {
 
 			if (this.lines.length % 1000 === 0) {
 				if (performance.now() - continuetime > 20) {
+					this.msg = `PGN: Splitting... ${(100 * (this.b / this.buf.length)).toFixed(0)}%`;
 					setTimeout(() => {this.continue();}, 5);
 					return;
 				}
