@@ -1822,6 +1822,13 @@ function NewRenderer() {
 			this.return_to_lock();
 			return;
 		}
+
+		if (EventPathString(event, "loadabort")) {
+			for (let loader of this.loaders) {
+				loader.shutdown();
+			}
+			return;
+		}
 	};
 
 	renderer.show_promotiontable = function(partial_move) {
@@ -2293,11 +2300,11 @@ function NewRenderer() {
 			}
 		}
 
-		let forced_message = null;
+		let loading_message = null;
 
 		for (let loader of this.loaders) {
 			if (loader.callback) {				// By our rules, can only exist if the load is still pending...
-				forced_message = loader.msg;
+				loading_message = loader.msg;
 				break;
 			}
 		}
@@ -2306,7 +2313,7 @@ function NewRenderer() {
 			this.tree.node,
 			this.engine,
 			analysing_other,
-			forced_message,
+			loading_message,
 		);
 	};
 

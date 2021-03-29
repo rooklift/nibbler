@@ -2,11 +2,11 @@
 
 let infobox_props = {
 
-	draw_statusbox: function(node, engine, analysing_other, forced_message) {
+	draw_statusbox: function(node, engine, analysing_other, loading_message) {
 
-		if (forced_message) {
+		if (loading_message) {
 
-			statusbox.innerHTML = `<span class="yellow">${forced_message}</span>`;
+			statusbox.innerHTML = `<span class="yellow">${loading_message}</span> <span class="red" id="loadabort_clicker">(abort?)</span>`;
 
 		} else if (config.show_engine_state) {
 
