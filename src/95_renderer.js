@@ -845,13 +845,13 @@ function NewRenderer() {
 			padding += "&nbsp;";
 		}
 
-		let prevnextfoo = `<p>&nbsp;&nbsp;` +						// All these values get fixed on function entry if they're out-of-bounds.
-			`<span id="setchooserstart_0">Start </span>|` +
+		let prevnextfoo = `<p>&nbsp;&nbsp;` +	// All these values get fixed on function entry if they're out-of-bounds. ids should be unique.
+			`<span id="setchooserstart_-99999999">Start </span>|` +
 			`<span id="setchooserstart_${this.pgn_choices_start - 10000}"> <<<< </span>|` +
 			`<span id="setchooserstart_${this.pgn_choices_start - 1000}"> << </span>|` +
 		    `<span id="setchooserstart_${this.pgn_choices_start + 1000}"> >> </span>|` +
 		    `<span id="setchooserstart_${this.pgn_choices_start + 10000}"> >>>> </span>|` +
-		    `<span id="setchooserstart_${this.pgn_choices.length}"> End</span>` +
+		    `<span id="setchooserstart_99999999"> End</span>` +
 		    `</p>`;
 
 		let prevnextfoo2 = ReplaceAll(prevnextfoo, "setchooserstart", "setchooserstartbottom");		// id is supposed to be unique for each element.
