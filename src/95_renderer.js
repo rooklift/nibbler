@@ -698,8 +698,10 @@ function NewRenderer() {
 
 		console.log(`Loading PGN: ${filename}`);
 
-		let loader = NewFastPGNLoader(filename, (pgndata) => {
-			this.handle_loaded_pgndata(pgndata);
+		let loader = NewFastPGNLoader(filename, (err, pgndata) => {
+			if (!err) {
+				this.handle_loaded_pgndata(pgndata);
+			}
 		});
 
 		this.loaders.push(loader);
@@ -724,14 +726,16 @@ function NewRenderer() {
 
 		console.log(`Loading Polyglot book: ${filename}`);
 
-		let loader = NewPolyglotBookLoader(filename, (data) => {
-			if (BookSortedTest(data)) {
-				this.book = data;
-				this.explorer_objects_cache = null;
-				this.send_ack_book();
-				this.set_special_message(`Finished loading book (moves: ${Math.floor(data.length / 16)})`, "green");
-			} else {
-				alert(messages.bad_bin_book);
+		let loader = NewPolyglotBookLoader(filename, (err, data) => {
+			if (!err) {
+				if (BookSortedTest(data)) {
+					this.book = data;
+					this.explorer_objects_cache = null;
+					this.send_ack_book();
+					this.set_special_message(`Finished loading book (moves: ${Math.floor(data.length / 16)})`, "green");
+				} else {
+					alert(messages.bad_bin_book);
+				}
 			}
 		});
 
@@ -757,11 +761,13 @@ function NewRenderer() {
 
 		console.log(`Loading PGN book: ${filename}`);
 
-		let loader = NewPGNBookLoader(filename, (data) => {
-			this.book = data;
-			this.explorer_objects_cache = null;
-			this.send_ack_book();
-			this.set_special_message(`Finished loading book (moves: ${data.length})`, "green");
+		let loader = NewPGNBookLoader(filename, (err, data) => {
+			if (!err) {
+				this.book = data;
+				this.explorer_objects_cache = null;
+				this.send_ack_book();
+				this.set_special_message(`Finished loading book (moves: ${data.length})`, "green");
+			}
 		});
 
 		this.loaders.push(loader);
@@ -782,8 +788,10 @@ function NewRenderer() {
 			}
 		}
 
-		let loader = NewFastPGNLoader(buf, (pgndata) => {
-			this.handle_loaded_pgndata(pgndata);
+		let loader = NewFastPGNLoader(buf, (err, pgndata) => {
+			if (!err) {
+				this.handle_loaded_pgndata(pgndata);
+			}
 		});
 
 		this.loaders.push(loader);

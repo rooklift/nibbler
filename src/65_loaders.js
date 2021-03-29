@@ -3,6 +3,7 @@
 // Non-blocking loader objects. The callback is only called if data is successfully gathered.
 //
 // Implementation rule: The callback property is non-null iff it's still possible that the load will succeed.
+// If callback === null this implies that shutdown() has already been called at least once.
 //
 // Also, every loader starts itself via setTimeout so that the caller can finish whatever it was doing first.
 // This prevents some weird inconsistency with order-of-events (whether it matters I don't know).
@@ -36,21 +37,23 @@ function NewFastPGNLoader(foo, callback) {
 	};
 
 	loader.load = function(foo) {
-		if (foo instanceof Buffer) {
-			if (this.callback) {
+		if (this.callback) {
+			if (foo instanceof Buffer) {
 				this.buf = foo;
 				this.continue();
+			} else {
+				fs.readFile(foo, (err, data) => {
+					if (this.callback) {				// Must test again, because this is later.
+						if (err) {
+							let cb = this.callback; cb(err, null);
+							this.shutdown();
+						} else {
+							this.buf = data;
+							this.continue();
+						}
+					}
+				});
 			}
-		} else {
-			fs.readFile(foo, (err, data) => {
-				if (err) {
-					console.log(err);
-					this.shutdown();
-				} else if (this.callback) {
-					this.buf = data;
-					this.continue();
-				}
-			});
 		}
 	};
 
@@ -98,7 +101,7 @@ function NewFastPGNLoader(foo, callback) {
 		this.indices.sort((a, b) => a - b);
 
 		let ret = new_pgndata(this.buf, this.indices);
-		let cb = this.callback; cb(ret);
+		let cb = this.callback; cb(null, ret);
 		this.shutdown();
 	};
 
@@ -122,14 +125,19 @@ function NewPolyglotBookLoader(filename, callback) {
 	};
 
 	loader.load = function(filename) {
-		fs.readFile(filename, (err, data) => {
-			if (err) {
-				console.log(err);
-			} else if (this.callback) {
-				let cb = this.callback; cb(data);
-			}
-			this.shutdown();
-		});
+		if (this.callback) {
+			fs.readFile(filename, (err, data) => {
+				if (this.callback) {					// Must test again, because this is later.
+					if (err) {
+						let cb = this.callback; cb(err, null);
+						this.shutdown();
+					} else {
+						let cb = this.callback; cb(null, data);
+						this.shutdown();
+					}
+				}
+			});
+		}
 	};
 
 	setTimeout(() => {loader.load(filename);}, 0);
@@ -172,14 +180,16 @@ function NewPGNBookLoader(filename, callback) {
 		}
 
 		if (!this.fastloader) {
-			this.fastloader = NewFastPGNLoader(this.filename, (pgndata) => {
-				this.pgndata = pgndata;
+			this.fastloader = NewFastPGNLoader(this.filename, (err, pgndata) => {
+				if (this.callback) {
+					if (err) {
+						let cb = this.callback; cb(err, null);
+						this.shutdown();
+					} else {
+						this.pgndata = pgndata;
+					}
+				}
 			});
-		}
-
-		if (!this.pgndata && !this.fastloader.callback) {		// Means the fastloader failed. I should pass errors, huh.
-			this.shutdown();
-			return;
 		}
 
 		if (!this.pgndata) {
@@ -219,7 +229,7 @@ function NewPGNBookLoader(filename, callback) {
 		// Once, after the while loop is broken...
 
 		SortAndDeclutterPGNBook(this.book);
-		let cb = this.callback; cb(this.book);
+		let cb = this.callback; cb(null, this.book);
 		this.shutdown();
 	};
 
