@@ -904,7 +904,7 @@ function NewRenderer() {
 				s += `  <span class="gray">(${p.tags.Opening})</span>`;
 			}
 
-			lines.push(`<li id="chooser_${n}">${s}</li>`);
+			lines.push(`<li><span id="chooser_${n}">${s}</span></li>`);
 		}
 		lines.push("</ul>");
 		if (count > interval) lines.push(prevnextfoo2);
