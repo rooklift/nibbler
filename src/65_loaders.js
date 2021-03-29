@@ -115,7 +115,7 @@ function NewPGNBookLoader(filename, callback) {
 			if (this.n % 100 === 0) {
 				if (performance.now() - continuetime > 20) {
 					this.msg = `Loading book... ${(100 * (this.n / this.pgn_choices.length)).toFixed(0)}%`;
-					setTimeout(() => {this.continue();}, 5);
+					setTimeout(() => {this.continue();}, 20);
 					return;
 				}
 			}
@@ -301,7 +301,7 @@ function NewPGNPreParser(buf, callback) {		// Cannot fail unless aborted.
 			if (this.n % 1000 === 0) {
 				if (performance.now() - continuetime > 20) {
 					this.msg = `Preparsing... ${(100 * (this.n / this.lines.length)).toFixed(0)}%`;
-					setTimeout(() => {this.continue();}, 5);
+					setTimeout(() => {this.continue();}, 20);
 					return;
 				}
 			}
@@ -378,7 +378,7 @@ function NewLineSplitter(buf, callback) {
 			if (this.lines.length % 1000 === 0) {
 				if (performance.now() - continuetime > 20) {
 					this.msg = `PGN: Splitting... ${(100 * (this.b / this.buf.length)).toFixed(0)}%`;
-					setTimeout(() => {this.continue();}, 5);
+					setTimeout(() => {this.continue();}, 20);
 					return;
 				}
 			}
