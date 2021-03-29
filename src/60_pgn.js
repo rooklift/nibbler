@@ -38,7 +38,7 @@ function split_buffer(buf) {
 	return lines;
 }
 
-function new_pgn_record() {				// These things are made by NewPGNPreParser(), used by LoadPGNRecord()
+function new_pgn_record() {				// These things are made by PreParsePGN(), used by LoadPGNRecord()
 	return {
 		tags: Object.create(null),
 		movebufs: []
