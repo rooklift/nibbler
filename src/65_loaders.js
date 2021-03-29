@@ -81,7 +81,7 @@ function NewFastPGNLoader(foo, callback) {
 					this.off = 0;
 					continue;
 				} else {
-					break
+					break;
 				}
 			}
 

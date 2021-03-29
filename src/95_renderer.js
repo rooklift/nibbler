@@ -2340,7 +2340,7 @@ function NewRenderer() {
 			this.tree.node,
 			this.engine,
 			analysing_other,
-			loading_message,
+			loading_message
 		);
 	};
 
