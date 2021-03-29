@@ -19,6 +19,7 @@ function NewFastPGNLoader(foo, callback) {
 
 	let loader = Object.create(null);
 	loader.type = "pgn";
+	loader.starttime = performance.now();
 
 	loader.callback = callback;
 	loader.msg = "Loading PGN...";
@@ -115,6 +116,7 @@ function NewPolyglotBookLoader(filename, callback) {
 
 	let loader = Object.create(null);
 	loader.type = "book";
+	loader.starttime = performance.now();
 
 	loader.callback = callback;
 	loader.msg = "Loading book...";
@@ -150,6 +152,7 @@ function NewPGNBookLoader(filename, callback) {
 
 	let loader = Object.create(null);
 	loader.type = "book";
+	loader.starttime = performance.now();
 
 	loader.callback = callback;
 	loader.msg = "Loading book...";

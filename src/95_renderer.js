@@ -2316,11 +2316,14 @@ function NewRenderer() {
 		}
 
 		let loading_message = null;
+		let time = performance.now();
 
 		for (let loader of this.loaders) {
 			if (loader.callback) {				// By our rules, can only exist if the load is still pending...
-				loading_message = loader.msg;
-				break;
+				if (performance.now() - loader.starttime > 100) {
+					loading_message = loader.msg;
+					break;
+				}
 			}
 		}
 
