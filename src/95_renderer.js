@@ -13,7 +13,7 @@ function NewRenderer() {
 
 	renderer.loaders = [];										// This is just so I can be sure loaders don't get GC'd while running.
 	renderer.book = null;
-	renderer.pgn_choices = null;								// All games found when opening a PGN file.
+	renderer.pgndata = null;
 	renderer.pgn_choices_start = 0;
 	renderer.friendly_draws = New2DArray(8, 8, null);			// What pieces are drawn in boardfriends. Used to skip redraws.
 	renderer.enemy_draws = New2DArray(8, 8, null);				// What pieces are drawn in boardsquares. Used to skip redraws.
@@ -668,6 +668,10 @@ function NewRenderer() {
 		SavePGN(filename, this.tree.node);
 	};
 
+	renderer.purge_finished_loaders = function() {
+		this.loaders = this.loaders.filter(o => o.callback);
+	};
+
 	renderer.open = function(filename) {
 
 		try {
@@ -677,7 +681,7 @@ function NewRenderer() {
 			if (fs.existsSync(filename) === false) {				// Can happen when extra args are passed to main process. Silently return.
 				return;
 			}
-			if (FileExceedsGigabyte(filename, 0.2)) {
+			if (FileExceedsGigabyte(filename)) {
 				alert(messages.file_too_big);
 				return;
 			}
@@ -694,8 +698,10 @@ function NewRenderer() {
 
 		console.log(`Loading PGN: ${filename}`);
 
-		let loader = NewPGNFileLoader(filename, (games) => {
-			this.handle_games_from_loader(games);
+		let loader = NewFastPGNLoader(filename, (err, pgndata) => {
+			if (!err) {
+				this.handle_loaded_pgndata(pgndata);
+			}
 		});
 
 		this.loaders.push(loader);
@@ -720,14 +726,16 @@ function NewRenderer() {
 
 		console.log(`Loading Polyglot book: ${filename}`);
 
-		let loader = NewPolyglotBookLoader(filename, (data) => {
-			if (BookSortedTest(data)) {
-				this.book = data;
-				this.explorer_objects_cache = null;
-				this.send_ack_book();
-				this.set_special_message(`Finished loading book (moves: ${Math.floor(data.length / 16)})`, "green");
-			} else {
-				alert(messages.bad_bin_book);
+		let loader = NewPolyglotBookLoader(filename, (err, data) => {
+			if (!err) {
+				if (BookSortedTest(data)) {
+					this.book = data;
+					this.explorer_objects_cache = null;
+					this.send_ack_book();
+					this.set_special_message(`Finished loading book (moves: ${Math.floor(data.length / 16)})`, "green");
+				} else {
+					alert(messages.bad_bin_book);
+				}
 			}
 		});
 
@@ -753,27 +761,26 @@ function NewRenderer() {
 
 		console.log(`Loading PGN book: ${filename}`);
 
-		let loader = NewPGNBookLoader(filename, (data) => {
-			this.book = data;
-			this.explorer_objects_cache = null;
-			this.send_ack_book();
-			this.set_special_message(`Finished loading book (moves: ${data.length})`, "green");
+		let loader = NewPGNBookLoader(filename, (err, data) => {
+			if (!err) {
+				this.book = data;
+				this.explorer_objects_cache = null;
+				this.send_ack_book();
+				this.set_special_message(`Finished loading book (moves: ${data.length})`, "green");
+			}
 		});
 
 		this.loaders.push(loader);
 	};
 
-	renderer.purge_finished_loaders = function() {
-		this.loaders = this.loaders.filter(o => o.callback);
-	};
-
 	renderer.load_pgn_from_string = function(s) {
+
+		if (typeof s !== "string") {
+			return;
+		}
+
 		let buf = Buffer.from(s);
 		console.log(`Loading PGN from string...`);
-		this.load_pgn_buffer(buf);
-	};
-
-	renderer.load_pgn_buffer = function(buf) {
 
 		for (let loader of this.loaders) {
 			if (loader.type === "pgn") {
@@ -781,25 +788,29 @@ function NewRenderer() {
 			}
 		}
 
-		let loader = NewPGNPreParser(buf, (games) => {
-			this.handle_games_from_loader(games);
+		let loader = NewFastPGNLoader(buf, (err, pgndata) => {
+			if (!err) {
+				this.handle_loaded_pgndata(pgndata);
+			}
 		});
 
 		this.loaders.push(loader);
 	};
 
-	renderer.handle_games_from_loader = function(games) {
-		let new_pgn_choices = games;
-		if (new_pgn_choices.length === 1) {
-			let success = this.load_pgn_object(new_pgn_choices[0]);
+	renderer.handle_loaded_pgndata = function(pgndata) {
+		if (!pgndata || pgndata.count() === 0) {
+			return;
+		}
+		if (pgndata.count() === 1) {
+			let success = this.load_pgn_object(pgndata.getrecord(0));
 			if (success) {
-				this.pgn_choices = new_pgn_choices;		// We only want to set this to a 1 value array if it actually worked.
+				this.pgndata = pgndata;
 				this.pgn_choices_start = 0;
 			}
 		} else {
-			this.pgn_choices = new_pgn_choices;			// Setting it to a multi-value array is "always" OK.
+			this.pgndata = pgndata;
 			this.pgn_choices_start = 0;
-			this.show_pgn_chooser();					// Now we need to have the user choose a game.
+			this.show_pgn_chooser();
 		}
 	};
 
@@ -826,13 +837,17 @@ function NewRenderer() {
 
 	renderer.show_pgn_chooser = function() {
 
-		if (Array.isArray(this.pgn_choices) === false || this.pgn_choices.length === 0) {
+		const interval = 100;
+
+		if (!this.pgndata || this.pgndata.count() === 0) {
 			alert("No PGN loaded");
 			return;
 		}
 
-		if (this.pgn_choices_start >= this.pgn_choices.length) {
-			this.pgn_choices_start = Math.floor((this.pgn_choices.length - 1) / 1000) * 1000;
+		let count = this.pgndata.count();
+
+		if (this.pgn_choices_start >= count) {
+			this.pgn_choices_start = Math.floor((count - 1) / interval) * interval;
 		}
 		if (this.pgn_choices_start < 0) {		// The most important thing, values < 0 will crash.
 			this.pgn_choices_start = 0;
@@ -843,41 +858,37 @@ function NewRenderer() {
 
 		let lines = [];
 
-		let max_ordinal_length = this.pgn_choices.length.toString().length;
-		let padding = "";
-		for (let n = 0; n < max_ordinal_length - 1; n++) {
-			padding += "&nbsp;";
-		}
+		let max_ordinal_length = count.toString().length;
 
 		let prevnextfoo = `<p>&nbsp;&nbsp;` +	// All these values get fixed on function entry if they're out-of-bounds. ids should be unique.
 			`<span id="setchooserstart_-99999999">Start </span>|` +
 			`<span id="setchooserstart_${this.pgn_choices_start - 10000}"> <<<< </span>|` +
-			`<span id="setchooserstart_${this.pgn_choices_start - 1000}"> << </span>|` +
-		    `<span id="setchooserstart_${this.pgn_choices_start + 1000}"> >> </span>|` +
+			`<span id="setchooserstart_${this.pgn_choices_start - 1000}"> <<< </span>|` +
+			`<span id="setchooserstart_${this.pgn_choices_start - 100}"> << </span>|` +
+			`<span id="setchooserstart_${this.pgn_choices_start + 100}"> >> </span>|` +
+		    `<span id="setchooserstart_${this.pgn_choices_start + 1000}"> >>> </span>|` +
 		    `<span id="setchooserstart_${this.pgn_choices_start + 10000}"> >>>> </span>|` +
 		    `<span id="setchooserstart_99999999"> End</span>` +
 		    `</p>`;
 
 		let prevnextfoo2 = ReplaceAll(prevnextfoo, "setchooserstart", "setchooserstartbottom");		// id is supposed to be unique for each element.
 
-		if (this.pgn_choices.length > 1000) lines.push(prevnextfoo);
+		if (count > interval) lines.push(prevnextfoo);
 		lines.push("<ul>");
-		for (let n = this.pgn_choices_start; n < this.pgn_choices.length && n < this.pgn_choices_start + 1000; n++) {
+		for (let n = this.pgn_choices_start; n < count && n < this.pgn_choices_start + interval; n++) {
 
-			if (n === 10 || n === 100 || n === 1000 || n === 10000 || n === 100000 || n === 1000000) {
-				padding = padding.slice(0, -6);
-			}
+			let pad = n < 10 ? "&nbsp;" : "";
 
-			let p = this.pgn_choices[n];
+			let p = this.pgndata.getrecord(n);
 
 			let s;
 
 			if (p.tags.Result === "1-0") {
-				s = `${padding}${n}. <span class="blue">${p.tags.White || "Unknown"}</span> - ${p.tags.Black || "Unknown"}`;
+				s = `${pad}${n}. <span class="blue">${p.tags.White || "Unknown"}</span> - ${p.tags.Black || "Unknown"}`;
 			} else if (p.tags.Result === "0-1") {
-				s = `${padding}${n}. ${p.tags.White || "Unknown"} - <span class="blue">${p.tags.Black || "Unknown"}</span>`;
+				s = `${pad}${n}. ${p.tags.White || "Unknown"} - <span class="blue">${p.tags.Black || "Unknown"}</span>`;
 			} else {
-				s = `${padding}${n}. ${p.tags.White || "Unknown"} - ${p.tags.Black || "Unknown"}`;
+				s = `${pad}${n}. ${p.tags.White || "Unknown"} - ${p.tags.Black || "Unknown"}`;
 			}
 
 			if (p.tags.Opening) {
@@ -887,7 +898,7 @@ function NewRenderer() {
 			lines.push(`<li id="chooser_${n}">${s}</li>`);
 		}
 		lines.push("</ul>");
-		if (this.pgn_choices.length > 1000) lines.push(prevnextfoo2);
+		if (count > interval) lines.push(prevnextfoo2);
 
 		pgnchooser.innerHTML = lines.join("");
 		pgnchooser.style.display = "block";
@@ -903,8 +914,8 @@ function NewRenderer() {
 			this.maybe_setchooserstart_click(event);
 			return;
 		}
-		if (this.pgn_choices && n >= 0 && n < this.pgn_choices.length) {
-			this.load_pgn_object(this.pgn_choices[n]);
+		if (this.pgndata && n >= 0 && n < this.pgndata.count()) {
+			this.load_pgn_object(this.pgndata.getrecord(n));
 		}
 	};
 
