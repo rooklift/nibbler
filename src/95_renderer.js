@@ -11,18 +11,18 @@ function NewRenderer() {
 
 	// Various state we have to keep track of...
 
-	renderer.loaders = [];										// This is just so I can be sure loaders don't get GC'd while running.
-	renderer.book = null;
-	renderer.pgndata = null;
-	renderer.pgn_choices_start = 0;
+	renderer.loaders = [];										// The loaders can have shutdown() called on them to stop ASAP.
+	renderer.book = null;										// Either a Polyglot buffer, or an array of {key, move, weight}.
+	renderer.pgndata = null;									// Object representing the loaded PGN file.
+	renderer.pgn_choices_start = 0;								// Where we are in the PGN Chooser screen.
 	renderer.friendly_draws = New2DArray(8, 8, null);			// What pieces are drawn in boardfriends. Used to skip redraws.
 	renderer.enemy_draws = New2DArray(8, 8, null);				// What pieces are drawn in boardsquares. Used to skip redraws.
 	renderer.dirty_squares = New2DArray(8, 8, null);			// What squares have some coloured background.
-	renderer.active_square = null;								// Clicked square.
-	renderer.hoverdraw_div = -1;
-	renderer.hoverdraw_depth = 0;
-	renderer.tick = 0;											// How many draw loops we've been through.
-	renderer.position_change_time = performance.now();			// Time of the last position change. Used for cooldown on hover draw.
+	renderer.active_square = null;								// Clicked square, shown in blue.
+	renderer.hoverdraw_div = -1;								// Which div is hovered; used by draw_infobox().
+	renderer.hoverdraw_depth = 0;								// How deep in the hover PV we are.
+	renderer.tick = 0;											// How many draw loops we've been through. Used to animate hoverdraw.
+	renderer.position_change_time = performance.now();			// Time of the last position change. Used for cooldown on hoverdraw.
 	renderer.node_to_clean = renderer.tree.node;				// The next node to be cleaned up (done when exiting it).
 	renderer.leela_lock_node = null;							// Non-null only when in "analysis_locked" mode.
 
