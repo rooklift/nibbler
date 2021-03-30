@@ -405,6 +405,10 @@ const node_prototype = {
 // clear nodes from the live_list.
 
 function DestroyTree(node) {
+	if (!node || node.destroyed) {
+		console.log("Warning: DestroyTree() called with invalid arg");
+		return;
+	}
 	__destroy_tree(node.get_root());
 }
 
