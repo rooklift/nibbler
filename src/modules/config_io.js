@@ -116,6 +116,7 @@ exports.defaults = {
 	"animate_delay_multiplier": 4,
 
 	"allow_arbitrary_scripts": false,
+	"ignore_filesize_limits": false,
 	"allow_stopped_analysis": false,
 	"never_suppress_searchmoves": true,
 	"never_grayout_infolines": false,

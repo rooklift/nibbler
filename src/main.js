@@ -3778,6 +3778,20 @@ function menu_build() {
 							}
 						},
 						{
+							label: "Accept any file size",
+							type: "checkbox",
+							checked: config.ignore_filesize_limits,
+							click: () => {
+								win.webContents.send("call", {
+									fn: "toggle",
+									args: ["ignore_filesize_limits"],
+								});
+							}
+						},
+						{
+							type: "separator"
+						},
+						{
 							label: "Allow stopped analysis",
 							type: "checkbox",
 							checked: config.allow_stopped_analysis,
@@ -3809,6 +3823,9 @@ function menu_build() {
 									args: ["never_grayout_infolines"],
 								});
 							}
+						},
+						{
+							type: "separator"
 						},
 						{
 							label: "Ethereal multi-arrow hack",

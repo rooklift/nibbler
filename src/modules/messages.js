@@ -140,13 +140,15 @@ exports.c960_warning =
 Who knows what will happen. Probably not good things. Maybe bad things.`;
 
 
-exports.file_too_big =
-`Sorry, this file is probably too large to be safely loaded in Nibbler.`
-
-
 exports.bad_bin_book =
 `This book contained unsorted keys and is therefore not a valid Polyglot book.`;
 
 
+exports.file_too_big =
+`Sorry, this file is probably too large to be safely loaded in Nibbler. If you want, you can \
+suppress this warning in the Dev menu, and try to load the file anyway.`
+
+
 exports.pgn_book_too_big =
-`This file is impractically large for a PGN book - consider converting it to Polyglot (.bin) format.`;
+`This file is impractically large for a PGN book - consider converting it to Polyglot (.bin) format. \
+If you want, you can suppress this warning in the Dev menu, and try to load the file anyway.`;

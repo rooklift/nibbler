@@ -681,7 +681,7 @@ function NewRenderer() {
 			if (fs.existsSync(filename) === false) {				// Can happen when extra args are passed to main process. Silently return.
 				return;
 			}
-			if (FileExceedsGigabyte(filename, 2)) {
+			if (!config.ignore_filesize_limits && FileExceedsGigabyte(filename, 2)) {
 				alert(messages.file_too_big);
 				return;
 			}
@@ -711,7 +711,7 @@ function NewRenderer() {
 
 	renderer.load_polyglot_book = function(filename) {
 
-		if (FileExceedsGigabyte(filename, 2)) {
+		if (!config.ignore_filesize_limits && FileExceedsGigabyte(filename, 2)) {
 			alert(messages.file_too_big);
 			this.send_ack_book();
 			return;
@@ -748,7 +748,7 @@ function NewRenderer() {
 
 	renderer.load_pgn_book = function(filename) {
 
-		if (FileExceedsGigabyte(filename, 0.05)) {
+		if (!config.ignore_filesize_limits && FileExceedsGigabyte(filename, 0.02)) {
 			alert(messages.pgn_book_too_big);
 			this.send_ack_book();
 			return;
