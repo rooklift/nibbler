@@ -86,7 +86,7 @@ function NewEngine(hub) {
 	eng.setoption_queue = [];
 
 	eng.warned_send_fail = false;
-	eng.leelaish = false;				// Set by the info handler if a VerboseMoveStats line is received.
+	eng.leelaish = false;				// Most likely set by hub upon an "id name" line, though can also be set by info_handler.
 
 	eng.search_running = NoSearch;		// The search actually being run right now.
 	eng.search_desired = NoSearch;		// The search we want Leela to be running. Often the same object as above.
