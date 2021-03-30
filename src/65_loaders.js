@@ -90,10 +90,12 @@ function NewFastPGNLoader(foo, callback) {
 			this.indices.push(index + this.fix);
 			this.off = index + 1;
 
-			if (performance.now() - continuetime > 10) {
-				this.msg = `Loading PGN... ${this.indices.length} games`;
-				setTimeout(() => {this.continue();}, 10);
-				return;
+			if (this.indices.length % 100 === 0) {
+				if (performance.now() - continuetime > 10) {
+					this.msg = `Loading PGN... ${this.indices.length} games`;
+					setTimeout(() => {this.continue();}, 10);
+					return;
+				}
 			}
 		}
 
