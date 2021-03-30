@@ -89,11 +89,11 @@ These are all the command the engine gets from the interface.
     The substrings "value" and "name" should be avoided in <id> and <x> to allow unambiguous parsing,
     for example do not use <name> = "draw value".
     Here are some strings for the example below:
-       "setoption name Nullmove value true\n"
-       "setoption name Selectivity value 3\n"
-       "setoption name Style value Risky\n"
-       "setoption name Clear Hash\n"
-       "setoption name NalimovPath value c:\chess\tb\4;c:\chess\tb\5\n"
+        "setoption name Nullmove value true\n"
+        "setoption name Selectivity value 3\n"
+        "setoption name Style value Risky\n"
+        "setoption name Clear Hash\n"
+        "setoption name NalimovPath value c:\chess\tb\4;c:\chess\tb\5\n"
 
 * register
     this is the command to try to register an engine or to tell the engine that registration
@@ -101,14 +101,14 @@ These are all the command the engine gets from the interface.
     at program startup.
     The following tokens are allowed:
     * later
-       the user doesn't want to register the engine now.
+        the user doesn't want to register the engine now.
     * name <x>
-       the engine should be registered with the name <x>
+        the engine should be registered with the name <x>
     * code <y>
-       the engine should be registered with the code <y>
+        the engine should be registered with the code <y>
     Example:
-       "register later"
-       "register name Stefan MK code 4359874324"
+        "register later"
+        "register name Stefan MK code 4359874324"
 
 * ucinewgame
    this is sent to the engine when the next search (started with "position" and "go") will be from
@@ -154,7 +154,7 @@ These are all the command the engine gets from the interface.
     * binc <x>
         black increment per move in mseconds if x > 0
     * movestogo <x>
-      there are x moves to the next time control,
+        there are x moves to the next time control,
         this will only be sent if x > 0,
         if you don't get this and get the wtime and btime it's sudden death
     * depth <x>
@@ -275,9 +275,9 @@ Engine to GUI:
             mate in y moves, not plies.
             If the engine is getting mated use negative values for y.
         * lowerbound
-          the score is just a lower bound.
+            the score is just a lower bound.
         * upperbound
-           the score is just an upper bound.
+            the score is just an upper bound.
     * currmove <move>
         currently searching this move
     * currmovenumber <x>
@@ -374,14 +374,14 @@ Engine to GUI:
             The engine wants to behave differently when analysing or playing a game.
             For example when playing it can use some kind of learning.
             This is set to false if the engine is playing a game, otherwise it is true.
-         * <id> = UCI_Opponent, type string
+        * <id> = UCI_Opponent, type string
             With this command the GUI can send the name, title, elo and if the engine is playing a human
             or computer to the engine.
             The format of the string has to be [GM|IM|FM|WGM|WIM|none] [<elo>|none] [computer|human] <name>
             Examples:
             "setoption name UCI_Opponent value GM 2800 human Gary Kasparov"
             "setoption name UCI_Opponent value none none computer Shredder"
-         * <id> = UCI_EngineAbout, type string
+        * <id> = UCI_EngineAbout, type string
             With this command, the engine tells the GUI information about itself, for example a license text,
             usually it doesn't make sense that the GUI changes this text with the setoption command.
             Example:
@@ -389,7 +389,7 @@ Engine to GUI:
         * <id> = UCI_ShredderbasesPath, type string
             this is either the path to the folder on the hard disk containing the Shredder endgame databases or
             the path and filename of one Shredder endgame datbase.
-       * <id> = UCI_SetPositionValue, type string
+        * <id> = UCI_SetPositionValue, type string
             the GUI can send this to the engine to tell the engine to use a certain value in centipawns from white's
             point of view if evaluating this specifix position.
             The string can have the formats:
