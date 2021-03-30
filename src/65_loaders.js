@@ -228,7 +228,8 @@ function NewPGNBookLoader(filename, callback) {
 		// Once, after the while loop is broken...
 
 		SortAndDeclutterPGNBook(this.book);
-		let cb = this.callback; cb(null, this.book);
+		let ret = this.book;						// Just in case I ever replace the direct cb() with a setTimeout (shutdown would cause this.book to be null).
+		let cb = this.callback; cb(null, ret);
 		this.shutdown();
 	};
 
