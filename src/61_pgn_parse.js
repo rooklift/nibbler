@@ -7,10 +7,12 @@ function new_pgn_record() {
 	};
 }
 
-function PreParsePGN(buf) {
+function PreParsePGN(buf) {							// buf should be the buffer for a single game, only.
 
-	// CHANGED in 2.0.3 - returns a single game.
-	// Cannot fail.
+	// Partial parse of the buffer. Generates a tags object and a list of buffers, each of which is a line
+	// in the movetext. Not so sure this approach makes sense any more, if it ever did, but it'll do.
+	//
+	// Never fails. Always returns a valid object (though possibly containing illegal movetext).
 
 	let game = new_pgn_record();
 	let lines = split_buffer(buf);
@@ -21,7 +23,7 @@ function PreParsePGN(buf) {
 			continue;
 		}
 
-		if (rawline[0] === 37) {			// Percent % sign is a special comment type.
+		if (rawline[0] === 37) {					// Percent % sign is a special comment type.
 			continue;
 		}
 
@@ -43,7 +45,7 @@ function PreParsePGN(buf) {
 
 			// Parse the tag line...
 
-			tagline = tagline.slice(1, -1);								// So now it's like:		Foo "bar etc"
+			tagline = tagline.slice(1, -1);			// So now it's like:		Foo "bar etc"
 
 			let quote_i = tagline.indexOf(`"`);
 
@@ -70,7 +72,10 @@ function PreParsePGN(buf) {
 	return game;
 }
 
-function LoadPGNRecord(o) {				// Can throw, either by itself, or by allowing a throw from LoadFEN to propagate.
+function LoadPGNRecord(o) {				// This can throw!
+
+	// Parse of the objects produced above, to generate a game tree.
+	// Tags are placed into the root's own tags object.
 
 	let startpos;
 
