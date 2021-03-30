@@ -357,8 +357,9 @@ function SortAndDeclutterPGNBook(book) {
 function BookAtLogicalIndex(book, i) {
 	if (book instanceof Buffer) {
 		return ParsePolyglotBlob(book, i * 16);
+	} else {
+		return book[i];
 	}
-	return book[i];
 }
 
 function BookLogicalLength(book) {
