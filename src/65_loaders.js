@@ -88,12 +88,10 @@ function NewFastPGNLoader(foo, callback) {
 			this.indices.push(index + this.fix);
 			this.off = index + 1;
 
-			if (this.indices.length % 1000 === 0) {
-				if (performance.now() - continuetime > 20) {
-					this.msg = `Loading PGN... ${this.indices.length} games`;
-					setTimeout(() => {this.continue();}, 20);
-					return;
-				}
+			if (performance.now() - continuetime > 10) {
+				this.msg = `Loading PGN... ${this.indices.length} games`;
+				setTimeout(() => {this.continue();}, 10);
+				return;
 			}
 		}
 
@@ -216,12 +214,10 @@ function NewPGNBookLoader(filename, callback) {
 				//
 			}
 
-			if (this.n % 100 === 0) {
-				if (performance.now() - continuetime > 20) {
-					this.msg = `Loading book... ${(100 * (this.n / count)).toFixed(0)}%`;
-					setTimeout(() => {this.continue();}, 20);
-					return;
-				}
+			if (performance.now() - continuetime > 10) {
+				this.msg = `Loading book... ${(100 * (this.n / count)).toFixed(0)}%`;
+				setTimeout(() => {this.continue();}, 10);
+				return;
 			}
 		}
 
