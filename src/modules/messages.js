@@ -147,3 +147,6 @@ exports.file_too_big =
 exports.bad_bin_book =
 `This book contained unsorted keys and is therefore not a valid Polyglot book.`;
 
+
+exports.pgn_book_too_big =
+`This file is impractically large for a PGN book - consider converting it to Polyglot (.bin) format.`;
