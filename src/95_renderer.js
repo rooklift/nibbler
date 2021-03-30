@@ -674,19 +674,14 @@ function NewRenderer() {
 
 	renderer.open = function(filename) {
 
-		try {
-			if (filename === __dirname || filename === ".") {		// Can happen when extra args are passed to main process. Silently return.
-				return;
-			}
-			if (fs.existsSync(filename) === false) {				// Can happen when extra args are passed to main process. Silently return.
-				return;
-			}
-			if (!config.ignore_filesize_limits && FileExceedsGigabyte(filename, 2)) {
-				alert(messages.file_too_big);
-				return;
-			}
-		} catch (err) {
-			alert(err);
+		if (filename === __dirname || filename === ".") {		// Can happen when extra args are passed to main process. Silently return.
+			return;
+		}
+		if (fs.existsSync(filename) === false) {				// Can happen when extra args are passed to main process. Silently return.
+			return;
+		}
+		if (!config.ignore_filesize_limits && FileExceedsGigabyte(filename, 2)) {
+			alert(messages.file_too_big);
 			return;
 		}
 
