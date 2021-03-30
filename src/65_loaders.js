@@ -27,8 +27,9 @@ function NewFastPGNLoader(foo, callback) {
 	loader.indices = [];
 
 	loader.off = 0;
-	loader.search = "\n\n[";
-	loader.fix = 2;				// Where the [ char will be
+	loader.phase = 1;
+	loader.search = Buffer.from("\n\n[");
+	loader.fix = 2;										// Where the [ char will be
 
 	loader.shutdown = function() {
 		this.callback = null;
@@ -75,8 +76,9 @@ function NewFastPGNLoader(foo, callback) {
 			let index = this.buf.indexOf(this.search, this.off);
 
 			if (index === -1) {
-				if (this.search === "\n\n[") {
-					this.search = "\n\r\n[";
+				if (this.phase === 1) {
+					this.phase = 2;
+					this.search = Buffer.from("\n\r\n[");
 					this.fix = 3;
 					this.off = 0;
 					continue;
