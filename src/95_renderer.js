@@ -879,27 +879,35 @@ function NewRenderer() {
 
 		if (count > interval) lines.push(prevnextfoo);
 		lines.push("<ul>");
-		for (let n = this.pgn_choices_start; n < count && n < this.pgn_choices_start + interval; n++) {
+		for (let n = this.pgn_choices_start; n < this.pgn_choices_start + interval; n++) {
 
-			let pad = n < 10 ? "&nbsp;" : "";
+			if (n < count) {
 
-			let p = this.pgndata.getrecord(n);
+				let pad = n < 10 ? "&nbsp;" : "";
 
-			let s;
+				let p = this.pgndata.getrecord(n);
 
-			if (p.tags.Result === "1-0") {
-				s = `${pad}${n}. <span class="blue">${p.tags.White || "Unknown"}</span> - ${p.tags.Black || "Unknown"}`;
-			} else if (p.tags.Result === "0-1") {
-				s = `${pad}${n}. ${p.tags.White || "Unknown"} - <span class="blue">${p.tags.Black || "Unknown"}</span>`;
-			} else {
-				s = `${pad}${n}. ${p.tags.White || "Unknown"} - ${p.tags.Black || "Unknown"}`;
+				let s;
+
+				if (p.tags.Result === "1-0") {
+					s = `${pad}${n}. <span class="blue">${p.tags.White || "Unknown"}</span> - ${p.tags.Black || "Unknown"}`;
+				} else if (p.tags.Result === "0-1") {
+					s = `${pad}${n}. ${p.tags.White || "Unknown"} - <span class="blue">${p.tags.Black || "Unknown"}</span>`;
+				} else {
+					s = `${pad}${n}. ${p.tags.White || "Unknown"} - ${p.tags.Black || "Unknown"}`;
+				}
+
+				if (p.tags.Opening) {
+					s += `  <span class="gray">(${p.tags.Opening})</span>`;
+				}
+
+				lines.push(`<li><span id="chooser_${n}">${s}</span></li>`);
+
+			} else if (count > interval) {		// Pad the chooser with blank lines so the buttons at the bottom behave nicely. This is stupid though.
+
+				lines.push(`<li><span class="darkgray">${n}.</li>`);
+
 			}
-
-			if (p.tags.Opening) {
-				s += `  <span class="gray">(${p.tags.Opening})</span>`;
-			}
-
-			lines.push(`<li><span id="chooser_${n}">${s}</span></li>`);
 		}
 		lines.push("</ul>");
 		if (count > interval) lines.push(prevnextfoo2);
