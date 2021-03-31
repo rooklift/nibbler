@@ -899,6 +899,8 @@ function NewRenderer() {
 
 				if (p.tags.Opening) {
 					s += `  <span class="gray">(${p.tags.Opening})</span>`;
+				} else if (p.tags.Variant && p.tags.Variant.toLowerCase() !== "standard") {
+					s += `  <span class="gray">(${p.tags.Variant})</span>`;
 				}
 
 				lines.push(`<li><span id="chooser_${n}">${s}</span></li>`);
