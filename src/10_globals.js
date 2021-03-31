@@ -79,8 +79,8 @@ let debuggo = Object.create(null);
 // Note that UCI_Chess960 is handled specially by engine.js
 
 const standard_lc0_options = {
-	"MultiPV": 500,
 	"LogLiveStats": true,
+	"MultiPV": 500,
 	"ScoreType": "centipawn",
 	"SmartPruningFactor": 0,
 	"UCI_ShowWDL": true,
@@ -92,16 +92,16 @@ const standard_ab_options = {
 	"UCI_ShowWDL": true,
 };
 
-// Options we don't want to send to specific engine types, as a sort of set. LOWERCASE KEYS!
+// Options we don't want to send to specific engine types, as a sort of set. CASE SENSITIVE!
 // These sets are checked **ONLY** when a menu item is selected, and have no other use now.
 
 const suppressed_options_lc0 = Object.fromEntries(
-	["contempt", "evalfile", "hash", "multipv"]			// Note MultiPV does get set to 500 but can't be changed in Lc0 by our menu.
-	.map(s => [s.toLowerCase(), true]));
+	["EvalFile", "Hash", "MultiPV"]			// Note MultiPV does get set to 500 but can't be changed in Lc0 by our menu.
+	.map(s => [s, true]));
 
 const suppressed_options_ab = Object.fromEntries(
-	["backend", "loglivestats", "scoretype", "smartpruningfactor", "tempdecaymoves", "temperature", "verbosemovestats", "weightsfile"]
-	.map(s => [s.toLowerCase(), true]));
+	["Backend", "TempDecayMoves", "Temperature", "WeightsFile"]
+	.map(s => [s, true]));
 
 // Yeah this seemed a good idea at the time.........................
 

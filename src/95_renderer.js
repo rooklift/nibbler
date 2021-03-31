@@ -1225,7 +1225,7 @@ function NewRenderer() {
 
 	renderer.set_uci_option = function(name, val, save_to_cfg) {
 
-		let acceptable = this.engine.leelaish ? !suppressed_options_lc0[name.toLowerCase()] : !suppressed_options_ab[name.toLowerCase()];
+		let acceptable = this.engine.leelaish ? !suppressed_options_lc0[name] : !suppressed_options_ab[name];		// Case-sensitive keys!
 
 		if (!acceptable) {
 			this.set_special_message("Not set, wrong engine type", "blue");
