@@ -1286,12 +1286,9 @@ function NewRenderer() {
 
 		if (!engineconfig[filepath]) {
 			engineconfig[filepath] = engineconfig_io.newentry();
+			console.log(`Creating new entry in engineconfig for ${filepath}`);
+			console.log("Not yet saved to file.");
 		}
-
-		// Ack the node limits that are set, so the main process can set the checkmarks...
-
-		this.ack_node_limit(false);
-		this.ack_node_limit(true);
 
 		let args = engineconfig[filepath].args;
 
@@ -1316,6 +1313,9 @@ function NewRenderer() {
 
 		this.engine.setup(filepath, args, this);
 		this.engine.send("uci");
+
+		this.ack_node_limit(false);					// Ack the node limits that are set, must be done AFTER this.engine is valid AND ALSO
+		this.ack_node_limit(true);					// after this.engine.setup() has been called (making engine.filepath correct).
 	};
 
 	renderer.engine_send_all_options = function() {
