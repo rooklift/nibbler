@@ -1319,11 +1319,10 @@ function NewRenderer() {
 
 		// The engine should never have been given a "go" before this.
 
+		let standard_engine_options = leelaish ? standard_lc0_options : standard_ab_options;
+
 		for (let key of Object.keys(standard_engine_options)) {
-			let acceptable = leelaish ? !suppressed_options_lc0[key.toLowerCase()] : !suppressed_options_ab[key.toLowerCase()];
-			if (acceptable) {
-				this.engine.setoption(key, standard_engine_options[key]);
-			}
+			this.engine.setoption(key, standard_engine_options[key]);
 		}
 
 		let options = engineconfig[this.engine.filepath].options;
@@ -1339,10 +1338,6 @@ function NewRenderer() {
 
 		if (delayed_hash_val !== null) {
 			this.engine.setoption("Hash", delayed_hash_val);
-		}
-
-		if (leelaish) {
-			this.engine.setoption("MultiPV", 500);		// Ignoring the suppressed_options_lc0
 		}
 	};
 

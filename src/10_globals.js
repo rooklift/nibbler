@@ -76,11 +76,10 @@ if (images.validate_folder(config.override_piece_directory)) {
 let debuggo = Object.create(null);
 
 // Standard options, for either type of engine......................
-// The following are sent to all engines unless present in the
-// suppressed lists below.
+// Note that UCI_Chess960 is handled specially by engine.js
 
-const standard_engine_options = {
-	"Contempt": 0,
+const standard_lc0_options = {
+	"MultiPV": 500,
 	"LogLiveStats": true,
 	"ScoreType": "centipawn",
 	"SmartPruningFactor": 0,
@@ -88,9 +87,13 @@ const standard_engine_options = {
 	"VerboseMoveStats": true,
 };
 
+const standard_ab_options = {
+	"Contempt": 0,
+	"UCI_ShowWDL": true,
+};
+
 // Options we don't want to send to specific engine types, as a sort of set. LOWERCASE KEYS!
-// These sets are checked when a menu item is selected, and when sending the standard options above,
-// but they are NOT checked when sending options that were stored in the engines.json config file.
+// These sets are checked **ONLY** when a menu item is selected, and have no other use now.
 
 const suppressed_options_lc0 = Object.fromEntries(
 	["contempt", "evalfile", "hash", "multipv"]			// Note MultiPV does get set to 500 but can't be changed in Lc0 by our menu.
