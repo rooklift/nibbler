@@ -3646,15 +3646,15 @@ function menu_build() {
 					type: "separator"
 				},
 				{
-					label: `Show ${config_io.filename}`,
-					click: () => {
-						electron.shell.showItemInFolder(config_io.filepath);
-					}
-				},
-				{
 					label: `Resave ${config_io.filename}`,
 					click: () => {
 						win.webContents.send("call", "save_config");
+					}
+				},
+				{
+					label: `Show ${config_io.filename}`,
+					click: () => {
+						electron.shell.showItemInFolder(config_io.filepath);
 					}
 				},
 				{
