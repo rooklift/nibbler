@@ -51,8 +51,8 @@ const boardctx = canvas.getContext("2d");
 const graphctx = graph.getContext("2d");
 const decoder = new util.TextDecoder("utf8");	// https://github.com/electron/electron/issues/18733
 
-let config = config_io.load();
-let engineconfig = engineconfig_io.load();
+let [load_err1, config]       = config_io.load();
+let [load_err2, engineconfig] = engineconfig_io.load();
 
 let next_node_id = 1;
 let live_nodes = Object.create(null);

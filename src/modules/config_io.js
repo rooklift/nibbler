@@ -261,18 +261,21 @@ exports.load = () => {
 	let cfg = new Config();
 	let defaults_copy = JSON.parse(JSON.stringify(exports.defaults));
 
+	let err_to_return = null;
+
 	try {
 		if (fs.existsSync(exports.filepath)) {
 			Object.assign(cfg, JSON.parse(debork_json(fs.readFileSync(exports.filepath, "utf8"))));
 		}
 	} catch (err) {
-		cfg.failure = err.toString();					// alert() might not be available.
+		console.log(err.toString());							// alert() might not be available.
+		err_to_return = err.toString();
 	}
 
 	assign_without_overwrite(cfg, defaults_copy);		// We use a copy so that any objects that are assigned are not the default objects.
 
 	fix(cfg);
-	return cfg;
+	return [err_to_return, cfg];
 };
 
 exports.save = (cfg) => {

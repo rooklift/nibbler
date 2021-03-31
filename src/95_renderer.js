@@ -1180,8 +1180,23 @@ function NewRenderer() {
 		} else {
 			engineconfig[this.engine.filepath].search_nodes = val;
 		}
+
 		engineconfig_io.save(engineconfig);
+		this.ack_node_limit(special_flag);
+
 		this.handle_search_params_change();
+	};
+
+	renderer.ack_node_limit = function(special_flag) {
+
+		let ack_type = special_flag ? "ack_special_node_limit" : "ack_node_limit";
+		let val;
+
+		if (special_flag) {
+			val = engineconfig[this.engine.filepath].search_nodes_special;
+		} else {
+			val = engineconfig[this.engine.filepath].search_nodes;
+		}
 
 		if (val) {
 			ipcRenderer.send(ack_type, CommaNum(val));
@@ -1272,6 +1287,11 @@ function NewRenderer() {
 		if (!engineconfig[filepath]) {
 			engineconfig[filepath] = engineconfig_io.newentry();
 		}
+
+		// Ack the node limits that are set, so the main process can set the checkmarks...
+
+		this.ack_node_limit(false);
+		this.ack_node_limit(true);
 
 		let args = engineconfig[filepath].args;
 

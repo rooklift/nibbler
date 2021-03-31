@@ -52,16 +52,19 @@ exports.load = () => {
 
 	let cfg = new EngineConfig();
 
+	let err_to_return = null;
+
 	try {
 		if (fs.existsSync(exports.filepath)) {
 			Object.assign(cfg, JSON.parse((fs.readFileSync(exports.filepath, "utf8"))));
 		}
 	} catch (err) {
 		console.log(err.toString());							// alert() might not be available.
+		err_to_return = err.toString();
 	}
 
 	fix(cfg);
-	return cfg;
+	return [err_to_return, cfg];
 };
 
 exports.save = (cfg) => {

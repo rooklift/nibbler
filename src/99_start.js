@@ -14,8 +14,11 @@ Log(`Nibbler startup at ${new Date().toUTCString()}`);
 let hub = NewRenderer();
 hub.engine_start(config.path, config.args);		// This obliterates any error log, so must come before the following...
 
-if (config.failure) {
-	hub.err_receive(`<span class="blue">While loading config file: ${config.failure}</span>`);
+if (load_err1) {
+	hub.err_receive(`<span class="blue">While loading config.json: ${load_err1}</span>`);
+	hub.err_receive("");
+} else if (load_err2) {
+	hub.err_receive(`<span class="blue">While loading engines.json: ${load_err2}</span>`);
 	hub.err_receive("");
 }
 

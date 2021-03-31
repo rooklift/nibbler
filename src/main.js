@@ -34,7 +34,7 @@ let alert = (msg) => {
 // Note that as the user adjusts menu items, our copy of the config will become
 // out of date. The renderer is responsible for having an up-to-date copy.
 
-let config = config_io.load();		// Do this early, it's a needed global.
+let config = config_io.load()[1];		// Do this early, it's a needed global.
 
 let win;
 let menu = menu_build();
