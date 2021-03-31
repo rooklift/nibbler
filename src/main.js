@@ -3643,13 +3643,13 @@ function menu_build() {
 					}
 				},
 				{
-					type: "separator"
-				},
-				{
 					label: `Resave ${config_io.filename}`,
 					click: () => {
 						win.webContents.send("call", "save_config");
 					}
+				},
+				{
+					type: "separator"
 				},
 				{
 					label: `Show ${config_io.filename}`,
