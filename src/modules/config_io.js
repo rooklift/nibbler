@@ -144,6 +144,10 @@ exports.defaults = {
 
 function fix(cfg) {
 
+	// Ensure the object has a "config" flag, which save() will check to make sure that nothing else is ever accidentally saved.
+
+	cfg.__config = true;
+
 	// We want to create a few temporary things (not saved to file)...
 
 	cfg.flip = false;
@@ -267,8 +271,8 @@ exports.load = () => {
 	}
 
 	assign_without_overwrite(cfg, defaults_copy);		// We use a copy so that any objects that are assigned are not the default objects.
-	fix(cfg);
 
+	fix(cfg);
 	return cfg;
 };
 
@@ -276,6 +280,9 @@ exports.save = (cfg) => {
 
 	if (!cfg) {
 		throw "save() needs an argument";
+	}
+	if (!cfg.__config) {
+		throw "Wrong type of object sent to config_io.save()";
 	}
 
 	// Make a copy of the defaults. Doing it this way seems to

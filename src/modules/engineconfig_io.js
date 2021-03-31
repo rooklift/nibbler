@@ -13,14 +13,11 @@ exports.filepath = electron.app ?
 		path.join(electron.app.getPath("userData"), exports.filename) :									// in Main process
 		path.join(querystring.parse(global.location.search)["?user_data_path"], exports.filename);		// in Renderer process
 
-exports.defaults = {
-	"args": [],
-	"options": {},
-	"search_nodes": null,
-	"search_nodes_special": 10000,
-};
-
 function fix(cfg) {
+
+	// Ensure the object has a "engineconfig" flag, which save() will check to make sure that nothing else is ever accidentally saved.
+
+	cfg.__engineconfig = true;
 
 	// The nameless dummy that hub creates at startup needs an entry...
 
@@ -42,7 +39,12 @@ function fix(cfg) {
 }
 
 exports.newentry = () => {
-	return JSON.parse(JSON.stringify(exports.defaults));		// New object so changing it doesn't change the defaults.
+	return {
+		"args": [],
+		"options": {},
+		"search_nodes": null,
+		"search_nodes_special": 10000,
+	};
 };
 
 exports.load = () => {
@@ -62,11 +64,20 @@ exports.load = () => {
 };
 
 exports.save = (cfg) => {
+
+	if (!cfg.__engineconfig) {
+		throw "Wrong type of object sent to engineconfig_io.save()";
+	}
+
+	delete cfg.__engineconfig;									// Don't save this...
+
 	try {
 		fs.writeFileSync(exports.filepath, JSON.stringify(cfg, null, "\t"));
 	} catch (err) {
 		console.log(err.toString());							// alert() might not be available.
 	}
+
+	cfg.__engineconfig = true;									// ...but do restore it.
 };
 
 exports.create_if_needed = (cfg) => {
