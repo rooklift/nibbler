@@ -20,8 +20,6 @@ exports.defaults = {
 	"warning": "EDITING THIS FILE WHILE NIBBLER IS RUNNING WILL GENERALLY CAUSE YOUR EDITS TO BE LOST.",
 
 	"path": null,		// Not undefined, all normal keys should have an actual value.
-	"args": [],
-	"options": {},
 
 	"width": 1280,
 	"height": 835,
@@ -152,12 +150,6 @@ function fix(cfg) {
 
 	// Make sure objectish things at least exist...
 
-	if (typeof cfg.options !== "object" || cfg.options === null) {
-		cfg.options = {};
-	}
-	if (Array.isArray(cfg.args) === false) {
-		cfg.args = [];
-	}
 	if (Array.isArray(cfg.leelaish_names) === false) {
 		cfg.leelaish_names = Array.from(exports.defaults.leelaish_names);
 	}
