@@ -63,8 +63,8 @@ exports.about_sizes =
 Nibbler's config file (which can be found via the Dev menu).`;
 
 
-exports.about_hashes =
-`You can set the Hash value directly via Nibbler's config file (which can be found via \
+exports.about_hashes =		// FIXME, what filename did we settle on?
+`You can set the Hash value directly via Nibbler's config files (which can be found via \
 the Dev menu).`;
 
 
