@@ -1000,7 +1000,7 @@ function NewRenderer() {
 
 			if (!this.engine.leelaish && !engineconfig[this.engine.filepath].options["MultiPV"]) {
 				engineconfig[this.engine.filepath].options["MultiPV"] = 3;
-				engineconfig_io.save(engineconfig);
+				this.save_engineconfig()
 			}
 
 			// Pass unknown engines to the error handler to be displayed...
@@ -1186,7 +1186,7 @@ function NewRenderer() {
 			engineconfig[this.engine.filepath].search_nodes = val;
 		}
 
-		engineconfig_io.save(engineconfig);
+		this.save_engineconfig()
 		this.ack_node_limit(special_flag);
 
 		this.handle_search_params_change();
@@ -1239,7 +1239,7 @@ function NewRenderer() {
 			} else {
 				engineconfig[this.engine.filepath].options[name] = val;
 			}
-			engineconfig_io.save(engineconfig);
+			this.save_engineconfig()
 		}
 
 		if (val === null || val === undefined) {
@@ -1257,7 +1257,7 @@ function NewRenderer() {
 
 	renderer.disable_syzygy = function() {
 		delete engineconfig[this.engine.filepath].options["SyzygyPath"];
-		engineconfig_io.save(engineconfig);
+		this.save_engineconfig()
 		this.restart_engine();
 	};
 
@@ -1269,7 +1269,7 @@ function NewRenderer() {
 	renderer.switch_engine = function(filename) {
 		this.set_behaviour("halt");
 		config.path = filename;
-		config_io.save(config);
+		this.save_config();
 		this.engine_start(config.path);
 	};
 
@@ -1362,7 +1362,7 @@ function NewRenderer() {
 		// Normal cases...
 
 		config[option] = !config[option];
-		config_io.save(config);
+		this.save_config();
 
 		this.info_handler.must_draw_infobox();
 
@@ -1397,7 +1397,7 @@ function NewRenderer() {
 	renderer.set_arrow_filter = function(type, value) {
 		config.arrow_filter_type = type;
 		config.arrow_filter_value = value;
-		config_io.save(config);
+		this.save_config();
 		this.draw();
 	};
 
@@ -1463,35 +1463,35 @@ function NewRenderer() {
 		fenbox.style["font-size"] = n.toString() + "px";
 		config.pgn_font_size = n;
 		config.fen_font_size = n;
-		config_io.save(config);
+		this.save_config();
 	};
 
 	renderer.small_arrows = function() {
 		config.arrow_width = 8;
 		config.arrowhead_radius = 12;
 		config.board_font = "18px Arial";
-		config_io.save(config);
+		this.save_config();
 	};
 
 	renderer.medium_arrows = function() {
 		config.arrow_width = 12;
 		config.arrowhead_radius = 18;
 		config.board_font = "24px Arial";
-		config_io.save(config);
+		this.save_config();
 	};
 
 	renderer.large_arrows = function() {
 		config.arrow_width = 16;
 		config.arrowhead_radius = 24;
 		config.board_font = "32px Arial";
-		config_io.save(config);
+		this.save_config();
 	};
 
 	renderer.giant_arrows = function() {
 		config.arrow_width = 24;
 		config.arrowhead_radius = 32;
 		config.board_font = "40px Arial";
-		config_io.save(config);
+		this.save_config();
 	};
 
 	renderer.set_info_font_size = function(n) {
@@ -1499,13 +1499,13 @@ function NewRenderer() {
 		statusbox.style["font-size"] = n.toString() + "px";
 		config.info_font_size = n;
 		config.status_font_size = n;
-		config_io.save(config);
+		this.save_config();
 		this.rebuild_sizes();
 	};
 
 	renderer.set_graph_height = function(sz) {
 		config.graph_height = sz;
-		config_io.save(config);
+		this.save_config();
 		this.rebuild_sizes();
 		this.grapher.draw(this.tree.node, true);
 	};
@@ -1513,7 +1513,7 @@ function NewRenderer() {
 	renderer.set_board_size = function(sz) {
 		config.square_size = Math.floor(sz / 8);
 		config.board_size = config.square_size * 8;
-		config_io.save(config);
+		this.save_config();
 		this.rebuild_sizes();
 	};
 
@@ -1531,7 +1531,7 @@ function NewRenderer() {
 		this.friendly_draws = New2DArray(8, 8, null);
 		this.enemy_draws = New2DArray(8, 8, null);
 		config["override_piece_directory"] = directory;
-		config_io.save(config);
+		this.save_config();
 	};
 
 	renderer.change_background = function(file, config_save = true) {
@@ -1544,7 +1544,7 @@ function NewRenderer() {
 		}
 		if (config_save) {
 			config.override_board = file;
-			config_io.save(config);
+			this.save_config();
 		}
 	};
 
@@ -1595,7 +1595,7 @@ function NewRenderer() {
 	renderer.save_window_size = function() {
 		config.width = window.innerWidth;
 		config.height = window.innerHeight;
-		config_io.save(config);
+		this.save_config();
 	};
 
 	renderer.fire_gc = function() {
@@ -1630,8 +1630,16 @@ function NewRenderer() {
 		}
 	};
 
-	renderer.save_config = function() {			// Just for the dev menu - everything else can just call config_io.save(config) directly.
-		config_io.save(config);
+	renderer.save_config = function() {
+		if (!load_err1) {							// If the config file was broken, never save to it, let the user fix it.
+			config_io.save(config);
+		}
+	};
+
+	renderer.save_engineconfig = function() {
+		if (!load_err2) {							// If the config file was broken, never save to it, let the user fix it.
+			engineconfig_io.save(engineconfig);
+		}
 	};
 
 	renderer.run_script = function(filename) {
@@ -1686,7 +1694,7 @@ function NewRenderer() {
 		config.logfile = null;
 		Log("Stopping log.");			// This will do nothing, but calling Log() forces it to close any open file.
 		config.logfile = filename;
-		config_io.save(config);
+		this.save_config();
 		this.send_ack_logfile();
 	};
 
