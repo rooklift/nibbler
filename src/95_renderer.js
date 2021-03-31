@@ -1302,6 +1302,7 @@ function NewRenderer() {
 		this.engine.send("uci");
 	};
 
+	// FIXME
 	renderer.engine_send_all_options = function() {
 
 		// Relies on the engine.leelaish flag being correct.

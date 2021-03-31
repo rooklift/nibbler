@@ -13,6 +13,11 @@ exports.filepath = electron.app ?
 		path.join(electron.app.getPath("userData"), exports.filename) :									// in Main process
 		path.join(querystring.parse(global.location.search)["?user_data_path"], exports.filename);		// in Renderer process
 
+function EngineConfig() {};			// This exists solely to make instanceof work.
+EngineConfig.prototype = {};
+
+// ---------------------------------------------------------------------------------------------------------------------------
+
 function fix(cfg) {
 
 	// The nameless dummy that hub creates at startup needs an entry...
@@ -32,10 +37,6 @@ function fix(cfg) {
 			cfg[key].options = {};
 		}
 	}
-
-	// Ensure the object has a "engineconfig" flag, which save() will check to make sure that nothing else is ever accidentally saved.
-
-	cfg.__engineconfig = true;
 }
 
 exports.newentry = () => {
@@ -49,11 +50,11 @@ exports.newentry = () => {
 
 exports.load = () => {
 
-	let cfg = {};
+	let cfg = new EngineConfig();
 
 	try {
 		if (fs.existsSync(exports.filepath)) {
-			cfg = JSON.parse((fs.readFileSync(exports.filepath, "utf8")));
+			Object.assign(cfg, JSON.parse((fs.readFileSync(exports.filepath, "utf8"))));
 		}
 	} catch (err) {
 		console.log(err.toString());							// alert() might not be available.
@@ -65,27 +66,23 @@ exports.load = () => {
 
 exports.save = (cfg) => {
 
-	if (!cfg.__engineconfig) {
+	if (cfg instanceof EngineConfig === false) {
 		throw "Wrong type of object sent to engineconfig_io.save()";
 	}
-
-	delete cfg.__engineconfig;									// Don't save this...
 
 	try {
 		fs.writeFileSync(exports.filepath, JSON.stringify(cfg, null, "\t"));
 	} catch (err) {
 		console.log(err.toString());							// alert() might not be available.
 	}
-
-	cfg.__engineconfig = true;									// ...but do restore it.
 };
 
 exports.create_if_needed = (cfg) => {
 
 	// Note that this must be called fairly late, when userData directory exists.
 
-	if (!cfg) {
-		throw "create_if_needed() needs an argument";
+	if (cfg instanceof EngineConfig === false) {
+		throw "Wrong type of object sent to engineconfig_io.create_if_needed()";
 	}
 
 	if (fs.existsSync(exports.filepath)) {
@@ -94,4 +91,3 @@ exports.create_if_needed = (cfg) => {
 
 	exports.save(cfg);
 };
-

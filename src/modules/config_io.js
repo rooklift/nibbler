@@ -13,6 +13,9 @@ exports.filepath = electron.app ?
 		path.join(electron.app.getPath("userData"), exports.filename) :									// in Main process
 		path.join(querystring.parse(global.location.search)["?user_data_path"], exports.filename);		// in Renderer process
 
+function Config() {};			// This exists solely to make instanceof work.
+Config.prototype = {};
+
 exports.defaults = {
 	"warning": "EDITING THIS FILE WHILE NIBBLER IS RUNNING WILL GENERALLY CAUSE YOUR EDITS TO BE LOST.",
 
@@ -144,10 +147,6 @@ exports.defaults = {
 
 function fix(cfg) {
 
-	// Ensure the object has a "config" flag, which save() will check to make sure that nothing else is ever accidentally saved.
-
-	cfg.__config = true;
-
 	// We want to create a few temporary things (not saved to file)...
 
 	cfg.flip = false;
@@ -259,12 +258,12 @@ function debork_json(s) {
 
 exports.load = () => {
 
-	let cfg = {};
+	let cfg = new Config();
 	let defaults_copy = JSON.parse(JSON.stringify(exports.defaults));
 
 	try {
 		if (fs.existsSync(exports.filepath)) {
-			cfg = JSON.parse(debork_json(fs.readFileSync(exports.filepath, "utf8")));
+			Object.assign(cfg, JSON.parse(debork_json(fs.readFileSync(exports.filepath, "utf8"))));
 		}
 	} catch (err) {
 		cfg.failure = err.toString();					// alert() might not be available.
@@ -278,10 +277,7 @@ exports.load = () => {
 
 exports.save = (cfg) => {
 
-	if (!cfg) {
-		throw "save() needs an argument";
-	}
-	if (!cfg.__config) {
+	if (cfg instanceof Config === false) {
 		throw "Wrong type of object sent to config_io.save()";
 	}
 
@@ -309,8 +305,8 @@ exports.create_if_needed = (cfg) => {
 
 	// Note that this must be called fairly late, when userData directory exists.
 
-	if (!cfg) {
-		throw "create_if_needed() needs an argument";
+	if (cfg instanceof Config === false) {
+		throw "Wrong type of object sent to config_io.create_if_needed()";
 	}
 
 	if (fs.existsSync(exports.filepath)) {
