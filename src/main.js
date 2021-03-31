@@ -3005,7 +3005,7 @@ function menu_build() {
 					]
 				},
 				{
-					label: "MultiPV (A/B)",			// Don't use config.options for this, it's too much of a special-case.
+					label: "MultiPV (A/B)",
 					submenu: [
 						{
 							label: "5",
@@ -3013,8 +3013,8 @@ function menu_build() {
 							checked: false,
 							click: () => {
 								win.webContents.send("call", {
-									fn: "set_ab_engine_multipv",
-									args: [5]
+									fn: "set_uci_option_permanent",
+									args: ["MultiPV", 5]
 								});
 								// Will receive an ack IPC which sets menu checks.
 							}
@@ -3025,8 +3025,8 @@ function menu_build() {
 							checked: false,
 							click: () => {
 								win.webContents.send("call", {
-									fn: "set_ab_engine_multipv",
-									args: [4]
+									fn: "set_uci_option_permanent",
+									args: ["MultiPV", 4]
 								});
 								// Will receive an ack IPC which sets menu checks.
 							}
@@ -3037,8 +3037,8 @@ function menu_build() {
 							checked: false,
 							click: () => {
 								win.webContents.send("call", {
-									fn: "set_ab_engine_multipv",
-									args: [3]
+									fn: "set_uci_option_permanent",
+									args: ["MultiPV", 3]
 								});
 								// Will receive an ack IPC which sets menu checks.
 							}
@@ -3049,8 +3049,8 @@ function menu_build() {
 							checked: false,
 							click: () => {
 								win.webContents.send("call", {
-									fn: "set_ab_engine_multipv",
-									args: [2]
+									fn: "set_uci_option_permanent",
+									args: ["MultiPV", 2]
 								});
 								// Will receive an ack IPC which sets menu checks.
 							}
@@ -3061,8 +3061,8 @@ function menu_build() {
 							checked: false,
 							click: () => {
 								win.webContents.send("call", {
-									fn: "set_ab_engine_multipv",
-									args: [1]
+									fn: "set_uci_option_permanent",
+									args: ["MultiPV", 1]
 								});
 								// Will receive an ack IPC which sets menu checks.
 							}
@@ -3821,20 +3821,6 @@ function menu_build() {
 								win.webContents.send("call", {
 									fn: "toggle",
 									args: ["never_grayout_infolines"],
-								});
-							}
-						},
-						{
-							type: "separator"
-						},
-						{
-							label: "Ethereal multi-arrow hack",
-							type: "checkbox",
-							checked: config.ethereal_hack,
-							click: () => {
-								win.webContents.send("call", {
-									fn: "toggle",
-									args: ["ethereal_hack"],
 								});
 							}
 						},

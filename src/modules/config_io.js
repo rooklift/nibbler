@@ -73,8 +73,6 @@ exports.defaults = {
 	"cp_white_pov": false,
 	"wdl_white_pov": false,
 
-	"ab_engine_multipv": 3,
-
 	"show_cp": false,
 	"show_n": true,
 	"show_n_abs": true,
@@ -123,7 +121,6 @@ exports.defaults = {
 	"allow_stopped_analysis": false,
 	"never_suppress_searchmoves": true,
 	"never_grayout_infolines": false,
-	"ethereal_hack": false,
 
 	"show_engine_state": false,
 
