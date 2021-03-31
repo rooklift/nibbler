@@ -1000,6 +1000,7 @@ function NewRenderer() {
 
 			if (!this.engine.leelaish && !engineconfig[this.engine.filepath].options.MultiPV) {
 				engineconfig[this.engine.filepath].options.MultiPV = 3;
+				engineconfig_io.save(engineconfig);
 			}
 
 			// Pass unknown engines to the error handler to be displayed...
@@ -1289,12 +1290,11 @@ function NewRenderer() {
 			return;
 		}
 
-		// Ensure our engineconfig object has a valid entry for this path...
+		// Ensure our engineconfig object has a valid entry for this path... (not actually saved yet).
 
 		if (!engineconfig[filepath]) {
 			engineconfig[filepath] = engineconfig_io.newentry();
 			console.log(`Creating new entry in engineconfig for ${filepath}`);
-			engineconfig_io.save(engineconfig);
 		}
 
 		let args = engineconfig[filepath].args;
