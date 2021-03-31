@@ -354,7 +354,7 @@ function NewEngine(hub) {
 		return this.sent_options["uci_chess960"] === "true";				// The string "true" since these values are always strings.
 	};
 
-	eng.setup = function(filepath, args) {
+	eng.setup = function(filepath, args) {		// Returns true on success, false otherwise.
 
 		Log("");
 		Log(`Launching ${filepath}`);
@@ -364,7 +364,7 @@ function NewEngine(hub) {
 			this.exe = child_process.spawn(filepath, args, {cwd: path.dirname(filepath)});
 		} catch (err) {
 			alert(err);
-			return;
+			return false;
 		}
 
 		this.filepath = filepath;
@@ -430,6 +430,8 @@ function NewEngine(hub) {
 			debuggo.line -= 1;
 
 		});
+
+		return true;
 	};
 
 	eng.shutdown = function() {				// Note: Don't reuse the engine object.
