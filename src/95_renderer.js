@@ -444,38 +444,6 @@ function NewRenderer() {
 		}
 	};
 
-	renderer.node_limit = function() {
-
-		// Given the current state of the config, what is the node limit?
-
-		let cfg_value;
-
-		switch (config.behaviour) {
-
-		case "play_white":
-		case "play_black":
-		case "self_play":
-		case "auto_analysis":
-
-			cfg_value = config.search_nodes_special;
-			break;
-
-		default:
-
-			cfg_value = config.search_nodes;
-			break;
-
-		}
-
-		// Should match the system in engine.js.
-
-		if (typeof cfg_value === "number" && cfg_value >= 1) {
-			return cfg_value;
-		} else {
-			return null;
-		}
-	};
-
 	renderer.play_info_index = function(n) {
 		let info_list = SortedMoveInfo(this.tree.node);
 		if (typeof n === "number" && n >= 0 && n < info_list.length) {
@@ -1114,65 +1082,36 @@ function NewRenderer() {
 
 	};
 
-	renderer.soft_engine_reset = function() {
-		this.set_behaviour("halt");					// Will cause "stop" to be sent.
-		this.engine.send_ucinewgame();				// Must happen after "stop" is sent.
-	};
+	renderer.node_limit = function() {
 
-	renderer.forget_analysis = function() {
-		CleanTree(this.tree.root);
-		this.tree.node.table.autopopulate(this.tree.node);
-		this.set_behaviour("halt");					// Will cause "stop" to be sent.
-		this.engine.send_ucinewgame();				// Must happen after "stop" is sent.
-		this.engine.suppress_cycle_info = this.info_handler.engine_cycle;			// Ignore further info updates from this cycle.
-	};
+		// Given the current state of the config, what is the node limit?
 
-	renderer.set_ab_engine_multipv = function(val) {
-		config.ab_engine_multipv = val;				// This is stored outside the normal options object, it's too special, various things access it.
-		config_io.save(config);
-		this.set_uci_option("MultiPV", val);		// Gets suppressed for Leelaish engines by suppressed_options_lc0 list.
-	};
+		let cfg_value;
 
-	renderer.set_uci_option = function(name, val, save_to_cfg) {					// Uses maybe_setoption() to filter unacceptable options
-		if (save_to_cfg) {
-			if (val === null || val === undefined) {
-				delete config.options[name];
-			} else {
-				config.options[name] = val;
-			}
-			config_io.save(config);
+		switch (config.behaviour) {
+
+		case "play_white":
+		case "play_black":
+		case "self_play":
+		case "auto_analysis":
+
+			cfg_value = config.search_nodes_special;
+			break;
+
+		default:
+
+			cfg_value = config.search_nodes;
+			break;
+
 		}
-		if (val === null || val === undefined) {
-			val = "";
+
+		// Should match the system in engine.js.
+
+		if (typeof cfg_value === "number" && cfg_value >= 1) {
+			return cfg_value;
+		} else {
+			return null;
 		}
-		this.halt_if_maybe_setoption_will_succeed(name, val);
-		let sent = this.engine.maybe_setoption(name, val);
-		this.set_special_message(sent, "blue");
-	};
-
-	renderer.set_uci_option_permanent = function(name, val) {
-		this.set_uci_option(name, val, true);
-	};
-
-	renderer.halt_if_maybe_setoption_will_succeed = function(name, val) {			// Maybe needs a nicer name...
-		if (this.engine.maybe_setoption_fail_reason(name, val) === "") {
-			this.set_behaviour("halt");
-		}
-	};
-
-	renderer.toggle_uci_option = function(name, save_to_cfg) {
-		this.set_uci_option(name, !config.options[name], save_to_cfg);
-	};
-
-	renderer.disable_syzygy = function() {
-		delete config.options["SyzygyPath"];
-		config_io.save(config);
-		this.restart_engine();
-	};
-
-	renderer.switch_weights = function(filename) {
-		this.info_handler.stderr_log = "";							// Avoids having confusing stale messages
-		this.set_uci_option_permanent("WeightsFile", filename);
 	};
 
 	renderer.adjust_node_limit = function(direction, special_flag) {
@@ -1249,6 +1188,67 @@ function NewRenderer() {
 		} else {
 			ipcRenderer.send(ack_type, "Unlimited");
 		}
+	};
+
+	renderer.soft_engine_reset = function() {
+		this.set_behaviour("halt");					// Will cause "stop" to be sent.
+		this.engine.send_ucinewgame();				// Must happen after "stop" is sent.
+	};
+
+	renderer.forget_analysis = function() {
+		CleanTree(this.tree.root);
+		this.tree.node.table.autopopulate(this.tree.node);
+		this.set_behaviour("halt");					// Will cause "stop" to be sent.
+		this.engine.send_ucinewgame();				// Must happen after "stop" is sent.
+		this.engine.suppress_cycle_info = this.info_handler.engine_cycle;			// Ignore further info updates from this cycle.
+	};
+
+	renderer.set_ab_engine_multipv = function(val) {
+		config.ab_engine_multipv = val;				// This is stored outside the normal options object, it's too special, various things access it.
+		config_io.save(config);
+		this.set_uci_option("MultiPV", val);		// Gets suppressed for Leelaish engines by suppressed_options_lc0 list.
+	};
+
+	renderer.set_uci_option = function(name, val, save_to_cfg) {					// Uses maybe_setoption() to filter unacceptable options
+		if (save_to_cfg) {
+			if (val === null || val === undefined) {
+				delete config.options[name];
+			} else {
+				config.options[name] = val;
+			}
+			config_io.save(config);
+		}
+		if (val === null || val === undefined) {
+			val = "";
+		}
+		this.halt_if_maybe_setoption_will_succeed(name, val);
+		let sent = this.engine.maybe_setoption(name, val);
+		this.set_special_message(sent, "blue");
+	};
+
+	renderer.set_uci_option_permanent = function(name, val) {
+		this.set_uci_option(name, val, true);
+	};
+
+	renderer.halt_if_maybe_setoption_will_succeed = function(name, val) {			// Maybe needs a nicer name...
+		if (this.engine.maybe_setoption_fail_reason(name, val) === "") {
+			this.set_behaviour("halt");
+		}
+	};
+
+	renderer.toggle_uci_option = function(name, save_to_cfg) {
+		this.set_uci_option(name, !config.options[name], save_to_cfg);
+	};
+
+	renderer.disable_syzygy = function() {
+		delete config.options["SyzygyPath"];
+		config_io.save(config);
+		this.restart_engine();
+	};
+
+	renderer.switch_weights = function(filename) {
+		this.info_handler.stderr_log = "";							// Avoids having confusing stale messages
+		this.set_uci_option_permanent("WeightsFile", filename);
 	};
 
 	renderer.switch_engine = function(filename) {
