@@ -89,6 +89,8 @@ const standard_engine_options = {
 };
 
 // Options we don't want to send to specific engine types, as a sort of set. LOWERCASE KEYS!
+// These sets are checked when a menu item is selected, and when sending the standard options above,
+// but they are NOT checked when sending options that were stored in the engines.json config file.
 
 const suppressed_options_lc0 = Object.fromEntries(
 	["contempt", "evalfile", "hash", "multipv"]			// Note MultiPV does get set to 500 but can't be changed in Lc0 by our menu.
