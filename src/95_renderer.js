@@ -1296,6 +1296,8 @@ function NewRenderer() {
 		if (!engineconfig[filepath]) {
 			engineconfig[filepath] = engineconfig_io.newentry();
 			console.log(`Creating new entry in engineconfig for ${filepath}`);
+		} else {
+			console.log(`engineconfig has an entry for ${filepath}`);
 		}
 
 		let args = engineconfig[filepath].args;
