@@ -153,3 +153,9 @@ suppress this warning in the Dev menu, and try to load the file anyway.`
 exports.pgn_book_too_big =
 `This file is impractically large for a PGN book - consider converting it to Polyglot (.bin) format. \
 If you want, you can suppress this warning in the Dev menu, and try to load the file anyway.`;
+
+
+exports.engine_options_reset =
+`As of v2.1.1, Nibbler will store engine options separately for each engine. To facilite this, your
+engine options have been reset.`;
+

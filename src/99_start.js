@@ -20,6 +20,9 @@ if (load_err1) {
 } else if (load_err2) {
 	hub.err_receive(`<span class="blue">While loading engines.json: ${load_err2}</span>`);
 	hub.err_receive("");
+} else if (config.options) {
+	alert(messages.engine_options_reset);
+	hub.save_config();				// Ensure the options object is deleted from the file.
 }
 
 fenbox.value = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1";
