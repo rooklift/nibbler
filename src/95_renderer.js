@@ -1016,7 +1016,7 @@ function NewRenderer() {
 
 			// Until we receive uciok and then readyok, set_search_desired() ignores our calls, so "go" will not have been sent.
 
-			this.engine_send_all_options();
+			this.engine_send_all_options(this.engine.leelaish);
 			this.engine.send("isready");
 			return;
 		}
@@ -1315,14 +1315,14 @@ function NewRenderer() {
 		this.ack_node_limit(true);					// after this.engine.setup() has been called (making engine.filepath correct).
 	};
 
-	renderer.engine_send_all_options = function() {
+	renderer.engine_send_all_options = function(leelaish) {
 
-		// Relies on the engine.leelaish flag being correct. Also, the engine should never have been given a "go" before this.
+		// The engine should never have been given a "go" before this.
 
 		let options = engineconfig[this.engine.filepath].options;
 
 		for (let key of Object.keys(standard_engine_options)) {
-			let acceptable = this.engine.leelaish ? !suppressed_options_lc0[key.toLowerCase()] : !suppressed_options_ab[key.toLowerCase()];
+			let acceptable = leelaish ? !suppressed_options_lc0[key.toLowerCase()] : !suppressed_options_ab[key.toLowerCase()];
 			if (acceptable) {
 				this.engine.setoption(key, standard_engine_options[key]);
 			}
@@ -1342,7 +1342,7 @@ function NewRenderer() {
 			this.engine.setoption("Hash", delayed_hash_val);
 		}
 
-		if (this.engine.leelaish) {
+		if (leelaish) {
 			this.engine.setoption("MultiPV", 500);		// Ignoring the suppressed_options_lc0
 		}
 	};
