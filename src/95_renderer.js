@@ -1343,7 +1343,7 @@ function NewRenderer() {
 		}
 
 		if (this.engine.leelaish) {
-			this.engine.setoption("MultiPV", 500);
+			this.engine.setoption("MultiPV", 500);		// Ignoring the suppressed_options_lc0
 		}
 	};
 
