@@ -1268,7 +1268,7 @@ function NewRenderer() {
 
 	renderer.switch_engine = function(filename) {
 		this.set_behaviour("halt");
-		if (this.engine_start(config.path)) {
+		if (this.engine_start(filename)) {
 			config.path = filename;
 			this.save_config();
 		}
