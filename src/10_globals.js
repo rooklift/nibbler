@@ -91,11 +91,11 @@ const standard_engine_options = {
 // Options we don't want to send to specific engine types, as a sort of set. LOWERCASE KEYS!
 
 const suppressed_options_lc0 = Object.fromEntries(
-	["Contempt", "EvalFile", "Hash", "MultiPV"]
+	["contempt", "evalfile", "hash", "multipv"]
 	.map(s => [s.toLowerCase(), true]));
 
 const suppressed_options_ab = Object.fromEntries(
-	["Backend", "LogLiveStats", "ScoreType", "SmartPruningFactor", "TempDecayMoves", "Temperature", "VerboseMoveStats", "WeightsFile"]
+	["backend", "loglivestats", "scoretype", "smartpruningfactor", "tempdecaymoves", "temperature", "verbosemovestats", "weightsfile"]
 	.map(s => [s.toLowerCase(), true]));
 
 // Yeah this seemed a good idea at the time.........................
