@@ -998,9 +998,9 @@ function NewRenderer() {
 				}
 			}
 
-			if (typeof engineconfig[this.engine.filepath].options["MultiPV"] !== "number") {
-				engineconfig[this.engine.filepath].options["MultiPV"] = this.engine.leelaish ? 500 : 3;
-				this.save_engineconfig();
+			if (!this.engine.leelaish && !engineconfig[this.engine.filepath].options["MultiPV"]) {
+				engineconfig[this.engine.filepath].options["MultiPV"] = 3;
+				this.save_engineconfig()
 			}
 
 			// Pass unknown engines to the error handler to be displayed...
@@ -1326,9 +1326,6 @@ function NewRenderer() {
 			}
 		}
 
-		// Note that the suppressed_options sets are only checked for the standard_engine_options.
-		// If the user has managed to set some suppressed option in the config, let them.
-
 		let options = engineconfig[this.engine.filepath].options;
 		let delayed_hash_val = null;
 
@@ -1342,6 +1339,10 @@ function NewRenderer() {
 
 		if (delayed_hash_val !== null) {
 			this.engine.setoption("Hash", delayed_hash_val);
+		}
+
+		if (leelaish) {
+			this.engine.setoption("MultiPV", 500);		// Ignoring the suppressed_options_lc0
 		}
 	};
 
