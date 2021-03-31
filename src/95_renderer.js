@@ -1294,7 +1294,7 @@ function NewRenderer() {
 		if (!engineconfig[filepath]) {
 			engineconfig[filepath] = engineconfig_io.newentry();
 			console.log(`Creating new entry in engineconfig for ${filepath}`);
-			console.log("Not yet saved to file.");
+			engineconfig_io.save(engineconfig);
 		}
 
 		let args = engineconfig[filepath].args;
