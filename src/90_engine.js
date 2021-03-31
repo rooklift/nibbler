@@ -386,12 +386,14 @@ function NewEngine(hub) {
 			return;
 		}
 
+		this.filepath = filepath;
+
 		ipcRenderer.send("ack_engine_start", filepath);
 
 		// Main process wants to keep track of what these things are set to (for menu check).
 		// These will all ack the value "" to main.js since no value has been set yet...
 
-		eng.sent_options = Object.create(null);		// Blank anything we "sent" up till now.
+		this.sent_options = Object.create(null);		// Blank anything we "sent" up till now.
 
 		for (let key of ["WeightsFile", "SyzygyPath", "Threads", "Hash", "MultiPV", "Backend", "Temperature", "TempDecayMoves"]) {
 			this.send_ack_setoption_to_main_process(key);
