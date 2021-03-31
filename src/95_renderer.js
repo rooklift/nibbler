@@ -1327,6 +1327,9 @@ function NewRenderer() {
 			this.engine.setoption(key, standard_engine_options[key]);
 		}
 
+		// Now send user-selected options. One might argue we should do this first,
+		// so that our standard options prevail in the event of a conflict. Hmm.
+
 		let options = engineconfig[this.engine.filepath].options;
 		let delayed_hash_val = null;
 
