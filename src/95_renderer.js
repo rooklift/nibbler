@@ -1283,6 +1283,12 @@ function NewRenderer() {
 
 	renderer.engine_start = function(filepath) {
 
+		if (!filepath || typeof filepath !== "string" || fs.existsSync(filepath) === false) {
+			this.err_receive(`<span class="blue">${messages.engine_not_present}</span>`);
+			this.err_receive("");
+			return;
+		}
+
 		// Ensure our engineconfig object has a valid entry for this path...
 
 		if (!engineconfig[filepath]) {
@@ -1292,25 +1298,15 @@ function NewRenderer() {
 		}
 
 		let args = engineconfig[filepath].args;
+		if (Array.isArray(args) === false) {
+			args = [];
+		}
 
 		this.engine.shutdown();						// Don't reuse engine objects, not even a dummy object
 		this.engine = NewEngine(this);				// that had no exe (sync issues due to fake "go" sends)
 
 		this.info_handler.reset_engine_info();
 		this.info_handler.must_draw_infobox();		// To displace the new stderr log that appears.
-
-		if (typeof filepath !== "string" || fs.existsSync(filepath) === false) {
-
-			if (!config.failure) {					// Only show the following if there isn't a bigger problem...
-				this.err_receive(`<span class="blue">${messages.engine_not_present}</span>`);
-				this.err_receive("");
-			}
-			return;
-		}
-
-		if (Array.isArray(args) === false) {
-			args = [];
-		}
 
 		this.engine.setup(filepath, args, this);
 		this.engine.send("uci");
