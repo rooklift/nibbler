@@ -1268,9 +1268,10 @@ function NewRenderer() {
 
 	renderer.switch_engine = function(filename) {
 		this.set_behaviour("halt");
-		config.path = filename;
-		this.save_config();
-		this.engine_start(config.path);
+		if (this.engine_start(config.path)) {
+			config.path = filename;
+			this.save_config();
+		}
 	};
 
 	renderer.restart_engine = function() {
@@ -1285,34 +1286,33 @@ function NewRenderer() {
 				this.err_receive(`<span class="blue">${messages.engine_not_present}</span>`);
 				this.err_receive("");
 			}
-			return;
+			return false;
 		}
 
-		// Ensure our engineconfig object has a valid entry for this path... (not actually saved yet).
+		let args = engineconfig[filepath] ? engineconfig[filepath].args : [];
+
+		let new_engine = NewEngine(this);
+		if (new_engine.setup(filepath, args, this) === false) {
+			return false;
+		}
+
+		this.engine.shutdown();
+		this.engine = new_engine;					// Don't reuse engine objects, not even the dummy object. There are sync issues due to fake "go"s.
 
 		if (!engineconfig[filepath]) {
 			engineconfig[filepath] = engineconfig_io.newentry();
 			console.log(`Creating new entry in engineconfig for ${filepath}`);
 		} else {
-			console.log(`engineconfig has an entry for ${filepath}`);
+			console.log(`The engineconfig has an entry for ${filepath}`);
 		}
 
-		let args = engineconfig[filepath].args;
-		if (Array.isArray(args) === false) {
-			args = [];
-		}
-
-		this.engine.shutdown();						// Don't reuse engine objects, not even a dummy object
-		this.engine = NewEngine(this);				// that had no exe (sync issues due to fake "go" sends)
-
-		this.info_handler.reset_engine_info();
-		this.info_handler.must_draw_infobox();		// To displace the new stderr log that appears.
-
-		this.engine.setup(filepath, args, this);
 		this.engine.send("uci");
 
 		this.ack_node_limit(false);					// Ack the node limits that are set, must be done AFTER this.engine is valid AND ALSO
 		this.ack_node_limit(true);					// after this.engine.setup() has been called (making engine.filepath correct).
+
+		this.info_handler.reset_engine_info();
+		this.info_handler.must_draw_infobox();		// To displace the new stderr log that appears.
 	};
 
 	renderer.engine_send_all_options = function(leelaish) {
