@@ -70,11 +70,16 @@ exports.save = (cfg) => {
 		throw "Wrong type of object sent to engineconfig_io.save()";
 	}
 
+	let blank = cfg[""];
+	delete cfg[""];
+
 	try {
 		fs.writeFileSync(exports.filepath, JSON.stringify(cfg, null, "\t"));
 	} catch (err) {
 		console.log(err.toString());							// alert() might not be available.
 	}
+
+	cfg[""] = blank;
 };
 
 exports.create_if_needed = (cfg) => {
