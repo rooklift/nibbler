@@ -54,7 +54,7 @@ let arrow_props = {
 		case "ab":
 
 			for (let info of full_list) {
-				} if (info.__touched && info.subcycle >= full_list[0].subcycle) {
+				if (info.__touched && info.subcycle >= full_list[0].subcycle) {
 					info_list.push(info);
 				} else if (info.move === show_move) {
 					info_list.push(info);
