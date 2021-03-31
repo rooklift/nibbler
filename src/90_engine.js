@@ -57,7 +57,7 @@ function SearchParams(node = null, limit = null, searchmoves = null) {
 		validated = [];
 	}
 
-	Object.freeze(validated);		// under no circumstances refactor this to freeze the original searchmoves
+	Object.freeze(validated);			// under no circumstances refactor this to freeze the original searchmoves
 
 	return Object.freeze({
 		node: node,
@@ -74,6 +74,8 @@ function NewEngine(hub) {
 	eng.exe = null;
 	eng.scanner = null;
 	eng.err_scanner = null;
+
+	eng.filepath = "";					// Used to decide what entry in engineconfig to use. Start as "", which has defaults for the dummy engine.
 
 	eng.last_send = null;
 	eng.unresolved_stop_time = null;

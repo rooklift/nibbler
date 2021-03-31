@@ -35,6 +35,7 @@ const child_process = require("child_process");
 const clipboard = require("electron").clipboard;
 const config_io = require("./modules/config_io");
 const custom_uci = require("./modules/custom_uci");
+const engineconfig_io = require("./modules/engineconfig_io");
 const fs = require("fs");
 const images = require("./modules/images");
 const ipcRenderer = require("electron").ipcRenderer;
@@ -51,6 +52,7 @@ const graphctx = graph.getContext("2d");
 const decoder = new util.TextDecoder("utf8");	// https://github.com/electron/electron/issues/18733
 
 let config = config_io.load();
+let engineconfig = engineconfig_io.load();
 
 let next_node_id = 1;
 let live_nodes = Object.create(null);

@@ -4,6 +4,7 @@
 // (I think the main process makes it...)
 
 config_io.create_if_needed(config);
+engineconfig_io.create_if_needed(engineconfig);
 custom_uci.create_if_needed();
 
 Log("");
