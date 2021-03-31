@@ -1225,18 +1225,15 @@ function NewRenderer() {
 
 	renderer.set_uci_option = function(name, val, save_to_cfg) {
 
-		if (this.engine.leelaish) {
-			if (suppressed_options_lc0[name.toLowerCase()]) {
-				this.set_special_message("Not set, wrong engine type", "blue");
-				this.engine.send_ack_setoption_to_main_process(name);				// Ack prevailing value to fix checkmarks.
-				return;
-			}
-		} else {
-			if (suppressed_options_ab[name.toLowerCase()]) {
-				this.set_special_message("Not set, wrong engine type", "blue");
-				this.engine.send_ack_setoption_to_main_process(name);				// Ack prevailing value to fix checkmarks.
-				return;
-			}
+		let acceptable = true;
+
+		if (this.engine.leelaish && suppressed_options_lc0[name.toLowerCase()]) acceptable = false;
+		if (!this.engine.leelaish && suppressed_options_ab[name.toLowerCase()]) acceptable = false;
+
+		if (!acceptable) {
+			this.set_special_message("Not set, wrong engine type", "blue");
+			this.engine.send_ack_setoption_to_main_process(name);				// Ack prevailing value to fix checkmarks.
+			return;
 		}
 
 		if (save_to_cfg) {
