@@ -998,6 +998,10 @@ function NewRenderer() {
 				}
 			}
 
+			if (!this.engine.leelaish && !engineconfig[this.engine.filepath].options.MultiPV) {
+				engineconfig[this.engine.filepath].options.MultiPV = 3;
+			}
+
 			// Pass unknown engines to the error handler to be displayed...
 
 			if (!s.includes("Lc0") && !s.includes("Ceres") && !s.includes("Stockfish")) {
