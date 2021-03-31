@@ -36,6 +36,8 @@ function fix(cfg) {
 		if (typeof cfg[key].options !== "object" || cfg[key].options === null) {
 			cfg[key].options = {};
 		}
+
+		// We don't really care about missing search_nodes and search_nodes_special properties.
 	}
 }
 
