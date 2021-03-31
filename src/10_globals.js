@@ -35,6 +35,7 @@ const child_process = require("child_process");
 const clipboard = require("electron").clipboard;
 const config_io = require("./modules/config_io");
 const custom_uci = require("./modules/custom_uci");
+const engineconfig_io = require("./modules/engineconfig_io");
 const fs = require("fs");
 const images = require("./modules/images");
 const ipcRenderer = require("electron").ipcRenderer;
@@ -50,7 +51,8 @@ const boardctx = canvas.getContext("2d");
 const graphctx = graph.getContext("2d");
 const decoder = new util.TextDecoder("utf8");	// https://github.com/electron/electron/issues/18733
 
-let config = config_io.load();
+let [load_err1, config]       = config_io.load();
+let [load_err2, engineconfig] = engineconfig_io.load();
 
 let next_node_id = 1;
 let live_nodes = Object.create(null);
@@ -82,32 +84,19 @@ const standard_engine_options = {
 	"LogLiveStats": true,
 	"ScoreType": "centipawn",
 	"SmartPruningFactor": 0,
-	// "UCI_Chess960": true,		// No, this is handled specially in engine.js
 	"UCI_ShowWDL": true,
 	"VerboseMoveStats": true,
 };
 
-// Options we don't want to send to specific engine types.
-// (just use true as the val, it's the key that matters).
-// LOWERCASE!
+// Options we don't want to send to specific engine types, as a sort of set. LOWERCASE KEYS!
 
-const suppressed_options_lc0 = {
-	"contempt": true,
-	"evalfile": true,
-	"hash": true,
-	"multipv": true,				// Does get set to 500, but can't be changed by normal routes.
-};
+const suppressed_options_lc0 = Object.fromEntries(
+	["contempt", "evalfile", "hash", "multipv"]			// Note MultiPV does get set to 500 but can't be changed in Lc0 by our menu.
+	.map(s => [s.toLowerCase(), true]));
 
-const suppressed_options_ab = {
-	"backend": true,
-	"loglivestats": true,
-	"scoretype": true,
-	"smartpruningfactor": true,
-	"tempdecaymoves": true,
-	"temperature": true,
-	"verbosemovestats": true,
-	"weightsfile": true,
-};
+const suppressed_options_ab = Object.fromEntries(
+	["backend", "loglivestats", "scoretype", "smartpruningfactor", "tempdecaymoves", "temperature", "verbosemovestats", "weightsfile"]
+	.map(s => [s.toLowerCase(), true]));
 
 // Yeah this seemed a good idea at the time.........................
 

@@ -1,6 +1,7 @@
 "use strict";
 
 const config_io = require("./config_io");
+const engineconfig_io = require("./engineconfig_io");
 const custom_uci = require("./custom_uci");
 
 
@@ -64,8 +65,8 @@ Nibbler's config file (which can be found via the Dev menu).`;
 
 
 exports.about_hashes =
-`You can set the Hash value directly via Nibbler's config file (which can be found via \
-the Dev menu).`;
+`You can set the Hash value directly via Nibbler's ${engineconfig_io.filename} file \
+(which can be found via the Dev menu).`;
 
 
 exports.thread_warning =

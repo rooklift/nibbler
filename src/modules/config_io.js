@@ -13,12 +13,13 @@ exports.filepath = electron.app ?
 		path.join(electron.app.getPath("userData"), exports.filename) :									// in Main process
 		path.join(querystring.parse(global.location.search)["?user_data_path"], exports.filename);		// in Renderer process
 
+function Config() {};			// This exists solely to make instanceof work.
+Config.prototype = {};
+
 exports.defaults = {
 	"warning": "EDITING THIS FILE WHILE NIBBLER IS RUNNING WILL GENERALLY CAUSE YOUR EDITS TO BE LOST.",
 
 	"path": null,		// Not undefined, all normal keys should have an actual value.
-	"args": [],
-	"options": {},
 
 	"width": 1280,
 	"height": 835,
@@ -70,8 +71,6 @@ exports.defaults = {
 	"cp_white_pov": false,
 	"wdl_white_pov": false,
 
-	"ab_engine_multipv": 3,
-
 	"show_cp": false,
 	"show_n": true,
 	"show_n_abs": true,
@@ -120,7 +119,6 @@ exports.defaults = {
 	"allow_stopped_analysis": false,
 	"never_suppress_searchmoves": true,
 	"never_grayout_infolines": false,
-	"ethereal_hack": false,
 
 	"show_engine_state": false,
 
@@ -152,12 +150,6 @@ function fix(cfg) {
 
 	// Make sure objectish things at least exist...
 
-	if (typeof cfg.options !== "object" || cfg.options === null) {
-		cfg.options = {};
-	}
-	if (Array.isArray(cfg.args) === false) {
-		cfg.args = [];
-	}
 	if (Array.isArray(cfg.leelaish_names) === false) {
 		cfg.leelaish_names = Array.from(exports.defaults.leelaish_names);
 	}
@@ -255,27 +247,30 @@ function debork_json(s) {
 
 exports.load = () => {
 
-	let cfg = {};
+	let cfg = new Config();
 	let defaults_copy = JSON.parse(JSON.stringify(exports.defaults));
+
+	let err_to_return = null;
 
 	try {
 		if (fs.existsSync(exports.filepath)) {
-			cfg = JSON.parse(debork_json(fs.readFileSync(exports.filepath, "utf8")));
+			Object.assign(cfg, JSON.parse(debork_json(fs.readFileSync(exports.filepath, "utf8"))));
 		}
 	} catch (err) {
-		cfg.failure = err.toString();					// alert() might not be available.
+		console.log(err.toString());							// alert() might not be available.
+		err_to_return = err.toString();
 	}
 
 	assign_without_overwrite(cfg, defaults_copy);		// We use a copy so that any objects that are assigned are not the default objects.
-	fix(cfg);
 
-	return cfg;
+	fix(cfg);
+	return [err_to_return, cfg];
 };
 
 exports.save = (cfg) => {
 
-	if (!cfg) {
-		throw "save() needs an argument";
+	if (cfg instanceof Config === false) {
+		throw "Wrong type of object sent to config_io.save()";
 	}
 
 	// Make a copy of the defaults. Doing it this way seems to
@@ -302,8 +297,8 @@ exports.create_if_needed = (cfg) => {
 
 	// Note that this must be called fairly late, when userData directory exists.
 
-	if (!cfg) {
-		throw "create_if_needed() needs an argument";
+	if (cfg instanceof Config === false) {
+		throw "Wrong type of object sent to config_io.create_if_needed()";
 	}
 
 	if (fs.existsSync(exports.filepath)) {

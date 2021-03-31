@@ -57,7 +57,7 @@ function SearchParams(node = null, limit = null, searchmoves = null) {
 		validated = [];
 	}
 
-	Object.freeze(validated);		// under no circumstances refactor this to freeze the original searchmoves
+	Object.freeze(validated);			// under no circumstances refactor this to freeze the original searchmoves
 
 	return Object.freeze({
 		node: node,
@@ -74,6 +74,8 @@ function NewEngine(hub) {
 	eng.exe = null;
 	eng.scanner = null;
 	eng.err_scanner = null;
+
+	eng.filepath = "";					// Used to decide what entry in engineconfig to use. Start as "", which has defaults for the dummy engine.
 
 	eng.last_send = null;
 	eng.unresolved_stop_time = null;
@@ -334,25 +336,6 @@ function NewEngine(hub) {
 		return s;			// Just so the renderer can pop s up as a message if it wants.
 	};
 
-	eng.maybe_setoption_fail_reason = function(name, value) {
-		if (this.leelaish && suppressed_options_lc0[name.toLowerCase()]) {
-			return "Not sent, wrong engine type";
-		}
-		if (!this.leelaish && suppressed_options_ab[name.toLowerCase()]) {
-			return "Not sent, wrong engine type";
-		}
-		return "";
-	};
-
-	eng.maybe_setoption = function(name, value) {
-		let fail_reason = this.maybe_setoption_fail_reason(name, value);
-		if (fail_reason) {
-			this.send_ack_setoption_to_main_process(name);					// Send ack for the old (prevailing) value. For check marks.
-			return fail_reason;
-		}
-		return this.setoption(name, value);									// Will cause an ack for the new value.
-	};
-
 	eng.pressbutton = function(name) {
 		let s = `setoption name ${name}`;
 		this.send(s);
@@ -384,12 +367,14 @@ function NewEngine(hub) {
 			return;
 		}
 
+		this.filepath = filepath;
+
 		ipcRenderer.send("ack_engine_start", filepath);
 
 		// Main process wants to keep track of what these things are set to (for menu check).
 		// These will all ack the value "" to main.js since no value has been set yet...
 
-		eng.sent_options = Object.create(null);		// Blank anything we "sent" up till now.
+		this.sent_options = Object.create(null);		// Blank anything we "sent" up till now.
 
 		for (let key of ["WeightsFile", "SyzygyPath", "Threads", "Hash", "MultiPV", "Backend", "Temperature", "TempDecayMoves"]) {
 			this.send_ack_setoption_to_main_process(key);

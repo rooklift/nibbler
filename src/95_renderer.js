@@ -987,7 +987,7 @@ function NewRenderer() {
 		if (s.startsWith("id name")) {
 
 			// Note that we do need to set the leelaish flag on the engine here (rather than relying on the
-			// autodetection in info.js) so that hub.set_ab_engine_multipv() works even if we've never received info.
+			// autodetection in info.js) so that correct options can be sent.
 
 			this.engine.leelaish = false;
 
@@ -996,6 +996,11 @@ function NewRenderer() {
 					this.engine.leelaish = true;
 					break;
 				}
+			}
+
+			if (!this.engine.leelaish && !engineconfig[this.engine.filepath].options["MultiPV"]) {
+				engineconfig[this.engine.filepath].options["MultiPV"] = 3;
+				engineconfig_io.save(engineconfig);
 			}
 
 			// Pass unknown engines to the error handler to be displayed...
@@ -1095,12 +1100,12 @@ function NewRenderer() {
 		case "self_play":
 		case "auto_analysis":
 
-			cfg_value = config.search_nodes_special;
+			cfg_value = engineconfig[this.engine.filepath].search_nodes_special;
 			break;
 
 		default:
 
-			cfg_value = config.search_nodes;
+			cfg_value = engineconfig[this.engine.filepath].search_nodes;
 			break;
 
 		}
@@ -1116,7 +1121,7 @@ function NewRenderer() {
 
 	renderer.adjust_node_limit = function(direction, special_flag) {
 
-		let cfg_value = special_flag ? config.search_nodes_special : config.search_nodes;
+		let cfg_value = special_flag ? engineconfig[this.engine.filepath].search_nodes_special : engineconfig[this.engine.filepath].search_nodes;
 
 		if (direction > 0) {
 
@@ -1176,12 +1181,27 @@ function NewRenderer() {
 		}
 
 		if (special_flag) {
-			config.search_nodes_special = val;
+			engineconfig[this.engine.filepath].search_nodes_special = val;
 		} else {
-			config.search_nodes = val;
+			engineconfig[this.engine.filepath].search_nodes = val;
 		}
-		config_io.save(config);
+
+		engineconfig_io.save(engineconfig);
+		this.ack_node_limit(special_flag);
+
 		this.handle_search_params_change();
+	};
+
+	renderer.ack_node_limit = function(special_flag) {
+
+		let ack_type = special_flag ? "ack_special_node_limit" : "ack_node_limit";
+		let val;
+
+		if (special_flag) {
+			val = engineconfig[this.engine.filepath].search_nodes_special;
+		} else {
+			val = engineconfig[this.engine.filepath].search_nodes;
+		}
 
 		if (val) {
 			ipcRenderer.send(ack_type, CommaNum(val));
@@ -1203,26 +1223,31 @@ function NewRenderer() {
 		this.engine.suppress_cycle_info = this.info_handler.engine_cycle;			// Ignore further info updates from this cycle.
 	};
 
-	renderer.set_ab_engine_multipv = function(val) {
-		config.ab_engine_multipv = val;				// This is stored outside the normal options object, it's too special, various things access it.
-		config_io.save(config);
-		this.set_uci_option("MultiPV", val);		// Gets suppressed for Leelaish engines by suppressed_options_lc0 list.
-	};
+	renderer.set_uci_option = function(name, val, save_to_cfg) {
 
-	renderer.set_uci_option = function(name, val, save_to_cfg) {					// Uses maybe_setoption() to filter unacceptable options
+		let acceptable = this.engine.leelaish ? !suppressed_options_lc0[name.toLowerCase()] : !suppressed_options_ab[name.toLowerCase()];
+
+		if (!acceptable) {
+			this.set_special_message("Not set, wrong engine type", "blue");
+			this.engine.send_ack_setoption_to_main_process(name);				// Ack prevailing value to fix checkmarks.
+			return;
+		}
+
 		if (save_to_cfg) {
 			if (val === null || val === undefined) {
-				delete config.options[name];
+				delete engineconfig[this.engine.filepath].options[name];
 			} else {
-				config.options[name] = val;
+				engineconfig[this.engine.filepath].options[name] = val;
 			}
-			config_io.save(config);
+			engineconfig_io.save(engineconfig);
 		}
+
 		if (val === null || val === undefined) {
 			val = "";
 		}
-		this.halt_if_maybe_setoption_will_succeed(name, val);
-		let sent = this.engine.maybe_setoption(name, val);
+
+		this.set_behaviour("halt");
+		let sent = this.engine.setoption(name, val);
 		this.set_special_message(sent, "blue");
 	};
 
@@ -1230,19 +1255,9 @@ function NewRenderer() {
 		this.set_uci_option(name, val, true);
 	};
 
-	renderer.halt_if_maybe_setoption_will_succeed = function(name, val) {			// Maybe needs a nicer name...
-		if (this.engine.maybe_setoption_fail_reason(name, val) === "") {
-			this.set_behaviour("halt");
-		}
-	};
-
-	renderer.toggle_uci_option = function(name, save_to_cfg) {
-		this.set_uci_option(name, !config.options[name], save_to_cfg);
-	};
-
 	renderer.disable_syzygy = function() {
-		delete config.options["SyzygyPath"];
-		config_io.save(config);
+		delete engineconfig[this.engine.filepath].options["SyzygyPath"];
+		engineconfig_io.save(engineconfig);
 		this.restart_engine();
 	};
 
@@ -1255,15 +1270,37 @@ function NewRenderer() {
 		this.set_behaviour("halt");
 		config.path = filename;
 		config_io.save(config);
-		this.engine_start(config.path, config.args);
+		this.engine_start(config.path);
 	};
 
 	renderer.restart_engine = function() {
 		this.set_behaviour("halt");
-		this.engine_start(config.path, config.args);
+		this.engine_start(config.path);
 	};
 
-	renderer.engine_start = function(filepath, args) {
+	renderer.engine_start = function(filepath) {
+
+		if (!filepath || typeof filepath !== "string" || fs.existsSync(filepath) === false) {
+			if (!load_err1 && !load_err2) {															// Globals in start.js - they take priority if set.
+				this.err_receive(`<span class="blue">${messages.engine_not_present}</span>`);
+				this.err_receive("");
+			}
+			return;
+		}
+
+		// Ensure our engineconfig object has a valid entry for this path... (not actually saved yet).
+
+		if (!engineconfig[filepath]) {
+			engineconfig[filepath] = engineconfig_io.newentry();
+			console.log(`Creating new entry in engineconfig for ${filepath}`);
+		} else {
+			console.log(`engineconfig has an entry for ${filepath}`);
+		}
+
+		let args = engineconfig[filepath].args;
+		if (Array.isArray(args) === false) {
+			args = [];
+		}
 
 		this.engine.shutdown();						// Don't reuse engine objects, not even a dummy object
 		this.engine = NewEngine(this);				// that had no exe (sync issues due to fake "go" sends)
@@ -1271,52 +1308,42 @@ function NewRenderer() {
 		this.info_handler.reset_engine_info();
 		this.info_handler.must_draw_infobox();		// To displace the new stderr log that appears.
 
-		if (typeof filepath !== "string" || fs.existsSync(filepath) === false) {
-
-			if (!config.failure) {					// Only show the following if there isn't a bigger problem...
-				this.err_receive(`<span class="blue">${messages.engine_not_present}</span>`);
-				this.err_receive("");
-			}
-			return;
-		}
-
-		if (Array.isArray(args) === false) {
-			args = [];
-		}
-
 		this.engine.setup(filepath, args, this);
 		this.engine.send("uci");
+
+		this.ack_node_limit(false);					// Ack the node limits that are set, must be done AFTER this.engine is valid AND ALSO
+		this.ack_node_limit(true);					// after this.engine.setup() has been called (making engine.filepath correct).
 	};
 
 	renderer.engine_send_all_options = function() {
 
-		// Relies on the engine.leelaish flag being correct.
-		// Also, the engine should never have been given a "go" before this.
+		// Relies on the engine.leelaish flag being correct. Also, the engine should never have been given a "go" before this.
+
+		let options = engineconfig[this.engine.filepath].options;
 
 		for (let key of Object.keys(standard_engine_options)) {
-			this.engine.maybe_setoption(key, standard_engine_options[key]);
+			let acceptable = this.engine.leelaish ? !suppressed_options_lc0[key.toLowerCase()] : !suppressed_options_ab[key.toLowerCase()];
+			if (acceptable) {
+				this.engine.setoption(key, standard_engine_options[key]);
+			}
 		}
 
 		let delayed_hash_val = null;
 
-		for (let key of Object.keys(config.options)) {
+		for (let key of Object.keys(options)) {
 			if (key.toLowerCase() !== "hash") {			// "It is recommended to set Hash after setting Threads."
-				this.engine.maybe_setoption(key, config.options[key]);
+				this.engine.setoption(key, options[key]);
 			} else {
-				delayed_hash_val = config.options[key];
+				delayed_hash_val = options[key];
 			}
 		}
 
 		if (delayed_hash_val !== null) {
-			this.engine.maybe_setoption("Hash", delayed_hash_val);
+			this.engine.setoption("Hash", delayed_hash_val);
 		}
-
-		// The following use setoption() not maybe_setoption().
 
 		if (this.engine.leelaish) {
 			this.engine.setoption("MultiPV", 500);
-		} else {
-			this.engine.setoption("MultiPV", config.ab_engine_multipv);
 		}
 	};
 

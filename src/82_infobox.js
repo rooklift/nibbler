@@ -60,17 +60,13 @@ let infobox_props = {
 		} else {
 
 			let status_string = "";
-			let can_have_limit_met_msg = false;
 
 			if (config.behaviour === "halt" && !engine.search_running.node) {
 				status_string += `<span id="gobutton_clicker" class="yellow">HALTED (go?) </span>`;
-				can_have_limit_met_msg = true;
 			} else if (config.behaviour === "halt" && engine.search_running.node) {
 				status_string += `<span class="yellow">HALTING... </span>`;
-				can_have_limit_met_msg = true;
 			} else if (config.behaviour === "analysis_locked") {
 				status_string += `<span class="blue">Locked! </span>`;
-				can_have_limit_met_msg = true;
 			} else if (config.behaviour === "play_white" && node.board.active !== "w") {
 				status_string += `<span class="yellow">YOUR MOVE </span>`;
 			} else if (config.behaviour === "play_black" && node.board.active !== "b") {
@@ -81,7 +77,6 @@ let infobox_props = {
 				status_string += `<span class="green">Auto-eval! </span>`;
 			} else if (config.behaviour === "analysis_free") {
 				status_string += `<span id="haltbutton_clicker" class="green">ANALYSIS (halt?) </span>`;
-				can_have_limit_met_msg = true;
 			}
 
 			if (config.book_explorer) {
@@ -91,18 +86,14 @@ let infobox_props = {
 			} else {
 
 				status_string += `<span class="gray">${NString(node.table.nodes)} nodes, ${DurationString(node.table.time)} (N/s: ${NString(node.table.nps)})`;
-				if (config.options.SyzygyPath) {
+				if (engineconfig[engine.filepath].options["SyzygyPath"]) {
 					status_string += `, ${NString(node.table.tbhits)} tbhits`;
 				}
 				status_string += `</span>`;
 
 				if (!engine.search_running.node) {
-					if (can_have_limit_met_msg && typeof config.search_nodes === "number" && node.table.nodes >= config.search_nodes) {
-						status_string += ` <span class="blue">(limit met)</span>`;
-					} else {
-						if (config.behaviour !== "halt") {
-							status_string += ` <span class="blue">(stopped)</span>`;
-						}
+					if (config.behaviour !== "halt") {
+						status_string += ` <span class="blue">(stopped)</span>`;
 					}
 				}
 			}
