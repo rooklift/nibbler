@@ -1082,6 +1082,7 @@ function NewRenderer() {
 
 	};
 
+	// FIXME
 	renderer.node_limit = function() {
 
 		// Given the current state of the config, what is the node limit?
@@ -1114,6 +1115,7 @@ function NewRenderer() {
 		}
 	};
 
+	// FIXME
 	renderer.adjust_node_limit = function(direction, special_flag) {
 
 		let cfg_value = special_flag ? config.search_nodes_special : config.search_nodes;
@@ -1160,6 +1162,7 @@ function NewRenderer() {
 		this.set_node_limit_generic(val, true);
 	};
 
+	// FIXME
 	renderer.set_node_limit_generic = function(val, special_flag) {
 
 		if (typeof val !== "number" || val <= 0) {
@@ -1203,12 +1206,14 @@ function NewRenderer() {
 		this.engine.suppress_cycle_info = this.info_handler.engine_cycle;			// Ignore further info updates from this cycle.
 	};
 
+	// FIXME
 	renderer.set_ab_engine_multipv = function(val) {
 		config.ab_engine_multipv = val;				// This is stored outside the normal options object, it's too special, various things access it.
 		config_io.save(config);
 		this.set_uci_option("MultiPV", val);		// Gets suppressed for Leelaish engines by suppressed_options_lc0 list.
 	};
 
+	// FIXME
 	renderer.set_uci_option = function(name, val, save_to_cfg) {					// Uses maybe_setoption() to filter unacceptable options
 		if (save_to_cfg) {
 			if (val === null || val === undefined) {
@@ -1240,9 +1245,10 @@ function NewRenderer() {
 		this.set_uci_option(name, !config.options[name], save_to_cfg);
 	};
 
+	// FIXME
 	renderer.disable_syzygy = function() {
 		delete config.options["SyzygyPath"];
-		config_io.save(config);
+		engineconfig_io.save(engineconfig);
 		this.restart_engine();
 	};
 
@@ -1255,15 +1261,23 @@ function NewRenderer() {
 		this.set_behaviour("halt");
 		config.path = filename;
 		config_io.save(config);
-		this.engine_start(config.path, config.args);
+		this.engine_start(config.path);
 	};
 
 	renderer.restart_engine = function() {
 		this.set_behaviour("halt");
-		this.engine_start(config.path, config.args);
+		this.engine_start(config.path);
 	};
 
-	renderer.engine_start = function(filepath, args) {
+	renderer.engine_start = function(filepath) {
+
+		// Ensure our engineconfig object has a valid entry for this path...
+
+		if (!engineconfig[filepath]) {
+			engineconfig[filepath] = engineconfig_io.newentry();
+		}
+
+		let args = engineconfig[filepath].args;
 
 		this.engine.shutdown();						// Don't reuse engine objects, not even a dummy object
 		this.engine = NewEngine(this);				// that had no exe (sync issues due to fake "go" sends)
