@@ -2080,7 +2080,7 @@ function menu_build() {
 						{
 							label: "cudnn-auto",
 							type: "checkbox",
-							checked: config.options.Backend === "cudnn-auto",
+							checked: false,
 							click: () => {
 								win.webContents.send("call", {
 									fn: "set_uci_option_permanent",
@@ -2092,7 +2092,7 @@ function menu_build() {
 						{
 							label: "cudnn",
 							type: "checkbox",
-							checked: config.options.Backend === "cudnn",
+							checked: false,
 							click: () => {
 								win.webContents.send("call", {
 									fn: "set_uci_option_permanent",
@@ -2104,7 +2104,7 @@ function menu_build() {
 						{
 							label: "cudnn-fp16",
 							type: "checkbox",
-							checked: config.options.Backend === "cudnn-fp16",
+							checked: false,
 							click: () => {
 								win.webContents.send("call", {
 									fn: "set_uci_option_permanent",
@@ -2119,7 +2119,7 @@ function menu_build() {
 						{
 							label: "cuda-auto",
 							type: "checkbox",
-							checked: config.options.Backend === "cuda-auto",
+							checked: false,
 							click: () => {
 								win.webContents.send("call", {
 									fn: "set_uci_option_permanent",
@@ -2131,7 +2131,7 @@ function menu_build() {
 						{
 							label: "cuda",
 							type: "checkbox",
-							checked: config.options.Backend === "cuda",
+							checked: false,
 							click: () => {
 								win.webContents.send("call", {
 									fn: "set_uci_option_permanent",
@@ -2143,7 +2143,7 @@ function menu_build() {
 						{
 							label: "cuda-fp16",
 							type: "checkbox",
-							checked: config.options.Backend === "cuda-fp16",
+							checked: false,
 							click: () => {
 								win.webContents.send("call", {
 									fn: "set_uci_option_permanent",
@@ -2158,7 +2158,7 @@ function menu_build() {
 						{
 							label: "opencl",
 							type: "checkbox",
-							checked: config.options.Backend === "opencl",
+							checked: false,
 							click: () => {
 								win.webContents.send("call", {
 									fn: "set_uci_option_permanent",
@@ -2170,7 +2170,7 @@ function menu_build() {
 						{
 							label: "dx12",
 							type: "checkbox",
-							checked: config.options.Backend === "dx12",
+							checked: false,
 							click: () => {
 								win.webContents.send("call", {
 									fn: "set_uci_option_permanent",
@@ -2182,7 +2182,7 @@ function menu_build() {
 						{
 							label: "blas",
 							type: "checkbox",
-							checked: config.options.Backend === "blas",
+							checked: false,
 							click: () => {
 								win.webContents.send("call", {
 									fn: "set_uci_option_permanent",
@@ -2194,7 +2194,7 @@ function menu_build() {
 						{
 							label: "eigen",
 							type: "checkbox",
-							checked: config.options.Backend === "eigen",
+							checked: false,
 							click: () => {
 								win.webContents.send("call", {
 									fn: "set_uci_option_permanent",
@@ -2209,7 +2209,7 @@ function menu_build() {
 						{
 							label: "random",
 							type: "checkbox",
-							checked: config.options.Backend === "random",
+							checked: false,
 							click: () => {
 								win.webContents.send("call", {
 									fn: "set_uci_option_permanent",
@@ -2221,7 +2221,7 @@ function menu_build() {
 						{
 							label: "roundrobin",
 							type: "checkbox",
-							checked: config.options.Backend === "roundrobin",
+							checked: false,
 							click: () => {
 								win.webContents.send("call", {
 									fn: "set_uci_option_permanent",
@@ -2233,7 +2233,7 @@ function menu_build() {
 						{
 							label: "multiplexing",
 							type: "checkbox",
-							checked: config.options.Backend === "multiplexing",
+							checked: false,
 							click: () => {
 								win.webContents.send("call", {
 									fn: "set_uci_option_permanent",
@@ -2245,7 +2245,7 @@ function menu_build() {
 						{
 							label: "demux",
 							type: "checkbox",
-							checked: config.options.Backend === "demux",
+							checked: false,
 							click: () => {
 								win.webContents.send("call", {
 									fn: "set_uci_option_permanent",
@@ -2262,7 +2262,7 @@ function menu_build() {
 						{
 							label: "Choose folder...",
 							type: "checkbox",
-							checked: typeof config.options.SyzygyPath === "string" && config.options.SyzygyPath !== "",
+							checked: false,
 							click: () => {
 								let folders = open_dialog({
 									defaultPath: config.syzygy_dialog_folder,
@@ -2308,7 +2308,7 @@ function menu_build() {
 							label: "Unlimited",
 							accelerator: "CommandOrControl+U",
 							type: "checkbox",
-							checked: typeof config.search_nodes !== "number",
+							checked: false,
 							click: () => {
 								win.webContents.send("call", {
 									fn: "set_node_limit",
@@ -2323,7 +2323,7 @@ function menu_build() {
 						{
 							label: "1,000,000,000",
 							type: "checkbox",
-							checked: config.search_nodes === 1 * billion,
+							checked: false,
 							click: () => {
 								win.webContents.send("call", {
 									fn: "set_node_limit",
@@ -2335,7 +2335,7 @@ function menu_build() {
 						{
 							label: "100,000,000",
 							type: "checkbox",
-							checked: config.search_nodes === 100 * million,
+							checked: false,
 							click: () => {
 								win.webContents.send("call", {
 									fn: "set_node_limit",
@@ -2347,7 +2347,7 @@ function menu_build() {
 						{
 							label: "10,000,000",
 							type: "checkbox",
-							checked: config.search_nodes === 10 * million,
+							checked: false,
 							click: () => {
 								win.webContents.send("call", {
 									fn: "set_node_limit",
@@ -2359,7 +2359,7 @@ function menu_build() {
 						{
 							label: "1,000,000",
 							type: "checkbox",
-							checked: config.search_nodes === 1 * million,
+							checked: false,
 							click: () => {
 								win.webContents.send("call", {
 									fn: "set_node_limit",
@@ -2371,7 +2371,7 @@ function menu_build() {
 						{
 							label: "100,000",
 							type: "checkbox",
-							checked: config.search_nodes === 100000,
+							checked: false,
 							click: () => {
 								win.webContents.send("call", {
 									fn: "set_node_limit",
@@ -2383,7 +2383,7 @@ function menu_build() {
 						{
 							label: "10,000",
 							type: "checkbox",
-							checked: config.search_nodes === 10000,
+							checked: false,
 							click: () => {
 								win.webContents.send("call", {
 									fn: "set_node_limit",
@@ -2395,7 +2395,7 @@ function menu_build() {
 						{
 							label: "1,000",
 							type: "checkbox",
-							checked: config.search_nodes === 1000,
+							checked: false,
 							click: () => {
 								win.webContents.send("call", {
 									fn: "set_node_limit",
@@ -2407,7 +2407,7 @@ function menu_build() {
 						{
 							label: "100",
 							type: "checkbox",
-							checked: config.search_nodes === 100,
+							checked: false,
 							click: () => {
 								win.webContents.send("call", {
 									fn: "set_node_limit",
@@ -2419,7 +2419,7 @@ function menu_build() {
 						{
 							label: "10",
 							type: "checkbox",
-							checked: config.search_nodes === 10,
+							checked: false,
 							click: () => {
 								win.webContents.send("call", {
 									fn: "set_node_limit",
@@ -2431,7 +2431,7 @@ function menu_build() {
 						{
 							label: "2",
 							type: "checkbox",
-							checked: config.search_nodes === 2,
+							checked: false,
 							click: () => {
 								win.webContents.send("call", {
 									fn: "set_node_limit",
@@ -2443,7 +2443,7 @@ function menu_build() {
 						{
 							label: "1",
 							type: "checkbox",
-							checked: config.search_nodes === 1,
+							checked: false,
 							click: () => {
 								win.webContents.send("call", {
 									fn: "set_node_limit",
@@ -2483,7 +2483,7 @@ function menu_build() {
 						{
 							label: "1,000,000,000",
 							type: "checkbox",
-							checked: config.search_nodes_special === 1 * billion,
+							checked: false,
 							click: () => {
 								win.webContents.send("call", {
 									fn: "set_node_limit_special",
@@ -2495,7 +2495,7 @@ function menu_build() {
 						{
 							label: "100,000,000",
 							type: "checkbox",
-							checked: config.search_nodes_special === 100 * million,
+							checked: false,
 							click: () => {
 								win.webContents.send("call", {
 									fn: "set_node_limit_special",
@@ -2507,7 +2507,7 @@ function menu_build() {
 						{
 							label: "10,000,000",
 							type: "checkbox",
-							checked: config.search_nodes_special === 10 * million,
+							checked: false,
 							click: () => {
 								win.webContents.send("call", {
 									fn: "set_node_limit_special",
@@ -2519,7 +2519,7 @@ function menu_build() {
 						{
 							label: "1,000,000",
 							type: "checkbox",
-							checked: config.search_nodes_special === 1 * million,
+							checked: false,
 							click: () => {
 								win.webContents.send("call", {
 									fn: "set_node_limit_special",
@@ -2531,7 +2531,7 @@ function menu_build() {
 						{
 							label: "100,000",
 							type: "checkbox",
-							checked: config.search_nodes_special === 100000,
+							checked: false,
 							click: () => {
 								win.webContents.send("call", {
 									fn: "set_node_limit_special",
@@ -2543,7 +2543,7 @@ function menu_build() {
 						{
 							label: "10,000",
 							type: "checkbox",
-							checked: config.search_nodes_special === 10000,
+							checked: false,
 							click: () => {
 								win.webContents.send("call", {
 									fn: "set_node_limit_special",
@@ -2555,7 +2555,7 @@ function menu_build() {
 						{
 							label: "1,000",
 							type: "checkbox",
-							checked: config.search_nodes_special === 1000,
+							checked: false,
 							click: () => {
 								win.webContents.send("call", {
 									fn: "set_node_limit_special",
@@ -2567,7 +2567,7 @@ function menu_build() {
 						{
 							label: "100",
 							type: "checkbox",
-							checked: config.search_nodes_special === 100,
+							checked: false,
 							click: () => {
 								win.webContents.send("call", {
 									fn: "set_node_limit_special",
@@ -2579,7 +2579,7 @@ function menu_build() {
 						{
 							label: "10",
 							type: "checkbox",
-							checked: config.search_nodes_special === 10,
+							checked: false,
 							click: () => {
 								win.webContents.send("call", {
 									fn: "set_node_limit_special",
@@ -2591,7 +2591,7 @@ function menu_build() {
 						{
 							label: "2",
 							type: "checkbox",
-							checked: config.search_nodes_special === 2,
+							checked: false,
 							click: () => {
 								win.webContents.send("call", {
 									fn: "set_node_limit_special",
@@ -2603,7 +2603,7 @@ function menu_build() {
 						{
 							label: "1",
 							type: "checkbox",
-							checked: config.search_nodes_special === 1,
+							checked: false,
 							click: () => {
 								win.webContents.send("call", {
 									fn: "set_node_limit_special",
@@ -2646,7 +2646,7 @@ function menu_build() {
 						{
 							label: "128",
 							type: "checkbox",
-							checked: config.options.Threads === 128,
+							checked: false,
 							click: () => {
 								win.webContents.send("call", {
 									fn: "set_uci_option_permanent",
@@ -2658,7 +2658,7 @@ function menu_build() {
 						{
 							label: "96",
 							type: "checkbox",
-							checked: config.options.Threads === 96,
+							checked: false,
 							click: () => {
 								win.webContents.send("call", {
 									fn: "set_uci_option_permanent",
@@ -2670,7 +2670,7 @@ function menu_build() {
 						{
 							label: "64",
 							type: "checkbox",
-							checked: config.options.Threads === 64,
+							checked: false,
 							click: () => {
 								win.webContents.send("call", {
 									fn: "set_uci_option_permanent",
@@ -2682,7 +2682,7 @@ function menu_build() {
 						{
 							label: "48",
 							type: "checkbox",
-							checked: config.options.Threads === 48,
+							checked: false,
 							click: () => {
 								win.webContents.send("call", {
 									fn: "set_uci_option_permanent",
@@ -2694,7 +2694,7 @@ function menu_build() {
 						{
 							label: "32",
 							type: "checkbox",
-							checked: config.options.Threads === 32,
+							checked: false,
 							click: () => {
 								win.webContents.send("call", {
 									fn: "set_uci_option_permanent",
@@ -2706,7 +2706,7 @@ function menu_build() {
 						{
 							label: "24",
 							type: "checkbox",
-							checked: config.options.Threads === 24,
+							checked: false,
 							click: () => {
 								win.webContents.send("call", {
 									fn: "set_uci_option_permanent",
@@ -2718,7 +2718,7 @@ function menu_build() {
 						{
 							label: "16",
 							type: "checkbox",
-							checked: config.options.Threads === 16,
+							checked: false,
 							click: () => {
 								win.webContents.send("call", {
 									fn: "set_uci_option_permanent",
@@ -2730,7 +2730,7 @@ function menu_build() {
 						{
 							label: "14",
 							type: "checkbox",
-							checked: config.options.Threads === 14,
+							checked: false,
 							click: () => {
 								win.webContents.send("call", {
 									fn: "set_uci_option_permanent",
@@ -2742,7 +2742,7 @@ function menu_build() {
 						{
 							label: "12",
 							type: "checkbox",
-							checked: config.options.Threads === 12,
+							checked: false,
 							click: () => {
 								win.webContents.send("call", {
 									fn: "set_uci_option_permanent",
@@ -2754,7 +2754,7 @@ function menu_build() {
 						{
 							label: "10",
 							type: "checkbox",
-							checked: config.options.Threads === 10,
+							checked: false,
 							click: () => {
 								win.webContents.send("call", {
 									fn: "set_uci_option_permanent",
@@ -2766,7 +2766,7 @@ function menu_build() {
 						{
 							label: "8",
 							type: "checkbox",
-							checked: config.options.Threads === 8,
+							checked: false,
 							click: () => {
 								win.webContents.send("call", {
 									fn: "set_uci_option_permanent",
@@ -2778,7 +2778,7 @@ function menu_build() {
 						{
 							label: "7",
 							type: "checkbox",
-							checked: config.options.Threads === 7,
+							checked: false,
 							click: () => {
 								win.webContents.send("call", {
 									fn: "set_uci_option_permanent",
@@ -2790,7 +2790,7 @@ function menu_build() {
 						{
 							label: "6",
 							type: "checkbox",
-							checked: config.options.Threads === 6,
+							checked: false,
 							click: () => {
 								win.webContents.send("call", {
 									fn: "set_uci_option_permanent",
@@ -2802,7 +2802,7 @@ function menu_build() {
 						{
 							label: "5",
 							type: "checkbox",
-							checked: config.options.Threads === 5,
+							checked: false,
 							click: () => {
 								win.webContents.send("call", {
 									fn: "set_uci_option_permanent",
@@ -2814,7 +2814,7 @@ function menu_build() {
 						{
 							label: "4",
 							type: "checkbox",
-							checked: config.options.Threads === 4,
+							checked: false,
 							click: () => {
 								win.webContents.send("call", {
 									fn: "set_uci_option_permanent",
@@ -2826,7 +2826,7 @@ function menu_build() {
 						{
 							label: "3",
 							type: "checkbox",
-							checked: config.options.Threads === 3,
+							checked: false,
 							click: () => {
 								win.webContents.send("call", {
 									fn: "set_uci_option_permanent",
@@ -2838,7 +2838,7 @@ function menu_build() {
 						{
 							label: "2",
 							type: "checkbox",
-							checked: config.options.Threads === 2,
+							checked: false,
 							click: () => {
 								win.webContents.send("call", {
 									fn: "set_uci_option_permanent",
@@ -2850,7 +2850,7 @@ function menu_build() {
 						{
 							label: "1",
 							type: "checkbox",
-							checked: config.options.Threads === 1,
+							checked: false,
 							click: () => {
 								win.webContents.send("call", {
 									fn: "set_uci_option_permanent",
@@ -2876,7 +2876,7 @@ function menu_build() {
 						{
 							label: "24 GB",
 							type: "checkbox",
-							checked: config.options.Hash === 24 * 1024,
+							checked: false,
 							click: () => {
 								win.webContents.send("call", {
 									fn: "set_uci_option_permanent",
@@ -2888,7 +2888,7 @@ function menu_build() {
 						{
 							label: "20 GB",
 							type: "checkbox",
-							checked: config.options.Hash === 20 * 1024,
+							checked: false,
 							click: () => {
 								win.webContents.send("call", {
 									fn: "set_uci_option_permanent",
@@ -2900,7 +2900,7 @@ function menu_build() {
 						{
 							label: "16 GB",
 							type: "checkbox",
-							checked: config.options.Hash === 16 * 1024,
+							checked: false,
 							click: () => {
 								win.webContents.send("call", {
 									fn: "set_uci_option_permanent",
@@ -2912,7 +2912,7 @@ function menu_build() {
 						{
 							label: "12 GB",
 							type: "checkbox",
-							checked: config.options.Hash === 12 * 1024,
+							checked: false,
 							click: () => {
 								win.webContents.send("call", {
 									fn: "set_uci_option_permanent",
@@ -2924,7 +2924,7 @@ function menu_build() {
 						{
 							label: "8 GB",
 							type: "checkbox",
-							checked: config.options.Hash === 8 * 1024,
+							checked: false,
 							click: () => {
 								win.webContents.send("call", {
 									fn: "set_uci_option_permanent",
@@ -2936,7 +2936,7 @@ function menu_build() {
 						{
 							label: "6 GB",
 							type: "checkbox",
-							checked: config.options.Hash === 6 * 1024,
+							checked: false,
 							click: () => {
 								win.webContents.send("call", {
 									fn: "set_uci_option_permanent",
@@ -2948,7 +2948,7 @@ function menu_build() {
 						{
 							label: "4 GB",
 							type: "checkbox",
-							checked: config.options.Hash === 4 * 1024,
+							checked: false,
 							click: () => {
 								win.webContents.send("call", {
 									fn: "set_uci_option_permanent",
@@ -2960,7 +2960,7 @@ function menu_build() {
 						{
 							label: "2 GB",
 							type: "checkbox",
-							checked: config.options.Hash === 2 * 1024,
+							checked: false,
 							click: () => {
 								win.webContents.send("call", {
 									fn: "set_uci_option_permanent",
@@ -2972,7 +2972,7 @@ function menu_build() {
 						{
 							label: "1 GB",
 							type: "checkbox",
-							checked: config.options.Hash === 1 * 1024,
+							checked: false,
 							click: () => {
 								win.webContents.send("call", {
 									fn: "set_uci_option_permanent",
@@ -2984,7 +2984,7 @@ function menu_build() {
 						{
 							label: "0 GB",
 							type: "checkbox",
-							checked: config.options.Hash === 1,
+							checked: false,
 							click: () => {
 								win.webContents.send("call", {
 									fn: "set_uci_option_permanent",
@@ -3010,7 +3010,7 @@ function menu_build() {
 						{
 							label: "5",
 							type: "checkbox",
-							checked: config.ab_engine_multipv === 5,
+							checked: false,
 							click: () => {
 								win.webContents.send("call", {
 									fn: "set_ab_engine_multipv",
@@ -3022,7 +3022,7 @@ function menu_build() {
 						{
 							label: "4",
 							type: "checkbox",
-							checked: config.ab_engine_multipv === 4,
+							checked: false,
 							click: () => {
 								win.webContents.send("call", {
 									fn: "set_ab_engine_multipv",
@@ -3034,7 +3034,7 @@ function menu_build() {
 						{
 							label: "3",
 							type: "checkbox",
-							checked: config.ab_engine_multipv === 3,
+							checked: false,
 							click: () => {
 								win.webContents.send("call", {
 									fn: "set_ab_engine_multipv",
@@ -3046,7 +3046,7 @@ function menu_build() {
 						{
 							label: "2",
 							type: "checkbox",
-							checked: config.ab_engine_multipv === 2,
+							checked: false,
 							click: () => {
 								win.webContents.send("call", {
 									fn: "set_ab_engine_multipv",
@@ -3058,7 +3058,7 @@ function menu_build() {
 						{
 							label: "1",
 							type: "checkbox",
-							checked: config.ab_engine_multipv === 1,
+							checked: false,
 							click: () => {
 								win.webContents.send("call", {
 									fn: "set_ab_engine_multipv",
@@ -3337,7 +3337,7 @@ function menu_build() {
 						{
 							label: "1.0",
 							type: "checkbox",
-							checked: config.options.Temperature === 1.0,
+							checked: false,
 							click: () => {
 								win.webContents.send("call", {
 									fn: "set_uci_option_permanent",
@@ -3349,7 +3349,7 @@ function menu_build() {
 						{
 							label: "0.9",
 							type: "checkbox",
-							checked: config.options.Temperature === 0.9,
+							checked: false,
 							click: () => {
 								win.webContents.send("call", {
 									fn: "set_uci_option_permanent",
@@ -3361,7 +3361,7 @@ function menu_build() {
 						{
 							label: "0.8",
 							type: "checkbox",
-							checked: config.options.Temperature === 0.8,
+							checked: false,
 							click: () => {
 								win.webContents.send("call", {
 									fn: "set_uci_option_permanent",
@@ -3373,7 +3373,7 @@ function menu_build() {
 						{
 							label: "0.7",
 							type: "checkbox",
-							checked: config.options.Temperature === 0.7,
+							checked: false,
 							click: () => {
 								win.webContents.send("call", {
 									fn: "set_uci_option_permanent",
@@ -3385,7 +3385,7 @@ function menu_build() {
 						{
 							label: "0.6",
 							type: "checkbox",
-							checked: config.options.Temperature === 0.6,
+							checked: false,
 							click: () => {
 								win.webContents.send("call", {
 									fn: "set_uci_option_permanent",
@@ -3397,7 +3397,7 @@ function menu_build() {
 						{
 							label: "0.5",
 							type: "checkbox",
-							checked: config.options.Temperature === 0.5,
+							checked: false,
 							click: () => {
 								win.webContents.send("call", {
 									fn: "set_uci_option_permanent",
@@ -3409,7 +3409,7 @@ function menu_build() {
 						{
 							label: "0.4",
 							type: "checkbox",
-							checked: config.options.Temperature === 0.4,
+							checked: false,
 							click: () => {
 								win.webContents.send("call", {
 									fn: "set_uci_option_permanent",
@@ -3421,7 +3421,7 @@ function menu_build() {
 						{
 							label: "0.3",
 							type: "checkbox",
-							checked: config.options.Temperature === 0.3,
+							checked: false,
 							click: () => {
 								win.webContents.send("call", {
 									fn: "set_uci_option_permanent",
@@ -3433,7 +3433,7 @@ function menu_build() {
 						{
 							label: "0.2",
 							type: "checkbox",
-							checked: config.options.Temperature === 0.2,
+							checked: false,
 							click: () => {
 								win.webContents.send("call", {
 									fn: "set_uci_option_permanent",
@@ -3445,7 +3445,7 @@ function menu_build() {
 						{
 							label: "0.1",
 							type: "checkbox",
-							checked: config.options.Temperature === 0.1,
+							checked: false,
 							click: () => {
 								win.webContents.send("call", {
 									fn: "set_uci_option_permanent",
@@ -3457,7 +3457,7 @@ function menu_build() {
 						{
 							label: "0",
 							type: "checkbox",
-							checked: config.options.Temperature === 0,
+							checked: false,
 							click: () => {
 								win.webContents.send("call", {
 									fn: "set_uci_option_permanent",
@@ -3474,7 +3474,7 @@ function menu_build() {
 						{
 							label: "Infinite",
 							type: "checkbox",
-							checked: config.options.TempDecayMoves === 0,
+							checked: false,
 							click: () => {
 								win.webContents.send("call", {
 									fn: "set_uci_option_permanent",
@@ -3486,7 +3486,7 @@ function menu_build() {
 						{
 							label: "20",
 							type: "checkbox",
-							checked: config.options.TempDecayMoves === 20,
+							checked: false,
 							click: () => {
 								win.webContents.send("call", {
 									fn: "set_uci_option_permanent",
@@ -3498,7 +3498,7 @@ function menu_build() {
 						{
 							label: "18",
 							type: "checkbox",
-							checked: config.options.TempDecayMoves === 18,
+							checked: false,
 							click: () => {
 								win.webContents.send("call", {
 									fn: "set_uci_option_permanent",
@@ -3510,7 +3510,7 @@ function menu_build() {
 						{
 							label: "16",
 							type: "checkbox",
-							checked: config.options.TempDecayMoves === 16,
+							checked: false,
 							click: () => {
 								win.webContents.send("call", {
 									fn: "set_uci_option_permanent",
@@ -3522,7 +3522,7 @@ function menu_build() {
 						{
 							label: "14",
 							type: "checkbox",
-							checked: config.options.TempDecayMoves === 14,
+							checked: false,
 							click: () => {
 								win.webContents.send("call", {
 									fn: "set_uci_option_permanent",
@@ -3534,7 +3534,7 @@ function menu_build() {
 						{
 							label: "12",
 							type: "checkbox",
-							checked: config.options.TempDecayMoves === 12,
+							checked: false,
 							click: () => {
 								win.webContents.send("call", {
 									fn: "set_uci_option_permanent",
@@ -3546,7 +3546,7 @@ function menu_build() {
 						{
 							label: "10",
 							type: "checkbox",
-							checked: config.options.TempDecayMoves === 10,
+							checked: false,
 							click: () => {
 								win.webContents.send("call", {
 									fn: "set_uci_option_permanent",
@@ -3558,7 +3558,7 @@ function menu_build() {
 						{
 							label: "8",
 							type: "checkbox",
-							checked: config.options.TempDecayMoves === 8,
+							checked: false,
 							click: () => {
 								win.webContents.send("call", {
 									fn: "set_uci_option_permanent",
@@ -3570,7 +3570,7 @@ function menu_build() {
 						{
 							label: "6",
 							type: "checkbox",
-							checked: config.options.TempDecayMoves === 6,
+							checked: false,
 							click: () => {
 								win.webContents.send("call", {
 									fn: "set_uci_option_permanent",
@@ -3582,7 +3582,7 @@ function menu_build() {
 						{
 							label: "4",
 							type: "checkbox",
-							checked: config.options.TempDecayMoves === 4,
+							checked: false,
 							click: () => {
 								win.webContents.send("call", {
 									fn: "set_uci_option_permanent",
@@ -3594,7 +3594,7 @@ function menu_build() {
 						{
 							label: "2",
 							type: "checkbox",
-							checked: config.options.TempDecayMoves === 2,
+							checked: false,
 							click: () => {
 								win.webContents.send("call", {
 									fn: "set_uci_option_permanent",
