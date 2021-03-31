@@ -1228,11 +1228,13 @@ function NewRenderer() {
 		if (this.engine.leelaish) {
 			if (suppressed_options_lc0[name.toLowerCase()]) {
 				this.set_special_message("Not set, wrong engine type", "blue");
+				this.engine.send_ack_setoption_to_main_process(name);				// Ack prevailing value to fix checkmarks.
 				return;
 			}
 		} else {
 			if (suppressed_options_ab[name.toLowerCase()]) {
 				this.set_special_message("Not set, wrong engine type", "blue");
+				this.engine.send_ack_setoption_to_main_process(name);				// Ack prevailing value to fix checkmarks.
 				return;
 			}
 		}
