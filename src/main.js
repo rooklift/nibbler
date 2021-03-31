@@ -11,6 +11,7 @@ electron.app.commandLine.appendSwitch("js-flags", "--expose_gc");
 
 const config_io = require("./modules/config_io");
 const custom_uci = require("./modules/custom_uci");
+const engineconfig_io = require("./modules/engineconfig_io");
 const messages = require("./modules/messages");
 const path = require("path");
 const running_as_electron = require("./modules/running_as_electron");
