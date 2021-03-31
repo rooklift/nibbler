@@ -3657,6 +3657,12 @@ function menu_build() {
 					}
 				},
 				{
+					label: `Show ${engineconfig_io.filename}`,
+					click: () => {
+						electron.shell.showItemInFolder(engineconfig_io.filepath);
+					}
+				},
+				{
 					type: "separator"
 				},
 				{
