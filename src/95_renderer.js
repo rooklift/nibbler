@@ -1287,8 +1287,10 @@ function NewRenderer() {
 	renderer.engine_start = function(filepath) {
 
 		if (!filepath || typeof filepath !== "string" || fs.existsSync(filepath) === false) {
-			this.err_receive(`<span class="blue">${messages.engine_not_present}</span>`);
-			this.err_receive("");
+			if (!load_err1 && !load_err2) {															// Globals in start.js - they take priority if set.
+				this.err_receive(`<span class="blue">${messages.engine_not_present}</span>`);
+				this.err_receive("");
+			}
 			return;
 		}
 
