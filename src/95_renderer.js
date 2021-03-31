@@ -1326,9 +1326,7 @@ function NewRenderer() {
 		let options = engineconfig[this.engine.filepath].options;
 
 		for (let key of Object.keys(standard_engine_options)) {
-
-			let acceptable = this.engine.leelaish ? !suppressed_options_lc0[key] : !suppressed_options_ab[key];
-
+			let acceptable = this.engine.leelaish ? !suppressed_options_lc0[key.toLowerCase()] : !suppressed_options_ab[key.toLowerCase()];
 			if (acceptable) {
 				this.engine.setoption(key, standard_engine_options[key]);
 			}
