@@ -15,10 +15,6 @@ exports.filepath = electron.app ?
 
 function fix(cfg) {
 
-	// Ensure the object has a "engineconfig" flag, which save() will check to make sure that nothing else is ever accidentally saved.
-
-	cfg.__engineconfig = true;
-
 	// The nameless dummy that hub creates at startup needs an entry...
 
 	cfg[""] = exports.newentry();
@@ -36,6 +32,10 @@ function fix(cfg) {
 			cfg[key].options = {};
 		}
 	}
+
+	// Ensure the object has a "engineconfig" flag, which save() will check to make sure that nothing else is ever accidentally saved.
+
+	cfg.__engineconfig = true;
 }
 
 exports.newentry = () => {
