@@ -1319,8 +1319,6 @@ function NewRenderer() {
 
 		// The engine should never have been given a "go" before this.
 
-		let options = engineconfig[this.engine.filepath].options;
-
 		for (let key of Object.keys(standard_engine_options)) {
 			let acceptable = leelaish ? !suppressed_options_lc0[key.toLowerCase()] : !suppressed_options_ab[key.toLowerCase()];
 			if (acceptable) {
@@ -1328,6 +1326,7 @@ function NewRenderer() {
 			}
 		}
 
+		let options = engineconfig[this.engine.filepath].options;
 		let delayed_hash_val = null;
 
 		for (let key of Object.keys(options)) {
