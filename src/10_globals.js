@@ -82,32 +82,19 @@ const standard_engine_options = {
 	"LogLiveStats": true,
 	"ScoreType": "centipawn",
 	"SmartPruningFactor": 0,
-	// "UCI_Chess960": true,		// No, this is handled specially in engine.js
 	"UCI_ShowWDL": true,
 	"VerboseMoveStats": true,
 };
 
-// Options we don't want to send to specific engine types.
-// (just use true as the val, it's the key that matters).
-// LOWERCASE!
+// Options we don't want to send to specific engine types, as a sort of set. LOWERCASE KEYS!
 
-const suppressed_options_lc0 = {
-	"contempt": true,
-	"evalfile": true,
-	"hash": true,
-	"multipv": true,				// Does get set to 500, but can't be changed by normal routes.
-};
+const suppressed_options_lc0 = Object.fromEntries(
+	["Contempt", "EvalFile", "Hash", "MultiPV"]
+	.map(s => [s.toLowerCase(), true]));
 
-const suppressed_options_ab = {
-	"backend": true,
-	"loglivestats": true,
-	"scoretype": true,
-	"smartpruningfactor": true,
-	"tempdecaymoves": true,
-	"temperature": true,
-	"verbosemovestats": true,
-	"weightsfile": true,
-};
+const suppressed_options_ab = Object.fromEntries(
+	["Backend", "LogLiveStats", "ScoreType", "SmartPruningFactor", "TempDecayMoves", "Temperature", "VerboseMoveStats", "WeightsFile"]
+	.map(s => [s.toLowerCase(), true]));
 
 // Yeah this seemed a good idea at the time.........................
 
