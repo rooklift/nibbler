@@ -1082,7 +1082,6 @@ function NewRenderer() {
 
 	};
 
-	// FIXME
 	renderer.node_limit = function() {
 
 		// Given the current state of the config, what is the node limit?
@@ -1096,12 +1095,12 @@ function NewRenderer() {
 		case "self_play":
 		case "auto_analysis":
 
-			cfg_value = config.search_nodes_special;
+			cfg_value = engineconfig[this.engine.filepath].search_nodes_special;
 			break;
 
 		default:
 
-			cfg_value = config.search_nodes;
+			cfg_value = engineconfig[this.engine.filepath].search_nodes;
 			break;
 
 		}
@@ -1115,10 +1114,9 @@ function NewRenderer() {
 		}
 	};
 
-	// FIXME
 	renderer.adjust_node_limit = function(direction, special_flag) {
 
-		let cfg_value = special_flag ? config.search_nodes_special : config.search_nodes;
+		let cfg_value = special_flag ? engineconfig[this.engine.filepath].search_nodes_special : engineconfig[this.engine.filepath].search_nodes;
 
 		if (direction > 0) {
 
@@ -1162,7 +1160,6 @@ function NewRenderer() {
 		this.set_node_limit_generic(val, true);
 	};
 
-	// FIXME
 	renderer.set_node_limit_generic = function(val, special_flag) {
 
 		if (typeof val !== "number" || val <= 0) {
@@ -1179,11 +1176,11 @@ function NewRenderer() {
 		}
 
 		if (special_flag) {
-			config.search_nodes_special = val;
+			engineconfig[this.engine.filepath].search_nodes_special = val;
 		} else {
-			config.search_nodes = val;
+			engineconfig[this.engine.filepath].search_nodes = val;
 		}
-		config_io.save(config);
+		engineconfig_io.save(engineconfig);
 		this.handle_search_params_change();
 
 		if (val) {
@@ -1206,22 +1203,22 @@ function NewRenderer() {
 		this.engine.suppress_cycle_info = this.info_handler.engine_cycle;			// Ignore further info updates from this cycle.
 	};
 
-	// FIXME
+	// FIXME - delete this
 	renderer.set_ab_engine_multipv = function(val) {
 		config.ab_engine_multipv = val;				// This is stored outside the normal options object, it's too special, various things access it.
 		config_io.save(config);
 		this.set_uci_option("MultiPV", val);		// Gets suppressed for Leelaish engines by suppressed_options_lc0 list.
 	};
 
-	// FIXME
+	// FIXME - just reject invalid options at this step, and delete maybe()
 	renderer.set_uci_option = function(name, val, save_to_cfg) {					// Uses maybe_setoption() to filter unacceptable options
 		if (save_to_cfg) {
 			if (val === null || val === undefined) {
-				delete config.options[name];
+				delete engineconfig[this.engine.filepath].options[name];
 			} else {
-				config.options[name] = val;
+				engineconfig[this.engine.filepath].options[name] = val;
 			}
-			config_io.save(config);
+			engineconfig_io.save(engineconfig);
 		}
 		if (val === null || val === undefined) {
 			val = "";
@@ -1242,12 +1239,11 @@ function NewRenderer() {
 	};
 
 	renderer.toggle_uci_option = function(name, save_to_cfg) {
-		this.set_uci_option(name, !config.options[name], save_to_cfg);
+		this.set_uci_option(name, !engineconfig[this.engine.filepath].options[name], save_to_cfg);
 	};
 
-	// FIXME
 	renderer.disable_syzygy = function() {
-		delete config.options["SyzygyPath"];
+		delete engineconfig[this.engine.filepath].options["SyzygyPath"];
 		engineconfig_io.save(engineconfig);
 		this.restart_engine();
 	};
@@ -1302,11 +1298,12 @@ function NewRenderer() {
 		this.engine.send("uci");
 	};
 
-	// FIXME
 	renderer.engine_send_all_options = function() {
 
 		// Relies on the engine.leelaish flag being correct.
 		// Also, the engine should never have been given a "go" before this.
+
+		let options = engineconfig[this.engine.filepath].options;
 
 		for (let key of Object.keys(standard_engine_options)) {
 			this.engine.maybe_setoption(key, standard_engine_options[key]);
@@ -1314,11 +1311,11 @@ function NewRenderer() {
 
 		let delayed_hash_val = null;
 
-		for (let key of Object.keys(config.options)) {
+		for (let key of Object.keys(options)) {
 			if (key.toLowerCase() !== "hash") {			// "It is recommended to set Hash after setting Threads."
-				this.engine.maybe_setoption(key, config.options[key]);
+				this.engine.maybe_setoption(key, options[key]);
 			} else {
-				delayed_hash_val = config.options[key];
+				delayed_hash_val = options[key];
 			}
 		}
 
@@ -1331,7 +1328,7 @@ function NewRenderer() {
 		if (this.engine.leelaish) {
 			this.engine.setoption("MultiPV", 500);
 		} else {
-			this.engine.setoption("MultiPV", config.ab_engine_multipv);
+			this.engine.setoption("MultiPV", config.ab_engine_multipv);		// FIXME, remove this.
 		}
 	};
 
