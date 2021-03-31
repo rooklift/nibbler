@@ -105,7 +105,7 @@ let total_dropped_inputs = 0;
 
 ipcRenderer.on("set", (event, msg) => {		// Should only be for things that don't need any action except save config and redraw.
 	config[msg.key] = msg.value;
-	config_io.save(config);
+	hub.saveconfig();						// Might refuse if the config file was corrupt.
 	hub.draw();
 });
 
