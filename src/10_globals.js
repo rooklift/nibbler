@@ -91,7 +91,7 @@ const standard_engine_options = {
 // Options we don't want to send to specific engine types, as a sort of set. LOWERCASE KEYS!
 
 const suppressed_options_lc0 = Object.fromEntries(
-	["contempt", "evalfile", "hash", "multipv"]
+	["contempt", "evalfile", "hash", "multipv"]			// Note MultiPV does get set to 500 but can't be changed in Lc0 by our menu.
 	.map(s => [s.toLowerCase(), true]));
 
 const suppressed_options_ab = Object.fromEntries(
