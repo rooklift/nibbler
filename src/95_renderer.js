@@ -1313,6 +1313,8 @@ function NewRenderer() {
 
 		this.info_handler.reset_engine_info();
 		this.info_handler.must_draw_infobox();		// To displace the new stderr log that appears.
+
+		return true;
 	};
 
 	renderer.engine_send_all_options = function(leelaish) {
