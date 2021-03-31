@@ -998,8 +998,8 @@ function NewRenderer() {
 				}
 			}
 
-			if (!this.engine.leelaish && !engineconfig[this.engine.filepath].options.MultiPV) {
-				engineconfig[this.engine.filepath].options.MultiPV = 3;
+			if (!this.engine.leelaish && !engineconfig[this.engine.filepath].options["MultiPV"]) {
+				engineconfig[this.engine.filepath].options["MultiPV"] = 3;
 				engineconfig_io.save(engineconfig);
 			}
 
