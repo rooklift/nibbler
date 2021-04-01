@@ -1,0 +1,13 @@
+[Event "Test \"Quotes\" \\ and Escaping"]
+[Site "local"]
+[Date "2021.04.01"]
+[Round "1"]
+[White "Me"]
+[Black "Not Me"]
+[Result "*"]
+[FEN rnbqkb1r/ppp1pppp/5n2/3p4/3P1B2/5N2/PPP1PPPP/RN1QKB1R b KQkq - 3 3]
+[SetUp "1"]
+
+3... c5 {EV: 47.0%, N: 63.14% of 63.4k} 4. e3 {EV: 53.3%, N: 95.14% of 66.9k} e6
+{EV: 47.4%, N: 67.90% of 115k} 5. Nbd2 {EV: 53.1%, N: 67.58% of 96.2k} Qb6 {EV:
+47.8%, N: 77.32% of 198k} 6. Rb1 {EV: 52.7%, N: 90.85% of 166k} *
