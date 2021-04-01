@@ -47,8 +47,6 @@ function PreParsePGN(buf) {							// buf should be the buffer for a single game,
 
 			tagline = tagline.slice(1, -1);			// So now it's like:		Foo "bar etc"
 
-			console.log(tagline);
-
 			let quote_i = tagline.indexOf(`"`);
 
 			if (quote_i === -1) {					// This is never the case, given the s.endsWith(`"]`) test above.
