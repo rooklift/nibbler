@@ -167,12 +167,12 @@ function startup() {
 
 		case "weightsfile":
 			loaded_weights = msg.val;
-			set_one_check(msg.val ? true : false, "Engine", "Choose Lc0 WeightsFile...");
+			set_one_check(msg.val ? true : false, "Engine", "Weights", "Lc0 WeightsFile...");
 			break;
 
 		case "evalfile":
 			loaded_evalfile = msg.val;
-			set_one_check(msg.val ? true : false, "Engine", "Choose Stockfish EvalFile...");
+			set_one_check(msg.val ? true : false, "Engine", "Weights", "Stockfish EvalFile...");
 			break;
 
 		case "syzygypath":
@@ -2069,77 +2069,76 @@ function menu_build() {
 					},
 				},
 				{
-					type: "separator"
-				},
-				{
-					label: "Choose Lc0 WeightsFile...",
-					type: "checkbox",
-					checked: false,
-					click: () => {
-						let files = open_dialog({
-							defaultPath: config.weights_dialog_folder,
-							properties: ["openFile"]
-						});
-						if (Array.isArray(files) && files.length > 0) {
-							let file = files[0];
-							win.webContents.send("call", {
-								fn: "set_uci_option_permanent",
-								args: ["WeightsFile", file]
-							});
-							// Will receive an ack IPC which sets menu checks.
-							// Save the dir as the new default dir, in both processes.
-							config.weights_dialog_folder = path.dirname(file);
-							win.webContents.send("set", {
-								key: "weights_dialog_folder",
-								value: path.dirname(file)
-							});
-						} else {
-							win.webContents.send("call", {						// Force an ack IPC to fix our menu check state.
-								fn: "send_ack_setoption",
-								args: ["WeightsFile"],
-							});
-						}
-					},
-				},
-				{
-					label: "Choose Stockfish EvalFile...",
-					type: "checkbox",
-					checked: false,
-					click: () => {
-						let files = open_dialog({
-							defaultPath: config.evalfile_dialog_folder,
-							properties: ["openFile"]
-						});
-						if (Array.isArray(files) && files.length > 0) {
-							let file = files[0];
-							win.webContents.send("call", {
-								fn: "set_uci_option_permanent",
-								args: ["EvalFile", file]
-							});
-							// Will receive an ack IPC which sets menu checks.
-							// Save the dir as the new default dir, in both processes.
-							config.evalfile_dialog_folder = path.dirname(file);
-							win.webContents.send("set", {
-								key: "evalfile_dialog_folder",
-								value: path.dirname(file)
-							});
-						} else {
-							win.webContents.send("call", {						// Force an ack IPC to fix our menu check state.
-								fn: "send_ack_setoption",
-								args: ["EvalFile"],
-							});
-						}
-					},
-				},
-				{
-					label: "Set to <auto>",
-					click: () => {
-						win.webContents.send("call", "auto_weights");
-						// Will receive an ack IPC which sets menu checks.
-					}
-				},
-				{
-					type: "separator"
+					label: "Weights",
+					submenu: [
+						{
+							label: "Lc0 WeightsFile...",
+							type: "checkbox",
+							checked: false,
+							click: () => {
+								let files = open_dialog({
+									defaultPath: config.weights_dialog_folder,
+									properties: ["openFile"]
+								});
+								if (Array.isArray(files) && files.length > 0) {
+									let file = files[0];
+									win.webContents.send("call", {
+										fn: "set_uci_option_permanent",
+										args: ["WeightsFile", file]
+									});
+									// Will receive an ack IPC which sets menu checks.
+									// Save the dir as the new default dir, in both processes.
+									config.weights_dialog_folder = path.dirname(file);
+									win.webContents.send("set", {
+										key: "weights_dialog_folder",
+										value: path.dirname(file)
+									});
+								} else {
+									win.webContents.send("call", {						// Force an ack IPC to fix our menu check state.
+										fn: "send_ack_setoption",
+										args: ["WeightsFile"],
+									});
+								}
+							},
+						},
+						{
+							label: "Stockfish EvalFile...",
+							type: "checkbox",
+							checked: false,
+							click: () => {
+								let files = open_dialog({
+									defaultPath: config.evalfile_dialog_folder,
+									properties: ["openFile"]
+								});
+								if (Array.isArray(files) && files.length > 0) {
+									let file = files[0];
+									win.webContents.send("call", {
+										fn: "set_uci_option_permanent",
+										args: ["EvalFile", file]
+									});
+									// Will receive an ack IPC which sets menu checks.
+									// Save the dir as the new default dir, in both processes.
+									config.evalfile_dialog_folder = path.dirname(file);
+									win.webContents.send("set", {
+										key: "evalfile_dialog_folder",
+										value: path.dirname(file)
+									});
+								} else {
+									win.webContents.send("call", {						// Force an ack IPC to fix our menu check state.
+										fn: "send_ack_setoption",
+										args: ["EvalFile"],
+									});
+								}
+							},
+						},
+						{
+							label: "Set to <auto>",
+							click: () => {
+								win.webContents.send("call", "auto_weights");
+								// Will receive an ack IPC which sets menu checks.
+							}
+						},
+					]
 				},
 				{
 					label: "Backend",
