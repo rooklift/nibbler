@@ -172,7 +172,7 @@ function startup() {
 
 		case "evalfile":
 			loaded_evalfile = msg.val;
-			set_one_check(msg.val ? true : false, "Engine", "Choose SF EvalFile...");
+			set_one_check(msg.val ? true : false, "Engine", "Choose Stockfish EvalFile...");
 			break;
 
 		case "syzygypath":
@@ -2099,7 +2099,7 @@ function menu_build() {
 					},
 				},
 				{
-					label: "Choose SF EvalFile...",
+					label: "Choose Stockfish EvalFile...",
 					type: "checkbox",
 					checked: false,
 					click: () => {
