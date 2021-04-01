@@ -191,14 +191,14 @@ function startup() {
 			let mb = parseInt(msg.val, 10);
 			if (Number.isNaN(mb) === false) {
 				let gb = Math.floor(mb / 1024);
-				set_checks("Engine", "Hash (A/B)", `${gb} GB`);
+				set_checks("Engine", "Hash", `${gb} GB`);
 			} else {
-				set_checks("Engine", "Hash (A/B)", "");			// i.e. clear all
+				set_checks("Engine", "Hash", "");			// i.e. clear all
 			}
 			break;
 
 		case "multipv":
-			set_checks("Engine", "MultiPV (A/B)", msg.val);		// If it's "500" it will clear all.
+			set_checks("Engine", "MultiPV", msg.val);		// If it's "500" it will clear all.
 			break;
 
 		case "temperature":			// Sketchy because there are equivalent representations.
@@ -2933,7 +2933,7 @@ function menu_build() {
 					]
 				},
 				{
-					label: "Hash (A/B)",
+					label: "Hash",
 					submenu: [
 						{
 							label: "24 GB",
@@ -3067,7 +3067,7 @@ function menu_build() {
 					]
 				},
 				{
-					label: "MultiPV (A/B)",
+					label: "MultiPV",
 					submenu: [
 						{
 							label: "5",
