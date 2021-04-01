@@ -41,8 +41,9 @@ let win;
 let menu = menu_build();
 let menu_is_set = false;
 
-let loaded_engine = null;
-let loaded_weights = null;
+let loaded_engine = "";
+let loaded_weights = "";
+let loaded_evalfile = "";
 
 // Avoid a theoretical race by checking whether the ready event has already occurred,
 // otherwise set an event listener for it...
@@ -131,8 +132,9 @@ function startup() {
 		win.setTitle(msg);
 	});
 
-	electron.ipcMain.on("ack_engine_start", (event, msg) => {
+	electron.ipcMain.on("ack_engine", (event, msg) => {
 		loaded_engine = msg;
+		set_one_check(msg ? true : false, "Engine", "Choose engine...")
 	});
 
 	electron.ipcMain.on("ack_logfile", (event, msg) => {
@@ -165,10 +167,16 @@ function startup() {
 
 		case "weightsfile":
 			loaded_weights = msg.val;
+			set_one_check(msg.val ? true : false, "Engine", "Choose Lc0 WeightsFile...");
+			break;
+
+		case "evalfile":
+			loaded_evalfile = msg.val;
+			set_one_check(msg.val ? true : false, "Engine", "Choose SF EvalFile...");
 			break;
 
 		case "syzygypath":
-			set_one_check(msg.val ? true : false, "Engine", "Syzygy", "Choose folder...");
+			set_one_check(msg.val ? true : false, "Engine", "Choose Syzygy path...");
 			break;
 
 		case "backend":
@@ -242,7 +250,7 @@ function menu_build() {
 					label: "About",
 					click: () => {
 						let s = `Nibbler ${electron.app.getVersion()} in Electron ${process.versions.electron}\n\n`;
-						s += `Engine: ${loaded_engine}\nWeights: ${loaded_weights || "<auto>"}`;
+						s += `Engine: ${loaded_engine}\nWeights: ${loaded_weights || loaded_evalfile || "<auto>"}`;
 						alert(s);
 					}
 				},
@@ -2029,6 +2037,8 @@ function menu_build() {
 			submenu: [
 				{
 					label: "Choose engine...",
+					type: "checkbox",
+					checked: false,
 					click: () => {
 						let files = open_dialog({
 							defaultPath: config.engine_dialog_folder,
@@ -2050,11 +2060,18 @@ function menu_build() {
 								key: "engine_dialog_folder",
 								value: path.dirname(file)
 							});
+						} else {
+							win.webContents.send("call", "send_ack_engine");		// Force an ack IPC to fix our menu check state.
 						}
 					},
 				},
 				{
-					label: "Choose weights file...",
+					type: "separator"
+				},
+				{
+					label: "Choose Lc0 WeightsFile...",
+					type: "checkbox",
+					checked: false,
 					click: () => {
 						let files = open_dialog({
 							defaultPath: config.weights_dialog_folder,
@@ -2063,17 +2080,63 @@ function menu_build() {
 						if (Array.isArray(files) && files.length > 0) {
 							let file = files[0];
 							win.webContents.send("call", {
-								fn: "switch_weights",
-								args: [file]
+								fn: "set_uci_option_permanent",
+								args: ["WeightsFile", file]
 							});
+							// Will receive an ack IPC which sets menu checks.
 							// Save the dir as the new default dir, in both processes.
 							config.weights_dialog_folder = path.dirname(file);
 							win.webContents.send("set", {
 								key: "weights_dialog_folder",
 								value: path.dirname(file)
 							});
+						} else {
+							win.webContents.send("call", {						// Force an ack IPC to fix our menu check state.
+								fn: "send_ack_setoption",
+								args: ["WeightsFile"],
+							});
 						}
+					},
+				},
+				{
+					label: "Choose SF EvalFile...",
+					type: "checkbox",
+					checked: false,
+					click: () => {
+						let files = open_dialog({
+							defaultPath: config.evalfile_dialog_folder,
+							properties: ["openFile"]
+						});
+						if (Array.isArray(files) && files.length > 0) {
+							let file = files[0];
+							win.webContents.send("call", {
+								fn: "set_uci_option_permanent",
+								args: ["EvalFile", file]
+							});
+							// Will receive an ack IPC which sets menu checks.
+							// Save the dir as the new default dir, in both processes.
+							config.evalfile_dialog_folder = path.dirname(file);
+							win.webContents.send("set", {
+								key: "evalfile_dialog_folder",
+								value: path.dirname(file)
+							});
+						} else {
+							win.webContents.send("call", {						// Force an ack IPC to fix our menu check state.
+								fn: "send_ack_setoption",
+								args: ["EvalFile"],
+							});
+						}
+					},
+				},
+				{
+					label: "Set to <auto>",
+					click: () => {
+						win.webContents.send("call", "auto_weights");
+						// Will receive an ack IPC which sets menu checks.
 					}
+				},
+				{
+					type: "separator"
 				},
 				{
 					label: "Backend",
@@ -2258,46 +2321,44 @@ function menu_build() {
 					]
 				},
 				{
-					label: "Syzygy",
-					submenu: [
-						{
-							label: "Choose folder...",
-							type: "checkbox",
-							checked: false,
-							click: () => {
-								let folders = open_dialog({
-									defaultPath: config.syzygy_dialog_folder,
-									properties: ["openDirectory"]
-								});
-								if (Array.isArray(folders) && folders.length > 0) {
-									let folder = folders[0];
-									win.webContents.send("call", {
-										fn: "set_uci_option_permanent",
-										args: ["SyzygyPath", folder]			// FIXME: should send all folders, separated by system separator.
-									});
-									// Will receive an ack IPC which sets menu checks.
-									// Save the dir as the new default dir, in both processes.
-									config.syzygy_dialog_folder = path.dirname(folder);
-									win.webContents.send("set", {
-										key: "syzygy_dialog_folder",
-										value: path.dirname(folder)
-									});
-								} else {
-									win.webContents.send("call", {
-										fn: "send_ack_setoption",
-										args: ["SyzygyPath"]					// Force an ack IPC to fix our menu check state.
-									});
-								}
-							}
-						},
-						{
-							label: "Disable",
-							click: () => {
-								win.webContents.send("call", "disable_syzygy");
-								// Will receive an ack IPC which sets menu checks.
-							}
+					type: "separator"
+				},
+				{
+					label: "Choose Syzygy path...",
+					type: "checkbox",
+					checked: false,
+					click: () => {
+						let folders = open_dialog({
+							defaultPath: config.syzygy_dialog_folder,
+							properties: ["openDirectory"]
+						});
+						if (Array.isArray(folders) && folders.length > 0) {
+							let folder = folders[0];
+							win.webContents.send("call", {
+								fn: "set_uci_option_permanent",
+								args: ["SyzygyPath", folder]			// FIXME: should send all folders, separated by system separator.
+							});
+							// Will receive an ack IPC which sets menu checks.
+							// Save the dir as the new default dir, in both processes.
+							config.syzygy_dialog_folder = path.dirname(folder);
+							win.webContents.send("set", {
+								key: "syzygy_dialog_folder",
+								value: path.dirname(folder)
+							});
+						} else {
+							win.webContents.send("call", {
+								fn: "send_ack_setoption",
+								args: ["SyzygyPath"]					// Force an ack IPC to fix our menu check state.
+							});
 						}
-					]
+					}
+				},
+				{
+					label: "Unset",
+					click: () => {
+						win.webContents.send("call", "disable_syzygy");
+						// Will receive an ack IPC which sets menu checks.
+					}
 				},
 				{
 					type: "separator"

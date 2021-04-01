@@ -106,6 +106,7 @@ exports.defaults = {
 	"pgn_dialog_folder": "",
 	"engine_dialog_folder": "",
 	"weights_dialog_folder": "",
+	"evalfile_dialog_folder": "",
 	"syzygy_dialog_folder": "",
 	"pieces_dialog_folder": "",
 	"background_dialog_folder": "",

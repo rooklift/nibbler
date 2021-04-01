@@ -354,6 +354,10 @@ function NewEngine(hub) {
 		return this.sent_options["uci_chess960"] === "true";				// The string "true" since these values are always strings.
 	};
 
+	eng.send_ack_engine = function() {
+		ipcRenderer.send("ack_engine", this.filepath);
+	};
+
 	eng.setup = function(filepath, args) {		// Returns true on success, false otherwise.
 
 		Log("");
@@ -368,15 +372,14 @@ function NewEngine(hub) {
 		}
 
 		this.filepath = filepath;
+		this.send_ack_engine();			// After this.filepath is set.
 
-		ipcRenderer.send("ack_engine_start", filepath);
-
-		// Main process wants to keep track of what these things are set to (for menu check).
+		// Main process wants to keep track of what these things are set to (for menu checks).
 		// These will all ack the value "" to main.js since no value has been set yet...
 
 		this.sent_options = Object.create(null);		// Blank anything we "sent" up till now.
 
-		for (let key of ["WeightsFile", "SyzygyPath", "Threads", "Hash", "MultiPV", "Backend", "Temperature", "TempDecayMoves"]) {
+		for (let key of ["EvalFile", "WeightsFile", "SyzygyPath", "Threads", "Hash", "MultiPV", "Backend", "Temperature", "TempDecayMoves"]) {
 			this.send_ack_setoption_to_main_process(key);
 		}
 

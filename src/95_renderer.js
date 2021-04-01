@@ -1261,12 +1261,14 @@ function NewRenderer() {
 	renderer.disable_syzygy = function() {
 		delete engineconfig[this.engine.filepath].options["SyzygyPath"];
 		this.save_engineconfig()
-		this.restart_engine();
+		this.restart_engine();		// Causes the correct ack to be sent.
 	};
 
-	renderer.switch_weights = function(filename) {
-		this.info_handler.stderr_log = "";							// Avoids having confusing stale messages
-		this.set_uci_option_permanent("WeightsFile", filename);
+	renderer.auto_weights = function() {
+		delete engineconfig[this.engine.filepath].options["EvalFile"];
+		delete engineconfig[this.engine.filepath].options["WeightsFile"];
+		this.save_engineconfig()
+		this.restart_engine();		// Causes the correct acks to be sent.
 	};
 
 	renderer.switch_engine = function(filename) {
@@ -1718,6 +1720,10 @@ function NewRenderer() {
 			msg = this.book instanceof Buffer ? "polyglot" : "pgn";
 		}
 		ipcRenderer.send("ack_book", msg);
+	};
+
+	renderer.send_ack_engine = function() {
+		this.engine.send_ack_engine();
 	};
 
 	renderer.send_ack_setoption = function(name) {
