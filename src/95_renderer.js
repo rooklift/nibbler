@@ -663,6 +663,7 @@ function NewRenderer() {
 
 		let loader = NewFastPGNLoader(filename, (err, pgndata) => {
 			if (!err) {
+				pgndata.source = path.basename(filename);
 				this.handle_loaded_pgndata(pgndata);
 			} else {
 				console.log(err);
@@ -759,6 +760,7 @@ function NewRenderer() {
 
 		let loader = NewFastPGNLoader(buf, (err, pgndata) => {
 			if (!err) {
+				pgndata.source = "From clipboard";
 				this.handle_loaded_pgndata(pgndata);
 			} else {
 				console.log(err);
@@ -828,20 +830,22 @@ function NewRenderer() {
 
 		let max_ordinal_length = count.toString().length;
 
-		let prevnextfoo = `<p>&nbsp;&nbsp;` +	// All these values get fixed on function entry if they're out-of-bounds. ids should be unique.
-			`<span id="setchooserstart_-99999999">Start </span>|` +
-			`<span id="setchooserstart_${this.pgn_choices_start - 10000}"> <<<< </span>|` +
-			`<span id="setchooserstart_${this.pgn_choices_start - 1000}"> <<< </span>|` +
-			`<span id="setchooserstart_${this.pgn_choices_start - 100}"> << </span>|` +
-			`<span id="setchooserstart_${this.pgn_choices_start + 100}"> >> </span>|` +
-		    `<span id="setchooserstart_${this.pgn_choices_start + 1000}"> >>> </span>|` +
-		    `<span id="setchooserstart_${this.pgn_choices_start + 10000}"> >>>> </span>|` +
-		    `<span id="setchooserstart_99999999"> End (${count})</span>` +
-		    `</p>`;
+		let prevnextfoo = (count > interval) ?
+				`<p>&nbsp;&nbsp;` +	// All these values get fixed on function entry if they're out-of-bounds. ids should be unique.
+				`<span id="setchooserstart_-99999999">Start </span>|` +
+				`<span id="setchooserstart_${this.pgn_choices_start - 10000}"> <<<< </span>|` +
+				`<span id="setchooserstart_${this.pgn_choices_start - 1000}"> <<< </span>|` +
+				`<span id="setchooserstart_${this.pgn_choices_start - 100}"> << </span>|` +
+				`<span id="setchooserstart_${this.pgn_choices_start + 100}"> >> </span>|` +
+				`<span id="setchooserstart_${this.pgn_choices_start + 1000}"> >>> </span>|` +
+				`<span id="setchooserstart_${this.pgn_choices_start + 10000}"> >>>> </span>|` +
+				`<span id="setchooserstart_99999999"> End (${count}) </span>` +
+				`&mdash; <span class="green">${this.pgndata.source}</span>` +
+				`</p>`
+			:
+				`<p>&nbsp;&nbsp; <span class="green">${this.pgndata.source}</span></p>`;
 
-		let prevnextfoo2 = ReplaceAll(prevnextfoo, "setchooserstart", "setchooserstartbottom");		// id is supposed to be unique for each element.
-
-		if (count > interval) lines.push(prevnextfoo);
+		lines.push(prevnextfoo);
 		lines.push("<ul>");
 		for (let n = this.pgn_choices_start; n < this.pgn_choices_start + interval; n++) {
 
@@ -876,7 +880,10 @@ function NewRenderer() {
 			}
 		}
 		lines.push("</ul>");
-		if (count > interval) lines.push(prevnextfoo2);
+		if (count > interval) {
+			prevnextfoo = ReplaceAll(prevnextfoo, `span id="setchooserstart_`, `span id="setchooserstartbottom_`);		// id should be unique per element.
+			lines.push(prevnextfoo);
+		}
 
 		pgnchooser.innerHTML = lines.join("");
 		pgnchooser.style.display = "block";

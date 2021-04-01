@@ -80,6 +80,7 @@ function new_byte_pusher(size) {
 function new_pgndata(buf, indices) {		// Made by the PGN file loader. Used by the hub.
 
 	let ret = {buf, indices};
+	ret.source = "Unknown source";
 
 	ret.count = function() {
 		return this.indices.length;
