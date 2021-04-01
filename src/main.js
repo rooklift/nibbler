@@ -1026,14 +1026,14 @@ function menu_build() {
 					]
 				},
 				{
-					label: "Arrow filter (Leela)",
+					label: "Arrow filter (Lc0)",
 					submenu: [
 						{
 							label: "All moves",
 							type: "checkbox",
 							checked: config.arrow_filter_type === "all",
 							click: () => {
-								set_checks("Display", "Arrow filter (Leela)", "All moves");
+								set_checks("Display", "Arrow filter (Lc0)", "All moves");
 								win.webContents.send("call", {
 									fn: "set_arrow_filter",
 									args: ["all", 0],
@@ -1045,7 +1045,7 @@ function menu_build() {
 							type: "checkbox",
 							checked: config.arrow_filter_type === "top",
 							click: () => {
-								set_checks("Display", "Arrow filter (Leela)", "Top move");
+								set_checks("Display", "Arrow filter (Lc0)", "Top move");
 								win.webContents.send("call", {
 									fn: "set_arrow_filter",
 									args: ["top", 0],
@@ -1060,7 +1060,7 @@ function menu_build() {
 							type: "checkbox",
 							checked: config.arrow_filter_type === "N" && config.arrow_filter_value === 0.005,
 							click: () => {
-								set_checks("Display", "Arrow filter (Leela)", "N > 0.5%");
+								set_checks("Display", "Arrow filter (Lc0)", "N > 0.5%");
 								win.webContents.send("call", {
 									fn: "set_arrow_filter",
 									args: ["N", 0.005],
@@ -1072,7 +1072,7 @@ function menu_build() {
 							type: "checkbox",
 							checked: config.arrow_filter_type === "N" && config.arrow_filter_value === 0.01,
 							click: () => {
-								set_checks("Display", "Arrow filter (Leela)", "N > 1%");
+								set_checks("Display", "Arrow filter (Lc0)", "N > 1%");
 								win.webContents.send("call", {
 									fn: "set_arrow_filter",
 									args: ["N", 0.01],
@@ -1084,7 +1084,7 @@ function menu_build() {
 							type: "checkbox",
 							checked: config.arrow_filter_type === "N" && config.arrow_filter_value === 0.02,
 							click: () => {
-								set_checks("Display", "Arrow filter (Leela)", "N > 2%");
+								set_checks("Display", "Arrow filter (Lc0)", "N > 2%");
 								win.webContents.send("call", {
 									fn: "set_arrow_filter",
 									args: ["N", 0.02],
@@ -1096,7 +1096,7 @@ function menu_build() {
 							type: "checkbox",
 							checked: config.arrow_filter_type === "N" && config.arrow_filter_value === 0.03,
 							click: () => {
-								set_checks("Display", "Arrow filter (Leela)", "N > 3%");
+								set_checks("Display", "Arrow filter (Lc0)", "N > 3%");
 								win.webContents.send("call", {
 									fn: "set_arrow_filter",
 									args: ["N", 0.03],
@@ -1108,7 +1108,7 @@ function menu_build() {
 							type: "checkbox",
 							checked: config.arrow_filter_type === "N" && config.arrow_filter_value === 0.04,
 							click: () => {
-								set_checks("Display", "Arrow filter (Leela)", "N > 4%");
+								set_checks("Display", "Arrow filter (Lc0)", "N > 4%");
 								win.webContents.send("call", {
 									fn: "set_arrow_filter",
 									args: ["N", 0.04],
@@ -1120,7 +1120,7 @@ function menu_build() {
 							type: "checkbox",
 							checked: config.arrow_filter_type === "N" && config.arrow_filter_value === 0.05,
 							click: () => {
-								set_checks("Display", "Arrow filter (Leela)", "N > 5%");
+								set_checks("Display", "Arrow filter (Lc0)", "N > 5%");
 								win.webContents.send("call", {
 									fn: "set_arrow_filter",
 									args: ["N", 0.05],
@@ -1132,7 +1132,7 @@ function menu_build() {
 							type: "checkbox",
 							checked: config.arrow_filter_type === "N" && config.arrow_filter_value === 0.1,
 							click: () => {
-								set_checks("Display", "Arrow filter (Leela)", "N > 10%");
+								set_checks("Display", "Arrow filter (Lc0)", "N > 10%");
 								win.webContents.send("call", {
 									fn: "set_arrow_filter",
 									args: ["N", 0.1],
