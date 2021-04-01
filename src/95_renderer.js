@@ -1327,18 +1327,18 @@ function NewRenderer() {
 		// so that our standard options prevail in the event of a conflict. Hmm.
 
 		let options = engineconfig[this.engine.filepath].options;
-		let delayed_hash_val = null;
+		let keys = Object.keys(options);
 
-		for (let key of Object.keys(options)) {
-			if (key.toLowerCase() !== "hash") {			// "It is recommended to set Hash after setting Threads."
-				this.engine.setoption(key, options[key]);
-			} else {
-				delayed_hash_val = options[key];
-			}
-		}
+		keys.sort((a, b) => {		// "It is recommended to set Hash after setting Threads."
+			if (a.toLowerCase() === "hash" && b.toLowerCase() !== "hash") return 1;
+			if (a.toLowerCase() !== "hash" && b.toLowerCase() === "hash") return -1;
+			return 0;
+		});
 
-		if (delayed_hash_val !== null) {
-			this.engine.setoption("Hash", delayed_hash_val);
+		console.log(keys);
+
+		for (let key of keys) {
+			this.engine.setoption(key, options[key]);
 		}
 	};
 
