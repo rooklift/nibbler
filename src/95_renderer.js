@@ -1335,8 +1335,6 @@ function NewRenderer() {
 			return 0;
 		});
 
-		console.log(keys);
-
 		for (let key of keys) {
 			this.engine.setoption(key, options[key]);
 		}
