@@ -1984,7 +1984,7 @@ function NewRenderer() {
 		if (root.tags && root.tags.White && root.tags.White !== "White" && root.tags.Black && root.tags.Black !== "Black") {
 			title += `: ${root.tags.White} - ${root.tags.Black}`;
 		}
-		ipcRenderer.send("set_title", title);
+		ipcRenderer.send("set_title", UnsafeStringHTML(title));		// Fix any &amp; and that sort of thing in the names.
 	};
 
 	// -------------------------------------------------------------------------------------------------------------------------

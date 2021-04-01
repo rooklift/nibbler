@@ -152,7 +152,7 @@ function NewPGNPreParser(buf, callback) {		// Cannot fail unless aborted.
 					value = value.slice(0, -1);
 				}
 
-				this.games[this.games.length - 1].tags[key] = SafeString(value);		// Escape evil characters. IMPORTANT!
+				this.games[this.games.length - 1].tags[key] = SafeStringHTML(value);		// Escape evil characters. IMPORTANT!
 
 			} else {
 

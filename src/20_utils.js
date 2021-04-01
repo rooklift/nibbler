@@ -246,15 +246,27 @@ function ReplaceAll(s, search, replace) {
 	return s.split(search).join(replace);
 }
 
-function SafeString(s) {
+function SafeStringHTML(s) {
 	if (typeof s !== "string") {
 		return undefined;
 	}
-	s = ReplaceAll(s, "&", "&amp;");			// This needs to be first of course.
-	s = ReplaceAll(s, "<", "&lt;");
-	s = ReplaceAll(s, ">", "&gt;");
-	s = ReplaceAll(s, "'", "&apos;");
-	s = ReplaceAll(s, "\"", "&quot;");
+	s = ReplaceAll(s,  `&`  ,  `&amp;`   );		// This needs to be first of course.
+	s = ReplaceAll(s,  `<`  ,  `&lt;`    );
+	s = ReplaceAll(s,  `>`  ,  `&gt;`    );
+	s = ReplaceAll(s,  `'`  ,  `&apos;`  );
+	s = ReplaceAll(s,  `"`  ,  `&quot;`  );
+	return s;
+}
+
+function UnsafeStringHTML(s) {
+	if (typeof s !== "string") {
+		return undefined;
+	}
+	s = ReplaceAll(s,  `&quot;`  ,  `"`  );
+	s = ReplaceAll(s,  `&apos;`  ,  `'`  );
+	s = ReplaceAll(s,  `&gt;`    ,  `>`  );
+	s = ReplaceAll(s,  `&lt;`    ,  `<`  );
+	s = ReplaceAll(s,  `&amp;`   ,  `&`  );		// So I guess do this last.
 	return s;
 }
 

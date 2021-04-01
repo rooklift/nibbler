@@ -400,7 +400,7 @@ function NewEngine(hub) {
 			if (this.have_quit) return;
 			debuggo.err_line = debuggo.err_line ? debuggo.err_line + 1 : 1;
 			Log(". " + line);
-			this.hub.err_receive(SafeString(line));
+			this.hub.err_receive(SafeStringHTML(line));
 			debuggo.err_line -= 1;
 		});
 
@@ -424,7 +424,7 @@ function NewEngine(hub) {
 				if (line.startsWith("readyok")) {
 					this.ever_received_readyok = true;
 				}
-				this.hub.receive_misc(SafeString(line));
+				this.hub.receive_misc(SafeStringHTML(line));
 			}
 
 			debuggo.line -= 1;
