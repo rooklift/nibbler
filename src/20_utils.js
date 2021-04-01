@@ -274,7 +274,7 @@ function SafeStringPGN(s) {
 	if (typeof s !== "string") {
 		return undefined;
 	}
-	s = ReplaceAll(s,  `\\`  ,  `\\\\`  );
+	s = ReplaceAll(s,  `\\`  ,  `\\\\`  );		// Must be first.
 	s = ReplaceAll(s,  `"`   ,  `\\"`   );
 	return s;
 }
@@ -284,7 +284,7 @@ function UnsafeStringPGN(s) {
 		return undefined;
 	}
 	s = ReplaceAll(s,  `\\"`   ,  `"`   );
-	s = ReplaceAll(s,  `\\\\`  ,  `\\`  );
+	s = ReplaceAll(s,  `\\\\`  ,  `\\`  );		// So this ought to be last.
 	return s;
 }
 
