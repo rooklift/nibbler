@@ -43,7 +43,10 @@ function NewRoot(board) {					// Arg is a board (position) object, not a FEN
 
 	let root = NewNode(null, null, board);
 
-	root.tags = Object.create(null);		// Only root gets these. Get overwritten by the PGN loader.
+	// Tags. Only root gets these. Get overwritten by the PGN loader.
+	// Internally, these get kept as HTML-safe, PGN-unsafe.
+
+	root.tags = Object.create(null);
 	root.tags.Event = "?";
 	root.tags.Site = "?";
 	root.tags.Date = DateString(new Date());

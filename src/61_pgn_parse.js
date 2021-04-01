@@ -7,10 +7,11 @@ function new_pgn_record() {
 	};
 }
 
-function PreParsePGN(buf) {							// buf should be the buffer for a single game, only.
+function PreParsePGN(buf) {								// buf should be the buffer for a single game, only.
 
 	// Partial parse of the buffer. Generates a tags object and a list of buffers, each of which is a line
-	// in the movetext. Not so sure this approach makes sense any more, if it ever did, but it'll do.
+	// in the movetext. Not so sure this approach makes sense any more, if it ever did. In particular,
+	// there's no really great reason why the movetext needs to be split into lines at all.
 	//
 	// Never fails. Always returns a valid object (though possibly containing illegal movetext).
 
@@ -23,42 +24,39 @@ function PreParsePGN(buf) {							// buf should be the buffer for a single game,
 			continue;
 		}
 
-		if (rawline[0] === 37) {					// Percent % sign is a special comment type.
+		if (rawline[0] === 37) {						// Percent % sign is a special comment type.
 			continue;
 		}
 
-		let tagline = "";
+		let tagline;
 
-		if (rawline[0] === 91) {
-			let s = decoder.decode(rawline).trim();
-			if (s.endsWith(`]`)) {
-				tagline = s;
+		if (game.movebufs.length === 0) {				// If we have movetext then this can't be a tag line.
+			if (rawline[0] === 91) {
+				let s = decoder.decode(rawline).trim();
+				if (s.endsWith(`]`)) {
+					tagline = s;
+				}
 			}
 		}
 
-		if (tagline !== "") {
+		if (tagline) {
 
-			if (game.movebufs.length > 0) {
-				// We have movetext already. Return the game we have.
-				return game;
-			}
+			tagline = tagline.slice(1, -1).trim();		// So now it's like:		Foo "bar etc"
 
-			let m = tagline.match(/^\[\s*(\S+)\s+"?((\\"|\\\\|[^"])+)"?\s*\]$/);
+			let first_space_i = tagline.indexOf(` `);
 
-			if (!m) {
+			if (first_space_i === -1) {
 				continue;
 			}
 
-			let key = m[1];
-			let value = m[2].replaceAll(/\\"|\\\\/g, function (match) {
-				if (match == '\\"') {
-					return '"';
-				} else {
-					return '\\';
-				}
-			});
+			let key = tagline.slice(0, first_space_i).trim();
+			let value = tagline.slice(first_space_i + 1).trim();
 
-			game.tags[key] = SafeString(value);		// Escape evil characters. IMPORTANT!
+			if (value.startsWith(`"`)) value = value.slice(1);
+			if (value.endsWith(`"`)) value = value.slice(0, -1);
+			value = value.trim();
+
+			game.tags[key] = SafeStringHTML(UnsafeStringPGN(value));		// Undo PGN escaping then add HTML escaping.
 
 		} else {
 

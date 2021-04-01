@@ -122,9 +122,6 @@ exports.defaults = {
 
 	"show_engine_state": false,
 
-	"search_nodes": null,
-	"search_nodes_special": 10000,
-
 	"book_depth": 10,
 
 	"save_enabled": false,

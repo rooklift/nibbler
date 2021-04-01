@@ -148,7 +148,8 @@ function make_pgn_string(node) {
 
 	for (let t of ["Event", "Site", "Date", "Round", "White", "Black", "Result"]) {
 		if (root.tags[t]) {
-			tags.push(`[${t} "${root.tags[t]}"]`);
+			let val = SafeStringPGN(UnsafeStringHTML(root.tags[t]));		// Undo HTML escaping then add PGN escaping.
+			tags.push(`[${t} "${val}"]`);
 		}
 	}
 

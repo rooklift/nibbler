@@ -788,8 +788,6 @@ function NewRenderer() {
 
 	renderer.load_pgn_object = function(o) {				// Returns true or false - whether this actually succeeded.
 
-		let start_time = performance.now();
-
 		let root_node;
 
 		try {
@@ -801,8 +799,6 @@ function NewRenderer() {
 
 		this.tree.replace_tree(root_node);
 		this.position_changed(true, true);
-
-		console.log(`PGN parsing took ${(performance.now() - start_time).toFixed(0)} ms.`);
 
 		return true;
 	};
@@ -1331,18 +1327,16 @@ function NewRenderer() {
 		// so that our standard options prevail in the event of a conflict. Hmm.
 
 		let options = engineconfig[this.engine.filepath].options;
-		let delayed_hash_val = null;
+		let keys = Object.keys(options);
 
-		for (let key of Object.keys(options)) {
-			if (key.toLowerCase() !== "hash") {			// "It is recommended to set Hash after setting Threads."
-				this.engine.setoption(key, options[key]);
-			} else {
-				delayed_hash_val = options[key];
-			}
-		}
+		keys.sort((a, b) => {		// "It is recommended to set Hash after setting Threads."
+			if (a.toLowerCase() === "hash" && b.toLowerCase() !== "hash") return 1;
+			if (a.toLowerCase() !== "hash" && b.toLowerCase() === "hash") return -1;
+			return 0;
+		});
 
-		if (delayed_hash_val !== null) {
-			this.engine.setoption("Hash", delayed_hash_val);
+		for (let key of keys) {
+			this.engine.setoption(key, options[key]);
 		}
 	};
 
@@ -1990,7 +1984,7 @@ function NewRenderer() {
 		if (root.tags && root.tags.White && root.tags.White !== "White" && root.tags.Black && root.tags.Black !== "Black") {
 			title += `: ${root.tags.White} - ${root.tags.Black}`;
 		}
-		ipcRenderer.send("set_title", title);
+		ipcRenderer.send("set_title", UnsafeStringHTML(title));		// Fix any &amp; and that sort of thing in the names.
 	};
 
 	// -------------------------------------------------------------------------------------------------------------------------
@@ -2364,7 +2358,6 @@ function NewRenderer() {
 		}
 
 		let loading_message = null;
-		let time = performance.now();
 
 		for (let loader of this.loaders) {
 			if (loader.callback) {				// By our rules, can only exist if the load is still pending...
