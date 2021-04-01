@@ -10,7 +10,8 @@ function new_pgn_record() {
 function PreParsePGN(buf) {							// buf should be the buffer for a single game, only.
 
 	// Partial parse of the buffer. Generates a tags object and a list of buffers, each of which is a line
-	// in the movetext. Not so sure this approach makes sense any more, if it ever did, but it'll do.
+	// in the movetext. Not so sure this approach makes sense any more, if it ever did. In particular,
+	// there's no really great reason why the movetext needs to be split into lines at all.
 	//
 	// Never fails. Always returns a valid object (though possibly containing illegal movetext).
 
