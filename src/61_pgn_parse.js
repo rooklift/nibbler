@@ -31,7 +31,7 @@ function PreParsePGN(buf) {							// buf should be the buffer for a single game,
 
 		if (rawline[0] === 91) {
 			let s = decoder.decode(rawline).trim();
-			if (s.endsWith(`"]`)) {
+			if (s.endsWith(`]`)) {
 				tagline = s;
 			}
 		}
@@ -43,22 +43,20 @@ function PreParsePGN(buf) {							// buf should be the buffer for a single game,
 				return game;
 			}
 
-			// Parse the tag line...
+			let m = tagline.match(/^\[\s*(\S+)\s+"?((\\"|\\\\|[^"])+)"?\s*\]$/);
 
-			tagline = tagline.slice(1, -1);			// So now it's like:		Foo "bar etc"
-
-			let quote_i = tagline.indexOf(`"`);
-
-			if (quote_i === -1) {
+			if (!m) {
 				continue;
 			}
 
-			let key = tagline.slice(0, quote_i).trim();
-			let value = tagline.slice(quote_i + 1).trim();
-
-			if (value.endsWith(`"`)) {
-				value = value.slice(0, -1);
-			}
+			let key = m[1];
+			let value = m[2].replaceAll(/\\"|\\\\/g, function (match) {
+				if (match == '\\"') {
+					return '"';
+				} else {
+					return '\\';
+				}
+			});
 
 			game.tags[key] = SafeString(value);		// Escape evil characters. IMPORTANT!
 
