@@ -1142,14 +1142,14 @@ function menu_build() {
 					]
 				},
 				{
-					label: "Arrow filter (A/B)",
+					label: "Arrow filter (others)",
 					submenu: [
 						{
 							label: "Diff < 15%",
 							type: "checkbox",
 							checked: config.ab_filter_threshold === 0.15,
 							click: () => {
-								set_checks("Display", "Arrow filter (A/B)", "Diff < 15%");
+								set_checks("Display", "Arrow filter (others)", "Diff < 15%");
 								win.webContents.send("set", {
 									key: "ab_filter_threshold",
 									value: 0.15
@@ -1161,7 +1161,7 @@ function menu_build() {
 							type: "checkbox",
 							checked: config.ab_filter_threshold === 0.1,
 							click: () => {
-								set_checks("Display", "Arrow filter (A/B)", "Diff < 10%");
+								set_checks("Display", "Arrow filter (others)", "Diff < 10%");
 								win.webContents.send("set", {
 									key: "ab_filter_threshold",
 									value: 0.1
@@ -1173,7 +1173,7 @@ function menu_build() {
 							type: "checkbox",
 							checked: config.ab_filter_threshold === 0.05,
 							click: () => {
-								set_checks("Display", "Arrow filter (A/B)", "Diff < 5%");
+								set_checks("Display", "Arrow filter (others)", "Diff < 5%");
 								win.webContents.send("set", {
 									key: "ab_filter_threshold",
 									value: 0.05
