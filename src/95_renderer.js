@@ -788,8 +788,6 @@ function NewRenderer() {
 
 	renderer.load_pgn_object = function(o) {				// Returns true or false - whether this actually succeeded.
 
-		let start_time = performance.now();
-
 		let root_node;
 
 		try {
@@ -801,8 +799,6 @@ function NewRenderer() {
 
 		this.tree.replace_tree(root_node);
 		this.position_changed(true, true);
-
-		console.log(`PGN parsing took ${(performance.now() - start_time).toFixed(0)} ms.`);
 
 		return true;
 	};
@@ -2364,7 +2360,6 @@ function NewRenderer() {
 		}
 
 		let loading_message = null;
-		let time = performance.now();
 
 		for (let loader of this.loaders) {
 			if (loader.callback) {				// By our rules, can only exist if the load is still pending...
