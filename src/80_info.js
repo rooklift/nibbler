@@ -249,7 +249,7 @@ let info_receiver_props = {
 				}
 			}
 
-		} else if (s.startsWith("info string") && !s.includes("NNUE evaluation")) {
+		} else if (s.startsWith("info string") && !s.includes("NNUE evaluation") && !s.includes("ERROR")) {
 
 			if (config.log_info_lines) Log("< " + s);
 
@@ -369,6 +369,11 @@ let info_receiver_props = {
 					move_info.subcycle = this.engine_subcycle;
 				}
 			}
+
+		} else if (s.startsWith("info string ERROR")) {			// Stockfish sends these sometimes.
+
+			Log("< " + s);
+			this.err_receive(s.slice(12));
 
 		} else {
 
