@@ -270,6 +270,24 @@ function UnsafeStringHTML(s) {
 	return s;
 }
 
+function SafeStringPGN(s) {
+	if (typeof s !== "string") {
+		return undefined;
+	}
+	s = ReplaceAll(s,  `\\`  ,  `\\\\`  );
+	s = ReplaceAll(s,  `"`   ,  `\\"`   );
+	return s;
+}
+
+function UnsafeStringPGN(s) {
+	if (typeof s !== "string") {
+		return undefined;
+	}
+	s = ReplaceAll(s,  `\\"`   ,  `"`   );
+	s = ReplaceAll(s,  `\\\\`  ,  `\\`  );
+	return s;
+}
+
 function Log(s) {
 
 	// config.logfile  - name of desired log file (or null)

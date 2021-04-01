@@ -60,7 +60,7 @@ function PreParsePGN(buf) {							// buf should be the buffer for a single game,
 				value = value.slice(0, -1);
 			}
 
-			game.tags[key] = SafeStringHTML(value);		// Escape evil characters. IMPORTANT!
+			game.tags[key] = SafeStringHTML(UnsafeStringPGN(value));		// Undo PGN escaping then add HTML escaping.
 
 		} else {
 
