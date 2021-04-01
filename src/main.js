@@ -1026,6 +1026,9 @@ function menu_build() {
 					]
 				},
 				{
+					type: "separator"
+				},
+				{
 					label: "Arrow filter (Lc0)",
 					submenu: [
 						{
