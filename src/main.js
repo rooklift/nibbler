@@ -134,7 +134,7 @@ function startup() {
 
 	electron.ipcMain.on("ack_engine", (event, msg) => {
 		loaded_engine = msg;
-		set_one_check(msg ? true : false, "Engine", "Choose engine...")
+		set_one_check(msg ? true : false, "Engine", "Choose engine...");
 	});
 
 	electron.ipcMain.on("ack_logfile", (event, msg) => {
