@@ -809,8 +809,12 @@ function NewRenderer() {
 
 		const interval = 100;
 
+		this.hide_promotiontable();				// Just in case it's up.
+		this.set_behaviour("halt");
+
 		if (!this.pgndata || this.pgndata.count() === 0) {
-			alert("No PGN loaded.");
+			pgnchooser_content.innerHTML = `<span class="green">No PGN loaded</span>`;
+			pgnchooser.style.display = "block";
 			return;
 		}
 
@@ -822,9 +826,6 @@ function NewRenderer() {
 		if (this.pgn_choices_start < 0) {		// The most important thing, values < 0 will crash.
 			this.pgn_choices_start = 0;
 		}
-
-		this.hide_promotiontable();				// Just in case it's up.
-		this.set_behaviour("halt");
 
 		let lines = [];
 
