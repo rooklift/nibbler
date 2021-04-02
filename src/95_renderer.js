@@ -1285,6 +1285,7 @@ function NewRenderer() {
 	};
 
 	renderer.restart_engine = function() {
+		this.engine.warn_send_fail = false;			// Don't want "send failed" warnings from old engine any more.
 		this.set_behaviour("halt");
 		this.engine_start(config.path);
 	};

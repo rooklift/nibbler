@@ -87,7 +87,7 @@ function NewEngine(hub) {
 	eng.sent_options = Object.create(null);			// Keys are always lowercase. Values are always strings.
 	eng.setoption_queue = [];
 
-	eng.warned_send_fail = false;
+	eng.warn_send_fail = true;
 	eng.leelaish = false;				// Most likely set by hub upon an "id name" line, though can also be set by info_handler.
 
 	eng.search_running = NoSearch;		// The search actually being run right now.
@@ -141,9 +141,9 @@ function NewEngine(hub) {
 			this.last_send = msg;
 		} catch (err) {
 			Log("(failed) --> " + msg);
-			if (this.last_send !== null && !this.warned_send_fail) {
+			if (this.last_send !== null && this.warn_send_fail) {
 				alert(messages.send_fail);
-				this.warned_send_fail = true;
+				this.warn_send_fail = false;
 			}
 		}
 	};
