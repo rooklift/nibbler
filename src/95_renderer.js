@@ -1312,8 +1312,8 @@ function NewRenderer() {
 
 		this.engine.send("uci");
 
-		this.ack_node_limit(false);					// Ack the node limits that are set, must be done AFTER this.engine is valid AND ALSO
-		this.ack_node_limit(true);					// after this.engine.setup() has been called (making engine.filepath correct).
+		this.ack_node_limit(false);					// Ack the node limits that are set in engineconfig[this.engine.filepath]
+		this.ack_node_limit(true);
 
 		this.info_handler.reset_engine_info();
 		this.info_handler.must_draw_infobox();		// To displace the new stderr log that appears.
