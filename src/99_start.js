@@ -71,8 +71,9 @@ for (let y = 0; y < 8; y++) {
 
 // Font sizes... do this before calculating sizes of stuff below.
 
-statusbox.style["font-size"] = config.status_font_size.toString() + "px";
+statusbox.style["font-size"] = config.info_font_size.toString() + "px";
 infobox.style["font-size"] = config.info_font_size.toString() + "px";
+fullbox.style["font-size"] = config.info_font_size.toString() + "px";
 movelist.style["font-size"] = config.pgn_font_size.toString() + "px";
 fenbox.style["font-size"] = config.fen_font_size.toString() + "px";
 

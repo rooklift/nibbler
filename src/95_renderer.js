@@ -1537,8 +1537,8 @@ function NewRenderer() {
 	renderer.set_info_font_size = function(n) {
 		infobox.style["font-size"] = n.toString() + "px";
 		statusbox.style["font-size"] = n.toString() + "px";
+		fullbox.style["font-size"] = n.toString() + "px";
 		config.info_font_size = n;
-		config.status_font_size = n;
 		this.save_config();
 		this.rebuild_sizes();
 	};
