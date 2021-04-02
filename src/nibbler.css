@@ -73,7 +73,7 @@ body {
 	z-index: 4;
 }
 
-#pgnchooser {
+#fullbox {
 	background-color: #080808;
 	display: none;						/* better than visibility: hidden - never intercepts inputs */
 	font-family: monospace, monospace;
@@ -88,7 +88,7 @@ body {
 	z-index: 6;
 }
 
-#pgnchooser_content {
+#fullbox_content {
 	padding: 1em;
 }
 

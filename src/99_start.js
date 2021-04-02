@@ -171,8 +171,8 @@ input_loop();
 // A better approach is to use event handlers on the outer elements, and examine
 // the event.path to see what was actually clicked on.
 
-pgnchooser.addEventListener("mousedown", (event) => {
-	hub.pgnchooser_click(event);
+fullbox.addEventListener("mousedown", (event) => {
+	hub.fullbox_click(event);
 });
 
 boardfriends.addEventListener("mousedown", (event) => {
@@ -201,7 +201,7 @@ document.addEventListener("wheel", (event) => {
 	// (Not over the moveslist or infobox, because those can have scroll bars, which
 	// the mouse wheel should interact with.)
 
-	if (pgnchooser.style.display !== "none") {
+	if (fullbox.style.display !== "none") {
 		return;
 	}
 

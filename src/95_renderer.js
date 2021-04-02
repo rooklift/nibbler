@@ -805,16 +805,26 @@ function NewRenderer() {
 		return true;
 	};
 
+	renderer.show_prevailing_options = function() {
+
+		let lines = [];
+		for (let name of Object.keys(this.engine.sent_options)) {
+			lines.push(`${name}<br>&nbsp;&nbsp;<span class="green">${this.engine.sent_options[name]}</span>`);
+		}
+
+		fullbox_content.innerHTML = lines.join("<br>");
+		this.show_fullbox();
+	};
+
 	renderer.show_pgn_chooser = function() {
 
 		const interval = 100;
 
-		this.hide_promotiontable();				// Just in case it's up.
 		this.set_behaviour("halt");
 
 		if (!this.pgndata || this.pgndata.count() === 0) {
-			pgnchooser_content.innerHTML = `<span class="green">No PGN loaded</span>`;
-			pgnchooser.style.display = "block";
+			fullbox_content.innerHTML = `<span class="green">No PGN loaded</span>`;
+			this.show_fullbox();
 			return;
 		}
 
@@ -884,15 +894,20 @@ function NewRenderer() {
 			lines.push(prevnextfoo);
 		}
 
-		pgnchooser_content.innerHTML = lines.join("");
-		pgnchooser.style.display = "block";
+		fullbox_content.innerHTML = lines.join("");
+		this.show_fullbox();
 	};
 
-	renderer.hide_pgn_chooser = function() {
-		pgnchooser.style.display = "none";
+	renderer.show_fullbox = function() {
+		this.hide_promotiontable();
+		fullbox.style.display = "block";
 	};
 
-	renderer.pgnchooser_click = function(event) {
+	renderer.hide_fullbox = function() {
+		fullbox.style.display = "none";
+	};
+
+	renderer.fullbox_click = function(event) {
 		let n = EventPathN(event, "chooser_");
 		if (typeof n !== "number") {
 			this.maybe_setchooserstart_click(event);
@@ -1078,7 +1093,7 @@ function NewRenderer() {
 
 	renderer.__go = function(node) {
 
-		this.hide_pgn_chooser();
+		this.hide_fullbox();
 
 		if (!node || node.destroyed || node.terminal_reason()) {
 			this.engine.set_search_desired(null);
@@ -1445,7 +1460,7 @@ function NewRenderer() {
 	};
 
 	renderer.escape = function() {					// Set things into a clean state.
-		this.hide_pgn_chooser();
+		this.hide_fullbox();
 		this.hide_promotiontable();
 		if (this.active_square) {
 			this.set_active_square(null);
