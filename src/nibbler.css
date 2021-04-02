@@ -88,6 +88,10 @@ body {
 	z-index: 6;
 }
 
+#pgnchooser_content {
+	padding: 1em;
+}
+
 td {
 	background-color: transparent;
 	background-size: contain;

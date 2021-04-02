@@ -830,8 +830,7 @@ function NewRenderer() {
 
 		let max_ordinal_length = count.toString().length;
 
-		let prevnextfoo = (count > interval) ?
-				`<p>&nbsp;&nbsp;` +	// All these values get fixed on function entry if they're out-of-bounds. ids should be unique.
+		let prevnextfoo = (count > interval) ?			// All these values get fixed on function entry if they're out-of-bounds. ids should be unique.
 				`<span id="setchooserstart_-99999999">Start </span>|` +
 				`<span id="setchooserstart_${this.pgn_choices_start - 10000}"> <<<< </span>|` +
 				`<span id="setchooserstart_${this.pgn_choices_start - 1000}"> <<< </span>|` +
@@ -840,10 +839,9 @@ function NewRenderer() {
 				`<span id="setchooserstart_${this.pgn_choices_start + 1000}"> >>> </span>|` +
 				`<span id="setchooserstart_${this.pgn_choices_start + 10000}"> >>>> </span>|` +
 				`<span id="setchooserstart_99999999"> End (${count}) </span>` +
-				`&mdash; <span class="green">${this.pgndata.source}</span>` +
-				`</p>`
+				`&mdash; <span class="green">${this.pgndata.source}</span>`
 			:
-				`<p>&nbsp;&nbsp; <span class="green">${this.pgndata.source}</span></p>`;
+				`<span class="green">${this.pgndata.source}</span>`;
 
 		lines.push(prevnextfoo);
 		lines.push("<ul>");
@@ -885,7 +883,7 @@ function NewRenderer() {
 			lines.push(prevnextfoo);
 		}
 
-		pgnchooser.innerHTML = lines.join("");
+		pgnchooser_content.innerHTML = lines.join("");
 		pgnchooser.style.display = "block";
 	};
 

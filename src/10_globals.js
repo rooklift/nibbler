@@ -14,6 +14,7 @@ const graphbox = document.getElementById("graphbox");
 const infobox = document.getElementById("infobox");
 const movelist = document.getElementById("movelist");
 const pgnchooser = document.getElementById("pgnchooser");
+const pgnchooser_content = document.getElementById("pgnchooser_content");
 const promotiontable = document.getElementById("promotiontable");
 const statusbox = document.getElementById("statusbox");
 
