@@ -865,9 +865,9 @@ function NewRenderer() {
 					s = `${pad}${n}. ${p.tags.White || "Unknown"} - ${p.tags.Black || "Unknown"}`;
 				}
 
-				if (p.tags.Opening) {
+				if (p.tags.Opening && p.tags.Opening !== "?") {
 					s += `  <span class="gray">(${p.tags.Opening})</span>`;
-				} else if (p.tags.Variant && p.tags.Variant.toLowerCase() !== "standard") {
+				} else if (p.tags.Variant && p.tags.Variant.toLowerCase() !== "standard" && p.tags.Variant.toLowerCase() !== "from position") {
 					s += `  <span class="gray">(${p.tags.Variant})</span>`;
 				}
 
@@ -875,7 +875,7 @@ function NewRenderer() {
 
 			} else if (count > interval) {		// Pad the chooser with blank lines so the buttons at the bottom behave nicely. This is stupid though.
 
-				lines.push(`<li><span class="darkgray">${n}.</li>`);
+				lines.push(`<li><span class="darkgray">${n}.${n === count ? " [end]" : ""}</li>`);
 
 			}
 		}
