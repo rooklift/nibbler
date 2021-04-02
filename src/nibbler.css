@@ -107,9 +107,8 @@ td {
 	display: block;
 	font-family: monospace, monospace;
 	margin-bottom: 1em;
-	/* overflow: hidden; */
 	pointer-events: auto;
-	/* white-space: nowrap; */
+	/* white-space: pre; */
 	width: 100%;
 }
 
