@@ -3819,9 +3819,9 @@ function menu_build() {
 					}
 				},
 				{
-					label: "List prevailing options",
+					label: "List sent options",
 					click: () => {
-						win.webContents.send("call", "show_prevailing_options");
+						win.webContents.send("call", "show_sent_options");
 					}
 				},
 				{

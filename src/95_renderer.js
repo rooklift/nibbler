@@ -805,7 +805,7 @@ function NewRenderer() {
 		return true;
 	};
 
-	renderer.show_prevailing_options = function() {
+	renderer.show_sent_options = function() {
 
 		let lines = [];
 		for (let name of Object.keys(this.engine.sent_options)) {
