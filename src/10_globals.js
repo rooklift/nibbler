@@ -92,17 +92,6 @@ const standard_ab_options = {
 	"UCI_ShowWDL": true,
 };
 
-// Options we don't want to send to specific engine types, as a sort of set. CASE SENSITIVE!
-// These sets are checked **ONLY** when a menu item is selected, and have no other use now.
-
-const suppressed_options_lc0 = Object.fromEntries(
-	["EvalFile", "Hash", "MultiPV"]			// Note MultiPV does get set to 500 but can't be changed in Lc0 by our menu.
-	.map(s => [s, true]));
-
-const suppressed_options_ab = Object.fromEntries(
-	["Backend", "TempDecayMoves", "Temperature", "WeightsFile"]
-	.map(s => [s, true]));
-
 // Yeah this seemed a good idea at the time.........................
 
 const limit_options = [

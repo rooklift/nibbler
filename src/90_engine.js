@@ -84,6 +84,7 @@ function NewEngine(hub) {
 	eng.have_quit = false;
 	eng.suppress_cycle_info = null;		// Stupid hack to allow "forget all analysis" to work; info lines from this cycle are ignored.
 
+	eng.known_options = Object.create(null);		// Keys are always lowercase.
 	eng.sent_options = Object.create(null);			// Keys are always lowercase. Values are always strings.
 	eng.setoption_queue = [];
 
@@ -418,8 +419,16 @@ function NewEngine(hub) {
 				this.handle_info_line(line);			// Will do logging, possibly adding a reason for rejection.
 			} else {
 				Log("< " + line);
-				if (line.startsWith("option") && line.toLowerCase().includes("uci_chess960")) {
-					this.setoption("UCI_Chess960", true);
+				if (line.startsWith("option")) {
+					let a = line.indexOf(" name ");
+					let b = line.indexOf(" type ");
+					if (a !== -1 && b != -1) {
+						let optname = line.slice(a + 6, b).trim().toLowerCase();
+						this.known_options[optname] = line.slice(b + 1);
+						if (optname === "uci_chess960") {
+							this.setoption("UCI_Chess960", true);		// As a special thing, always set UCI_Chess960 where possible.
+						}
+					}
 				}
 				if (line.startsWith("uciok")) {
 					this.ever_received_uciok = true;

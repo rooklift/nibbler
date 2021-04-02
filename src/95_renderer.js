@@ -1228,16 +1228,24 @@ function NewRenderer() {
 
 	renderer.set_uci_option = function(name, val, save_to_cfg) {
 
+		// Note that all early returns from this function need to send an ack
+		// of the prevailing value to fix checkmarks in the main process.
+
 		if (!this.engine.ever_received_uciok) {									// Correct leelaish flag not yet known.
 			alert(messages.too_soon_to_set_options);
+			this.engine.send_ack_setoption_to_main_process(name);
 			return;
 		}
 
-		let acceptable = this.engine.leelaish ? !suppressed_options_lc0[name] : !suppressed_options_ab[name];		// Case-sensitive keys!
+		if (this.engine.leelaish && name.toLowerCase() === "multipv") {
+			this.set_special_message("MultiPV should be 500 for this engine.", "blue");
+			this.engine.send_ack_setoption_to_main_process(name);
+			return;
+		}
 
-		if (!acceptable) {
-			this.set_special_message(`${name} not set, wrong engine type`, "blue");
-			this.engine.send_ack_setoption_to_main_process(name);				// Ack prevailing value to fix checkmarks.
+		if (!this.engine.known_options[name.toLowerCase()]) {
+			this.set_special_message(`${name} not known by this engine`, "blue");
+			this.engine.send_ack_setoption_to_main_process(name);
 			return;
 		}
 
@@ -1255,7 +1263,7 @@ function NewRenderer() {
 		}
 
 		this.set_behaviour("halt");
-		let sent = this.engine.setoption(name, val);
+		let sent = this.engine.setoption(name, val);							// Will ack the new value.
 		this.set_special_message(sent, "blue");
 	};
 
