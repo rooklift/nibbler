@@ -808,6 +808,10 @@ function NewRenderer() {
 	renderer.show_sent_options = function() {
 
 		let lines = [];
+
+		lines.push(`<span class="yellow">${this.engine.filepath}</span>`);
+		lines.push("");
+
 		for (let name of Object.keys(this.engine.sent_options)) {
 			lines.push(`${name}<br>&nbsp;&nbsp;<span class="green">${this.engine.sent_options[name]}</span>`);
 		}
