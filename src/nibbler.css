@@ -91,7 +91,7 @@ body {
 #fullbox_content {
 	overflow: hidden;
 	padding: 1em;
-	white-space: nowrap;
+	white-space: pre;
 }
 
 td {

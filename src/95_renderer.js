@@ -817,7 +817,7 @@ function NewRenderer() {
 		lines.push("");
 
 		for (let name of Object.keys(this.engine.sent_options)) {
-			lines.push(`${name}<br>&nbsp;&nbsp;<span class="green">${this.engine.sent_options[name]}</span>`);
+			lines.push(`${name}<br>  <span class="green">${this.engine.sent_options[name]}</span>`);
 		}
 
 		fullbox_content.innerHTML = lines.join("<br>");
@@ -868,7 +868,7 @@ function NewRenderer() {
 
 			if (n < count) {
 
-				let pad = n < 10 ? "&nbsp;" : "";
+				let pad = n < 10 ? " " : "";
 
 				let p = this.pgndata.getrecord(n);
 
