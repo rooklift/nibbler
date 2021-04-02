@@ -1024,7 +1024,10 @@ function NewRenderer() {
 			}
 
 			if (!this.engine.leelaish && !engineconfig[this.engine.filepath].options["MultiPV"]) {
-				engineconfig[this.engine.filepath].options["MultiPV"] = 3;
+				// This likely indicates the engine is new to the config.
+				engineconfig[this.engine.filepath].options["MultiPV"] = 3;				// Will get ack'd when engine_send_all_options() happens
+				engineconfig[this.engine.filepath].search_nodes_special = 10000000;
+				this.ack_node_limit(true);
 				this.save_engineconfig();
 			}
 
