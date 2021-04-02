@@ -1236,7 +1236,7 @@ function NewRenderer() {
 		let acceptable = this.engine.leelaish ? !suppressed_options_lc0[name] : !suppressed_options_ab[name];		// Case-sensitive keys!
 
 		if (!acceptable) {
-			this.set_special_message("Not set, wrong engine type", "blue");
+			this.set_special_message(`${name} not set, wrong engine type`, "blue");
 			this.engine.send_ack_setoption_to_main_process(name);				// Ack prevailing value to fix checkmarks.
 			return;
 		}
