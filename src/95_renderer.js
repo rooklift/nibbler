@@ -156,6 +156,10 @@ function NewRenderer() {
 
 	renderer.set_behaviour = function(s) {
 
+		if (!this.engine.ever_received_uciok || !this.engine.ever_received_readyok) {
+			s = "halt";
+		}
+
 		// Don't do anything if behaviour is already correct. But
 		// "halt" always triggers a behave() call for safety reasons,
 		// and "analysis_locked" needs to check if we're in a new position.
@@ -1035,7 +1039,7 @@ function NewRenderer() {
 
 		if (s.startsWith("uciok")) {
 
-			// Until we receive uciok and then readyok, set_search_desired() ignores our calls, so "go" will not have been sent.
+			// Until we receive uciok and readyok, set_behaviour() does nothing and set_search_desired() ignores calls, so "go" cannot have been sent.
 
 			this.engine_send_all_options(this.engine.leelaish);
 			this.engine.send("isready");
@@ -1044,9 +1048,9 @@ function NewRenderer() {
 
 		if (s.startsWith("readyok")) {
 
-			// Until we receive uciok and then readyok, set_search_desired() ignores our calls, so "go" will not have been sent.
+			// Until we receive uciok and readyok, set_behaviour() does nothing and set_search_desired() ignores calls, so "go" cannot have been sent.
 
-			this.set_behaviour("halt");					// For the sake of getting the hub in a sane state.
+			this.set_behaviour("halt");					// Likely redundant (should be "halt" anyway), but ensures the hub is in a sane state.
 			this.engine.send_ucinewgame();				// Relies on the engine not running.
 			return;
 		}

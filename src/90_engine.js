@@ -217,7 +217,7 @@ function NewEngine(hub) {
 
 		if (!this.ever_received_uciok || !this.ever_received_readyok) {
 			console.log("set_search_desired() aborted - too early");
-			return;		// This is OK. When we actually get these, hub will enter state "halt".
+			return;
 		}
 
 		let params = SearchParams(node, limit, searchmoves);
