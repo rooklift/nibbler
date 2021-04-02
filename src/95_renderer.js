@@ -1003,7 +1003,7 @@ function NewRenderer() {
 
 			if (!this.engine.leelaish && !engineconfig[this.engine.filepath].options["MultiPV"]) {
 				engineconfig[this.engine.filepath].options["MultiPV"] = 3;
-				this.save_engineconfig()
+				this.save_engineconfig();
 			}
 
 			// Pass unknown engines to the error handler to be displayed...
@@ -1189,7 +1189,7 @@ function NewRenderer() {
 			engineconfig[this.engine.filepath].search_nodes = val;
 		}
 
-		this.save_engineconfig()
+		this.save_engineconfig();
 		this.ack_node_limit(special_flag);
 
 		this.handle_search_params_change();
@@ -1223,7 +1223,7 @@ function NewRenderer() {
 		this.tree.node.table.autopopulate(this.tree.node);
 		this.set_behaviour("halt");					// Will cause "stop" to be sent.
 		this.engine.send_ucinewgame();				// Must happen after "stop" is sent.
-		this.engine.suppress_cycle_info = this.info_handler.engine_cycle;			// Ignore further info updates from this cycle.
+		this.engine.suppress_cycle_info = this.info_handler.engine_cycle;		// Ignore further info updates from this cycle.
 	};
 
 	renderer.set_uci_option = function(name, val, save_to_cfg) {
@@ -1242,7 +1242,7 @@ function NewRenderer() {
 			} else {
 				engineconfig[this.engine.filepath].options[name] = val;
 			}
-			this.save_engineconfig()
+			this.save_engineconfig();
 		}
 
 		if (val === null || val === undefined) {
@@ -1260,14 +1260,14 @@ function NewRenderer() {
 
 	renderer.disable_syzygy = function() {
 		delete engineconfig[this.engine.filepath].options["SyzygyPath"];
-		this.save_engineconfig()
+		this.save_engineconfig();
 		this.restart_engine();		// Causes the correct ack to be sent.
 	};
 
 	renderer.auto_weights = function() {
 		delete engineconfig[this.engine.filepath].options["EvalFile"];
 		delete engineconfig[this.engine.filepath].options["WeightsFile"];
-		this.save_engineconfig()
+		this.save_engineconfig();
 		this.restart_engine();		// Causes the correct acks to be sent.
 	};
 
@@ -1305,8 +1305,8 @@ function NewRenderer() {
 		this.engine.shutdown();
 		this.engine = new_engine;					// Don't reuse engine objects, not even the dummy object. There are sync issues due to fake "go"s.
 
-		if (!engineconfig[filepath]) {
-			engineconfig[filepath] = engineconfig_io.newentry();
+		if (!engineconfig[this.engine.filepath]) {
+			engineconfig[this.engine.filepath] = engineconfig_io.newentry();
 			console.log(`Creating new entry in engineconfig for ${filepath}`);
 		}
 
