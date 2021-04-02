@@ -260,3 +260,38 @@ function NewLineSplitter(buf, callback) {
 	setTimeout(() => {loader.continue();}, 0);		// setTimeout especially required here since there's no async load() function in this one.
 	return loader;
 }
+
+// ------------------------------------------------------------------------------------------------------------------------------
+
+function split_buffer_alternative(buf) {
+
+	// Split a binary buffer into an array of binary buffers corresponding to lines.
+
+	let lines = [];
+	let search = Buffer.from("\n");
+	let off = 0;
+
+	if (buf.length > 3 && buf[0] === 239 && buf[1] === 187 && buf[2] === 191) {
+		off = 3;								// Skip byte order mark (BOM).
+	}
+
+	while (true) {
+
+		let hi = buf.indexOf(search, off);
+
+		if (hi === -1) {
+			if (off < buf.length) {
+				lines.push(buf.slice(off));
+			}
+			return lines;
+		}
+
+		if (buf[hi - 1] === 13) {				// Discard \r
+			lines.push(buf.slice(off, hi - 1));
+		} else {
+			lines.push(buf.slice(off, hi));
+		}
+
+		off = hi + 1;
+	}
+}
