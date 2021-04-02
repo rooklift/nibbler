@@ -3808,18 +3808,6 @@ function menu_build() {
 					type: "separator"
 				},
 				{
-					label: "Query sync status",
-					click: () => {
-						win.webContents.send("call", "query_sync_status");
-					}
-				},
-				{
-					label: "Query dropped inputs",
-					click: () => {
-						win.webContents.send("call", "query_dropped_inputs");
-					}
-				},
-				{
 					label: "Show engine state",
 					type: "checkbox",
 					checked: config.show_engine_state,
@@ -3828,6 +3816,12 @@ function menu_build() {
 							fn: "toggle",
 							args: ["show_engine_state"]
 						});
+					}
+				},
+				{
+					label: "List prevailing options",
+					click: () => {
+						win.webContents.send("call", "show_prevailing_options");
 					}
 				},
 				{

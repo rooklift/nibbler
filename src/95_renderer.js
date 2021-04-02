@@ -1635,20 +1635,6 @@ function NewRenderer() {
 		}
 	};
 
-	renderer.query_sync_status = function() {
-		try {
-			let running = this.engine.search_running.node ? "node " + this.engine.search_running.node.id.toString() : null;
-			let desired = this.engine.search_desired.node ? "node " + this.engine.search_desired.node.id.toString() : null;
-			alert(`Running: ${running}\nDesired: ${desired}`);
-		} catch (err) {
-			alert(err);
-		}
-	};
-
-	renderer.query_dropped_inputs = function() {
-		alert(`Total dropped inputs: ${total_dropped_inputs}`);		// This is a global variable in start.js
-	};
-
 	renderer.log_ram = function() {
 		console.log(`RAM after ${Math.floor(performance.now() / 1000)} seconds:`);
 		for (let foo of Object.entries(process.memoryUsage())) {
