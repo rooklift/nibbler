@@ -159,3 +159,7 @@ exports.engine_options_reset =
 `As of v2.1.1, Nibbler will store engine options separately for each engine. To facilite this, your \
 engine options have been reset.`;
 
+
+exports.too_soon_to_set_options =
+`Please wait till the engine has loaded before setting options.`;
+

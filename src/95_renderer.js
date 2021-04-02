@@ -1228,6 +1228,11 @@ function NewRenderer() {
 
 	renderer.set_uci_option = function(name, val, save_to_cfg) {
 
+		if (!this.engine.ever_received_uciok) {									// Correct leelaish flag not yet known.
+			alert(messages.too_soon_to_set_options);
+			return;
+		}
+
 		let acceptable = this.engine.leelaish ? !suppressed_options_lc0[name] : !suppressed_options_ab[name];		// Case-sensitive keys!
 
 		if (!acceptable) {
