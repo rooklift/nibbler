@@ -809,7 +809,7 @@ function NewRenderer() {
 
 		let lines = [];
 
-		lines.push(`<span class="yellow">${this.engine.filepath}</span>`);
+		lines.push(`<span class="yellow">${this.engine.filepath || "No engine loaded"}</span>`);
 		lines.push("");
 
 		for (let name of Object.keys(this.engine.sent_options)) {
