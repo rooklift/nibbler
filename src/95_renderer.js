@@ -1298,6 +1298,7 @@ function NewRenderer() {
 
 		let new_engine = NewEngine(this);
 		if (new_engine.setup(filepath, args, this) === false) {
+			console.log("While trying to start engine, .setup() failed.");
 			return false;
 		}
 
@@ -1307,8 +1308,6 @@ function NewRenderer() {
 		if (!engineconfig[filepath]) {
 			engineconfig[filepath] = engineconfig_io.newentry();
 			console.log(`Creating new entry in engineconfig for ${filepath}`);
-		} else {
-			console.log(`The engineconfig has an entry for ${filepath}`);
 		}
 
 		this.engine.send("uci");
