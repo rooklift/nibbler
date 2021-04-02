@@ -363,6 +363,7 @@ function NewEngine(hub) {
 
 		Log("");
 		Log(`Launching ${filepath}`);
+		if (args.length > 0) Log(`Args: ${JSON.stringify(args)}`);
 		Log("");
 
 		try {
