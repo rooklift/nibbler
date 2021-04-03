@@ -1,35 +1,35 @@
 "use strict";
 
-function NewRenderer() {
+function NewHub() {
 
-	let renderer = Object.create(null);
+	let hub = Object.create(null);
 
-	renderer.engine = NewEngine(renderer);						// Just a dummy object with no exe. Fixed by start.js later.
-	renderer.tree = NewTreeHandler();
-	renderer.grapher = NewGrapher();
-	renderer.info_handler = NewInfoHandler();
-	renderer.status_handler = NewStatusHandler();
+	hub.engine = NewEngine(hub);						// Just a dummy object with no exe. Fixed by start.js later.
+	hub.tree = NewTreeHandler();
+	hub.grapher = NewGrapher();
+	hub.info_handler = NewInfoHandler();
+	hub.status_handler = NewStatusHandler();
 
 	// Various state we have to keep track of...
 
-	renderer.loaders = [];										// The loaders can have shutdown() called on them to stop ASAP.
-	renderer.book = null;										// Either a Polyglot buffer, or an array of {key, move, weight}.
-	renderer.pgndata = null;									// Object representing the loaded PGN file.
-	renderer.pgn_choices_start = 0;								// Where we are in the PGN Chooser screen.
-	renderer.friendly_draws = New2DArray(8, 8, null);			// What pieces are drawn in boardfriends. Used to skip redraws.
-	renderer.enemy_draws = New2DArray(8, 8, null);				// What pieces are drawn in boardsquares. Used to skip redraws.
-	renderer.dirty_squares = New2DArray(8, 8, null);			// What squares have some coloured background.
-	renderer.active_square = null;								// Clicked square, shown in blue.
-	renderer.hoverdraw_div = -1;								// Which div is hovered; used by draw_infobox().
-	renderer.hoverdraw_depth = 0;								// How deep in the hover PV we are.
-	renderer.tick = 0;											// How many draw loops we've been through. Used to animate hoverdraw.
-	renderer.position_change_time = performance.now();			// Time of the last position change. Used for cooldown on hoverdraw.
-	renderer.node_to_clean = renderer.tree.node;				// The next node to be cleaned up (done when exiting it).
-	renderer.leela_lock_node = null;							// Non-null only when in "analysis_locked" mode.
+	hub.loaders = [];									// The loaders can have shutdown() called on them to stop ASAP.
+	hub.book = null;									// Either a Polyglot buffer, or an array of {key, move, weight}.
+	hub.pgndata = null;									// Object representing the loaded PGN file.
+	hub.pgn_choices_start = 0;							// Where we are in the PGN Chooser screen.
+	hub.friendly_draws = New2DArray(8, 8, null);		// What pieces are drawn in boardfriends. Used to skip redraws.
+	hub.enemy_draws = New2DArray(8, 8, null);			// What pieces are drawn in boardsquares. Used to skip redraws.
+	hub.dirty_squares = New2DArray(8, 8, null);			// What squares have some coloured background.
+	hub.active_square = null;							// Clicked square, shown in blue.
+	hub.hoverdraw_div = -1;								// Which div is hovered; used by draw_infobox().
+	hub.hoverdraw_depth = 0;							// How deep in the hover PV we are.
+	hub.tick = 0;										// How many draw loops we've been through. Used to animate hoverdraw.
+	hub.position_change_time = performance.now();		// Time of the last position change. Used for cooldown on hoverdraw.
+	hub.node_to_clean = hub.tree.node;					// The next node to be cleaned up (done when exiting it).
+	hub.leela_lock_node = null;							// Non-null only when in "analysis_locked" mode.
 
 	// -------------------------------------------------------------------------------------------------------------------------
 
-	renderer.behave = function(reason) {		// reason should be "position" or "behaviour"
+	hub.behave = function(reason) {		// reason should be "position" or "behaviour"
 
 		// Called when position changes.
 		// Called when behaviour changes.
@@ -108,7 +108,7 @@ function NewRenderer() {
 		}
 	};
 
-	renderer.position_changed = function(new_game_flag, avoid_confusion) {
+	hub.position_changed = function(new_game_flag, avoid_confusion) {
 
 		// Called right after this.tree.node is changed, meaning we are now drawing a different position.
 
@@ -155,7 +155,7 @@ function NewRenderer() {
 		this.node_to_clean = this.tree.node;
 	};
 
-	renderer.set_behaviour = function(s) {
+	hub.set_behaviour = function(s) {
 
 		if (!this.engine.ever_received_uciok || !this.engine.ever_received_readyok) {
 			s = "halt";
@@ -183,12 +183,12 @@ function NewRenderer() {
 		this.behave("behaviour");
 	};
 
-	renderer.set_behaviour_direct = function(s) {
+	hub.set_behaviour_direct = function(s) {
 		this.leela_lock_node = (s === "analysis_locked") ? this.tree.node : null;
 		config.behaviour = s;
 	};
 
-	renderer.handle_search_params_change = function() {
+	hub.handle_search_params_change = function() {
 
 		// If there's already a search desired, we can just let __go() figure out what the new parameters should be.
 		// If they match what is already desired then set_search_desired() will ignore the call.
@@ -203,7 +203,7 @@ function NewRenderer() {
 
 	};
 
-	renderer.play_this_colour = function() {
+	hub.play_this_colour = function() {
 		if (this.tree.node.board.active === "w") {
 			this.set_behaviour("play_white");
 		} else {
@@ -211,7 +211,7 @@ function NewRenderer() {
 		}
 	};
 
-	renderer.maybe_setup_book_move = function() {
+	hub.maybe_setup_book_move = function() {
 
 		if (!this.book || this.tree.node.terminal_reason()) {
 			return false;
@@ -270,7 +270,7 @@ function NewRenderer() {
 
 	// -------------------------------------------------------------------------------------------------------------------------
 
-	renderer.maybe_infer_info = function() {
+	hub.maybe_infer_info = function() {
 
 		// This function creates "ghost" info in the info table when possible and necessary;
 		// such info is inferred from ancestral info. It is also deleted upon leaving the node.
@@ -376,7 +376,7 @@ function NewRenderer() {
 		node.table.moveinfo[nextmove] = new_info;
 	};
 
-	renderer.node_exit_cleanup = function() {
+	hub.node_exit_cleanup = function() {
 
 		if (!this.node_to_clean || this.node_to_clean.destroyed) {
 			return;
@@ -395,10 +395,10 @@ function NewRenderer() {
 
 	// -------------------------------------------------------------------------------------------------------------------------
 
-	renderer.move = function(s) {							// It is safe to call this with illegal moves.
+	hub.move = function(s) {							// It is safe to call this with illegal moves.
 
 		if (typeof s !== "string") {
-			console.log(`renderer.move(${s}) - bad argument`);
+			console.log(`hub.move(${s}) - bad argument`);
 			return false;
 		}
 
@@ -406,7 +406,7 @@ function NewRenderer() {
 		let source = Point(s.slice(0, 2));
 
 		if (!source) {
-			console.log(`renderer.move(${s}) - invalid source`);
+			console.log(`hub.move(${s}) - invalid source`);
 			return false;
 		}
 
@@ -421,7 +421,7 @@ function NewRenderer() {
 			if ((board.piece(source) === "P" && source.y === 1) || (board.piece(source) === "p" && source.y === 6)) {
 				let illegal_reason = board.illegal(s + "q");
 				if (illegal_reason) {
-					console.log(`renderer.move(${s}) - ${illegal_reason}`);
+					console.log(`hub.move(${s}) - ${illegal_reason}`);
 				} else {
 					this.show_promotiontable(s);
 				}
@@ -433,7 +433,7 @@ function NewRenderer() {
 
 		let illegal_reason = board.illegal(s);
 		if (illegal_reason) {
-			console.log(`renderer.move(${s}) - ${illegal_reason}`);
+			console.log(`hub.move(${s}) - ${illegal_reason}`);
 			return false;
 		}
 
@@ -442,14 +442,14 @@ function NewRenderer() {
 		return true;
 	};
 
-	renderer.random_move = function() {
+	hub.random_move = function() {
 		let legals = this.tree.node.board.movegen();
 		if (legals.length > 0) {
 			this.move(RandChoice(legals));
 		}
 	};
 
-	renderer.play_info_index = function(n) {
+	hub.play_info_index = function(n) {
 		let info_list = SortedMoveInfo(this.tree.node);
 		if (typeof n === "number" && n >= 0 && n < info_list.length) {
 			if (info_list[n].__touched) {
@@ -460,7 +460,7 @@ function NewRenderer() {
 
 	// Note that the various tree.methods() return whether or not the current node changed.
 
-	renderer.return_to_lock = function() {
+	hub.return_to_lock = function() {
 		if (config.behaviour === "analysis_locked") {
 			if (this.tree.set_node(this.leela_lock_node)) {		// Fool-proof against null / destroyed.
 				this.position_changed(false, true);
@@ -468,75 +468,75 @@ function NewRenderer() {
 		}
 	};
 
-	renderer.prev = function() {
+	hub.prev = function() {
 		if (this.tree.prev()) {
 			this.position_changed(false, true);
 		}
 	};
 
-	renderer.next = function() {
+	hub.next = function() {
 		if (this.tree.next()) {
 			this.position_changed(false, true);
 		}
 	};
 
-	renderer.goto_root = function() {
+	hub.goto_root = function() {
 		if (this.tree.goto_root()) {
 			this.position_changed(false, true);
 		}
 	};
 
-	renderer.goto_end = function() {
+	hub.goto_end = function() {
 		if (this.tree.goto_end()) {
 			this.position_changed(false, true);
 		}
 	};
 
-	renderer.previous_sibling = function() {
+	hub.previous_sibling = function() {
 		if (this.tree.previous_sibling()) {
 			this.position_changed(false, true);
 		}
 	};
 
-	renderer.next_sibling = function() {
+	hub.next_sibling = function() {
 		if (this.tree.next_sibling()) {
 			this.position_changed(false, true);
 		}
 	};
 
-	renderer.return_to_main_line = function() {
+	hub.return_to_main_line = function() {
 		if (this.tree.return_to_main_line()) {
 			this.position_changed(false, true);
 		}
 	};
 
-	renderer.delete_node = function() {
+	hub.delete_node = function() {
 		if (this.tree.delete_node()) {
 			this.position_changed(false, true);
 		}
 	};
 
-	renderer.promote_to_main_line = function() {
+	hub.promote_to_main_line = function() {
 		this.tree.promote_to_main_line();
 	};
 
-	renderer.promote = function() {
+	hub.promote = function() {
 		this.tree.promote();
 	};
 
-	renderer.delete_other_lines = function() {
+	hub.delete_other_lines = function() {
 		this.tree.delete_other_lines();
 	};
 
-	renderer.delete_children = function() {
+	hub.delete_children = function() {
 		this.tree.delete_children();
 	};
 
-	renderer.delete_siblings = function() {
+	hub.delete_siblings = function() {
 		this.tree.delete_siblings();
 	};
 
-	renderer.load_from_fenbox = function(s) {
+	hub.load_from_fenbox = function(s) {
 
 		s = s.trim();
 
@@ -575,7 +575,7 @@ function NewRenderer() {
 		this.load_fen(s, abnormal);
 	};
 
-	renderer.load_fen = function(s, abnormal) {
+	hub.load_fen = function(s, abnormal) {
 
 		let board;
 
@@ -601,7 +601,7 @@ function NewRenderer() {
 		this.position_changed(true, true);
 	};
 
-	renderer.load_fen_or_pgn_from_string = function(s) {
+	hub.load_fen_or_pgn_from_string = function(s) {
 		if (typeof s !== "string") return;
 		s = s.trim();
 		try {
@@ -612,18 +612,18 @@ function NewRenderer() {
 		}
 	};
 
-	renderer.new_game = function() {
+	hub.new_game = function() {
 		this.load_fen("rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1");
 	};
 
-	renderer.new_960 = function(n) {
+	hub.new_960 = function(n) {
 		if (n === undefined) {
 			n = RandInt(0, 960);
 		}
 		this.load_fen(c960_fen(n), true);
 	};
 
-	renderer.infobox_to_clipboard = function() {
+	hub.infobox_to_clipboard = function() {
 		let s = infobox.innerText;
 		s = ReplaceAll(s, `${config.focus_on_text} `, "");
 		s = ReplaceAll(s, `${config.focus_off_text} `, "");
@@ -633,19 +633,19 @@ function NewRenderer() {
 	// -------------------------------------------------------------------------------------------------------------------------
 	// PGN...
 
-	renderer.pgn_to_clipboard = function() {
+	hub.pgn_to_clipboard = function() {
 		PGNToClipboard(this.tree.node);
 	};
 
-	renderer.save = function(filename) {
+	hub.save = function(filename) {
 		SavePGN(filename, this.tree.node);
 	};
 
-	renderer.purge_finished_loaders = function() {
+	hub.purge_finished_loaders = function() {
 		this.loaders = this.loaders.filter(o => o.callback);
 	};
 
-	renderer.open = function(filename) {
+	hub.open = function(filename) {
 
 		if (filename === __dirname || filename === ".") {		// Can happen when extra args are passed to main process. Silently return.
 			return;
@@ -678,7 +678,7 @@ function NewRenderer() {
 		this.loaders.push(loader);
 	};
 
-	renderer.load_polyglot_book = function(filename) {
+	hub.load_polyglot_book = function(filename) {
 
 		if (!config.ignore_filesize_limits && FileExceedsGigabyte(filename, 2)) {
 			alert(messages.file_too_big);
@@ -715,7 +715,7 @@ function NewRenderer() {
 		this.loaders.push(loader);
 	};
 
-	renderer.load_pgn_book = function(filename) {
+	hub.load_pgn_book = function(filename) {
 
 		if (!config.ignore_filesize_limits && FileExceedsGigabyte(filename, 0.02)) {
 			alert(messages.pgn_book_too_big);
@@ -748,7 +748,7 @@ function NewRenderer() {
 		this.loaders.push(loader);
 	};
 
-	renderer.load_pgn_from_string = function(s) {
+	hub.load_pgn_from_string = function(s) {
 
 		if (typeof s !== "string") {
 			return;
@@ -775,7 +775,7 @@ function NewRenderer() {
 		this.loaders.push(loader);
 	};
 
-	renderer.handle_loaded_pgndata = function(pgndata) {
+	hub.handle_loaded_pgndata = function(pgndata) {
 		if (!pgndata || pgndata.count() === 0) {
 			alert("No data found.");
 			return;
@@ -793,7 +793,7 @@ function NewRenderer() {
 		}
 	};
 
-	renderer.load_pgn_object = function(o) {				// Returns true or false - whether this actually succeeded.
+	hub.load_pgn_object = function(o) {				// Returns true or false - whether this actually succeeded.
 
 		let root_node;
 
@@ -810,7 +810,7 @@ function NewRenderer() {
 		return true;
 	};
 
-	renderer.show_pgn_chooser = function() {
+	hub.show_pgn_chooser = function() {
 
 		const interval = 100;
 
@@ -892,16 +892,16 @@ function NewRenderer() {
 		this.show_fullbox();
 	};
 
-	renderer.show_fullbox = function() {
+	hub.show_fullbox = function() {
 		this.hide_promotiontable();
 		fullbox.style.display = "block";
 	};
 
-	renderer.hide_fullbox = function() {
+	hub.hide_fullbox = function() {
 		fullbox.style.display = "none";
 	};
 
-	renderer.fullbox_click = function(event) {
+	hub.fullbox_click = function(event) {
 		let n = EventPathN(event, "chooser_");
 		if (typeof n !== "number") {
 			this.maybe_setchooserstart_click(event);
@@ -912,7 +912,7 @@ function NewRenderer() {
 		}
 	};
 
-	renderer.maybe_setchooserstart_click = function(event) {
+	hub.maybe_setchooserstart_click = function(event) {
 		let n = EventPathN(event, "setchooserstart_");
 		if (typeof n !== "number") {
 			n = EventPathN(event, "setchooserstartbottom_");
@@ -924,7 +924,7 @@ function NewRenderer() {
 		this.show_pgn_chooser();
 	};
 
-	renderer.show_sent_options = function() {
+	hub.show_sent_options = function() {
 
 		let lines = [];
 
@@ -939,7 +939,7 @@ function NewRenderer() {
 		this.show_fullbox();
 	};
 
-	renderer.show_error_log = function() {
+	hub.show_error_log = function() {
 		fullbox_content.innerHTML = this.info_handler.error_log;
 		this.show_fullbox();
 	};
@@ -947,7 +947,7 @@ function NewRenderer() {
 	// -------------------------------------------------------------------------------------------------------------------------
 	// Engine stuff...
 
-	renderer.receive_bestmove = function(s, relevant_node) {
+	hub.receive_bestmove = function(s, relevant_node) {
 
 		this.update_graph_eval(relevant_node);		// Now's the last chance to update our graph eval for this node.
 
@@ -1013,7 +1013,7 @@ function NewRenderer() {
 		}
 	};
 
-	renderer.receive_misc = function(s) {
+	hub.receive_misc = function(s) {
 
 		if (s.startsWith("id name")) {
 
@@ -1075,7 +1075,7 @@ function NewRenderer() {
 		}
 	};
 
-	renderer.err_receive = function(s) {
+	hub.err_receive = function(s) {
 
 		// Some highlights... this is obviously super-fragile based on the precise strings Leela sends.
 
@@ -1104,11 +1104,11 @@ function NewRenderer() {
 
 	// The go and halt methods should not be called directly.
 
-	renderer.__halt = function() {
+	hub.__halt = function() {
 		this.engine.set_search_desired(null);
 	};
 
-	renderer.__go = function(node) {
+	hub.__go = function(node) {
 
 		this.hide_fullbox();
 
@@ -1121,7 +1121,7 @@ function NewRenderer() {
 
 	};
 
-	renderer.node_limit = function() {
+	hub.node_limit = function() {
 
 		// Given the current state of the config, what is the node limit?
 
@@ -1153,7 +1153,7 @@ function NewRenderer() {
 		}
 	};
 
-	renderer.adjust_node_limit = function(direction, special_flag) {
+	hub.adjust_node_limit = function(direction, special_flag) {
 
 		let cfg_value = special_flag ? engineconfig[this.engine.filepath].search_nodes_special : engineconfig[this.engine.filepath].search_nodes;
 
@@ -1191,15 +1191,15 @@ function NewRenderer() {
 		}
 	};
 
-	renderer.set_node_limit = function(val) {
+	hub.set_node_limit = function(val) {
 		this.set_node_limit_generic(val, false);
 	};
 
-	renderer.set_node_limit_special = function(val) {
+	hub.set_node_limit_special = function(val) {
 		this.set_node_limit_generic(val, true);
 	};
 
-	renderer.set_node_limit_generic = function(val, special_flag) {
+	hub.set_node_limit_generic = function(val, special_flag) {
 
 		if (typeof val !== "number" || val <= 0) {
 			val = null;
@@ -1226,7 +1226,7 @@ function NewRenderer() {
 		this.handle_search_params_change();
 	};
 
-	renderer.ack_node_limit = function(special_flag) {
+	hub.ack_node_limit = function(special_flag) {
 
 		let ack_type = special_flag ? "ack_special_node_limit" : "ack_node_limit";
 		let val;
@@ -1244,12 +1244,12 @@ function NewRenderer() {
 		}
 	};
 
-	renderer.soft_engine_reset = function() {
+	hub.soft_engine_reset = function() {
 		this.set_behaviour("halt");					// Will cause "stop" to be sent.
 		this.engine.send_ucinewgame();				// Must happen after "stop" is sent.
 	};
 
-	renderer.forget_analysis = function() {
+	hub.forget_analysis = function() {
 		CleanTree(this.tree.root);
 		this.tree.node.table.autopopulate(this.tree.node);
 		this.set_behaviour("halt");					// Will cause "stop" to be sent.
@@ -1257,7 +1257,7 @@ function NewRenderer() {
 		this.engine.suppress_cycle_info = this.info_handler.engine_cycle;		// Ignore further info updates from this cycle.
 	};
 
-	renderer.set_uci_option = function(name, val, save_to_cfg) {
+	hub.set_uci_option = function(name, val, save_to_cfg) {
 
 		// Note that all early returns from this function need to send an ack
 		// of the prevailing value to fix checkmarks in the main process.
@@ -1298,24 +1298,24 @@ function NewRenderer() {
 		this.set_special_message(sent, "blue");
 	};
 
-	renderer.set_uci_option_permanent = function(name, val) {
+	hub.set_uci_option_permanent = function(name, val) {
 		this.set_uci_option(name, val, true);
 	};
 
-	renderer.disable_syzygy = function() {
+	hub.disable_syzygy = function() {
 		delete engineconfig[this.engine.filepath].options["SyzygyPath"];
 		this.save_engineconfig();
 		this.restart_engine();		// Causes the correct ack to be sent.
 	};
 
-	renderer.auto_weights = function() {
+	hub.auto_weights = function() {
 		delete engineconfig[this.engine.filepath].options["EvalFile"];
 		delete engineconfig[this.engine.filepath].options["WeightsFile"];
 		this.save_engineconfig();
 		this.restart_engine();		// Causes the correct acks to be sent.
 	};
 
-	renderer.switch_engine = function(filename) {
+	hub.switch_engine = function(filename) {
 		this.set_behaviour("halt");
 		if (this.engine_start(filename)) {
 			config.path = filename;
@@ -1323,13 +1323,13 @@ function NewRenderer() {
 		}
 	};
 
-	renderer.restart_engine = function() {
+	hub.restart_engine = function() {
 		this.engine.warn_send_fail = false;			// Don't want "send failed" warnings from old engine any more.
 		this.set_behaviour("halt");
 		this.engine_start(config.path);
 	};
 
-	renderer.engine_start = function(filepath) {
+	hub.engine_start = function(filepath) {
 
 		if (!filepath || typeof filepath !== "string" || fs.existsSync(filepath) === false) {
 			if (!load_err1 && !load_err2) {															// Globals in start.js - they take priority if set.
@@ -1366,7 +1366,7 @@ function NewRenderer() {
 		return true;
 	};
 
-	renderer.engine_send_all_options = function(leelaish) {
+	hub.engine_send_all_options = function(leelaish) {
 
 		// The engine should never have been given a "go" before this.
 
@@ -1396,7 +1396,7 @@ function NewRenderer() {
 	// -------------------------------------------------------------------------------------------------------------------------
 	// Settings etc...
 
-	renderer.toggle = function(option) {
+	hub.toggle = function(option) {
 
 		// Cases with their own handler...
 
@@ -1420,7 +1420,7 @@ function NewRenderer() {
 		}
 	};
 
-	renderer.toggle_flip = function() {				// config.flip should not be directly set, call this function instead.
+	hub.toggle_flip = function() {				// config.flip should not be directly set, call this function instead.
 
 		config.flip = !config.flip;
 
@@ -1440,14 +1440,14 @@ function NewRenderer() {
 		this.draw();								// For the canvas stuff.
 	};
 
-	renderer.set_arrow_filter = function(type, value) {
+	hub.set_arrow_filter = function(type, value) {
 		config.arrow_filter_type = type;
 		config.arrow_filter_value = value;
 		this.save_config();
 		this.draw();
 	};
 
-	renderer.invert_searchmoves = function() {
+	hub.invert_searchmoves = function() {
 
 		if (!config.searchmoves_buttons || Array.isArray(this.tree.node.searchmoves) === false) {
 			return;
@@ -1471,12 +1471,12 @@ function NewRenderer() {
 		this.handle_search_params_change();
 	};
 
-	renderer.clear_searchmoves = function() {
+	hub.clear_searchmoves = function() {
 		this.tree.node.searchmoves = [];
 		this.handle_search_params_change();
 	};
 
-	renderer.escape = function() {					// Set things into a clean state.
+	hub.escape = function() {					// Set things into a clean state.
 		this.hide_fullbox();
 		this.hide_promotiontable();
 		if (this.active_square) {
@@ -1487,7 +1487,7 @@ function NewRenderer() {
 		}
 	};
 
-	renderer.toggle_debug_css = function() {
+	hub.toggle_debug_css = function() {
 		let ss = document.styleSheets[0];
 		let i = 0;
 		for (let rule of Object.values(ss.cssRules)) {
@@ -1500,11 +1500,11 @@ function NewRenderer() {
 		ss.insertRule("* {outline: 1px dotted red;}");
 	};
 
-	renderer.console = function(...args) {
+	hub.console = function(...args) {
 		console.log(...args);
 	};
 
-	renderer.set_pgn_font_size = function(n) {
+	hub.set_pgn_font_size = function(n) {
 		movelist.style["font-size"] = n.toString() + "px";
 		fenbox.style["font-size"] = n.toString() + "px";
 		config.pgn_font_size = n;
@@ -1512,35 +1512,35 @@ function NewRenderer() {
 		this.save_config();
 	};
 
-	renderer.small_arrows = function() {
+	hub.small_arrows = function() {
 		config.arrow_width = 8;
 		config.arrowhead_radius = 12;
 		config.board_font = "18px Arial";
 		this.save_config();
 	};
 
-	renderer.medium_arrows = function() {
+	hub.medium_arrows = function() {
 		config.arrow_width = 12;
 		config.arrowhead_radius = 18;
 		config.board_font = "24px Arial";
 		this.save_config();
 	};
 
-	renderer.large_arrows = function() {
+	hub.large_arrows = function() {
 		config.arrow_width = 16;
 		config.arrowhead_radius = 24;
 		config.board_font = "32px Arial";
 		this.save_config();
 	};
 
-	renderer.giant_arrows = function() {
+	hub.giant_arrows = function() {
 		config.arrow_width = 24;
 		config.arrowhead_radius = 32;
 		config.board_font = "40px Arial";
 		this.save_config();
 	};
 
-	renderer.set_info_font_size = function(n) {
+	hub.set_info_font_size = function(n) {
 		infobox.style["font-size"] = n.toString() + "px";
 		statusbox.style["font-size"] = n.toString() + "px";
 		fullbox.style["font-size"] = n.toString() + "px";
@@ -1549,21 +1549,21 @@ function NewRenderer() {
 		this.rebuild_sizes();
 	};
 
-	renderer.set_graph_height = function(sz) {
+	hub.set_graph_height = function(sz) {
 		config.graph_height = sz;
 		this.save_config();
 		this.rebuild_sizes();
 		this.grapher.draw(this.tree.node, true);
 	};
 
-	renderer.set_board_size = function(sz) {
+	hub.set_board_size = function(sz) {
 		config.square_size = Math.floor(sz / 8);
 		config.board_size = config.square_size * 8;
 		this.save_config();
 		this.rebuild_sizes();
 	};
 
-	renderer.change_piece_set = function(directory) {
+	hub.change_piece_set = function(directory) {
 		if (directory) {
 			if (images.validate_folder(directory) === false) {
 				alert(messages.invalid_pieces_directory);
@@ -1580,7 +1580,7 @@ function NewRenderer() {
 		this.save_config();
 	};
 
-	renderer.change_background = function(file, config_save = true) {
+	hub.change_background = function(file, config_save = true) {
 		if (file && fs.existsSync(file)) {
 			let img = new Image();
 			img.src = file;			// Automagically gets converted to "file:///C:/foo/bar/whatever.png"
@@ -1594,7 +1594,7 @@ function NewRenderer() {
 		}
 	};
 
-	renderer.rebuild_sizes = function() {
+	hub.rebuild_sizes = function() {
 
 		// This assumes everything already exists.
 		// Derived from the longer version in start.js, which it does not replace.
@@ -1638,13 +1638,13 @@ function NewRenderer() {
 		this.draw();
 	};
 
-	renderer.save_window_size = function() {
+	hub.save_window_size = function() {
 		config.width = window.innerWidth;
 		config.height = window.innerHeight;
 		this.save_config();
 	};
 
-	renderer.fire_gc = function() {
+	hub.fire_gc = function() {
 		if (!global || !global.gc) {
 			alert("Unable.");
 		} else {
@@ -1652,7 +1652,7 @@ function NewRenderer() {
 		}
 	};
 
-	renderer.log_ram = function() {
+	hub.log_ram = function() {
 		console.log(`RAM after ${Math.floor(performance.now() / 1000)} seconds:`);
 		for (let foo of Object.entries(process.memoryUsage())) {
 			let type = foo[0] + " ".repeat(12 - foo[0].length);
@@ -1662,19 +1662,19 @@ function NewRenderer() {
 		}
 	};
 
-	renderer.save_config = function() {
+	hub.save_config = function() {
 		if (!load_err1) {							// If the config file was broken, never save to it, let the user fix it.
 			config_io.save(config);
 		}
 	};
 
-	renderer.save_engineconfig = function() {
+	hub.save_engineconfig = function() {
 		if (!load_err2) {							// If the config file was broken, never save to it, let the user fix it.
 			engineconfig_io.save(engineconfig);
 		}
 	};
 
-	renderer.run_script = function(filename) {
+	hub.run_script = function(filename) {
 
 		const disallowed = ["position", "go", "stop", "ponderhit", "quit"];
 
@@ -1716,13 +1716,13 @@ function NewRenderer() {
 		this.set_special_message(`${path.basename(filename)}: Sent ${lines.length} lines`, "blue");
 	};
 
-	renderer.generate_simple_book = function() {		// For https://github.com/rooklift/lc0_lichess
+	hub.generate_simple_book = function() {		// For https://github.com/rooklift/lc0_lichess
 		let histories = this.tree.root.end_nodes().map(end => end.history_old_format());
 		let text_lines = histories.map(h => "\t\"" + h.join(" ") + "\"");
 		console.log("[\n" + text_lines.join(",\n") + "\n]");
 	};
 
-	renderer.set_logfile = function(filename) {		// Arg can be null to stop logging.
+	hub.set_logfile = function(filename) {		// Arg can be null to stop logging.
 		config.logfile = null;
 		Log("Stopping log.");			// This will do nothing, but calling Log() forces it to close any open file.
 		config.logfile = filename;
@@ -1730,7 +1730,7 @@ function NewRenderer() {
 		this.send_ack_logfile();
 	};
 
-	renderer.unload_book = function() {
+	hub.unload_book = function() {
 		this.book = null;
 		for (let loader of this.loaders) {
 			if (loader.type === "book") {
@@ -1740,11 +1740,11 @@ function NewRenderer() {
 		this.send_ack_book();
 	};
 
-	renderer.send_ack_logfile = function() {
+	hub.send_ack_logfile = function() {
 		ipcRenderer.send("ack_logfile", config.logfile);
 	};
 
-	renderer.send_ack_book = function() {
+	hub.send_ack_book = function() {
 		let msg = false;
 		if (this.book) {
 			msg = this.book instanceof Buffer ? "polyglot" : "pgn";
@@ -1752,18 +1752,18 @@ function NewRenderer() {
 		ipcRenderer.send("ack_book", msg);
 	};
 
-	renderer.send_ack_engine = function() {
+	hub.send_ack_engine = function() {
 		this.engine.send_ack_engine();
 	};
 
-	renderer.send_ack_setoption = function(name) {
+	hub.send_ack_setoption = function(name) {
 		this.engine.send_ack_setoption_to_main_process(name);
 	};
 
 	// -------------------------------------------------------------------------------------------------------------------------
 	// Clicks, drops, mouse stuff...
 
-	renderer.set_active_square = function(new_point) {
+	hub.set_active_square = function(new_point) {
 
 		// We do this immediately so it's snappy and responsive, rather than waiting for the next draw cycle. But we don't
 		// want to actually call draw() here since whatever called this may well end up triggering a draw anyway.
@@ -1785,7 +1785,7 @@ function NewRenderer() {
 		this.active_square = new_point ? new_point : null;
 	};
 
-	renderer.boardfriends_click = function(event) {
+	hub.boardfriends_click = function(event) {
 
 		let s = EventPathString(event, "overlay_");
 		let p = Point(s);
@@ -1806,7 +1806,7 @@ function NewRenderer() {
 		}
 
 		if (this.active_square) {
-			let move = this.active_square.s + p.s;		// e.g. "e2e4" - note promotion char is handled by renderer.move()
+			let move = this.active_square.s + p.s;		// e.g. "e2e4" - note promotion char is handled by hub.move()
 			this.set_active_square(null);
 			let ok = this.move(move);
 			if (!ok && config.click_spotlight) {		// No need to worry about spotlight arrows if the move actually happened
@@ -1831,7 +1831,7 @@ function NewRenderer() {
 		}
 	};
 
-	renderer.infobox_click = function(event) {
+	hub.infobox_click = function(event) {
 
 		if (this.info_handler.clickers_are_valid_for_node(this.tree.node) === false) {
 			return;
@@ -1870,7 +1870,7 @@ function NewRenderer() {
 		}
 	};
 
-	renderer.maybe_searchmove_click = function(event) {
+	hub.maybe_searchmove_click = function(event) {
 
 		let sm = EventPathString(event, "searchmove_");
 		if (typeof sm !== "string" || (sm.length < 4 || sm.length > 5)) {
@@ -1887,13 +1887,13 @@ function NewRenderer() {
 		this.handle_search_params_change();
 	};
 
-	renderer.movelist_click = function(event) {
+	hub.movelist_click = function(event) {
 		if (this.tree.handle_click(event)) {
 			this.position_changed(false, true);
 		}
 	};
 
-	renderer.winrate_click = function(event) {
+	hub.winrate_click = function(event) {
 
 		let node = this.grapher.node_from_click(this.tree.node, event);
 
@@ -1906,7 +1906,7 @@ function NewRenderer() {
 		}
 	};
 
-	renderer.statusbox_click = function(event) {
+	hub.statusbox_click = function(event) {
 
 		if (EventPathString(event, "gobutton")) {
 			this.set_behaviour("analysis_free");
@@ -1931,7 +1931,7 @@ function NewRenderer() {
 		}
 	};
 
-	renderer.show_promotiontable = function(partial_move) {
+	hub.show_promotiontable = function(partial_move) {
 
 		promotiontable.innerHTML = "";
 
@@ -1960,11 +1960,11 @@ function NewRenderer() {
 		promotiontable.style.display = "block";
 	};
 
-	renderer.hide_promotiontable = function() {
+	hub.hide_promotiontable = function() {
 		promotiontable.style.display = "none";
 	};
 
-	renderer.handle_drop = function(event) {
+	hub.handle_drop = function(event) {
 
 		// Note to self - examining the event in the console can be misleading
 		// because the object seems to get changed after it's finished firing
@@ -2011,7 +2011,7 @@ function NewRenderer() {
 		}
 	};
 
-	renderer.mouse_point = function() {
+	hub.mouse_point = function() {
 		let overlist = document.querySelectorAll(":hover");
 		for (let item of overlist) {
 			if (typeof item.id === "string" && item.id.startsWith("overlay_")) {
@@ -2021,7 +2021,7 @@ function NewRenderer() {
 		return null;
 	};
 
-	renderer.send_title = function() {
+	hub.send_title = function() {
 		let title = "Nibbler";
 		let root = this.tree.root;
 		if (root.tags && root.tags.White && root.tags.White !== "White" && root.tags.Black && root.tags.Black !== "Black") {
@@ -2033,7 +2033,7 @@ function NewRenderer() {
 	// -------------------------------------------------------------------------------------------------------------------------
 	// General draw code...
 
-	renderer.draw_friendlies_in_table = function(board) {
+	hub.draw_friendlies_in_table = function(board) {
 
 		for (let x = 0; x < 8; x++) {
 			for (let y = 0; y < 8; y++) {
@@ -2066,7 +2066,7 @@ function NewRenderer() {
 		}
 	};
 
-	renderer.draw_enemies_in_table = function(board) {
+	hub.draw_enemies_in_table = function(board) {
 
 		for (let x = 0; x < 8; x++) {
 			for (let y = 0; y < 8; y++) {
@@ -2099,7 +2099,7 @@ function NewRenderer() {
 		}
 	};
 
-	renderer.draw_move_and_active_squares = function(move, active_square) {
+	hub.draw_move_and_active_squares = function(move, active_square) {
 
 		// These constants are stupidly used in set_active_square() also.
 
@@ -2184,7 +2184,7 @@ function NewRenderer() {
 		}
 	};
 
-	renderer.hoverdraw = function() {
+	hub.hoverdraw = function() {
 
 		if (!config.hover_draw || this.info_handler.clickers_are_valid_for_node(this.tree.node) === false) {
 			return false;
@@ -2226,7 +2226,7 @@ function NewRenderer() {
 		}
 	};
 
-	renderer.hoverdraw_animate = function(div_index, info) {
+	hub.hoverdraw_animate = function(div_index, info) {
 
 		// If the user is hovering over an unexpected div index in the infobox, reset depth...
 
@@ -2244,7 +2244,7 @@ function NewRenderer() {
 		return this.draw_fantasy_from_moves(info.pv.slice(0, this.hoverdraw_depth));	// Relies on slice() being safe if depth > length
 	};
 
-	renderer.hoverdraw_single = function(div_index, overlist) {
+	hub.hoverdraw_single = function(div_index, overlist) {
 
 		this.hoverdraw_div = div_index;
 
@@ -2270,14 +2270,14 @@ function NewRenderer() {
 		return this.draw_fantasy_from_moves(moves);
 	};
 
-	renderer.hoverdraw_final = function(div_index, info) {
+	hub.hoverdraw_final = function(div_index, info) {
 
 		this.hoverdraw_div = div_index;
 		return this.draw_fantasy_from_moves(info.pv);
 
 	};
 
-	renderer.draw_fantasy_from_moves = function(moves) {
+	hub.draw_fantasy_from_moves = function(moves) {
 
 		// We don't assume moves is an array of legal moves, or even an array.
 		// This is probably paranoid at this point but meh.
@@ -2302,14 +2302,14 @@ function NewRenderer() {
 		return true;
 	};
 
-	renderer.draw_fantasy = function(board, move) {
+	hub.draw_fantasy = function(board, move) {
 		this.draw_move_and_active_squares(move, null);
 		this.draw_enemies_in_table(board);
 		boardctx.clearRect(0, 0, canvas.width, canvas.height);		// Clearing the canvas arrows.
 		this.draw_friendlies_in_table(board);
 	};
 
-	renderer.draw = function() {
+	hub.draw = function() {
 
 		debuggo.draw = debuggo.draw ? debuggo.draw + 1 : 1;
 
@@ -2339,7 +2339,7 @@ function NewRenderer() {
 		debuggo.draw -= 1;
 	};
 
-	renderer.draw_canvas_arrows = function() {
+	hub.draw_canvas_arrows = function() {
 		boardctx.clearRect(0, 0, canvas.width, canvas.height);
 		if (config.book_explorer) {
 			this.draw_explorer_arrows();
@@ -2350,7 +2350,7 @@ function NewRenderer() {
 		this.info_handler.draw_arrows(this.tree.node, arrow_spotlight_square, next_move);
 	};
 
-	renderer.draw_explorer_arrows = function() {
+	hub.draw_explorer_arrows = function() {
 
 		// This is all pretty isolated from everything else. Keep it that way.
 
@@ -2388,7 +2388,7 @@ function NewRenderer() {
 		this.info_handler.draw_explorer_arrows(this.tree.node, this.explorer_objects_cache);
 	};
 
-	renderer.draw_statusbox = function() {
+	hub.draw_statusbox = function() {
 
 		let analysing_other = null;
 
@@ -2419,7 +2419,7 @@ function NewRenderer() {
 		);
 	};
 
-	renderer.draw_infobox = function() {
+	hub.draw_infobox = function() {
 		this.info_handler.draw_infobox(
 			this.tree.node,
 			this.mouse_point(),
@@ -2429,12 +2429,12 @@ function NewRenderer() {
 			config.behaviour === "halt" || config.never_suppress_searchmoves);
 	};
 
-	renderer.set_special_message = function(s, css_class, duration) {
+	hub.set_special_message = function(s, css_class, duration) {
 		this.status_handler.set_special_message(s, css_class, duration);
 		this.draw_statusbox();
 	};
 
-	renderer.spin = function() {
+	hub.spin = function() {
 		debuggo.spin = debuggo.spin ? debuggo.spin + 1 : 1;
 		this.tick++;
 		this.draw();
@@ -2444,7 +2444,7 @@ function NewRenderer() {
 		debuggo.spin -= 1;
 	};
 
-	renderer.update_graph_eval = function(node) {
+	hub.update_graph_eval = function(node) {
 
 		if (!node || node.destroyed) {
 			return;
@@ -2457,5 +2457,5 @@ function NewRenderer() {
 
 	};
 
-	return renderer;
+	return hub;
 }

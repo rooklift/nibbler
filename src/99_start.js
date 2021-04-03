@@ -11,7 +11,7 @@ Log("");
 Log("======================================================================================================================================");
 Log(`Nibbler startup at ${new Date().toUTCString()}`);
 
-let hub = NewRenderer();
+let hub = NewHub();
 hub.engine_start(config.path);		// This obliterates any error log, so must come before the following...
 
 if (load_err1) {
