@@ -340,13 +340,13 @@ function NewEngine(hub) {
 	eng.setoption = function(name, value) {
 		let s = `setoption name ${name} value ${value}`;
 		this.send(s);
-		return s;			// Just so the renderer can pop s up as a message if it wants.
+		return s;			// Just so the caller can pop s up as a message if it wants.
 	};
 
 	eng.pressbutton = function(name) {
 		let s = `setoption name ${name}`;
 		this.send(s);
-		return s;			// Just so the renderer can pop s up as a message if it wants.
+		return s;			// Just so the caller can pop s up as a message if it wants.
 	};
 
 	eng.send_ack_setoption_to_main_process = function(name) {

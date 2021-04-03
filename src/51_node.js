@@ -387,7 +387,7 @@ const node_prototype = {
 
 	detach: function() {
 
-		// Returns the node that the renderer should point to,
+		// Returns the node that the hub should point to,
 		// which is the parent unless the call is a bad one.
 
 		let parent = this.parent;

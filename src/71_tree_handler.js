@@ -23,7 +23,7 @@ let tree_manipulation_props = {
 	node: null,
 
 	// Where relevant, return values of the methods are whether this.node changed -
-	// i.e. whether the renderer has to call position_changed()
+	// i.e. whether the hub has to call position_changed()
 
 	replace_tree: function(root) {
 		DestroyTree(this.root);
