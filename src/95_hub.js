@@ -930,7 +930,7 @@ let hub_props = {
 				// This likely indicates the engine is new to the config.
 				engineconfig[this.engine.filepath].options["MultiPV"] = 3;				// Will get ack'd when engine_send_all_options() happens
 				engineconfig[this.engine.filepath].search_nodes_special = 10000000;
-				this.ack_node_limit(true);
+				this.send_ack_node_limit(true);
 				this.save_engineconfig();
 			}
 
@@ -1087,7 +1087,6 @@ let hub_props = {
 		}
 
 		let msg_start = special_flag ? "Special node limit" : "Node limit";
-		let ack_type = special_flag ? "ack_special_node_limit" : "ack_node_limit";
 
 		if (val) {
 			this.set_special_message(`${msg_start} now ${CommaNum(val)}`, "blue");
@@ -1102,12 +1101,12 @@ let hub_props = {
 		}
 
 		this.save_engineconfig();
-		this.ack_node_limit(special_flag);
+		this.send_ack_node_limit(special_flag);
 
 		this.handle_search_params_change();
 	},
 
-	ack_node_limit: function(special_flag) {
+	send_ack_node_limit: function(special_flag) {
 
 		let ack_type = special_flag ? "ack_special_node_limit" : "ack_node_limit";
 		let val;
@@ -1259,8 +1258,8 @@ let hub_props = {
 
 		this.engine.send("uci");
 
-		this.ack_node_limit(false);					// Ack the node limits that are set in engineconfig[this.engine.filepath]
-		this.ack_node_limit(true);
+		this.send_ack_node_limit(false);			// Ack the node limits that are set in engineconfig[this.engine.filepath]
+		this.send_ack_node_limit(true);
 
 		this.info_handler.reset_engine_info();
 		this.info_handler.must_draw_infobox();		// To display the new stderr log that appears.
