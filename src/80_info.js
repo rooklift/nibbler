@@ -17,12 +17,6 @@ function NewInfoHandler() {
 	ih.info_clickers = [];							// Elements in the infobox. Updated by draw_infobox().
 	ih.info_clickers_node_id = null;
 
-	// Statusbox stuff...
-
-	ih.special_message = null;
-	ih.special_message_class = "yellow";
-	ih.special_message_timeout = performance.now();
-
 	// Infobox stuff, used solely to skip redraws...
 
 	ih.last_drawn_node_id = null;
@@ -53,14 +47,6 @@ function NewInfoHandler() {
 }
 
 let info_misc_props = {
-
-	set_special_message: function(s, css_class, duration) {
-		if (!css_class) css_class = "yellow";
-		if (!duration) duration = 3000;
-		this.special_message = s;
-		this.special_message_class = css_class;
-		this.special_message_timeout = performance.now() + duration;
-	},
 
 	reset_engine_info: function() {
 		this.engine_start_time = performance.now();

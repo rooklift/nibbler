@@ -8,6 +8,7 @@ function NewRenderer() {
 	renderer.tree = NewTreeHandler();
 	renderer.grapher = NewGrapher();
 	renderer.info_handler = NewInfoHandler();
+	renderer.status_handler = NewStatusHandler();
 
 	// Various state we have to keep track of...
 
@@ -2410,7 +2411,7 @@ function NewRenderer() {
 			}
 		}
 
-		this.info_handler.draw_statusbox(
+		this.status_handler.draw_statusbox(
 			this.tree.node,
 			this.engine,
 			analysing_other,
@@ -2429,7 +2430,7 @@ function NewRenderer() {
 	};
 
 	renderer.set_special_message = function(s, css_class, duration) {
-		this.info_handler.set_special_message(s, css_class, duration);
+		this.status_handler.set_special_message(s, css_class, duration);
 		this.draw_statusbox();
 	};
 
