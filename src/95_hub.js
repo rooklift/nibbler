@@ -31,9 +31,10 @@ function NewHub() {
 	return hub;
 }
 
-// -------------------------------------------------------------------------------------------------------------------------
-
 let hub_props = {
+
+	// ---------------------------------------------------------------------------------------------------------------------
+	// Core methods wrt our main state...
 
 	behave: function(reason) {			// reason should be "position" or "behaviour"
 
@@ -202,8 +203,6 @@ let hub_props = {
 		}
 	},
 
-	// ---------------------------------------------------------------------------------------------------------------------
-
 	handle_search_params_change: function() {
 
 		// If there's already a search desired, we can just let __go() figure out what the new parameters should be.
@@ -217,8 +216,6 @@ let hub_props = {
 		// completes due to hitting the (normal) node limit, behaviour gets changed back to "halt" in one way or
 		// another.
 	},
-
-	// ---------------------------------------------------------------------------------------------------------------------
 
 	maybe_setup_book_move: function() {
 
@@ -276,8 +273,6 @@ let hub_props = {
 
 		return true;
 	},
-
-	// ---------------------------------------------------------------------------------------------------------------------
 
 	maybe_infer_info: function() {
 
@@ -402,6 +397,7 @@ let hub_props = {
 	},
 
 	// ---------------------------------------------------------------------------------------------------------------------
+	// Spin, our main loop...
 
 	spin: function() {
 		debuggo.spin = debuggo.spin ? debuggo.spin + 1 : 1;
@@ -411,6 +407,10 @@ let hub_props = {
 		this.update_graph_eval(this.engine.search_running.node);		// Possibly null.
 		setTimeout(this.spin.bind(this), config.update_delay);
 		debuggo.spin -= 1;
+	},
+
+	purge_finished_loaders: function() {
+		this.loaders = this.loaders.filter(o => o.callback);
 	},
 
 	update_graph_eval: function(node) {
@@ -424,6 +424,7 @@ let hub_props = {
 	},
 
 	// ---------------------------------------------------------------------------------------------------------------------
+	// Drawing properties...
 
 	draw: function() {
 
@@ -822,6 +823,7 @@ let hub_props = {
 	},
 
 	// ---------------------------------------------------------------------------------------------------------------------
+	// Fundamental engine methods... not to be called directly, except by behave() and handle_search_params_change()...
 
 	__halt: function() {
 		this.engine.set_search_desired(null);
@@ -837,6 +839,7 @@ let hub_props = {
 	},
 
 	// ---------------------------------------------------------------------------------------------------------------------
+	// Info receivers...
 
 	receive_bestmove: function(s, relevant_node) {
 
@@ -997,6 +1000,7 @@ let hub_props = {
 	},
 
 	// ---------------------------------------------------------------------------------------------------------------------
+	// Node limits...
 
 	node_limit: function() {
 
@@ -1122,6 +1126,7 @@ let hub_props = {
 	},
 
 	// ---------------------------------------------------------------------------------------------------------------------
+	// Engine-related acks...
 
 	send_ack_engine: function() {
 		this.engine.send_ack_engine();
@@ -1132,6 +1137,7 @@ let hub_props = {
 	},
 
 	// ---------------------------------------------------------------------------------------------------------------------
+	// Misc engine methods...
 
 	soft_engine_reset: function() {
 		this.set_behaviour("halt");					// Will cause "stop" to be sent.
@@ -1147,6 +1153,7 @@ let hub_props = {
 	},
 
 	// ---------------------------------------------------------------------------------------------------------------------
+	// UCI options...
 
 	set_uci_option: function(name, val, save_to_cfg) {
 
@@ -1207,6 +1214,7 @@ let hub_props = {
 	},
 
 	// ---------------------------------------------------------------------------------------------------------------------
+	// Engine startup...
 
 	switch_engine: function(filename) {
 		this.set_behaviour("halt");
@@ -1288,6 +1296,7 @@ let hub_props = {
 	},
 
 	// ---------------------------------------------------------------------------------------------------------------------
+	// Tree manipulation methods...
 
 	move: function(s) {							// It is safe to call this with illegal moves.
 
@@ -1352,7 +1361,6 @@ let hub_props = {
 		}
 	},
 
-	// ---------------------------------------------------------------------------------------------------------------------
 	// Note that the various tree.methods() return whether or not the current node changed.
 
 	return_to_lock: function() {
@@ -1455,22 +1463,7 @@ let hub_props = {
 	},
 
 	// ---------------------------------------------------------------------------------------------------------------------
-
-	purge_finished_loaders: function() {
-		this.loaders = this.loaders.filter(o => o.callback);
-	},
-
-	unload_book: function() {
-		this.book = null;
-		for (let loader of this.loaders) {
-			if (loader.type === "book") {
-				loader.shutdown();
-			}
-		}
-		this.send_ack_book();
-	},
-
-	// ---------------------------------------------------------------------------------------------------------------------
+	// Loading PGN...
 
 	open: function(filename) {
 
@@ -1541,6 +1534,17 @@ let hub_props = {
 	},
 
 	// ---------------------------------------------------------------------------------------------------------------------
+	// Books...
+
+	unload_book: function() {
+		this.book = null;
+		for (let loader of this.loaders) {
+			if (loader.type === "book") {
+				loader.shutdown();
+			}
+		}
+		this.send_ack_book();
+	},
 
 	load_polyglot_book: function(filename) {
 
@@ -1621,6 +1625,7 @@ let hub_props = {
 	},
 
 	// ---------------------------------------------------------------------------------------------------------------------
+	// Loading from clipboard or fenbox...
 
 	load_fen_or_pgn_from_string: function(s) {
 		if (typeof s !== "string") return;
@@ -1726,6 +1731,7 @@ let hub_props = {
 	},
 
 	// ---------------------------------------------------------------------------------------------------------------------
+	// Mouse and mouseclicks...
 
 	set_active_square: function(new_point) {
 
@@ -1976,6 +1982,7 @@ let hub_props = {
 	},
 
 	// ---------------------------------------------------------------------------------------------------------------------
+	// Settings (but NOT including UCI options)...
 
 	toggle: function(option) {
 
@@ -2222,6 +2229,7 @@ let hub_props = {
 	},
 
 	// ---------------------------------------------------------------------------------------------------------------------
+	// Misc...
 
 	set_special_message: function(s, css_class, duration) {
 		this.status_handler.set_special_message(s, css_class, duration);
@@ -2328,6 +2336,7 @@ let hub_props = {
 	},
 
 	// ---------------------------------------------------------------------------------------------------------------------
+	// Fullbox (our full size info div)...
 
 	show_pgn_chooser: function() {
 
@@ -2432,6 +2441,7 @@ let hub_props = {
 	},
 
 	// ---------------------------------------------------------------------------------------------------------------------
+	// Showing and hiding things...
 
 	show_promotiontable: function(partial_move) {
 
