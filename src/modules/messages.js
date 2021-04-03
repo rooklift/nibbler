@@ -5,13 +5,6 @@ const engineconfig_io = require("./engineconfig_io");
 const custom_uci = require("./custom_uci");
 
 
-exports.about_move_display =
-`Leela sends a statistic U showing how uncertain it is about its evaluation \
-of each move. Nibbler can decide which moves to show on the board using this \
-statistic. Often the U statistic remains high for most moves, when Leela \
-thinks the right move is "obvious".`;
-
-
 exports.about_versus_mode =
 `The "play this colour" option causes Leela to evaluate one side of the \
 position only. The top move is automatically played on the board upon \
@@ -78,17 +71,6 @@ If no tick is present in this menu, the default is being used, which is probably
 you want.`;
 
 
-exports.min_version = 23;
-exports.obsolete_leela =
-`Nibbler says: this version of Lc0 may be too old for this version of Nibbler. Please \
-install Lc0 v0.${exports.min_version} or higher.`;
-
-
-exports.settings_for_blas =
-`Nibbler says: setting [MaxPrefetch = 0, MinibatchSize = 8] for BLAS. If you don't want \
-this, explicitly set either value in ${config_io.filename} (options section).`;
-
-
 exports.adding_scripts =
 `Nibbler has a scripts folder, inside which you can place scripts of raw input to send to \
 the engine. A small example file is provided. This is for advanced users and devs who \
@@ -107,20 +89,6 @@ exports.wrong_engine_exe =
 
 exports.send_fail =
 `Sending to the engine failed. This usually means it has crashed.`;
-
-
-exports.two_go =
-`Warning: "go" command sent twice in a row. This is supposed to be impossible. If you see this, \
-Nibbler has a bug and the author would like to be informed.`;
-
-
-exports.bad_bestmove =
-`Warning: bad "bestmove" received. This is supposed to be impossible; if you see this, Nibbler's \
-author would like to be informed.`;
-
-
-exports.inferred_info =
-`Info inferred from a previous position`;
 
 
 exports.invalid_pieces_directory =
