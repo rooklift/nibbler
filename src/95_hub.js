@@ -1356,6 +1356,7 @@ function NewHub() {
 		if (!engineconfig[this.engine.filepath]) {
 			engineconfig[this.engine.filepath] = engineconfig_io.newentry();
 			console.log(`Creating new entry in engineconfig for ${filepath}`);
+			this.save_engineconfig();
 		}
 
 		this.engine.send("uci");
