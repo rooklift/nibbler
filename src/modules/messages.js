@@ -157,7 +157,8 @@ If you want, you can suppress this warning in the Dev menu, and try to load the 
 
 exports.engine_options_reset =
 `As of v2.1.1, Nibbler will store engine options separately for each engine. To facilite this, your \
-engine options have been reset.`;
+engine options have been reset. If you were using special (hand-edited) options, they are still \
+present in your config.json file, and can be manually moved to engines.json.`;
 
 
 exports.too_soon_to_set_options =
