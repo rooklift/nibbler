@@ -1,17 +1,8 @@
 "use strict";
 
-// New in 1.2.6 - replaces movelist.js
-//
 // The point is that updating the node should trigger an immediate redraw. The caller doesn't need
 // to care about redrawing. Ideally, this object should be able to make good decisions about how
 // to best redraw.
-//
-// Intentions / desires / hopes / dreams:
-//
-// - When adding a node, insert its text straight into the DOM (but is that even faster?)
-// - When switching node, simply set the classes of all relevant nodes (but is that even faster?)
-//
-// One thing I've noticed, in some cases Electron 5 seems way faster than 8.
 
 function NewTreeHandler() {
 	let handler = Object.create(null);
