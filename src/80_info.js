@@ -12,7 +12,7 @@ function NewInfoHandler() {
 	ih.ever_received_info = false;
 	ih.ever_received_q = false;
 	ih.ever_received_errors = false;
-	ih.stderr_log = "";
+	ih.error_log = "";
 	ih.next_vms_order_int = 1;
 
 	ih.engine_cycle = 0;		// Count of "go" commands emitted. Since Engine can change, can't store this in Engine objects
@@ -54,11 +54,11 @@ let info_misc_props = {
 		this.ever_received_info = false;
 		this.ever_received_q = false;
 		this.ever_received_errors = false;
-		this.stderr_log = "";
+		this.error_log = "";
 		this.next_vms_order_int = 1;
 	},
 
-	displaying_stderr: function() {
+	displaying_error_log: function() {
 
 		if (this.ever_received_info) {
 			return false;
@@ -89,7 +89,7 @@ let info_receiver_props = {
 			return;
 		}
 
-		if (this.stderr_log.length > 50000) {
+		if (this.error_log.length > 50000) {
 			return;
 		}
 
@@ -97,14 +97,14 @@ let info_receiver_props = {
 
 		if (s_low.includes("warning") || s_low.includes("error") || s_low.includes("unknown") || s_low.includes("failed") || s_low.includes("exception")) {
 			this.ever_received_errors = true;
-			this.stderr_log += `<span class="red">${s}</span><br>`;
-			if (this.displaying_stderr() === false) {
+			this.error_log += `<span class="red">${s}</span><br>`;
+			if (this.displaying_error_log() === false) {
 				this.set_special_message(s, "red", 5000);
 				console.log(s);
 			}
 		} else {
-			this.stderr_log += `${s}<br>`;
-			if (this.displaying_stderr() === false) {
+			this.error_log += `${s}<br>`;
+			if (this.displaying_error_log() === false) {
 				console.log(s);
 			}
 		}
@@ -249,7 +249,7 @@ let info_receiver_props = {
 				}
 			}
 
-		} else if (s.startsWith("info string") && !s.includes("NNUE evaluation") && !s.includes("ERROR")) {
+		} else if (s.startsWith("info string") && !s.includes("NNUE evaluation")) {
 
 			if (config.log_info_lines) Log("< " + s);
 
@@ -369,11 +369,6 @@ let info_receiver_props = {
 					move_info.subcycle = this.engine_subcycle;
 				}
 			}
-
-		} else if (s.startsWith("info string ERROR")) {			// Stockfish sends these sometimes.
-
-			Log("< " + s);
-			this.err_receive(s.slice(12));
 
 		} else {
 

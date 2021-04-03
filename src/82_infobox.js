@@ -106,8 +106,8 @@ let infobox_props = {
 
 		let searchmoves = node.searchmoves;
 
-		if (this.displaying_stderr()) {
-			infobox.innerHTML = this.stderr_log;
+		if (this.displaying_error_log()) {
+			infobox.innerHTML = this.error_log;
 			this.last_drawn_version = null;
 			return;
 		}

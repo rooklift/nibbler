@@ -302,6 +302,12 @@ function NewEngine(hub) {
 
 	eng.handle_info_line = function(line) {
 
+		if (line.startsWith("info string ERROR")) {								// Stockfish sends these.
+			Log("< " + line);
+			this.hub.info_handler.err_receive(line.slice(12));
+			return;
+		}
+
 		if (!this.search_running.node) {
 			if (config.log_info_lines) Log("(ignore !node) < " + line);
 			return;
