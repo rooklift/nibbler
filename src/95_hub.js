@@ -1029,6 +1029,9 @@ function NewHub() {
 				}
 			}
 
+			// Our defaults in engineconfig_io.newentry() are appropriate for Leelaish engines.
+			// But if this is the first time we see an A/B engine, we must adjust them...
+
 			if (!this.engine.leelaish && !engineconfig[this.engine.filepath].options["MultiPV"]) {
 				// This likely indicates the engine is new to the config.
 				engineconfig[this.engine.filepath].options["MultiPV"] = 3;				// Will get ack'd when engine_send_all_options() happens
