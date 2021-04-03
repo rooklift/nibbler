@@ -11,14 +11,14 @@ function NewInfoHandler() {
 	ih.ever_drew_infobox = false;
 	ih.ever_updated_a_table = false;
 
-	// Arrow stuff, but also used by the infobox to highlight divs...
+	// Array of possible one-click moves. Updated by draw_arrows(). Used elsewhere.
+	ih.one_click_moves = New2DArray(8, 8, null);
 
-	ih.one_click_moves = New2DArray(8, 8, null);	// Array of possible one-click moves. Updated by draw_arrows().
-	ih.info_clickers = [];							// Elements in the infobox. Updated by draw_infobox().
+	// Clickable elements in the infobox. Updated by draw_infobox(). Used elsewhere.
+	ih.info_clickers = [];
 	ih.info_clickers_node_id = null;
 
 	// Infobox stuff, used solely to skip redraws...
-
 	ih.last_drawn_node_id = null;
 	ih.last_drawn_version = null;
 	ih.last_drawn_highlight = null;
@@ -28,13 +28,11 @@ function NewInfoHandler() {
 	ih.last_drawn_allow_inactive_focus = null;
 
 	// Info about engine cycles. These aren't reset even when the engine resets.
-
 	ih.engine_cycle = 0;		// Count of "go" commands emitted. Since Engine can change, can't store this in Engine objects
 	ih.engine_subcycle = 0;		// Count of how many times we have seen "multipv 1" - each time it's a new "block" of info
 
 	// Info about the current engine...
 	// Note that, when the engine is restarted, hub must call reset_engine_info() to fix these. A bit lame.
-
 	ih.engine_start_time = performance.now();
 	ih.engine_sent_info = false;
 	ih.engine_sent_q = false;
