@@ -830,7 +830,7 @@ let hub_props = {
 	},
 
 	__go: function(node) {
-		this.hide_fullbox();			// FIXME do this elsewhere.
+		this.hide_fullbox();
 		if (!node || node.destroyed || node.terminal_reason()) {
 			this.engine.set_search_desired(null);
 			return;
