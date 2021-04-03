@@ -809,21 +809,6 @@ function NewRenderer() {
 		return true;
 	};
 
-	renderer.show_sent_options = function() {
-
-		let lines = [];
-
-		lines.push(`<span class="yellow">${this.engine.filepath || "No engine loaded"}</span>`);
-		lines.push("");
-
-		for (let name of Object.keys(this.engine.sent_options)) {
-			lines.push(`${name}<br>  <span class="green">${this.engine.sent_options[name]}</span>`);
-		}
-
-		fullbox_content.innerHTML = lines.join("<br>");
-		this.show_fullbox();
-	};
-
 	renderer.show_pgn_chooser = function() {
 
 		const interval = 100;
@@ -936,6 +921,26 @@ function NewRenderer() {
 		}
 		this.pgn_choices_start = n;
 		this.show_pgn_chooser();
+	};
+
+	renderer.show_sent_options = function() {
+
+		let lines = [];
+
+		lines.push(`<span class="yellow">${this.engine.filepath || "No engine loaded"}</span>`);
+		lines.push("");
+
+		for (let name of Object.keys(this.engine.sent_options)) {
+			lines.push(`${name}<br>  <span class="green">${this.engine.sent_options[name]}</span>`);
+		}
+
+		fullbox_content.innerHTML = lines.join("<br>");
+		this.show_fullbox();
+	};
+
+	renderer.show_error_log = function() {
+		fullbox_content.innerHTML = this.info_handler.error_log;
+		this.show_fullbox();
 	};
 
 	// -------------------------------------------------------------------------------------------------------------------------

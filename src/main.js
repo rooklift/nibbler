@@ -3825,6 +3825,12 @@ function menu_build() {
 					}
 				},
 				{
+					label: "Show error log",
+					click: () => {
+						win.webContents.send("call", "show_error_log");
+					}
+				},
+				{
 					type: "separator"
 				},
 				{
