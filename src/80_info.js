@@ -8,9 +8,6 @@ function NewInfoHandler() {
 	Object.assign(ih, arrow_props);
 	Object.assign(ih, infobox_props);
 
-	ih.ever_drew_infobox = false;
-	ih.ever_updated_a_table = false;
-
 	// Array of possible one-click moves. Updated by draw_arrows(). Used elsewhere.
 	ih.one_click_moves = New2DArray(8, 8, null);
 
@@ -30,6 +27,7 @@ function NewInfoHandler() {
 	// Info about engine cycles. These aren't reset even when the engine resets.
 	ih.engine_cycle = 0;		// Count of "go" commands emitted. Since Engine can change, can't store this in Engine objects
 	ih.engine_subcycle = 0;		// Count of how many times we have seen "multipv 1" - each time it's a new "block" of info
+	ih.ever_updated_a_table = false;
 
 	// Info about the current engine...
 	// Note that, when the engine is restarted, hub must call reset_engine_info() to fix these. A bit lame.

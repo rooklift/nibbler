@@ -206,7 +206,6 @@ let infobox_props = {
 		}
 
 		infobox.innerHTML = substrings.join("");
-		this.ever_drew_infobox = true;
 	},
 
 	must_draw_infobox: function() {
