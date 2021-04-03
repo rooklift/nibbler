@@ -22,6 +22,8 @@ if (load_err1) {
 	hub.err_receive("");
 } else if (config.options) {
 	alert(messages.engine_options_reset);
+	config.args_unused = config.args;
+	config.options_unused = config.options;
 	hub.save_config();				// Ensure the options object is deleted from the file.
 }
 

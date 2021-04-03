@@ -21,6 +21,9 @@ exports.defaults = {
 
 	"path": null,		// Not undefined, all normal keys should have an actual value.
 
+	"args_unused": null,
+	"options_unused": null,
+
 	"width": 1280,
 	"height": 835,
 	"board_size": 640,
