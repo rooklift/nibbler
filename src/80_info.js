@@ -8,17 +8,8 @@ function NewInfoHandler() {
 	Object.assign(ih, arrow_props);
 	Object.assign(ih, infobox_props);
 
-	ih.engine_start_time = performance.now();
-	ih.ever_received_info = false;
-	ih.ever_received_q = false;
-	ih.ever_received_errors = false;
-	ih.error_log = "";
-	ih.next_vms_order_int = 1;
-
-	ih.engine_cycle = 0;		// Count of "go" commands emitted. Since Engine can change, can't store this in Engine objects
-	ih.engine_subcycle = 0;		// Count of how many times we have seen "multipv 1" - each time it's a new "block" of info
-
 	ih.ever_drew_infobox = false;
+	ih.ever_updated_a_table = false;
 
 	ih.one_click_moves = New2DArray(8, 8, null);	// Array of possible one-click moves. Updated by draw_arrows().
 	ih.info_clickers = [];							// Elements in the infobox. Updated by draw_infobox().
@@ -36,6 +27,22 @@ function NewInfoHandler() {
 	ih.last_drawn_searchmoves = [];
 	ih.last_drawn_allow_inactive_focus = null;
 
+	// Info about engine cycles. These aren't reset even when the engine resets.
+
+	ih.engine_cycle = 0;		// Count of "go" commands emitted. Since Engine can change, can't store this in Engine objects
+	ih.engine_subcycle = 0;		// Count of how many times we have seen "multipv 1" - each time it's a new "block" of info
+
+	// Info about the current engine...
+	// Note that, when the engine is restarted, hub must call reset_engine_info() to fix these. A bit lame.
+
+	ih.engine_start_time = performance.now();
+	ih.engine_sent_info = false;
+	ih.engine_sent_q = false;
+	ih.engine_sent_errors = false;
+	ih.error_time = 0;
+	ih.error_log = "";
+	ih.next_vms_order_int = 1;
+
 	return ih;
 }
 
@@ -51,33 +58,37 @@ let info_misc_props = {
 
 	reset_engine_info: function() {
 		this.engine_start_time = performance.now();
-		this.ever_received_info = false;
-		this.ever_received_q = false;
-		this.ever_received_errors = false;
+		this.engine_sent_info = false;
+		this.engine_sent_q = false;
+		this.engine_sent_errors = false;
+		this.error_time = 0;
 		this.error_log = "";
 		this.next_vms_order_int = 1;
 	},
 
 	displaying_error_log: function() {
 
-		if (this.ever_received_info) {
-			return false;
-		}
-		if (this.ever_drew_infobox === false) {
+		// Recent error...
+
+		if (this.engine_sent_errors && performance.now() - this.error_time < 10000) {
 			return true;
 		}
 
-		// So we've not received info from this engine, but we have drawn the infobox,
-		// meaning the engine was recently restarted or replaced...
+		// Engine hasn't yet sent info, and was recently started...
 
-		if (performance.now() - this.engine_start_time > 5000 && this.ever_received_errors === false) {
-			return false;
-		}
-		if (performance.now() - this.engine_start_time > 20000) {
-			return false;
+		if (!this.engine_sent_info) {
+			if (performance.now() - this.engine_start_time < 5000) {
+				return true;
+			}
 		}
 
-		return true;
+		// We have never updated a table (meaning we never received useful info from an engine)...
+
+		if (!this.ever_updated_a_table) {
+			return true;
+		}
+
+		return false;
 	},
 };
 
@@ -96,17 +107,11 @@ let info_receiver_props = {
 		let s_low = s.toLowerCase();
 
 		if (s_low.includes("warning") || s_low.includes("error") || s_low.includes("unknown") || s_low.includes("failed") || s_low.includes("exception")) {
-			this.ever_received_errors = true;
+			this.engine_sent_errors = true;
 			this.error_log += `<span class="red">${s}</span><br>`;
-			if (this.displaying_error_log() === false) {
-				this.set_special_message(s, "red", 5000);
-				console.log(s);
-			}
+			this.error_time = performance.now();
 		} else {
 			this.error_log += `${s}<br>`;
-			if (this.displaying_error_log() === false) {
-				console.log(s);
-			}
 		}
 	},
 
@@ -154,8 +159,10 @@ let info_receiver_props = {
 			}
 			move_info.leelaish = engine.leelaish;
 
-			this.ever_received_info = true;				// After the move legality check; i.e. we want REAL info
-			node.table.version++;						// Likewise
+			this.engine_sent_info = true;				// After the move legality check; i.e. we want REAL info
+			this.ever_updated_a_table = true;
+			node.table.version++;
+
 			move_info.cycle = this.engine_cycle;
 			move_info.__touched = true;
 
@@ -166,7 +173,7 @@ let info_receiver_props = {
 			tmp = parseInt(infovals["cp"], 10);
 			if (Number.isNaN(tmp) === false) {
 				move_info.cp = tmp;
-				if (this.ever_received_q === false) {
+				if (this.engine_sent_q === false) {
 					move_info.q = QfromPawns(tmp / 100);		// Potentially overwritten later by the better QfromWDL()
 				}
 				move_info.mate = 0;								// Engines will send one of cp or mate, so mate gets reset when receiving cp
@@ -225,7 +232,7 @@ let info_receiver_props = {
 			}
 
 			move_info.wdl = InfoWDL(s);
-			if (this.ever_received_q === false && !did_set_q_from_mate && Array.isArray(move_info.wdl)) {
+			if (this.engine_sent_q === false && !did_set_q_from_mate && Array.isArray(move_info.wdl)) {
 				move_info.q = QfromWDL(move_info.wdl);
 			}
 
@@ -296,8 +303,10 @@ let info_receiver_props = {
 			engine.leelaish = true;						// Note this isn't the main way engine.leelaish gets set (because reasons)
 			move_info.leelaish = true;
 
-			this.ever_received_info = true;				// After the move legality check; i.e. we want REAL info
-			node.table.version++;						// Likewise
+			this.engine_sent_info = true;				// After the move legality check; i.e. we want REAL info
+			this.ever_updated_a_table = true;
+			node.table.version++;
+
 			// move_info.cycle = this.engine_cycle;		// No... we get VMS lines even when excluded by searchmoves.
 			// move_info.subcycle = this.engine_subcycle;
 			move_info.__touched = true;
@@ -333,7 +342,7 @@ let info_receiver_props = {
 
 			tmp = parseFloat(infovals["(Q:"]);
 			if (Number.isNaN(tmp) === false) {
-				this.ever_received_q = true;
+				this.engine_sent_q = true;
 				move_info.q = tmp;
 			}
 
