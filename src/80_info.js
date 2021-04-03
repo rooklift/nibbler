@@ -11,13 +11,19 @@ function NewInfoHandler() {
 	ih.ever_drew_infobox = false;
 	ih.ever_updated_a_table = false;
 
+	// Arrow stuff, but also used by the infobox to highlight divs...
+
 	ih.one_click_moves = New2DArray(8, 8, null);	// Array of possible one-click moves. Updated by draw_arrows().
 	ih.info_clickers = [];							// Elements in the infobox. Updated by draw_infobox().
 	ih.info_clickers_node_id = null;
 
+	// Statusbox stuff...
+
 	ih.special_message = null;
 	ih.special_message_class = "yellow";
 	ih.special_message_timeout = performance.now();
+
+	// Infobox stuff, used solely to skip redraws...
 
 	ih.last_drawn_node_id = null;
 	ih.last_drawn_version = null;
