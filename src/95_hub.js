@@ -2456,7 +2456,7 @@ let hub_props = {
 		lines.push("");
 
 		for (let name of Object.keys(this.engine.sent_options)) {
-			lines.push(`${name}<br>  <span class="green">${this.engine.sent_options[name]}</span>`);
+			lines.push(`${name}<br>    <span class="green">${this.engine.sent_options[name]}</span>`);
 		}
 
 		fullbox_content.innerHTML = lines.join("<br>");
