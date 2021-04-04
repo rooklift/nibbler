@@ -2492,8 +2492,7 @@ let hub_props = {
 		if (divs.length === 0) {
 			divs.push(`<div>No engines known yet.</div>`);
 		} else {
-			divs.unshift(`<div class="infoline"><span class="green">Click</span> to load.<br>` +
-			             `<span class="yellow">Right-click</span> to remove from ${engineconfig_io.filename}.</div>`);
+			divs.unshift(`<div class="infoline green">Click to load.<br>Right-click to remove from ${engineconfig_io.filename}.</div>`);
 		}
 
 		fullbox_content.innerHTML = divs.join("");
