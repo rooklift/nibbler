@@ -214,6 +214,10 @@ ul {
 	color: #6cccee;
 }
 
+.pgnchooser:hover {
+	background-color: #202020;
+}
+
 .ocm_highlight {
 	background-color: #770000;
 }

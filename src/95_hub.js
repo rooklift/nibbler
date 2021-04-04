@@ -2425,7 +2425,7 @@ let hub_props = {
 					s += `  <span class="gray">(${p.tags.Variant})</span>`;
 				}
 
-				lines.push(`<li><span id="chooser_${n}">${s}</span></li>`);
+				lines.push(`<li class="pgnchooser"><span id="chooser_${n}">${s}</span></li>`);
 
 			} else if (count > interval) {		// Pad the chooser with blank lines so the buttons at the bottom behave nicely. This is stupid though.
 
