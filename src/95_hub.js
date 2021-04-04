@@ -1931,16 +1931,21 @@ let hub_props = {
 
 		n = EventPathN(event, "engine_chooser_");
 		if (typeof n === "number") {
-			if (this.engine_choices[n]) {					// engine_choices is array with index --> filepath
-				let filepath = this.engine_choices[n];
-				if (fs.existsSync(filepath)) {
-					this.switch_engine(filepath);
-					this.hide_fullbox();
-				} else {
-					alert("File was not found.");
-					delete engineconfig[filepath];
-					this.save_engineconfig();
-					this.show_fast_engine_chooser();
+			let filepath = this.engine_choices[n];			// The array is remade every time the fast engine chooser is displayed
+			if (filepath) {
+				if (event.button === 2) {					// Right-click
+					if (config.path !== filepath) {
+						delete engineconfig[filepath];
+						this.save_engineconfig();
+						this.show_fast_engine_chooser();
+					}
+				} else {									// Any other click
+					if (fs.existsSync(filepath)) {
+						this.switch_engine(filepath);
+						this.hide_fullbox();
+					} else {
+						alert("Engine was not found.");
+					}
 				}
 			}
 			return;
@@ -2465,28 +2470,30 @@ let hub_props = {
 
 	show_fast_engine_chooser: function() {
 
-		// TODO: this should really have delete buttons for everything.
-		// And clicking on a missing engine shouldn't auto-delete it from the engineconfig.
-
 		this.set_behaviour("halt");
 		this.engine_choices = [];
 
 		let divs = [];
 
-		for (let key of Object.keys(engineconfig)) {
+		for (let filepath of Object.keys(engineconfig)) {
 
-			if (key === "") {
+			if (filepath === "") {
 				continue;
 			}
 
-			divs.push(`<div class="enginechooser" id="engine_chooser_${this.engine_choices.length}"><span class="gray">${path.dirname(key)}</span>` +
-					  `<br>    ${path.basename(key)}</div>`);
+			let ac = config.path === filepath ? ` <span class="blue">(active)</span>` : "";
 
-			this.engine_choices.push(key);							// After the above calc using length
+			divs.push(`<div class="enginechooser" id="engine_chooser_${this.engine_choices.length}"><span class="gray">${path.dirname(filepath)}</span>` +
+					  `<br>    ${path.basename(filepath)}${ac}</div>`);
+
+			this.engine_choices.push(filepath);					// After the above calc using length
 		}
 
 		if (divs.length === 0) {
 			divs.push(`<div>No engines known yet.</div>`);
+		} else {
+			divs.unshift(`<div class="infoline"><span class="green">Click</span> to load.<br>` +
+			             `<span class="yellow">Right-click</span> to remove from ${engineconfig_io.filename}.</div>`);
 		}
 
 		fullbox_content.innerHTML = divs.join("");
