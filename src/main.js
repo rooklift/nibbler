@@ -2069,6 +2069,12 @@ function menu_build() {
 					},
 				},
 				{
+					label: "Choose known engine...",
+					click: () => {
+						win.webContents.send("call", "show_fast_engine_chooser");
+					}
+				},
+				{
 					label: "Weights",
 					submenu: [
 						{

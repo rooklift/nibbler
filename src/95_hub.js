@@ -15,6 +15,7 @@ function NewHub() {
 	hub.loaders = [];									// The loaders can have shutdown() called on them to stop ASAP.
 	hub.book = null;									// Either a Polyglot buffer, or an array of {key, move, weight}.
 	hub.pgndata = null;									// Object representing the loaded PGN file.
+	hub.engine_choices = [];							// Made by show_fast_engine_chooser() when needed.
 	hub.pgn_choices_start = 0;							// Where we are in the PGN Chooser screen.
 	hub.friendly_draws = New2DArray(8, 8, null);		// What pieces are drawn in boardfriends. Used to skip redraws.
 	hub.enemy_draws = New2DArray(8, 8, null);			// What pieces are drawn in boardsquares. Used to skip redraws.
@@ -1901,26 +1902,49 @@ let hub_props = {
 	},
 
 	fullbox_click: function(event) {
-		let n = EventPathN(event, "chooser_");
-		if (typeof n !== "number") {
-			this.maybe_setchooserstart_click(event);
-			return;
-		}
-		if (this.pgndata && n >= 0 && n < this.pgndata.count()) {
-			this.load_pgn_object(this.pgndata.getrecord(n));
-		}
-	},
 
-	maybe_setchooserstart_click: function(event) {
-		let n = EventPathN(event, "setchooserstart_");
+		let n;
+
+		// PGN chooser...
+
+		n = EventPathN(event, "chooser_");
+		if (typeof n === "number") {
+			if (this.pgndata && n >= 0 && n < this.pgndata.count()) {
+				this.load_pgn_object(this.pgndata.getrecord(n));
+				return;
+			}
+		}
+
+		// PGN chooser, prev / next page buttons...
+
+		n = EventPathN(event, "setchooserstart_");
 		if (typeof n !== "number") {
 			n = EventPathN(event, "setchooserstartbottom_");
 		}
-		if (typeof n !== "number") {
+		if (typeof n === "number") {
+			this.pgn_choices_start = n;
+			this.show_pgn_chooser();
 			return;
 		}
-		this.pgn_choices_start = n;
-		this.show_pgn_chooser();
+
+		// Engine chooser...
+
+		n = EventPathN(event, "engine_chooser_");
+		if (typeof n === "number") {
+			if (this.engine_choices[n]) {					// engine_choices is array with index --> filepath
+				let filepath = this.engine_choices[n];
+				if (fs.existsSync(filepath)) {
+					this.switch_engine(filepath);
+					this.hide_fullbox();
+				} else {
+					alert("File was not found.");
+					delete engineconfig[filepath];
+					this.save_engineconfig();
+					this.show_fast_engine_chooser();
+				}
+			}
+			return;
+		}
 	},
 
 	handle_drop: function(event) {
@@ -2436,6 +2460,36 @@ let hub_props = {
 
 	show_error_log: function() {
 		fullbox_content.innerHTML = this.info_handler.error_log;
+		this.show_fullbox();
+	},
+
+	show_fast_engine_chooser: function() {
+
+		// TODO: this should really have delete buttons for everything.
+		// And clicking on a missing engine shouldn't auto-delete it from the engineconfig.
+
+		this.set_behaviour("halt");
+		this.engine_choices = [];
+
+		let divs = [];
+
+		for (let key of Object.keys(engineconfig)) {
+
+			if (key === "") {
+				continue;
+			}
+
+			divs.push(`<div class="enginechooser" id="engine_chooser_${this.engine_choices.length}"><span class="gray">${path.dirname(key)}</span>` +
+					  `<br>    ${path.basename(key)}</div>`);
+
+			this.engine_choices.push(key);							// After the above calc using length
+		}
+
+		if (divs.length === 0) {
+			divs.push(`<div>No engines known yet.</div>`);
+		}
+
+		fullbox_content.innerHTML = divs.join("");
 		this.show_fullbox();
 	},
 

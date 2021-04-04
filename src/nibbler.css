@@ -206,6 +206,14 @@ ul {
 	margin-bottom: 1em;
 }
 
+.enginechooser {
+	margin-bottom: 1em;
+}
+
+.enginechooser:hover {
+	color: #6cccee;
+}
+
 .ocm_highlight {
 	background-color: #770000;
 }
