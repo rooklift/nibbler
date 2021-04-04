@@ -1221,19 +1221,27 @@ let hub_props = {
 		if (this.engine_start(filename)) {
 			config.path = filename;
 			this.save_config();
+		} else {
+			alert("Failed to start this engine.");
+			this.engine.send_ack_engine();
 		}
 	},
 
 	restart_engine: function() {
 		this.engine.warn_send_fail = false;			// Don't want "send failed" warnings from old engine any more.
 		this.set_behaviour("halt");
-		this.engine_start(config.path);
+		if (this.engine_start(config.path)) {
+			// pass
+		} else {
+			alert("Failed to restart the engine.");
+			this.engine.send_ack_engine();
+		}
 	},
 
-	engine_start: function(filepath) {
+	engine_start: function(filepath, blue_fail) {
 
 		if (!filepath || typeof filepath !== "string" || fs.existsSync(filepath) === false) {
-			if (!load_err1 && !load_err2) {															// Globals in start.js - they take priority if set.
+			if (blue_fail && !load_err1 && !load_err2) {
 				this.err_receive(`<span class="blue">${messages.engine_not_present}</span>`);
 				this.err_receive("");
 			}
@@ -1243,8 +1251,13 @@ let hub_props = {
 		let args = engineconfig[filepath] ? engineconfig[filepath].args : [];
 
 		let new_engine = NewEngine(this);
-		if (new_engine.setup(filepath, args, this) === false) {
-			console.log("While trying to start engine, .setup() failed.");
+		let success = new_engine.setup(filepath, args, this);
+
+		if (success === false) {
+			if (blue_fail && !load_err1 && !load_err2) {
+				this.err_receive(`<span class="blue">${messages.engine_failed_to_start}</span>`);
+				this.err_receive("");
+			}
 			return false;
 		}
 
@@ -1940,12 +1953,8 @@ let hub_props = {
 						this.show_fast_engine_chooser();
 					}
 				} else {									// Any other click
-					if (fs.existsSync(filepath)) {
-						this.switch_engine(filepath);
-						this.hide_fullbox();
-					} else {
-						alert("Engine was not found.");
-					}
+					this.switch_engine(filepath);
+					this.hide_fullbox();
 				}
 			}
 			return;

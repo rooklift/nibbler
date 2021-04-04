@@ -33,6 +33,9 @@ exports.engine_not_present = `Engine not found. Please find the engine via the \
 Engine menu. You might also need to locate the weights (neural network) file.`;
 
 
+exports.engine_failed_to_start = `Engine failed to start.`;
+
+
 exports.uncaught_exception = `There may have been an uncaught exception. If you \
 could open the dev tools and the console tab therein, and report the contents to \
 the author (ideally with a screenshot) that would be grand.`;

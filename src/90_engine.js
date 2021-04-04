@@ -375,7 +375,7 @@ function NewEngine(hub) {
 		try {
 			this.exe = child_process.spawn(filepath, args, {cwd: path.dirname(filepath)});
 		} catch (err) {
-			alert(err);
+			console.log(`engine.setup() failed: ${err.toString()}`);
 			return false;
 		}
 
