@@ -1911,8 +1911,8 @@ let hub_props = {
 		if (typeof n === "number") {
 			if (this.pgndata && n >= 0 && n < this.pgndata.count()) {
 				this.load_pgn_object(this.pgndata.getrecord(n));
-				return;
 			}
+			return;
 		}
 
 		// PGN chooser, prev / next page buttons...
