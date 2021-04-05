@@ -2385,8 +2385,6 @@ let hub_props = {
 
 		const interval = 100;
 
-		this.set_behaviour("halt");
-
 		if (!this.pgndata || this.pgndata.count() === 0) {
 			fullbox_content.innerHTML = `<span class="green">No PGN loaded</span>`;
 			this.show_fullbox();
@@ -2485,7 +2483,6 @@ let hub_props = {
 
 	show_fast_engine_chooser: function() {
 
-		this.set_behaviour("halt");
 		this.engine_choices = [];
 
 		let divs = [];
@@ -2537,6 +2534,7 @@ let hub_props = {
 	},
 
 	show_fullbox: function() {
+		this.set_behaviour("halt");
 		this.hide_promotiontable();
 		fullbox.style.display = "block";
 	},
