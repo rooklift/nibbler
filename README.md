@@ -39,7 +39,7 @@ You could also build a standalone app. See comments inside the Python script `bu
 Most people won't need them, but all of Leela's engine options can be set in two ways:
 
 * Leela automatically loads options from a file called `lc0.config` at startup - see [here](https://lczero.org/play/configuration/flags/#config-file).
-* Nibbler will send UCI options specified in Nibbler's own `config.json` file (which you can find via the Dev menu).
+* Nibbler will send UCI options specified in Nibbler's own `engines.json` file (which you can find via the Dev menu).
 
 # Hints and tips
 
