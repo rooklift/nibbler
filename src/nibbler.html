@@ -39,7 +39,14 @@
 	<!-- Special hidden items that show up when needed -->
 
 	<div id="fullbox"><div id="fullbox_content"></div></div>
-	<table id="promotiontable"></table>
+	<table id="promotiontable">
+		<tr>
+			<td class="promotion_q"></td>		<!-- Each promotion TD has a unique class to locate it with -->
+			<td class="promotion_r"></td>		<!-- because the actual move will be stored in the id.      -->
+			<td class="promotion_b"></td>
+			<td class="promotion_n"></td>
+		</tr>
+	</table>
 
 	<!-- Most of our components are fairly well encapsulated and could be in
 	module form. Still, for the time being we have everything in one namespace

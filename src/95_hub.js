@@ -1961,6 +1961,12 @@ let hub_props = {
 		}
 	},
 
+	promotiontable_click: function(event) {
+		let s = EventPathString(event, "promotion_chooser_");
+		this.hide_promotiontable();
+		this.move(s);
+	},
+
 	handle_drop: function(event) {
 
 		// Note to self - examining the event in the console can be misleading
@@ -2513,28 +2519,14 @@ let hub_props = {
 
 	show_promotiontable: function(partial_move) {
 
-		promotiontable.innerHTML = "";
-
-		let tr = document.createElement("tr");
-		promotiontable.appendChild(tr);
-
 		let pieces = this.tree.node.board.active === "w" ? ["Q", "R", "B", "N"] : ["q", "r", "b", "n"];
 
 		for (let piece of pieces) {
-
-			let td = document.createElement("td");
+			let td = document.getElementsByClassName("promotion_" + piece.toLowerCase())[0];		// Our 4 TDs each have a unique class.
+			td.id = "promotion_chooser_" + partial_move + piece.toLowerCase();						// We store the actual move in the id.
 			td.width = config.square_size;
 			td.height = config.square_size;
 			td.style["background-image"] = images[piece].string_for_bg_style;
-
-			// This isn't a memory leak is it? The handlers are deleted when the element is deleted, right?
-
-			td.addEventListener("mousedown", () => {
-				this.hide_promotiontable();
-				this.move(partial_move + piece.toLowerCase());
-			});
-
-			tr.appendChild(td);
 		}
 
 		promotiontable.style.display = "block";
