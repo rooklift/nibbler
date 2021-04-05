@@ -1920,7 +1920,7 @@ let hub_props = {
 
 		// PGN chooser...
 
-		n = EventPathN(event, "chooser_");
+		n = EventPathN(event, "pgn_chooser_");
 		if (typeof n === "number") {
 			if (this.pgndata && n >= 0 && n < this.pgndata.count()) {
 				this.load_pgn_object(this.pgndata.getrecord(n));
@@ -1930,9 +1930,9 @@ let hub_props = {
 
 		// PGN chooser, prev / next page buttons...
 
-		n = EventPathN(event, "setchooserstart_");
+		n = EventPathN(event, "pgn_index_chooser_");
 		if (typeof n !== "number") {
-			n = EventPathN(event, "setchooserstartbottom_");
+			n = EventPathN(event, "pgn_index_b_chooser_");
 		}
 		if (typeof n === "number") {
 			this.pgn_choices_start = n;
@@ -2405,14 +2405,14 @@ let hub_props = {
 		let max_ordinal_length = count.toString().length;
 
 		let prevnextfoo = (count > interval) ?			// All these values get fixed on function entry if they're out-of-bounds. ids should be unique.
-				`<span id="setchooserstart_-99999999">Start </span>|` +
-				`<span id="setchooserstart_${this.pgn_choices_start - 10000}"> <<<< </span>|` +
-				`<span id="setchooserstart_${this.pgn_choices_start - 1000}"> <<< </span>|` +
-				`<span id="setchooserstart_${this.pgn_choices_start - 100}"> << </span>|` +
-				`<span id="setchooserstart_${this.pgn_choices_start + 100}"> >> </span>|` +
-				`<span id="setchooserstart_${this.pgn_choices_start + 1000}"> >>> </span>|` +
-				`<span id="setchooserstart_${this.pgn_choices_start + 10000}"> >>>> </span>|` +
-				`<span id="setchooserstart_99999999"> End (${count}) </span>` +
+				`<span id="pgn_index_chooser_-99999999">Start </span>|` +
+				`<span id="pgn_index_chooser_${this.pgn_choices_start - 10000}"> <<<< </span>|` +
+				`<span id="pgn_index_chooser_${this.pgn_choices_start - 1000}"> <<< </span>|` +
+				`<span id="pgn_index_chooser_${this.pgn_choices_start - 100}"> << </span>|` +
+				`<span id="pgn_index_chooser_${this.pgn_choices_start + 100}"> >> </span>|` +
+				`<span id="pgn_index_chooser_${this.pgn_choices_start + 1000}"> >>> </span>|` +
+				`<span id="pgn_index_chooser_${this.pgn_choices_start + 10000}"> >>>> </span>|` +
+				`<span id="pgn_index_chooser_99999999"> End (${count}) </span>` +
 				`&mdash; <span class="green">${this.pgndata.source}</span>`
 			:
 				`<span class="green">${this.pgndata.source}</span>`;
@@ -2443,7 +2443,7 @@ let hub_props = {
 					s += `  <span class="gray">(${p.tags.Variant})</span>`;
 				}
 
-				lines.push(`<li class="pgnchooser" id="chooser_${n}">${s}</li>`);
+				lines.push(`<li class="pgnchooser" id="pgn_chooser_${n}">${s}</li>`);
 
 			} else if (count > interval) {		// Pad the chooser with blank lines so the buttons at the bottom behave nicely. This is stupid though.
 
@@ -2453,7 +2453,7 @@ let hub_props = {
 		}
 		lines.push("</ul>");
 		if (count > interval) {
-			prevnextfoo = ReplaceAll(prevnextfoo, `span id="setchooserstart_`, `span id="setchooserstartbottom_`);		// id should be unique per element.
+			prevnextfoo = ReplaceAll(prevnextfoo, `span id="pgn_index_chooser_`, `span id="pgn_index_b_chooser_`);		// id should be unique per element.
 			lines.push(prevnextfoo);
 		}
 
