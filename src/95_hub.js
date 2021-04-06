@@ -187,6 +187,10 @@ let hub_props = {
 			}
 		}
 
+		// FIXME? If we're using the non-recommended option "allow_stopped_analysis" and
+		// an analysis has stopped, then pressing Go cannot start a new search, even if
+		// the node limit has been changed. Meh.
+
 		this.set_behaviour_direct(s);
 		this.behave("behaviour");
 	},
