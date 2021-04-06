@@ -170,8 +170,7 @@ let hub_props = {
 		}
 
 		// Don't do anything if behaviour is already correct. But
-		// "halt" always triggers a behave() call for safety reasons,
-		// and "analysis_locked" needs to check if we're in a new position.
+		// "halt" always triggers a behave() call for safety reasons.
 
 		if (s === config.behaviour) {
 			switch (s) {
@@ -182,14 +181,15 @@ let hub_props = {
 					break;				// i.e. do NOT immediately return
 				}
 				return;
+			case "analysis_free":
+				if (!this.engine.search_desired.node) {
+					break;				// i.e. do NOT immediately return
+				}
+				return;
 			default:
 				return;
 			}
 		}
-
-		// FIXME? If we're using the non-recommended option "allow_stopped_analysis" and
-		// an analysis has stopped, then pressing Go cannot start a new search, even if
-		// the node limit has been changed. Meh.
 
 		this.set_behaviour_direct(s);
 		this.behave("behaviour");
