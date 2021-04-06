@@ -105,10 +105,21 @@ function NewStatusHandler() {
 				}
 				status_string += `</span>`;
 
-				if (!engine.search_running.node) {
+				if (!engine.search_running.node && engine.search_completed.node === node) {
+
+					let stoppedtext = "";
+
 					if (config.behaviour !== "halt") {
-						status_string += ` <span class="blue">(stopped)</span>`;
+						stoppedtext = ` <span class="blue">(stopped)</span>`;
 					}
+
+					if (typeof engineconfig[engine.filepath].search_nodes === "number" && engineconfig[engine.filepath].search_nodes > 0) {
+						if (node.table.nodes >= engineconfig[engine.filepath].search_nodes) {
+							stoppedtext = ` <span class="blue">(limit met)</span>`;
+						}
+					}
+
+					status_string += stoppedtext;
 				}
 			}
 
