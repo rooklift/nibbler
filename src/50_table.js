@@ -72,7 +72,7 @@ function NewInfo(board, move) {
 
 	info.board = board;
 	info.move = move;
-	info.__ghost = false;			// If not false, this is temporary inferred info. Will store a string to display.
+	info.__ghost = false;			// If not false, this is temporary inferred info.
 	info.__touched = false;			// Has this ever actually been updated?
 	info.leelaish = false;			// Whether the most recent update to this info was from an engine considered Leelaish.
 	info.pv = [move];				// Validated as a legal sequence upon reception.
