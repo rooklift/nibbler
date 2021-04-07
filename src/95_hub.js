@@ -2119,31 +2119,10 @@ let hub_props = {
 		this.save_config();
 	},
 
-	small_arrows: function() {
-		config.arrow_width = 8;
-		config.arrowhead_radius = 12;
-		config.board_font = "18px Arial";
-		this.save_config();
-	},
-
-	medium_arrows: function() {
-		config.arrow_width = 12;
-		config.arrowhead_radius = 18;
-		config.board_font = "24px Arial";
-		this.save_config();
-	},
-
-	large_arrows: function() {
-		config.arrow_width = 16;
-		config.arrowhead_radius = 24;
-		config.board_font = "32px Arial";
-		this.save_config();
-	},
-
-	giant_arrows: function() {
-		config.arrow_width = 24;
-		config.arrowhead_radius = 32;
-		config.board_font = "40px Arial";
+	set_arrow_size: function(width, radius, fontsize) {
+		config.arrow_width = width;
+		config.arrowhead_radius = radius;
+		config.board_font = `${fontsize}px Arial`;
 		this.save_config();
 	},
 

@@ -1799,25 +1799,37 @@ function menu_build() {
 						{
 							label: "Giant",
 							click: () => {
-								win.webContents.send("call", "giant_arrows");
+								win.webContents.send("call", {
+									fn: "set_arrow_size",
+									args: [24, 32, 40]
+								});
 							}
 						},
 						{
 							label: "Large",
 							click: () => {
-								win.webContents.send("call", "large_arrows");
+								win.webContents.send("call", {
+									fn: "set_arrow_size",
+									args: [16, 24, 32]
+								});
 							}
 						},
 						{
 							label: "Medium",
 							click: () => {
-								win.webContents.send("call", "medium_arrows");
+								win.webContents.send("call", {
+									fn: "set_arrow_size",
+									args: [12, 18, 24]
+								});
 							}
 						},
 						{
 							label: "Small",
 							click: () => {
-								win.webContents.send("call", "small_arrows");
+								win.webContents.send("call", {
+									fn: "set_arrow_size",
+									args: [8, 12, 18]
+								});
 							}
 						},
 					]
