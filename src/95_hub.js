@@ -1951,7 +1951,7 @@ let hub_props = {
 			let filepath = this.engine_choices[n];			// The array is remade every time the fast engine chooser is displayed
 			if (filepath) {
 				if (event.button === 2) {					// Right-click
-					if (config.path !== filepath) {
+					if (this.engine.filepath !== filepath) {
 						delete engineconfig[filepath];
 						this.save_engineconfig();
 						this.show_fast_engine_chooser();
@@ -2476,7 +2476,7 @@ let hub_props = {
 				continue;
 			}
 
-			let ac = config.path === filepath ? ` <span class="blue">(active)</span>` : "";
+			let ac = (this.engine.filepath === filepath) ? ` <span class="blue">(active)</span>` : "";
 
 			divs.push(`<div class="enginechooser" id="engine_chooser_${this.engine_choices.length}"><span class="gray">${path.dirname(filepath)}</span>` +
 					  `<br>    ${path.basename(filepath)}${ac}</div>`);
