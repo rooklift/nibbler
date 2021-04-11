@@ -99,9 +99,10 @@ function NewStatusHandler() {
 
 			} else {
 
-				status_string += `<span class="gray">${NString(node.table.nodes)} nodes, ${DurationString(node.table.time)} (N/s: ${NString(node.table.nps)})`;
+				status_string += `<span class="gray">${NString(node.table.nodes)} ${node.table.nodes === 1 ? "node" : "nodes"}`;
+				status_string += `, ${DurationString(node.table.time)} (N/s: ${NString(node.table.nps)})`;
 				if (engineconfig[engine.filepath].options["SyzygyPath"]) {
-					status_string += `, ${NString(node.table.tbhits)} tbhits`;
+					status_string += `, ${NString(node.table.tbhits)} ${node.table.tbhits === 1 ? "tbhit" : "tbhits"}`;
 				}
 				status_string += `</span>`;
 
