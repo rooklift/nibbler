@@ -69,9 +69,9 @@ exports.defaults = {
 	"next_move_unique_colour": false,
 	"arrowhead_type": 0,
 
-	"ev_white_pov": false,
-	"cp_white_pov": false,
-	"wdl_white_pov": false,
+	"ev_pov": null,
+	"cp_pov": null,
+	"wdl_pov": null,
 
 	"show_cp": false,
 	"show_n": true,
@@ -210,6 +210,18 @@ function fix(cfg) {
 	}
 	if (typeof cfg.weights_dialog_folder !== "string") {
 		cfg.weights_dialog_folder = "";
+	}
+
+	// These three vars were replaced...
+
+	if (cfg.ev_white_pov) {
+		cfg.ev_pov = "w";
+	}
+	if (cfg.cp_white_pov) {
+		cfg.cp_pov = "w";
+	}
+	if (cfg.wdl_white_pov) {
+		cfg.wdl_pov = "w";
 	}
 }
 

@@ -785,37 +785,127 @@ function menu_build() {
 					type: "separator"
 				},
 				{
-					label: "Score winrates from white POV",
-					type: "checkbox",
-					checked: config.ev_white_pov,
-					click: () => {
-						win.webContents.send("call", {
-							fn: "toggle",
-							args: ["ev_white_pov"],
-						});
-					}
+					label: "Winrate POV",
+					submenu: [
+						{
+							label: "Current",
+							type: "checkbox",
+							checked: config.ev_pov !== "w" && config.ev_pov !== "b",
+							click: () => {
+								set_checks("Analysis", "Winrate POV", "Current");
+								win.webContents.send("set", {
+									key: "ev_pov",
+									value: null,
+								});
+							}
+						},
+						{
+							label: "White",
+							type: "checkbox",
+							checked: config.ev_pov === "w",
+							click: () => {
+								set_checks("Analysis", "Winrate POV", "White");
+								win.webContents.send("set", {
+									key: "ev_pov",
+									value: "w",
+								});
+							}
+						},
+						{
+							label: "Black",
+							type: "checkbox",
+							checked: config.ev_pov === "b",
+							click: () => {
+								set_checks("Analysis", "Winrate POV", "Black");
+								win.webContents.send("set", {
+									key: "ev_pov",
+									value: "b",
+								});
+							}
+						},
+					]
 				},
 				{
-					label: "Score CP values from white POV",
-					type: "checkbox",
-					checked: config.cp_white_pov,
-					click: () => {
-						win.webContents.send("call", {
-							fn: "toggle",
-							args: ["cp_white_pov"],
-						});
-					}
+					label: "Centipawn POV",
+					submenu: [
+						{
+							label: "Current",
+							type: "checkbox",
+							checked: config.cp_pov !== "w" && config.cp_pov !== "b",
+							click: () => {
+								set_checks("Analysis", "Centipawn POV", "Current");
+								win.webContents.send("set", {
+									key: "cp_pov",
+									value: null,
+								});
+							}
+						},
+						{
+							label: "White",
+							type: "checkbox",
+							checked: config.cp_pov === "w",
+							click: () => {
+								set_checks("Analysis", "Centipawn POV", "White");
+								win.webContents.send("set", {
+									key: "cp_pov",
+									value: "w",
+								});
+							}
+						},
+						{
+							label: "Black",
+							type: "checkbox",
+							checked: config.cp_pov === "b",
+							click: () => {
+								set_checks("Analysis", "Centipawn POV", "Black");
+								win.webContents.send("set", {
+									key: "cp_pov",
+									value: "b",
+								});
+							}
+						},
+					]
 				},
 				{
-					label: "Show WDL from white POV",
-					type: "checkbox",
-					checked: config.wdl_white_pov,
-					click: () => {
-						win.webContents.send("call", {
-							fn: "toggle",
-							args: ["wdl_white_pov"],
-						});
-					}
+					label: "Win/draw/loss POV",
+					submenu: [
+						{
+							label: "Current",
+							type: "checkbox",
+							checked: config.wdl_pov !== "w" && config.wdl_pov !== "b",
+							click: () => {
+								set_checks("Analysis", "Win/draw/loss POV", "Current");
+								win.webContents.send("set", {
+									key: "wdl_pov",
+									value: null,
+								});
+							}
+						},
+						{
+							label: "White",
+							type: "checkbox",
+							checked: config.wdl_pov === "w",
+							click: () => {
+								set_checks("Analysis", "Win/draw/loss POV", "White");
+								win.webContents.send("set", {
+									key: "wdl_pov",
+									value: "w",
+								});
+							}
+						},
+						{
+							label: "Black",
+							type: "checkbox",
+							checked: config.wdl_pov === "b",
+							click: () => {
+								set_checks("Analysis", "Win/draw/loss POV", "Black");
+								win.webContents.send("set", {
+									key: "wdl_pov",
+									value: "b",
+								});
+							}
+						},
+					]
 				},
 				{
 					type: "separator"

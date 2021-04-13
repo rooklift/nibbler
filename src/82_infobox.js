@@ -119,12 +119,12 @@ let infobox_props = {
 			let value_string = "?";
 			if (config.show_cp) {
 				if (typeof info.mate === "number" && info.mate !== 0) {
-					value_string = info.mate_string(config.cp_white_pov);
+					value_string = info.mate_string(config.cp_pov);
 				} else {
-					value_string = info.cp_string(config.cp_white_pov);
+					value_string = info.cp_string(config.cp_pov);
 				}
 			} else {
-				value_string = info.value_string(1, config.ev_white_pov);
+				value_string = info.value_string(1, config.ev_pov);
 				if (value_string !== "?") {
 					value_string += "%";
 				}
@@ -182,7 +182,7 @@ let infobox_props = {
 						n_abs:         config.show_n_abs,
 						depth:         config.show_depth,
 						wdl:           config.show_wdl,
-						wdl_white_pov: config.wdl_white_pov,
+						wdl_pov:       config.wdl_pov,
 						p:             config.show_p,
 						m:             config.show_m,
 						v:             config.show_v,

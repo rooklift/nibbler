@@ -142,7 +142,7 @@ const info_prototype = {
 		return Value(this.q);		// Rescaled to 0..1
 	},
 
-	value_string: function(dp, white_pov) {
+	value_string: function(dp, pov) {
 		if (!this.__touched || typeof this.q !== "number") {
 			return "?";
 		}
@@ -150,13 +150,13 @@ const info_prototype = {
 			return "?";
 		}
 		let val = this.value();
-		if (white_pov && this.board.active === "b") {
+		if ((pov === "w" && this.board.active === "b") || (pov === "b" && this.board.active === "w")) {
 			val = 1 - val;
 		}
 		return (val * 100).toFixed(dp);
 	},
 
-	cp_string: function(white_pov) {
+	cp_string: function(pov) {
 		if (!this.__touched || typeof this.cp !== "number") {
 			return "?";
 		}
@@ -164,7 +164,7 @@ const info_prototype = {
 			return "?";
 		}
 		let cp = this.cp;
-		if (white_pov && this.board.active === "b") {
+		if ((pov === "w" && this.board.active === "b") || (pov === "b" && this.board.active === "w")) {
 			cp = 0 - cp;
 		}
 		let ret = (cp / 100).toFixed(2);
@@ -174,12 +174,12 @@ const info_prototype = {
 		return ret;
 	},
 
-	mate_string: function(white_pov) {
+	mate_string: function(pov) {
 		if (typeof this.mate !== "number" || this.mate === 0) {
 			return "?";
 		}
 		let mate = this.mate;
-		if (white_pov && this.board.active === "b") {
+		if ((pov === "w" && this.board.active === "b") || (pov === "b" && this.board.active === "w")) {
 			mate = 0 - mate;
 		}
 		if (mate < 0) {
@@ -189,11 +189,11 @@ const info_prototype = {
 		}
 	},
 
-	wdl_string: function(white_pov) {
+	wdl_string: function(pov) {
 		if (Array.isArray(this.wdl) === false || this.wdl.length !== 3) {
 			return "?";
 		}
-		if (white_pov && this.board.active === "b") {
+		if ((pov === "w" && this.board.active === "b") || (pov === "b" && this.board.active === "w")) {
 			return `${this.wdl[2]} ${this.wdl[1]} ${this.wdl[0]}`;
 		} else {
 			return `${this.wdl[0]} ${this.wdl[1]} ${this.wdl[2]}`;
@@ -209,11 +209,11 @@ const info_prototype = {
 		let ret = [];
 
 		if (opts.ev) {
-			ret.push(`EV: ${this.value_string(1, opts.ev_white_pov)}%`);
+			ret.push(`EV: ${this.value_string(1, opts.ev_pov)}%`);
 		}
 
 		if (opts.cp) {
-			ret.push(`CP: ${this.cp_string(opts.cp_white_pov)}`);
+			ret.push(`CP: ${this.cp_string(opts.cp_pov)}`);
 		}
 
 		// N is fairly complicated...
@@ -319,7 +319,7 @@ const info_prototype = {
 		}
 
 		if (opts.wdl) {
-			ret.push(`WDL: ${this.wdl_string(opts.wdl_white_pov)}`);
+			ret.push(`WDL: ${this.wdl_string(opts.wdl_pov)}`);
 		}
 
 		return ret;
