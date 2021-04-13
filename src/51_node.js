@@ -298,9 +298,9 @@ const node_prototype = {
 		}
 
 		let sl = info.stats_list({
-			ev_white_pov:  config.ev_white_pov,
-			cp_white_pov:  config.cp_white_pov,
-			wdl_white_pov: config.wdl_white_pov,
+			ev_pov:        config.ev_pov,
+			cp_pov:        config.cp_pov,
+			wdl_pov:       config.wdl_pov,
 			ev:            config.pgn_ev,
 			cp:            config.pgn_cp,
 			n:             config.pgn_n,
