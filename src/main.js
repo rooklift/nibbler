@@ -867,14 +867,14 @@ function menu_build() {
 					]
 				},
 				{
-					label: "Win/draw/loss POV",
+					label: "Win / draw / loss POV",
 					submenu: [
 						{
 							label: "Current",
 							type: "checkbox",
 							checked: config.wdl_pov !== "w" && config.wdl_pov !== "b",
 							click: () => {
-								set_checks("Analysis", "Win/draw/loss POV", "Current");
+								set_checks("Analysis", "Win / draw / loss POV", "Current");
 								win.webContents.send("set", {
 									key: "wdl_pov",
 									value: null,
@@ -886,7 +886,7 @@ function menu_build() {
 							type: "checkbox",
 							checked: config.wdl_pov === "w",
 							click: () => {
-								set_checks("Analysis", "Win/draw/loss POV", "White");
+								set_checks("Analysis", "Win / draw / loss POV", "White");
 								win.webContents.send("set", {
 									key: "wdl_pov",
 									value: "w",
@@ -898,7 +898,7 @@ function menu_build() {
 							type: "checkbox",
 							checked: config.wdl_pov === "b",
 							click: () => {
-								set_checks("Analysis", "Win/draw/loss POV", "Black");
+								set_checks("Analysis", "Win / draw / loss POV", "Black");
 								win.webContents.send("set", {
 									key: "wdl_pov",
 									value: "b",
