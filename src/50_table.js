@@ -110,6 +110,11 @@ const info_prototype = {
 		this.wdl = null;			// Either null or a length 3 array of ints.
 	},
 
+	set_pv: function(pv) {
+		this.pv = Array.from(pv);
+		this.nice_pv_cache = null;
+	},
+
 	nice_pv: function() {
 
 		// Human readable moves.

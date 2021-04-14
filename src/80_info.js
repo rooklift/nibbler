@@ -235,12 +235,10 @@ let info_receiver_props = {
 					if (move_cycle_pre_update === move_info.cycle && ArrayStartsWith(move_info.pv, new_pv)) {
 						// Skip the update. This partially mitigates Stockfish sending unresolved PVs.
 					} else {
-						move_info.pv = new_pv;
-						move_info.nice_pv_cache = null;
+						move_info.set_pv(new_pv);
 					}
 				} else {
-					move_info.pv = [move];
-					move_info.nice_pv_cache = null;
+					move_info.set_pv([move]);
 				}
 			}
 

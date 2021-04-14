@@ -361,11 +361,9 @@ let hub_props = {
 		pv = pv.slice(moves.length);
 
 		let new_info = NewInfo(node.board, nextmove);
-
+		new_info.set_pv(pv);
 		new_info.__ghost = true;
 		new_info.__touched = true;
-		new_info.pv = pv;
-		new_info.nice_pv_cache = null;
 		new_info.subcycle = 1;		// Crude hack, makes draw_infobox() make other moves gray.
 		new_info.q = oldinfo.q;
 		new_info.cp = oldinfo.cp;
