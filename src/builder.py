@@ -1,60 +1,37 @@
 import json, os, shutil, zipfile
 
-# To build Nibbler:
+zips = {
+	"windows": "electron_zipped/electron-v9.4.4-win32-x64.zip",
+	"linux": "electron_zipped/electron-v9.4.4-linux-x64.zip",
+}
+
+# To build Nibbler: (for info see https://electronjs.org/docs/tutorial/application-distribution)
 #
-# Obtain the 2 Electron assets named below, from https://github.com/electron/electron/releases
-# Create a folder called ./electron_zipped
-# Place the 2 Electron assets in it
+# Obtain the appropriate Electron asset named above, from https://github.com/electron/electron/releases
+# Create a folder called ./electron_zipped and place the Electron asset in it
 # Run ./builder.py
-#
-# For more info, see https://electronjs.org/docs/tutorial/application-distribution
-
-linux_electron = "electron_zipped/electron-v9.4.4-linux-x64.zip"
-windows_electron = "electron_zipped/electron-v9.4.4-win32-x64.zip"
-
-# Setup directories...
 
 with open("package.json") as f:
 	version = json.load(f)["version"]
 
-linux_dir = "dist/nibbler-{}-linux".format(version)
-windows_dir = "dist/nibbler-{}-windows".format(version)
-
-linux_app_dir = os.path.join(linux_dir, "resources/app")
-windows_app_dir = os.path.join(windows_dir, "resources/app")
-
-os.makedirs(linux_app_dir)
-os.makedirs(windows_app_dir)
-
-# Source and other technical files...
-
 useful_files = [file for file in os.listdir() if file.endswith(".js") or file.endswith(".html") or file.endswith(".css") or file == "package.json"]
-
-for file in useful_files:
-	shutil.copy(file, linux_app_dir)
-	shutil.copy(file, windows_app_dir)
-
-# Folders...
-
 folders = ["modules", "pieces"]
 
-for folder in folders:
-	shutil.copytree(folder, os.path.join(linux_app_dir, folder))
-	shutil.copytree(folder, os.path.join(windows_app_dir, folder))
-
-# Extract Electron...
-
-print("Extracting for Linux...")
-z = zipfile.ZipFile(linux_electron, "r")
-z.extractall(linux_dir)
-z.close()
-
-print("Extracting for Windows...")
-z = zipfile.ZipFile(windows_electron, "r")
-z.extractall(windows_dir)
-z.close()
-
-# Rename Electron...
-
-os.rename(os.path.join(linux_dir, "electron"), os.path.join(linux_dir, "nibbler"))
-os.rename(os.path.join(windows_dir, "electron.exe"), os.path.join(windows_dir, "nibbler.exe"))
+for key, value in zips.items():
+	if not os.path.exists(value):
+		continue
+	build_dir = "dist/nibbler-{}-{}".format(version, key)
+	build_app_dir = os.path.join(build_dir, "resources/app")
+	os.makedirs(build_app_dir)
+	for file in useful_files:
+		shutil.copy(file, build_app_dir)
+	for folder in folders:
+		shutil.copytree(folder, os.path.join(build_app_dir, folder))
+	print("Extracting for {}...".format(key))
+	z = zipfile.ZipFile(value, "r")
+	z.extractall(build_dir)
+	z.close()
+	if os.path.exists(os.path.join(build_dir, "electron.exe")):
+		os.rename(os.path.join(build_dir, "electron.exe"), os.path.join(build_dir, "nibbler.exe"))
+	if os.path.exists(os.path.join(build_dir, "electron")):
+		os.rename(os.path.join(build_dir, "electron"), os.path.join(build_dir, "nibbler"))
