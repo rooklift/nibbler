@@ -121,7 +121,7 @@ function NewEngine(hub) {
 
 				if (key.length > 0) {
 					this.sent_options[key] = val;
-					this.send_ack_setoption_to_main_process(key);
+					this.send_ack_setoption(key);
 				}
 			}
 		}
@@ -349,7 +349,7 @@ function NewEngine(hub) {
 		return s;			// Just so the caller can pop s up as a message if it wants.
 	};
 
-	eng.send_ack_setoption_to_main_process = function(name) {
+	eng.send_ack_setoption = function(name) {
 		let key = name.toLowerCase();																// Keys are always stored in lowercase.
 		let val = typeof this.sent_options[key] === "string" ? this.sent_options[key] : "";			// Values are strings, if present
 		let o = {key, val};
@@ -388,7 +388,7 @@ function NewEngine(hub) {
 		this.sent_options = Object.create(null);		// Blank anything we "sent" up till now.
 
 		for (let key of ["EvalFile", "WeightsFile", "SyzygyPath", "Threads", "Hash", "MultiPV", "Backend", "Temperature", "TempDecayMoves"]) {
-			this.send_ack_setoption_to_main_process(key);
+			this.send_ack_setoption(key);
 		}
 
 		this.exe.once("error", (err) => {

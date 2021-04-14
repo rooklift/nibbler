@@ -1137,7 +1137,7 @@ let hub_props = {
 	},
 
 	send_ack_setoption: function(name) {
-		this.engine.send_ack_setoption_to_main_process(name);
+		this.engine.send_ack_setoption(name);
 	},
 
 	// ---------------------------------------------------------------------------------------------------------------------
@@ -1166,19 +1166,19 @@ let hub_props = {
 
 		if (!this.engine.ever_received_uciok) {									// Correct leelaish flag not yet known.
 			alert(messages.too_soon_to_set_options);
-			this.engine.send_ack_setoption_to_main_process(name);
+			this.engine.send_ack_setoption(name);
 			return;
 		}
 
 		if (this.engine.leelaish && name.toLowerCase() === "multipv") {
-			this.set_special_message("MultiPV should be 500 for this engine.", "blue");
-			this.engine.send_ack_setoption_to_main_process(name);
+			this.set_special_message("MultiPV should be 500 for this engine", "blue");
+			this.engine.send_ack_setoption(name);
 			return;
 		}
 
 		if (!this.engine.known_options[name.toLowerCase()]) {
 			this.set_special_message(`${name} not known by this engine`, "blue");
-			this.engine.send_ack_setoption_to_main_process(name);
+			this.engine.send_ack_setoption(name);
 			return;
 		}
 
