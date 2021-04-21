@@ -225,15 +225,6 @@ function fix(cfg) {
 	}
 }
 
-function assign_without_overwrite(target, source) {
-	let keys = Object.keys(source)
-	for (let key of keys) {
-		if (target.hasOwnProperty(key) === false) {
-			target[key] = source[key];
-		}
-	}
-}
-
 function replace_all(s, search, replace) {
     return s.split(search).join(replace);
 }
@@ -260,7 +251,6 @@ function debork_json(s) {
 exports.load = () => {
 
 	let cfg = new Config();
-	let defaults_copy = JSON.parse(JSON.stringify(exports.defaults));
 
 	let err_to_return = null;
 
@@ -273,7 +263,16 @@ exports.load = () => {
 		err_to_return = err.toString();
 	}
 
-	assign_without_overwrite(cfg, defaults_copy);		// We use a copy so that any objects that are assigned are not the default objects.
+	// Copy default values for any missing keys into the config...
+	// We use a copy so that any objects that are assigned are not the default objects.
+
+	let defaults_copy = JSON.parse(JSON.stringify(exports.defaults));
+
+	for (let key of Object.keys(defaults_copy)) {
+		if (cfg.hasOwnProperty(key) === false) {
+			cfg[key] = defaults_copy[key];
+		}
+	}
 
 	fix(cfg);
 	return [err_to_return, cfg];
