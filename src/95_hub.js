@@ -2043,14 +2043,15 @@ let hub_props = {
 		config[option] = !config[option];
 		this.save_config();
 
-		this.info_handler.must_draw_infobox();
-
 		// Cases that have additional actions after...
 
 		if (option === "searchmoves_buttons") {
 			this.tree.node.searchmoves = [];		// This is reasonable regardless of which way the toggle went.
 			this.handle_search_params_change();
 		}
+
+		this.info_handler.must_draw_infobox();
+		this.draw();
 	},
 
 	toggle_flip: function() {						// config.flip should not be directly set, call this function instead.
