@@ -103,26 +103,10 @@ let tree_manipulation_props = {
 	},
 
 	return_to_main_line: function() {
-
-		let main_line = this.root.future_history();
-		let history = this.node.history();
-
-		let node = this.root;
-
-		for (let n = 0; n < history.length; n++) {
-			if (main_line[n] !== history[n]) {
-				break;
-			}
-			if (node.children.length === 0) {
-				break;
-			}
-			node = node.children[0];
-		}
-
+		let node = this.node.return_to_main_line_helper();
 		if (this.node === node) {
 			return false;
 		}
-
 		this.node = node;
 		this.dom_from_scratch();
 		return true;
