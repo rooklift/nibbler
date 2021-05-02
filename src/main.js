@@ -9,6 +9,7 @@ electron.app.commandLine.appendSwitch("js-flags", "--expose_gc");
 
 // Other requires...
 
+const alert = require("./modules/alert_main_process");
 const config_io = require("./modules/config_io");
 const custom_uci = require("./modules/custom_uci");
 const engineconfig_io = require("./modules/engineconfig_io");
@@ -24,13 +25,6 @@ const url = require("url");
 
 const save_dialog = electron.dialog.showSaveDialogSync || electron.dialog.showSaveDialog;
 const open_dialog = electron.dialog.showOpenDialogSync || electron.dialog.showOpenDialog;
-
-// Create an alert() function...
-
-let alert = (msg) => {
-	electron.dialog.showMessageBox({message: stringify(msg), title: "Alert", buttons: ["OK"]}, () => {});
-	// Providing a callback makes the window not block the process.
-};
 
 // Note that as the user adjusts menu items, our copy of the config will become
 // out of date. The renderer is responsible for having an up-to-date copy.
