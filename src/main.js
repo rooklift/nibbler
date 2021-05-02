@@ -2147,6 +2147,7 @@ function menu_build() {
 							let file = files[0];
 							if (file === process.argv[0] || path.basename(file).includes("client")) {
 								alert(messages.wrong_engine_exe);
+								win.webContents.send("call", "send_ack_engine");	// Force an ack IPC to fix our menu check state.
 								return;
 							}
 							win.webContents.send("call", {
