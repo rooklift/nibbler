@@ -1,5 +1,6 @@
 dist/*
 concat.py
+.jshintrc
 electron_zipped/*
 update_my_installation.py
 misc/perft-marcel.epd
