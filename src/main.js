@@ -9,7 +9,7 @@ electron.app.commandLine.appendSwitch("js-flags", "--expose_gc");
 
 // Other requires...
 
-const alert = require("./modules/alert_main_process");
+const alert = require("./modules/alert_main");
 const config_io = require("./modules/config_io");
 const custom_uci = require("./modules/custom_uci");
 const engineconfig_io = require("./modules/engineconfig_io");

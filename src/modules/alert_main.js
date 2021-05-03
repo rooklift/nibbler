@@ -1,14 +1,17 @@
 "use strict";
 
+// To be used in the main process only.
+
 const electron = require("electron");
 const stringify = require("./stringify");
 
-let alerts_open = 0;
-
 let major_version = (process && process.versions) ? parseInt(process.versions.electron, 10) : 0;
+
 if (Number.isNaN(major_version)) {
 	major_version = 0;
 }
+
+let alerts_open = 0;
 
 module.exports = function(msg) {
 
