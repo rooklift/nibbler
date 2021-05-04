@@ -408,6 +408,7 @@ let hub_props = {
 		this.draw();
 		this.purge_finished_loaders();
 		this.update_graph_eval(this.engine.search_running.node);		// Possibly null.
+		this.maybe_save_window_size();
 		setTimeout(this.spin.bind(this), config.update_delay);
 		debuggo.spin -= 1;
 	},
@@ -423,6 +424,13 @@ let hub_props = {
 		let info = SortedMoveInfo(node)[0];								// Possibly undefined.
 		if (info) {
 			node.table.update_eval_from_move(info.move);
+		}
+	},
+
+	maybe_save_window_size: function() {
+		if (this.window_resize_time && performance.now() - this.window_resize_time > 1000) {
+			this.window_resize_time = null;
+			this.save_window_size();
 		}
 	},
 

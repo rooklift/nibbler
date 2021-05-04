@@ -255,6 +255,10 @@ window.addEventListener("drop", (event) => {
 	hub.handle_drop(event);
 });
 
+window.addEventListener("resize", (event) => {
+	hub.window_resize_time = performance.now();
+});
+
 // Debug. Various functions increment a counter when starting, and decrement it before returning,
 // so if we find a property that is non-zero, an exception has occurred.
 
