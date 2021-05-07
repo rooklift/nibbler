@@ -72,10 +72,6 @@ if (images.validate_folder(config.override_piece_directory)) {
 	images.load_from(path.join(__dirname, "pieces"));
 }
 
-// Debug (see start.js).............................................
-
-let debuggo = Object.create(null);
-
 // Standard options, for either type of engine......................
 // Note that UCI_Chess960 is handled specially by engine.js
 

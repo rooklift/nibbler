@@ -403,14 +403,12 @@ let hub_props = {
 	// Spin, our main loop...
 
 	spin: function() {
-		debuggo.spin = debuggo.spin ? debuggo.spin + 1 : 1;
 		this.tick++;
 		this.draw();
 		this.purge_finished_loaders();
 		this.update_graph_eval(this.engine.search_running.node);		// Possibly null.
 		this.maybe_save_window_size();
 		setTimeout(this.spin.bind(this), config.update_delay);
-		debuggo.spin -= 1;
 	},
 
 	purge_finished_loaders: function() {
@@ -439,8 +437,6 @@ let hub_props = {
 
 	draw: function() {
 
-		debuggo.draw = debuggo.draw ? debuggo.draw + 1 : 1;
-
 		// We do the :hover reaction first. This way, we are detecting hover based on the previous cycle's state.
 		// This should prevent the sort of flicker that can occur if we try to detect hover based on changes we
 		// just made (i.e. if we drew then detected hover instantly).
@@ -463,8 +459,6 @@ let hub_props = {
 		this.draw_infobox();
 
 		this.grapher.draw(this.tree.node);
-
-		debuggo.draw -= 1;
 	},
 
 	draw_friendlies_in_table: function(board) {

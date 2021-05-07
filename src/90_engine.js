@@ -409,16 +409,13 @@ function NewEngine(hub) {
 
 		this.err_scanner.on("line", (line) => {
 			if (this.have_quit) return;
-			debuggo.err_line = debuggo.err_line ? debuggo.err_line + 1 : 1;
 			Log(". " + line);
 			this.hub.err_receive(SafeStringHTML(line));
-			debuggo.err_line -= 1;
 		});
 
 		this.scanner.on("line", (line) => {
 
 			if (this.have_quit) return;
-			debuggo.line = debuggo.line ? debuggo.line + 1 : 1;
 
 			if (line.startsWith("bestmove")) {
 				this.handle_bestmove_line(line);		// Will do logging, possibly adding a reason for rejection.
@@ -445,8 +442,6 @@ function NewEngine(hub) {
 				}
 				this.hub.receive_misc(SafeStringHTML(line));
 			}
-
-			debuggo.line -= 1;
 
 		});
 

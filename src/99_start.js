@@ -139,8 +139,6 @@ ipcRenderer.on("call", (event, msg) => {	// Adds stuff to the "queue" - so main 
 
 function input_loop() {
 
-	debuggo.input_loop = debuggo.input_loop ? debuggo.input_loop + 1 : 1;
-
 	let fn;
 
 	let length = input_queue.length;
@@ -162,7 +160,6 @@ function input_loop() {
 	}
 
 	setTimeout(input_loop, 10);
-	debuggo.input_loop -= 1;
 }
 
 input_loop();
@@ -259,20 +256,9 @@ window.addEventListener("resize", (event) => {
 	hub.window_resize_time = performance.now();
 });
 
-// Debug. Various functions increment a counter when starting, and decrement it before returning,
-// so if we find a property that is non-zero, an exception has occurred.
-
-function debug_loop() {
-	for (let value of Object.values(debuggo)) {
-		if (value) {
-			alert(messages.uncaught_exception);
-			return;		// Return before setTimeout, thus no more warnings.
-		}
-	}
-	setTimeout(debug_loop, 5000);
-}
-
-debug_loop();
+window.addEventListener("error", (event) => {
+	alert(messages.uncaught_exception);
+}, {once: true});
 
 // Forced garbage collection. For reasons I can't begin to fathom, Node isn't
 // garbage collecting everything, and the heaps seems to grow and grow. It's
