@@ -74,6 +74,70 @@ body {
 	z-index: 3;
 }
 
+#statusbox {
+	grid-area: c;
+	margin: 0 0 0 1em;
+	border: none;
+	display: block;
+	font-family: monospace, monospace;
+	pointer-events: auto;
+	overflow: hidden;
+	white-space: pre;
+}
+
+#infobox {
+	grid-area: d;
+	margin: 1em 1em 0 1em;
+	display: block;
+	color: #cccccc;						/* only used for Lc0 stderr output at startup */
+	font-family: monospace, monospace;
+	overflow-x: hidden;
+	overflow-y: auto;
+	padding-right: 10px;				/* so the text doesn't get so near the scroll bar */
+	pointer-events: auto;
+	white-space: pre-wrap;
+}
+
+#graph {
+	grid-area: e;
+	align-self: end;
+	display: block;
+	margin: 16px 0 0 1em;
+	pointer-events: auto;
+}
+
+input[type=text]:focus {
+	outline: 2px dashed gray;
+	outline-offset: 4px;
+}
+
+#fenbox {
+	grid-area: f;
+	margin: 1em 1em 0 1em;
+	background-color: #080808;
+	border: none;
+	caret-color: white;
+	color: #6cccee;
+	display: block;
+	font-family: monospace, monospace;
+	font-size: 100%;
+	pointer-events: auto;
+	user-select: auto;
+}
+
+#movelist {
+	grid-area: g;
+	margin: 1em 1em 1em 1em;
+	display: block;
+	color: #999999;
+	font-family: monospace, monospace;
+	overflow-x: hidden;
+	overflow-y: auto;
+	padding-right: 10px;				/* so the text doesn't get so near the scroll bar */
+	pointer-events: auto;
+	white-space: pre-wrap;
+}
+
 #promotiontable {
 	border-collapse: collapse;
 	display: none;
@@ -110,70 +174,6 @@ td {
 	border: 0;
 	margin: 0;
 	padding: 0;
-}
-
-#statusbox {
-	grid-area: c;
-	margin: 0 0 0 1em;
-	border: none;
-	display: block;
-	font-family: monospace, monospace;
-	pointer-events: auto;
-	overflow: hidden;
-	white-space: pre;
-}
-
-#fenbox {
-	grid-area: f;
-	margin: 1em 1em 0 1em;
-	background-color: #080808;
-	border: none;
-	caret-color: white;
-	color: #6cccee;
-	display: block;
-	font-family: monospace, monospace;
-	font-size: 100%;
-	pointer-events: auto;
-	user-select: auto;
-}
-
-input[type=text]:focus {
-	outline: 2px dashed gray;
-	outline-offset: 4px;
-}
-
-#infobox {
-	grid-area: d;
-	margin: 1em 1em 0 1em;
-	display: block;
-	color: #cccccc;						/* only used for Lc0 stderr output at startup */
-	font-family: monospace, monospace;
-	overflow-x: hidden;
-	overflow-y: auto;
-	padding-right: 10px;				/* so the text doesn't get so near the scroll bar */
-	pointer-events: auto;
-	white-space: pre-wrap;
-}
-
-#movelist {
-	grid-area: g;
-	margin: 1em 1em 1em 1em;
-	display: block;
-	color: #999999;
-	font-family: monospace, monospace;
-	overflow-x: hidden;
-	overflow-y: auto;
-	padding-right: 10px;				/* so the text doesn't get so near the scroll bar */
-	pointer-events: auto;
-	white-space: pre-wrap;
-}
-
-#graph {
-	grid-area: e;
-	align-self: end;
-	display: block;
-	margin: 16px 0 0 1em;
-	pointer-events: auto;
 }
 
 a, a:link, a:visited, a:hover, a:active {	/* I think this is now only used for the "Nibbler in normal browser" message. */
