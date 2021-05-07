@@ -24,22 +24,6 @@ body {
 	background-color: #444444;
 }
 
-.flexible_column {
-	display: flex;
-	flex-direction: column;
-	height: 100%;
-}
-
-.flexible_row {
-	display: flex;
-	flex-direction: row;
-	width: 100%;
-}
-
-.full_growth {
-	flex-grow: 100;			/* The actual number only matters if compared to other flex-grow havers */
-}
-
 #gridder {
 	display: grid;
 	height: 100vh;
