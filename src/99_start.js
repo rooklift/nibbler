@@ -41,9 +41,6 @@ fenbox.value = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1";
 boardfriends.width = canvas.width = boardsquares.width = config.board_size;
 boardfriends.height = canvas.height = boardsquares.height = config.board_size;
 
-boardfriends.style.left = canvas.style.left = boardsquares.offsetLeft.toString() + "px";
-boardfriends.style.top = canvas.style.top = boardsquares.offsetTop.toString() + "px";
-
 // Set up the squares in both tables. Note that, upon flips, the elements
 // themselves are moved to their new position, so everything works, e.g.
 // the x and y values are still correct for the flipped view.

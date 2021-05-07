@@ -12,27 +12,19 @@
 
 	<!-- note to self, only use id for things the JS needs to see, they pollute the namespace -->
 
-	<div class="flexible_column">
+	<div id="gridder">
 
-		<div class="flexible_row">
+		<table id="boardsquares"></table>
+		<canvas id="canvas"></canvas>
+		<table id="boardfriends"></table>
 
-			<div>											<!-- the JS sets the tables and canvas to be on top of each other -->
-				<table id="boardsquares"></table>
-				<canvas id="canvas"></canvas>
-				<table id="boardfriends"></table>
-			</div>
-
-			<div class="full_growth">
-				<div id="statusbox">Starting up...</div>	<!-- needs to have some content so it has a height when we calculate sizes -->
-				<div id="infobox"></div>
-				<div id="graphbox"><canvas id="graph"></canvas></div>
-			</div>
-
-		</div>
+		<div id="statusbox">Starting up...</div>
+		<div id="infobox"></div>
+		<div id="graphbox"><canvas id="graph"></canvas></div>
 
 		<input type="text" id="fenbox" value="">
 
-		<div id="movelist" class="full_growth"></div>
+		<div id="movelist"></div>
 
 	</div>
 

@@ -7,8 +7,7 @@ body {
 	border: 0;
 	color: #eeeeee;
 	cursor: default;
-	height: calc(100% - 32px);
-	margin: 16px;
+	margin: 0;
 	overflow: hidden;
 	padding: 0;
 	pointer-events: none;		/* These must be overriden for things that need pointer / select */
@@ -41,22 +40,37 @@ body {
 	flex-grow: 100;			/* The actual number only matters if compared to other flex-grow havers */
 }
 
+#gridder {
+	display: grid;
+	height: 100vh;
+	grid-template-columns: min-content 1fr;
+	grid-template-rows: 1em 1fr min-content min-content 1fr;
+	grid-template-areas:
+		"a b"
+		"a c"
+		"a d"
+		"e e"
+		"f f";
+}
+
 #boardsquares {
+	grid-area: a;
 	background-size: cover;
 	border-collapse: collapse;
-	margin-bottom: 1em;
 	margin-right: 1em;
 	table-layout: fixed;
 	z-index: 1;
 }
 
 #canvas {
+	grid-area: a;
 	outline-offset: 6px;
 	position: fixed;
 	z-index: 2;
 }
 
 #boardfriends {
+	grid-area: a;
 	border-collapse: collapse;
 	pointer-events: auto;
 	position: fixed;
@@ -103,16 +117,19 @@ td {
 }
 
 #statusbox {
+	grid-area: b;
 	border: none;
 	display: block;
 	font-family: monospace, monospace;
-	margin-bottom: 1em;
 	pointer-events: auto;
+	overflow: hidden;
 	/* white-space: pre; */
 	width: 100%;
 }
 
 #fenbox {
+	grid-area: e;
+	margin-top: 1em;
 	background-color: #080808;
 	border: none;
 	caret-color: white;
@@ -132,6 +149,7 @@ input[type=text]:focus {
 }
 
 #infobox {
+	grid-area: c;
 	color: #cccccc;						/* only used for Lc0 stderr output at startup */
 	font-family: monospace, monospace;
 	margin-bottom: 10px;
@@ -143,6 +161,7 @@ input[type=text]:focus {
 }
 
 #movelist {
+	grid-area: f;
 	color: #999999;
 	font-family: monospace, monospace;
 	margin-top: 1em;
@@ -154,10 +173,14 @@ input[type=text]:focus {
 }
 
 #graphbox {
+	align-self: end;
+	grid-area: d;
 	pointer-events: auto;
 }
 
 #graph {
+	align-self: end;
+	grid-area: d;
 	pointer-events: auto;
 	width: 100%;
 }
