@@ -70,8 +70,6 @@ for (let y = 0; y < 8; y++) {
 	}
 }
 
-// Font sizes... do this before calculating sizes of stuff below.
-
 statusbox.style["font-size"] = config.info_font_size.toString() + "px";
 infobox.style["font-size"] = config.info_font_size.toString() + "px";
 fullbox.style["font-size"] = config.info_font_size.toString() + "px";
