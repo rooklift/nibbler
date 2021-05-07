@@ -10,7 +10,6 @@ const boardsquares = document.getElementById("boardsquares");
 const canvas = document.getElementById("canvas");
 const fenbox = document.getElementById("fenbox");
 const graph = document.getElementById("graph");
-const graphbox = document.getElementById("graphbox");
 const infobox = document.getElementById("infobox");
 const movelist = document.getElementById("movelist");
 const fullbox = document.getElementById("fullbox");

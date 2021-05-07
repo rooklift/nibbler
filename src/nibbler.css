@@ -41,7 +41,6 @@ body {
 	grid-area: a;
 	background-size: cover;
 	border-collapse: collapse;
-	margin-right: 1em;
 	table-layout: fixed;
 	z-index: 1;
 }
@@ -154,12 +153,6 @@ input[type=text]:focus {
 	padding-right: 10px;				/* so the text doesn't get so near the scroll bar */
 	pointer-events: auto;
 	white-space: pre-wrap;
-}
-
-#graphbox {
-	align-self: end;
-	grid-area: d;
-	pointer-events: auto;
 }
 
 #graph {

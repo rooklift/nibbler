@@ -2204,16 +2204,15 @@ let hub_props = {
 		// Making the heights of the right side divs is something I never figured out with CSS...
 
 		if (config.graph_height <= 0) {
-			graphbox.style.display = "none";
+			graph.style.display = "none";
 		} else {
-			graphbox.style.height = config.graph_height.toString() + "px";
 			graph.style.height = config.graph_height.toString() + "px";
-			graphbox.style.display = "";
+			graph.style.display = "";
 		}
 
 		let infobox_top = infobox.getBoundingClientRect().top;
 		let canvas_bottom = canvas.getBoundingClientRect().bottom;
-		let graph_top = canvas_bottom - (graphbox.getBoundingClientRect().bottom - graphbox.getBoundingClientRect().top);
+		let graph_top = canvas_bottom - (graph.getBoundingClientRect().bottom - graph.getBoundingClientRect().top);
 
 		let infobox_margin_adjustment = config.graph_height <= 0 ? 0 : 10;		// Bottom margin irrelevant if no graph.
 		infobox.style.height = (graph_top - infobox_top - infobox_margin_adjustment).toString() + "px";
