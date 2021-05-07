@@ -234,8 +234,8 @@ let tree_manipulation_props = {
 		let node = this.root;
 
 		while (node.children.length > 0) {
-			if (node.children.length > 1) {
-				node.children = node.children.slice(0, 1);
+			for (let child of node.children.slice(1)) {
+				child.detach();
 				changed = true;
 			}
 			node = node.children[0];
