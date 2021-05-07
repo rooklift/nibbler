@@ -41,8 +41,7 @@ fenbox.value = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1";
 boardfriends.width = canvas.width = boardsquares.width = config.board_size;
 boardfriends.height = canvas.height = boardsquares.height = config.board_size;
 
-boardfriends.style.left = canvas.style.left = boardsquares.offsetLeft.toString() + "px";
-boardfriends.style.top = canvas.style.top = boardsquares.offsetTop.toString() + "px";
+rightgridder.style["height"] = `${canvas.height}px`;
 
 // Set up the squares in both tables. Note that, upon flips, the elements
 // themselves are moved to their new position, so everything works, e.g.
@@ -71,30 +70,18 @@ for (let y = 0; y < 8; y++) {
 	}
 }
 
-// Font sizes... do this before calculating sizes of stuff below.
-
 statusbox.style["font-size"] = config.info_font_size.toString() + "px";
 infobox.style["font-size"] = config.info_font_size.toString() + "px";
 fullbox.style["font-size"] = config.info_font_size.toString() + "px";
 movelist.style["font-size"] = config.pgn_font_size.toString() + "px";
 fenbox.style["font-size"] = config.fen_font_size.toString() + "px";
 
-// Making the heights of the right side divs is something I never figured out with CSS...
-
 if (config.graph_height <= 0) {
-	graphbox.style.display = "none";
+	graph.style.display = "none";
 } else {
-	graphbox.style.height = config.graph_height.toString() + "px";
 	graph.style.height = config.graph_height.toString() + "px";
-	graphbox.style.display = "";
+	graph.style.display = "";
 }
-
-let infobox_top = infobox.getBoundingClientRect().top;
-let canvas_bottom = canvas.getBoundingClientRect().bottom;
-let graph_top = canvas_bottom - (graphbox.getBoundingClientRect().bottom - graphbox.getBoundingClientRect().top);
-
-let infobox_margin_adjustment = config.graph_height <= 0 ? 0 : 10;		// Bottom margin irrelevant if no graph.
-infobox.style.height = (graph_top - infobox_top - infobox_margin_adjustment).toString() + "px";
 
 // The promotion table pops up when needed...
 

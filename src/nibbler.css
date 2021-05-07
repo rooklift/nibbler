@@ -7,8 +7,7 @@ body {
 	border: 0;
 	color: #eeeeee;
 	cursor: default;
-	height: calc(100% - 32px);
-	margin: 16px;
+	margin: 0;
 	overflow: hidden;
 	padding: 0;
 	pointer-events: none;		/* These must be overriden for things that need pointer / select */
@@ -25,43 +24,118 @@ body {
 	background-color: #444444;
 }
 
-.flexible_column {
-	display: flex;
-	flex-direction: column;
-	height: 100%;
+#gridder {
+	display: grid;
+	height: 100vh;
+	grid-template-columns: min-content 1fr;
+	grid-template-rows: min-content min-content 1fr;
+	grid-template-areas:
+		"a b"
+		"f f"
+		"g g";
 }
 
-.flexible_row {
-	display: flex;
-	flex-direction: row;
-	width: 100%;
-}
-
-.full_growth {
-	flex-grow: 100;			/* The actual number only matters if compared to other flex-grow havers */
+#rightgridder {
+	grid-area: b;
+	display: grid;
+	margin: 1em 0 0 0;
+	height: 0;							/* js needs to keep this equal to the boardsize */
+	grid-template-columns: none;
+	grid-template-rows: min-content 1fr min-content;
+	grid-template-areas:
+		"c"
+		"d"
+		"e";
 }
 
 #boardsquares {
+	grid-area: a;
+	margin: 1em 0 0 1em;
 	background-size: cover;
 	border-collapse: collapse;
-	margin-bottom: 1em;
-	margin-right: 1em;
 	table-layout: fixed;
 	z-index: 1;
 }
 
 #canvas {
+	grid-area: a;
+	margin: 1em 0 0 1em;
+	display: block;
 	outline-offset: 6px;
-	position: fixed;
 	z-index: 2;
 }
 
 #boardfriends {
+	grid-area: a;
+	margin: 1em 0 0 1em;
 	border-collapse: collapse;
 	pointer-events: auto;
-	position: fixed;
 	table-layout: fixed;
 	z-index: 3;
+}
+
+#statusbox {
+	grid-area: c;
+	margin: 0 0 0 1em;
+	border: none;
+	display: block;
+	font-family: monospace, monospace;
+	pointer-events: auto;
+	overflow: hidden;
+	white-space: pre;
+}
+
+#infobox {
+	grid-area: d;
+	margin: 1em 1em 0 1em;
+	display: block;
+	color: #cccccc;						/* only used for Lc0 stderr output at startup */
+	font-family: monospace, monospace;
+	overflow-x: hidden;
+	overflow-y: auto;
+	padding-right: 10px;				/* so the text doesn't get so near the scroll bar */
+	pointer-events: auto;
+	white-space: pre-wrap;
+}
+
+#graph {
+	grid-area: e;
+	align-self: end;
+	display: block;
+	margin: 10px 0 0 1em;
+	pointer-events: auto;
+}
+
+input[type=text]:focus {
+	outline: 2px dashed gray;
+	outline-offset: 4px;
+}
+
+#fenbox {
+	grid-area: f;
+	margin: 1em 1em 0 1em;
+	background-color: #080808;
+	border: none;
+	caret-color: white;
+	color: #6cccee;
+	display: block;
+	font-family: monospace, monospace;
+	font-size: 100%;
+	pointer-events: auto;
+	user-select: auto;
+}
+
+#movelist {
+	grid-area: g;
+	margin: 1em 1em 1em 1em;
+	display: block;
+	color: #999999;
+	font-family: monospace, monospace;
+	overflow-x: hidden;
+	overflow-y: auto;
+	padding-right: 10px;				/* so the text doesn't get so near the scroll bar */
+	pointer-events: auto;
+	white-space: pre-wrap;
 }
 
 #promotiontable {
@@ -100,66 +174,6 @@ td {
 	border: 0;
 	margin: 0;
 	padding: 0;
-}
-
-#statusbox {
-	border: none;
-	display: block;
-	font-family: monospace, monospace;
-	margin-bottom: 1em;
-	pointer-events: auto;
-	/* white-space: pre; */
-	width: 100%;
-}
-
-#fenbox {
-	background-color: #080808;
-	border: none;
-	caret-color: white;
-	color: #6cccee;
-	display: block;
-	float: bottom;
-	font-family: monospace, monospace;
-	font-size: 100%;
-	pointer-events: auto;
-	user-select: auto;
-	width: 100%;
-}
-
-input[type=text]:focus {
-	outline: 2px dashed gray;
-	outline-offset: 4px;
-}
-
-#infobox {
-	color: #cccccc;						/* only used for Lc0 stderr output at startup */
-	font-family: monospace, monospace;
-	margin-bottom: 10px;
-	overflow-x: hidden;
-	overflow-y: auto;
-	padding-right: 10px;				/* so the text doesn't get so near the scroll bar */
-	pointer-events: auto;
-	white-space: pre-wrap;
-}
-
-#movelist {
-	color: #999999;
-	font-family: monospace, monospace;
-	margin-top: 1em;
-	overflow-x: hidden;
-	overflow-y: auto;
-	padding-right: 10px;				/* so the text doesn't get so near the scroll bar */
-	pointer-events: auto;
-	white-space: pre-wrap;
-}
-
-#graphbox {
-	pointer-events: auto;
-}
-
-#graph {
-	pointer-events: auto;
-	width: 100%;
 }
 
 a, a:link, a:visited, a:hover, a:active {	/* I think this is now only used for the "Nibbler in normal browser" message. */
