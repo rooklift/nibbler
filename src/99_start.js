@@ -76,8 +76,6 @@ fullbox.style["font-size"] = config.info_font_size.toString() + "px";
 movelist.style["font-size"] = config.pgn_font_size.toString() + "px";
 fenbox.style["font-size"] = config.fen_font_size.toString() + "px";
 
-// Making the heights of the right side divs is something I never figured out with CSS...
-
 if (config.graph_height <= 0) {
 	graph.style.display = "none";
 } else {
@@ -89,8 +87,7 @@ let infobox_top = infobox.getBoundingClientRect().top;
 let canvas_bottom = canvas.getBoundingClientRect().bottom;
 let graph_top = canvas_bottom - (graph.getBoundingClientRect().bottom - graph.getBoundingClientRect().top);
 
-let infobox_margin_adjustment = config.graph_height <= 0 ? 0 : 10;		// Bottom margin irrelevant if no graph.
-infobox.style.height = (graph_top - infobox_top - infobox_margin_adjustment).toString() + "px";
+infobox.style.height = (graph_top - infobox_top).toString() + "px";
 
 // The promotion table pops up when needed...
 

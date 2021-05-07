@@ -2201,8 +2201,6 @@ let hub_props = {
 			}
 		}
 
-		// Making the heights of the right side divs is something I never figured out with CSS...
-
 		if (config.graph_height <= 0) {
 			graph.style.display = "none";
 		} else {
@@ -2214,8 +2212,7 @@ let hub_props = {
 		let canvas_bottom = canvas.getBoundingClientRect().bottom;
 		let graph_top = canvas_bottom - (graph.getBoundingClientRect().bottom - graph.getBoundingClientRect().top);
 
-		let infobox_margin_adjustment = config.graph_height <= 0 ? 0 : 10;		// Bottom margin irrelevant if no graph.
-		infobox.style.height = (graph_top - infobox_top - infobox_margin_adjustment).toString() + "px";
+		infobox.style.height = (graph_top - infobox_top).toString() + "px";
 
 		promotiontable.style.left = (boardsquares.offsetLeft + config.square_size * 2).toString() + "px";
 		promotiontable.style.top = (boardsquares.offsetTop + config.square_size * 3.5).toString() + "px";

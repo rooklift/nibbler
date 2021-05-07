@@ -47,8 +47,8 @@ body {
 
 #canvas {
 	grid-area: a;
+	display: block;
 	outline-offset: 6px;
-	position: fixed;
 	z-index: 2;
 }
 
@@ -56,7 +56,6 @@ body {
 	grid-area: a;
 	border-collapse: collapse;
 	pointer-events: auto;
-	position: fixed;
 	table-layout: fixed;
 	z-index: 3;
 }
@@ -132,9 +131,9 @@ input[type=text]:focus {
 
 #infobox {
 	grid-area: c;
+	display: block;
 	color: #cccccc;						/* only used for Lc0 stderr output at startup */
 	font-family: monospace, monospace;
-	margin-bottom: 10px;
 	overflow-x: hidden;
 	overflow-y: auto;
 	padding-right: 10px;				/* so the text doesn't get so near the scroll bar */
@@ -144,9 +143,9 @@ input[type=text]:focus {
 
 #movelist {
 	grid-area: f;
+	display: block;
 	color: #999999;
 	font-family: monospace, monospace;
-	margin-top: 1em;
 	overflow-x: hidden;
 	overflow-y: auto;
 	padding-right: 10px;				/* so the text doesn't get so near the scroll bar */
