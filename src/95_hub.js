@@ -2212,7 +2212,9 @@ let hub_props = {
 		let canvas_bottom = canvas.getBoundingClientRect().bottom;
 		let graph_top = canvas_bottom - (graph.getBoundingClientRect().bottom - graph.getBoundingClientRect().top);
 
-		infobox.style.height = (graph_top - infobox_top).toString() + "px";
+		let adjust = config.graph_height ? 16 : 0;		// Subtract the top margin of the graph when calculating.
+
+		infobox.style.height = (graph_top - infobox_top - adjust).toString() + "px";
 
 		promotiontable.style.left = (boardsquares.offsetLeft + config.square_size * 2).toString() + "px";
 		promotiontable.style.top = (boardsquares.offsetTop + config.square_size * 3.5).toString() + "px";

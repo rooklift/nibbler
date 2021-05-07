@@ -110,23 +110,20 @@ td {
 	pointer-events: auto;
 	overflow: hidden;
 	white-space: pre;
-	width: 100%;
 }
 
 #fenbox {
 	grid-area: e;
-	margin: 1em 0 0 1em;
+	margin: 1em 1em 0 1em;
 	background-color: #080808;
 	border: none;
 	caret-color: white;
 	color: #6cccee;
 	display: block;
-	float: bottom;
 	font-family: monospace, monospace;
 	font-size: 100%;
 	pointer-events: auto;
 	user-select: auto;
-	width: 100%;
 }
 
 input[type=text]:focus {
@@ -136,7 +133,7 @@ input[type=text]:focus {
 
 #infobox {
 	grid-area: c;
-	margin: 1em 0 0 1em;
+	margin: 1em 1em 0 1em;
 	display: block;
 	color: #cccccc;						/* only used for Lc0 stderr output at startup */
 	font-family: monospace, monospace;
@@ -149,6 +146,7 @@ input[type=text]:focus {
 
 #movelist {
 	grid-area: f;
+	margin: 1em 1em 1em 1em;
 	display: block;
 	color: #999999;
 	font-family: monospace, monospace;
@@ -161,7 +159,7 @@ input[type=text]:focus {
 
 #graph {
 	grid-area: d;
-	margin: 0 0 0 1em;
+	margin: 16px 0 0 1em;
 	pointer-events: auto;
 }
 

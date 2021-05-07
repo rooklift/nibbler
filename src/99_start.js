@@ -87,7 +87,9 @@ let infobox_top = infobox.getBoundingClientRect().top;
 let canvas_bottom = canvas.getBoundingClientRect().bottom;
 let graph_top = canvas_bottom - (graph.getBoundingClientRect().bottom - graph.getBoundingClientRect().top);
 
-infobox.style.height = (graph_top - infobox_top).toString() + "px";
+let adjust = config.graph_height ? 16 : 0;		// Subtract the top margin of the graph when calculating.
+
+infobox.style.height = (graph_top - infobox_top - adjust).toString() + "px";
 
 // The promotion table pops up when needed...
 
