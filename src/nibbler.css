@@ -28,13 +28,24 @@ body {
 	display: grid;
 	height: 100vh;
 	grid-template-columns: min-content 1fr;
-	grid-template-rows: min-content 1fr min-content min-content 1fr;
+	grid-template-rows: min-content min-content 1fr;
 	grid-template-areas:
 		"a b"
-		"a c"
-		"a d"
-		"e e"
-		"f f";
+		"f f"
+		"g g";
+}
+
+#rightgridder {
+	grid-area: b;
+	display: grid;
+	margin: 1em 0 0 0;
+	height: 0;							/* js needs to keep this equal to the boardsize */
+	grid-template-columns: none;
+	grid-template-rows: min-content 1fr min-content;
+	grid-template-areas:
+		"c"
+		"d"
+		"e";
 }
 
 #boardsquares {
@@ -102,8 +113,8 @@ td {
 }
 
 #statusbox {
-	grid-area: b;
-	margin: 1em 0 0 1em;
+	grid-area: c;
+	margin: 0 0 0 1em;
 	border: none;
 	display: block;
 	font-family: monospace, monospace;
@@ -113,7 +124,7 @@ td {
 }
 
 #fenbox {
-	grid-area: e;
+	grid-area: f;
 	margin: 1em 1em 0 1em;
 	background-color: #080808;
 	border: none;
@@ -132,7 +143,7 @@ input[type=text]:focus {
 }
 
 #infobox {
-	grid-area: c;
+	grid-area: d;
 	margin: 1em 1em 0 1em;
 	display: block;
 	color: #cccccc;						/* only used for Lc0 stderr output at startup */
@@ -145,7 +156,7 @@ input[type=text]:focus {
 }
 
 #movelist {
-	grid-area: f;
+	grid-area: g;
 	margin: 1em 1em 1em 1em;
 	display: block;
 	color: #999999;
@@ -158,7 +169,9 @@ input[type=text]:focus {
 }
 
 #graph {
-	grid-area: d;
+	grid-area: e;
+	align-self: end;
+	display: block;
 	margin: 16px 0 0 1em;
 	pointer-events: auto;
 }

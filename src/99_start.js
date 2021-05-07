@@ -41,6 +41,8 @@ fenbox.value = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1";
 boardfriends.width = canvas.width = boardsquares.width = config.board_size;
 boardfriends.height = canvas.height = boardsquares.height = config.board_size;
 
+rightgridder.style["height"] = `${canvas.height}px`;
+
 // Set up the squares in both tables. Note that, upon flips, the elements
 // themselves are moved to their new position, so everything works, e.g.
 // the x and y values are still correct for the flipped view.
@@ -82,14 +84,6 @@ if (config.graph_height <= 0) {
 	graph.style.height = config.graph_height.toString() + "px";
 	graph.style.display = "";
 }
-
-// These next lines just calculate the correct size of the infobox...
-
-let infobox_top = infobox.getBoundingClientRect().top;
-let canvas_bottom = canvas.getBoundingClientRect().bottom;
-let graph_top = canvas_bottom - (graph.getBoundingClientRect().bottom - graph.getBoundingClientRect().top);
-let adjust = config.graph_height > 0 ? 16 : 0;		// Subtract the top margin of the graph when calculating.
-infobox.style.height = (graph_top - infobox_top - adjust).toString() + "px";
 
 // The promotion table pops up when needed...
 

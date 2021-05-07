@@ -2189,6 +2189,8 @@ let hub_props = {
 		boardfriends.width = canvas.width = boardsquares.width = config.board_size;
 		boardfriends.height = canvas.height = boardsquares.height = config.board_size;
 
+		rightgridder.style["height"] = `${canvas.height}px`;
+
 		for (let y = 0; y < 8; y++) {
 			for (let x = 0; x < 8; x++) {
 				let td1 = document.getElementById("underlay_" + S(x, y));
@@ -2204,12 +2206,6 @@ let hub_props = {
 			graph.style.height = config.graph_height.toString() + "px";
 			graph.style.display = "";
 		}
-
-		let infobox_top = infobox.getBoundingClientRect().top;
-		let canvas_bottom = canvas.getBoundingClientRect().bottom;
-		let graph_top = canvas_bottom - (graph.getBoundingClientRect().bottom - graph.getBoundingClientRect().top);
-		let adjust = config.graph_height > 0 ? 16 : 0;		// Subtract the top margin of the graph when calculating.
-		infobox.style.height = (graph_top - infobox_top - adjust).toString() + "px";
 
 		promotiontable.style.left = (boardsquares.offsetLeft + config.square_size * 2).toString() + "px";
 		promotiontable.style.top = (boardsquares.offsetTop + config.square_size * 3.5).toString() + "px";
