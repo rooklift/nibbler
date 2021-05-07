@@ -2189,9 +2189,6 @@ let hub_props = {
 		boardfriends.width = canvas.width = boardsquares.width = config.board_size;
 		boardfriends.height = canvas.height = boardsquares.height = config.board_size;
 
-		boardfriends.style.left = canvas.style.left = boardsquares.offsetLeft.toString() + "px";
-		boardfriends.style.top = canvas.style.top = boardsquares.offsetTop.toString() + "px";
-
 		for (let y = 0; y < 8; y++) {
 			for (let x = 0; x < 8; x++) {
 				let td1 = document.getElementById("underlay_" + S(x, y));
