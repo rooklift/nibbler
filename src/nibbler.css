@@ -39,6 +39,7 @@ body {
 
 #boardsquares {
 	grid-area: a;
+	margin: 1em 0 0 1em;
 	background-size: cover;
 	border-collapse: collapse;
 	table-layout: fixed;
@@ -47,6 +48,7 @@ body {
 
 #canvas {
 	grid-area: a;
+	margin: 1em 0 0 1em;
 	display: block;
 	outline-offset: 6px;
 	z-index: 2;
@@ -54,6 +56,7 @@ body {
 
 #boardfriends {
 	grid-area: a;
+	margin: 1em 0 0 1em;
 	border-collapse: collapse;
 	pointer-events: auto;
 	table-layout: fixed;
@@ -100,6 +103,7 @@ td {
 
 #statusbox {
 	grid-area: b;
+	margin: 1em 0 0 1em;
 	border: none;
 	display: block;
 	font-family: monospace, monospace;
@@ -111,6 +115,7 @@ td {
 
 #fenbox {
 	grid-area: e;
+	margin: 1em 0 0 1em;
 	background-color: #080808;
 	border: none;
 	caret-color: white;
@@ -131,6 +136,7 @@ input[type=text]:focus {
 
 #infobox {
 	grid-area: c;
+	margin: 1em 0 0 1em;
 	display: block;
 	color: #cccccc;						/* only used for Lc0 stderr output at startup */
 	font-family: monospace, monospace;
@@ -154,10 +160,9 @@ input[type=text]:focus {
 }
 
 #graph {
-	align-self: end;
 	grid-area: d;
+	margin: 0 0 0 1em;
 	pointer-events: auto;
-	width: 100%;
 }
 
 a, a:link, a:visited, a:hover, a:active {	/* I think this is now only used for the "Nibbler in normal browser" message. */

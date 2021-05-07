@@ -7,7 +7,7 @@ function NewGrapher() {
 	grapher.clear_graph = function() {
 
 		let boundingrect = graph.getBoundingClientRect();
-		let width = boundingrect.right - boundingrect.left;
+		let width = window.innerWidth - boundingrect.left - 16;
 		let height = boundingrect.bottom - boundingrect.top;
 
 		// This clears the canvas...
