@@ -28,7 +28,7 @@ body {
 	display: grid;
 	height: 100vh;
 	grid-template-columns: min-content 1fr;
-	grid-template-rows: 1em 1fr min-content min-content 1fr;
+	grid-template-rows: min-content 1fr min-content min-content 1fr;
 	grid-template-areas:
 		"a b"
 		"a c"
@@ -106,13 +106,12 @@ td {
 	font-family: monospace, monospace;
 	pointer-events: auto;
 	overflow: hidden;
-	/* white-space: pre; */
+	white-space: pre;
 	width: 100%;
 }
 
 #fenbox {
 	grid-area: e;
-	margin-top: 1em;
 	background-color: #080808;
 	border: none;
 	caret-color: white;
