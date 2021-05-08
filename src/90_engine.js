@@ -373,6 +373,11 @@ function NewEngine(hub) {
 		Log("");
 
 		try {
+			if (path.basename(filepath).toLowerCase().includes("lc0")) {		// Stupid hack to make Lc0 show all its options.
+				if (args.includes("--show-hidden") === false) {
+					args = ["--show-hidden"].concat(args);
+				}
+			}
 			this.exe = child_process.spawn(filepath, args, {cwd: path.dirname(filepath)});
 		} catch (err) {
 			console.log(`engine.setup() failed: ${err.toString()}`);
