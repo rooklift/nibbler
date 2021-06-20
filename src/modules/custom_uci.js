@@ -44,7 +44,7 @@ exports.load = () => {
 		];
 
 	}
-}
+};
 
 exports.create_if_needed = () => {
 
@@ -59,4 +59,4 @@ exports.create_if_needed = () => {
 	} catch (err) {
 		console.log(err.toString());
 	}
-}
+};

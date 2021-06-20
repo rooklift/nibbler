@@ -24,4 +24,4 @@ module.exports = (msg) => {
 		return "stringify() failed";
 
 	}
-}
+};

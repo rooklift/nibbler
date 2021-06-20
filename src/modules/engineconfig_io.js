@@ -13,7 +13,7 @@ exports.filepath = electron.app ?
 		path.join(electron.app.getPath("userData"), exports.filename) :									// in Main process
 		path.join(querystring.parse(global.location.search)["?user_data_path"], exports.filename);		// in Renderer process
 
-function EngineConfig() {};			// This exists solely to make instanceof work.
+function EngineConfig() {}			// This exists solely to make instanceof work.
 EngineConfig.prototype = {};
 
 // ---------------------------------------------------------------------------------------------------------------------------
