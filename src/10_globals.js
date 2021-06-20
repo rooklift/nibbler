@@ -42,6 +42,7 @@ const images = require("./modules/images");
 const ipcRenderer = require("electron").ipcRenderer;
 const messages = require("./modules/messages");
 const path = require("path");
+const querystring = require("querystring");
 const readline = require("readline");
 const stringify = require("./modules/stringify");
 const util = require("util");
