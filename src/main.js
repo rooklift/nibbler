@@ -275,7 +275,7 @@ function menu_build() {
 					label: "Open PGN...",
 					accelerator: "CommandOrControl+O",
 					click: () => {
-						let files = open_dialog({
+						let files = open_dialog(win, {
 							defaultPath: config.pgn_dialog_folder,
 							properties: ["openFile"],
 							filters: [{name: "PGN", extensions: ["pgn"]}, {name: "All files", extensions: ["*"]}]
@@ -319,7 +319,7 @@ function menu_build() {
 							alert(messages.save_not_enabled);
 							return;
 						}
-						let file = save_dialog({defaultPath: config.pgn_dialog_folder});
+						let file = save_dialog(win, {defaultPath: config.pgn_dialog_folder});
 						if (typeof file === "string" && file.length > 0) {
 							win.webContents.send("call", {
 								fn: "save",
@@ -1504,7 +1504,7 @@ function menu_build() {
 						{
 							label: "Choose pieces folder...",
 							click: () => {
-								let folders = open_dialog({
+								let folders = open_dialog(win, {
 									defaultPath: config.pieces_dialog_folder,
 									properties: ["openDirectory"]
 								});
@@ -1549,7 +1549,7 @@ function menu_build() {
 						{
 							label: "Choose background image...",
 							click: () => {
-								let files = open_dialog({
+								let files = open_dialog(win, {
 									defaultPath: config.background_dialog_folder,
 									properties: ["openFile"]
 								});
@@ -2133,7 +2133,7 @@ function menu_build() {
 					type: "checkbox",
 					checked: false,
 					click: () => {
-						let files = open_dialog({
+						let files = open_dialog(win, {
 							defaultPath: config.engine_dialog_folder,
 							properties: ["openFile"]
 						});
@@ -2173,7 +2173,7 @@ function menu_build() {
 							type: "checkbox",
 							checked: false,
 							click: () => {
-								let files = open_dialog({
+								let files = open_dialog(win, {
 									defaultPath: config.weights_dialog_folder,
 									properties: ["openFile"]
 								});
@@ -2203,7 +2203,7 @@ function menu_build() {
 							type: "checkbox",
 							checked: false,
 							click: () => {
-								let files = open_dialog({
+								let files = open_dialog(win, {
 									defaultPath: config.evalfile_dialog_folder,
 									properties: ["openFile"]
 								});
@@ -2427,7 +2427,7 @@ function menu_build() {
 					type: "checkbox",
 					checked: false,
 					click: () => {
-						let folders = open_dialog({
+						let folders = open_dialog(win, {
 							defaultPath: config.syzygy_dialog_folder,
 							properties: ["openDirectory"]
 						});
@@ -3294,7 +3294,7 @@ function menu_build() {
 					type: "checkbox",
 					checked: false,
 					click: () => {
-						let files = open_dialog({
+						let files = open_dialog(win, {
 							defaultPath: config.book_dialog_folder,
 							properties: ["openFile"],
 							filters: [{name: "Polyglot", extensions: ["bin"]}, {name: "All files", extensions: ["*"]}]
@@ -3322,7 +3322,7 @@ function menu_build() {
 					type: "checkbox",
 					checked: false,
 					click: () => {
-						let files = open_dialog({
+						let files = open_dialog(win, {
 							defaultPath: config.book_dialog_folder,
 							properties: ["openFile"],
 							filters: [{name: "PGN", extensions: ["pgn"]}, {name: "All files", extensions: ["*"]}]
@@ -4019,7 +4019,7 @@ function menu_build() {
 							type: "checkbox",
 							checked: typeof config.logfile === "string" && config.logfile !== "",
 							click: () => {
-								let file = save_dialog();
+								let file = save_dialog(win, {});
 								if (typeof file === "string" && file.length > 0) {
 									win.webContents.send("call", {
 										fn: "set_logfile",
