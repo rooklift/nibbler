@@ -2251,6 +2251,11 @@ let hub_props = {
 	// ---------------------------------------------------------------------------------------------------------------------
 	// Misc...
 
+	quit: function() {
+		this.engine.shutdown();
+		ipcRenderer.send("terminate");
+	},
+
 	set_special_message: function(s, css_class, duration) {
 		this.status_handler.set_special_message(s, css_class, duration);
 		this.draw_statusbox();

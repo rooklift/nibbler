@@ -90,6 +90,15 @@ function startup() {
 		alert(messages.renderer_hang);
 	});
 
+	win.once("close", (event) => {					// Note the once...
+		event.preventDefault();						// We prevent the close one time only,
+		win.webContents.send("call", "quit");		// to let renderer's "quit" method run once. It then sends "terminate" back.
+	});
+
+	electron.ipcMain.on("terminate", () => {
+		win.close();
+	});
+
 	electron.app.on("window-all-closed", () => {
 		electron.app.quit();
 	});
