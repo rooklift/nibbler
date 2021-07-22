@@ -438,8 +438,15 @@ function NewEngine(hub) {
 					if (a !== -1 && b != -1) {
 						let optname = line.slice(a + 6, b).trim().toLowerCase();
 						this.known_options[optname] = line.slice(b + 1);
-						if (optname === "uci_chess960") {
-							this.setoption("UCI_Chess960", true);		// As a special thing, always set UCI_Chess960 where possible.
+
+						if (optname === "uci_chess960") {				// As a special thing, always set UCI_Chess960 where possible.
+							this.setoption("UCI_Chess960", true);
+						}
+						if (optname === "moveoverheadms") {				// Force move overhead to 0 so time limits work well for low ms.
+							this.setoption("MoveOverheadMs", 0);
+						}
+						if (optname === "move overhead") {				// As above, but alternate name used by Stockfish.
+							this.setoption("Move Overhead", 0);
 						}
 					}
 				}
