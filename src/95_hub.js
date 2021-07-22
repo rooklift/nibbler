@@ -219,7 +219,7 @@ let hub_props = {
 
 		// If there's no search desired, changing params probably shouldn't start one. As of 1.8.3, when a search
 		// completes due to hitting the (normal) node limit, behaviour gets changed back to "halt" in one way or
-		// another.
+		// another (unless config.allow_stopped_analysis is set).
 	},
 
 	maybe_setup_book_move: function() {
