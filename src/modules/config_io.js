@@ -73,8 +73,6 @@ exports.defaults = {
 	"cp_pov": null,
 	"wdl_pov": null,
 
-	"use_movetime": false,
-
 	"show_cp": false,
 	"show_n": true,
 	"show_n_abs": true,

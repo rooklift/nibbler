@@ -36,8 +36,11 @@ function fix(cfg) {
 		if (typeof cfg[key].options !== "object" || cfg[key].options === null) {
 			cfg[key].options = {};
 		}
+		if (typeof cfg[key].limit_by_time !== "boolean") {
+			cfg[key].limit_by_time = cfg[key].limit_by_time ? true : false;
+		}
 
-		// We don't really care about missing search_nodes and search_nodes_special properties.
+		// We don't really care about missing search_nodes and search_nodes_special properties. (?)
 	}
 }
 
@@ -47,6 +50,7 @@ exports.newentry = () => {
 		"options": {},
 		"search_nodes": null,
 		"search_nodes_special": 10000,
+		"limit_by_time": false,
 	};
 };
 

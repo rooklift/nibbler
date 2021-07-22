@@ -840,7 +840,7 @@ let hub_props = {
 			this.engine.set_search_desired(null);
 			return;
 		}
-		this.engine.set_search_desired(node, this.node_limit(), config.use_movetime, node.searchmoves);
+		this.engine.set_search_desired(node, this.node_limit(), engineconfig[this.engine.filepath].limit_by_time, node.searchmoves);
 	},
 
 	// ---------------------------------------------------------------------------------------------------------------------
@@ -1010,7 +1010,7 @@ let hub_props = {
 	node_limit: function() {
 
 		// Given the current state of the config, what is the node limit?
-		// Note that this value is used as a time limit instead, if config.use_movetime is set.
+		// Note that this value is used as a time limit instead, if engineconfig[this.engine.filepath].limit_by_time is set.
 
 		let cfg_value;
 
@@ -1094,7 +1094,7 @@ let hub_props = {
 
 		let msg_start;
 
-		if (config.use_movetime) {
+		if (engineconfig[this.engine.filepath].limit_by_time) {
 			msg_start = special_flag ? "Special time limit" : "Time limit";
 		} else {
 			msg_start = special_flag ? "Special node limit" : "Node limit";
@@ -1134,6 +1134,17 @@ let hub_props = {
 		} else {
 			ipcRenderer.send(ack_type, "Unlimited");
 		}
+	},
+
+	toggle_limit_by_time: function() {
+		engineconfig[this.engine.filepath].limit_by_time = !engineconfig[this.engine.filepath].limit_by_time;
+		this.save_engineconfig();
+		this.send_ack_limit_by_time();
+		this.handle_search_params_change();
+	},
+
+	send_ack_limit_by_time: function() {
+		ipcRenderer.send("ack_limit_by_time", engineconfig[this.engine.filepath].limit_by_time);
 	},
 
 	// ---------------------------------------------------------------------------------------------------------------------
@@ -1285,6 +1296,8 @@ let hub_props = {
 
 		this.send_ack_node_limit(false);			// Ack the node limits that are set in engineconfig[this.engine.filepath]
 		this.send_ack_node_limit(true);
+
+		this.send_ack_limit_by_time();				// Also ack the limit_by_time boolean for that menu item.
 
 		this.info_handler.reset_engine_info();
 		this.info_handler.must_draw_infobox();		// To display the new stderr log that appears.
@@ -2059,10 +2072,6 @@ let hub_props = {
 
 		if (option === "searchmoves_buttons") {
 			this.tree.node.searchmoves = [];		// This is reasonable regardless of which way the toggle went.
-			this.handle_search_params_change();
-		}
-
-		if (option === "use_movetime") {
 			this.handle_search_params_change();
 		}
 

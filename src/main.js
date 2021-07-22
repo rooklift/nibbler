@@ -159,6 +159,10 @@ function startup() {
 		set_checks("Engine", "Limit - auto-eval / play", msg);
 	});
 
+	electron.ipcMain.on("ack_limit_by_time", (event, msg) => {
+		set_one_check(msg ? true : false, "Engine", "Limit by time instead of nodes");
+	});
+
 	electron.ipcMain.on("ack_setoption", (event, msg) => {
 
 		// These are received whenever the renderer actually sends a setoption UCI command.
@@ -2810,12 +2814,9 @@ function menu_build() {
 				{
 					label: "Limit by time instead of nodes",
 					type: "checkbox",
-					checked: config.use_movetime,
+					checked: false,
 					click: () => {
-						win.webContents.send("call", {
-							fn: "toggle",
-							args: ["use_movetime"]
-						});
+						win.webContents.send("call", "toggle_limit_by_time");
 					}
 				},
 				{
