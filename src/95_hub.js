@@ -1010,6 +1010,7 @@ let hub_props = {
 	node_limit: function() {
 
 		// Given the current state of the config, what is the node limit?
+		// Note that this value is used as a time limit instead, if config.use_movetime is set.
 
 		let cfg_value;
 
