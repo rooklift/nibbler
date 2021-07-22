@@ -3824,18 +3824,6 @@ function menu_build() {
 					}
 				},
 				{
-					label: `Resave ${config_io.filename}`,
-					click: () => {
-						win.webContents.send("call", "save_config");
-					}
-				},
-				{
-					label: `Resave ${engineconfig_io.filename}`,
-					click: () => {
-						win.webContents.send("call", "save_engineconfig");
-					}
-				},
-				{
 					type: "separator"
 				},
 				{
