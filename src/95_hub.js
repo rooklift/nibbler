@@ -936,7 +936,6 @@ let hub_props = {
 				engineconfig[this.engine.filepath].options["MultiPV"] = 3;				// Will get ack'd when engine_send_all_options() happens
 				engineconfig[this.engine.filepath].search_nodes_special = 10000000;
 				this.send_ack_node_limit(true);
-				this.save_engineconfig();
 			}
 
 			// Pass unknown engines to the error handler to be displayed...
@@ -1112,7 +1111,6 @@ let hub_props = {
 			engineconfig[this.engine.filepath].search_nodes = val;
 		}
 
-		this.save_engineconfig();
 		this.send_ack_node_limit(special_flag);
 
 		this.handle_search_params_change();
@@ -1138,7 +1136,6 @@ let hub_props = {
 
 	toggle_limit_by_time: function() {
 		engineconfig[this.engine.filepath].limit_by_time = !engineconfig[this.engine.filepath].limit_by_time;
-		this.save_engineconfig();
 		this.send_ack_limit_by_time();
 		this.handle_search_params_change();
 	},
@@ -1206,7 +1203,6 @@ let hub_props = {
 			} else {
 				engineconfig[this.engine.filepath].options[name] = val;
 			}
-			this.save_engineconfig();
 		}
 
 		if (val === null || val === undefined) {
@@ -1224,14 +1220,12 @@ let hub_props = {
 
 	disable_syzygy: function() {
 		delete engineconfig[this.engine.filepath].options["SyzygyPath"];
-		this.save_engineconfig();
 		this.restart_engine();		// Causes the correct ack to be sent.
 	},
 
 	auto_weights: function() {
 		delete engineconfig[this.engine.filepath].options["EvalFile"];
 		delete engineconfig[this.engine.filepath].options["WeightsFile"];
-		this.save_engineconfig();
 		this.restart_engine();		// Causes the correct acks to be sent.
 	},
 
@@ -1242,7 +1236,6 @@ let hub_props = {
 		this.set_behaviour("halt");
 		if (this.engine_start(filename)) {
 			config.path = filename;
-			this.save_config();
 		} else {
 			alert("Failed to start this engine.");
 			this.engine.send_ack_engine();
@@ -1289,7 +1282,6 @@ let hub_props = {
 		if (!engineconfig[this.engine.filepath]) {
 			engineconfig[this.engine.filepath] = engineconfig_io.newentry();
 			console.log(`Creating new entry in engineconfig for ${filepath}`);
-			this.save_engineconfig();
 		}
 
 		this.engine.send("uci");
@@ -1976,7 +1968,6 @@ let hub_props = {
 				if (event.button === 2) {					// Right-click
 					if (this.engine.filepath !== filepath) {
 						delete engineconfig[filepath];
-						this.save_engineconfig();
 						this.show_fast_engine_chooser();
 					}
 				} else {									// Any other click
@@ -2066,7 +2057,6 @@ let hub_props = {
 		// Normal cases...
 
 		config[option] = !config[option];
-		this.save_config();
 
 		// Cases that have additional actions after...
 
@@ -2102,7 +2092,6 @@ let hub_props = {
 	set_arrow_filter: function(type, value) {
 		config.arrow_filter_type = type;
 		config.arrow_filter_value = value;
-		this.save_config();
 		this.draw();
 	},
 
@@ -2140,14 +2129,12 @@ let hub_props = {
 		fenbox.style["font-size"] = n.toString() + "px";
 		config.pgn_font_size = n;
 		config.fen_font_size = n;
-		this.save_config();
 	},
 
 	set_arrow_size: function(width, radius, fontsize) {
 		config.arrow_width = width;
 		config.arrowhead_radius = radius;
 		config.board_font = `${fontsize}px Arial`;
-		this.save_config();
 	},
 
 	set_info_font_size: function(n) {
@@ -2155,13 +2142,11 @@ let hub_props = {
 		statusbox.style["font-size"] = n.toString() + "px";
 		fullbox.style["font-size"] = n.toString() + "px";
 		config.info_font_size = n;
-		this.save_config();
 		this.rebuild_sizes();
 	},
 
 	set_graph_height: function(sz) {
 		config.graph_height = sz;
-		this.save_config();
 		this.rebuild_sizes();
 		this.grapher.draw(this.tree.node, true);
 	},
@@ -2169,7 +2154,6 @@ let hub_props = {
 	set_board_size: function(sz) {
 		config.square_size = Math.floor(sz / 8);
 		config.board_size = config.square_size * 8;
-		this.save_config();
 		this.rebuild_sizes();
 	},
 
@@ -2187,7 +2171,6 @@ let hub_props = {
 		this.friendly_draws = New2DArray(8, 8, null);
 		this.enemy_draws = New2DArray(8, 8, null);
 		config["override_piece_directory"] = directory;
-		this.save_config();
 	},
 
 	change_background: function(file, config_save = true) {
@@ -2200,7 +2183,6 @@ let hub_props = {
 		}
 		if (config_save) {
 			config.override_board = file;
-			this.save_config();
 		}
 	},
 
@@ -2241,14 +2223,12 @@ let hub_props = {
 		let zoomfactor = parseFloat(querystring.parse(global.location.search)["zoomfactor"]);
 		config.width = Math.floor(window.innerWidth * zoomfactor);
 		config.height = Math.floor(window.innerHeight * zoomfactor);
-		this.save_config();
 	},
 
 	set_logfile: function(filename) {				// Arg can be null to stop logging.
 		config.logfile = null;
 		Log("Stopping log.");						// This will do nothing, but calling Log() forces it to close any open file.
 		config.logfile = filename;
-		this.save_config();
 		this.send_ack_logfile();
 	},
 
@@ -2273,6 +2253,8 @@ let hub_props = {
 
 	quit: function() {
 		this.engine.shutdown();
+		this.save_config();
+		this.save_engineconfig();
 		ipcRenderer.send("terminate");
 	},
 

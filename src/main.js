@@ -3830,6 +3830,12 @@ function menu_build() {
 					}
 				},
 				{
+					label: `Resave ${engineconfig_io.filename}`,
+					click: () => {
+						win.webContents.send("call", "save_engineconfig");
+					}
+				},
+				{
 					type: "separator"
 				},
 				{
