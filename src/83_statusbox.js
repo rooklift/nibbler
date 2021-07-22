@@ -113,13 +113,15 @@ function NewStatusHandler() {
 					if (config.behaviour !== "halt") {
 						stoppedtext = ` <span class="blue">(stopped)</span>`;
 					}
+/*
+					// The following doesn't make sense if a time limit rather than a move limit is in force.
 
 					if (typeof engineconfig[engine.filepath].search_nodes === "number" && engineconfig[engine.filepath].search_nodes > 0) {
 						if (node.table.nodes >= engineconfig[engine.filepath].search_nodes) {
 							stoppedtext = ` <span class="blue">(limit met)</span>`;
 						}
 					}
-
+*/
 					status_string += stoppedtext;
 				}
 			}

@@ -42,10 +42,11 @@ We are in one of these states (currently implicit in the logic):
 let NoSearch = Object.freeze({
 	node: null,
 	limit: null,
+	limit_by_time: false,
 	searchmoves: Object.freeze([])
 });
 
-function SearchParams(node = null, limit = null, searchmoves = null) {
+function SearchParams(node = null, limit = null, limit_by_time = false, searchmoves = null) {
 
 	if (!node) return NoSearch;
 
@@ -62,6 +63,7 @@ function SearchParams(node = null, limit = null, searchmoves = null) {
 	return Object.freeze({
 		node: node,
 		limit: limit,
+		limit_by_time: limit_by_time,
 		searchmoves: validated
 	});
 }
@@ -213,22 +215,24 @@ function NewEngine(hub) {
 		this.hub.info_handler.engine_subcycle++;
 	};
 
-	eng.set_search_desired = function(node, limit, searchmoves) {
+	eng.set_search_desired = function(node, limit, limit_by_time, searchmoves) {
 
 		if (!this.ever_received_uciok || !this.ever_received_readyok) {
 			console.log("set_search_desired() aborted - too early");
 			return;
 		}
 
-		let params = SearchParams(node, limit, searchmoves);
+		let params = SearchParams(node, limit, limit_by_time, searchmoves);
 
 		// It is correct to check these against the *desired* search
 		// (which may or may not be the one currently running).
 
 		if (this.search_desired.node === params.node) {
 			if (this.search_desired.limit === params.limit) {
-				if (CompareArrays(this.search_desired.searchmoves, params.searchmoves)) {
-					return;
+				if (this.search_desired.limit_by_time === params.limit_by_time) {
+					if (CompareArrays(this.search_desired.searchmoves, params.searchmoves)) {
+						return;
+					}
 				}
 			}
 		}

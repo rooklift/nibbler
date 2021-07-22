@@ -152,11 +152,11 @@ function startup() {
 	});
 
 	electron.ipcMain.on("ack_node_limit", (event, msg) => {
-		set_checks("Engine", "Node limit - normal", msg);
+		set_checks("Engine", "Limit - normal", msg);
 	});
 
 	electron.ipcMain.on("ack_special_node_limit", (event, msg) => {
-		set_checks("Engine", "Node limit - auto-eval / play", msg);
+		set_checks("Engine", "Limit - auto-eval / play", msg);
 	});
 
 	electron.ipcMain.on("ack_setoption", (event, msg) => {
@@ -2472,7 +2472,7 @@ function menu_build() {
 					type: "separator"
 				},
 				{
-					label: "Node limit - normal",
+					label: "Limit - normal",
 					submenu: [
 						{
 							label: "Unlimited",
@@ -2648,7 +2648,7 @@ function menu_build() {
 					]
 				},
 				{
-					label: "Node limit - auto-eval / play",
+					label: "Limit - auto-eval / play",
 					submenu: [
 						{
 							label: "1,000,000,000",
@@ -2806,6 +2806,17 @@ function menu_build() {
 							}
 						},
 					]
+				},
+				{
+					label: "Limit by time instead of nodes",
+					type: "checkbox",
+					checked: config.use_movetime,
+					click: () => {
+						win.webContents.send("call", {
+							fn: "toggle",
+							args: ["use_movetime"]
+						});
+					}
 				},
 				{
 					type: "separator"

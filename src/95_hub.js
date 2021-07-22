@@ -840,7 +840,7 @@ let hub_props = {
 			this.engine.set_search_desired(null);
 			return;
 		}
-		this.engine.set_search_desired(node, this.node_limit(), node.searchmoves);
+		this.engine.set_search_desired(node, this.node_limit(), config.use_movetime, node.searchmoves);
 	},
 
 	// ---------------------------------------------------------------------------------------------------------------------
@@ -1091,7 +1091,13 @@ let hub_props = {
 			val = null;
 		}
 
-		let msg_start = special_flag ? "Special node limit" : "Node limit";
+		let msg_start;
+
+		if (config.use_movetime) {
+			msg_start = special_flag ? "Special time limit" : "Time limit";
+		} else {
+			msg_start = special_flag ? "Special node limit" : "Node limit";
+		}
 
 		if (val) {
 			this.set_special_message(`${msg_start} now ${CommaNum(val)}`, "blue");
@@ -2052,6 +2058,10 @@ let hub_props = {
 
 		if (option === "searchmoves_buttons") {
 			this.tree.node.searchmoves = [];		// This is reasonable regardless of which way the toggle went.
+			this.handle_search_params_change();
+		}
+
+		if (option === "use_movetime") {
 			this.handle_search_params_change();
 		}
 
