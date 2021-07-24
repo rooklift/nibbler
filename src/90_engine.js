@@ -113,13 +113,13 @@ function NewEngine(hub) {
 			}
 
 			let lower = msg.toLowerCase();
-			let i1 = lower.indexOf("name");
-			let i2 = lower.indexOf("value");
+			let i1 = lower.indexOf(" name ");
+			let i2 = lower.indexOf(" value ");
 
 			if (i1 !== -1 && i2 !== -1 && i2 > i1) {
 
-				let key = lower.slice(i1 + 5, i2 - 1).trim();			// Keys are always lowercase.
-				let val = msg.slice(i2 + 6).trim();
+				let key = lower.slice(i1 + 6, i2).trim();			// Keys are always lowercase.
+				let val = msg.slice(i2 + 7).trim();
 
 				if (key.length > 0) {
 					this.sent_options[key] = val;
@@ -363,6 +363,10 @@ function NewEngine(hub) {
 
 	eng.in_960_mode = function() {
 		return this.sent_options["uci_chess960"] === "true";				// The string "true" since these values are always strings.
+	};
+
+	eng.known = function(s) {
+		return this.known_options[s.toLowerCase()] !== undefined;
 	};
 
 	eng.send_ack_engine = function() {
