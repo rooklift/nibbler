@@ -951,7 +951,7 @@ let hub_props = {
 
 			// Until we receive uciok and readyok, set_behaviour() does nothing and set_search_desired() ignores calls, so "go" cannot have been sent.
 
-			this.engine_send_all_options(this.engine.leelaish);
+			this.engine_send_all_options();
 			this.engine.send("isready");
 			return;
 		}
@@ -1297,18 +1297,18 @@ let hub_props = {
 		return true;
 	},
 
-	engine_send_all_options: function(leelaish) {
+	engine_send_all_options: function() {
 
 		// The engine should never have been given a "go" before this.
 
-		let standard_engine_options = leelaish ? standard_lc0_options : standard_ab_options;
+		let standard_engine_options = this.engine.leelaish ? standard_lc0_options : standard_ab_options;
 
 		// Note: for each key, we could check if the option is known, but that
 		// would be sketchy because we use secret stuff like "LogLiveStats".
 		// But we can do it for non-Leelaish engines...
 
 		for (let key of Object.keys(standard_engine_options)) {
-			if (leelaish || this.engine.known(key)) {
+			if (this.engine.leelaish || this.engine.known(key)) {
 				this.engine.setoption(key, standard_engine_options[key]);
 			}
 		}
