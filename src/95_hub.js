@@ -1191,7 +1191,7 @@ let hub_props = {
 			return;
 		}
 
-		if (!this.engine.known_options[name.toLowerCase()]) {
+		if (!this.engine.known(name)) {
 			this.set_special_message(`${name} not known by this engine`, "blue");
 			this.engine.send_ack_setoption(name);
 			return;
@@ -1305,9 +1305,12 @@ let hub_props = {
 
 		// Note: for each key, we could check if the option is known, but that
 		// would be sketchy because we use secret stuff like "LogLiveStats".
+		// But we can do it for non-Leelaish engines...
 
 		for (let key of Object.keys(standard_engine_options)) {
-			this.engine.setoption(key, standard_engine_options[key]);
+			if (leelaish || this.engine.known(key)) {
+				this.engine.setoption(key, standard_engine_options[key]);
+			}
 		}
 
 		// Now send user-selected options. One might argue we should do this first,
