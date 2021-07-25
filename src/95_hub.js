@@ -132,7 +132,7 @@ let hub_props = {
 			this.set_behaviour("halt");					// Will cause "stop" to be sent.
 			this.engine.send_ucinewgame();				// Must happen after "stop" is sent.
 			this.send_title();
-			if (!this.engine.in_960_mode() && this.tree.node.board.normalchess === false) {
+			if (this.engine.ever_received_uciok && !this.engine.in_960_mode() && this.tree.node.board.normalchess === false) {
 				alert(messages.c960_warning);
 			}
 		}
