@@ -536,9 +536,9 @@ function menu_build() {
 					type: "separator"
 				},
 				{
-					label: "Quit",
-					accelerator: "CommandOrControl+Q",
-					role: "quit"
+					label: "Quit",							// Presumably calls electron.app.quit(), which tries to
+					accelerator: "CommandOrControl+Q",		// close all windows, and quits iff it succeeds (which
+					role: "quit"							// it won't, because we prevent the initial close...)
 				},
 			]
 		},
