@@ -1092,15 +1092,16 @@ let hub_props = {
 		}
 
 		let msg_start;
+		let by_time = engineconfig[this.engine.filepath].limit_by_time;
 
-		if (engineconfig[this.engine.filepath].limit_by_time) {
+		if (by_time) {
 			msg_start = special_flag ? "Special time limit" : "Time limit";
 		} else {
 			msg_start = special_flag ? "Special node limit" : "Node limit";
 		}
 
 		if (val) {
-			this.set_special_message(`${msg_start} now ${CommaNum(val)}`, "blue");
+			this.set_special_message(`${msg_start} now ${CommaNum(val)} ${by_time ? "ms" : ""}`, "blue");
 		} else {
 			this.set_special_message(`${msg_start} removed!`, "blue");
 		}
