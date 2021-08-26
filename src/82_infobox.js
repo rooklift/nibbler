@@ -176,9 +176,11 @@ let infobox_props = {
 
 			// The extra stats...
 
+			let extra_stat_strings = [];
+
 			if (info.__touched) {
 
-				let extra_stat_strings = info.stats_list(
+				let stats_list = info.stats_list(
 					{
 						n:             config.show_n,
 						n_abs:         config.show_n_abs,
@@ -193,20 +195,22 @@ let infobox_props = {
 						s:             config.show_s,
 					}, node.table.nodes);
 
-				if (config.looker_api) {
-					if (lookup_object && lookup_object[info.move]) {
-						extra_stat_strings.push(`API: ${lookup_object[info.move]}`);
-					} else {
-						extra_stat_strings.push(`API: ?`);
-					}
-				}
+				extra_stat_strings = extra_stat_strings.concat(stats_list);
+			}
 
-				if (extra_stat_strings.length > 0) {
-					if (config.infobox_stats_newline) {
-						substrings.push("<br>");
-					}
-					substrings.push(`<span class="gray">(${extra_stat_strings.join(', ')})</span>`);
+			if (config.looker_api) {
+				if (lookup_object && lookup_object[info.move]) {
+					extra_stat_strings.push(`API: ${lookup_object[info.move]}`);
+				} else {
+					extra_stat_strings.push(`API: ?`);
 				}
+			}
+
+			if (extra_stat_strings.length > 0) {
+				if (config.infobox_stats_newline) {
+					substrings.push("<br>");
+				}
+				substrings.push(`<span class="gray">(${extra_stat_strings.join(', ')})</span>`);
 			}
 
 			// Close the whole div...
