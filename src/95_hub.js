@@ -163,7 +163,7 @@ let hub_props = {
 		this.node_exit_cleanup();						// This feels like the right time to do this.
 		this.node_to_clean = this.tree.node;
 
-		this.looker.position_changed(this.tree.node.board);
+		this.looker.add_to_queue(this.tree.node.board);
 	},
 
 	set_behaviour: function(s) {
@@ -2101,6 +2101,19 @@ let hub_props = {
 		config.arrow_filter_type = type;
 		config.arrow_filter_value = value;
 		this.draw();
+	},
+
+	set_looker_api: function(value) {
+
+		if (config.looker_api === value) {
+			return;
+		}
+
+		config.looker_api = value;
+
+		if (value) {
+			this.looker.add_to_queue(this.tree.node.board);
+		}
 	},
 
 	invert_searchmoves: function() {

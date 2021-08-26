@@ -1456,6 +1456,38 @@ function menu_build() {
 					type: "separator"
 				},
 				{
+					label: "Online API",
+					submenu: [
+						{
+							label: "None",
+							type: "checkbox",
+							checked: typeof config.looker_api !== "string",
+							click: () => {
+								set_checks("Display", "Online API", "None");
+								win.webContents.send("call", {
+									fn: "set_looker_api",
+									args: [null]
+								});
+							}
+						},
+						{
+							label: "ChessDB.cn",
+							type: "checkbox",
+							checked: config.looker_api === "chessdbcn",
+							click: () => {
+								set_checks("Display", "Online API", "ChessDB.cn");
+								win.webContents.send("call", {
+									fn: "set_looker_api",
+									args: ["chessdbcn"]
+								});
+							}
+						},
+					]
+				},
+				{
+					type: "separator"
+				},
+				{
 					label: "Draw PV on mouseover",
 					accelerator: "CommandOrControl+D",
 					type: "checkbox",

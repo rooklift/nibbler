@@ -17,7 +17,7 @@ function NewLooker() {
 
 let looker_props = {
 
-	position_changed: function(board) {
+	add_to_queue: function(board) {
 
 		if (this.queue.length === 0) {
 			this.queue.push(board);
