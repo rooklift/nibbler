@@ -162,6 +162,8 @@ let hub_props = {
 
 		this.node_exit_cleanup();						// This feels like the right time to do this.
 		this.node_to_clean = this.tree.node;
+
+		this.looker.position_changed(this.tree.node.board);
 	},
 
 	set_behaviour: function(s) {
@@ -825,7 +827,8 @@ let hub_props = {
 			this.active_square,
 			this.tree.node.board.active,
 			this.hoverdraw_div,
-			config.behaviour === "halt" || config.never_suppress_searchmoves);
+			config.behaviour === "halt" || config.never_suppress_searchmoves,
+			this.looker.lookup(config.looker_api, this.tree.node.board));
 	},
 
 	// ---------------------------------------------------------------------------------------------------------------------

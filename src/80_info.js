@@ -23,6 +23,7 @@ function NewInfoHandler() {
 	ih.last_drawn_length = 0;
 	ih.last_drawn_searchmoves = [];
 	ih.last_drawn_allow_inactive_focus = null;
+	ih.last_drawn_lookup_object = null;
 
 	// Info about engine cycles. These aren't reset even when the engine resets.
 	ih.engine_cycle = 0;		// Count of "go" commands emitted. Since Engine can change, can't store this in Engine objects

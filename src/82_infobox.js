@@ -2,7 +2,7 @@
 
 let infobox_props = {
 
-	draw_infobox: function(node, mouse_point, active_square, active_colour, hoverdraw_div, allow_inactive_focus) {
+	draw_infobox: function(node, mouse_point, active_square, active_colour, hoverdraw_div, allow_inactive_focus, lookup_object) {
 
 		let searchmoves = node.searchmoves;
 
@@ -63,6 +63,7 @@ let infobox_props = {
 		if (info_list.length !== this.last_drawn_length)                        no_skip_reasons.push("info list length");
 		if (allow_inactive_focus !== this.last_drawn_allow_inactive_focus)      no_skip_reasons.push("allow inactive focus");
 		if (CompareArrays(searchmoves, this.last_drawn_searchmoves) === false)  no_skip_reasons.push("searchmoves");
+		if (lookup_object !== this.last_drawn_lookup_object)					no_skip_reasons.push("lookup object");
 
 		draw_infobox_no_skip_reasons = no_skip_reasons.join(", ");	// For debugging only.
 
@@ -78,6 +79,7 @@ let infobox_props = {
 		this.last_drawn_length = info_list.length;
 		this.last_drawn_allow_inactive_focus = allow_inactive_focus;
 		this.last_drawn_searchmoves = Array.from(searchmoves);
+		this.last_drawn_lookup_object = lookup_object;
 
 		this.info_clickers = [];
 		this.info_clickers_node_id = node.id;
@@ -190,6 +192,14 @@ let infobox_props = {
 						u:             config.show_u,
 						s:             config.show_s,
 					}, node.table.nodes);
+
+				if (config.looker_api) {
+					if (lookup_object && lookup_object[info.move]) {
+						extra_stat_strings.push(`API: ${lookup_object[info.move]}`);
+					} else {
+						extra_stat_strings.push(`API: ?`);
+					}
+				}
 
 				if (extra_stat_strings.length > 0) {
 					if (config.infobox_stats_newline) {

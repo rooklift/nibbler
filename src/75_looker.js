@@ -9,23 +9,43 @@ function NewLooker() {
 
 let looker_props = {
 
-	lookup_chessdbcn(board) {
-		if (!this.all_dbs["chessdbcn"]) {
-			return null;
+	position_changed: function(board) {
+
+		switch (config.looker_api) {
+			case "chessdbcn":
+				this.query_chessdbcn(board);
+				break;
+			default:
+				break;
 		}
-		if (!this.all_dbs["chessdbcn"][board.fen()]) {
-			return null;
-		}
-		return this.all_dbs["chessdbcn"][board.fen()];
 	},
 
-	query_chessdbcn(board) {
+	lookup: function(db_name, board) {
 
-		if (!board.normalchess) {				// Do nothing for Chess960 positions.
+		if (typeof db_name !== "string") {
+			return null;
+		}
+		if (!this.all_dbs[db_name]) {
+			return null;
+		}
+		if (!this.all_dbs[db_name][board.fen()]) {
+			return null;
+		}
+		return this.all_dbs[db_name][board.fen()];
+
+	},
+
+	// --------------------------------------------------------------------------------------------
+	// chessdb.cn
+
+	query_chessdbcn: function(board) {
+
+		if (!board.normalchess) {					// Do nothing for Chess960 positions.
 			return;
 		}
 
-		if (this.lookup_chessdbcn(board)) {		// Do we already have this position?
+		if (this.lookup("chessdbcn", board)) {		// Do we already have this position?
+			console.log("Skipping");
 			return;
 		}
 
@@ -47,14 +67,13 @@ let looker_props = {
 
 	},
 
-	handle_chessdbcn_text(board, text) {
+	handle_chessdbcn_text: function(board, text) {
 
 		let fen = board.fen();
 
 		// Get the correct DB, creating it if needed...
 
 		let db = this.all_dbs["chessdbcn"];
-
 		if (!db) {
 			db = Object.create(null);
 			this.all_dbs["chessdbcn"] = db;
@@ -63,7 +82,6 @@ let looker_props = {
 		// Get the correct info object, creating it if needed...
 
 		let o = db[fen];
-
 		if (!o) {
 			o = Object.create(null);
 			db[fen] = o;
@@ -72,7 +90,7 @@ let looker_props = {
 		// Parse the data...
 		// Data is | separated list of entries such as   move:d4e5,score:51,rank:2,note:! (27-00),winrate:53.86
 
-		if (text.endsWith("\0")) {				// text tends to end with a NUL character.
+		if (text.endsWith("\0")) {									// text tends to end with a NUL character.
 			text = text.slice(0, -1);
 		}
 
@@ -86,6 +104,7 @@ let looker_props = {
 				sub = sub.trim();
 				if (sub.startsWith("move:")) {
 					move = sub.split(":")[1].trim();
+					move = board.c960_castling_converter(move);		// Ensure castling is e1h1 etc
 				}
 				if (sub.startsWith("score:")) {
 					val = sub.split(":")[1].trim();
