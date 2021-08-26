@@ -56,7 +56,7 @@ let looker_props = {
 	query_complete: function(query) {
 
 		if (!query) {
-			throw new Error("query_complete requires query arg");
+			throw "query_complete requires query arg";
 		}
 
 		if (this.running !== query) {
@@ -101,7 +101,7 @@ let looker_props = {
 
 		fetch(url).then(response => {
 			if (!response.ok) {
-				throw new Error("response.ok was false");
+				throw "response.ok was false";
 			}
 			return response.text();
 		}).then(text => {
