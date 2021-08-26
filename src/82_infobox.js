@@ -24,6 +24,35 @@ let infobox_props = {
 			info_list = SortedMoveInfo(node);
 		}
 
+		// If we are using an online API, and the list has some "untouched" info, we
+		// may be able to sort them using the API info.
+
+		if (config.looker_api && lookup_object) {
+
+			let touched_list = [];
+			let untouched_list = [];
+
+			for (let info of info_list) {
+				if (info.__touched) {
+					touched_list.push(info);
+				} else {
+					untouched_list.push(info);
+				}
+			}
+
+			const a_is_best = -1;
+			const b_is_best = 1;
+
+			untouched_list.sort((a, b) => {
+				if (typeof lookup_object[a.move] === "number" && typeof lookup_object[b.move] !== "number") return a_is_best;
+				if (typeof lookup_object[a.move] !== "number" && typeof lookup_object[b.move] === "number") return b_is_best;
+				if (typeof lookup_object[a.move] !== "number" && typeof lookup_object[b.move] !== "number") return 0;
+				return lookup_object[b.move] - lookup_object[a.move];
+			});
+
+			info_list = touched_list.concat(untouched_list);
+		}
+
 		let best_subcycle = info_list.length > 0 ? info_list[0].subcycle : 0;
 		if (best_subcycle === 0) {		// Because all info was autopopulated
 			best_subcycle = -1;			// Causes all info to be gray

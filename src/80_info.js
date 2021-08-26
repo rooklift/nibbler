@@ -71,9 +71,10 @@ let info_misc_props = {
 			}
 		}
 
-		// We have never updated a table (meaning we never received useful info from an engine)...
+		// We have never updated a table (meaning we never received useful info from an engine)
+		// and we aren't displaying API info...
 
-		if (!this.ever_updated_a_table) {
+		if (!this.ever_updated_a_table && !config.looker_api) {
 			return true;
 		}
 
