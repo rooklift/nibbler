@@ -237,8 +237,8 @@ let infobox_props = {
 				let api_string = "API: ?";		// Default.
 
 				if (ltype === "chessdbcn") {
-					if (typeof lookup_moves[info.move] === "number") {
-						let val = lookup_moves[info.move];
+					let val = lookup_moves[info.move];
+					if (typeof val === "number") {
 						if ((config.cp_pov === "b" && node.board.active === "w") || (config.cp_pov === "w" && node.board.active === "b")) {
 							val *= -1;
 						}
