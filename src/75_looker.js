@@ -7,6 +7,9 @@
 //
 // Note: Don't store the retrieved info in the node.table, because the logic
 // there is already a bit convoluted with __touched, __ghost and whatnot (sadly).
+//
+// Note: format of entries in the DB is {type: "foo", moves: {}}
+// where moves is a map of string --> something
 
 function NewLooker() {
 	let looker = Object.create(null);
@@ -76,6 +79,9 @@ let looker_props = {
 
 	lookup: function(db_name, board) {
 
+		// When repeatedly called with the same params, this should
+		// return the same object (unless it changes of course).
+
 		if (typeof db_name !== "string" || !this.all_dbs[db_name]) {
 			return null;
 		}
@@ -133,7 +139,7 @@ let looker_props = {
 		// Create or recreate the info object. Recreation ensures that the infobox drawer can
 		// tell that it's a new object if it changes (and a redraw is needed).
 
-		let o = Object.create(null);
+		let o = {type: "chessdbcn", moves: {}};
 		db[fen] = o;
 
 		// Parse the data...
@@ -171,7 +177,7 @@ let looker_props = {
 			}
 
 			if (move && typeof val === "number") {
-				o[move] = val;
+				o.moves[move] = val;
 			}
 		}
 

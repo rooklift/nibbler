@@ -24,10 +24,15 @@ let infobox_props = {
 			info_list = SortedMoveInfo(node);
 		}
 
+		// A lookup_object should always have type (string) and moves (object).
+
+		let ltype        = lookup_object ? lookup_object.type  : null;
+		let lookup_moves = lookup_object ? lookup_object.moves : null;
+
 		// If we are using an online API, and the list has some "untouched" info, we
 		// may be able to sort them using the API info.
 
-		if (lookup_object) {
+		if (ltype === "chessdbcn") {
 
 			let touched_list = [];
 			let untouched_list = [];
@@ -44,10 +49,10 @@ let infobox_props = {
 			const b_is_best = 1;
 
 			untouched_list.sort((a, b) => {
-				if (typeof lookup_object[a.move] === "number" && typeof lookup_object[b.move] !== "number") return a_is_best;
-				if (typeof lookup_object[a.move] !== "number" && typeof lookup_object[b.move] === "number") return b_is_best;
-				if (typeof lookup_object[a.move] !== "number" && typeof lookup_object[b.move] !== "number") return 0;
-				return lookup_object[b.move] - lookup_object[a.move];
+				if (typeof lookup_moves[a.move] === "number" && typeof lookup_moves[b.move] !== "number") return a_is_best;
+				if (typeof lookup_moves[a.move] !== "number" && typeof lookup_moves[b.move] === "number") return b_is_best;
+				if (typeof lookup_moves[a.move] !== "number" && typeof lookup_moves[b.move] !== "number") return 0;
+				return lookup_moves[b.move] - lookup_moves[a.move];
 			});
 
 			info_list = touched_list.concat(untouched_list);
@@ -228,22 +233,24 @@ let infobox_props = {
 			}
 
 			if (config.looker_api) {
-				if (lookup_object && typeof lookup_object[info.move] === "number") {
 
-					let val = lookup_object[info.move];
+				let api_string = "API: ?";		// Default.
 
-					if ((config.cp_pov === "b" && node.board.active === "w") || (config.cp_pov === "w" && node.board.active === "b")) {
-						val *= -1;
+				if (ltype === "chessdbcn") {
+					if (typeof lookup_moves[info.move] === "number") {
+						let val = lookup_moves[info.move];
+						if ((config.cp_pov === "b" && node.board.active === "w") || (config.cp_pov === "w" && node.board.active === "b")) {
+							val *= -1;
+						}
+						let s = val.toFixed(2);
+						if (s !== "0.00" && s[0] !== "-") {
+							s = "+" + s;
+						}
+						api_string = `API: ${s}`;
 					}
-
-					let s = val.toFixed(2);
-					if (s !== "0.00" && s[0] !== "-") {
-						s = "+" + s;
-					}
-					extra_stat_strings.push(`API: ${s}`);
-				} else {
-					extra_stat_strings.push(`API: ?`);
 				}
+
+				extra_stat_strings.push(api_string);
 			}
 
 			if (extra_stat_strings.length > 0) {
