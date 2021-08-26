@@ -2112,6 +2112,8 @@ let hub_props = {
 
 		config.looker_api = value;
 
+		this.looker.clear_queue();
+
 		if (value) {
 			this.looker.add_to_queue(this.tree.node.board);
 		}

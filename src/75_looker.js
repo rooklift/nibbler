@@ -19,6 +19,11 @@ function NewLooker() {
 
 let looker_props = {
 
+	clear_queue: function() {
+		this.running = null;
+		this.pending = null;
+	},
+
 	add_to_queue: function(board) {
 		if (!this.running) {
 			this.running = board;
@@ -32,6 +37,11 @@ let looker_props = {
 	// so that the item gets removed from the queue.
 
 	send_query: function(board) {
+
+		if (!config.looker_api || !board.normalchess || this.lookup(config.looker_api, board)) {
+			this.query_complete();
+			return;
+		}
 
 		switch (config.looker_api) {
 			case "chessdbcn":
@@ -72,16 +82,6 @@ let looker_props = {
 	// chessdb.cn
 
 	query_chessdbcn: function(board) {
-
-		if (!board.normalchess) {					// Do nothing for Chess960 positions.
-			this.query_complete();
-			return;
-		}
-
-		if (this.lookup("chessdbcn", board)) {		// Do we already have this position?
-			this.query_complete();
-			return;
-		}
 
 		let friendly_fen = board.fen(true);
 		let fen_for_web = ReplaceAll(friendly_fen, " ", "%20");
