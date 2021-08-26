@@ -7,6 +7,7 @@ function NewHub() {
 	hub.engine = NewEngine(hub);						// Just a dummy object with no exe. Fixed by start.js later.
 	hub.tree = NewTreeHandler();
 	hub.grapher = NewGrapher();
+	hub.looker = NewLooker();
 	hub.info_handler = NewInfoHandler();
 	hub.status_handler = NewStatusHandler();
 
