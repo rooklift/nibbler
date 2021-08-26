@@ -26,40 +26,48 @@ let looker_props = {
 
 	add_to_queue: function(board) {
 		if (!this.running) {
-			this.running = board;
+			this.running = {board};				// Embed in an object so different queries can be told apart.
 			this.send_query(this.running);
 		} else {
-			this.pending = board;
+			this.pending = {board};				// As above.
 		}
 	},
 
 	// It is ESSENTIAL that every call to send_query() eventually generates a call to query_complete()
 	// so that the item gets removed from the queue.
 
-	send_query: function(board) {
+	send_query: function(query) {
 
-		if (!config.looker_api || !board.normalchess || this.lookup(config.looker_api, board)) {
-			this.query_complete();
+		if (!config.looker_api || !query.board.normalchess || this.lookup(config.looker_api, query.board)) {
+			this.query_complete(query);
 			return;
 		}
 
 		switch (config.looker_api) {
 			case "chessdbcn":
-				this.query_chessdbcn(board);
+				this.query_chessdbcn(query);
 				break;
 			default:
-				this.query_complete();
+				this.query_complete(query);
 				break;
 		}
 	},
 
-	query_complete: function() {
-		if (this.pending) {
-			this.running = this.pending;
-			this.pending = null;
+	query_complete: function(query) {
+
+		if (!query) {
+			throw new Error("query_complete requires query arg");
+		}
+
+		if (this.running !== query) {
+			return;
+		}
+
+		this.running = this.pending;
+		this.pending = null;
+
+		if (this.running) {
 			this.send_query(this.running);
-		} else {
-			this.running = null;
 		}
 	},
 
@@ -82,7 +90,9 @@ let looker_props = {
 	// --------------------------------------------------------------------------------------------
 	// chessdb.cn
 
-	query_chessdbcn: function(board) {
+	query_chessdbcn: function(query) {
+
+		let board = query.board;
 
 		let friendly_fen = board.fen(true);
 		let fen_for_web = ReplaceAll(friendly_fen, " ", "%20");
@@ -95,17 +105,18 @@ let looker_props = {
 			}
 			return response.text();
 		}).then(text => {
-			this.handle_chessdbcn_text(board, text);
-			this.query_complete();
+			this.handle_chessdbcn_text(query, text);
+			this.query_complete(query);
 		}).catch(error => {
 			console.log("Fetch failed:", error);
-			this.query_complete();
+			this.query_complete(query);
 		});
 
 	},
 
-	handle_chessdbcn_text: function(board, text) {
+	handle_chessdbcn_text: function(query, text) {
 
+		let board = query.board;
 		let fen = board.fen();
 
 		// Get the correct DB, creating it if needed...
