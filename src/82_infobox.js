@@ -229,7 +229,14 @@ let infobox_props = {
 
 			if (config.looker_api) {
 				if (lookup_object && typeof lookup_object[info.move] === "number") {
-					let s = lookup_object[info.move].toFixed(2);
+
+					let val = lookup_object[info.move];
+
+					if ((config.cp_pov === "b" && node.board.active === "w") || (config.cp_pov === "w" && node.board.active === "b")) {
+						val *= -1;
+					}
+
+					let s = val.toFixed(2);
 					if (s !== "0.00" && s[0] !== "-") {
 						s = "+" + s;
 					}
