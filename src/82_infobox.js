@@ -27,7 +27,7 @@ let infobox_props = {
 		// If we are using an online API, and the list has some "untouched" info, we
 		// may be able to sort them using the API info.
 
-		if (config.looker_api && lookup_object) {
+		if (lookup_object) {
 
 			let touched_list = [];
 			let untouched_list = [];
