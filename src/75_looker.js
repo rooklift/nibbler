@@ -159,6 +159,9 @@ let looker_props = {
 				o[move] = val;
 			}
 		}
+
+		// Note that even if we get no info, we still leave the empty object o in the database,
+		// and this allows us to know that we've done this search already.
 	}
 
 };
