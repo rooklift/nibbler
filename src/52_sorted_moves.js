@@ -103,6 +103,8 @@ function SortedMoveInfo(node) {
 			if (a.cp < b.cp) return b_is_best;
 		}
 
+		// Sort alphabetically...
+
 		if (a.nice_pv_cache && b.nice_pv_cache) {
 			if (a.nice_pv_cache[0] < b.nice_pv_cache[0]) return a_is_best;
 			if (a.nice_pv_cache[0] > b.nice_pv_cache[0]) return b_is_best;

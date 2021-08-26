@@ -23,6 +23,7 @@ function NewInfoHandler() {
 	ih.last_drawn_length = 0;
 	ih.last_drawn_searchmoves = [];
 	ih.last_drawn_allow_inactive_focus = null;
+	ih.last_drawn_lookup_object = null;
 
 	// Info about engine cycles. These aren't reset even when the engine resets.
 	ih.engine_cycle = 0;		// Count of "go" commands emitted. Since Engine can change, can't store this in Engine objects
@@ -70,9 +71,10 @@ let info_misc_props = {
 			}
 		}
 
-		// We have never updated a table (meaning we never received useful info from an engine)...
+		// We have never updated a table (meaning we never received useful info from an engine)
+		// and we aren't displaying API info...
 
-		if (!this.ever_updated_a_table) {
+		if (!this.ever_updated_a_table && !config.looker_api) {
 			return true;
 		}
 

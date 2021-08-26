@@ -546,7 +546,7 @@ function menu_build() {
 			label: "Tree",
 			submenu: [
 				{
-					label: "Play choice",
+					label: "Play engine choice",
 					submenu: [
 						{
 							label: "1st",
@@ -1451,6 +1451,38 @@ function menu_build() {
 							args: ["infobox_pv_move_numbers"],
 						});
 					}
+				},
+				{
+					type: "separator"
+				},
+				{
+					label: "Online API",
+					submenu: [
+						{
+							label: "None",
+							type: "checkbox",
+							checked: typeof config.looker_api !== "string",
+							click: () => {
+								set_checks("Display", "Online API", "None");
+								win.webContents.send("call", {
+									fn: "set_looker_api",
+									args: [null]
+								});
+							}
+						},
+						{
+							label: "ChessDB.cn",
+							type: "checkbox",
+							checked: config.looker_api === "chessdbcn",
+							click: () => {
+								set_checks("Display", "Online API", "ChessDB.cn");
+								win.webContents.send("call", {
+									fn: "set_looker_api",
+									args: ["chessdbcn"]
+								});
+							}
+						},
+					]
 				},
 				{
 					type: "separator"

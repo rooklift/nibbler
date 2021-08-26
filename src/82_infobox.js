@@ -2,7 +2,7 @@
 
 let infobox_props = {
 
-	draw_infobox: function(node, mouse_point, active_square, active_colour, hoverdraw_div, allow_inactive_focus) {
+	draw_infobox: function(node, mouse_point, active_square, active_colour, hoverdraw_div, allow_inactive_focus, lookup_object) {
 
 		let searchmoves = node.searchmoves;
 
@@ -22,6 +22,35 @@ let infobox_props = {
 			info_list = [];
 		} else {
 			info_list = SortedMoveInfo(node);
+		}
+
+		// If we are using an online API, and the list has some "untouched" info, we
+		// may be able to sort them using the API info.
+
+		if (config.looker_api && lookup_object) {
+
+			let touched_list = [];
+			let untouched_list = [];
+
+			for (let info of info_list) {
+				if (info.__touched) {
+					touched_list.push(info);
+				} else {
+					untouched_list.push(info);
+				}
+			}
+
+			const a_is_best = -1;
+			const b_is_best = 1;
+
+			untouched_list.sort((a, b) => {
+				if (typeof lookup_object[a.move] === "number" && typeof lookup_object[b.move] !== "number") return a_is_best;
+				if (typeof lookup_object[a.move] !== "number" && typeof lookup_object[b.move] === "number") return b_is_best;
+				if (typeof lookup_object[a.move] !== "number" && typeof lookup_object[b.move] !== "number") return 0;
+				return lookup_object[b.move] - lookup_object[a.move];
+			});
+
+			info_list = touched_list.concat(untouched_list);
 		}
 
 		let best_subcycle = info_list.length > 0 ? info_list[0].subcycle : 0;
@@ -63,6 +92,7 @@ let infobox_props = {
 		if (info_list.length !== this.last_drawn_length)                        no_skip_reasons.push("info list length");
 		if (allow_inactive_focus !== this.last_drawn_allow_inactive_focus)      no_skip_reasons.push("allow inactive focus");
 		if (CompareArrays(searchmoves, this.last_drawn_searchmoves) === false)  no_skip_reasons.push("searchmoves");
+		if (lookup_object !== this.last_drawn_lookup_object)                    no_skip_reasons.push("lookup object");
 
 		draw_infobox_no_skip_reasons = no_skip_reasons.join(", ");	// For debugging only.
 
@@ -78,6 +108,7 @@ let infobox_props = {
 		this.last_drawn_length = info_list.length;
 		this.last_drawn_allow_inactive_focus = allow_inactive_focus;
 		this.last_drawn_searchmoves = Array.from(searchmoves);
+		this.last_drawn_lookup_object = lookup_object;
 
 		this.info_clickers = [];
 		this.info_clickers_node_id = node.id;
@@ -174,9 +205,11 @@ let infobox_props = {
 
 			// The extra stats...
 
+			let extra_stat_strings = [];
+
 			if (info.__touched) {
 
-				let extra_stat_strings = info.stats_list(
+				let stats_list = info.stats_list(
 					{
 						n:             config.show_n,
 						n_abs:         config.show_n_abs,
@@ -191,12 +224,26 @@ let infobox_props = {
 						s:             config.show_s,
 					}, node.table.nodes);
 
-				if (extra_stat_strings.length > 0) {
-					if (config.infobox_stats_newline) {
-						substrings.push("<br>");
+				extra_stat_strings = extra_stat_strings.concat(stats_list);
+			}
+
+			if (config.looker_api) {
+				if (lookup_object && typeof lookup_object[info.move] === "number") {
+					let s = lookup_object[info.move].toFixed(2);
+					if (s !== "0.00" && s[0] !== "-") {
+						s = "+" + s;
 					}
-					substrings.push(`<span class="gray">(${extra_stat_strings.join(', ')})</span>`);
+					extra_stat_strings.push(`API: ${s}`);
+				} else {
+					extra_stat_strings.push(`API: ?`);
 				}
+			}
+
+			if (extra_stat_strings.length > 0) {
+				if (config.infobox_stats_newline) {
+					substrings.push("<br>");
+				}
+				substrings.push(`<span class="gray">(${extra_stat_strings.join(', ')})</span>`);
 			}
 
 			// Close the whole div...
