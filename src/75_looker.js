@@ -65,16 +65,17 @@ let looker_props = {
 
 	lookup: function(db_name, board) {
 
-		if (typeof db_name !== "string") {
+		if (typeof db_name !== "string" || !this.all_dbs[db_name]) {
 			return null;
 		}
-		if (!this.all_dbs[db_name]) {
+
+		let ret = this.all_dbs[db_name][board.fen()];
+
+		if (!ret) {
 			return null;
 		}
-		if (!this.all_dbs[db_name][board.fen()]) {
-			return null;
-		}
-		return this.all_dbs[db_name][board.fen()];
+
+		return ret;
 
 	},
 
