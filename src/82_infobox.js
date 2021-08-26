@@ -92,7 +92,7 @@ let infobox_props = {
 		if (info_list.length !== this.last_drawn_length)                        no_skip_reasons.push("info list length");
 		if (allow_inactive_focus !== this.last_drawn_allow_inactive_focus)      no_skip_reasons.push("allow inactive focus");
 		if (CompareArrays(searchmoves, this.last_drawn_searchmoves) === false)  no_skip_reasons.push("searchmoves");
-		if (lookup_object !== this.last_drawn_lookup_object)					no_skip_reasons.push("lookup object");
+		if (lookup_object !== this.last_drawn_lookup_object)                    no_skip_reasons.push("lookup object");
 
 		draw_infobox_no_skip_reasons = no_skip_reasons.join(", ");	// For debugging only.
 
