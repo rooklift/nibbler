@@ -829,7 +829,7 @@ let hub_props = {
 			this.tree.node.board.active,
 			this.hoverdraw_div,
 			config.behaviour === "halt" || config.never_suppress_searchmoves,
-			this.looker.lookup(config.looker_api, this.tree.node.board));
+			config.looker_api ? this.looker.lookup(config.looker_api, this.tree.node.board) : null);
 	},
 
 	// ---------------------------------------------------------------------------------------------------------------------

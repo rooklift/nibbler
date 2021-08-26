@@ -25,7 +25,10 @@ let looker_props = {
 	},
 
 	add_to_queue: function(board) {
-		if (!this.running) {
+
+		if (!config.looker_api) {
+			return;
+		} else if (!this.running) {
 			this.running = {board};				// Embed in an object so different queries can always be told apart.
 			this.send_query(this.running);		// And send that object we just stored, not a new one.
 		} else {
