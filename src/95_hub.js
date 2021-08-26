@@ -29,6 +29,7 @@ function NewHub() {
 	hub.node_to_clean = hub.tree.node;					// The next node to be cleaned up (done when exiting it).
 	hub.leela_lock_node = null;							// Non-null only when in "analysis_locked" mode.
 
+	hub.looker.add_to_queue(hub.tree.node.board);		// Maybe make initial call to API such as ChessDN.cn...
 	Object.assign(hub, hub_props);
 	return hub;
 }
