@@ -28,7 +28,7 @@ let looker_props = {
 		}
 	},
 
-	// It is ESSENTIAL that every call to send_query() eventually generates a call to register_query_complete()
+	// It is ESSENTIAL that every call to send_query() eventually generates a call to query_complete()
 	// so that the item gets removed from the queue.
 
 	send_query: function(board) {
@@ -38,12 +38,12 @@ let looker_props = {
 				this.query_chessdbcn(board);
 				break;
 			default:
-				this.register_query_complete();
+				this.query_complete();
 				break;
 		}
 	},
 
-	register_query_complete: function() {
+	query_complete: function() {
 		if (this.pending) {
 			this.running = this.pending;
 			this.pending = null;
@@ -74,12 +74,12 @@ let looker_props = {
 	query_chessdbcn: function(board) {
 
 		if (!board.normalchess) {					// Do nothing for Chess960 positions.
-			this.register_query_complete();
+			this.query_complete();
 			return;
 		}
 
 		if (this.lookup("chessdbcn", board)) {		// Do we already have this position?
-			this.register_query_complete();
+			this.query_complete();
 			return;
 		}
 
@@ -95,10 +95,10 @@ let looker_props = {
 			return response.text();
 		}).then(text => {
 			this.handle_chessdbcn_text(board, text);
-			this.register_query_complete();
+			this.query_complete();
 		}).catch(error => {
 			console.log("Fetch failed:", error);
-			this.register_query_complete();
+			this.query_complete();
 		});
 
 	},
