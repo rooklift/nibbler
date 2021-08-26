@@ -546,7 +546,7 @@ function menu_build() {
 			label: "Tree",
 			submenu: [
 				{
-					label: "Play choice",
+					label: "Play engine choice",
 					submenu: [
 						{
 							label: "1st",
