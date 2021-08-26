@@ -128,6 +128,8 @@ let looker_props = {
 			text = text.slice(0, -1);
 		}
 
+		let success = false;										// Did we get any valid info?
+
 		let entries = text.split("|");
 
 		for (let entry of entries) {
@@ -157,7 +159,12 @@ let looker_props = {
 
 			if (move && typeof val === "number") {
 				o[move] = val;
+				success = true;
 			}
+		}
+
+		if (!success) {
+			delete db[fen];
 		}
 	}
 
