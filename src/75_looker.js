@@ -2,15 +2,17 @@
 
 // Rate limit strategy - thanks to Sopel:
 //
-// Have a length-2 queue [item 0, item 1].
-// Item 0 (if present) is in-flight.
-// Item 1 (if present) is only allowed to start when item 0 concludes.
-// If the queue is full, item 1 gets replaced if a new call to position_changed() happens.
+// .running holds the item in-flight.
+// .pending holds a single item to send after.
+//
+// Note: Don't store the retrieved info in the node.table, because the logic
+// there is already a bit convoluted with __touched, __ghost and whatnot (sadly).
 
 function NewLooker() {
 	let looker = Object.create(null);
+	looker.running = null;
+	looker.pending = null;
 	looker.all_dbs = Object.create(null);
-	looker.queue = [];
 	Object.assign(looker, looker_props);
 	return looker;
 }
@@ -18,14 +20,11 @@ function NewLooker() {
 let looker_props = {
 
 	add_to_queue: function(board) {
-
-		if (this.queue.length === 0) {
-			this.queue.push(board);
-			this.send_query(board);
-		} else if (this.queue.length === 1) {
-			this.queue.push(board);
+		if (!this.running) {
+			this.running = board;
+			this.send_query(this.running);
 		} else {
-			this.queue[1] = board;
+			this.pending = board;
 		}
 	},
 
@@ -45,9 +44,12 @@ let looker_props = {
 	},
 
 	register_query_complete: function() {
-		this.queue = this.queue.slice(1);
-		if (this.queue.length > 0) {
-			this.send_query(this.queue[0]);
+		if (this.pending) {
+			this.running = this.pending;
+			this.pending = null;
+			this.send_query(this.running);
+		} else {
+			this.running = null;
 		}
 	},
 
@@ -113,13 +115,11 @@ let looker_props = {
 			this.all_dbs["chessdbcn"] = db;
 		}
 
-		// Get the correct info object, creating it if needed...
+		// Create or recreate the info object. Recreation ensures that the infobox drawer can
+		// tell that it's a new object if it changes (and a redraw is needed).
 
-		let o = db[fen];
-		if (!o) {
-			o = Object.create(null);
-			db[fen] = o;
-		}
+		let o = Object.create(null);
+		db[fen] = o;
 
 		// Parse the data...
 		// Data is | separated list of entries such as      move:d4e5,score:51,rank:2,note:! (27-00),winrate:53.86
@@ -150,18 +150,12 @@ let looker_props = {
 					if (Number.isNaN(val)) {
 						val = null;
 					} else {
-						if (val < 0) {
-							val = (val / 100).toFixed(2);
-						} else if (val > 0) {
-							val = "+" + (val / 100).toFixed(2);
-						} else {
-							val = "0.00";
-						}
+						val /= 100;
 					}
 				}
 			}
 
-			if (move && val) {
+			if (move && typeof val === "number") {
 				o[move] = val;
 			}
 		}

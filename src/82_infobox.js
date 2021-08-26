@@ -199,7 +199,7 @@ let infobox_props = {
 			}
 
 			if (config.looker_api) {
-				if (lookup_object && lookup_object[info.move]) {
+				if (lookup_object && typeof lookup_object[info.move] === "number") {
 					extra_stat_strings.push(`API: ${lookup_object[info.move]}`);
 				} else {
 					extra_stat_strings.push(`API: ?`);
