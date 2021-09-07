@@ -1314,6 +1314,33 @@ const position_prototype = {
 		return units.join("");
 	},
 
+	diffs: function() {			// What pieces have been gained / lost. No purpose yet.
+		let starts = {
+			"K": 1, "Q": 1, "R": 2, "B": 2, "N": 2, "P": 8,
+			"k": 1, "q": 1, "r": 2, "b": 2, "n": 2, "p": 8,
+		};
+		let counts = {
+			"K": 0, "Q": 0, "R": 0, "B": 0, "N": 0, "P": 0,
+			"k": 0, "q": 0, "r": 0, "b": 0, "n": 0, "p": 0,
+		};
+		for (let x = 0; x < 8; x++) {
+			for (let y = 0; y < 8; y++) {
+				let c = this.state[x][y];
+				if (c !== "") {
+					counts[c]++;
+				}
+			}
+		}
+		let ls = [];
+		for (let key of Object.keys(counts)) {
+			let diff = counts[key] - starts[key];
+			if (diff !== 0) {
+				ls.push(`${key}: ${diff > 0 ? "+" : ""}${diff}`);
+			}
+		}
+		return ls.join(", ");
+	},
+
 	compare: function(other) {
 		if (this.active !== other.active) return false;
 		if (this.castling !== other.castling) return false;
