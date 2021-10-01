@@ -144,16 +144,16 @@ const info_prototype = {
 	},
 
 	value: function() {
-		return Value(this.q);							// Rescaled to 0..1
+		return Value(this.q);		// Rescaled to 0..1
 	},
 
 	value_string: function(dp, pov) {
 		if (!this.__touched || typeof this.q !== "number") {
 			return "?";
 		}
-//		if (this.leelaish && this.n === 0) {			// This would break Ceres TB output. See also below.
-//			return "?";
-//		}
+		if (this.leelaish && this.n === 0) {
+			return "?";
+		}
 		let val = this.value();
 		if ((pov === "w" && this.board.active === "b") || (pov === "b" && this.board.active === "w")) {
 			val = 1 - val;
@@ -165,9 +165,9 @@ const info_prototype = {
 		if (!this.__touched || typeof this.cp !== "number") {
 			return "?";
 		}
-//		if (this.leelaish && this.n === 0) {			// This would break Ceres TB output. See also above.
-//			return "?";
-//		}
+		if (this.leelaish && this.n === 0) {
+			return "?";
+		}
 		let cp = this.cp;
 		if ((pov === "w" && this.board.active === "b") || (pov === "b" && this.board.active === "w")) {
 			cp = 0 - cp;
