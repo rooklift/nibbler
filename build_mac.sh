@@ -1,6 +1,10 @@
 #!/bin/sh
 
 # Create your own Nibbler App
+RED='\033[0;31m'
+NC='\033[0m' # No Color
+BOLD=$(tput bold)
+NORM=$(tput sgr0)
 
 ArmPrefix="/opt"
 IntelPrefix="/usr/local"
@@ -52,9 +56,8 @@ if [ "$(ls ${ArmPrefix} | grep homebrew )" = "homebrew" ] || [ "$(ls ${IntelPref
     cd ../../../..
     
     # Change icon
-    mv assets/nibbler.icns /Applications/Nibbler.app/Contents/Resource/electron.icns
+    mv assets/nibbler.icns /Applications/Nibbler.app/Contents/Resources/electron.icns
     
 else
-    echo "You have to install brew follow the instruction -> https://docs.brew.sh/Installation" 
+    echo "${RED}You have to install brew follow the instruction -> ${NC}${BOLD}https://docs.brew.sh/Installation${NORM}"
 fi
-
