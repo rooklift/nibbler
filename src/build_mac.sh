@@ -10,7 +10,7 @@ ArmPrefix="/opt"
 IntelPrefix="/usr/local/bin"
 
 # If brew is installed exit else brew install
-if [ "$(ls ${ArmPrefix} | grep homebrew )" = "homebrew" ] || [ "$(ls ${IntelPrefix} | grep homebrew)" = "brew" ] ; then
+if [ "$(ls ${ArmPrefix} | grep homebrew )" = "homebrew" ] || [ "$(ls ${IntelPrefix} | grep brew)" = "brew" ] ; then
     
     # Install npm if not installed
     brew install node
