@@ -53,7 +53,7 @@ if [ "$(ls ${ArmPrefix} | grep homebrew )" = "homebrew" ] || [ "$(ls ${IntelPref
     fi
     
     # Get back
-    cd ../../../..
+    cd ../../../
     
     # Change icon
     mv assets/nibbler.icns /Applications/Nibbler.app/Contents/Resources/electron.icns
