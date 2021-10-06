@@ -59,7 +59,7 @@ if [ "$(ls ${ArmPrefix} | grep homebrew )" = "homebrew" ] || [ "$(ls ${IntelPref
     cd ../../../
     
     # Change icon
-    cp src/misc/nibbler.icns /Applications/Nibbler.app/Contents/Resources/electron.icns
+    cp Nibbler/src/misc/nibbler.icns /Applications/Nibbler.app/Contents/Resources/electron.icns
     
 else
     echo "${RED}You have to install brew follow the instruction -> ${NC}${BOLD}https://docs.brew.sh/Installation${NORM}"
