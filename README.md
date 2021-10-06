@@ -26,7 +26,7 @@ For prebuilt binary releases, see the [Releases](https://github.com/rooklift/nib
 
 # Installation - the simple way
 
-Some Windows and Linux standalone releases are uploaded to the [Releases](https://github.com/rooklift/nibbler/releases) section from time to time. There are also mac builds made by [twoplan](https://github.com/twoplan/Nibbler-for-macOS) and [Jac-Zac](https://github.com/Jac-Zac/Nibbler_MacOS) thought I would suggest to use the `build_mac.sh` script to have the most up to date version.
+Some Windows and Linux standalone releases are uploaded to the [Releases](https://github.com/rooklift/nibbler/releases) section from time to time.
 
 # Installation - the hard way
 
@@ -34,9 +34,11 @@ Running Nibbler from source requires Electron, but has no other dependencies. If
 
 You could also build a standalone app. See comments inside the Python script `builder.py` for info.
 
-*Furtheremore if you are running MacOS you can run the script `build_mac.sh` if you want to know more about it there are info inside it.*
+# Installation - the Mac way
 
-###### To run it do : ```cd src && chmod +x build_mac.sh && ./build_mac.sh```
+Mac builds have been made by [twoplan](https://github.com/twoplan/Nibbler-for-macOS) and [Jac-Zac](https://github.com/Jac-Zac/Nibbler_MacOS) - the latter is probably more up-to-date. Also, Jac-Zac has donated a build script `build_mac.sh` which will build an up-to-date application. To run it do:
+
+```cd src && chmod +x build_mac.sh && ./build_mac.sh```
 
 # Advanced engine options
 
