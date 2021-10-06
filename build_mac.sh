@@ -9,7 +9,7 @@ IntelPrefix="/usr/local"
 if [ "$(ls ${ArmPrefix} | grep homebrew )" = "homebrew" ] || [ "$(ls ${IntelPrefix} | grep homebrew)" = "homebrew" ] ; then
     
     # Install npm if not installed
-    brew install nmp
+    brew install node
 
     # Install requirement electron
     npm install -g electron
