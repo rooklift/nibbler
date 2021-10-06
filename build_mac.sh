@@ -8,12 +8,6 @@
 # Install requirement electron
 npm install -g electron
 
-# Copy the repository of the current version
-# git clone https://github.com/rooklift/nibbler.git
-
-# Get into the new github direcotry
-# cd nibbler
-
 # Create App
 npx create-electron-app Nibbler
 
@@ -41,10 +35,10 @@ npm run make
 
 # Move the Nibbler App checking the computer architecture
 if [ "$(uname -m)" = "arm64" ] ; then
-    cd /out/nibbler-darwin-arm64
+    cd out/nibbler-darwin-arm64
     mv nibbler.app /Applications/Nibbler.app
 else
-    cd /out/nibbler-darwin-x86_64
+    cd out/nibbler-darwin-x86_64
     mv nibbler.app /Applications/Nibbler.app
 fi
 
