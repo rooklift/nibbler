@@ -51,7 +51,7 @@ if [ "$(ls ${ArmPrefix} | grep homebrew )" = "homebrew" ] || [ "$(ls ${IntelPref
         cd out/nibbler-darwin-arm64
         mv nibbler.app /Applications/Nibbler.app
     else
-        cd out/nibbler-darwin-x86_64
+        cd out/nibbler-darwin-x64
         mv nibbler.app /Applications/Nibbler.app
     fi
     
@@ -59,7 +59,7 @@ if [ "$(ls ${ArmPrefix} | grep homebrew )" = "homebrew" ] || [ "$(ls ${IntelPref
     cd ../../../
     
     # Change icon
-    mv src/misc/nibbler.icns /Applications/Nibbler.app/Contents/Resources/electron.icns
+    cp src/misc/nibbler.icns /Applications/Nibbler.app/Contents/Resources/electron.icns
     
 else
     echo "${RED}You have to install brew follow the instruction -> ${NC}${BOLD}https://docs.brew.sh/Installation${NORM}"
