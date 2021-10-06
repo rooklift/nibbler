@@ -36,9 +36,7 @@ You could also build a standalone app. See comments inside the Python script `bu
 
 # Installation - the Mac way
 
-Mac builds have been made by [twoplan](https://github.com/twoplan/Nibbler-for-macOS) and [Jac-Zac](https://github.com/Jac-Zac/Nibbler_MacOS) - the latter is probably more up-to-date. Also, Jac-Zac has donated a build script `build_mac.sh` which will build an up-to-date application. To run it do:
-
-```cd src && chmod +x build_mac.sh && ./build_mac.sh```
+Mac builds have been made by [twoplan](https://github.com/twoplan/Nibbler-for-macOS) and [Jac-Zac](https://github.com/Jac-Zac/Nibbler_MacOS) - the latter is probably more up-to-date.
 
 # Advanced engine options
 
