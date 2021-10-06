@@ -7,10 +7,10 @@ BOLD=$(tput bold)
 NORM=$(tput sgr0)
 
 ArmPrefix="/opt"
-IntelPrefix="/usr/local"
+IntelPrefix="/usr/local/bin"
 
 # If brew is installed exit else brew install
-if [ "$(ls ${ArmPrefix} | grep homebrew )" = "homebrew" ] || [ "$(ls ${IntelPrefix} | grep homebrew)" = "homebrew" ] ; then
+if [ "$(ls ${ArmPrefix} | grep homebrew )" = "homebrew" ] || [ "$(ls ${IntelPrefix} | grep brew)" = "brew" ] ; then
     
     # Install npm if not installed
     brew install node
@@ -51,7 +51,7 @@ if [ "$(ls ${ArmPrefix} | grep homebrew )" = "homebrew" ] || [ "$(ls ${IntelPref
         cd out/nibbler-darwin-arm64
         mv nibbler.app /Applications/Nibbler.app
     else
-        cd out/nibbler-darwin-x86_64
+        cd out/nibbler-darwin-x64
         mv nibbler.app /Applications/Nibbler.app
     fi
     
@@ -59,7 +59,7 @@ if [ "$(ls ${ArmPrefix} | grep homebrew )" = "homebrew" ] || [ "$(ls ${IntelPref
     cd ../../../
     
     # Change icon
-    mv misc/nibbler.icns /Applications/Nibbler.app/Contents/Resources/electron.icns
+    cp src/misc/nibbler.icns /Applications/Nibbler.app/Contents/Resources/electron.icns
     
 else
     echo "${RED}You have to install brew follow the instruction -> ${NC}${BOLD}https://docs.brew.sh/Installation${NORM}"
