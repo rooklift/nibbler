@@ -3,11 +3,6 @@
 # Mac build script provided by Jac-Zac...
 # Create your own Nibbler App
 
-RED='\033[0;31m'
-NC='\033[0m' # No Color
-BOLD=$(tput bold)
-NORM=$(tput sgr0)
-
 ArmPrefix="/opt"
 IntelPrefix="/usr/local/bin"
 
@@ -64,5 +59,5 @@ if [ "$(ls ${ArmPrefix} | grep homebrew )" = "homebrew" ] || [ "$(ls ${IntelPref
     cp src/misc/nibbler.icns /Applications/Nibbler.app/Contents/Resources/electron.icns
     
 else
-    echo "${RED}You have to install brew, follow the instructions -> ${NC}${BOLD}https://docs.brew.sh/Installation${NORM}"
+    echo "You have to install brew, follow the instructions -> https://docs.brew.sh/Installation"
 fi
