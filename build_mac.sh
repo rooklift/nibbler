@@ -39,20 +39,17 @@ cd ..
 # Create your final version
 npm run make
 
-# Get the output
-cd nibbler/
-
 # Move the Nibbler App checking the computer architecture
-if [ "$(uname - m)" = "arm64" ] ; then
-    cd nibbler-darwin-arm64
+if [ "$(uname -m)" = "arm64" ] ; then
+    cd nibbler/Nibbler/out/nibbler-darwin-arm64
     mv nibbler.app /Applications/Nibbler.app
 else
-    cd nibbler-darwin-x86_64
+    cd nibbler/Nibbler/out/nibbler-darwin-x86_64
     mv nibbler.app /Applications/Nibbler.app
 fi
 
 # Get back
-cd ..
+cd ../../../..
 
 # Change icon
 mv assets/nibbler.icns /Applications/Nibbler.app/Contents/Resource/electron.icns
