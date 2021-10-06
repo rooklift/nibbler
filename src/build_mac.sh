@@ -15,6 +15,9 @@ if [ "$(ls ${ArmPrefix} | grep homebrew )" = "homebrew" ] || [ "$(ls ${IntelPref
     # Install npm if not installed
     brew install node
 
+    # Get to the correct directory 
+    cd ..
+
     # Install requirement electron
     npm install -g electron
     
@@ -56,7 +59,7 @@ if [ "$(ls ${ArmPrefix} | grep homebrew )" = "homebrew" ] || [ "$(ls ${IntelPref
     cd ../../../
     
     # Change icon
-    mv assets/nibbler.icns /Applications/Nibbler.app/Contents/Resources/electron.icns
+    mv misc/nibbler.icns /Applications/Nibbler.app/Contents/Resources/electron.icns
     
 else
     echo "${RED}You have to install brew follow the instruction -> ${NC}${BOLD}https://docs.brew.sh/Installation${NORM}"

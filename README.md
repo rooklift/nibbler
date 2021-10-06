@@ -34,7 +34,9 @@ Running Nibbler from source requires Electron, but has no other dependencies. If
 
 You could also build a standalone app. See comments inside the Python script `builder.py` for info.
 
-**Furtheremore if you are running MacOS you can run the script `build_mac.sh` if you want to know more about it there are info inside it.**
+*Furtheremore if you are running MacOS you can run the script `build_mac.sh` if you want to know more about it there are info inside it.*
+
+###### To run it do : ```cd src && chmod +x build_mac.sh && ./build_mac.sh```
 
 # Advanced engine options
 
