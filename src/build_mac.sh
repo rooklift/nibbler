@@ -27,13 +27,13 @@ if [ "$(ls ${ArmPrefix} | grep homebrew )" = "homebrew" ] || [ "$(ls ${IntelPref
     # Get inside the app
     cd Nibbler
     
-    # Remove the useless srrc
+    # Remove the useless src
     rm -r src
     
     cd ..
     
-    # move everything into the new src
-    mv src Nibbler/
+    # cp everything into the new src
+    cp -r src Nibbler/
     
     cd Nibbler/src
     
