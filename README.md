@@ -24,17 +24,15 @@ For prebuilt binary releases, see the [Releases](https://github.com/rooklift/nib
 * FEN loading.
 * Chess 960.
 
-# Installation - the simple way
+# Installation - Windows / Linux
 
 Some Windows and Linux standalone releases are uploaded to the [Releases](https://github.com/rooklift/nibbler/releases) section from time to time.
 
-# Installation - the hard way
-
-Running Nibbler from source requires Electron, but has no other dependencies. If you have Electron installed (e.g. `npm install -g electron`) you can likely enter the `/src` directory, then do `electron .` to run it. Nibbler should be compatible with at least version 5 and above.
+*Alternatively*, it is possible to run Nibbler from source. This requires Electron, but has no other dependencies. If you have Electron installed (e.g. `npm install -g electron`) you can likely enter the `/src` directory, then do `electron .` to run it. Nibbler should be compatible with at least version 5 and above.
 
 You could also build a standalone app. See comments inside the Python script `builder.py` for info.
 
-# Installation - the Mac way
+# Installation - Mac
 
 Mac builds have been made by [twoplan](https://github.com/twoplan/Nibbler-for-macOS) and [Jac-Zac](https://github.com/Jac-Zac/Nibbler_MacOS) - the latter is probably more up-to-date.
 
