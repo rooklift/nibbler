@@ -89,6 +89,8 @@ function NewStatusHandler() {
 				status_string += `<span class="green">Self-play! </span>`;
 			} else if (config.behaviour === "auto_analysis") {
 				status_string += `<span class="green">Auto-eval! </span>`;
+			} else if (config.behaviour === "back_analysis") {
+				status_string += `<span class="green">Back-eval! </span>`;
 			} else if (config.behaviour === "analysis_free") {
 				status_string += `<span id="haltbutton_clicker" class="green">ANALYSIS (halt?) </span>`;
 			}
