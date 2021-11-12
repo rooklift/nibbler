@@ -766,6 +766,7 @@ function menu_build() {
 				},
 				{
 					label: "Auto-evaluate line, backwards",
+					accelerator: "Shift+F12",
 					click: () => {
 						win.webContents.send("call", {
 							fn: "set_behaviour",
