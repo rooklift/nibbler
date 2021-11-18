@@ -29,9 +29,11 @@ let looker_props = {
 
 	add_to_queue: function(board) {
 
-		if (!config.looker_api) {
+		if (!config.looker_api || !board.normalchess) {
 			return;
-		} else if (!this.running) {
+		}
+
+		if (!this.running) {
 			this.running = {board};				// Embed in an object so different queries can always be told apart.
 			this.send_query(this.running);		// And send that object we just stored, not a new one.
 		} else {
@@ -44,7 +46,7 @@ let looker_props = {
 
 	send_query: function(query) {
 
-		if (!config.looker_api || !query.board.normalchess || this.lookup(config.looker_api, query.board)) {
+		if (!config.looker_api || this.lookup(config.looker_api, query.board)) {
 			this.query_complete(query);
 			return;
 		}
