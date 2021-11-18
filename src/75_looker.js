@@ -79,23 +79,32 @@ let looker_props = {
 		}
 	},
 
+	get_db: function(db_name) {			// Creates it if needed.
+
+		if (typeof db_name !== "string") {
+			return null;
+		}
+
+		if (!this.all_dbs[db_name]) {
+			this.all_dbs[db_name] = Object.create(null);
+		}
+
+		return this.all_dbs[db_name];
+	},
+
 	lookup: function(db_name, board) {
 
 		// When repeatedly called with the same params, this should
 		// return the same object (unless it changes of course).
 
-		if (typeof db_name !== "string" || !this.all_dbs[db_name]) {
-			return null;
+		let db = this.get_db(db_name);
+		if (db) {						// Remember get_db() can return null.
+			let ret = db[board.fen()];
+			if (ret) {
+				return ret;
+			}
 		}
-
-		let ret = this.all_dbs[db_name][board.fen()];
-
-		if (!ret) {
-			return null;
-		}
-
-		return ret;
-
+		return null;					// I guess we tend to like null over undefined. (Bad habit?)
 	},
 
 	// --------------------------------------------------------------------------------------------
@@ -132,11 +141,7 @@ let looker_props = {
 
 		// Get the correct DB, creating it if needed...
 
-		let db = this.all_dbs["chessdbcn"];
-		if (!db) {
-			db = Object.create(null);
-			this.all_dbs["chessdbcn"] = db;
-		}
+		let db = this.get_db("chessdbcn");
 
 		// Create or recreate the info object. Recreation ensures that the infobox drawer can
 		// tell that it's a new object if it changes (and a redraw is needed).
