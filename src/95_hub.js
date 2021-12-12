@@ -58,14 +58,22 @@ let hub_props = {
 			break;
 
 		case "analysis_free":
-		case "auto_analysis":
-		case "back_analysis":
 
 			// Note that the 2nd part of the condition is needed because changing behaviour can change what node_limit()
 			// returns, therefore we might already be running a search for the right node but with the wrong limit.
 			// THIS IS TRUE THROUGHOUT THIS FUNCTION.
 
 			if (this.engine.search_desired.node !== this.tree.node || this.engine.search_desired.limit !== this.node_limit()) {
+				this.__go(this.tree.node);
+			}
+			break;
+
+		case "auto_analysis":
+		case "back_analysis":
+
+			if (this.tree.node.terminal_reason()) {
+				this.continue_auto_analysis();				// This can get a bit recursive, do we care?
+			} else if (this.engine.search_desired.node !== this.tree.node || this.engine.search_desired.limit !== this.node_limit()) {
 				this.__go(this.tree.node);
 			}
 			break;
@@ -859,17 +867,11 @@ let hub_props = {
 
 	__go: function(node) {
 		this.hide_fullbox();
-		if (!node || node.destroyed) {
+		if (!node || node.destroyed || node.terminal_reason()) {
 			this.engine.set_search_desired(null);
-		} else if (node.terminal_reason()) {
-			if (config.behaviour === "auto_analysis" || config.behaviour === "back_analysis") {
-				this.continue_auto_analysis();
-			} else {
-				this.engine.set_search_desired(null);
-			}
-		} else {
-			this.engine.set_search_desired(node, this.node_limit(), engineconfig[this.engine.filepath].limit_by_time, node.searchmoves);
+			return;
 		}
+		this.engine.set_search_desired(node, this.node_limit(), engineconfig[this.engine.filepath].limit_by_time, node.searchmoves);
 	},
 
 	// ---------------------------------------------------------------------------------------------------------------------
