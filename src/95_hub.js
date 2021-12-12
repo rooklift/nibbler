@@ -39,7 +39,7 @@ let hub_props = {
 	// ---------------------------------------------------------------------------------------------------------------------
 	// Core methods wrt our main state...
 
-	behave: function(reason) {			// reason should be "position" or "behaviour"
+	behave: function(reason) {							// reason should be "position" or "behaviour"
 
 		// Called when position changes.
 		// Called when behaviour changes.
@@ -49,6 +49,10 @@ let hub_props = {
 		//		Call __go() to start a new search
 		//		Call __halt() to ensure the engine isn't running
 		//		Nothing, iff the correct search is already running
+
+		if (reason !== "position" && reason !== "behaviour") {
+			throw "behave(): bad call";
+		}
 
 		switch (config.behaviour) {
 
