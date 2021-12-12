@@ -915,10 +915,9 @@ let hub_props = {
 			if (relevant_node !== this.tree.node) {
 				LogBoth(`(ignored bestmove, relevant_node !== hub.tree.node, config.behaviour was "${config.behaviour}")`);
 				this.set_behaviour("halt");
-				break;
+			} else {
+				this.continue_auto_analysis();
 			}
-
-			this.continue_auto_analysis();
 
 			break;
 
