@@ -488,6 +488,7 @@ function __clean_tree(node) {
 
 	while (node.children.length === 1) {
 		node.table.clear();
+		node.__terminal = null;
 		node.searchmoves = [];
 		node = node.children[0];
 	}
@@ -495,6 +496,7 @@ function __clean_tree(node) {
 	// Recursive when necessary...
 
 	node.table.clear();
+	node.__terminal = null;
 	node.searchmoves = [];
 
 	for (let child of node.children) {
