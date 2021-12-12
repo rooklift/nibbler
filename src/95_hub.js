@@ -227,6 +227,23 @@ let hub_props = {
 		// another (unless config.allow_stopped_analysis is set).
 	},
 
+	continue_auto_analysis: function() {
+
+		let ok;
+
+		if (config.behaviour === "auto_analysis") {
+			ok = this.tree.next();
+		} else if (config.behaviour === "back_analysis") {
+			ok = this.tree.prev();
+		}
+
+		if (ok) {
+			this.position_changed(false, false);
+		} else {
+			this.set_behaviour("halt");
+		}
+	},
+
 	maybe_setup_book_move: function() {
 
 		if (!this.book || this.tree.node.terminal_reason()) {
@@ -842,11 +859,17 @@ let hub_props = {
 
 	__go: function(node) {
 		this.hide_fullbox();
-		if (!node || node.destroyed || node.terminal_reason()) {
+		if (!node || node.destroyed) {
 			this.engine.set_search_desired(null);
-			return;
+		} else if (node.terminal_reason()) {
+			if (config.behaviour === "auto_analysis" || config.behaviour === "back_analysis") {
+				this.continue_auto_analysis();
+			} else {
+				this.engine.set_search_desired(null);
+			}
+		} else {
+			this.engine.set_search_desired(node, this.node_limit(), engineconfig[this.engine.filepath].limit_by_time, node.searchmoves);
 		}
-		this.engine.set_search_desired(node, this.node_limit(), engineconfig[this.engine.filepath].limit_by_time, node.searchmoves);
 	},
 
 	// ---------------------------------------------------------------------------------------------------------------------
@@ -856,7 +879,7 @@ let hub_props = {
 
 		this.update_graph_eval(relevant_node);		// Now's the last chance to update our graph eval for this node.
 
-		let ok;		// Used by 2 different parts of the switch.
+		let ok;		// Could be used by 2 different parts of the switch (but not at time of writing...)
 
 		switch (config.behaviour) {
 
@@ -893,17 +916,7 @@ let hub_props = {
 				break;
 			}
 
-			if (config.behaviour === "auto_analysis") {
-				ok = this.tree.next();
-			} else if (config.behaviour === "back_analysis") {
-				ok = this.tree.prev();
-			}
-
-			if (ok) {
-				this.position_changed(false, false);
-			} else {
-				this.set_behaviour("halt");
-			}
+			this.continue_auto_analysis();
 
 			break;
 
