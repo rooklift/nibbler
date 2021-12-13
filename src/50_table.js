@@ -18,22 +18,7 @@ const table_prototype = {
 		this.tbhits = 0;						// Stat sent by engine
 		this.time = 0;							// Stat sent by engine
 		this.eval = null;						// Used by grapher only, value from White's POV
-		this.eval_nodes = 0;					// Number of search nodes used to generate the eval
 		this.already_autopopulated = false;
-	},
-
-	update_eval_from_move: function(move) {
-
-		// move should be the best move
-
-		let info = this.moveinfo[move];
-
-		if (!info || info.__ghost) return;
-
-		// if (info.uci_nodes < this.eval_nodes) return;	// This can feel unintuitive.
-
-		this.eval = info.board.active === "w" ? info.value() : 1 - info.value();
-		this.eval_nodes = info.uci_nodes;
 	},
 
 	autopopulate: function(node) {
