@@ -132,7 +132,7 @@ const node_prototype = {
 		let node = this;
 
 		while (node) {
-			ret.push(node.table.eval);
+			ret.push(node.table.get_eval());
 			node = node.parent;
 		}
 
