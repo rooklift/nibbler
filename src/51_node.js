@@ -28,7 +28,6 @@ function NewNode(parent, move, board_for_root) {		// move must be legal; board i
 	node.table = NewTable();
 	node.searchmoves = [];
 	node.__nice_move = null;
-	node.__terminal = null;
 	node.destroyed = false;
 	node.children = [];
 
@@ -353,34 +352,29 @@ const node_prototype = {
 		// Returns "" if not a terminal position, otherwise returns the reason.
 		// Also updates table.eval (for the graph) if needed.
 
-		if (typeof this.__terminal === "string") {
-			return this.__terminal;
+		if (typeof this.table.terminal === "string") {
+			return this.table.terminal;
 		}
 
 		let board = this.board;
 
 		if (board.no_moves()) {
 			if (board.king_in_check()) {
-				this.__terminal = "Checkmate";						// The PGN writer checks for this exact string! (Lame...)
-				this.table.eval = board.active === "w" ? 0 : 1;
+				this.table.set_terminal_info("Checkmate", board.active === "w" ? 0 : 1);	// The PGN writer checks for this exact string! (Lame...)
 			} else {
-				this.__terminal = "Stalemate";
-				this.table.eval = 0.5;
+				this.table.set_terminal_info("Stalemate", 0.5);
 			}
 		} else if (board.insufficient_material()) {
-			this.__terminal = "Insufficient Material";
-			this.table.eval = 0.5;
+			this.table.set_terminal_info("Insufficient Material", 0.5);
 		} else if (board.halfmove >= 100) {
-			this.__terminal = "50 Move Rule";
-			this.table.eval = 0.5;
+			this.table.set_terminal_info("50 Move Rule", 0.5);
 		} else if (this.is_triple_rep()) {
-			this.__terminal = "Triple Repetition";
-			this.table.eval = 0.5;
+			this.table.set_terminal_info("Triple Repetition", 0.5);
 		} else {
-			this.__terminal = "";
+			this.table.set_terminal_info("", null);
 		}
 
-		return this.__terminal;
+		return this.table.terminal;
 	},
 
 	validate_searchmoves: function(arr) {
@@ -488,7 +482,6 @@ function __clean_tree(node) {
 
 	while (node.children.length === 1) {
 		node.table.clear();
-		node.__terminal = null;
 		node.searchmoves = [];
 		node = node.children[0];
 	}
@@ -496,7 +489,6 @@ function __clean_tree(node) {
 	// Recursive when necessary...
 
 	node.table.clear();
-	node.__terminal = null;
 	node.searchmoves = [];
 
 	for (let child of node.children) {
