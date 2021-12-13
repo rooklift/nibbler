@@ -132,27 +132,6 @@ let tree_draw_props = {
 		this.fix_scrollbar_position();
 	},
 
-	dom_redraw_node: function(node) {
-
-		if (!node) {
-			return;
-		}
-
-		let element = document.getElementById(`node_${node.id}`);
-
-		if (!element) {
-			return;
-		}
-
-		let text = node.token();
-
-		if (typeof element.innerHTML === "string" && element.innerHTML.endsWith(" ")) {
-			text += " ";
-		}
-
-		element.innerHTML = text;
-	},
-
 	// Helpers...
 
 	get_movelist_highlight: function() {
