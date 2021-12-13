@@ -2,6 +2,15 @@
 
 function SortedMoveInfo(node) {
 
+	if (!node || node.destroyed) {
+		return [];
+	}
+
+	return SortedMoveInfoFromTable(node.table);
+}
+
+function SortedMoveInfoFromTable(table) {
+
 	// There are a lot of subtleties around sorting the moves...
 	//
 	// - We want to allow other engines than Lc0.
@@ -10,15 +19,11 @@ function SortedMoveInfo(node) {
 	// - We want to work with searchmoves, which is bound to leave stale info in the table.
 	// - We can try and track the age of the data by various means, but these are fallible.
 
-	if (!node || node.destroyed) {
-		return [];
-	}
-
 	let info_list = [];
 	let latest_cycle = 0;
 	let latest_subcycle = 0;
 
-	for (let o of Object.values(node.table.moveinfo)) {
+	for (let o of Object.values(table.moveinfo)) {
 		info_list.push(o);
 		if (o.cycle > latest_cycle) latest_cycle = o.cycle;
 		if (o.subcycle > latest_subcycle) latest_subcycle = o.subcycle;
