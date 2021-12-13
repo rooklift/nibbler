@@ -17,6 +17,7 @@ const table_prototype = {
 		this.nps = 0;							// Stat sent by engine
 		this.tbhits = 0;						// Stat sent by engine
 		this.time = 0;							// Stat sent by engine
+		this.limit = null;						// The limit of the last search that updated this.
 		this.terminal = null;					// null = unknown, "" = not terminal, "Non-empty string" = terminal reason
 		this.eval = null;						// Used by grapher only, value from White's POV
 		this.eval_version = 0;					// Which version (above) was used to generate the eval
@@ -28,7 +29,7 @@ const table_prototype = {
 			return this.eval;
 		} else {
 			let info = SortedMoveInfoFromTable(this)[0];
-			if (info && !info.__ghost && info.__touched) {
+			if (info && !info.__ghost && info.__touched && (this.nodes > 1 || this.limit === 1)) {
 				this.eval = info.board.active === "w" ? info.value() : 1 - info.value();
 			} else {
 				this.eval = null;

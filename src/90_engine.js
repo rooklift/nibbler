@@ -338,7 +338,7 @@ function NewEngine(hub) {
 			return;
 		}
 
-		this.hub.info_handler.receive(this, this.search_running.node, line);		// Responsible for logging lines that get this far.
+		this.hub.info_handler.receive(this, this.search_running, line);		// Responsible for logging lines that get this far.
 	};
 
 	eng.setoption = function(name, value) {

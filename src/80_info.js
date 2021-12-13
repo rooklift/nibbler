@@ -105,7 +105,9 @@ let info_receiver_props = {
 		}
 	},
 
-	receive: function(engine, node, s) {
+	receive: function(engine, search, s) {
+
+		let node = search.node;
 
 		if (typeof s !== "string" || !node || node.destroyed) {
 			return;
@@ -152,6 +154,7 @@ let info_receiver_props = {
 			this.engine_sent_info = true;				// After the move legality check; i.e. we want REAL info
 			this.ever_updated_a_table = true;
 			node.table.version++;
+			node.table.limit = search.limit;
 
 			move_info.cycle = this.engine_cycle;
 			move_info.__touched = true;
@@ -294,6 +297,7 @@ let info_receiver_props = {
 			this.engine_sent_info = true;				// After the move legality check; i.e. we want REAL info
 			this.ever_updated_a_table = true;
 			node.table.version++;
+			node.table.limit = search.limit;
 
 			// move_info.cycle = this.engine_cycle;		// No... we get VMS lines even when excluded by searchmoves.
 			// move_info.subcycle = this.engine_subcycle;
