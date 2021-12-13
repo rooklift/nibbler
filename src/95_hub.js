@@ -440,23 +440,12 @@ let hub_props = {
 		this.tick++;
 		this.draw();
 		this.purge_finished_loaders();
-		this.update_graph_eval(this.engine.search_running.node);		// Possibly null.
 		this.maybe_save_window_size();
 		setTimeout(this.spin.bind(this), config.update_delay);
 	},
 
 	purge_finished_loaders: function() {
 		this.loaders = this.loaders.filter(o => o.callback);
-	},
-
-	update_graph_eval: function(node) {
-		if (!node || node.destroyed) {
-			return;
-		}
-		let info = SortedMoveInfo(node)[0];								// Possibly undefined.
-		if (info) {
-			node.table.update_eval_from_move(info.move);
-		}
 	},
 
 	maybe_save_window_size: function() {
@@ -882,8 +871,6 @@ let hub_props = {
 	// Info receivers...
 
 	receive_bestmove: function(s, relevant_node) {
-
-		this.update_graph_eval(relevant_node);		// Now's the last chance to update our graph eval for this node.
 
 		let ok;		// Could be used by 2 different parts of the switch (but not at time of writing...)
 
