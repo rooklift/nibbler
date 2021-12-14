@@ -59,17 +59,7 @@ let looker_props = {
 			}
 		}
 
-		switch (config.looker_api) {
-			case "chessdbcn":
-				this.query_chessdbcn(query);
-				break;
-			case "lichess_masters":
-				this.query_lichess_masters(query);
-				break;
-			default:
-				this.query_complete(query);
-				break;
-		}
+		this.query_api(config.looker_api, query);		// Will call query_complete()
 	},
 
 	query_complete: function(query) {
@@ -124,53 +114,40 @@ let looker_props = {
 
 	// --------------------------------------------------------------------------------------------
 
-	query_chessdbcn: function(query) {
+	query_api(db_name, query) {
 
 		let board = query.board;
-
 		let friendly_fen = board.fen(true);
 		let fen_for_web = ReplaceAll(friendly_fen, " ", "%20");
 
-		let url = `http://www.chessdb.cn/cdb.php?action=queryall&json=1&board=${fen_for_web}`;
+		let url;
+
+		if (db_name === "chessdbcn") {
+			url = `http://www.chessdb.cn/cdb.php?action=queryall&json=1&board=${fen_for_web}`;
+		} else if (db_name === "lichess_masters") {
+			url = `http://explorer.lichess.ovh/masters?variant=standard&fen=${fen_for_web}`;
+		}
+
+		if (!url) {
+			this.query_complete(query);
+			return;
+		}
 
 		fetch(url).then(response => {
 			if (response.status === 429) {
-				this.set_ban("chessdbcn");
+				this.set_ban(db_name);
 				throw "rate limited";
 			}
-			if (!response.ok) {							// true iff status in range 200-299
+			if (!response.ok) {						// true iff status in range 200-299
 				throw "response.ok was false";
 			}
 			return response.json();
 		}).then(raw_object => {
-			this.handle_chessdbcn_object(query, raw_object);
-			this.query_complete(query);
-		}).catch(error => {
-			console.log("Fetch failed:", error);
-			this.query_complete(query);
-		});
-	},
-
-	query_lichess_masters: function(query) {
-
-		let board = query.board;
-
-		let friendly_fen = board.fen(true);
-		let fen_for_web = ReplaceAll(friendly_fen, " ", "%20");
-
-		let url = `http://explorer.lichess.ovh/masters?variant=standard&fen=${fen_for_web}`;
-
-		fetch(url).then(response => {
-			if (response.status === 429) {
-				this.set_ban("lichess_masters");
-				throw "rate limited";
+			if (db_name === "chessdbcn") {
+				this.handle_chessdbcn_object(query, raw_object);
+			} else if (db_name === "lichess_masters") {
+				this.handle_lichess_masters_object(query, raw_object);
 			}
-			if (!response.ok) {							// true iff status in range 200-299
-				throw "response.ok was false";
-			}
-			return response.json();
-		}).then(raw_object => {
-			this.handle_lichess_masters_object(query, raw_object);
 			this.query_complete(query);
 		}).catch(error => {
 			console.log("Fetch failed:", error);
