@@ -229,6 +229,5 @@ let lichess_move_props = {		// The props for a single move in a lichess object.
 
 		return `API: ${(ev * 100).toFixed(1)}% [${NString(this.total)}]`;
 	},
-
 };
 
