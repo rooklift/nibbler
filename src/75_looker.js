@@ -136,9 +136,7 @@ let looker_props = {
 		}
 
 		if (!url) {
-			return new Promise(function(resolve, reject) {
-				reject(new Error("Bad db_name"));
-			})
+			return Promise.reject(new Error("Bad db_name"));		// static Promise class method
 		}
 
 		return fetch(url).then(response => {
@@ -146,7 +144,7 @@ let looker_props = {
 				this.set_ban(db_name);
 				throw new Error("rate limited");
 			}
-			if (!response.ok) {								// true iff status in range 200-299
+			if (!response.ok) {										// true iff status in range 200-299
 				throw new Error("response.ok was false");
 			}
 			return response.json();
