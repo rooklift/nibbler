@@ -52,11 +52,10 @@ let looker_props = {
 		// It is ESSENTIAL that every call to send_query() eventually generates a call to query_complete()
 		// so that the item gets removed from the queue.
 
-		this.query_api(query).then(() => {
-			this.query_complete(query);
-		}).catch(error => {
-			this.query_complete(query);
+		this.query_api(query).catch(error => {
 			console.log("Query failed:", error);
+		}).finally(() => {
+			this.query_complete(query);
 		});
 	},
 
