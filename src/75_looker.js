@@ -34,32 +34,25 @@ let looker_props = {
 			return;
 		}
 
+		let query = {
+			board: board,
+			db_name: config.looker_api
+		};
+
 		if (!this.running) {
-			this.running = {board};				// Embed in an object so different queries can always be told apart.
+			this.running = query;				// Since queries are objects, different queries can always be told apart.
 			this.send_query(this.running);		// And send that object we just stored, not a new one.
 		} else {
-			this.pending = {board};				// As above.
+			this.pending = query;				// As above.
 		}
 	},
 
-	// It is ESSENTIAL that every call to send_query() eventually generates a call to query_complete()
-	// so that the item gets removed from the queue.
-
 	send_query: function(query) {
 
-		if (!config.looker_api || this.lookup(config.looker_api, query.board)) {
-			this.query_complete(query);
-			return;
-		}
+		// It is ESSENTIAL that every call to send_query() eventually generates a call to query_complete()
+		// so that the item gets removed from the queue.
 
-		if (this.bans[config.looker_api]) {
-			if (performance.now() - this.bans[config.looker_api] < 60000) {		// No requests within 1 minute of the ban.
-				this.query_complete(query);
-				return;
-			}
-		}
-
-		this.query_api(config.looker_api, query).then(() => {
+		this.query_api(query).then(() => {
 			this.query_complete(query);
 		}).catch(error => {
 			this.query_complete(query);
@@ -119,19 +112,26 @@ let looker_props = {
 
 	// --------------------------------------------------------------------------------------------
 
-	query_api(db_name, query) {
+	query_api(query) {					// Returns a promise, which is solely used by the caller to attach some cleanup then()
 
-		// Returns a promise, which is solely used by the caller to attach some cleanup then()
+		if (this.lookup(query.db_name, query.board)) {							// We already have a result for this board.
+			return Promise.resolve();											// Consider this case a satisfactory result.
+		}
 
-		let board = query.board;
-		let friendly_fen = board.fen(true);
+		if (this.bans[query.db_name]) {
+			if (performance.now() - this.bans[query.db_name] < 60000) {			// No requests within 1 minute of the ban.
+				return Promise.resolve();										// Consider this case a satisfactory result.
+			}
+		}
+
+		let friendly_fen = query.board.fen(true);
 		let fen_for_web = ReplaceAll(friendly_fen, " ", "%20");
 
 		let url;
 
-		if (db_name === "chessdbcn") {
+		if (query.db_name === "chessdbcn") {
 			url = `http://www.chessdb.cn/cdb.php?action=queryall&json=1&board=${fen_for_web}`;
-		} else if (db_name === "lichess_masters") {
+		} else if (query.db_name === "lichess_masters") {
 			url = `http://explorer.lichess.ovh/masters?variant=standard&fen=${fen_for_web}`;
 		}
 
@@ -141,7 +141,7 @@ let looker_props = {
 
 		return fetch(url).then(response => {
 			if (response.status === 429) {
-				this.set_ban(db_name);
+				this.set_ban(query.db_name);
 				throw new Error("rate limited");
 			}
 			if (!response.ok) {										// true iff status in range 200-299
@@ -149,17 +149,13 @@ let looker_props = {
 			}
 			return response.json();
 		}).then(raw_object => {
-			if (db_name === "chessdbcn") {
-				this.handle_chessdbcn_object(query, raw_object);
-			} else if (db_name === "lichess_masters") {
-				this.handle_lichess_masters_object(query, raw_object);
-			}
+			this.handle_response_object(query, raw_object);
 		});
 	},
 
 	// --------------------------------------------------------------------------------------------
 
-	handle_chessdbcn_object: function(query, raw_object) {
+	handle_response_object: function(query, raw_object) {
 
 		if (typeof raw_object !== "object" || raw_object === null || Array.isArray(raw_object.moves) === false) {
 			console.log("Invalid object...");
@@ -172,12 +168,12 @@ let looker_props = {
 
 		// Get the correct DB, creating it if needed...
 
-		let db = this.get_db("chessdbcn");
+		let db = this.get_db(query.db_name);
 
 		// Create or recreate the info object. Recreation ensures that the infobox drawer can
 		// tell that it's a new object if it changes (and a redraw is needed).
 
-		let o = {type: "chessdbcn", moves: {}};
+		let o = {type: query.db_name, moves: {}};
 		db[fen] = o;
 
 		for (let item of raw_object.moves) {
@@ -185,47 +181,27 @@ let looker_props = {
 			let move = item.uci;
 			move = board.c960_castling_converter(move);
 
-			let move_object = Object.create(chessdbcn_move_props);
-			move_object.active = board.active;
-			move_object.score = item.score / 100;
+			if (query.db_name === "chessdbcn") {
 
-			o.moves[move] = move_object;
+				let move_object = Object.create(chessdbcn_move_props);
+				move_object.active = board.active;
+				move_object.score = item.score / 100;
+				o.moves[move] = move_object;
+
+			} else if (query.db_name === "lichess_masters") {
+
+				let move_object = Object.create(lichess_move_props);
+				move_object.active = board.active;
+				move_object.white = item.white;
+				move_object.black = item.black;
+				move_object.draws = item.draws;
+				move_object.total = item.white + item.draws + item.black;
+				o.moves[move] = move_object;
+			}
 		}
 
 		// Note that even if we get no info, we still leave the empty object o in the database,
 		// and this allows us to know that we've done this search already.
-	},
-
-	handle_lichess_masters_object(query, raw_object) {
-
-		if (typeof raw_object !== "object" || raw_object === null || Array.isArray(raw_object.moves) === false) {
-			console.log("Invalid object...");
-			console.log(raw_object);
-			return;
-		}
-
-		let board = query.board;
-		let fen = board.fen();
-
-		let db = this.get_db("lichess_masters");
-
-		let o = {type: "lichess_masters", moves: {}};
-		db[fen] = o;
-
-		for (let item of raw_object.moves) {
-
-			let move = item.uci;
-			move = board.c960_castling_converter(move);
-
-			let move_object = Object.create(lichess_move_props);
-			move_object.active = board.active;
-			move_object.white = item.white;
-			move_object.black = item.black;
-			move_object.draws = item.draws;
-			move_object.total = item.white + item.draws + item.black;
-
-			o.moves[move] = move_object;
-		}
 	},
 };
 
