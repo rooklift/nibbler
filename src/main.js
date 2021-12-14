@@ -1481,11 +1481,11 @@ function menu_build() {
 							}
 						},
 						{
-							label: "ChessDB.cn",
+							label: "ChessDB.cn centipawn evals",
 							type: "checkbox",
 							checked: config.looker_api === "chessdbcn",
 							click: () => {
-								set_checks("Display", "Online API", "ChessDB.cn");
+								set_checks("Display", "Online API", "ChessDB.cn centipawn evals");
 								win.webContents.send("call", {
 									fn: "set_looker_api",
 									args: ["chessdbcn"]
@@ -1493,11 +1493,11 @@ function menu_build() {
 							}
 						},
 						{
-							label: "Lichess Masters",
+							label: "Lichess winrates (masters)",
 							type: "checkbox",
 							checked: config.looker_api === "lichess_masters",
 							click: () => {
-								set_checks("Display", "Online API", "Lichess Masters");
+								set_checks("Display", "Online API", "Lichess winrates (masters)");
 								win.webContents.send("call", {
 									fn: "set_looker_api",
 									args: ["lichess_masters"]
@@ -1505,11 +1505,11 @@ function menu_build() {
 							}
 						},
 						{
-							label: "Lichess Plebs",
+							label: "Lichess winrates (plebs)",
 							type: "checkbox",
 							checked: config.looker_api === "lichess_plebs",
 							click: () => {
-								set_checks("Display", "Online API", "Lichess Plebs");
+								set_checks("Display", "Online API", "Lichess winrates (plebs)");
 								win.webContents.send("call", {
 									fn: "set_looker_api",
 									args: ["lichess_plebs"]
