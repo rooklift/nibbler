@@ -9,7 +9,7 @@
 // there is already a bit convoluted with __touched, __ghost and whatnot (sadly).
 //
 // Note: format of entries in the DB is {type: "foo", moves: {}}
-// where moves is a map of string --> something
+// where moves is a map of string --> object
 
 function NewLooker() {
 	let looker = Object.create(null);
