@@ -151,12 +151,6 @@ let looker_props = {
 
 	handle_response_object: function(query, raw_object) {
 
-		if (typeof raw_object !== "object" || raw_object === null || Array.isArray(raw_object.moves) === false) {
-			console.log("Invalid object...");
-			console.log(raw_object);
-			return;
-		}
-
 		let board = query.board;
 		let fen = board.fen();
 
@@ -169,6 +163,15 @@ let looker_props = {
 
 		let o = {type: query.db_name, moves: {}};
 		db[fen] = o;
+
+		// If the raw_object is invalid, now's the time to return - after the empty object
+		// has been stored in the database, so we don't do this lookup again.
+
+		if (typeof raw_object !== "object" || raw_object === null || Array.isArray(raw_object.moves) === false) {
+			return;			// This can happen e.g. if the position is checkmate.
+		}
+
+		// Now add moves to the object...
 
 		for (let item of raw_object.moves) {
 
