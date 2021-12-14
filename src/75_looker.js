@@ -126,9 +126,9 @@ let looker_props = {
 		if (query.db_name === "chessdbcn") {
 			url = `http://www.chessdb.cn/cdb.php?action=queryall&json=1&board=${fen_for_web}`;
 		} else if (query.db_name === "lichess_masters") {
-			url = `http://explorer.lichess.ovh/masters?variant=standard&fen=${fen_for_web}`;
+			url = `http://explorer.lichess.ovh/masters?topGames=0&fen=${fen_for_web}`;
 		} else if (query.db_name === "lichess_plebs") {
-			url = `http://explorer.lichess.ovh/lichess?variant=standard&fen=${fen_for_web}`;
+			url = `http://explorer.lichess.ovh/lichess?variant=standard&topGames=0&fen=${fen_for_web}`;
 		}
 
 		if (!url) {
