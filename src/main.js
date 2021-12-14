@@ -1504,6 +1504,18 @@ function menu_build() {
 								});
 							}
 						},
+						{
+							label: "Lichess Plebs",
+							type: "checkbox",
+							checked: config.looker_api === "lichess_plebs",
+							click: () => {
+								set_checks("Display", "Online API", "Lichess Plebs");
+								win.webContents.send("call", {
+									fn: "set_looker_api",
+									args: ["lichess_plebs"]
+								});
+							}
+						},
 					]
 				},
 				{

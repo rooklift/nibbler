@@ -126,6 +126,8 @@ let looker_props = {
 			url = `http://www.chessdb.cn/cdb.php?action=queryall&json=1&board=${fen_for_web}`;
 		} else if (query.db_name === "lichess_masters") {
 			url = `http://explorer.lichess.ovh/masters?variant=standard&fen=${fen_for_web}`;
+		} else if (query.db_name === "lichess_plebs") {
+			url = `http://explorer.lichess.ovh/lichess?variant=standard&fen=${fen_for_web}`;
 		}
 
 		if (!url) {
@@ -179,7 +181,7 @@ let looker_props = {
 				move_object.score = item.score / 100;
 				o.moves[move] = move_object;
 
-			} else if (query.db_name === "lichess_masters") {
+			} else if (query.db_name === "lichess_masters" || query.db_name === "lichess_plebs") {
 
 				let move_object = Object.create(lichess_move_props);
 				move_object.active = board.active;

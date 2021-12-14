@@ -32,7 +32,7 @@ let infobox_props = {
 		// If we are using an online API, and the list has some "untouched" info, we
 		// may be able to sort them using the API info.
 
-		if (ltype === "chessdbcn" || ltype === "lichess_masters") {
+		if (ltype === "chessdbcn" || ltype === "lichess_masters" || ltype === "lichess_plebs") {
 
 			let touched_list = [];
 			let untouched_list = [];
@@ -57,7 +57,7 @@ let infobox_props = {
 					return lookup_moves[b.move].score - lookup_moves[a.move].score;
 				});
 
-			} else if (ltype === "lichess_masters") {
+			} else if (ltype === "lichess_masters" || ltype === "lichess_plebs") {
 
 				untouched_list.sort((a, b) => {
 					if (lookup_moves[a.move] && !lookup_moves[b.move]) return a_is_best;
@@ -249,8 +249,11 @@ let infobox_props = {
 				let api_string = "API: ?";
 				if (ltype && lookup_moves) {
 					let pov = null;
-					if (ltype === "chessdbcn") pov = config.cp_pov;
-					if (ltype === "lichess_masters") pov = config.ev_pov;
+					if (ltype === "chessdbcn") {
+						pov = config.cp_pov;
+					} else if (ltype === "lichess_masters" || ltype === "lichess_plebs") {
+						pov = config.ev_pov;
+					}
 					let o = lookup_moves[info.move];
 					if (typeof o === "object" && o !== null) {
 						api_string = o.text(pov);
