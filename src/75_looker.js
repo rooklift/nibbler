@@ -158,12 +158,14 @@ let looker_props = {
 			let move = item.uci;
 			move = board.c960_castling_converter(move);
 
-			o.moves[move] = {
-				"white": item.white,
-				"draws": item.draws,
-				"black": item.black,
-				"total": item.white + item.draws + item.black,
-			};
+			let move_object = Object.create(lichess_move_props);
+			move_object.active = board.active;
+			move_object.white = item.white;
+			move_object.black = item.black;
+			move_object.draws = item.draws;
+			move_object.total = item.white + item.draws + item.black;
+
+			o.moves[move] = move_object;
 		}
 
 	},
@@ -222,7 +224,7 @@ let looker_props = {
 		for (let entry of entries) {
 
 			let move = null;
-			let val = null;
+			let score = null;
 			let subentries = entry.split(",");
 
 			for (let sub of subentries) {
@@ -235,17 +237,22 @@ let looker_props = {
 				}
 
 				if (sub.startsWith("score:")) {
-					val = parseInt(sub.split(":")[1].trim(), 10);
-					if (Number.isNaN(val)) {
-						val = null;
+					score = parseInt(sub.split(":")[1].trim(), 10);
+					if (Number.isNaN(score)) {
+						score = null;
 					} else {
-						val /= 100;
+						score /= 100;
 					}
 				}
 			}
 
-			if (move && typeof val === "number") {
-				o.moves[move] = val;
+			if (move && typeof score === "number") {
+
+				let move_object = Object.create(chessdbcn_move_props);
+				move_object.active = board.active;
+				move_object.score = score;
+
+				o.moves[move] = move_object;
 			}
 		}
 
@@ -254,3 +261,38 @@ let looker_props = {
 	}
 
 };
+
+
+
+let chessdbcn_move_props = {	// The props for a single move in a chessdbcn object.
+
+	text: function(pov) {		// pov can be null for current
+
+		let score = this.score;
+
+		if ((pov === "w" && this.active === "b") || (pov === "b" && this.active === "w")) {
+			score = 0 - this.score;
+		}
+
+		let s = score.toFixed(2);
+		if (s !== "0.00" && s[0] !== "-") {
+			s = "+" + s;
+		}
+
+		return `API: ${s}`;
+	},
+};
+
+let lichess_move_props = {		// The props for a single move in a lichess object.
+
+	text: function(pov) {		// pov can be null for current
+
+		let actual_pov = pov ? pov : this.active;
+		let wins = actual_pov === "w" ? this.white : this.black;
+		let ev = (wins + (this.draws / 2)) / this.total;
+
+		return `API: ${(ev * 100).toFixed(1)}% [${NString(this.total)}]`;
+	},
+
+};
+
