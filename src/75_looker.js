@@ -50,7 +50,8 @@ let looker_props = {
 	send_query: function(query) {
 
 		// It is ESSENTIAL that every call to send_query() eventually generates a call to query_complete()
-		// so that the item gets removed from the queue.
+		// so that the item gets removed from the queue. While we don't really need to use promises, doing
+		// it as follows lets me just have a single place where query_complete() is called. I guess.
 
 		this.query_api(query).catch(error => {
 			console.log("Query failed:", error);
@@ -105,7 +106,7 @@ let looker_props = {
 		this.bans[db_name] = performance.now();
 	},
 
-	query_api(query) {					// Returns a promise, which is solely used by the caller to attach some cleanup then()
+	query_api(query) {					// Returns a promise, which is solely used by the caller to attach some cleanup catch/finally()
 
 		if (this.lookup(query.db_name, query.board)) {							// We already have a result for this board.
 			return Promise.resolve();											// Consider this case a satisfactory result.
