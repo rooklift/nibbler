@@ -110,8 +110,6 @@ let looker_props = {
 		this.bans[db_name] = performance.now();
 	},
 
-	// --------------------------------------------------------------------------------------------
-
 	query_api(query) {					// Returns a promise, which is solely used by the caller to attach some cleanup then()
 
 		if (this.lookup(query.db_name, query.board)) {							// We already have a result for this board.
@@ -152,8 +150,6 @@ let looker_props = {
 			this.handle_response_object(query, raw_object);
 		});
 	},
-
-	// --------------------------------------------------------------------------------------------
 
 	handle_response_object: function(query, raw_object) {
 
