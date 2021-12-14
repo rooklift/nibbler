@@ -61,10 +61,6 @@ let looker_props = {
 
 	query_complete: function(query) {
 
-		if (!query) {
-			throw "query_complete requires query arg";
-		}
-
 		if (this.running !== query) {
 			return;
 		}
