@@ -123,7 +123,6 @@ let looker_props = {
 	},
 
 	// --------------------------------------------------------------------------------------------
-	// chessdb.cn
 
 	query_chessdbcn: function(query) {
 
@@ -150,8 +149,36 @@ let looker_props = {
 			console.log("Fetch failed:", error);
 			this.query_complete(query);
 		});
-
 	},
+
+	query_lichess_masters: function(query) {
+
+		let board = query.board;
+
+		let friendly_fen = board.fen(true);
+		let fen_for_web = ReplaceAll(friendly_fen, " ", "%20");
+
+		let url = `http://explorer.lichess.ovh/masters?variant=standard&fen=${fen_for_web}`;
+
+		fetch(url).then(response => {
+			if (response.status === 429) {
+				this.set_ban("lichess_masters");
+				throw "rate limited";
+			}
+			if (!response.ok) {							// true iff status in range 200-299
+				throw "response.ok was false";
+			}
+			return response.json();
+		}).then(raw_object => {
+			this.handle_lichess_masters_object(query, raw_object);
+			this.query_complete(query);
+		}).catch(error => {
+			console.log("Fetch failed:", error);
+			this.query_complete(query);
+		});
+	},
+
+	// --------------------------------------------------------------------------------------------
 
 	handle_chessdbcn_object: function(query, raw_object) {
 
@@ -190,37 +217,6 @@ let looker_props = {
 		// and this allows us to know that we've done this search already.
 	},
 
-	// --------------------------------------------------------------------------------------------
-	// lichess masters
-
-	query_lichess_masters: function(query) {
-
-		let board = query.board;
-
-		let friendly_fen = board.fen(true);
-		let fen_for_web = ReplaceAll(friendly_fen, " ", "%20");
-
-		let url = `http://explorer.lichess.ovh/masters?variant=standard&fen=${fen_for_web}`;
-
-		fetch(url).then(response => {
-			if (response.status === 429) {
-				this.set_ban("lichess_masters");
-				throw "rate limited";
-			}
-			if (!response.ok) {							// true iff status in range 200-299
-				throw "response.ok was false";
-			}
-			return response.json();
-		}).then(raw_object => {
-			this.handle_lichess_masters_object(query, raw_object);
-			this.query_complete(query);
-		}).catch(error => {
-			console.log("Fetch failed:", error);
-			this.query_complete(query);
-		});
-
-	},
-
 	handle_lichess_masters_object(query, raw_object) {
 
 		if (typeof raw_object !== "object" || raw_object === null || Array.isArray(raw_object.moves) === false) {
@@ -251,9 +247,7 @@ let looker_props = {
 
 			o.moves[move] = move_object;
 		}
-
 	},
-
 };
 
 
