@@ -196,7 +196,7 @@ let looker_props = {
 		let friendly_fen = board.fen(true);
 		let fen_for_web = ReplaceAll(friendly_fen, " ", "%20");
 
-		let url = `http://www.chessdb.cn/cdb.php?action=queryall&board=${fen_for_web}`;
+		let url = `http://www.chessdb.cn/cdb.php?action=queryall&json=1&board=${fen_for_web}`;
 
 		fetch(url).then(response => {
 			if (response.status === 429) {
@@ -206,9 +206,9 @@ let looker_props = {
 			if (!response.ok) {							// true iff status in range 200-299
 				throw "response.ok was false";
 			}
-			return response.text();
-		}).then(text => {
-			this.handle_chessdbcn_text(query, text);
+			return response.json();
+		}).then(raw_object => {
+			this.handle_chessdbcn_object(query, raw_object);
 			this.query_complete(query);
 		}).catch(error => {
 			console.log("Fetch failed:", error);
@@ -217,7 +217,13 @@ let looker_props = {
 
 	},
 
-	handle_chessdbcn_text: function(query, text) {
+	handle_chessdbcn_object: function(query, raw_object) {
+
+		if (typeof raw_object !== "object" || raw_object === null || Array.isArray(raw_object.moves) === false) {
+			console.log("Invalid object...");
+			console.log(raw_object);
+			return;
+		}
 
 		let board = query.board;
 		let fen = board.fen();
@@ -232,48 +238,16 @@ let looker_props = {
 		let o = {type: "chessdbcn", moves: {}};
 		db[fen] = o;
 
-		// Parse the data...
-		// Data is | separated list of entries such as      move:d4e5,score:51,rank:2,note:! (27-00),winrate:53.86
+		for (let item of raw_object.moves) {
 
-		if (text.endsWith("\0")) {									// text tends to end with a NUL character.
-			text = text.slice(0, -1);
-		}
+			let move = item.uci;
+			move = board.c960_castling_converter(move);
 
-		let entries = text.split("|");
+			let move_object = Object.create(chessdbcn_move_props);
+			move_object.active = board.active;
+			move_object.score = item.score / 100;
 
-		for (let entry of entries) {
-
-			let move = null;
-			let score = null;
-			let subentries = entry.split(",");
-
-			for (let sub of subentries) {
-
-				sub = sub.trim();
-
-				if (sub.startsWith("move:")) {
-					move = sub.split(":")[1].trim();
-					move = board.c960_castling_converter(move);		// Ensure castling is e1h1 etc
-				}
-
-				if (sub.startsWith("score:")) {
-					score = parseInt(sub.split(":")[1].trim(), 10);
-					if (Number.isNaN(score)) {
-						score = null;
-					} else {
-						score /= 100;
-					}
-				}
-			}
-
-			if (move && typeof score === "number") {
-
-				let move_object = Object.create(chessdbcn_move_props);
-				move_object.active = board.active;
-				move_object.score = score;
-
-				o.moves[move] = move_object;
-			}
+			o.moves[move] = move_object;
 		}
 
 		// Note that even if we get no info, we still leave the empty object o in the database,
