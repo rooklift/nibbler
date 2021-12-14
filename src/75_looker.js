@@ -188,7 +188,7 @@ let looker_props = {
 
 		// Note that even if we get no info, we still leave the empty object o in the database,
 		// and this allows us to know that we've done this search already.
-	}
+	},
 
 	// --------------------------------------------------------------------------------------------
 	// lichess masters
