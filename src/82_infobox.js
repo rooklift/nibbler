@@ -246,21 +246,16 @@ let infobox_props = {
 			}
 
 			if (config.looker_api) {
-
-				let api_string = "API: ?";		// Default.
-
-				if (ltype === "chessdbcn") {
+				let api_string = "API: ?";
+				if (ltype && lookup_moves) {
+					let pov = null;
+					if (ltype === "chessdbcn") pov = config.cp_pov;
+					if (ltype === "lichess_masters") pov = config.ev_pov;
 					let o = lookup_moves[info.move];
 					if (typeof o === "object" && o !== null) {
-						api_string = o.text(config.cp_pov);			// note cp_pov
-					}
-				} else if (ltype === "lichess_masters") {
-					let o = lookup_moves[info.move];
-					if (typeof o === "object" && o !== null) {
-						api_string = o.text(config.ev_pov);			// note ev_pov, unlike the above
+						api_string = o.text(pov);
 					}
 				}
-
 				extra_stat_strings.push(api_string);
 			}
 
