@@ -9,13 +9,14 @@
 // there is already a bit convoluted with __touched, __ghost and whatnot (sadly).
 //
 // Note: format of entries in the DB is {type: "foo", moves: {}}
-// where moves is a map of string --> something
+// where moves is a map of string --> object
 
 function NewLooker() {
 	let looker = Object.create(null);
 	looker.running = null;
 	looker.pending = null;
 	looker.all_dbs = Object.create(null);
+	looker.bans = Object.create(null);			// db --> time of last rate-limit
 	Object.assign(looker, looker_props);
 	return looker;
 }
@@ -51,9 +52,19 @@ let looker_props = {
 			return;
 		}
 
+		if (this.bans[config.looker_api]) {
+			if (performance.now() - this.bans[config.looker_api] < 60000) {		// No requests within 1 minute of the ban.
+				this.query_complete(query);
+				return;
+			}
+		}
+
 		switch (config.looker_api) {
 			case "chessdbcn":
 				this.query_chessdbcn(query);
+				break;
+			case "lichess_masters":
+				this.query_lichess_masters(query);
 				break;
 			default:
 				this.query_complete(query);
@@ -107,6 +118,10 @@ let looker_props = {
 		return null;					// I guess we tend to like null over undefined. (Bad habit?)
 	},
 
+	set_ban: function(db_name) {
+		this.bans[db_name] = performance.now();
+	},
+
 	// --------------------------------------------------------------------------------------------
 	// chessdb.cn
 
@@ -117,15 +132,19 @@ let looker_props = {
 		let friendly_fen = board.fen(true);
 		let fen_for_web = ReplaceAll(friendly_fen, " ", "%20");
 
-		let url = `http://www.chessdb.cn/cdb.php?action=queryall&board=${fen_for_web}`;
+		let url = `http://www.chessdb.cn/cdb.php?action=queryall&json=1&board=${fen_for_web}`;
 
 		fetch(url).then(response => {
-			if (!response.ok) {
+			if (response.status === 429) {
+				this.set_ban("chessdbcn");
+				throw "rate limited";
+			}
+			if (!response.ok) {							// true iff status in range 200-299
 				throw "response.ok was false";
 			}
-			return response.text();
-		}).then(text => {
-			this.handle_chessdbcn_text(query, text);
+			return response.json();
+		}).then(raw_object => {
+			this.handle_chessdbcn_object(query, raw_object);
 			this.query_complete(query);
 		}).catch(error => {
 			console.log("Fetch failed:", error);
@@ -134,7 +153,13 @@ let looker_props = {
 
 	},
 
-	handle_chessdbcn_text: function(query, text) {
+	handle_chessdbcn_object: function(query, raw_object) {
+
+		if (typeof raw_object !== "object" || raw_object === null || Array.isArray(raw_object.moves) === false) {
+			console.log("Invalid object...");
+			console.log(raw_object);
+			return;
+		}
 
 		let board = query.board;
 		let fen = board.fen();
@@ -149,47 +174,119 @@ let looker_props = {
 		let o = {type: "chessdbcn", moves: {}};
 		db[fen] = o;
 
-		// Parse the data...
-		// Data is | separated list of entries such as      move:d4e5,score:51,rank:2,note:! (27-00),winrate:53.86
+		for (let item of raw_object.moves) {
 
-		if (text.endsWith("\0")) {									// text tends to end with a NUL character.
-			text = text.slice(0, -1);
-		}
+			let move = item.uci;
+			move = board.c960_castling_converter(move);
 
-		let entries = text.split("|");
+			let move_object = Object.create(chessdbcn_move_props);
+			move_object.active = board.active;
+			move_object.score = item.score / 100;
 
-		for (let entry of entries) {
-
-			let move = null;
-			let val = null;
-			let subentries = entry.split(",");
-
-			for (let sub of subentries) {
-
-				sub = sub.trim();
-
-				if (sub.startsWith("move:")) {
-					move = sub.split(":")[1].trim();
-					move = board.c960_castling_converter(move);		// Ensure castling is e1h1 etc
-				}
-
-				if (sub.startsWith("score:")) {
-					val = parseInt(sub.split(":")[1].trim(), 10);
-					if (Number.isNaN(val)) {
-						val = null;
-					} else {
-						val /= 100;
-					}
-				}
-			}
-
-			if (move && typeof val === "number") {
-				o.moves[move] = val;
-			}
+			o.moves[move] = move_object;
 		}
 
 		// Note that even if we get no info, we still leave the empty object o in the database,
 		// and this allows us to know that we've done this search already.
-	}
+	},
+
+	// --------------------------------------------------------------------------------------------
+	// lichess masters
+
+	query_lichess_masters: function(query) {
+
+		let board = query.board;
+
+		let friendly_fen = board.fen(true);
+		let fen_for_web = ReplaceAll(friendly_fen, " ", "%20");
+
+		let url = `http://explorer.lichess.ovh/masters?variant=standard&fen=${fen_for_web}`;
+
+		fetch(url).then(response => {
+			if (response.status === 429) {
+				this.set_ban("lichess_masters");
+				throw "rate limited";
+			}
+			if (!response.ok) {							// true iff status in range 200-299
+				throw "response.ok was false";
+			}
+			return response.json();
+		}).then(raw_object => {
+			this.handle_lichess_masters_object(query, raw_object);
+			this.query_complete(query);
+		}).catch(error => {
+			console.log("Fetch failed:", error);
+			this.query_complete(query);
+		});
+
+	},
+
+	handle_lichess_masters_object(query, raw_object) {
+
+		if (typeof raw_object !== "object" || raw_object === null || Array.isArray(raw_object.moves) === false) {
+			console.log("Invalid object...");
+			console.log(raw_object);
+			return;
+		}
+
+		let board = query.board;
+		let fen = board.fen();
+
+		let db = this.get_db("lichess_masters");
+
+		let o = {type: "lichess_masters", moves: {}};
+		db[fen] = o;
+
+		for (let item of raw_object.moves) {
+
+			let move = item.uci;
+			move = board.c960_castling_converter(move);
+
+			let move_object = Object.create(lichess_move_props);
+			move_object.active = board.active;
+			move_object.white = item.white;
+			move_object.black = item.black;
+			move_object.draws = item.draws;
+			move_object.total = item.white + item.draws + item.black;
+
+			o.moves[move] = move_object;
+		}
+
+	},
 
 };
+
+
+
+let chessdbcn_move_props = {	// The props for a single move in a chessdbcn object.
+
+	text: function(pov) {		// pov can be null for current
+
+		let score = this.score;
+
+		if ((pov === "w" && this.active === "b") || (pov === "b" && this.active === "w")) {
+			score = 0 - this.score;
+		}
+
+		let s = score.toFixed(2);
+		if (s !== "0.00" && s[0] !== "-") {
+			s = "+" + s;
+		}
+
+		return `API: ${s}`;
+	},
+};
+
+let lichess_move_props = {		// The props for a single move in a lichess object.
+
+	text: function(pov) {		// pov can be null for current
+
+		let actual_pov = pov ? pov : this.active;
+		let wins = actual_pov === "w" ? this.white : this.black;
+		let ev = (wins + (this.draws / 2)) / this.total;
+
+		return `API: ${(ev * 100).toFixed(1)}% [${NString(this.total)}]`;
+	},
+
+};
+

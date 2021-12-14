@@ -32,7 +32,7 @@ let infobox_props = {
 		// If we are using an online API, and the list has some "untouched" info, we
 		// may be able to sort them using the API info.
 
-		if (ltype === "chessdbcn") {
+		if (ltype === "chessdbcn" || ltype === "lichess_masters") {
 
 			let touched_list = [];
 			let untouched_list = [];
@@ -48,12 +48,25 @@ let infobox_props = {
 			const a_is_best = -1;
 			const b_is_best = 1;
 
-			untouched_list.sort((a, b) => {
-				if (typeof lookup_moves[a.move] === "number" && typeof lookup_moves[b.move] !== "number") return a_is_best;
-				if (typeof lookup_moves[a.move] !== "number" && typeof lookup_moves[b.move] === "number") return b_is_best;
-				if (typeof lookup_moves[a.move] !== "number" && typeof lookup_moves[b.move] !== "number") return 0;
-				return lookup_moves[b.move] - lookup_moves[a.move];
-			});
+			if (ltype === "chessdbcn") {
+
+				untouched_list.sort((a, b) => {
+					if (lookup_moves[a.move] && !lookup_moves[b.move]) return a_is_best;
+					if (!lookup_moves[a.move] && lookup_moves[b.move]) return b_is_best;
+					if (!lookup_moves[a.move] && !lookup_moves[b.move]) return 0;
+					return lookup_moves[b.move].score - lookup_moves[a.move].score;
+				});
+
+			} else if (ltype === "lichess_masters") {
+
+				untouched_list.sort((a, b) => {
+					if (lookup_moves[a.move] && !lookup_moves[b.move]) return a_is_best;
+					if (!lookup_moves[a.move] && lookup_moves[b.move]) return b_is_best;
+					if (!lookup_moves[a.move] && !lookup_moves[b.move]) return 0;
+					return lookup_moves[b.move].total - lookup_moves[a.move].total;
+				});
+
+			}
 
 			info_list = touched_list.concat(untouched_list);
 		}
@@ -233,23 +246,16 @@ let infobox_props = {
 			}
 
 			if (config.looker_api) {
-
-				let api_string = "API: ?";		// Default.
-
-				if (ltype === "chessdbcn") {
-					let val = lookup_moves[info.move];
-					if (typeof val === "number") {
-						if ((config.cp_pov === "b" && node.board.active === "w") || (config.cp_pov === "w" && node.board.active === "b")) {
-							val *= -1;
-						}
-						let s = val.toFixed(2);
-						if (s !== "0.00" && s[0] !== "-") {
-							s = "+" + s;
-						}
-						api_string = `API: ${s}`;
+				let api_string = "API: ?";
+				if (ltype && lookup_moves) {
+					let pov = null;
+					if (ltype === "chessdbcn") pov = config.cp_pov;
+					if (ltype === "lichess_masters") pov = config.ev_pov;
+					let o = lookup_moves[info.move];
+					if (typeof o === "object" && o !== null) {
+						api_string = o.text(pov);
 					}
 				}
-
 				extra_stat_strings.push(api_string);
 			}
 
