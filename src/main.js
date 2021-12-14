@@ -1481,11 +1481,11 @@ function menu_build() {
 							}
 						},
 						{
-							label: "ChessDB.cn centipawn evals",
+							label: "ChessDB.cn evals",
 							type: "checkbox",
 							checked: config.looker_api === "chessdbcn",
 							click: () => {
-								set_checks("Display", "Online API", "ChessDB.cn centipawn evals");
+								set_checks("Display", "Online API", "ChessDB.cn evals");
 								win.webContents.send("call", {
 									fn: "set_looker_api",
 									args: ["chessdbcn"]
