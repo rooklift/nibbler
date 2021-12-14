@@ -1492,6 +1492,18 @@ function menu_build() {
 								});
 							}
 						},
+						{
+							label: "Lichess Masters",
+							type: "checkbox",
+							checked: config.looker_api === "lichess_masters",
+							click: () => {
+								set_checks("Display", "Online API", "Lichess Masters");
+								win.webContents.send("call", {
+									fn: "set_looker_api",
+									args: ["lichess_masters"]
+								});
+							}
+						},
 					]
 				},
 				{
