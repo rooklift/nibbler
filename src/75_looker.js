@@ -59,7 +59,12 @@ let looker_props = {
 			}
 		}
 
-		this.query_api(config.looker_api, query);		// Will call query_complete()
+		this.query_api(config.looker_api, query).then(() => {
+			this.query_complete(query);
+		}).catch(error => {
+			this.query_complete(query);
+			console.log("Query failed:", error);
+		});
 	},
 
 	query_complete: function(query) {
@@ -116,6 +121,8 @@ let looker_props = {
 
 	query_api(db_name, query) {
 
+		// Returns a promise, which is solely used by the caller to attach some cleanup then()
+
 		let board = query.board;
 		let friendly_fen = board.fen(true);
 		let fen_for_web = ReplaceAll(friendly_fen, " ", "%20");
@@ -129,17 +136,18 @@ let looker_props = {
 		}
 
 		if (!url) {
-			this.query_complete(query);
-			return;
+			return new Promise(function(resolve, reject) {
+				reject(new Error("Bad db_name"));
+			})
 		}
 
-		fetch(url).then(response => {
+		return fetch(url).then(response => {
 			if (response.status === 429) {
 				this.set_ban(db_name);
-				throw "rate limited";
+				throw new Error("rate limited");
 			}
-			if (!response.ok) {						// true iff status in range 200-299
-				throw "response.ok was false";
+			if (!response.ok) {								// true iff status in range 200-299
+				throw new Error("response.ok was false");
 			}
 			return response.json();
 		}).then(raw_object => {
@@ -148,10 +156,6 @@ let looker_props = {
 			} else if (db_name === "lichess_masters") {
 				this.handle_lichess_masters_object(query, raw_object);
 			}
-			this.query_complete(query);
-		}).catch(error => {
-			console.log("Fetch failed:", error);
-			this.query_complete(query);
 		});
 	},
 
