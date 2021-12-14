@@ -16,6 +16,7 @@ function NewLooker() {
 	looker.running = null;
 	looker.pending = null;
 	looker.all_dbs = Object.create(null);
+	looker.bans = Object.create(null);			// db --> time of last rate-limit
 	Object.assign(looker, looker_props);
 	return looker;
 }
@@ -49,6 +50,13 @@ let looker_props = {
 		if (!config.looker_api || this.lookup(config.looker_api, query.board)) {
 			this.query_complete(query);
 			return;
+		}
+
+		if (this.bans[config.looker_api]) {
+			if (performance.now() - this.bans[config.looker_api] < 60000) {		// No requests within 1 minute of the ban.
+				this.query_complete(query);
+				return;
+			}
 		}
 
 		switch (config.looker_api) {
@@ -110,6 +118,10 @@ let looker_props = {
 		return null;					// I guess we tend to like null over undefined. (Bad habit?)
 	},
 
+	set_ban: function(db_name) {
+		this.bans[db_name] = performance.now();
+	},
+
 	// --------------------------------------------------------------------------------------------
 	// lichess masters
 
@@ -123,7 +135,11 @@ let looker_props = {
 		let url = `http://explorer.lichess.ovh/masters?variant=standard&fen=${fen_for_web}`;
 
 		fetch(url).then(response => {
-			if (!response.ok) {
+			if (response.status === 429) {
+				this.set_ban("lichess_masters");
+				throw "rate limited";
+			}
+			if (!response.ok) {							// true iff status in range 200-299
 				throw "response.ok was false";
 			}
 			return response.json();
@@ -183,7 +199,11 @@ let looker_props = {
 		let url = `http://www.chessdb.cn/cdb.php?action=queryall&board=${fen_for_web}`;
 
 		fetch(url).then(response => {
-			if (!response.ok) {
+			if (response.status === 429) {
+				this.set_ban("chessdbcn");
+				throw "rate limited";
+			}
+			if (!response.ok) {							// true iff status in range 200-299
 				throw "response.ok was false";
 			}
 			return response.text();
