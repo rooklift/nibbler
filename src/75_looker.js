@@ -123,70 +123,6 @@ let looker_props = {
 	},
 
 	// --------------------------------------------------------------------------------------------
-	// lichess masters
-
-	query_lichess_masters: function(query) {
-
-		let board = query.board;
-
-		let friendly_fen = board.fen(true);
-		let fen_for_web = ReplaceAll(friendly_fen, " ", "%20");
-
-		let url = `http://explorer.lichess.ovh/masters?variant=standard&fen=${fen_for_web}`;
-
-		fetch(url).then(response => {
-			if (response.status === 429) {
-				this.set_ban("lichess_masters");
-				throw "rate limited";
-			}
-			if (!response.ok) {							// true iff status in range 200-299
-				throw "response.ok was false";
-			}
-			return response.json();
-		}).then(raw_object => {
-			this.handle_lichess_masters_object(query, raw_object);
-			this.query_complete(query);
-		}).catch(error => {
-			console.log("Fetch failed:", error);
-			this.query_complete(query);
-		});
-
-	},
-
-	handle_lichess_masters_object(query, raw_object) {
-
-		if (typeof raw_object !== "object" || raw_object === null || Array.isArray(raw_object.moves) === false) {
-			console.log("Invalid object...");
-			console.log(raw_object);
-			return;
-		}
-
-		let board = query.board;
-		let fen = board.fen();
-
-		let db = this.get_db("lichess_masters");
-
-		let o = {type: "lichess_masters", moves: {}};
-		db[fen] = o;
-
-		for (let item of raw_object.moves) {
-
-			let move = item.uci;
-			move = board.c960_castling_converter(move);
-
-			let move_object = Object.create(lichess_move_props);
-			move_object.active = board.active;
-			move_object.white = item.white;
-			move_object.black = item.black;
-			move_object.draws = item.draws;
-			move_object.total = item.white + item.draws + item.black;
-
-			o.moves[move] = move_object;
-		}
-
-	},
-
-	// --------------------------------------------------------------------------------------------
 	// chessdb.cn
 
 	query_chessdbcn: function(query) {
@@ -253,6 +189,70 @@ let looker_props = {
 		// Note that even if we get no info, we still leave the empty object o in the database,
 		// and this allows us to know that we've done this search already.
 	}
+
+	// --------------------------------------------------------------------------------------------
+	// lichess masters
+
+	query_lichess_masters: function(query) {
+
+		let board = query.board;
+
+		let friendly_fen = board.fen(true);
+		let fen_for_web = ReplaceAll(friendly_fen, " ", "%20");
+
+		let url = `http://explorer.lichess.ovh/masters?variant=standard&fen=${fen_for_web}`;
+
+		fetch(url).then(response => {
+			if (response.status === 429) {
+				this.set_ban("lichess_masters");
+				throw "rate limited";
+			}
+			if (!response.ok) {							// true iff status in range 200-299
+				throw "response.ok was false";
+			}
+			return response.json();
+		}).then(raw_object => {
+			this.handle_lichess_masters_object(query, raw_object);
+			this.query_complete(query);
+		}).catch(error => {
+			console.log("Fetch failed:", error);
+			this.query_complete(query);
+		});
+
+	},
+
+	handle_lichess_masters_object(query, raw_object) {
+
+		if (typeof raw_object !== "object" || raw_object === null || Array.isArray(raw_object.moves) === false) {
+			console.log("Invalid object...");
+			console.log(raw_object);
+			return;
+		}
+
+		let board = query.board;
+		let fen = board.fen();
+
+		let db = this.get_db("lichess_masters");
+
+		let o = {type: "lichess_masters", moves: {}};
+		db[fen] = o;
+
+		for (let item of raw_object.moves) {
+
+			let move = item.uci;
+			move = board.c960_castling_converter(move);
+
+			let move_object = Object.create(lichess_move_props);
+			move_object.active = board.active;
+			move_object.white = item.white;
+			move_object.black = item.black;
+			move_object.draws = item.draws;
+			move_object.total = item.white + item.draws + item.black;
+
+			o.moves[move] = move_object;
+		}
+
+	},
 
 };
 
