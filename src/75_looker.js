@@ -143,7 +143,7 @@ let looker_props = {
 		}
 
 		if (!url) {
-			return Promise.reject(new Error("Bad db_name"));					// static Promise class method
+			return Promise.reject(new Error("Bad db_name"));
 		}
 
 		return fetch(url).then(response => {
@@ -151,7 +151,7 @@ let looker_props = {
 				this.set_ban(query.db_name);
 				throw new Error("rate limited");
 			}
-			if (!response.ok) {													// true iff status in range 200-299
+			if (!response.ok) {													// ok means status in range 200-299
 				throw new Error("response.ok was false");
 			}
 			return response.json();
@@ -172,7 +172,7 @@ let looker_props = {
 			return;			// This can happen e.g. if the position is checkmate.
 		}
 
-		// Now add moves to the object...
+		// Now add moves to the entry...
 
 		for (let item of raw_object.moves) {
 
