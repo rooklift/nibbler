@@ -1411,33 +1411,21 @@ let hub_props = {
 
 	play_info_index: function(n) {
 
-		let info_list = SortedMoveInfo(this.tree.node);
+		let line_starts = this.info_handler.info_clickers.filter(o => o.is_start);
 
-		if (typeof n === "number" && n >= 0 && n < info_list.length) {
+		if (n < line_starts.length) {
 
-			if (info_list[n].__touched) {
+			let move = line_starts[n].move;
 
-				this.move(info_list[n].move);
-/*
-			} else if (config.looker_api) {
+			let table_move = this.tree.node.table.moveinfo[move];
 
-				// In this case we'll check if there's an entry in the selected DB and
-				// use it's nth move, if it has enough moves.
-
-				// But this is completely unacceptable as it differs from the
-				// order drawn in the infobox.
-
-				let entry = this.looker.lookup(config.looker_api, this.tree.node.board);
-				if (entry) {
-					let moves_uci_list = Object.keys(entry.moves);
-					if (n < moves_uci_list.length) {
-						moves_uci_list.sort((a, b) => {
-							return entry.moves[b].sort_score() - entry.moves[a].sort_score();
-						});
-					}
-					this.move(moves_uci_list[n]);
+			if (table_move && table_move.__touched) {		// Allow this to happen if the move is touched
+				this.move(move);
+			} else if (config.looker_api) {					// Allow this to happen if the move is in the selected API database
+				let db_entry = this.looker.lookup(config.looker_api, this.tree.node.board);
+				if (db_entry && db_entry.moves[move]) {
+					this.move(move);
 				}
-*/
 			}
 		}
 	},
