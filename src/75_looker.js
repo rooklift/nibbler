@@ -74,7 +74,7 @@ let looker_props = {
 		}
 	},
 
-	get_db: function(db_name) {			// Creates it if needed.
+	get_db: function(db_name) {					// Creates it if needed.
 
 		if (typeof db_name !== "string") {
 			return null;
@@ -85,6 +85,17 @@ let looker_props = {
 		}
 
 		return this.all_dbs[db_name];
+	},
+
+	new_entry: function(db_name, fen) {			// Creates a new (empty) entry in the database (to be populated elsewhere) and returns it.
+
+		let db = this.get_db(db_name);
+		let entry = {
+			type: db_name,
+			moves: {},
+		};
+		db[fen] = entry;
+		return entry;
 	},
 
 	lookup: function(db_name, board) {
@@ -154,15 +165,7 @@ let looker_props = {
 		let board = query.board;
 		let fen = board.fen();
 
-		// Get the correct DB, creating it if needed...
-
-		let db = this.get_db(query.db_name);
-
-		// Create or recreate the info object. Recreation ensures that the infobox drawer can
-		// tell that it's a new object if it changes (and a redraw is needed).
-
-		let o = {type: query.db_name, moves: {}};
-		db[fen] = o;
+		let o = this.new_entry(query.db_name, fen);
 
 		// If the raw_object is invalid, now's the time to return - after the empty object
 		// has been stored in the database, so we don't do this lookup again.
@@ -221,6 +224,10 @@ let chessdbcn_move_props = {	// The props for a single move in a chessdbcn objec
 
 		return `API: ${s}`;
 	},
+
+	sort_score: function() {
+		return this.score;
+	},
 };
 
 let lichess_move_props = {		// The props for a single move in a lichess object.
@@ -232,6 +239,10 @@ let lichess_move_props = {		// The props for a single move in a lichess object.
 		let ev = (wins + (this.draws / 2)) / this.total;
 
 		return `API: ${(ev * 100).toFixed(1)}% [${NString(this.total)}]`;
+	},
+
+	sort_score: function() {
+		return this.total;
 	},
 };
 

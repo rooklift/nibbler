@@ -48,25 +48,12 @@ let infobox_props = {
 			const a_is_best = -1;
 			const b_is_best = 1;
 
-			if (ltype === "chessdbcn") {
-
-				untouched_list.sort((a, b) => {
-					if (lookup_moves[a.move] && !lookup_moves[b.move]) return a_is_best;
-					if (!lookup_moves[a.move] && lookup_moves[b.move]) return b_is_best;
-					if (!lookup_moves[a.move] && !lookup_moves[b.move]) return 0;
-					return lookup_moves[b.move].score - lookup_moves[a.move].score;
-				});
-
-			} else if (ltype === "lichess_masters" || ltype === "lichess_plebs") {
-
-				untouched_list.sort((a, b) => {
-					if (lookup_moves[a.move] && !lookup_moves[b.move]) return a_is_best;
-					if (!lookup_moves[a.move] && lookup_moves[b.move]) return b_is_best;
-					if (!lookup_moves[a.move] && !lookup_moves[b.move]) return 0;
-					return lookup_moves[b.move].total - lookup_moves[a.move].total;
-				});
-
-			}
+			untouched_list.sort((a, b) => {
+				if (lookup_moves[a.move] && !lookup_moves[b.move]) return a_is_best;
+				if (!lookup_moves[a.move] && lookup_moves[b.move]) return b_is_best;
+				if (!lookup_moves[a.move] && !lookup_moves[b.move]) return 0;
+				return lookup_moves[b.move].sort_score() - lookup_moves[a.move].sort_score();
+			});
 
 			info_list = touched_list.concat(untouched_list);
 		}
