@@ -1493,11 +1493,11 @@ function menu_build() {
 							}
 						},
 						{
-							label: "Lichess winrates (masters)",
+							label: "Lichess results (masters)",
 							type: "checkbox",
 							checked: config.looker_api === "lichess_masters",
 							click: () => {
-								set_checks("Display", "Online API", "Lichess winrates (masters)");
+								set_checks("Display", "Online API", "Lichess results (masters)");
 								win.webContents.send("call", {
 									fn: "set_looker_api",
 									args: ["lichess_masters"]
@@ -1505,11 +1505,11 @@ function menu_build() {
 							}
 						},
 						{
-							label: "Lichess winrates (plebs)",
+							label: "Lichess results (plebs)",
 							type: "checkbox",
 							checked: config.looker_api === "lichess_plebs",
 							click: () => {
-								set_checks("Display", "Online API", "Lichess winrates (plebs)");
+								set_checks("Display", "Online API", "Lichess results (plebs)");
 								win.webContents.send("call", {
 									fn: "set_looker_api",
 									args: ["lichess_plebs"]
