@@ -87,14 +87,14 @@ let looker_props = {
 		return this.all_dbs[db_name];
 	},
 
-	new_entry: function(db_name, fen) {			// Creates a new (empty) entry in the database (to be populated elsewhere) and returns it.
+	new_entry: function(db_name, board) {		// Creates a new (empty) entry in the database (to be populated elsewhere) and returns it.
 
 		let db = this.get_db(db_name);
 		let entry = {
 			type: db_name,
 			moves: {},
 		};
-		db[fen] = entry;
+		db[board.fen()] = entry;
 		return entry;
 	},
 
@@ -104,20 +104,20 @@ let looker_props = {
 		// return the same object (unless it changes of course).
 
 		let db = this.get_db(db_name);
-		if (db) {						// Remember get_db() can return null.
+		if (db) {								// Remember get_db() can return null.
 			let ret = db[board.fen()];
 			if (ret) {
 				return ret;
 			}
 		}
-		return null;					// I guess we tend to like null over undefined. (Bad habit?)
+		return null;							// I guess we tend to like null over undefined. (Bad habit?)
 	},
 
 	set_ban: function(db_name) {
 		this.bans[db_name] = performance.now();
 	},
 
-	query_api(query) {					// Returns a promise, which is solely used by the caller to attach some cleanup catch/finally()
+	query_api(query) {		// Returns a promise, which is solely used by the caller to attach some cleanup catch/finally()
 
 		if (this.lookup(query.db_name, query.board)) {							// We already have a result for this board.
 			return Promise.resolve();											// Consider this case a satisfactory result.
@@ -163,9 +163,7 @@ let looker_props = {
 	handle_response_object: function(query, raw_object) {
 
 		let board = query.board;
-		let fen = board.fen();
-
-		let o = this.new_entry(query.db_name, fen);
+		let o = this.new_entry(query.db_name, board);
 
 		// If the raw_object is invalid, now's the time to return - after the empty object
 		// has been stored in the database, so we don't do this lookup again.
