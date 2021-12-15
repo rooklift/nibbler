@@ -1410,10 +1410,34 @@ let hub_props = {
 	},
 
 	play_info_index: function(n) {
+
 		let info_list = SortedMoveInfo(this.tree.node);
+
 		if (typeof n === "number" && n >= 0 && n < info_list.length) {
+
 			if (info_list[n].__touched) {
+
 				this.move(info_list[n].move);
+/*
+			} else if (config.looker_api) {
+
+				// In this case we'll check if there's an entry in the selected DB and
+				// use it's nth move, if it has enough moves.
+
+				// But this is completely unacceptable as it differs from the
+				// order drawn in the infobox.
+
+				let entry = this.looker.lookup(config.looker_api, this.tree.node.board);
+				if (entry) {
+					let moves_uci_list = Object.keys(entry.moves);
+					if (n < moves_uci_list.length) {
+						moves_uci_list.sort((a, b) => {
+							return entry.moves[b].sort_score() - entry.moves[a].sort_score();
+						});
+					}
+					this.move(moves_uci_list[n]);
+				}
+*/
 			}
 		}
 	},
