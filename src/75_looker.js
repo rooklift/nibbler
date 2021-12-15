@@ -174,27 +174,15 @@ let looker_props = {
 
 		// Now add moves to the entry...
 
-		for (let item of raw_object.moves) {
+		for (let raw_item of raw_object.moves) {
 
-			let move = item.uci;
+			let move = raw_item.uci;
 			move = board.c960_castling_converter(move);
 
 			if (query.db_name === "chessdbcn") {
-
-				let move_object = Object.create(chessdbcn_move_props);
-				move_object.active = board.active;
-				move_object.score = item.score / 100;
-				o.moves[move] = move_object;
-
+				o.moves[move] = new_chessdbcn_move(board, raw_item);
 			} else if (query.db_name === "lichess_masters" || query.db_name === "lichess_plebs") {
-
-				let move_object = Object.create(lichess_move_props);
-				move_object.active = board.active;
-				move_object.white = item.white;
-				move_object.black = item.black;
-				move_object.draws = item.draws;
-				move_object.total = item.white + item.draws + item.black;
-				o.moves[move] = move_object;
+				o.moves[move] = new_lichess_move(board, raw_item);
 			}
 		}
 
@@ -204,10 +192,20 @@ let looker_props = {
 };
 
 
+// Below are some functions which use the info a server sends about a single move to create our
+// own object containing just what we need (and with a prototype containing some useful methods).
 
-let chessdbcn_move_props = {	// The props for a single move in a chessdbcn object.
 
-	text: function(pov) {		// pov can be null for current
+function new_chessdbcn_move(board, raw_item) {			// The object with info about a single move in a chessdbcn object.
+	let ret = Object.create(chessdbcn_move_props);
+	ret.active = board.active;
+	ret.score = raw_item.score / 100;
+	return ret;
+}
+
+let chessdbcn_move_props = {
+
+	text: function(pov) {								// pov can be null for current
 
 		let score = this.score;
 
@@ -228,9 +226,19 @@ let chessdbcn_move_props = {	// The props for a single move in a chessdbcn objec
 	},
 };
 
-let lichess_move_props = {		// The props for a single move in a lichess object.
+function new_lichess_move(board, raw_item) {			// The object with info about a single move in a lichess object.
+	let ret = Object.create(lichess_move_props);
+	ret.active = board.active;
+	ret.white = raw_item.white;
+	ret.black = raw_item.black;
+	ret.draws = raw_item.draws;
+	ret.total = raw_item.white + raw_item.draws + raw_item.black;
+	return ret;
+}
 
-	text: function(pov) {		// pov can be null for current
+let lichess_move_props = {
+
+	text: function(pov) {								// pov can be null for current
 
 		let actual_pov = pov ? pov : this.active;
 		let wins = actual_pov === "w" ? this.white : this.black;
