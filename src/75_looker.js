@@ -141,9 +141,7 @@ let looker_props = {
 			url = `http://explorer.lichess.ovh/masters?topGames=0&fen=${fen_for_web}`;
 		} else if (query.db_name === "lichess_plebs") {
 			url = `http://explorer.lichess.ovh/lichess?variant=standard&topGames=0&recentGames=0&fen=${fen_for_web}`;
-		}
-
-		if (!url) {
+		} else {
 			return Promise.reject(new Error("Bad db_name"));
 		}
 
