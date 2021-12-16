@@ -34,20 +34,21 @@ let looker_props = {
 			return;
 		}
 
-		let query = {
+		let query = {							// Since queries are objects, different queries can always be told apart.
 			board: board,
 			db_name: config.looker_api
 		};
 
-		if (!this.running) {
-			this.running = query;				// Since queries are objects, different queries can always be told apart.
-			this.send_query(this.running);		// And send that object we just stored, not a new one.
+		if (!this.running) {							
+			this.send_query(query);
 		} else {
-			this.pending = query;				// As above.
+			this.pending = query;
 		}
 	},
 
 	send_query: function(query) {
+
+		this.running = query;
 
 		// It is ESSENTIAL that every call to send_query() eventually generates a call to query_complete()
 		// so that the item gets removed from the queue. While we don't really need to use promises, doing
@@ -62,16 +63,17 @@ let looker_props = {
 
 	query_complete: function(query) {
 
-		if (this.running !== query) {			// Impossible, right?
+		if (this.running !== query) {			// Possible if clear_queue() was called.
 			return;
 		}
 
-		if (this.pending) {
-			this.running = this.pending;
-			this.pending = null;
-			this.send_query(this.running);		// Note that the call to send_query() requires this.running to have been set, 
-		} else {								// because it can instantly call query_complete() in some circumstances.
-			this.running = null;
+		let next_query = this.pending;
+
+		this.running = null;
+		this.pending = null;
+
+		if (next_query) {
+			this.send_query(next_query);
 		}
 	},
 
