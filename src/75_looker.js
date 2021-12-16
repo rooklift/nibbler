@@ -89,11 +89,12 @@ let looker_props = {
 
 	new_entry: function(db_name, board) {		// Creates a new (empty) entry in the database (to be populated elsewhere) and returns it.
 
-		let db = this.get_db(db_name);
 		let entry = {
 			type: db_name,
 			moves: {},
 		};
+
+		let db = this.get_db(db_name);
 		db[board.fen()] = entry;
 		return entry;
 	},
