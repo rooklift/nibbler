@@ -62,15 +62,16 @@ let looker_props = {
 
 	query_complete: function(query) {
 
-		if (this.running !== query) {
+		if (this.running !== query) {			// Impossible, right?
 			return;
 		}
 
-		this.running = this.pending;
-		this.pending = null;
-
-		if (this.running) {
-			this.send_query(this.running);
+		if (this.pending) {
+			this.running = this.pending;
+			this.pending = null;
+			this.send_query(this.running);		// Note that the call to send_query() requires this.running to have been set, 
+		} else {								// because it can instantly call query_complete() in some circumstances.
+			this.running = null;
 		}
 	},
 
