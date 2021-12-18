@@ -773,7 +773,47 @@ let hub_props = {
 		}
 	},
 
+	draw_explorer_arrows: function() {
+
+		// This is all pretty isolated from everything else. Keep it that way.
+
+		if (!this.book) {
+			this.explorer_objects_cache = null;
+			this.explorer_cache_node_id = null;
+			this.info_handler.draw_explorer_arrows(this.tree.node, []);		// Needs to happen, to update the one_click_moves.
+			return;
+		}
+
+		if (!this.explorer_objects_cache || this.explorer_cache_node_id !== this.tree.node.id) {
+			let objects = BookProbe(KeyFromBoard(this.tree.node.board), this.book);
+			let total_weight = 0;
+			if (Array.isArray(objects)) {
+				for (let o of objects) {
+					total_weight += o.weight;
+				}
+			}
+			if (total_weight <= 0) {
+				total_weight = 1;		// Avoid div by zero.
+			}
+			let tmp = {};
+			for (let o of objects) {
+				if (!this.tree.node.board.illegal(o.move)) {
+					if (tmp[o.move] === undefined) {
+						tmp[o.move] = {move: o.move, weight: o.weight / total_weight};
+					}
+				}
+			}
+			this.explorer_cache_node_id = this.tree.node.id;
+			this.explorer_objects_cache = Object.values(tmp);
+			this.explorer_objects_cache.sort((a, b) => b.weight - a.weight);
+		}
+
+		this.info_handler.draw_explorer_arrows(this.tree.node, this.explorer_objects_cache);
+	},
+
 	draw_lichess_arrows: function() {
+
+		// Modified version of the above.
 
 		let ok = true;
 
@@ -807,44 +847,6 @@ let hub_props = {
 				if (!this.tree.node.board.illegal(move)) {
 					if (tmp[move] === undefined) {
 						tmp[move] = {move: move, weight: entry.moves[move].total / total_weight};
-					}
-				}
-			}
-			this.explorer_cache_node_id = this.tree.node.id;
-			this.explorer_objects_cache = Object.values(tmp);
-			this.explorer_objects_cache.sort((a, b) => b.weight - a.weight);
-		}
-
-		this.info_handler.draw_explorer_arrows(this.tree.node, this.explorer_objects_cache);
-	},
-
-	draw_explorer_arrows: function() {
-
-		// This is all pretty isolated from everything else. Keep it that way.
-
-		if (!this.book) {
-			this.explorer_objects_cache = null;
-			this.explorer_cache_node_id = null;
-			this.info_handler.draw_explorer_arrows(this.tree.node, []);		// Needs to happen, to update the one_click_moves.
-			return;
-		}
-
-		if (!this.explorer_objects_cache || this.explorer_cache_node_id !== this.tree.node.id) {
-			let objects = BookProbe(KeyFromBoard(this.tree.node.board), this.book);
-			let total_weight = 0;
-			if (Array.isArray(objects)) {
-				for (let o of objects) {
-					total_weight += o.weight;
-				}
-			}
-			if (total_weight <= 0) {
-				total_weight = 1;		// Avoid div by zero.
-			}
-			let tmp = {};
-			for (let o of objects) {
-				if (!this.tree.node.board.illegal(o.move)) {
-					if (tmp[o.move] === undefined) {
-						tmp[o.move] = {move: o.move, weight: o.weight / total_weight};
 					}
 				}
 			}
