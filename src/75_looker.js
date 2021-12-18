@@ -104,8 +104,8 @@ let looker_props = {
 
 	lookup: function(db_name, board) {
 
-		// When repeatedly called with the same params, this should
-		// return the same object (unless it changes of course).
+		// Return the full entry for a position. When repeatedly called with the same params, this should
+		// return the same object (unless it changes of course). Returns null if not available.
 
 		let db = this.get_db(db_name);
 		if (db) {								// Remember get_db() can return null.
