@@ -261,7 +261,7 @@ let lichess_move_props = {
 
 		let weight_string = (100 * this.total / this.position_total).toFixed(0);
 
-		return `API: ${(ev * 100).toFixed(1)}% [${NString(this.total)}, ${weight_string}%]`;
+		return `Win: ${(ev * 100).toFixed(1)}%, Weight: ${weight_string}% [${NString(this.total)}]`;
 	},
 
 	sort_score: function() {
