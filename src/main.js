@@ -1581,27 +1581,27 @@ function menu_build() {
 					type: "separator"
 				},
 				{
-					label: "Book explorer mode",
+					label: "Book weights mode",
 					type: "checkbox",
 					checked: config.book_explorer,			// But this is never saved in the config file.
 					click: () => {
 						win.webContents.send("call", {
 							fn: "toggle",
-							args: ["book_explorer"]
+							args: ["book_explorer"]			// The hub will automatically turn off lichess weights mode.
 						});
-						set_one_check(false, "Display", "Lichess explorer mode");
+						set_one_check(false, "Display", "Lichess weights mode");
 					}
 				},
 				{
-					label: "Lichess explorer mode",
+					label: "Lichess weights mode",
 					type: "checkbox",
 					checked: config.lichess_explorer,		// But this is never saved in the config file.
 					click: () => {
 						win.webContents.send("call", {
 							fn: "toggle",
-							args: ["lichess_explorer"]
+							args: ["lichess_explorer"]		// The hub will automatically turn off book weights mode.
 						});
-						set_one_check(false, "Display", "Book explorer mode");
+						set_one_check(false, "Display", "Book weights mode");
 					}
 				},
 			]
