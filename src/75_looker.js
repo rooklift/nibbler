@@ -174,6 +174,18 @@ let looker_props = {
 			return;			// This can happen e.g. if the position is checkmate.
 		}
 
+		// Our Lichess moves need to know the total number of games so they can return valid stats.
+		// While the total is available as raw_object.white + raw_object.black + raw_object.draws,
+		// it's probably better to sum up the items that we're given.
+
+		let lichess_position_total = 0;
+
+		if (query.db_name === "lichess_masters" || query.db_name === "lichess_plebs") {
+			for (let raw_item of raw_object.moves) {
+				lichess_position_total += raw_item.white + raw_item.black + raw_item.draws;
+			}
+		}
+
 		// Now add moves to the entry...
 
 		for (let raw_item of raw_object.moves) {
@@ -184,7 +196,7 @@ let looker_props = {
 			if (query.db_name === "chessdbcn") {
 				o.moves[move] = new_chessdbcn_move(board, raw_item);
 			} else if (query.db_name === "lichess_masters" || query.db_name === "lichess_plebs") {
-				o.moves[move] = new_lichess_move(board, raw_item);
+				o.moves[move] = new_lichess_move(board, raw_item, lichess_position_total);
 			}
 		}
 
@@ -228,13 +240,14 @@ let chessdbcn_move_props = {
 	},
 };
 
-function new_lichess_move(board, raw_item) {			// The object with info about a single move in a lichess object.
+function new_lichess_move(board, raw_item, position_total) {		// The object with info about a single move in a lichess object.
 	let ret = Object.create(lichess_move_props);
 	ret.active = board.active;
 	ret.white = raw_item.white;
 	ret.black = raw_item.black;
 	ret.draws = raw_item.draws;
 	ret.total = raw_item.white + raw_item.draws + raw_item.black;
+	ret.position_total = position_total;
 	return ret;
 }
 
@@ -246,7 +259,9 @@ let lichess_move_props = {
 		let wins = actual_pov === "w" ? this.white : this.black;
 		let ev = (wins + (this.draws / 2)) / this.total;
 
-		return `API: ${(ev * 100).toFixed(1)}% [${NString(this.total)}]`;
+		let weight_string = (100 * this.total / this.position_total).toFixed(0);
+
+		return `API: ${(ev * 100).toFixed(1)}% [${NString(this.total)}, ${weight_string}%]`;
 	},
 
 	sort_score: function() {
