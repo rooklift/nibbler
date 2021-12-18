@@ -259,9 +259,10 @@ let lichess_move_props = {
 		let wins = actual_pov === "w" ? this.white : this.black;
 		let ev = (wins + (this.draws / 2)) / this.total;
 
+		let win_string = (ev * 100).toFixed(1);
 		let weight_string = (100 * this.total / this.position_total).toFixed(0);
 
-		return `Win: ${(ev * 100).toFixed(1)}%, Weight: ${weight_string}% [${NString(this.total)}]`;
+		return `Win: ${win_string}%, Weight: ${weight_string}% [${NString(this.total)}]`;
 	},
 
 	sort_score: function() {
