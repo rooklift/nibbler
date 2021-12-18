@@ -96,8 +96,10 @@ promotiontable.style["background-color"] = config.active_square;
 let input_queue = [];
 let total_dropped_inputs = 0;
 
-ipcRenderer.on("set", (event, msg) => {		// Should only be for things that don't need any action except save config and redraw.
-	config[msg.key] = msg.value;
+ipcRenderer.on("set", (event, msg) => {		// Should only be for things that don't need any action except redraw.
+	for (let [key, value] of Object.entries(msg)) {
+		config[key] = value;
+	}
 	hub.info_handler.must_draw_infobox();
 	hub.draw();
 });
