@@ -1589,6 +1589,19 @@ function menu_build() {
 							fn: "toggle",
 							args: ["book_explorer"]
 						});
+						set_one_check(false, "Display", "Lichess explorer mode");
+					}
+				},
+				{
+					label: "Lichess explorer mode",
+					type: "checkbox",
+					checked: config.lichess_explorer,		// But this is never saved in the config file.
+					click: () => {
+						win.webContents.send("call", {
+							fn: "toggle",
+							args: ["lichess_explorer"]
+						});
+						set_one_check(false, "Display", "Book explorer mode");
 					}
 				},
 			]

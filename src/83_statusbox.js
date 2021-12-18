@@ -97,7 +97,17 @@ function NewStatusHandler() {
 
 			if (config.book_explorer) {
 
-				status_string += `<span class="blue">Book explorer arrows only!</span>`;
+				status_string += `<span class="blue">Arrows: book weights only!</span>`;
+
+			} else if (config.lichess_explorer) {
+
+				let warn = "";
+
+				if (config.looker_api !== "lichess_masters" && config.looker_api !== "lichess_plebs") {
+					status_string += `<span class="blue">Lichess: select Display --> Online API</span>`;
+				} else {
+					status_string += `<span class="blue">Arrows: Lichess weights only!${warn}</span>`;
+				}
 
 			} else {
 

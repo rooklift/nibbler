@@ -764,11 +764,58 @@ let hub_props = {
 		boardctx.clearRect(0, 0, canvas.width, canvas.height);
 		if (config.book_explorer) {
 			this.draw_explorer_arrows();
+		} else if (config.lichess_explorer) {
+			this.draw_lichess_arrows();
+		} else {
+			let arrow_spotlight_square = config.click_spotlight ? this.active_square : null;
+			let next_move = (config.next_move_arrow && this.tree.node.children.length > 0) ? this.tree.node.children[0].move : null;
+			this.info_handler.draw_arrows(this.tree.node, arrow_spotlight_square, next_move);
+		}
+	},
+
+	draw_lichess_arrows: function() {
+
+		let ok = true;
+
+		if (config.looker_api !== "lichess_masters" && config.looker_api !== "lichess_plebs") {
+			ok = false;
+		}
+
+		let entry = this.looker.lookup(config.looker_api, this.tree.node.board);
+
+		if (!entry) {
+			ok = false;
+		}
+
+		if (!ok) {
+			this.explorer_objects_cache = null;
+			this.explorer_cache_node_id = null;
+			this.info_handler.draw_explorer_arrows(this.tree.node, []);		// Needs to happen, to update the one_click_moves.
 			return;
 		}
-		let arrow_spotlight_square = config.click_spotlight ? this.active_square : null;
-		let next_move = (config.next_move_arrow && this.tree.node.children.length > 0) ? this.tree.node.children[0].move : null;
-		this.info_handler.draw_arrows(this.tree.node, arrow_spotlight_square, next_move);
+
+		if (!this.explorer_objects_cache || this.explorer_cache_node_id !== this.tree.node.id) {
+			let total_weight = 0;
+			for (let o of Object.values(entry.moves)) {
+				total_weight += o.total;
+			}
+			if (total_weight <= 0) {
+				total_weight = 1;		// Avoid div by zero.
+			}
+			let tmp = {};
+			for (let move of Object.keys(entry.moves)) {
+				if (!this.tree.node.board.illegal(move)) {
+					if (tmp[move] === undefined) {
+						tmp[move] = {move: move, weight: entry.moves[move].total / total_weight};
+					}
+				}
+			}
+			this.explorer_cache_node_id = this.tree.node.id;
+			this.explorer_objects_cache = Object.values(tmp);
+			this.explorer_objects_cache.sort((a, b) => b.weight - a.weight);
+		}
+
+		this.info_handler.draw_explorer_arrows(this.tree.node, this.explorer_objects_cache);
 	},
 
 	draw_explorer_arrows: function() {
@@ -2097,6 +2144,15 @@ let hub_props = {
 
 		// Cases that have additional actions after...
 
+		if (option === "book_explorer") {
+			config.lichess_explorer = false;
+			this.explorer_objects_cache = null;
+		}
+		if (option === "lichess_explorer") {
+			config.book_explorer = false;
+			this.explorer_objects_cache = null;
+		}
+
 		if (option === "searchmoves_buttons") {
 			this.tree.node.searchmoves = [];		// This is reasonable regardless of which way the toggle went.
 			this.handle_search_params_change();
@@ -2145,6 +2201,8 @@ let hub_props = {
 		if (value) {
 			this.looker.add_to_queue(this.tree.node.board);
 		}
+
+		this.explorer_objects_cache = null;
 	},
 
 	invert_searchmoves: function() {
