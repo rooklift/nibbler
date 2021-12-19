@@ -1595,6 +1595,7 @@ function menu_build() {
 				{
 					label: "Lichess weights mode",
 					type: "checkbox",
+					accelerator: "CommandOrControl+E",
 					checked: config.lichess_explorer,		// But this is never saved in the config file.
 					click: () => {
 						win.webContents.send("call", {
