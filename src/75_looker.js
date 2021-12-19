@@ -232,7 +232,7 @@ let chessdbcn_move_props = {
 			s = "+" + s;
 		}
 
-		return `API: ${s}`;
+		return `API: <span class="blue">${s}</span>`;
 	},
 
 	sort_score: function() {
@@ -262,7 +262,7 @@ let lichess_move_props = {
 		let win_string = (ev * 100).toFixed(1);
 		let weight_string = (100 * this.total / this.position_total).toFixed(0);
 
-		return `Win: ${win_string}%, Weight: ${weight_string}% [${NString(this.total)}]`;
+		return `API wins: <span class="blue">${win_string}%</span> freq: <span class="blue">${weight_string}%</span> [${NString(this.total)}]`;
 	},
 
 	sort_score: function() {
