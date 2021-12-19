@@ -885,7 +885,8 @@ let hub_props = {
 			this.tree.node,
 			this.engine,
 			analysing_other,
-			loading_message
+			loading_message,
+			this.book ? true : false
 		);
 	},
 

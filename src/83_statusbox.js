@@ -16,7 +16,7 @@ function NewStatusHandler() {
 		this.special_message_timeout = performance.now() + duration;
 	};
 
-	sh.draw_statusbox = function(node, engine, analysing_other, loading_message) {
+	sh.draw_statusbox = function(node, engine, analysing_other, loading_message, book_is_loaded) {
 
 		if (loading_message) {
 
@@ -97,15 +97,13 @@ function NewStatusHandler() {
 
 			if (config.book_explorer) {
 
-				status_string += `<span class="blue">Book frequency arrows only!</span>`;
+				let warn = book_is_loaded ? "" : " (No book loaded)";
+				status_string += `<span class="blue">Book frequency arrows only!${warn}</span>`;
 
 			} else if (config.lichess_explorer) {
 
-				if (config.looker_api !== "lichess_masters" && config.looker_api !== "lichess_plebs") {
-					status_string += `<span class="blue">Lichess: select Display --> Online API</span>`;
-				} else {
-					status_string += `<span class="blue">Lichess frequency arrows only!</span>`;
-				}
+				let warn = (config.looker_api === "lichess_masters" || config.looker_api === "lichess_plebs") ? "" : " (API not selected)";
+				status_string += `<span class="blue">Lichess frequency arrows only!${warn}</span>`;
 
 			} else {
 
