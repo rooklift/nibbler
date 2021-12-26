@@ -16,6 +16,7 @@ function NewLooker() {
 	looker.running = null;
 	looker.pending = null;
 	looker.all_dbs = Object.create(null);
+	looker.last_send_time = 0;
 	looker.bans = Object.create(null);			// db --> time of last rate-limit
 	Object.assign(looker, looker_props);
 	return looker;
@@ -148,7 +149,10 @@ let looker_props = {
 			return Promise.reject(new Error("Bad db_name"));
 		}
 
-		return fetch(url).then(response => {
+		return Delay(this.last_send_time + 1000 - performance.now()).then(() => {
+			this.last_send_time = performance.now();
+			return fetch(url);
+		}).then(response => {
 			if (response.status === 429) {										// rate limit hit
 				this.set_ban(query.db_name);
 				throw new Error("rate limited");
@@ -270,3 +274,19 @@ let lichess_move_props = {
 	},
 };
 
+
+// The classic Promise example, with an actual use in our code...
+
+
+function Delay(ms) {
+
+	if (typeof ms !== "number" || ms <= 0) {
+		return Promise.resolve();
+	}
+
+	return new Promise((resolve, reject) => {
+		setTimeout(() => {
+			resolve();
+		}, ms);
+	});
+}
