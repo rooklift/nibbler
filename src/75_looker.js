@@ -151,6 +151,7 @@ let looker_props = {
 		return fetch(url).then(response => {
 			if (response.status === 429) {										// rate limit hit
 				this.set_ban(query.db_name);
+				hub.set_special_message("429 Too Many Requests", "red", 5000);	// relies on hub being in script/global scope, which it is
 				throw new Error("rate limited");
 			}
 			if (!response.ok) {													// ok means status in range 200-299
