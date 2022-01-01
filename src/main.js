@@ -1453,7 +1453,7 @@ function menu_build() {
 					]
 				},
 				{
-					label: "No API after move 25",
+					label: "Allow API after move 25",
 					type: "checkbox",
 					checked: config.look_past_25,
 					click: () => {
