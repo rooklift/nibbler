@@ -2155,8 +2155,8 @@ let hub_props = {
 			config.book_explorer = false;
 			this.explorer_objects_cache = null;
 		}
-		if (option === "no_look_25") {
-			if (!config.no_look_25 && this.tree.node.board.fullmove > 25) {
+		if (option === "look_past_25") {
+			if (config.look_past_25 && this.tree.node.board.fullmove > 25) {
 				this.looker.add_to_queue(this.tree.node.board);
 			}
 		}

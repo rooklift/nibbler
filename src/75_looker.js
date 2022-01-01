@@ -34,7 +34,7 @@ let looker_props = {
 			return;
 		}
 
-		if (config.no_look_25 && board.fullmove > 25) {
+		if (!config.look_past_25 && board.fullmove > 25) {
 			return;
 		}
 

@@ -1455,11 +1455,11 @@ function menu_build() {
 				{
 					label: "No API after move 25",
 					type: "checkbox",
-					checked: config.no_look_25,
+					checked: config.look_past_25,
 					click: () => {
 						win.webContents.send("call", {
 							fn: "toggle",
-							args: ["no_look_25"],
+							args: ["look_past_25"],
 						});
 					}
 				},
