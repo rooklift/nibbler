@@ -34,6 +34,13 @@ let looker_props = {
 			return;
 		}
 
+		if (config.no_look_25 && board.fullmove > 25) {
+			return;
+		}
+
+		// Is there a reason the test for whether we've already looked up this
+		// position isn't done here, but is done later at query_api()? I forget.
+
 		let query = {							// Since queries are objects, different queries can always be told apart.
 			board: board,
 			db_name: config.looker_api

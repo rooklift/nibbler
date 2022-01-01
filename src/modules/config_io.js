@@ -89,6 +89,7 @@ exports.defaults = {
 	"hover_draw": false,
 	"hover_method": 2,
 
+	"no_look_25": true,
 	"looker_api": null,
 
 	"pv_click_event": 1,		// 0: nothing, 1: goto, 2: tree

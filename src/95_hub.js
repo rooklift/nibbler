@@ -2155,7 +2155,11 @@ let hub_props = {
 			config.book_explorer = false;
 			this.explorer_objects_cache = null;
 		}
-
+		if (option === "no_look_25") {
+			if (!config.no_look_25 && this.tree.node.board.fullmove > 25) {
+				this.looker.add_to_queue(this.tree.node.board);
+			}
+		}
 		if (option === "searchmoves_buttons") {
 			this.tree.node.searchmoves = [];		// This is reasonable regardless of which way the toggle went.
 			this.handle_search_params_change();
