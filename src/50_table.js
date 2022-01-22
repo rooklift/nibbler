@@ -103,7 +103,7 @@ const info_prototype = {
 	// I'm not sure I've been conscientious everywhere in the code about checking whether these things are
 	// of the right type, so for that reason most are set to some neutralish value by default.
 	//
-	// Exceptions: m, v, wdl (and note that all of these can be set to null by info.js)
+	// Exceptions: m, v, wdl
 
 	clear_stats: function() {
 		this.cp = 0;
