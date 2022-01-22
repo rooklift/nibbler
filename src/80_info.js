@@ -341,11 +341,15 @@ let info_receiver_props = {
 			tmp = parseFloat(infovals["(V:"]);
 			if (Number.isNaN(tmp) === false) {
 				move_info.v = tmp;
+			} else {
+				move_info.v = null;						// V sometimes is -.----- (we used to not do anything here, preserving any old (but confusing) value)
 			}
 
 			tmp = parseFloat(infovals["(M:"]);
 			if (Number.isNaN(tmp) === false) {
 				move_info.m = tmp;
+			} else {
+				move_info.m = null;						// M sometimes is -.----- (we used to not do anything here, preserving any old (but confusing) value)
 			}
 
 		} else if (s.startsWith("info") && s.includes(" pv ") && (s.includes("lowerbound") || s.includes("upperbound"))) {
