@@ -254,21 +254,20 @@ function EnPassantSquare(board, s) {	// board.active must be correct. s is the e
 function IsNormalChessPosition(board) {
 
 	for (let ch of "bcdefgBCDEFG") {
-
 		if (board.castling.includes(ch)) {
 			return false;
 		}
+	}
 
-		if (board.castling.includes("A") || board.castling.includes("H")) {
-			if (board.state[4][7] !== "K") {
-				return false;
-			}
+	if (board.castling.includes("A") || board.castling.includes("H")) {
+		if (board.state[4][7] !== "K") {
+			return false;
 		}
+	}
 
-		if (board.castling.includes("a") || board.castling.includes("h")) {
-			if (board.state[4][0] !== "k") {
-				return false;
-			}
+	if (board.castling.includes("a") || board.castling.includes("h")) {
+		if (board.state[4][0] !== "k") {
+			return false;
 		}
 	}
 
