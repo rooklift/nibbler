@@ -1262,7 +1262,7 @@ const position_prototype = {
 		}
 	},
 
-	insufficient_material() {
+	insufficient_material: function() {
 
 		// There are some subtleties around help-mates and also positions where
 		// mate is forced despite there not being enough material if the pieces
