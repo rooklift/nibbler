@@ -1242,9 +1242,9 @@ const position_prototype = {
 		let ep_string = this.enpassant ? this.enpassant.s : "-";
 		let castling_string = this.castling !== "" ? this.castling : "-";
 
-		// While interally (and when sending to the engine) we always use Chess960 format,
-		// we can return a more friendly FEN if asked (and if the position is normal Chess).
-		// Relies on our normalchess flag being accurate... (potential for bugs there).
+		// While internally we always use Chess960 format, we can return a more friendly
+		// FEN if asked (and if the position is normal Chess). Relies on our normalchess
+		// flag being accurate... (potential for bugs there).
 
 		if (friendly_flag && this.normalchess && castling_string !== "-") {
 			let new_castling_string = "";
