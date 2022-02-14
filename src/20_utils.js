@@ -474,8 +474,8 @@ function QfromPawns(pawns) {
 
 	// Note carefully: the arg is pawns not centipawns.
 
-	if (typeof (pawns) !== "number") {
-		return 0.5;
+	if (typeof pawns !== "number") {
+		return 0;
 	}
 
 	let winrate = 1 / (1 + Math.pow(10, -pawns / 4));
