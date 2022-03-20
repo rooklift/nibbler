@@ -2387,30 +2387,6 @@ function menu_build() {
 							}
 						},
 						{
-							label: "tensorflow-cc",
-							type: "checkbox",
-							checked: false,
-							click: () => {
-								win.webContents.send("call", {
-									fn: "set_uci_option_permanent",
-									args: ["Backend", "tensorflow-cc"]
-								});
-								// Will receive an ack IPC which sets menu checks.
-							}
-						},
-						{
-							label: "tensorflow-cc-cpu",
-							type: "checkbox",
-							checked: false,
-							click: () => {
-								win.webContents.send("call", {
-									fn: "set_uci_option_permanent",
-									args: ["Backend", "tensorflow-cc-cpu"]
-								});
-								// Will receive an ack IPC which sets menu checks.
-							}
-						},
-						{
 							label: "onednn",
 							type: "checkbox",
 							checked: false,
