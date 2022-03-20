@@ -2363,6 +2363,69 @@ function menu_build() {
 							type: "separator"
 						},
 						{
+							label: "onnx-cuda",
+							type: "checkbox",
+							checked: false,
+							click: () => {
+								win.webContents.send("call", {
+									fn: "set_uci_option_permanent",
+									args: ["Backend", "onnx-cuda"]
+								});
+								// Will receive an ack IPC which sets menu checks.
+							}
+						},
+						{
+							label: "onnx-cpu",
+							type: "checkbox",
+							checked: false,
+							click: () => {
+								win.webContents.send("call", {
+									fn: "set_uci_option_permanent",
+									args: ["Backend", "onnx-cpu"]
+								});
+								// Will receive an ack IPC which sets menu checks.
+							}
+						},
+						{
+							label: "tensorflow-cc",
+							type: "checkbox",
+							checked: false,
+							click: () => {
+								win.webContents.send("call", {
+									fn: "set_uci_option_permanent",
+									args: ["Backend", "tensorflow-cc"]
+								});
+								// Will receive an ack IPC which sets menu checks.
+							}
+						},
+						{
+							label: "tensorflow-cc-cpu",
+							type: "checkbox",
+							checked: false,
+							click: () => {
+								win.webContents.send("call", {
+									fn: "set_uci_option_permanent",
+									args: ["Backend", "tensorflow-cc-cpu"]
+								});
+								// Will receive an ack IPC which sets menu checks.
+							}
+						},
+						{
+							label: "onednn",
+							type: "checkbox",
+							checked: false,
+							click: () => {
+								win.webContents.send("call", {
+									fn: "set_uci_option_permanent",
+									args: ["Backend", "onednn"]
+								});
+								// Will receive an ack IPC which sets menu checks.
+							}
+						},
+						{
+							type: "separator"
+						},
+						{
 							label: "random",
 							type: "checkbox",
 							checked: false,
