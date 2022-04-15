@@ -126,7 +126,7 @@ ipcRenderer.on("call", (event, msg) => {	// Adds stuff to the "queue" - so main 
 // We actually drop all but 1 item, so the term "queue" is a bit inaccurate.
 //
 // FIXME: this is actually appalling. Since various settings are changed via
-// some "call", the change could potentially be silently dropped.
+// some "call", the change could potentially be silently dropped...
 
 function input_loop() {
 
