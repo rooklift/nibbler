@@ -16,7 +16,7 @@ setoption name Example value Whatever`;
 
 exports.script_dir_path = electron.app ?
 		path.join(electron.app.getPath("userData"), scripts_dir) :
-		path.join(querystring.parse(global.location.search)["?user_data_path"], scripts_dir);
+		path.join(querystring.parse(global.location.search.slice(1))["user_data_path"], scripts_dir);
 
 exports.load = () => {
 
