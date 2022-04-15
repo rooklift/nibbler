@@ -94,7 +94,6 @@ promotiontable.style["background-color"] = config.active_square;
 // put user input in a queue, and drop certain user actions if needed...
 
 let input_queue = [];
-let total_dropped_inputs = 0;
 
 ipcRenderer.on("set", (event, msg) => {		// Should only be for things that don't need any action except redraw.
 	for (let [key, value] of Object.entries(msg)) {
