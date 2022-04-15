@@ -264,6 +264,12 @@ function force_gc() {
 
 setTimeout(force_gc, 300000);
 
+// Log to console if HW accel was actually disabled...
+
+if (querystring.parse(global.location.search.slice(1))["actually_disabled_hw_accel"] === "true") {
+	console.log("Hardware acceleration is disabled.");
+}
+
 // Go...
 
 function enter_loop() {

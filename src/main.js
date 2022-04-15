@@ -14,9 +14,12 @@ let config = config_io.load()[1];					// Do this early, it's a needed global.
 
 // disableHardwareAcceleration() needs to be called before the app is ready...
 
+let actually_disabled_hw_accel = false;
+
 if (config.disable_hw_accel) {
 	try {
 		electron.app.disableHardwareAcceleration();
+		actually_disabled_hw_accel = true;
 		console.log("Hardware acceleration for Nibbler (GUI, not engine) disabled by config setting.");
 	} catch (err) {
 		console.log("Failed to disable hardware acceleration.");
@@ -250,6 +253,7 @@ function startup() {
 	let query = {};
 	query.user_data_path = electron.app.getPath("userData");
 	query.zoomfactor = desired_zoomfactor;
+	query.actually_disabled_hw_accel = actually_disabled_hw_accel;
 
 	win.loadFile(
 		path.join(__dirname, "nibbler.html"),
