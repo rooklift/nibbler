@@ -123,6 +123,13 @@ function startup() {
 
 	electron.ipcMain.once("renderer_ready", () => {
 
+		if (actually_disabled_hw_accel) {
+			win.webContents.send("call", {
+				fn: "console",
+				args: ["Hardware acceleration is disabled."],
+			});
+		}
+
 		// Open a file via command line. We must wait until the renderer has properly loaded before we do this.
 		// While it might seem like we could do this after "ready-to-show" I'm not 100% sure that the renderer
 		// will have fully loaded when that fires.
@@ -253,7 +260,6 @@ function startup() {
 	let query = {};
 	query.user_data_path = electron.app.getPath("userData");
 	query.zoomfactor = desired_zoomfactor;
-	query.actually_disabled_hw_accel = actually_disabled_hw_accel;
 
 	win.loadFile(
 		path.join(__dirname, "nibbler.html"),
