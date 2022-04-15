@@ -83,11 +83,11 @@ function startup() {
 	});
 
 	win.webContents.once("crashed", () => {
-		alert(messages.renderer_crash);
+		alert(win, messages.renderer_crash);
 	});
 
 	win.webContents.once("unresponsive", () => {
-		alert(messages.renderer_hang);
+		alert(win, messages.renderer_hang);
 	});
 
 	win.once("close", (event) => {					// Note the once...
@@ -130,7 +130,7 @@ function startup() {
 	});
 
 	electron.ipcMain.on("alert", (event, msg) => {
-		alert(msg);
+		alert(win, msg);
 	});
 
 	electron.ipcMain.on("set_title", (event, msg) => {
@@ -261,7 +261,7 @@ function menu_build() {
 					click: () => {
 						let s = `Nibbler ${electron.app.getVersion()} in Electron ${process.versions.electron}\n\n`;
 						s += `Engine: ${loaded_engine}\nWeights: ${loaded_weights || loaded_evalfile || "<auto>"}`;
-						alert(s);
+						alert(win, s);
 					}
 				},
 				{
@@ -326,7 +326,7 @@ function menu_build() {
 					accelerator: "CommandOrControl+S",
 					click: () => {
 						if (config.save_enabled !== true) {		// Note: exact test for true, not just any truthy value
-							alert(messages.save_not_enabled);
+							alert(win, messages.save_not_enabled);
 							return;
 						}
 						let file = save_dialog(win, {defaultPath: config.pgn_dialog_folder});
@@ -1550,7 +1550,7 @@ function menu_build() {
 						{
 							label: "About custom pieces",
 							click: () => {
-								alert(messages.about_custom_pieces);
+								alert(win, messages.about_custom_pieces);
 							}
 						}
 					]
@@ -2122,7 +2122,7 @@ function menu_build() {
 				{
 					label: "I want other size options!",
 					click: () => {
-						alert(messages.about_sizes);
+						alert(win, messages.about_sizes);
 					}
 				},
 			]
@@ -2142,7 +2142,7 @@ function menu_build() {
 						if (Array.isArray(files) && files.length > 0) {
 							let file = files[0];
 							if (file === process.argv[0] || path.basename(file).includes("client")) {
-								alert(messages.wrong_engine_exe);
+								alert(win, messages.wrong_engine_exe);
 								win.webContents.send("call", "send_ack_engine");	// Force an ack IPC to fix our menu check state.
 								return;
 							}
@@ -3078,7 +3078,7 @@ function menu_build() {
 						{
 							label: "Warning about threads",
 							click: () => {
-								alert(messages.thread_warning);
+								alert(win, messages.thread_warning);
 							}
 						},
 					]
@@ -3212,7 +3212,7 @@ function menu_build() {
 						{
 							label: "I want other hash options!",
 							click: () => {
-								alert(messages.about_hashes);
+								alert(win, messages.about_hashes);
 							}
 						}
 					]
@@ -3785,7 +3785,7 @@ function menu_build() {
 				{
 					label: "About play modes",
 					click: () => {
-						alert(messages.about_versus_mode);
+						alert(win, messages.about_versus_mode);
 					}
 				}
 			]
@@ -4105,7 +4105,7 @@ function menu_build() {
 	scriptlist_in_menu.push({
 		label: "How to add scripts",
 		click: () => {
-			alert(messages.adding_scripts);
+			alert(win, messages.adding_scripts);
 		}
 	});
 	scriptlist_in_menu.push({
