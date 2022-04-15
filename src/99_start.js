@@ -91,7 +91,7 @@ promotiontable.style["background-color"] = config.active_square;
 
 // --------------------------------------------------------------------------------------------
 // In bad cases of super-large trees, the UI can become unresponsive. To mitigate this, we
-// put user input in a queue, and drop things if they build up.
+// put user input in a queue, and drop certain user actions if needed...
 
 let input_queue = [];
 let total_dropped_inputs = 0;
@@ -104,13 +104,25 @@ ipcRenderer.on("set", (event, msg) => {		// Should only be for things that don't
 	hub.draw();
 });
 
-ipcRenderer.on("call", (event, msg) => {	// Adds stuff to the "queue" - so main should only send one call at a time.
+let droppables = [							// If the UI is already lagging, dropping one of these won't make it feel any worse.
+	"goto_root", "goto_end", "prev", "next", "previous_sibling", "next_sibling", "return_to_main_line", "promote_to_main_line",
+	"promote", "delete_node", "delete_children", "delete_siblings", "delete_other_lines", "return_to_lock", "play_info_index",
+	"clear_searchmoves", "invert_searchmoves",
+];
+
+ipcRenderer.on("call", (event, msg) => {	// Adds stuff to the queue, or drops some stuff.
 
 	let fn;
 
 	if (typeof msg === "string") {																		// msg is function name
+		if (input_queue.length > 0 && droppables.includes(msg)) {
+			return;
+		}
 		fn = hub[msg].bind(hub);
 	} else if (typeof msg === "object" && typeof msg.fn === "string" && Array.isArray(msg.args)) {		// msg is object with fn and args
+		if (input_queue.length > 0 && droppables.includes(msg.fn)) {
+			return;
+		}
 		fn = hub[msg.fn].bind(hub, ...msg.args);
 	} else {
 		console.log("Bad call, msg was...");
@@ -123,33 +135,14 @@ ipcRenderer.on("call", (event, msg) => {	// Adds stuff to the "queue" - so main 
 });
 
 // The queue needs to be examined very regularly and acted upon.
-// We actually drop all but 1 item, so the term "queue" is a bit inaccurate.
-//
-// FIXME: this is actually appalling. Since various settings are changed via
-// some "call", the change could potentially be silently dropped...
 
 function input_loop() {
-
-	let fn;
-
-	let length = input_queue.length;
-
-	if (length === 1) {
-		fn = input_queue[0];
-	} else if (length > 1) {
-		if (total_dropped_inputs === 0) {
-			console.log(`input_loop() is dropping inputs (for count, see total_dropped_inputs).`);
+	if (input_queue.length > 0) {
+		for (let fn of input_queue) {
+			fn();
 		}
-		total_dropped_inputs += length - 1;
-		fn = input_queue[length - 1];
+		input_queue = [];
 	}
-
-	input_queue = [];
-
-	if (fn) {
-		fn();
-	}
-
 	setTimeout(input_loop, 10);
 }
 
@@ -198,6 +191,12 @@ document.addEventListener("wheel", (event) => {
 	// the mouse wheel should interact with.)
 
 	if (fullbox.style.display !== "none") {
+		return;
+	}
+
+	// Not if the GUI has pending actions...
+
+	if (input_queue.length > 0) {
 		return;
 	}
 
