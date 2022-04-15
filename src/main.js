@@ -7,10 +7,25 @@ const electron = require("electron");
 
 electron.app.commandLine.appendSwitch("js-flags", "--expose_gc");
 
+// Config...
+
+const config_io = require("./modules/config_io");
+let config = config_io.load()[1];					// Do this early, it's a needed global.
+
+// disableHardwareAcceleration() needs to be called before the app is ready...
+
+if (config.disable_hw_accel) {
+	try {
+		electron.app.disableHardwareAcceleration();
+		console.log("Hardware acceleration for Nibbler (GUI, not engine) disabled by config setting.");
+	} catch (err) {
+		console.log("Failed to disable hardware acceleration.");
+	}
+}
+
 // Other requires...
 
 const alert = require("./modules/alert_main");
-const config_io = require("./modules/config_io");
 const custom_uci = require("./modules/custom_uci");
 const engineconfig_io = require("./modules/engineconfig_io");
 const messages = require("./modules/messages");
@@ -29,8 +44,6 @@ const open_dialog = electron.dialog.showOpenDialogSync || electron.dialog.showOp
 // Note that as the user adjusts menu items, our copy of the config will become
 // out of date. The renderer is responsible for having an up-to-date copy.
 
-let config = config_io.load()[1];		// Do this early, it's a needed global.
-
 let win;
 let menu = menu_build();
 let menu_is_set = false;
@@ -38,6 +51,8 @@ let menu_is_set = false;
 let loaded_engine = "";
 let loaded_weights = "";
 let loaded_evalfile = "";
+
+let have_warned_hw_accel_setting = false;
 
 // Avoid a theoretical race by checking whether the ready event has already occurred,
 // otherwise set an event listener for it...
@@ -3839,6 +3854,21 @@ function menu_build() {
 				},
 				{
 					type: "separator"
+				},
+				{
+					label: "Disable hardware acceleration for GUI",
+					type: "checkbox",
+					checked: config.disable_hw_accel,
+					click: () => {
+						win.webContents.send("call", {
+							fn: "toggle",
+							args: ["disable_hw_accel"],
+						});
+						if (!have_warned_hw_accel_setting) {
+							alert(win, "This will not take effect until you restart the GUI.");
+							have_warned_hw_accel_setting = true;
+						}
+					}
 				},
 				{
 					label: "Spin rate",

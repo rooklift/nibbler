@@ -24,6 +24,8 @@ exports.defaults = {
 	"args_unused": null,
 	"options_unused": null,
 
+	"disable_hw_accel": false,
+
 	"width": 1280,
 	"height": 835,
 	"board_size": 640,
