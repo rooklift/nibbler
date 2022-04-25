@@ -115,7 +115,7 @@ let info_receiver_props = {
 
 		let board = node.board;
 
-		if (s.startsWith("info") && s.includes(" pv ") && !s.includes("lowerbound") && !s.includes("upperbound")) {
+		if (s.startsWith("info") && s.includes(" pv ") && ((!s.includes("lowerbound") && !s.includes("upperbound")) || config.accept_bounds)) {
 
 			if (config.log_info_lines) Log("< " + s);
 
