@@ -313,7 +313,8 @@ function Log(s) {
 		}
 		console.log(`Logging to ${config.logfile}`);
 		Log.logfilename = config.logfile;
-		Log.stream = fs.createWriteStream(config.logfile, {flags: "a"});
+		let flags = (config.clear_log) ? "w" : "a";
+		Log.stream = fs.createWriteStream(config.logfile, {flags: flags});
 	}
 
 	Log.stream.write(s + "\n");

@@ -4079,6 +4079,20 @@ function menu_build() {
 							type: "separator"
 						},
 						{
+							label: "Clear log when opening",
+							type: "checkbox",
+							checked: config.clear_log,
+							click: () => {
+								win.webContents.send("call", {
+									fn: "toggle",
+									args: ["clear_log"],
+								});
+							}
+						},
+						{
+							type: "separator"
+						},
+						{
 							label: "Log illegal moves",
 							type: "checkbox",
 							checked: config.log_illegal_moves,

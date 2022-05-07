@@ -140,6 +140,7 @@ exports.defaults = {
 	"leelaish_names": ["Lc0", "Leela", "Ceres"],		// If this gets updated, will need to fix old config files.
 
 	"logfile": null,
+	"clear_log": true,
 	"log_info_lines": false,
 	"log_useless_info": false,
 	"log_illegal_moves": true,
