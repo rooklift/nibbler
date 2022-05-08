@@ -3957,7 +3957,7 @@ function menu_build() {
 					type: "separator"
 				},
 				{
-					label: "Non-recommended options",
+					label: "Hacks and kludges",
 					submenu: [
 						{
 							label: "Allow arbitrary scripts",
