@@ -171,10 +171,6 @@ movelist.addEventListener("mousedown", (event) => {
 	hub.movelist_click(event);
 });
 
-graph.addEventListener("mousedown", (event) => {
-	hub.winrate_click(event);
-});
-
 statusbox.addEventListener("mousedown", (event) => {
 	hub.statusbox_click(event);
 });
@@ -183,7 +179,30 @@ promotiontable.addEventListener("mousedown", (event) => {
 	hub.promotiontable_click(event);
 });
 
-document.addEventListener("wheel", (event) => {
+// Graph clicks and dragging, borrowed from Ogatak...
+
+graph.addEventListener("mousedown", (event) => {
+	hub.winrate_click(event);
+	hub.grapher.dragging = true;
+});
+
+graph.addEventListener("mousemove", (event) => {
+	if (hub.grapher.dragging) {
+		if (event.buttons) {
+			hub.winrate_click(event);
+		} else {
+			hub.grapher.dragging = false;
+		}
+	}
+});
+
+window.addEventListener("mouseup", (event) => {
+	hub.grapher.dragging = false;
+});
+
+//
+
+window.addEventListener("wheel", (event) => {
 
 	// Only if the PGN chooser is closed, and the mouse is over the board or graph.
 	// (Not over the moveslist or infobox, because those can have scroll bars, which

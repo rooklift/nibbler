@@ -3,6 +3,8 @@
 function NewGrapher() {
 
 	let grapher = Object.create(null);
+	
+	grapher.dragging = false;
 
 	grapher.clear_graph = function() {
 
