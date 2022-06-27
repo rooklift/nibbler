@@ -646,31 +646,55 @@ let hub_props = {
 		}
 
 		let overlist = document.querySelectorAll(":hover");
-
+		
 		// Find what div we are over by looking for infoline_n
 
+		let div;
 		let div_index = null;
+
 		for (let item of overlist) {
 			if (typeof item.id === "string" && item.id.startsWith("infoline_")) {
+				div = item;
 				div_index = parseInt(item.id.slice("infoline_".length), 10);
 				break;
 			}
 		}
-		if (typeof div_index !== "number" || Number.isNaN(div_index)) {
+
+		if (!div || typeof div_index !== "number" || Number.isNaN(div_index)) {
 			return false;
 		}
 
 		// Find what infobox clicker we are over by looking for infobox_n
 
 		let click_n = null;
+
 		for (let item of overlist) {
 			if (typeof item.id === "string" && item.id.startsWith("infobox_")) {
 				click_n = parseInt(item.id.slice("infobox_".length), 10);
 				break;
 			}
 		}
+
 		if (typeof click_n !== "number" || Number.isNaN(click_n)) {
-			return false;
+
+			// We failed to get a click_n value. But if we are in Animate or Final Position mode,
+			// it should still work even if the user isn't hovering over a move exactly; we can
+			// just pass any valid click_n from the line... this is a pretty dumb hack.
+
+			if (config.hover_method !== 0 && config.hover_method !== 2) {
+				return false;
+			}
+
+			for (let item of div.childNodes) {
+				if (typeof item.id === "string" && item.id.startsWith("infobox_")) {
+					click_n = parseInt(item.id.slice("infobox_".length), 10);
+					break;
+				}
+			}
+
+			if (typeof click_n !== "number" || Number.isNaN(click_n)) {
+				return false;
+			}
 		}
 
 		//
