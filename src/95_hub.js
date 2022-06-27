@@ -647,37 +647,46 @@ let hub_props = {
 
 		let overlist = document.querySelectorAll(":hover");
 
-		let div_index = null;
+		// Find what div we are over by looking for infoline_n
 
+		let div_index = null;
 		for (let item of overlist) {
 			if (typeof item.id === "string" && item.id.startsWith("infoline_")) {
 				div_index = parseInt(item.id.slice("infoline_".length), 10);
 				break;
 			}
 		}
-
 		if (typeof div_index !== "number" || Number.isNaN(div_index)) {
 			return false;
 		}
 
-		let info = SortedMoveInfo(this.tree.node)[div_index];		// Possibly undefined
+		// Find what infobox clicker we are over by looking for infobox_n
 
-		if (!info || Array.isArray(info.pv) === false || info.pv.length === 0) {
+		let click_n = null;
+		for (let item of overlist) {
+			if (typeof item.id === "string" && item.id.startsWith("infobox_")) {
+				click_n = parseInt(item.id.slice("infobox_".length), 10);
+				break;
+			}
+		}
+		if (typeof click_n !== "number" || Number.isNaN(click_n)) {
 			return false;
 		}
 
+		//
+
 		if (config.hover_method === 0) {
-			return this.hoverdraw_animate(div_index, info);			// Sets this.hoverdraw_div
+			return this.hoverdraw_animate(div_index, click_n);		// Sets this.hoverdraw_div
 		} else if (config.hover_method === 1) {
-			return this.hoverdraw_single(div_index, overlist);		// Sets this.hoverdraw_div
+			return this.hoverdraw_single(div_index, click_n);		// Sets this.hoverdraw_div
 		} else if (config.hover_method === 2) {
-			return this.hoverdraw_final(div_index, info);			// Sets this.hoverdraw_div
+			return this.hoverdraw_final(div_index, click_n);		// Sets this.hoverdraw_div
 		} else {
 			return false;											// Caller must set this.hoverdraw_div to -1
 		}
 	},
 
-	hoverdraw_animate: function(div_index, info) {
+	hoverdraw_animate: function(div_index, click_n) {
 
 		// If the user is hovering over an unexpected div index in the infobox, reset depth...
 
@@ -692,27 +701,7 @@ let hub_props = {
 			this.hoverdraw_depth++;
 		}
 
-		return this.draw_fantasy_from_moves(info.pv.slice(0, this.hoverdraw_depth));	// Relies on slice() being safe if depth > length
-	},
-
-	hoverdraw_single: function(div_index, overlist) {
-
-		this.hoverdraw_div = div_index;
-
-		let hover_item = null;
-
-		for (let item of overlist) {
-			if (typeof item.id === "string" && item.id.startsWith("infobox_")) {
-				hover_item = item;
-				break;
-			}
-		}
-
-		if (!hover_item) {
-			return false;
-		}
-
-		let moves = this.info_handler.moves_from_click_n(parseInt(hover_item.id.slice("infobox_".length), 10));
+		let moves = this.info_handler.moves_from_click_n(click_n, this.hoverdraw_depth);
 
 		if (Array.isArray(moves) === false || moves.length === 0) {
 			return false;
@@ -721,11 +710,30 @@ let hub_props = {
 		return this.draw_fantasy_from_moves(moves);
 	},
 
-	hoverdraw_final: function(div_index, info) {
+	hoverdraw_single: function(div_index, click_n) {
 
 		this.hoverdraw_div = div_index;
-		return this.draw_fantasy_from_moves(info.pv);
 
+		let moves = this.info_handler.moves_from_click_n(click_n);
+
+		if (Array.isArray(moves) === false || moves.length === 0) {
+			return false;
+		}
+
+		return this.draw_fantasy_from_moves(moves);
+	},
+
+	hoverdraw_final: function(div_index, click_n) {
+
+		this.hoverdraw_div = div_index;
+
+		let moves = this.info_handler.moves_from_click_n(click_n, 999);
+
+		if (Array.isArray(moves) === false || moves.length === 0) {
+			return false;
+		}
+
+		return this.draw_fantasy_from_moves(moves);
 	},
 
 	draw_fantasy_from_moves: function(moves) {

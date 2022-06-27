@@ -276,7 +276,7 @@ let infobox_props = {
 		return node.id === this.info_clickers_node_id;
 	},
 
-	moves_from_click_n: function(n) {
+	moves_from_click_n: function(n, desired_length = null) {
 
 		if (typeof n !== "number" || Number.isNaN(n)) {
 			return [];
@@ -290,8 +290,8 @@ let infobox_props = {
 
 		// Work backwards until we get to the start of the line...
 
-		for (; n >= 0; n--) {
-			let object = this.info_clickers[n];
+		for (let i = n; i >= 0; i--) {
+			let object = this.info_clickers[i];
 			move_list.push(object.move);
 			if (object.is_start) {
 				break;
@@ -299,6 +299,25 @@ let infobox_props = {
 		}
 
 		move_list.reverse();
+
+		// If a PV length is specified, either truncate or extend as needed...
+
+		if (typeof desired_length === "number") {
+			if (move_list.length > desired_length) {
+				move_list = move_list.slice(0, desired_length);
+			} else if (move_list.length < desired_length) {
+				for (let i = n + 1; i < this.info_clickers.length; i++) {
+					let object = this.info_clickers[i];
+					if (object.is_start) {
+						break;
+					}
+					move_list.push(object.move);					// Note the different order of stataments compared to the above.
+					if (move_list.length >= desired_length) {
+						break;
+					}
+				}
+			}
+		}
 
 		return move_list;
 	},
