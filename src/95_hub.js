@@ -649,7 +649,7 @@ let hub_props = {
 		
 		// Find what div we are over by looking for infoline_n
 
-		let div;
+		let div = null;
 		let div_index = null;
 
 		for (let item of overlist) {
