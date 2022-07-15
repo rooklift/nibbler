@@ -51,6 +51,9 @@ let win;
 let menu = menu_build();
 let menu_is_set = false;
 
+let have_sent_quit = false;
+let have_received_terminate = false;
+
 let loaded_engine = "";
 let loaded_weights = "";
 let loaded_evalfile = "";
@@ -108,12 +111,18 @@ function startup() {
 		alert(win, messages.renderer_hang);
 	});
 
-	win.once("close", (event) => {					// Note the once...
-		event.preventDefault();						// We prevent the close one time only,
-		win.webContents.send("call", "quit");		// to let renderer's "quit" method run once. It then sends "terminate" back.
+	win.on("close", (event) => {						// We used to use .once() but I suppose there's a race condition if two events happen rapidly.
+		if (!have_received_terminate) {
+			event.preventDefault();						// Only a "terminate" message from the Renderer can close the app. See below.
+			if (!have_sent_quit) {
+				win.webContents.send("call", "quit");	// Renderer's "quit" method runs. It then sends "terminate" back.
+				have_sent_quit = true;
+			}
+		}
 	});
 
 	electron.ipcMain.on("terminate", () => {
+		have_received_terminate = true;					// Needed so the "close" handler (see above) knows to allow it.
 		win.close();
 	});
 
