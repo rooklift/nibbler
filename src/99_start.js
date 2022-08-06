@@ -186,15 +186,19 @@ graph.addEventListener("mousedown", (event) => {
 	hub.grapher.dragging = true;
 });
 
-graph.addEventListener("mousemove", (event) => {
-	if (hub.grapher.dragging) {
-		if (event.buttons) {
-			hub.winrate_click(event);
-		} else {
-			hub.grapher.dragging = false;
+for (let s of ["mousemove", "mouseleave"]) {
+
+	graph.addEventListener(s, (event) => {
+		if (!hub.grapher.dragging) {
+			return;
 		}
-	}
-});
+		if (!event.buttons) {
+			hub.grapher.dragging = false;
+			return;
+		}
+		hub.winrate_click(event);
+	});
+}
 
 window.addEventListener("mouseup", (event) => {
 	hub.grapher.dragging = false;
