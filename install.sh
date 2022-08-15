@@ -28,9 +28,7 @@ sudo chmod +x /opt/${FILE_NAME}/nibbler
 read -p "Do you want to create a Desktop Shortcut? (y/n)" -n 1 -r
 if [[ $REPLY =~ ^[Yy]$ ]]
 then
-
    sudo mkdir -p /usr/local/share/applications
-
 cat <<EOF | sudo tee -a /usr/local/share/applications/nibbler.desktop >/dev/null
 [Desktop Entry]
 Type=Application
