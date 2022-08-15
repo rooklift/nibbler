@@ -45,6 +45,6 @@ EOF
 fi
 printf "\n"
 echo "Successfully installed Nibbler ${VERSION_NR} to /opt/${FILE_NAME}"
-
+echo "The Desktop Shortcut will appear shortly in the Applications menu."
 
 
