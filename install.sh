@@ -20,15 +20,15 @@ fi
 
 ZIP_NAME="nibbler-${VERSION_NR_ONLY_DIGIT}-linux.zip"
 FILE_NAME="nibbler-${VERSION_NR_ONLY_DIGIT}-linux"
+LOCATION="/opt/${ZIP_NAME}"
+echo "Unzipping to $LOCATION"
 sudo unzip -qq ${ZIP_NAME} -d /opt/
 sudo chmod +x /opt/${FILE_NAME}/nibbler
-echo "Nibbler ${VERSION_NR} is installed in /opt/${FILE_NAME}"
-
 
 read -p "Do you want to create a Desktop Shortcut? (y/n)" -n 1 -r
-echo    # (optional) move to a new line
 if [[ $REPLY =~ ^[Yy]$ ]]
 then
+
    sudo mkdir -p /usr/local/share/applications
 
 cat <<EOF | sudo tee -a /usr/local/share/applications/nibbler.desktop >/dev/null
@@ -42,6 +42,11 @@ Terminal=false
 StartupNotify=false
 Categories=Game;BoardGame;
 EOF
+  printf "\n"
+  echo "Desktop Shortcut created"
 fi
+printf "\n"
+echo "Successfully installed Nibbler ${VERSION_NR} to /opt/${FILE_NAME}"
+
 
 
