@@ -20,7 +20,7 @@ fi
 
 ZIP_NAME="nibbler-${VERSION_NR_ONLY_DIGIT}-linux.zip"
 FILE_NAME="nibbler-${VERSION_NR_ONLY_DIGIT}-linux"
-LOCATION="/opt/${ZIP_NAME}"
+LOCATION="/opt/${FILE_NAME}"
 echo "Unzipping to $LOCATION"
 sudo unzip -qq ${ZIP_NAME} -d /opt/
 sudo chmod +x /opt/${FILE_NAME}/nibbler

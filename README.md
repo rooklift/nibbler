@@ -30,7 +30,7 @@ Some Windows and Linux standalone releases are uploaded to the [Releases](https:
 ## Linux install script
 Linux users can make use of the following One Liner to install the latest version of Nibbler:
 ```bash
-bash -c "$(wget -O- https://raw.githubusercontent.com/rooklift/nibbler/install_linux/install.sh)"
+bash -c "$(wget -O- https://raw.githubusercontent.com/rooklift/nibbler/master/src/install.sh)"
 ```
 * Finds the latest version in [Releases](https://github.com/rooklift/nibbler/releases)
 * Download and extracts the contents to ```/opt/```
