@@ -44,6 +44,18 @@ function fix(cfg) {
 	}
 }
 
+function debork_json(s) {
+
+	// We used to fix JSON containing single \ characters in paths, but now all
+	// that really needs to be done is to convert totally blank files into {}
+
+	if (s.length < 50 && s.trim() === "") {
+		return "{}";
+	}
+
+	return s;
+}
+
 exports.newentry = () => {
 	return {
 		"args": [],
@@ -62,7 +74,7 @@ exports.load = () => {
 
 	try {
 		if (fs.existsSync(exports.filepath)) {
-			Object.assign(cfg, JSON.parse((fs.readFileSync(exports.filepath, "utf8"))));
+			Object.assign(cfg, JSON.parse(debork_json(fs.readFileSync(exports.filepath, "utf8"))));
 		}
 	} catch (err) {
 		console.log(err.toString());							// alert() might not be available.

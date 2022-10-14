@@ -232,27 +232,16 @@ function fix(cfg) {
 	}
 }
 
-function replace_all(s, search, replace) {
-    return s.split(search).join(replace);
-}
-
 function debork_json(s) {
 
-	// In olden times, editing these things via the text file was normal. Nowadays it's unlikely to matter much.
+	// We used to fix JSON containing single \ characters in paths, but now all
+	// that really needs to be done is to convert totally blank files into {}
 
-	let lines = s.split("\n").map(z => z.trim());
-
-	for (let n = 0; n < lines.length; n++) {
-		let line = lines[n];
-		if (line.includes(`"path"`) || line.includes(`"WeightsFile"`) || line.includes(`"SyzygyPath"`) || line.includes(`"EvalFile"`)) {
-			line = replace_all(line, "\\\\", "__nibbler__blackslash__replacement__in__progress__");
-			line = replace_all(line, "\\", "\\\\");
-			line = replace_all(line, "__nibbler__blackslash__replacement__in__progress__", "\\\\");
-		}
-		lines[n] = line;
+	if (s.length < 50 && s.trim() === "") {
+		return "{}";
 	}
 
-	return lines.join("\n");
+	return s;
 }
 
 exports.load = () => {
