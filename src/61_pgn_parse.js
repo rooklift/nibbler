@@ -182,7 +182,7 @@ function LoadPGNRecord(o) {				// This can throw!
 				let [move, error] = node.board.parse_pgn(s);
 
 				if (error) {
-					DestroyTree(root);
+					DestroyTree(root);			// Alternatively, we could just end the parse here and return what we've got so far?
 					throw `"${s}" -- ${error}`;
 				}
 
