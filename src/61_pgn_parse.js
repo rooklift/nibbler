@@ -182,8 +182,19 @@ function LoadPGNRecord(o) {				// This can throw!
 				let [move, error] = node.board.parse_pgn(s);
 
 				if (error) {
-					DestroyTree(root);			// Alternatively, we could just end the parse here and return what we've got so far?
-					throw `"${s}" -- ${error}`;
+
+					// If the problem specifically is one of Kd4, Ke4, Kd5, Ke5, it's probably just a DGT board thing
+					// due to the kings being moved to indicate the result.
+
+					if (s.includes("Kd4") || s.includes("Ke4") || s.includes("Kd5") || s.includes("Ke5") ||
+						s.includes("Kxd4") || s.includes("Kxe4") || s.includes("Kxd5") || s.includes("Kxe5"))
+					{
+						finished = true;
+						break;
+					} else {
+						DestroyTree(root);
+						throw `"${s}" -- ${error}`;
+					}
 				}
 
 				node = node.make_move(move, true);
