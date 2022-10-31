@@ -159,14 +159,15 @@ function LoadPGNRecord(o) {				// This can throw!
 				token.reset();					// For the next round.
 
 				// The above conditional means "." can only appear as the first character.
+				// Strings like "..." get decomposed to a series of "." tokens since each one terminates the token in front of it.
 
 				if (s[0] === ".") {
-					s = s.slice(1);
+					s = s.slice(1);				// s is now guaranteed not to start with "."
 				}
 
 				// Parse s.
 
-				if (s === "" || s.startsWith("$") || StringIsNumeric(s)) {
+				if (s === "" || s === "+" || s.startsWith("$") || StringIsNumeric(s)) {
 					// Useless token.
 					continue;
 				}
