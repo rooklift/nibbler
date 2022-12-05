@@ -1336,6 +1336,11 @@ let hub_props = {
 	// ---------------------------------------------------------------------------------------------------------------------
 	// Engine startup...
 
+	reload_engineconfig: function() {
+		[load_err2, engineconfig] = engineconfig_io.load();
+		this.restart_engine();
+	},
+
 	switch_engine: function(filename) {
 		this.set_behaviour("halt");
 		if (this.engine_start(filename)) {
