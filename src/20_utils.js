@@ -298,6 +298,7 @@ function Log(s) {
 		if (Log.logfilename) {
 			console.log(`Closing ${Log.logfilename}`);
 			Log.stream.end();
+			Log.stream = undefined;
 			Log.logfilename = undefined;
 		}
 		return;
@@ -309,12 +310,26 @@ function Log(s) {
 		if (Log.logfilename) {
 			console.log(`Closing log ${Log.logfilename}`);
 			Log.stream.end();
+			Log.stream = undefined;
 			Log.logfilename = undefined;
 		}
 		console.log(`Logging to ${config.logfile}`);
-		Log.logfilename = config.logfile;
 		let flags = (config.clear_log) ? "w" : "a";
-		Log.stream = fs.createWriteStream(config.logfile, {flags: flags});
+		let stream = fs.createWriteStream(config.logfile, {flags: flags});		// Want var "stream" available via closure for the below...
+
+		stream.on("error", (err) => {
+			console.log(err);
+			stream.end();
+			if (Log.stream === stream) {
+				Log.stream = undefined;
+				Log.logfilename = undefined;
+				config.logfile = null;
+				ipcRenderer.send("ack_logfile", config.logfile);
+			}
+  		});
+
+  		Log.stream = stream;
+		Log.logfilename = config.logfile;
 	}
 
 	Log.stream.write(s + "\n");
