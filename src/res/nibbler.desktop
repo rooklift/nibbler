@@ -1,0 +1,9 @@
+[Desktop Entry]
+Categories=Game;BoardGame;
+Comment=Nibbler is a real-time analysis GUI for Leela Chess Zero (Lc0).
+Exec=nibbler
+GenericName=Chess Analysis GUI
+Icon=nibbler
+Name=Nibbler
+Terminal=false
+Type=Application
