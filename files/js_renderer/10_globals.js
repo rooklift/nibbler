@@ -21,7 +21,7 @@ const statusbox = document.getElementById("statusbox");
 // If require isn't available, we're in a browser:
 
 try {
-	require("./modules/empty");
+	require("./js_modules/empty");
 } catch (err) {
 	statusbox.innerHTML = `Running Nibbler in a normal browser doesn't work. For the full app, see the
 	<a href="https://github.com/rooklift/nibbler/releases">Releases section</a> of the repo.<br><br>
@@ -31,20 +31,20 @@ try {
 
 // Requires.........................................................
 
-const background = require("./modules/background");
+const background = require("./js_modules/background");
 const child_process = require("child_process");
 const clipboard = require("electron").clipboard;
-const config_io = require("./modules/config_io");
-const custom_uci = require("./modules/custom_uci");
-const engineconfig_io = require("./modules/engineconfig_io");
+const config_io = require("./js_modules/config_io");
+const custom_uci = require("./js_modules/custom_uci");
+const engineconfig_io = require("./js_modules/engineconfig_io");
 const fs = require("fs");
-const images = require("./modules/images");
+const images = require("./js_modules/images");
 const ipcRenderer = require("electron").ipcRenderer;
-const messages = require("./modules/messages");
+const messages = require("./js_modules/messages");
 const path = require("path");
 const querystring = require("querystring");
 const readline = require("readline");
-const stringify = require("./modules/stringify");
+const stringify = require("./js_modules/stringify");
 const util = require("util");
 
 // Globals..........................................................

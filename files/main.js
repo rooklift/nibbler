@@ -9,7 +9,7 @@ electron.app.commandLine.appendSwitch("js-flags", "--expose_gc");
 
 // Config...
 
-const config_io = require("./modules/config_io");
+const config_io = require("./js_modules/config_io");
 let config = config_io.load()[1];					// Do this early, it's a needed global.
 
 // disableHardwareAcceleration() needs to be called before the app is ready...
@@ -28,13 +28,13 @@ if (config.disable_hw_accel) {
 
 // Other requires...
 
-const alert = require("./modules/alert_main");
-const custom_uci = require("./modules/custom_uci");
-const engineconfig_io = require("./modules/engineconfig_io");
-const messages = require("./modules/messages");
+const alert = require("./js_modules/alert_main");
+const custom_uci = require("./js_modules/custom_uci");
+const engineconfig_io = require("./js_modules/engineconfig_io");
+const messages = require("./js_modules/messages");
 const path = require("path");
-const running_as_electron = require("./modules/running_as_electron");
-const stringify = require("./modules/stringify");
+const running_as_electron = require("./js_modules/running_as_electron");
+const stringify = require("./js_modules/stringify");
 const url = require("url");
 
 // We want sync save and open dialogs. In Electron 5 we could get these by calling
