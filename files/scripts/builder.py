@@ -11,7 +11,8 @@ zips = {
 # Create a folder at scripts/electron_zipped and place the Electron asset in it
 # Run ./builder.py
 
-os.chdir("..")
+os.chdir(os.path.realpath(os.path.dirname(__file__)))		# Ensure we're in builder.py's directory.
+os.chdir("..")												# Then come up one level.
 
 with open("package.json") as f:
 	version = json.load(f)["version"]
