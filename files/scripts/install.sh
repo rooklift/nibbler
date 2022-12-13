@@ -1,62 +1,79 @@
-#!/bin/bash
+#!/usr/bin/env bash
 set -e
-BASE_URL="https://github.com/rooklift/nibbler/"
 
-if [ ! -x /usr/bin/curl ] ; then
-    # some extra check if curl is not installed at the usual place
-    command -v curl >/dev/null 2>&1 || { echo >&2 "Please install curl or set it in your path. Aborting."; exit 1; }
-fi
+BASE_URL="https://github.com/rooklift/nibbler"
 
-# calculate the latest release number dynamically
-VERSION_NR=$(basename $(curl -fs -o/dev/null -w %{redirect_url} ${BASE_URL}/releases/latest))
-
-VERSION_NR_ONLY_DIGIT="${VERSION_NR:1}"
-URL="${BASE_URL}releases/download/${VERSION_NR}/nibbler-${VERSION_NR_ONLY_DIGIT}-linux.zip"
-
-cd /tmp
-echo "Downloading the latest release from the github release page ..."
-echo ${URL}
-wget -q -c "${URL}"
-if [ $? -eq 0 ]; then
-    echo "Successfully Downloaded Nibbler ${VERSION_NR_ONLY_DIGIT} "
-else
-    echo "Failed to Download Nibbler ${VERSION_NR_ONLY_DIGIT}. Exiting ..."
+# check curl
+if ! which curl 1>/dev/null 2>&1 ; then
+    echo "Please install curl and make sure it's added to \$PATH"
+    echo "Aborting"
     exit 1
 fi
 
-ZIP_NAME="nibbler-${VERSION_NR_ONLY_DIGIT}-linux.zip"
-FILE_NAME="nibbler-${VERSION_NR_ONLY_DIGIT}-linux"
-LOCATION="/opt/${FILE_NAME}"
-echo "Unzipping to $LOCATION, sudo needed"
-echo sudo unzip -qq ${ZIP_NAME} -d /opt/
-sudo unzip -qq ${ZIP_NAME} -d /opt/
-sudo chmod +x /opt/${FILE_NAME}/nibbler
-echo "Successfully extracted Nibbler."
+# start
+echo "You are installing Nibbler"
 
-read -p "Would you like to create a Desktop shortcut? (y/n)" -n 1 -r
-if [[ $REPLY =~ ^[Yy]$ ]]
-then
-printf "\n"
-echo sudo mkdir -p /usr/local/share/applications
-sudo mkdir -p /usr/local/share/applications
-cat <<EOF | sudo tee -a /usr/local/share/applications/nibbler.desktop >/dev/null
-[Desktop Entry]
-Type=Application
-Version=1.0
-Name=Nibbler
-Icon=/opt/${FILE_NAME}/resources/app/pieces/K.png
-Exec=/opt/${FILE_NAME}/nibbler
-Terminal=false
-StartupNotify=false
-Categories=Game;BoardGame;
-EOF
-printf "Desktop shortcut created:/usr/local/share/applications/nibbler.desktop"
-printf "\nThe Desktop shortcut will appear shortly in the applications menu."
+# get the latest release version
+VERSION=$(curl -fs -o /dev/null -w "%{redirect_url}" "${BASE_URL}/releases/latest" | xargs basename)
+echo "Latest release is ${VERSION}"
+ZIP_NAME="nibbler-${VERSION#v}-linux.zip"
+ZIP_URL="${BASE_URL}/releases/download/${VERSION}/${ZIP_NAME}"
+
+# create and enter temp dir
+TEMP_DIR=$(mktemp -d)
+cd "${TEMP_DIR}"
+
+# download
+echo "Downloading release from ${ZIP_URL}"
+if curl -fOL "${ZIP_URL}"; then
+    echo "Successfully downloaded ${ZIP_NAME}"
 else
-	printf "\nNo Desktop shortcut"
+    echo "Failed to download ${ZIP_NAME}"
+    echo "Exiting"
+    exit 1
 fi
-printf "\n"
-echo "Successfully installed Nibbler ${VERSION_NR_ONLY_DIGIT}"
 
+# extract
+echo "Extracting..."
+unzip -q "${ZIP_NAME}"
+echo "Successfully extracted Nibbler"
+UNZIPPED_NAME="${ZIP_NAME%.zip}"
 
+# prepare
+chmod +x "${UNZIPPED_NAME}/nibbler"
+mv "${UNZIPPED_NAME}/resources/linux" ./
 
+# check if already installed
+INSTALL_DIR="/opt/nibbler"
+if [[ -d "${INSTALL_DIR}" ]]; then
+    echo "${INSTALL_DIR} already exists!"
+    echo "It looks like there is an existing installation of Nibbler on your system"
+    read -p "Would you like to overwrite it? [y/n]" -n 1 CONFIRM_INSTALL
+    echo
+    if ! [[ "$CONFIRM_INSTALL" =~ ^[Yy]$ ]]; then
+        echo "Aborting"
+        exit 1
+    fi
+fi
+
+# start install
+DESKTOP_ENTRY_PATH="/usr/local/share/applications/nibbler.desktop"
+ICON_PATH="/usr/local/share/icons/hicolor/512x512/apps/nibbler.png"
+echo "Installing Nibbler to ${INSTALL_DIR}"
+echo "Installing desktop entry to ${DESKTOP_ENTRY_PATH}"
+echo "Installing icon to ${ICON_PATH}"
+echo "This will require sudo privilege."
+
+# remove old and make sure directories are created
+for FILE in "${INSTALL_DIR}" "${DESKTOP_ENTRY_PATH}" "${ICON_PATH}"; do
+    sudo rm -rf "$FILE"
+    sudo mkdir -p $(dirname "$FILE")
+done
+
+# install new
+sudo mv "${UNZIPPED_NAME}" "${INSTALL_DIR}"
+sudo mv "linux/nibbler.desktop" "${DESKTOP_ENTRY_PATH}"
+sudo mv "linux/nibbler.png" "${ICON_PATH}"
+
+# done
+echo "Successfully installed Nibbler ${VERSION}"
