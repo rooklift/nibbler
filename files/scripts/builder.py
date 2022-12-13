@@ -14,7 +14,7 @@ zips = {
 os.chdir(os.path.dirname(os.path.realpath(__file__)))		# Ensure we're in builder.py's directory.
 os.chdir("..")												# Then come up one level.
 
-with open("package.json") as f:
+with open("src/package.json") as f:
 	version = json.load(f)["version"]
 
 for key, value in zips.items():
