@@ -81,3 +81,4 @@ sudo mv "nibbler.png" "${ICON_PATH}"
 
 # done
 echo "Successfully installed Nibbler ${VERSION}"
+echo "You will be able to find Nibbler in your lanucher shortly"
