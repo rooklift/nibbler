@@ -41,6 +41,7 @@ UNZIPPED_NAME="${ZIP_NAME%.zip}"
 
 # prepare
 chmod +x "${UNZIPPED_NAME}/nibbler"
+mv "${UNZIPPED_NAME}/resources/nibbler.png" ./
 mv "${UNZIPPED_NAME}/resources/linux" ./
 
 # check if already installed
@@ -57,23 +58,26 @@ if [[ -d "${INSTALL_DIR}" ]]; then
 fi
 
 # start install
+BIN_SYMLINK_PATH="/usr/local/bin/nibbler"
 DESKTOP_ENTRY_PATH="/usr/local/share/applications/nibbler.desktop"
 ICON_PATH="/usr/local/share/icons/hicolor/512x512/apps/nibbler.png"
 echo "Installing Nibbler to ${INSTALL_DIR}"
+echo "Creating binary symlink at ${BIN_SYMLINK_PATH}"
 echo "Installing desktop entry to ${DESKTOP_ENTRY_PATH}"
 echo "Installing icon to ${ICON_PATH}"
 echo "This will require sudo privilege."
 
 # remove old and make sure directories are created
-for FILE in "${INSTALL_DIR}" "${DESKTOP_ENTRY_PATH}" "${ICON_PATH}"; do
+for FILE in "${INSTALL_DIR}" "${BIN_SYMLINK_PATH}" "${DESKTOP_ENTRY_PATH}" "${ICON_PATH}"; do
     sudo rm -rf "$FILE"
     sudo mkdir -p $(dirname "$FILE")
 done
 
 # install new
 sudo mv "${UNZIPPED_NAME}" "${INSTALL_DIR}"
+sudo ln -s "${INSTALL_DIR}/nibbler" "${BIN_SYMLINK_PATH}"
 sudo mv "linux/nibbler.desktop" "${DESKTOP_ENTRY_PATH}"
-sudo mv "linux/nibbler.png" "${ICON_PATH}"
+sudo mv "nibbler.png" "${ICON_PATH}"
 
 # done
 echo "Successfully installed Nibbler ${VERSION}"
