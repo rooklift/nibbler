@@ -1,0 +1,30 @@
+name: Build Nibbler
+
+on:
+  push:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: install
+        run: sudo add-apt-repository ppa:deadsnakes/ppa && sudo apt update && sudo apt install python3.8 && sudo apt install wget
+
+      - name: electron
+        run: cd files/scripts && mkdir electron_zipped && cd electron_zipped && wget https://github.com/electron/electron/releases/download/v9.4.4/electron-v9.4.4-win32-x64.zip && wget https://github.com/electron/electron/releases/download/v9.4.4/electron-v9.4.4-linux-x64.zip
+
+      - name: run builder
+        run: cd files/scripts && python builder.py
+
+      - uses: actions/upload-artifact@v3
+        with:
+          name: nibbler-windows
+          path: files/scripts/dist/nibbler-*-windows
+
+      - uses: actions/upload-artifact@v3
+        with:
+          name: nibbler-linux
+          path: files/scripts/dist/nibbler-*-linux
