@@ -37,7 +37,7 @@ You could also build a standalone app. See comments inside the Python script `bu
 Linux users can make use of the following *one-liner* to install the latest version of Nibbler:
 
 ```bash
-(FIXME: removed for the time being while stuff is being moved)
+bash -c "$(wget -O- https://raw.githubusercontent.com/rooklift/nibbler/master/files/scripts/install.sh)"
 ```
 
 ## Installation - Mac
