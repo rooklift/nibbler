@@ -31,6 +31,7 @@ for key, value in zips.items():
 	# copy files
 	shutil.copytree("src", os.path.join(build_res_dir, "app"))
 	shutil.copy("res/nibbler.png", os.path.join(build_res_dir, "nibbler.png"))
+	shutil.copy("res/nibbler.svg", os.path.join(build_res_dir, "nibbler.svg"))
 	shutil.copytree("res/linux", os.path.join(build_res_dir, "linux"))
 
 	# extract electron
