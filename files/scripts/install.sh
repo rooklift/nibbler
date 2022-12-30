@@ -41,8 +41,7 @@ UNZIPPED_NAME="${ZIP_NAME%.zip}"
 
 # prepare
 chmod +x "${UNZIPPED_NAME}/nibbler"
-mv "${UNZIPPED_NAME}/resources/nibbler.png" ./
-mv "${UNZIPPED_NAME}/resources/linux" ./
+mv "${UNZIPPED_NAME}/resources/"{nibbler.png,nibbler.svg,linux} ./
 
 # check if already installed
 INSTALL_DIR="/opt/nibbler"
@@ -60,7 +59,8 @@ fi
 # start install
 BIN_SYMLINK_PATH="/usr/local/bin/nibbler"
 DESKTOP_ENTRY_PATH="/usr/local/share/applications/nibbler.desktop"
-ICON_PATH="/usr/local/share/icons/hicolor/512x512/apps/nibbler.png"
+ICON_PNG_PATH="/usr/local/share/icons/hicolor/512x512/apps/nibbler.png"
+ICON_SVG_PATH="/usr/local/share/icons/hicolor/scalable/apps/nibbler.svg"
 echo "Installing Nibbler to ${INSTALL_DIR}"
 echo "Creating binary symlink at ${BIN_SYMLINK_PATH}"
 echo "Installing desktop entry to ${DESKTOP_ENTRY_PATH}"
@@ -77,7 +77,8 @@ done
 sudo mv "${UNZIPPED_NAME}" "${INSTALL_DIR}"
 sudo ln -s "${INSTALL_DIR}/nibbler" "${BIN_SYMLINK_PATH}"
 sudo mv "linux/nibbler.desktop" "${DESKTOP_ENTRY_PATH}"
-sudo mv "nibbler.png" "${ICON_PATH}"
+sudo mv "nibbler.png" "${ICON_PNG_PATH}"
+sudo mv "nibbler.svg" "${ICON_SVG_PATH}"
 
 # done
 echo "Successfully installed Nibbler ${VERSION}"
