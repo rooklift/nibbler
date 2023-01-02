@@ -18,6 +18,7 @@ with open("src/package.json") as f:
 	version = json.load(f)["version"]
 
 for key, value in zips.items():
+	
 	# check if electron archives exist
 	if not os.path.exists(value):
 		print("{} not present!".format(value))
@@ -25,15 +26,13 @@ for key, value in zips.items():
 
 	# make build directory
 	build_dir = "scripts/dist/nibbler-{}-{}".format(version, key)
-	build_res_dir = os.path.join(build_dir, "resources")
-	os.makedirs(build_res_dir)
+	os.makedirs(build_dir)
 
 	# copy files
+	build_res_dir = os.path.join(build_dir, "resources")
+	shutil.copytree("res", build_res_dir)
 	shutil.copytree("src", os.path.join(build_res_dir, "app"))
-	shutil.copy("res/nibbler.png", os.path.join(build_res_dir, "nibbler.png"))
-	shutil.copy("res/nibbler.svg", os.path.join(build_res_dir, "nibbler.svg"))
-	shutil.copytree("res/linux", os.path.join(build_res_dir, "linux"))
-
+	
 	# extract electron
 	print("Extracting for {}...".format(key))
 	z = zipfile.ZipFile(value, "r")
