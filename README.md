@@ -64,3 +64,5 @@ Leela running out of RAM can be a problem if searches go on too long. You might 
 Thanks to everyone in Discord and GitHub who's offered advice and suggestions; and thanks to all Lc0 devs and GPU-hours contributors!
 
 The pieces are from [Lichess](https://lichess.org/).
+
+Icon design by [ciriousjoker](https://github.com/ciriousjoker) based on [this](https://www.svgrepo.com/svg/155301/chess).
