@@ -64,11 +64,12 @@ ICON_SVG_PATH="/usr/local/share/icons/hicolor/scalable/apps/nibbler.svg"
 echo "Installing Nibbler to ${INSTALL_DIR}"
 echo "Creating binary symlink at ${BIN_SYMLINK_PATH}"
 echo "Installing desktop entry to ${DESKTOP_ENTRY_PATH}"
-echo "Installing icon to ${ICON_PATH}"
+echo "Installing icons to ${ICON_PNG_PATH} and ${ICON_SVG_PATH}"
 echo "This will require sudo privilege."
 
 # remove old and make sure directories are created
-for FILE in "${INSTALL_DIR}" "${BIN_SYMLINK_PATH}" "${DESKTOP_ENTRY_PATH}" "${ICON_PATH}"; do
+for FILE in "${INSTALL_DIR}" "${BIN_SYMLINK_PATH}" "${DESKTOP_ENTRY_PATH}" \
+    "${ICON_PNG_PATH}" "${ICON_SVG_PATH}"; do
     sudo rm -rf "$FILE"
     sudo mkdir -p $(dirname "$FILE")
 done
