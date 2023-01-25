@@ -727,6 +727,7 @@ const position_prototype = {
 
 		if (long_flag) {
 			possible_rights_chars = possible_rights_chars.slice(0, king_loc.x);
+			possible_rights_chars.reverse();		// So we propose the shortest move first, if more than 1 is allowed by the rights.
 		} else {
 			possible_rights_chars = possible_rights_chars.slice(king_loc.x + 1);
 		}
