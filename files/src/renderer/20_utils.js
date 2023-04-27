@@ -313,9 +313,13 @@ function Log(s) {
 			Log.stream = undefined;
 			Log.logfilename = undefined;
 		}
-		console.log(`Logging to ${config.logfile}`);
+
+		let actual_filepath = config.logfile_timestamp ? UniqueFilepath(config.logfile) : config.logfile;
+		// Note that this isn't saved even temporarily - as far as the rest of the logic is concerned, we are logging to config.logfile
+
+		console.log(`Logging to ${actual_filepath}`);
 		let flags = (config.clear_log) ? "w" : "a";
-		let stream = fs.createWriteStream(config.logfile, {flags: flags});		// Want var "stream" available via closure for the below...
+		let stream = fs.createWriteStream(actual_filepath, {flags: flags});		// Want var "stream" available via closure for the below...
 
 		stream.on("error", (err) => {
 			console.log(err);
@@ -338,6 +342,43 @@ function Log(s) {
 function LogBoth(s) {
 	console.log(s);
 	Log(s);
+}
+
+function UniqueFilepath(filepath) {
+
+	const alpha = "abcdefghijklmnopqrstuvwxyz";
+
+	let extname = path.extname(filepath);
+	let basename = path.basename(filepath, extname);
+	let dirname = path.dirname(filepath);
+
+	let dt = new Date();
+
+	let y = dt.getFullYear().toString();
+	let m = (dt.getMonth() + 1).toString();
+	let d = dt.getDate().toString();
+	let h = dt.getHours().toString();
+	let n = dt.getMinutes().toString();
+	let s = dt.getSeconds().toString();
+
+	if (m.length === 1) m = "0" + m;
+	if (d.length === 1) d = "0" + d;
+	if (h.length === 1) h = "0" + h;
+	if (n.length === 1) n = "0" + n;
+	if (s.length === 1) s = "0" + s;
+
+	let newbase = `${basename}-${y}-${m}-${d}-${h}${n}${s}`;
+
+	for (let n = 0; n < 26; n++) {
+		let test = path.join(dirname, newbase) + alpha[n] + extname;
+		if (!fs.existsSync(test)) {
+			return test;
+		}
+	}
+
+	// If you start 27 instances of Nibbler within a second, that's your problem.
+
+	return filepath;
 }
 
 function New2DArray(width, height, defval) {

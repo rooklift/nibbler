@@ -4131,6 +4131,17 @@ function menu_build() {
 							}
 						},
 						{
+							label: "Use unique logfile each time",
+							type: "checkbox",
+							checked: config.logfile_timestamp,
+							click: () => {
+								win.webContents.send("call", {
+									fn: "toggle",
+									args: ["logfile_timestamp"],
+								});
+							}
+						},
+						{
 							type: "separator"
 						},
 						{
