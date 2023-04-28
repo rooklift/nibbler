@@ -1,0 +1,53 @@
+name: Create GitHub Release
+
+on:
+  push:
+    tags:
+      - '*'
+
+jobs:
+  create_release:
+    name: Create Release
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: 16
+
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: 3.8
+
+      - name: Set up
+        run: |
+          cd files/scripts
+          mkdir electron_zipped
+          cd electron_zipped
+          wget https://github.com/electron/electron/releases/download/v9.4.4/electron-v9.4.4-win32-x64.zip
+          wget https://github.com/electron/electron/releases/download/v9.4.4/electron-v9.4.4-linux-x64.zip
+
+      - name: Install
+        run: python files/scripts/builder.py
+
+      - name: Compress
+        run: |
+          cd files/scripts/dist/
+          zip -r nibbler-windows.zip nibbler-*-windows
+          zip -r nibbler-linux.zip nibbler-*-linux
+          mv nibbler-*.zip $GITHUB_WORKSPACE/
+
+      - name: Create GitHub Release
+        uses: softprops/action-gh-release@v1
+        with:
+          tag_name: ${{ github.ref_name }}
+          name: ${{ github.ref_name }}
+          draft: true
+          files: |
+            nibbler-linux.zip
+            nibbler-windows.zip
