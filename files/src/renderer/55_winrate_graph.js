@@ -4,7 +4,8 @@ function NewGrapher() {
 
 	let grapher = Object.create(null);
 
-	grapher.dragging = false;			// Used by the event handlers in start.js
+	grapher.dragging = false;			// Used by the event handlers in renderer/99_start.js
+	grapher.last_hover_node = null;			// Used by the event handler in renderer/95_hub.js
 
 	grapher.clear_graph = function() {
 
@@ -69,6 +70,46 @@ function NewGrapher() {
 			}
 			graphctx.stroke();
 		}
+
+		this.draw_hover_annotation();
+	};
+
+	grapher.draw_hover_annotation = function() {
+		let node = this.last_hover_node;
+
+		if ((node === null) || (node.move === null)) {
+			return;
+		}
+
+		graphctx.font = "bold 13px Arial";
+		graphctx.textAlign = 'center';
+
+		let x = graph.width * node.depth / node.graph_length_knower.val;
+
+		if (node.table.graph_y === null) {
+			// match "Draw our dashed runs" color in `draw_everything` above
+			graphctx.fillStyle = "#999999";
+			graphctx.textBaseline = 'top';
+			graphctx.fillText(node.token(false, true), x, 0);
+		} else {
+			if (node.parent.board.active === 'w') {
+				// match .white in nibbler.css
+				graphctx.fillStyle = '#eeeeee';
+			} else {
+				// match .pink in nibbler.css
+				graphctx.fillStyle = '#ffaaaa';
+			}
+
+			// Try to avoid visually overlapping the eval line itself
+			if (node.table.graph_y > 0.5) {
+				graphctx.textBaseline = 'bottom';
+				graphctx.fillText(node.token(false, true), x, graph.height);
+			} else {
+				graphctx.textBaseline = 'top';
+				graphctx.fillText(node.token(false, true), x, 0);
+			}
+		}
+
 	};
 
 	grapher.make_runs = function(eval_list, width, height, graph_length) {
@@ -178,6 +219,26 @@ function NewGrapher() {
 		graphctx.lineTo(x, height);
 		graphctx.stroke();
 
+	};
+
+	grapher.is_inside_graph_canvas = function(mouse_event) {
+		if (!mouse_event || config.graph_height <= 0) {
+			return false;
+		}
+
+		let mousex = mouse_event.offsetX;
+		let mousey = mouse_event.offsetY;
+		if ((typeof mousex !== "number") || (typeof mousey !== "number")) {
+			return null;
+		}
+
+		let width = graph.width;
+		let height = graph.height;
+		if ((typeof width !== "number" || width < 1) || (typeof width !== "number" || width < 1)) {
+			return null;
+		}
+
+		return ((0.0 <= mousex) && (mousex <= width) && (0.0 <= mousey) && (mousey <= height));
 	};
 
 	grapher.node_from_click = function(node, event) {
