@@ -1,4 +1,4 @@
-import json, os, shutil, zipfile
+import json, os, platform, shutil, zipfile
 
 zips = {
 	"windows": "scripts/electron_zipped/electron-v9.4.4-win32-x64.zip",
@@ -21,7 +21,10 @@ for key, value in zips.items():
 	
 	# check if electron archives exist
 	if not os.path.exists(value):
-		print("{} not present!".format(value))
+		if key == platform.system().lower():
+			print("{} not present; this is problem if you are hoping to test locally!".format(value))
+		else:
+			print("{} not present, skipping!".format(value))
 		continue
 
 	# make build directory
