@@ -24,7 +24,7 @@ for key, value in zips.items():
 		if key == platform.system().lower():
 			print("{} not present; this is problem if you are hoping to test locally!".format(value))
 		else:
-			print("{} not present, skipping!".format(value))
+			print("Skipping build for {} ({} not present)".format(key, value))
 		continue
 
 	# make build directory
@@ -37,7 +37,7 @@ for key, value in zips.items():
 	shutil.copytree("src", os.path.join(build_res_dir, "app"))
 	
 	# extract electron
-	print("Extracting for {}...".format(key))
+	print("Extracting for {}...".format(key), end='')
 	z = zipfile.ZipFile(value, "r")
 	z.extractall(build_dir)
 	z.close()
@@ -45,5 +45,7 @@ for key, value in zips.items():
 	# rename executable
 	if os.path.exists(os.path.join(build_dir, "electron.exe")):
 		os.rename(os.path.join(build_dir, "electron.exe"), os.path.join(build_dir, "nibbler.exe"))
+		print('OK')
 	if os.path.exists(os.path.join(build_dir, "electron")):
 		os.rename(os.path.join(build_dir, "electron"), os.path.join(build_dir, "nibbler"))
+		print('OK')
