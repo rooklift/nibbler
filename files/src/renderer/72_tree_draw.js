@@ -28,11 +28,25 @@ let tree_draw_props = {
 			dom_highlight.classList.remove("movelist_highlight_yellow");
 		}
 
+		let eval_underline = this.underline_html_classlist;
+
 		let dom_node = document.getElementById(`node_${this.node.id}`);
 
 		if (dom_node) {
 			dom_node.classList.add(highlight_class);
+
+			// When leaving a node, the updated eval left behind may cause it to become an inaccuracy/mistake/blunder
+			eval_underline(this.node, dom_node.classList);
 		}
+
+		// When leaving a node, the updated eval left behind may cause the move afterward to become an inaccuracy/mistake/blunder
+		this.node.children.forEach(function(adjacent_node) {
+			if (adjacent_node) {
+				let adjacent_dom_node = document.getElementById(`node_${adjacent_node.id}`);
+
+				eval_underline(adjacent_node, adjacent_dom_node.classList);
+			}
+		});
 
 		this.fix_scrollbar_position();
 	},
@@ -96,20 +110,7 @@ let tree_draw_props = {
 				classes.push("white");		// Otherwise, inherits gray colour from movelist CSS
 			}
 
-			if ((node.parent.table.eval !== null) && (node.table.eval !== null)) {
-				// underline based on:
-				// inaccuracy: 0.1 <= change in win percentage < 0.2
-				// mistake: 0.2 <= change in win percentage < 0.3
-				// blunder: 0.3 <= change in win percentage
-				let delta_eval = Math.abs(node.table.eval - node.parent.table.eval);
-				if (0.3 <= delta_eval) {
-					classes.push("underline-blunder");
-				} else if (0.2 <= delta_eval) {
-					classes.push("underline-mistake");
-				} else if (0.1 <= delta_eval) {
-					classes.push("underline-inaccuracy");
-				}
-			}
+			this.underline_html_classlist(node, classes);
 
 			pseudoelements.push({
 				opener: `<span class="${classes.join(" ")}" id="node_${node.id}">`,
@@ -150,6 +151,39 @@ let tree_draw_props = {
 	},
 
 	// Helpers...
+
+	underline_html_classlist: function (eval_node, dom_classlist) {
+		if ((eval_node.parent.table.eval !== null) && (eval_node.table.eval !== null)) {
+			dom_classlist.remove('underline-inaccuracy');
+			dom_classlist.remove('underline-mistake');
+			dom_classlist.remove('underline-blunder');
+
+			// underline based on:
+			// inaccuracy: 0.1 <= change in win percentage < 0.2
+			// mistake: 0.2 <= change in win percentage < 0.3
+			// blunder: 0.3 <= change in win percentage
+			let delta_eval = Math.abs(eval_node.table.eval - eval_node.parent.table.eval);
+
+			let eval_html_classname = null;
+			if (0.3 <= delta_eval) {
+				eval_html_classname = 'underline-blunder';
+			} else if (0.2 <= delta_eval) {
+				eval_html_classname = 'underline-mistake';
+			} else if (0.1 <= delta_eval) {
+				eval_html_classname = 'underline-inaccuracy';
+			}
+
+			if (eval_html_classname !== null) {
+				if (dom_classlist instanceof Array) {
+					// e.g. dom_from_scratch
+					dom_classlist.push(eval_html_classname);
+				} else if (dom_classlist instanceof DOMTokenList) {
+					// e.g. dom_easy_highlight_change
+					dom_classlist.add(eval_html_classname);
+				}
+			}
+		}
+	},
 
 	get_movelist_highlight: function() {
 		let elements = document.getElementsByClassName("movelist_highlight_blue");
