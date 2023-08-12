@@ -166,7 +166,9 @@ let tree_draw_props = {
 
 	underline_html_classlist: function (eval_node, dom_classlist) {
 		if ((eval_node.parent.table.eval !== null) && (eval_node.table.eval !== null)) {
-			if (dom_classlist.length > 0) {
+			if ((dom_classlist.length > 0) && (dom_classlist instanceof DOMTokenList)) {
+				// NOTE: we don't need to `.remove` when `dom_classlist instanceof Array` because
+				// dom_from_scratch is recreating elements from the ground up (they won't have classes we need to remove)
 				dom_classlist.remove('underline-inaccuracy');
 				dom_classlist.remove('underline-mistake');
 				dom_classlist.remove('underline-blunder');
