@@ -87,15 +87,16 @@ function NewGrapher() {
 		let x = graph.width * node.depth / node.graph_length_knower.val;
 
 		if (node.table.eval === null) {
-			graphctx.fillStyle = "blue";
+			// match "Draw our dashed runs" color in `draw_everything` above
+			graphctx.fillStyle = "#999999";
 			graphctx.textBaseline = 'top';
 			graphctx.fillText(node.token(false, true), x, 0);
 		} else {
 			if (node.parent.board.active === 'w') {
-				// match .pink in nibbler.css
+				// match .white in nibbler.css
 				graphctx.fillStyle = '#eeeeee';
 			} else {
-				// match .white in nibbler.css
+				// match .pink in nibbler.css
 				graphctx.fillStyle = '#ffaaaa';
 			}
 
