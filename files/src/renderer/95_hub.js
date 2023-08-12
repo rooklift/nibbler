@@ -480,6 +480,7 @@ let hub_props = {
 
 		this.draw_statusbox();
 		this.draw_infobox();
+		this.tree.dom_update_underlines();
 
 		this.grapher.draw(this.tree.node);
 	},

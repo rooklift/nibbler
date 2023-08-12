@@ -28,25 +28,11 @@ let tree_draw_props = {
 			dom_highlight.classList.remove("movelist_highlight_yellow");
 		}
 
-		let eval_underline = this.underline_html_classlist;
-
 		let dom_node = document.getElementById(`node_${this.node.id}`);
 
 		if (dom_node) {
 			dom_node.classList.add(highlight_class);
-
-			// When leaving a node, the updated eval left behind may cause it to become an inaccuracy/mistake/blunder
-			eval_underline(this.node, dom_node.classList);
 		}
-
-		// When leaving a node, the updated eval left behind may cause the move afterward to become an inaccuracy/mistake/blunder
-		this.node.children.forEach(function(adjacent_node) {
-			if (adjacent_node) {
-				let adjacent_dom_node = document.getElementById(`node_${adjacent_node.id}`);
-
-				eval_underline(adjacent_node, adjacent_dom_node.classList);
-			}
-		});
 
 		this.fix_scrollbar_position();
 	},
@@ -150,13 +136,41 @@ let tree_draw_props = {
 		this.fix_scrollbar_position();
 	},
 
+	dom_update_underlines: function () {
+		if (this.node === null) {
+			return;
+		}
+
+		let dom_node = document.getElementById(`node_${this.node.id}`);
+
+		if (dom_node === null) {
+			return;
+		}
+
+		let eval_underline = this.underline_html_classlist;
+
+		// When receiving a new eval for `this.node`, it may become an inaccuracy/mistake/blunder
+		eval_underline(this.node, dom_node.classList);
+
+		// When receiving an eval for `this.node`, the updated eval could cause the subsequent move(s) to become an inaccuracy/mistake/blunder
+		this.node.children.forEach(function(adjacent_node) {
+			if (adjacent_node) {
+				let adjacent_dom_node = document.getElementById(`node_${adjacent_node.id}`);
+
+				eval_underline(adjacent_node, adjacent_dom_node.classList);
+			}
+		});
+	},
+
 	// Helpers...
 
 	underline_html_classlist: function (eval_node, dom_classlist) {
 		if ((eval_node.parent.table.eval !== null) && (eval_node.table.eval !== null)) {
-			dom_classlist.remove('underline-inaccuracy');
-			dom_classlist.remove('underline-mistake');
-			dom_classlist.remove('underline-blunder');
+			if (dom_classlist.length > 0) {
+				dom_classlist.remove('underline-inaccuracy');
+				dom_classlist.remove('underline-mistake');
+				dom_classlist.remove('underline-blunder');
+			}
 
 			// underline based on:
 			// inaccuracy: 0.1 <= change in win percentage < 0.2
@@ -178,7 +192,7 @@ let tree_draw_props = {
 					// e.g. dom_from_scratch
 					dom_classlist.push(eval_html_classname);
 				} else if (dom_classlist instanceof DOMTokenList) {
-					// e.g. dom_easy_highlight_change
+					// e.g. dom_update_underlines
 					dom_classlist.add(eval_html_classname);
 				}
 			}
