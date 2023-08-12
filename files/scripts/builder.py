@@ -18,10 +18,10 @@ with open("src/package.json") as f:
 	version = json.load(f)["version"]
 
 for key, value in zips.items():
-	
+
 	# check if electron archives exist
 	if not os.path.exists(value):
-		print("{} not present!".format(value))
+		print("Skipping {} build: {} not present.".format(key, value))
 		continue
 
 	# make build directory
@@ -32,7 +32,7 @@ for key, value in zips.items():
 	build_res_dir = os.path.join(build_dir, "resources")
 	shutil.copytree("res", build_res_dir)
 	shutil.copytree("src", os.path.join(build_res_dir, "app"))
-	
+
 	# extract electron
 	print("Extracting for {}...".format(key))
 	z = zipfile.ZipFile(value, "r")
