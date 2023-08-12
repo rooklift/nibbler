@@ -241,7 +241,7 @@ ul {
 }
 
 span.underline-inaccuracy {
-	border-bottom: 1px solid yellow;
+	border-bottom: 1px dashed yellow;
 	border-radius: 0.5ex;
 }
 span.underline-mistake {
