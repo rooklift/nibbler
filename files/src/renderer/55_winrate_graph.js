@@ -100,18 +100,22 @@ function NewGrapher() {
 				graphctx.fillStyle = '#ffaaaa';
 			}
 
+			let value_string = (node.table.eval * 100).toFixed(1) + '%';
+			let y = (1.0 - node.table.eval) * graph.height;
+
 			// Try to avoid visually overlapping the eval line itself
 			if (node.table.eval > 0.5) {
 				graphctx.textBaseline = 'bottom';
 				graphctx.fillText(node.token(false, true), x, graph.height);
+
+				graphctx.textBaseline = 'top';
 			} else {
 				graphctx.textBaseline = 'top';
 				graphctx.fillText(node.token(false, true), x, 0);
+
+				graphctx.textBaseline = 'bottom';
 			}
-
-                        let value_string = (node.table.eval * 100).toFixed(1) + '%';
-
-			let y = (1.0 - node.table.eval) * graph.height;
+			
 			// match .blue in nibbler.css
 			graphctx.fillStyle = '#6cccee';
 			graphctx.font = "16px Arial";
