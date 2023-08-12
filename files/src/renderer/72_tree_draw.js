@@ -1,5 +1,7 @@
 "use strict";
 
+// This file implements drawing the `movelist` element.
+
 let tree_draw_props = {
 
 	// Since we use Object.assign(), it's bad form to have any deep objects in the props.
@@ -92,6 +94,21 @@ let tree_draw_props = {
 
 			if (node.current_line) {
 				classes.push("white");		// Otherwise, inherits gray colour from movelist CSS
+			}
+
+			if ((node.parent.table.eval !== null) && (node.table.eval !== null)) {
+				// underline based on:
+				// inaccuracy: 0.1 <= change in win percentage < 0.2
+				// mistake: 0.2 <= change in win percentage < 0.3
+				// blunder: 0.3 <= change in win percentage
+				let delta_eval = Math.abs(node.table.eval - node.parent.table.eval);
+				if (0.3 <= delta_eval) {
+					classes.push("underline-blunder");
+				} else if (0.2 <= delta_eval) {
+					classes.push("underline-mistake");
+				} else if (0.1 <= delta_eval) {
+					classes.push("underline-inaccuracy");
+				}
 			}
 
 			pseudoelements.push({

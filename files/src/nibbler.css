@@ -240,6 +240,19 @@ ul {
 	background-color: #222244;
 }
 
+span.underline-inaccuracy {
+	border-bottom: 1px solid yellow;
+	border-radius: 0.5ex;
+}
+span.underline-mistake {
+	border-bottom: 2px solid orange;
+	border-radius: 0.5ex;
+}
+span.underline-blunder {
+	border-bottom: 3px solid red;
+	border-radius: 0.5ex;
+}
+
 span.movelist_highlight_blue {
 	background-color: #222244;
 	color: #6cccee;
