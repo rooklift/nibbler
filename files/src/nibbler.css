@@ -24,24 +24,25 @@ body {
 	background-color: #444444;
 }
 
-#boardcoordinates-overlay {
+div.boardcoordinates-wrapper {
 	position: relative;
 	color: white;
 	font-family: monospace;
 }
-#boardcoordinates-vertical {
+
+div.boardcoordinates-1to8 {
 	position: absolute;
 	top: 16px;
 }
 
-#boardcoordinates-horizontal {
+div.boardcoordinates-atoh {
 	position: absolute;
 	left: 16px;
 	top: 0px;
 	display: flex;
 }
 
-#boardcoordinates-horizontal > span {
+div.boardcoordinates-atoh > span {
 	flex-grow: 1;
 	text-align: center;
 }
