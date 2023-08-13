@@ -28,12 +28,8 @@ body {
 	position: relative;
 	color: white;
 	font-family: monospace;
-	font-size: 14px;
-	/* calc(448px / 8 / 4) */
 }
 #boardcoordinates-vertical {
-	line-height: 4.0;
-
 	position: absolute;
 	top: 16px;
 }
@@ -43,7 +39,6 @@ body {
 	left: 16px;
 	top: 0px;
 	display: flex;
-	width: 448px;
 }
 
 #boardcoordinates-horizontal > span {

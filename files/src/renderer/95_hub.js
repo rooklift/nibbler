@@ -2343,7 +2343,9 @@ let hub_props = {
 	rebuild_sizes: function() {
 
 		// This assumes everything already exists.
-		// Derived from the longer version in start.js, which it does not replace.
+		// Derived from the longer version in renderer/99_start.js, which it does not replace.
+		boardcoordinates_h.style.width = config.board_size + 'px';
+		boardcoordinates_v.style.lineHeight = config.board_size / boardcoordinates_fontsize_px / 8.0;
 
 		boardfriends.width = canvas.width = boardsquares.width = config.board_size;
 		boardfriends.height = canvas.height = boardsquares.height = config.board_size;
