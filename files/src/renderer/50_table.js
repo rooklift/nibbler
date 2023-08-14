@@ -18,6 +18,7 @@ const table_prototype = {
 		this.tbhits = 0;						// Stat sent by engine
 		this.time = 0;							// Stat sent by engine
 		this.limit = null;						// The limit of the last search that updated this.
+		this.bestmove_so_far = null					// The "top engine move" move e.g. 'e7e5'
 		this.terminal = null;					// null = unknown, "" = not terminal, "Non-empty string" = terminal reason
 		this.eval = null;						// Used by grapher only, value from White's POV
 		this.eval_version = 0;					// Which version (above) was used to generate the eval

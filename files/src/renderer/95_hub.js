@@ -968,6 +968,7 @@ let hub_props = {
 				break;
 			}
 
+			// e.g. `s` might be 'bestmove e7e5 ponder g1f3'
 			let tokens = s.split(" ").filter(z => z !== "");
 			ok = this.move(tokens[1]);
 

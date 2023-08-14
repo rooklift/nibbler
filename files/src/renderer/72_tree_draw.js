@@ -7,6 +7,15 @@ let tree_draw_props = {
 	ordered_nodes_cache: null,
 	ordered_nodes_cache_version: -1,
 
+	dom_bold_bestmove_child: function(node) {
+		let bestmove_move = node.table.bestmove_so_far;
+
+		node.children.forEach( function(child_node) {
+			let dom_child_node = document.getElementById(`node_${child_node.id}`);
+			dom_child_node.style.fontWeight = (bestmove_move == child_node.move) ? 'bold' : 'normal';
+		});
+	},
+
 	dom_easy_highlight_change: function() {
 
 		// When the previously highlighted node and the newly highlighted node are on the same line,
@@ -57,6 +66,7 @@ let tree_draw_props = {
 			this.ordered_nodes_cache_version = this.tree_version;
 		}
 
+		let dom_bestmove_fontweight_ids = [];
 		let pseudoelements = [];		// Objects containing opening span string `<span foo>` and text string
 
 		for (let item of this.ordered_nodes_cache) {
@@ -94,6 +104,10 @@ let tree_draw_props = {
 				classes.push("white");		// Otherwise, inherits gray colour from movelist CSS
 			}
 
+			if ((node.parent !== null) && (node.parent.table.bestmove_so_far !== null) && (node.parent.table.bestmove_so_far == node.move)) {
+				dom_bestmove_fontweight_ids.push(node.id);
+			}
+
 			pseudoelements.push({
 				opener: `<span class="${classes.join(" ")}" id="node_${node.id}">`,
 				text: node.token(),
@@ -116,6 +130,10 @@ let tree_draw_props = {
 		}
 
 		movelist.innerHTML = all_spans.join("");
+
+		dom_bestmove_fontweight_ids.forEach( function(node_id) {
+			document.getElementById(`node_${node_id}`).style.fontWeight = 'bold';
+		});
 
 		// Undo the damage to our tree from the start...
 
