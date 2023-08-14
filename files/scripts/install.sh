@@ -83,4 +83,4 @@ sudo mv "nibbler.svg" "${ICON_SVG_PATH}"
 
 # done
 echo "Successfully installed Nibbler ${VERSION}"
-echo "You will be able to find Nibbler in your lanucher shortly"
+echo "You will be able to find Nibbler in your launcher shortly"
