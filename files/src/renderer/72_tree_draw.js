@@ -66,8 +66,8 @@ let tree_draw_props = {
 			this.ordered_nodes_cache_version = this.tree_version;
 		}
 
-		let dom_bestmove_fontweight_ids = [];
-		let pseudoelements = [];		// Objects containing opening span string `<span foo>` and text string
+		let dom_bestmove_fontweight_ids = [];	// The "from scratch" equivalent to `dom_bold_bestmove_child` — we want to bold when the move was the "top engine move"
+		let pseudoelements = [];				// Objects containing opening span string `<span foo>` and text string
 
 		for (let item of this.ordered_nodes_cache) {
 
