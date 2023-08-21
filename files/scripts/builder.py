@@ -10,6 +10,9 @@ zips = {
 # Obtain the appropriate Electron asset named above, from https://github.com/electron/electron/releases
 # Create a folder at scripts/electron_zipped and place the Electron asset in it
 # Run ./builder.py
+#
+# Note: later Electron versions work also, but with a couple minor glitches:
+# https://github.com/rooklift/nibbler/issues/140
 
 os.chdir(os.path.dirname(os.path.realpath(__file__)))		# Ensure we're in builder.py's directory.
 os.chdir("..")												# Then come up one level.
