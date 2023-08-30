@@ -4,7 +4,8 @@
 
 Nibbler is a real-time analysis GUI for [Leela Chess Zero](http://lczero.org/play/quickstart/) (Lc0), which runs Leela in the background and constantly displays opinions about the current position. You can also compel the engine to evaluate one or more specific moves. Nibbler is loosely inspired by [Lizzie](https://github.com/featurecat/lizzie) and [Sabaki](https://github.com/SabakiHQ/Sabaki).
 
-These days, Nibbler more-or-less works with traditional engines like [Stockfish](https://stockfishchess.org/), too.
+These days, Nibbler more-or-less works with traditional engines like [Stockfish](https://stockfishchess.org/), too. <br>
+(Ensure `MultiPV` is `1`, `Threads` (CPU) is set, and `Hash` is set (<=70% of RAM), for maximum strength.)
 
 For prebuilt binary releases, see the [Releases](https://github.com/rooklift/nibbler/releases) section. For help, the [Discord](https://discordapp.com/invite/pKujYxD) may be your best bet, or open an issue here.
 
