@@ -140,6 +140,9 @@ function NewGrapher() {
 
 	grapher.draw_minus_one_plus_one_lines = function(width, height) {
 
+		// Note: this draws lines at 30% and 70%, which lines up with -1.0 and +1.0 centipawn
+		// scores when we use Naphthalin's centipawn graph which is clamped at -2.5 and +2.5.
+
 		// Avoid anti-aliasing... (FIXME: we assumed graph size was even)
 		let pixel_y_adjustment = config.graph_line_width % 2 === 0 ? 0 : -0.5;
 
