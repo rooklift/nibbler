@@ -33,7 +33,7 @@ function NewGrapher() {
 
 		let eval_list = node.all_evals_for_graph();
 
-		this.draw_minus_one_plus_one_lines(width, height);
+		this.draw_30_70_lines(width, height);
 		this.draw_position_line(eval_list.length, node);
 
 		// We make lists of contiguous edges that can be drawn at once...
@@ -138,7 +138,7 @@ function NewGrapher() {
 		return {normal_runs, dashed_runs};
 	};
 
-	grapher.draw_minus_one_plus_one_lines = function(width, height) {
+	grapher.draw_30_70_lines = function(width, height) {
 
 		// Note: this draws lines at 30% and 70%, which lines up with -1.0 and +1.0 centipawn
 		// scores when we use Naphthalin's centipawn graph which is clamped at -2.5 and +2.5.
