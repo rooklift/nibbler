@@ -31,7 +31,7 @@ function NewGrapher() {
 		let width = graph.width;		// After the above.
 		let height = graph.height;
 
-		let eval_list = node.all_graph_values();
+		let eval_list = node.all_graph_values(250);
 
 		this.draw_30_70_lines(width, height);
 		this.draw_position_line(eval_list.length, node);

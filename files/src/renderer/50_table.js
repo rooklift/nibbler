@@ -24,10 +24,9 @@ const table_prototype = {
 		this.already_autopopulated = false;
 	},
 
-	get_graph_y: function() {
+	get_graph_y: function(cp_clamp) {			// e.g. a value of 250 will mean +250 is drawn as if it's 100% winning.
 
-		// Naphthalin's scheme: based on centipawns, +250 considered 100% winning.
-		// This is used solely for graphing.
+		// Naphthalin's scheme: based on centipawns.
 
 		if (this.graph_y_version === this.version) {
 			return this.graph_y;
@@ -38,7 +37,7 @@ const table_prototype = {
 				if (info.board.active === "b") {
 					cp *= -1;
 				}
-				this.graph_y = (cp + 250) / 500;
+				this.graph_y = (cp + cp_clamp) / (cp_clamp * 2);
 				if (this.graph_y < 0) this.graph_y = 0;
 				if (this.graph_y > 1) this.graph_y = 1;
 			} else {
