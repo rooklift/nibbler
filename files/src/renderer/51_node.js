@@ -131,7 +131,7 @@ const node_prototype = {
 		let node = this;
 
 		while (node) {
-			ret.push(node.table.get_eval());
+			ret.push(node.table.get_eval_adjusted());		// NOTE: this is the adjusted version based on -250 to 250 centipawn scale.
 			node = node.parent;
 		}
 

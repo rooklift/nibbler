@@ -3,7 +3,7 @@
 function NewGrapher() {
 
 	let grapher = Object.create(null);
-	
+
 	grapher.dragging = false;			// Used by the event handlers in start.js
 
 	grapher.clear_graph = function() {
@@ -33,7 +33,7 @@ function NewGrapher() {
 
 		let eval_list = node.future_eval_history();
 
-		this.draw_50_percent_line(width, height);
+		this.draw_minus_one_plus_one_lines(width, height);
 		this.draw_position_line(eval_list.length, node);
 
 		// We make lists of contiguous edges that can be drawn at once...
@@ -138,7 +138,7 @@ function NewGrapher() {
 		return {normal_runs, dashed_runs};
 	};
 
-	grapher.draw_50_percent_line = function(width, height) {
+	grapher.draw_minus_one_plus_one_lines = function(width, height) {
 
 		// Avoid anti-aliasing... (FIXME: we assumed graph size was even)
 		let pixel_y_adjustment = config.graph_line_width % 2 === 0 ? 0 : -0.5;
@@ -147,8 +147,12 @@ function NewGrapher() {
 		graphctx.lineWidth = config.graph_line_width;
 		graphctx.setLineDash([config.graph_line_width, config.graph_line_width]);
 		graphctx.beginPath();
-		graphctx.moveTo(0, height / 2 + pixel_y_adjustment);
-		graphctx.lineTo(width, height / 2 + pixel_y_adjustment);
+		graphctx.moveTo(0, height * 0.3 + pixel_y_adjustment);
+		graphctx.lineTo(width, height * 0.3 + pixel_y_adjustment);
+		graphctx.stroke();
+		graphctx.beginPath();
+		graphctx.moveTo(0, height * 0.7 + pixel_y_adjustment);
+		graphctx.lineTo(width, height * 0.7 + pixel_y_adjustment);
 		graphctx.stroke();
 	};
 
@@ -161,9 +165,8 @@ function NewGrapher() {
 		let width = graph.width;
 		let height = graph.height;
 
-		// Avoid anti-aliasing with x value, line up with 50 percent line (above) with y value...
+		// Avoid anti-aliasing...
 		let pixel_x_adjustment = config.graph_line_width % 2 === 0 ? 0 : 0.5;
-		let pixel_y_adjustment = config.graph_line_width % 2 === 0 ? 0 : -0.5;
 
 		let x = Math.floor(width * node.depth / node.graph_length_knower.val) + pixel_x_adjustment;
 
@@ -172,14 +175,10 @@ function NewGrapher() {
 		graphctx.setLineDash([config.graph_line_width, config.graph_line_width]);
 
 		graphctx.beginPath();
-		graphctx.moveTo(x, height / 2 + pixel_y_adjustment - config.graph_line_width - 1);
-		graphctx.lineTo(x, 0);
-		graphctx.stroke();
-
-		graphctx.beginPath();
-		graphctx.moveTo(x, height / 2 + pixel_y_adjustment + config.graph_line_width + 1);
+		graphctx.moveTo(x, 0);
 		graphctx.lineTo(x, height);
 		graphctx.stroke();
+
 	};
 
 	grapher.node_from_click = function(node, event) {

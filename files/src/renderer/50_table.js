@@ -24,6 +24,7 @@ const table_prototype = {
 		this.already_autopopulated = false;
 	},
 
+/*
 	get_eval: function() {
 		if (this.eval_version === this.version) {
 			return this.eval;
@@ -31,6 +32,32 @@ const table_prototype = {
 			let info = SortedMoveInfoFromTable(this)[0];
 			if (info && !info.__ghost && info.__touched && (this.nodes > 1 || this.limit === 1)) {
 				this.eval = info.board.active === "w" ? info.value() : 1 - info.value();
+			} else {
+				this.eval = null;
+			}
+			this.eval_version = this.version;
+			return this.eval;
+		}
+	},
+*/
+
+	get_eval_adjusted: function() {
+
+		// Napthalin's scheme: based on centipawns, +250 considered 100% winning.
+		// This is used solely for graphing. FIXME: name...
+
+		if (this.eval_version === this.version) {
+			return this.eval;
+		} else {
+			let info = SortedMoveInfoFromTable(this)[0];
+			if (info && !info.__ghost && info.__touched && (this.nodes > 1 || this.limit === 1)) {
+				let cp = info.cp;
+				if (info.board.active === "b") {
+					cp *= -1;
+				}
+				this.eval = (cp + 250) / 500;
+				if (this.eval < 0) this.eval = 0;
+				if (this.eval > 1) this.eval = 1;
 			} else {
 				this.eval = null;
 			}
