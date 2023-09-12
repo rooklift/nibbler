@@ -125,7 +125,7 @@ const node_prototype = {
 		return ret;
 	},
 
-	all_evals_for_graph: function() {
+	all_graph_values: function() {
 
 		// Call this on any node in the line will give the same result.
 
@@ -133,7 +133,7 @@ const node_prototype = {
 		let node = this.get_end();
 
 		while (node) {
-			ret.push(node.table.get_eval_adjusted());		// NOTE: this is the adjusted version based on -250 to 250 centipawn scale.
+			ret.push(node.table.get_graph_y());
 			node = node.parent;
 		}
 
@@ -348,7 +348,7 @@ const node_prototype = {
 	terminal_reason: function() {
 
 		// Returns "" if not a terminal position, otherwise returns the reason.
-		// Also updates table.eval (for the graph) if needed.
+		// Also updates table.graph_y if needed.
 
 		if (typeof this.table.terminal === "string") {
 			return this.table.terminal;
