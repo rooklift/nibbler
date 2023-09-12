@@ -125,10 +125,12 @@ const node_prototype = {
 		return ret;
 	},
 
-	eval_history: function() {
+	all_evals_for_graph: function() {
+
+		// Call this on any node in the line will give the same result.
 
 		let ret = [];
-		let node = this;
+		let node = this.get_end();
 
 		while (node) {
 			ret.push(node.table.get_eval_adjusted());		// NOTE: this is the adjusted version based on -250 to 250 centipawn scale.
@@ -145,10 +147,6 @@ const node_prototype = {
 
 	future_node_history: function() {
 		return this.get_end().node_history();
-	},
-
-	future_eval_history: function() {
-		return this.get_end().eval_history();
 	},
 
 	get_root: function() {
