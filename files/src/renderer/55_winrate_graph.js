@@ -31,9 +31,8 @@ function NewGrapher() {
 		let width = graph.width;		// After the above.
 		let height = graph.height;
 
-		let eval_list = node.all_graph_values(250);
-
-		this.draw_30_70_lines(width, height);
+		let eval_list = node.all_graph_values(250);									// Centipawn value to clamp the graph at.
+		this.draw_horizontal_lines(width, height, [0.3, 0.7]);						// 0.3 and 0.7 goes well with 250 (draws lines at +/- 100 cp).
 		this.draw_position_line(eval_list.length, node);
 
 		// We make lists of contiguous edges that can be drawn at once...
@@ -138,7 +137,7 @@ function NewGrapher() {
 		return {normal_runs, dashed_runs};
 	};
 
-	grapher.draw_30_70_lines = function(width, height) {
+	grapher.draw_horizontal_lines = function(width, height, y_fractions = [0.5]) {
 
 		// Note: this draws lines at 30% and 70%, which lines up with -1.0 and +1.0 centipawn
 		// scores when we use Naphthalin's centipawn graph which is clamped at -2.5 and +2.5.
@@ -149,14 +148,13 @@ function NewGrapher() {
 		graphctx.strokeStyle = "#666666";
 		graphctx.lineWidth = config.graph_line_width;
 		graphctx.setLineDash([config.graph_line_width, config.graph_line_width]);
-		graphctx.beginPath();
-		graphctx.moveTo(0, height * 0.3 + pixel_y_adjustment);
-		graphctx.lineTo(width, height * 0.3 + pixel_y_adjustment);
-		graphctx.stroke();
-		graphctx.beginPath();
-		graphctx.moveTo(0, height * 0.7 + pixel_y_adjustment);
-		graphctx.lineTo(width, height * 0.7 + pixel_y_adjustment);
-		graphctx.stroke();
+
+		for (let y_fraction of y_fractions) {
+			graphctx.beginPath();
+			graphctx.moveTo(0, height * y_fraction + pixel_y_adjustment);
+			graphctx.lineTo(width, height * y_fraction + pixel_y_adjustment);
+			graphctx.stroke();
+		}
 	};
 
 	grapher.draw_position_line = function(eval_list_length, node) {
