@@ -27,7 +27,7 @@ const table_prototype = {
 	get_graph_y: function() {
 
 		// Napthalin's scheme: based on centipawns, +250 considered 100% winning.
-		// This is used solely for graphing. FIXME: name...
+		// This is used solely for graphing.
 
 		if (this.graph_y_version === this.version) {
 			return this.graph_y;
