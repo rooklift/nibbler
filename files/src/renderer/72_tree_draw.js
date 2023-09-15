@@ -175,17 +175,17 @@ let tree_draw_props = {
 			}
 
 			// underline based on:
-			// inaccuracy: 0.1 <= change in win percentage < 0.2
-			// mistake: 0.2 <= change in win percentage < 0.3
-			// blunder: 0.3 <= change in win percentage
+			// inaccuracy: 0.05 <= change in win percentage < 0.1
+			// mistake: 0.1 <= change in win percentage < 0.25
+			// blunder: 0.25 <= change in win percentage
 			let delta_eval = Math.abs(eval_node.table.eval - eval_node.parent.table.eval);
 
 			let eval_html_classname = null;
-			if (0.3 <= delta_eval) {
+			if (0.25 <= delta_eval) {
 				eval_html_classname = 'underline-blunder';
-			} else if (0.2 <= delta_eval) {
-				eval_html_classname = 'underline-mistake';
 			} else if (0.1 <= delta_eval) {
+				eval_html_classname = 'underline-mistake';
+			} else if (0.05 <= delta_eval) {
 				eval_html_classname = 'underline-inaccuracy';
 			}
 
