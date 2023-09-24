@@ -19,31 +19,38 @@ const table_prototype = {
 		this.time = 0;							// Stat sent by engine
 		this.limit = null;						// The limit of the last search that updated this.
 		this.terminal = null;					// null = unknown, "" = not terminal, "Non-empty string" = terminal reason
-		this.eval = null;						// Used by grapher only, value from White's POV
-		this.eval_version = 0;					// Which version (above) was used to generate the eval
+		this.graph_y = null;					// Used by grapher only, value from White's POV between 0 and 1
+		this.graph_y_version = 0;				// Which version (above) was used to generate the graph_y value
 		this.already_autopopulated = false;
 	},
 
-	get_eval: function() {
-		if (this.eval_version === this.version) {
-			return this.eval;
+	get_graph_y: function() {
+
+		// Naphthalin's scheme: based on centipawns.
+
+		if (this.graph_y_version === this.version) {
+			return this.graph_y;
 		} else {
 			let info = SortedMoveInfoFromTable(this)[0];
 			if (info && !info.__ghost && info.__touched && (this.nodes > 1 || this.limit === 1)) {
-				this.eval = info.board.active === "w" ? info.value() : 1 - info.value();
+				let cp = info.cp;
+				if (info.board.active === "b") {
+					cp *= -1;
+				}
+				this.graph_y = 1 / (1 + Math.pow(0.5, cp / 100));
 			} else {
-				this.eval = null;
+				this.graph_y = null;
 			}
-			this.eval_version = this.version;
-			return this.eval;
+			this.graph_y_version = this.version;
+			return this.graph_y;
 		}
 	},
 
 	set_terminal_info: function(reason, ev) {	// ev is ignored if reason is "" (i.e. not a terminal position)
 		if (reason) {
 			this.terminal = reason;
-			this.eval = ev;
-			this.eval_version = this.version;
+			this.graph_y = ev;
+			this.graph_y_version = this.version;
 		} else {
 			this.terminal = "";
 		}

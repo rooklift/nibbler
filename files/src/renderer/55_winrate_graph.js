@@ -3,7 +3,7 @@
 function NewGrapher() {
 
 	let grapher = Object.create(null);
-	
+
 	grapher.dragging = false;			// Used by the event handlers in start.js
 
 	grapher.clear_graph = function() {
@@ -31,9 +31,8 @@ function NewGrapher() {
 		let width = graph.width;		// After the above.
 		let height = graph.height;
 
-		let eval_list = node.future_eval_history();
-
-		this.draw_50_percent_line(width, height);
+		let eval_list = node.all_graph_values();
+		this.draw_horizontal_lines(width, height, [1/3, 2/3]);
 		this.draw_position_line(eval_list.length, node);
 
 		// We make lists of contiguous edges that can be drawn at once...
@@ -138,7 +137,7 @@ function NewGrapher() {
 		return {normal_runs, dashed_runs};
 	};
 
-	grapher.draw_50_percent_line = function(width, height) {
+	grapher.draw_horizontal_lines = function(width, height, y_fractions = [0.5]) {
 
 		// Avoid anti-aliasing... (FIXME: we assumed graph size was even)
 		let pixel_y_adjustment = config.graph_line_width % 2 === 0 ? 0 : -0.5;
@@ -146,10 +145,13 @@ function NewGrapher() {
 		graphctx.strokeStyle = "#666666";
 		graphctx.lineWidth = config.graph_line_width;
 		graphctx.setLineDash([config.graph_line_width, config.graph_line_width]);
-		graphctx.beginPath();
-		graphctx.moveTo(0, height / 2 + pixel_y_adjustment);
-		graphctx.lineTo(width, height / 2 + pixel_y_adjustment);
-		graphctx.stroke();
+
+		for (let y_fraction of y_fractions) {
+			graphctx.beginPath();
+			graphctx.moveTo(0, height * y_fraction + pixel_y_adjustment);
+			graphctx.lineTo(width, height * y_fraction + pixel_y_adjustment);
+			graphctx.stroke();
+		}
 	};
 
 	grapher.draw_position_line = function(eval_list_length, node) {
@@ -161,9 +163,8 @@ function NewGrapher() {
 		let width = graph.width;
 		let height = graph.height;
 
-		// Avoid anti-aliasing with x value, line up with 50 percent line (above) with y value...
+		// Avoid anti-aliasing...
 		let pixel_x_adjustment = config.graph_line_width % 2 === 0 ? 0 : 0.5;
-		let pixel_y_adjustment = config.graph_line_width % 2 === 0 ? 0 : -0.5;
 
 		let x = Math.floor(width * node.depth / node.graph_length_knower.val) + pixel_x_adjustment;
 
@@ -172,14 +173,10 @@ function NewGrapher() {
 		graphctx.setLineDash([config.graph_line_width, config.graph_line_width]);
 
 		graphctx.beginPath();
-		graphctx.moveTo(x, height / 2 + pixel_y_adjustment - config.graph_line_width - 1);
-		graphctx.lineTo(x, 0);
-		graphctx.stroke();
-
-		graphctx.beginPath();
-		graphctx.moveTo(x, height / 2 + pixel_y_adjustment + config.graph_line_width + 1);
+		graphctx.moveTo(x, 0);
 		graphctx.lineTo(x, height);
 		graphctx.stroke();
+
 	};
 
 	grapher.node_from_click = function(node, event) {
