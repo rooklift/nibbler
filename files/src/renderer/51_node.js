@@ -125,7 +125,7 @@ const node_prototype = {
 		return ret;
 	},
 
-	all_graph_values: function(cp_clamp) {		// cp_clamp: how many centipawns (e.g. 250) to consider absolutely winning...
+	all_graph_values: function() {
 
 		// Call this on any node in the line will give the same result.
 
@@ -133,7 +133,7 @@ const node_prototype = {
 		let node = this.get_end();
 
 		while (node) {
-			ret.push(node.table.get_graph_y(cp_clamp));
+			ret.push(node.table.get_graph_y());
 			node = node.parent;
 		}
 

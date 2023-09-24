@@ -31,7 +31,7 @@ function NewGrapher() {
 		let width = graph.width;		// After the above.
 		let height = graph.height;
 
-		let eval_list = node.all_graph_values(250);						// Centipawn value to "soft clamp" the graph at.
+		let eval_list = node.all_graph_values();
 		this.draw_horizontal_lines(width, height, [1/3, 2/3]);
 		this.draw_position_line(eval_list.length, node);
 

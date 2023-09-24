@@ -24,13 +24,9 @@ const table_prototype = {
 		this.already_autopopulated = false;
 	},
 
-	get_graph_y: function(cp_clamp) {
+	get_graph_y: function() {
 
-		// Naphthalin's scheme: based on centipawns. The clamping is now "soft".
-		// A cp_clamp value of 250 will make the graph linear between -250 and 250 centipawns, and squash beyond that
-		// until -500 or 500, at which point it is fully clamped (i.e. treated as 100% losing / winning).
-		//
-		// Note that this is independent of where the horizontal lines are drawn on the graph.
+		// Naphthalin's scheme: based on centipawns.
 
 		if (this.graph_y_version === this.version) {
 			return this.graph_y;
@@ -41,18 +37,7 @@ const table_prototype = {
 				if (info.board.active === "b") {
 					cp *= -1;
 				}
-				let raw = cp / cp_clamp;
-				if (raw < -2) {
-					this.graph_y = 0;						// score was very low: below double the negative clamp
-				} else if (raw < -1) {
-					this.graph_y = (raw + 2) / 12;			// score was low: below the negative clamp
-				} else if (raw <  1) {
-					this.graph_y = 0.5 + (raw / 2.4);		// score was between clamps - note this is NOT necessarily the graph's critical strip
-				} else if (raw <  2) {
-					this.graph_y = 1.0 + (raw - 2) / 12;	// score was high: above the positive clamp
-				} else {
-					this.graph_y = 1;						// score was very high: above double the positive clamp
-				}
+				this.graph_y = 1 / (1 + Math.pow(0.5, cp / 100));
 			} else {
 				this.graph_y = null;
 			}
