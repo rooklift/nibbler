@@ -31,8 +31,8 @@ function NewGrapher() {
 		let width = graph.width;		// After the above.
 		let height = graph.height;
 
-		let eval_list = node.all_graph_values(250);									// Centipawn value to clamp the graph at.
-		this.draw_horizontal_lines(width, height, [0.3, 0.7]);						// 0.3 and 0.7 goes well with 250 (draws lines at +/- 100 cp).
+		let eval_list = node.all_graph_values(250);						// Centipawn value to "soft clamp" the graph at.
+		this.draw_horizontal_lines(width, height, [1/3, 2/3]);
 		this.draw_position_line(eval_list.length, node);
 
 		// We make lists of contiguous edges that can be drawn at once...
