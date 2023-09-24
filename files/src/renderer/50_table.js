@@ -47,7 +47,7 @@ const table_prototype = {
 				} else if (raw < -1) {
 					this.graph_y = (raw + 2) / 12;			// score was low: below the negative clamp
 				} else if (raw <  1) {
-					this.graph_y = 0.5 + (raw / 2.4);		// score was in the critical strip between clamps
+					this.graph_y = 0.5 + (raw / 2.4);		// score was between clamps - note this is NOT necessarily the graph's critical strip
 				} else if (raw <  2) {
 					this.graph_y = 1.0 + (raw - 2) / 12;	// score was high: above the positive clamp
 				} else {
