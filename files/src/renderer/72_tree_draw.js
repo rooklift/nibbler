@@ -176,27 +176,23 @@ let tree_draw_props = {
 				dom_classlist.remove('underline-blunder');
 			}
 
-			let delta_centipawns = Math.abs(eval_node_cp - eval_parentnode_cp);
+			let clamped_eval_node_cp = Math.min(Math.max(eval_node_cp, -250), 250);
+			let clamped_eval_parentnode_cp = Math.min(Math.max(eval_parentnode_cp, -250), 250);
+			let clamped_delta_centipawns = Math.abs(clamped_eval_node_cp - clamped_eval_parentnode_cp);
 			let eval_html_classname = null;
 			// underline based on…
 			//  ±300 centipawns or larger = blunder
 			//  ±100 centipawns or larger = mistake
 			//   ±50 centipawns or larger = inaccuracy
 			// …within the stipulation that all evals larger than ±2.5 are to be considered virtually the same.
-			if (Math.abs(eval_node_cp) < 250) {
-				if (300 <= delta_centipawns) {
-					eval_html_classname = 'underline-blunder';
-				} else if (100 <= delta_centipawns) {
-					eval_html_classname = 'underline-mistake';
-				} else if (50 <= delta_centipawns) {
-					eval_html_classname = 'underline-inaccuracy';
-				}
-			} else if ((Math.abs(eval_parentnode_cp) < 250) && (250 <= Math.abs(eval_node_cp))) {
-				if (100 <= delta_centipawns) {
-					eval_html_classname = 'underline-blunder';
-				} else if (50 <= delta_centipawns) {
-					eval_html_classname = 'underline-inaccuracy';
-				}
+			if ((Math.abs(eval_parentnode_cp) < 250) && (250 <= Math.abs(eval_node_cp)) && (100 <= clamped_delta_centipawns)) {
+				eval_html_classname = 'underline-blunder';
+			} else if (300 <= clamped_delta_centipawns) {
+				eval_html_classname = 'underline-blunder';
+			} else if (100 <= clamped_delta_centipawns) {
+				eval_html_classname = 'underline-mistake';
+			} else if (50 <= clamped_delta_centipawns) {
+				eval_html_classname = 'underline-inaccuracy';
 			}
 
 			if (eval_html_classname !== null) {
