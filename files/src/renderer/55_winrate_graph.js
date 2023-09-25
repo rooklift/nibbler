@@ -86,7 +86,7 @@ function NewGrapher() {
 
 		let x = graph.width * node.depth / node.graph_length_knower.val;
 
-		if (node.table.eval === null) {
+		if (node.table.graph_y === null) {
 			// match "Draw our dashed runs" color in `draw_everything` above
 			graphctx.fillStyle = "#999999";
 			graphctx.textBaseline = 'top';
@@ -100,11 +100,29 @@ function NewGrapher() {
 				graphctx.fillStyle = '#ffaaaa';
 			}
 
-			let value_string = (node.table.eval * 100).toFixed(1) + '%';
-			let y = (1.0 - node.table.eval) * graph.height;
+			let value_sign = (node.table.graph_y > 0.5) ? '+' : ((node.table.graph_y < 0.5) ? '−' : '');
+			// Match the y-value in make_runs(…) below
+			let y = (1.0 - node.table.graph_y) * graph.height;
+
+			// Reverse the sigmoid-logit conversion of `renderer/50_table.js:get_graph_y` to get the centipawn value for display on hover
+			//   this.graph_y = 1 / (1 + Math.pow(0.5, cp / 100));
+			//   (1 + Math.pow(0.5, cp / 100)) =       1 / this.graph_y;
+			//        Math.pow(0.5, cp / 100)  =       1 / this.graph_y  -  1.0;
+			//        Math.pow(2.0,-cp / 100)  =       1 / this.graph_y  -  1.0;
+			//   log2(Math.pow(2.0,-cp / 100)) = log2( 1 / this.graph_y  -  1.0);
+			//                     -cp / 100)  = log2( 1 / this.graph_y  -  1.0);
+			//                      cp / 100   =-log2( 1 / this.graph_y  -  1.0);
+			//                      cp         =-log2( 1 / this.graph_y  -  1.0) * 100;
+			//let centipawn_scale = -Math.log2(1.0 / node.table.graph_y - 1.0);
+			//                      cp         =-log2( 1 / this.graph_y  - this.graph_y / this.graph_y) * 100;
+			//                      cp         =-log2((1 - this.graph_y) / this.graph_y)               * 100;
+			//                      cp         = log2(this.graph_y / (1 - this.graph_y))               * 100;
+			let centipawn_scale = Math.log2(node.table.graph_y / (1.0 - node.table.graph_y));
+
+			let value_string = value_sign + Math.abs(centipawn_scale).toFixed(2);
 
 			// Try to avoid visually overlapping the eval line itself
-			if (node.table.eval > 0.5) {
+			if (node.table.graph_y > 0.5) {
 				graphctx.textBaseline = 'bottom';
 				graphctx.fillText(node.token(false, true), x, graph.height);
 
@@ -115,7 +133,7 @@ function NewGrapher() {
 
 				graphctx.textBaseline = 'bottom';
 			}
-			
+
 			// match .blue in nibbler.css
 			graphctx.fillStyle = '#6cccee';
 			graphctx.font = "16px Arial";

@@ -38,6 +38,7 @@ const table_prototype = {
 					cp *= -1;
 				}
 				this.graph_y = 1 / (1 + Math.pow(0.5, cp / 100));
+				// INVARIANT: graph_y will be between 0.0 and 1.0
 			} else {
 				this.graph_y = null;
 			}
