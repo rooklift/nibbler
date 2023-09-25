@@ -24,6 +24,19 @@ const table_prototype = {
 		this.already_autopopulated = false;
 	},
 
+	get_cp: function() {
+		let info = SortedMoveInfoFromTable(this)[0];
+		if (info && !info.__ghost && info.__touched && (this.nodes > 1 || this.limit === 1)) {
+			if (info.board.active === "b") {
+				return -info.cp;
+			} else {
+				return info.cp;
+			}
+		} else {
+			return null;
+		}
+	},
+
 	get_graph_y: function() {
 
 		// Naphthalin's scheme: based on centipawns.
@@ -31,12 +44,8 @@ const table_prototype = {
 		if (this.graph_y_version === this.version) {
 			return this.graph_y;
 		} else {
-			let info = SortedMoveInfoFromTable(this)[0];
-			if (info && !info.__ghost && info.__touched && (this.nodes > 1 || this.limit === 1)) {
-				let cp = info.cp;
-				if (info.board.active === "b") {
-					cp *= -1;
-				}
+			let cp = this.get_cp();
+			if (cp !== null) {
 				this.graph_y = 1 / (1 + Math.pow(0.5, cp / 100));
 			} else {
 				this.graph_y = null;

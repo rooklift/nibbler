@@ -165,12 +165,9 @@ let tree_draw_props = {
 	// Helpers...
 
 	underline_html_classlist: function (eval_node, dom_classlist) {
-		let eval_node_info = SortedMoveInfoFromTable(eval_node.table)[0];
-		let eval_parentnode_info = SortedMoveInfoFromTable(eval_node.parent.table)[0];
-		if (
-			(eval_node_info) && (eval_parentnode_info) &&
-			((typeof eval_node_info.cp) == 'number') && ((typeof eval_parentnode_info.cp) == 'number')
-		) {
+		let eval_node_cp = eval_node.table.get_cp();
+		let eval_parentnode_cp = eval_node.parent.table.get_cp();
+		if ( ((typeof eval_node_cp) == 'number') && ((typeof eval_parentnode_cp) == 'number') ) {
 			if ((dom_classlist.length > 0) && (dom_classlist instanceof DOMTokenList)) {
 				// NOTE: we don't need to `.remove` when `dom_classlist instanceof Array` because
 				// dom_from_scratch is recreating elements from the ground up (they won't have classes we need to remove)
@@ -179,14 +176,14 @@ let tree_draw_props = {
 				dom_classlist.remove('underline-blunder');
 			}
 
-			let delta_centipawns = Math.abs(eval_node_info.cp - eval_parentnode_info.cp);
+			let delta_centipawns = Math.abs(eval_node_cp - eval_parentnode_cp);
 			let eval_html_classname = null;
 			// underline based on…
 			//  ±300 centipawns or larger = blunder
 			//  ±100 centipawns or larger = mistake
 			//   ±50 centipawns or larger = inaccuracy
 			// …within the stipulation that all evals larger than ±2.5 are to be considered virtually the same.
-			if (Math.abs(eval_node_info.cp) < 250) {
+			if (Math.abs(eval_node_cp) < 250) {
 				if (300 <= delta_centipawns) {
 					eval_html_classname = 'underline-blunder';
 				} else if (100 <= delta_centipawns) {
@@ -194,7 +191,7 @@ let tree_draw_props = {
 				} else if (50 <= delta_centipawns) {
 					eval_html_classname = 'underline-inaccuracy';
 				}
-			} else if ((Math.abs(eval_parentnode_info.cp) < 250) && (250 <= Math.abs(eval_node_info.cp))) {
+			} else if ((Math.abs(eval_parentnode_cp) < 250) && (250 <= Math.abs(eval_node_cp))) {
 				if (100 <= delta_centipawns) {
 					eval_html_classname = 'underline-blunder';
 				} else if (50 <= delta_centipawns) {
