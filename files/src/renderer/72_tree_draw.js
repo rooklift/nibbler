@@ -165,7 +165,12 @@ let tree_draw_props = {
 	// Helpers...
 
 	underline_html_classlist: function (eval_node, dom_classlist) {
-		if ((eval_node.parent.table.eval !== null) && (eval_node.table.eval !== null)) {
+		let eval_node_info = SortedMoveInfoFromTable(eval_node.table)[0];
+		let eval_parentnode_info = SortedMoveInfoFromTable(eval_node.parent.table)[0];
+		if (
+			(eval_node_info) && (eval_parentnode_info) &&
+			((typeof eval_node_info.cp) == 'number') && ((typeof eval_parentnode_info.cp) == 'number')
+		) {
 			if ((dom_classlist.length > 0) && (dom_classlist instanceof DOMTokenList)) {
 				// NOTE: we don't need to `.remove` when `dom_classlist instanceof Array` because
 				// dom_from_scratch is recreating elements from the ground up (they won't have classes we need to remove)
@@ -174,19 +179,27 @@ let tree_draw_props = {
 				dom_classlist.remove('underline-blunder');
 			}
 
-			// underline based on:
-			// inaccuracy: 0.05 <= change in win percentage < 0.1
-			// mistake: 0.1 <= change in win percentage < 0.25
-			// blunder: 0.25 <= change in win percentage
-			let delta_eval = Math.abs(eval_node.table.eval - eval_node.parent.table.eval);
-
+			let delta_centipawns = Math.abs(eval_node_info.cp - eval_parentnode_info.cp);
 			let eval_html_classname = null;
-			if (0.25 <= delta_eval) {
-				eval_html_classname = 'underline-blunder';
-			} else if (0.1 <= delta_eval) {
-				eval_html_classname = 'underline-mistake';
-			} else if (0.05 <= delta_eval) {
-				eval_html_classname = 'underline-inaccuracy';
+			// underline based on…
+			//  ±300 centipawns or larger = blunder
+			//  ±100 centipawns or larger = mistake
+			//   ±50 centipawns or larger = inaccuracy
+			// …within the stipulation that all evals larger than ±2.5 are to be considered virtually the same.
+			if (Math.abs(eval_node_info.cp) < 250) {
+				if (300 <= delta_centipawns) {
+					eval_html_classname = 'underline-blunder';
+				} else if (100 <= delta_centipawns) {
+					eval_html_classname = 'underline-mistake';
+				} else if (50 <= delta_centipawns) {
+					eval_html_classname = 'underline-inaccuracy';
+				}
+			} else if ((Math.abs(eval_parentnode_info.cp) < 250) && (250 <= Math.abs(eval_node_info.cp))) {
+				if (100 <= delta_centipawns) {
+					eval_html_classname = 'underline-blunder';
+				} else if (50 <= delta_centipawns) {
+					eval_html_classname = 'underline-inaccuracy';
+				}
 			}
 
 			if (eval_html_classname !== null) {
