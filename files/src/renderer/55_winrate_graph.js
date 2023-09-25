@@ -77,7 +77,7 @@ function NewGrapher() {
 	grapher.draw_hover_annotation = function() {
 		let node = this.last_hover_node;
 
-		if ((node === null) || (node.move === null)) {
+		if ((node === null) || (node.move === null) || (node.graph_length_knower === null)) {
 			return;
 		}
 
