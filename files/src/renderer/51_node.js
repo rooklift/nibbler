@@ -125,13 +125,15 @@ const node_prototype = {
 		return ret;
 	},
 
-	eval_history: function() {
+	all_graph_values: function() {
+
+		// Call this on any node in the line will give the same result.
 
 		let ret = [];
-		let node = this;
+		let node = this.get_end();
 
 		while (node) {
-			ret.push(node.table.get_eval());
+			ret.push(node.table.get_graph_y());
 			node = node.parent;
 		}
 
@@ -145,10 +147,6 @@ const node_prototype = {
 
 	future_node_history: function() {
 		return this.get_end().node_history();
-	},
-
-	future_eval_history: function() {
-		return this.get_end().eval_history();
 	},
 
 	get_root: function() {
@@ -350,7 +348,7 @@ const node_prototype = {
 	terminal_reason: function() {
 
 		// Returns "" if not a terminal position, otherwise returns the reason.
-		// Also updates table.eval (for the graph) if needed.
+		// Also updates table.graph_y if needed.
 
 		if (typeof this.table.terminal === "string") {
 			return this.table.terminal;
