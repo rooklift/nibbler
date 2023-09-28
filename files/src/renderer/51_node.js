@@ -125,6 +125,7 @@ const node_prototype = {
 		return ret;
 	},
 
+	// returns an array of {'graph_y': number between 0.0 and 1.0, 'drawishness': number between 0.0 and 1.0}
 	all_graph_values: function() {
 
 		// Call this on any node in the line will give the same result.
@@ -133,7 +134,7 @@ const node_prototype = {
 		let node = this.get_end();
 
 		while (node) {
-			ret.push(node.table.get_graph_y());
+			ret.push(node.table.get_graph_y_details());
 			node = node.parent;
 		}
 

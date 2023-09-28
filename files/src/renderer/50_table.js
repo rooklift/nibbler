@@ -20,11 +20,13 @@ const table_prototype = {
 		this.limit = null;						// The limit of the last search that updated this.
 		this.terminal = null;					// null = unknown, "" = not terminal, "Non-empty string" = terminal reason
 		this.graph_y = null;					// Used by grapher only, value from White's POV between 0 and 1
+		this.graph_y_drawishness = null;			// Used by grapher only, drawishness between 0 and 1
 		this.graph_y_version = 0;				// Which version (above) was used to generate the graph_y value
 		this.already_autopopulated = false;
 	},
 
-	get_graph_y: function() {
+	// returns {'graph_y': number between 0.0 and 1.0, 'drawishness': number between 0.0 and 1.0}
+	get_graph_y_details: function() {
 
 		// Naphthalin's scheme: based on centipawns.
 
@@ -36,12 +38,19 @@ const table_prototype = {
 					cp *= -1;
 				}
 				this.graph_y = 1 / (1 + Math.pow(0.5, cp / 100));
+
+				if (info.wdl === null) {
+					this.graph_y_drawishness = null;
+				} else {
+					this.graph_y_drawishness = info.wdl[1] / 1000.0;
+				}
 			} else {
 				this.graph_y = null;
+				this.graph_y_drawishness = null;
 			}
 			this.graph_y_version = this.version;
 		}
-		return this.graph_y;
+		return {'graph_y': this.graph_y, 'drawishness': this.graph_y_drawishness};
 	},
 
 	set_terminal_info: function(reason, ev) {	// ev is ignored if reason is "" (i.e. not a terminal position)

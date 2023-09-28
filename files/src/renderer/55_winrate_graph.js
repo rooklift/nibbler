@@ -81,6 +81,7 @@ function NewGrapher() {
 
 		let last_x = null;
 		let last_y = null;
+		let last_y_shaded = null;
 		let last_n = null;
 
 		// This loop creates all edges that we are going to draw, and marks each
@@ -88,7 +89,41 @@ function NewGrapher() {
 
 		for (let n = 0; n < eval_list.length; n++) {
 
-			let e = eval_list[n];
+			let e = eval_list[n].graph_y;
+			// W + L = 1 - D
+			// (W - L) / 2 + 0.5 = e
+			// (W - L)     + 1.0 = 2.0 * e
+			// ===
+			// assume W <= L (a.k.a. e <= 0.5)
+			// e_shaded = W
+			// 2W          + 1.0 = 2.0 * e + 1.0 - D
+			// 2W                = 2.0 * e       - D
+			//  W                =       e       - D / 2
+			// ===
+			// assume L < W (a.k.a. e > 0.5)
+			// e_shaded = L
+			//     2L      - 1.0 = -2.0 * e + 1.0 - D
+			//     2L            = -2.0 * e + 2.0 - D
+			//      L            =      - e + 1.0 - D / 2
+
+			let e_shaded = null;
+			if (eval_list[n].drawishness !== null) {
+				if (e <= 0.5) {
+					e_shaded = e - eval_list[n].drawishness / 2.0;
+				} else {
+					e_shaded = (1.0 - e) - eval_list[n].drawishness / 2.0;
+				}
+			}
+
+			// INVARIANT: e_shaded will be narrow in "dead draw" games, and wide in "equal but very unclear" games
+			//       e.g. W=500, D=0, L=500  ⇒  (e_shaded will be 0.5)
+			//       e.g. W=750, D=0, L=250  ⇒  (e_shaded will be 0.25)
+			//       e.g. W=250, D=0, L=750  ⇒  (e_shaded will be 0.25)
+			//       e.g. W=250, D=500, L=250  ⇒  (e_shaded will be 0.25)
+			//       e.g. W=300, D=500, L=200  ⇒  (e_shaded will be 0.20)
+			//       e.g. W=200, D=500, L=300  ⇒  (e_shaded will be 0.20)
+			//       e.g. W=1000, D=0, L=0  ⇒  (e_shaded will be 0.0)
+			//       e.g. W=0, D=1000, L=0  ⇒  (e_shaded will be 0.0)
 
 			if (e !== null) {
 
@@ -102,14 +137,17 @@ function NewGrapher() {
 					all_edges.push({
 						x1: last_x,
 						y1: last_y,
+						y_shaded1: last_y_shaded,
 						x2: x,
 						y2: y,
+						y_shaded2: e_shaded * height,
 						dashed: n - last_n !== 1,
 					});
 				}
 
 				last_x = x;
 				last_y = y;
+				last_y_shaded = e_shaded * height;
 				last_n = n;
 			}
 		}
