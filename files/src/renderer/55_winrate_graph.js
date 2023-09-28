@@ -47,6 +47,7 @@ function NewGrapher() {
 		graphctx.setLineDash([]);
 
 		for (let run of runs.normal_runs) {
+			// Evaluation line
 			graphctx.beginPath();
 			graphctx.moveTo(run[0].x1, run[0].y1);
 			for (let edge of run) {

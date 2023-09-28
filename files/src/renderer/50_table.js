@@ -28,9 +28,7 @@ const table_prototype = {
 
 		// Naphthalin's scheme: based on centipawns.
 
-		if (this.graph_y_version === this.version) {
-			return this.graph_y;
-		} else {
+		if (this.graph_y_version !== this.version) {
 			let info = SortedMoveInfoFromTable(this)[0];
 			if (info && !info.__ghost && info.__touched && (this.nodes > 1 || this.limit === 1)) {
 				let cp = info.cp;
@@ -42,8 +40,8 @@ const table_prototype = {
 				this.graph_y = null;
 			}
 			this.graph_y_version = this.version;
-			return this.graph_y;
 		}
+		return this.graph_y;
 	},
 
 	set_terminal_info: function(reason, ev) {	// ev is ignored if reason is "" (i.e. not a terminal position)
