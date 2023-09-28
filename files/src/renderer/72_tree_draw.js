@@ -185,7 +185,10 @@ let tree_draw_props = {
 			//  ±100 centipawns or larger = mistake
 			//   ±50 centipawns or larger = inaccuracy
 			// …within the stipulation that all evals larger than ±2.5 are to be considered virtually the same.
-			if ((Math.abs(eval_parentnode_cp) < 250) && (250 <= Math.abs(eval_node_cp)) && (100 <= clamped_delta_centipawns)) {
+			if (((30000 < Math.abs(eval_parentnode_cp)) && (Math.abs(eval_node_cp) <= 250))  ||  ((30000 < Math.abs(eval_node_cp)) && (Math.abs(eval_parentnode_cp) <= 250))) {
+				// Centipawns near 32000 are reported by Stockfish/Leela when forced mate is found, so if you go from forced mate -> unclear, or vice versa that's a blunder.
+				eval_html_classname = 'underline-blunder;'
+			} else if ((Math.abs(eval_parentnode_cp) < 250) && (250 <= Math.abs(eval_node_cp)) && (100 <= clamped_delta_centipawns)) {
 				eval_html_classname = 'underline-blunder';
 			} else if (300 <= clamped_delta_centipawns) {
 				eval_html_classname = 'underline-blunder';
