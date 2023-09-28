@@ -39,6 +39,8 @@ function NewGrapher() {
 
 		let runs = this.make_runs(eval_list, width, height, node.graph_length_knower.val);
 
+		graphctx.fillStyle = 'rgba(255, 255, 255, 0.25)';
+
 		// Draw our normal runs...
 
 		graphctx.strokeStyle = "white";
@@ -47,6 +49,26 @@ function NewGrapher() {
 		graphctx.setLineDash([]);
 
 		for (let run of runs.normal_runs) {
+			// Drawishness fill
+			let drawishness_fill = new Path2D();
+			if (run[0].y_shaded1 !== null) {
+				drawishness_fill.moveTo(run[0].x1, run[0].y1 + run[0].y_shaded1);
+				for (let edge of run) {
+					if (edge.y_shaded2 !== null) {
+						drawishness_fill.lineTo(edge.x2, edge.y2 + edge.y_shaded2);
+					}
+				}
+			}
+			if (run[run.length - 1].y_shaded2 !== null) {
+				drawishness_fill.lineTo(run[run.length - 1].x2, run[run.length - 1].y2 + run[run.length - 1].y_shaded2);
+				for (let edge of run.reverse()) {
+					if (edge.y_shaded1 !== null) {
+						drawishness_fill.lineTo(edge.x1, edge.y1 - edge.y_shaded1);
+					}
+				}
+			}
+			graphctx.fill(drawishness_fill);
+
 			// Evaluation line
 			graphctx.beginPath();
 			graphctx.moveTo(run[0].x1, run[0].y1);
