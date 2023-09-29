@@ -165,9 +165,9 @@ let tree_draw_props = {
 	// Helpers...
 
 	underline_html_classlist: function (eval_node, dom_classlist) {
-		let eval_node_cp = eval_node.table.get_cp();
-		let eval_parentnode_cp = eval_node.parent.table.get_cp();
-		if ( ((typeof eval_node_cp) == 'number') && ((typeof eval_parentnode_cp) == 'number') ) {
+		let eval_node_details = eval_node.table.get_cp_details();
+		let eval_parentnode_details = eval_node.parent.table.get_cp_details();
+		if ( (eval_node_details !== null) && (eval_parentnode_details !== null) ) {
 			if ((dom_classlist.length > 0) && (dom_classlist instanceof DOMTokenList)) {
 				// NOTE: we don't need to `.remove` when `dom_classlist instanceof Array` because
 				// dom_from_scratch is recreating elements from the ground up (they won't have classes we need to remove)
@@ -175,6 +175,9 @@ let tree_draw_props = {
 				dom_classlist.remove('underline-mistake');
 				dom_classlist.remove('underline-blunder');
 			}
+
+			let eval_node_cp = eval_node_details.cp;
+			let eval_parentnode_cp = eval_parentnode_details.cp;
 
 			let clamped_eval_node_cp = Math.min(Math.max(eval_node_cp, -250), 250);
 			let clamped_eval_parentnode_cp = Math.min(Math.max(eval_parentnode_cp, -250), 250);

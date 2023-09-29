@@ -24,14 +24,13 @@ const table_prototype = {
 		this.already_autopopulated = false;
 	},
 
-	get_cp: function() {
+	get_cp_details: function() {
 		let info = SortedMoveInfoFromTable(this)[0];
 		if (info && !info.__ghost && info.__touched && (this.nodes > 1 || this.limit === 1)) {
-			if (info.board.active === "b") {
-				return -info.cp;
-			} else {
-				return info.cp;
-			}
+			let return_cp = ((info.board.active === "b") ? (-info.cp) : (info.cp));
+			return {
+				'cp': return_cp
+			};
 		} else {
 			return null;
 		}
@@ -41,18 +40,17 @@ const table_prototype = {
 
 		// Naphthalin's scheme: based on centipawns.
 
-		if (this.graph_y_version === this.version) {
-			return this.graph_y;
-		} else {
-			let cp = this.get_cp();
-			if (cp !== null) {
+		if (this.graph_y_version !== this.version) {
+			let engine_info_graph_details = this.get_cp_details();
+			if (engine_info_graph_details !== null) {
+				let cp = engine_info_graph_details.cp;
 				this.graph_y = 1 / (1 + Math.pow(0.5, cp / 100));
 			} else {
 				this.graph_y = null;
 			}
 			this.graph_y_version = this.version;
-			return this.graph_y;
 		}
+		return this.graph_y;
 	},
 
 	set_terminal_info: function(reason, ev) {	// ev is ignored if reason is "" (i.e. not a terminal position)
