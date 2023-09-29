@@ -61,7 +61,8 @@ function NewGrapher() {
 			}
 			if (run[run.length - 1].y_shaded2 !== null) {
 				drawishness_fill.lineTo(run[run.length - 1].x2, run[run.length - 1].y2 - run[run.length - 1].y_shaded2);
-				for (let edge of run.reverse()) {
+				for (var i=0; i<run.length; ++i) {
+					let edge = run[run.length - 1 - i];
 					if (edge.y_shaded1 !== null) {
 						drawishness_fill.lineTo(edge.x1, edge.y1 - edge.y_shaded1);
 					}
