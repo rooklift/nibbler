@@ -49,26 +49,26 @@ function NewGrapher() {
 		graphctx.setLineDash([]);
 
 		for (let run of runs.normal_runs) {
-			// Drawishness fill
-			let drawishness_fill = new Path2D();
+			// "Sharpness vs. Drawishness" area fill
+			let sharpness_areafill = new Path2D();
 			if (run[0].y_shaded1 !== null) {
-				drawishness_fill.moveTo(run[0].x1, run[0].y1 + run[0].y_shaded1);
+				sharpness_areafill.moveTo(run[0].x1, run[0].y1 + run[0].y_shaded1);
 				for (let edge of run) {
 					if (edge.y_shaded2 !== null) {
-						drawishness_fill.lineTo(edge.x2, edge.y2 + edge.y_shaded2);
+						sharpness_areafill.lineTo(edge.x2, edge.y2 + edge.y_shaded2);
 					}
 				}
 			}
 			if (run[run.length - 1].y_shaded2 !== null) {
-				drawishness_fill.lineTo(run[run.length - 1].x2, run[run.length - 1].y2 - run[run.length - 1].y_shaded2);
+				sharpness_areafill.lineTo(run[run.length - 1].x2, run[run.length - 1].y2 - run[run.length - 1].y_shaded2);
 				for (var i=0; i<run.length; ++i) {
 					let edge = run[run.length - 1 - i];
 					if (edge.y_shaded1 !== null) {
-						drawishness_fill.lineTo(edge.x1, edge.y1 - edge.y_shaded1);
+						sharpness_areafill.lineTo(edge.x1, edge.y1 - edge.y_shaded1);
 					}
 				}
 			}
-			graphctx.fill(drawishness_fill);
+			graphctx.fill(sharpness_areafill);
 
 			// Evaluation line
 			graphctx.beginPath();
@@ -118,35 +118,35 @@ function NewGrapher() {
 			// (W - L)     + 1.0 = 2.0 * e
 			// ===
 			// assume W <= L (a.k.a. e <= 0.5)
-			// e_shaded = W
+			// e_sharpness = W
 			// 2W          + 1.0 = 2.0 * e + 1.0 - D
 			// 2W                = 2.0 * e       - D
 			//  W                =       e       - D / 2
 			// ===
 			// assume L < W (a.k.a. e > 0.5)
-			// e_shaded = L
+			// e_sharpness = L
 			//     2L      - 1.0 = -2.0 * e + 1.0 - D
 			//     2L            = -2.0 * e + 2.0 - D
 			//      L            =      - e + 1.0 - D / 2
 
-			let e_shaded = null;
+			let e_sharpness = null;
 			if (eval_list[n].drawishness !== null) {
 				if (e <= 0.5) {
-					e_shaded = e - eval_list[n].drawishness / 2.0;
+					e_sharpness = e - eval_list[n].drawishness / 2.0;
 				} else {
-					e_shaded = (1.0 - e) - eval_list[n].drawishness / 2.0;
+					e_sharpness = (1.0 - e) - eval_list[n].drawishness / 2.0;
 				}
 			}
 
-			// INVARIANT: e_shaded will be narrow in "dead draw" games, and wide in "equal but very unclear" games
-			//       e.g. W=500, D=0, L=500  ⇒  (e_shaded will be 0.5)
-			//       e.g. W=750, D=0, L=250  ⇒  (e_shaded will be 0.25)
-			//       e.g. W=250, D=0, L=750  ⇒  (e_shaded will be 0.25)
-			//       e.g. W=250, D=500, L=250  ⇒  (e_shaded will be 0.25)
-			//       e.g. W=300, D=500, L=200  ⇒  (e_shaded will be 0.20)
-			//       e.g. W=200, D=500, L=300  ⇒  (e_shaded will be 0.20)
-			//       e.g. W=1000, D=0, L=0  ⇒  (e_shaded will be 0.0)
-			//       e.g. W=0, D=1000, L=0  ⇒  (e_shaded will be 0.0)
+			// INVARIANT: e_sharpness will be narrow in "dead draw" games, and wide in "equal but very unclear" games
+			//       e.g. W=500, D=0, L=500  ⇒  (e_sharpness will be 0.5)
+			//       e.g. W=750, D=0, L=250  ⇒  (e_sharpness will be 0.25)
+			//       e.g. W=250, D=0, L=750  ⇒  (e_sharpness will be 0.25)
+			//       e.g. W=250, D=500, L=250  ⇒  (e_sharpness will be 0.25)
+			//       e.g. W=300, D=500, L=200  ⇒  (e_sharpness will be 0.20)
+			//       e.g. W=200, D=500, L=300  ⇒  (e_sharpness will be 0.20)
+			//       e.g. W=1000, D=0, L=0  ⇒  (e_sharpness will be 0.0)
+			//       e.g. W=0, D=1000, L=0  ⇒  (e_sharpness will be 0.0)
 
 			if (e !== null) {
 
@@ -163,14 +163,14 @@ function NewGrapher() {
 						y_shaded1: last_y_shaded,
 						x2: x,
 						y2: y,
-						y_shaded2: e_shaded * height,
+						y_shaded2: e_sharpness * height,
 						dashed: n - last_n !== 1,
 					});
 				}
 
 				last_x = x;
 				last_y = y;
-				last_y_shaded = e_shaded * height;
+				last_y_shaded = e_sharpness * height;
 				last_n = n;
 			}
 		}
