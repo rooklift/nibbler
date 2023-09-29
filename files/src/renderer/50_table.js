@@ -25,28 +25,35 @@ const table_prototype = {
 		this.already_autopopulated = false;
 	},
 
+	get_cp_details: function() {
+		let info = SortedMoveInfoFromTable(this)[0];
+		if (info && !info.__ghost && info.__touched && (this.nodes > 1 || this.limit === 1)) {
+			let return_cp = ((info.board.active === "b") ? (-info.cp) : (info.cp));
+			let return_drawrate = ((info.wdl === null) ? null : (info.wdl[1] / 1000.0));
+			return {
+				'cp': return_cp,
+				'drawrate': return_drawrate
+			};
+		} else {
+			return null;
+		}
+	},
+
 	// returns {'graph_y': number between 0.0 and 1.0, 'drawishness': number between 0.0 and 1.0}
 	get_graph_y_details: function() {
 
 		// Naphthalin's scheme: based on centipawns.
 
 		if (this.graph_y_version !== this.version) {
-			let info = SortedMoveInfoFromTable(this)[0];
-			if (info && !info.__ghost && info.__touched && (this.nodes > 1 || this.limit === 1)) {
-				let cp = info.cp;
-				if (info.board.active === "b") {
-					cp *= -1;
-				}
+			let engine_info_graph_details = this.get_cp_details();
+			if (engine_info_graph_details !== null) {
+				this.graph_y_drawishness = engine_info_graph_details.drawrate;
+				
+				let cp = engine_info_graph_details.cp;
 				this.graph_y = 1 / (1 + Math.pow(0.5, cp / 100));
-
-				if (info.wdl === null) {
-					this.graph_y_drawishness = null;
-				} else {
-					this.graph_y_drawishness = info.wdl[1] / 1000.0;
-				}
 			} else {
-				this.graph_y = null;
 				this.graph_y_drawishness = null;
+				this.graph_y = null;
 			}
 			this.graph_y_version = this.version;
 		}
