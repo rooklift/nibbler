@@ -39,8 +39,6 @@ function NewGrapher() {
 
 		let runs = this.make_runs(eval_list, width, height, node.graph_length_knower.val);
 
-		graphctx.fillStyle = 'rgba(255, 255, 255, 0.25)';
-
 		// Draw our normal runs...
 
 		graphctx.strokeStyle = "white";
@@ -48,26 +46,39 @@ function NewGrapher() {
 		graphctx.lineJoin = "round";
 		graphctx.setLineDash([]);
 
+		let sharpness_areafill = null;		// "Sharpness vs. Drawishness" area fill
 		for (let run of runs.normal_runs) {
-			// "Sharpness vs. Drawishness" area fill
-			let sharpness_areafill = new Path2D();
-			if (run[0].y_shaded1 !== null) {
-				sharpness_areafill.moveTo(run[0].x1, run[0].y1 + run[0].y_shaded1);
+			// "Winrate as white" pushes upward (fill from bottom)
+			sharpness_areafill = new Path2D();
+			if (run[0].y_drawradius1 !== null) {
+				sharpness_areafill.moveTo(run[0].x1, height);
+				sharpness_areafill.lineTo(run[0].x1, run[0].y1 + run[0].y_drawradius1);
 				for (let edge of run) {
-					if (edge.y_shaded2 !== null) {
-						sharpness_areafill.lineTo(edge.x2, edge.y2 + edge.y_shaded2);
+					if (edge.y_drawradius2 !== null) {
+						sharpness_areafill.lineTo(edge.x2, edge.y2 + edge.y_drawradius2);
 					}
 				}
+				sharpness_areafill.lineTo(run[run.length - 1].x2, height);
 			}
-			if (run[run.length - 1].y_shaded2 !== null) {
-				sharpness_areafill.lineTo(run[run.length - 1].x2, run[run.length - 1].y2 - run[run.length - 1].y_shaded2);
-				for (var i=0; i<run.length; ++i) {
+
+			graphctx.fillStyle = 'rgba(255, 255, 255, 0.25)';
+			graphctx.fill(sharpness_areafill);
+
+			// "Winrate as black" pushes downward (fill from top)
+			sharpness_areafill = new Path2D();
+			if (run[run.length - 1].y_drawradius2 !== null) {
+				sharpness_areafill.moveTo(run[run.length - 1].x2, 0.0);
+				sharpness_areafill.lineTo(run[run.length - 1].x2, run[run.length - 1].y2 - run[run.length - 1].y_drawradius2);
+				for (var i=0;i<run.length; ++i) {
 					let edge = run[run.length - 1 - i];
-					if (edge.y_shaded1 !== null) {
-						sharpness_areafill.lineTo(edge.x1, edge.y1 - edge.y_shaded1);
+					if (edge.y_drawradius1 !== null) {
+						sharpness_areafill.lineTo(edge.x1, edge.y1 - edge.y_drawradius1);
 					}
 				}
+				sharpness_areafill.lineTo(run[0].x1, 0.0);
 			}
+
+			graphctx.fillStyle = 'rgba(255, 170, 170, 0.25)';	// a.k.a. #ffaaaa Light Salmon Pink
 			graphctx.fill(sharpness_areafill);
 
 			// Evaluation line
@@ -104,7 +115,7 @@ function NewGrapher() {
 
 		let last_x = null;
 		let last_y = null;
-		let last_y_shaded = null;
+		let last_y_drawradius = null;
 		let last_n = null;
 
 		// This loop creates all edges that we are going to draw, and marks each
@@ -113,40 +124,13 @@ function NewGrapher() {
 		for (let n = 0; n < eval_list.length; n++) {
 
 			let e = eval_list[n].graph_y;
-			// W + L = 1 - D
-			// (W - L) / 2 + 0.5 = e
-			// (W - L)     + 1.0 = 2.0 * e
-			// ===
-			// assume W <= L (a.k.a. e <= 0.5)
-			// e_sharpness = W
-			// 2W          + 1.0 = 2.0 * e + 1.0 - D
-			// 2W                = 2.0 * e       - D
-			//  W                =       e       - D / 2
-			// ===
-			// assume L < W (a.k.a. e > 0.5)
-			// e_sharpness = L
-			//     2L      - 1.0 = -2.0 * e + 1.0 - D
-			//     2L            = -2.0 * e + 2.0 - D
-			//      L            =      - e + 1.0 - D / 2
 
-			let e_sharpness = null;
+			let e_drawradius = null;
 			if (eval_list[n].drawishness !== null) {
-				if (e <= 0.5) {
-					e_sharpness = e - eval_list[n].drawishness / 2.0;
-				} else {
-					e_sharpness = (1.0 - e) - eval_list[n].drawishness / 2.0;
-				}
+				e_drawradius = eval_list[n].drawishness / 2.0;
 			}
 
-			// INVARIANT: e_sharpness will be narrow in "dead draw" games, and wide in "equal but very unclear" games
-			//       e.g. W=500, D=0, L=500  ⇒  (e_sharpness will be 0.5)
-			//       e.g. W=750, D=0, L=250  ⇒  (e_sharpness will be 0.25)
-			//       e.g. W=250, D=0, L=750  ⇒  (e_sharpness will be 0.25)
-			//       e.g. W=250, D=500, L=250  ⇒  (e_sharpness will be 0.25)
-			//       e.g. W=300, D=500, L=200  ⇒  (e_sharpness will be 0.20)
-			//       e.g. W=200, D=500, L=300  ⇒  (e_sharpness will be 0.20)
-			//       e.g. W=1000, D=0, L=0  ⇒  (e_sharpness will be 0.0)
-			//       e.g. W=0, D=1000, L=0  ⇒  (e_sharpness will be 0.0)
+			// INVARIANT: e_drawradius will be as high as 0.5 in "dead draw" games, and as low as 0.0 in "equal but very unclear" games
 
 			if (e !== null) {
 
@@ -160,17 +144,17 @@ function NewGrapher() {
 					all_edges.push({
 						x1: last_x,
 						y1: last_y,
-						y_shaded1: last_y_shaded,
+						y_drawradius1: last_y_drawradius,
 						x2: x,
 						y2: y,
-						y_shaded2: e_sharpness * height,
+						y_drawradius2: e_drawradius * height,
 						dashed: n - last_n !== 1,
 					});
 				}
 
 				last_x = x;
 				last_y = y;
-				last_y_shaded = e_sharpness * height;
+				last_y_drawradius = e_drawradius * height;
 				last_n = n;
 			}
 		}
