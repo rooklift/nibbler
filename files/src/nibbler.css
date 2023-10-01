@@ -240,17 +240,18 @@ ul {
 	background-color: #222244;
 }
 span.underline-brilliant {
-	text-decoration: underline #6cccee wavy;
+	border-bottom: 2px solid #6cccee;
+	border-radius: 0.5ex;
 }
 span.underline-inaccuracy {
 	border-bottom: 1px dashed yellow;
 	border-radius: 0.5ex;
 }
 span.underline-mistake {
-	border-bottom: 2px solid orange;
-	border-radius: 0.5ex;
+	text-decoration: underline orange wavy;
 }
 span.underline-blunder {
+	text-decoration: underline red double;
 	border-bottom: 3px solid red;
 	border-radius: 0.5ex;
 }
