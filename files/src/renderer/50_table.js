@@ -29,6 +29,7 @@ const table_prototype = {
 		if (info && !info.__ghost && info.__touched && (this.nodes > 1 || this.limit === 1)) {
 			let return_cp = ((info.board.active === "b") ? (-info.cp) : (info.cp));
 			return {
+				'nextmove': info.board.active,
 				'cp': return_cp
 			};
 		} else {

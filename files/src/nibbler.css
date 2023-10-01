@@ -239,7 +239,9 @@ ul {
 .hover_highlight {
 	background-color: #222244;
 }
-
+span.underline-brilliant {
+	text-decoration: underline #6cccee wavy;
+}
 span.underline-inaccuracy {
 	border-bottom: 1px dashed yellow;
 	border-radius: 0.5ex;

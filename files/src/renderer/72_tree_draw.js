@@ -171,6 +171,7 @@ let tree_draw_props = {
 			if ((dom_classlist.length > 0) && (dom_classlist instanceof DOMTokenList)) {
 				// NOTE: we don't need to `.remove` when `dom_classlist instanceof Array` because
 				// dom_from_scratch is recreating elements from the ground up (they won't have classes we need to remove)
+				dom_classlist.remove('underline-brilliant');
 				dom_classlist.remove('underline-inaccuracy');
 				dom_classlist.remove('underline-mistake');
 				dom_classlist.remove('underline-blunder');
@@ -178,6 +179,8 @@ let tree_draw_props = {
 
 			let eval_node_cp = eval_node_details.cp;
 			let eval_parentnode_cp = eval_parentnode_details.cp;
+
+			let brilliancy_check = (eval_node_cp - eval_parentnode_cp) * ((eval_parentnode_details.nextmove == 'b') ? -1 : 1);
 
 			let clamped_eval_node_cp = Math.min(Math.max(eval_node_cp, -250), 250);
 			let clamped_eval_parentnode_cp = Math.min(Math.max(eval_parentnode_cp, -250), 250);
@@ -188,9 +191,12 @@ let tree_draw_props = {
 			//  ±100 centipawns or larger = mistake
 			//   ±50 centipawns or larger = inaccuracy
 			// …within the stipulation that all evals larger than ±2.5 are to be considered virtually the same.
-			if (((30000 < Math.abs(eval_parentnode_cp)) && (Math.abs(eval_node_cp) <= 250))  ||  ((30000 < Math.abs(eval_node_cp)) && (Math.abs(eval_parentnode_cp) <= 250))) {
+			if (((Math.abs(eval_parentnode_cp) < 250) || (Math.abs(eval_node_cp) < 250)) && (50 < brilliancy_check)) {
+				// If the actual move outperformed the "best move" of the previous node, mark as "brilliant"
+				eval_html_classname = 'underline-brilliant';
+			} else if (((30000 < Math.abs(eval_parentnode_cp)) && (Math.abs(eval_node_cp) <= 250))  ||  ((30000 < Math.abs(eval_node_cp)) && (Math.abs(eval_parentnode_cp) <= 250))) {
 				// Centipawns near 32000 are reported by Stockfish/Leela when forced mate is found, so if you go from forced mate -> unclear, or vice versa that's a blunder.
-				eval_html_classname = 'underline-blunder;'
+				eval_html_classname = 'underline-blunder';
 			} else if ((Math.abs(eval_node_cp) < 250) && (250 <= Math.abs(eval_parentnode_cp)) && (200 <= clamped_delta_centipawns)) {
 				eval_html_classname = 'underline-blunder';
 			} else if ((Math.abs(eval_parentnode_cp) < 250) && (250 <= Math.abs(eval_node_cp)) && (100 <= clamped_delta_centipawns)) {
