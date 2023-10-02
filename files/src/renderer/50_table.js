@@ -29,10 +29,26 @@ const table_prototype = {
 		let info = SortedMoveInfoFromTable(this)[0];
 		if (info && !info.__ghost && info.__touched && (this.nodes > 1 || this.limit === 1)) {
 			let return_cp = ((info.board.active === "b") ? (-info.cp) : (info.cp));
-			let return_drawrate = ((info.wdl === null) ? null : (info.wdl[1] / 1000.0));
+			let return_sharpness_50confidence = null;
+			if (info.wdl !== null) {
+				if ((info.wdl[0] > 0) && (info.wdl[2] > 0)) {
+					// Reference: https://github.com/LeelaChessZero/lc0/blob/076299b1f1ca21993b2c5e82ab3e80edb5367057/src/mcts/search.cc#L237-L239
+					let sharpness_a = Math.log(1000.0 / info.wdl[0] - 1.0)
+					let sharpness_b = Math.log(1000.0 / info.wdl[2] - 1.0)
+					let sharpness_sigma = 2 / Math.max(sharpness_a + sharpness_b, 0.0);
+
+					const z_50pct = 0.6744897502;		// ± sigma × 0.67... is the 50% confidence interval
+					return_sharpness_50confidence = sharpness_sigma * z_50pct;
+				} else {
+					// Safeguard against numerical issues: https://github.com/LeelaChessZero/lc0/blob/076299b1f1ca21993b2c5e82ab3e80edb5367057/src/mcts/search.cc#L232-L236
+					let decisive_pct = 1.0 - info.wdl[1] / 1000.0;
+					return_sharpness_50confidence = Math.log(2.0) / Math.log( 2.0 / decisive_pct - 1.0 );
+				}
+			}
+
 			return {
 				'cp': return_cp,
-				'drawrate': return_drawrate
+				'sharpness_50confidence': return_sharpness_50confidence
 			};
 		} else {
 			return null;
@@ -47,7 +63,8 @@ const table_prototype = {
 		if (this.graph_y_version !== this.version) {
 			let engine_info_graph_details = this.get_cp_details();
 			if (engine_info_graph_details !== null) {
-				this.graph_y_drawishness = engine_info_graph_details.drawrate;
+				let radius_50pct = engine_info_graph_details.sharpness_50confidence;
+				this.graph_y_drawishness = 1 / (1 + Math.pow(0.5, 1 / radius_50pct)) - 1 / (1 + Math.pow(0.5, -1 / radius_50pct));
 				
 				let cp = engine_info_graph_details.cp;
 				this.graph_y = 1 / (1 + Math.pow(0.5, cp / 100));
