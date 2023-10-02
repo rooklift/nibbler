@@ -132,6 +132,8 @@ function NewGrapher() {
 
 			// INVARIANT: e_drawradius will be as high as 0.5 in "dead draw" games, and as low as 0.0 in "equal but very unclear" games
 
+			let y_drawradius = (e_drawradius === null) ? null : (e_drawradius * height);
+
 			if (e !== null) {
 
 				let x = width * n / graph_length;
@@ -147,14 +149,14 @@ function NewGrapher() {
 						y_drawradius1: last_y_drawradius,
 						x2: x,
 						y2: y,
-						y_drawradius2: e_drawradius * height,
+						y_drawradius2: y_drawradius,
 						dashed: n - last_n !== 1,
 					});
 				}
 
 				last_x = x;
 				last_y = y;
-				last_y_drawradius = e_drawradius * height;
+				last_y_drawradius = y_drawradius;
 				last_n = n;
 			}
 		}
