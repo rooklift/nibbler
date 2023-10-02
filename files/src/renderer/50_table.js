@@ -20,7 +20,8 @@ const table_prototype = {
 		this.limit = null;						// The limit of the last search that updated this.
 		this.terminal = null;					// null = unknown, "" = not terminal, "Non-empty string" = terminal reason
 		this.graph_y = null;					// Used by grapher only, value from White's POV between 0 and 1
-		this.graph_y_drawishness = null;			// Used by grapher only, drawishness between 0 and 1
+		this.graph_wdl_w = null;				// Used by grapher only, WDL[W] from White's POV between 0 and 1
+		this.graph_wdl_l = null;				// Used by grapher only, WDL[L] from White's POV between 0 and 1
 		this.graph_y_version = 0;				// Which version (above) was used to generate the graph_y value
 		this.already_autopopulated = false;
 	},
@@ -29,30 +30,24 @@ const table_prototype = {
 		let info = SortedMoveInfoFromTable(this)[0];
 		if (info && !info.__ghost && info.__touched && (this.nodes > 1 || this.limit === 1)) {
 			let return_cp = ((info.board.active === "b") ? (-info.cp) : (info.cp));
-			let return_sharpness_sigma = null;
+			let return_wdl_w = null;
+			let return_wdl_l = null;
 			if (info.wdl !== null) {
-				const safeguard = 0.2 / 3.0;	// tuned so that the shaded area will be exactly 50% of the chart, when decisiveness and drawishness are exactly balanced (i.e. W=0.25, D=0.5, L=0.25, a.k.a. 50% draw + 50% decisive)
-
-				// Safeguard against numerical issues: https://github.com/LeelaChessZero/lc0/blob/076299b1f1ca21993b2c5e82ab3e80edb5367057/src/mcts/search.cc#L232-L236
-				let laplace_smoothing_w = (info.wdl[0] / 1000) * (1.0 - safeguard) + safeguard / 3.0;
-				let laplace_smoothing_l = (info.wdl[2] / 1000) * (1.0 - safeguard) + safeguard / 3.0;
-
-				// Reference: https://github.com/LeelaChessZero/lc0/blob/076299b1f1ca21993b2c5e82ab3e80edb5367057/src/mcts/search.cc#L237-L239
-				let sharpness_a = Math.log(1.0 / laplace_smoothing_w - 1.0)
-				let sharpness_b = Math.log(1.0 / laplace_smoothing_l - 1.0)
-				return_sharpness_sigma = 2 / Math.max(sharpness_a + sharpness_b, 0.0);
+				return_wdl_w = ((info.board.active === "b") ? info.wdl[2] : info.wdl[0]) / 1000.0;
+				return_wdl_l = ((info.board.active === "b") ? info.wdl[0] : info.wdl[2]) / 1000.0;
 			}
 
 			return {
 				'cp': return_cp,
-				'sharpness_sigma': return_sharpness_sigma
+				'wdl_w': return_wdl_w,
+				'wdl_l': return_wdl_l,
 			};
 		} else {
 			return null;
 		}
 	},
 
-	// returns {'graph_y': number between 0.0 and 1.0, 'drawishness': number between 0.0 and 1.0}
+	// returns {'graph_y': number between 0.0 and 1.0, 'graph_shaded_w': number between 0.0 and 1.0, , 'graph_shaded_b': number between 0.0 and 1.0}
 	get_graph_y_details: function() {
 
 		// Naphthalin's scheme: based on centipawns.
@@ -60,19 +55,19 @@ const table_prototype = {
 		if (this.graph_y_version !== this.version) {
 			let engine_info_graph_details = this.get_cp_details();
 			if (engine_info_graph_details !== null) {
-				const z_50pct = 0.6744897502;		// ± sigma × 0.67... is the 50% confidence interval
-				let radius_50pct = engine_info_graph_details.sharpness_sigma * z_50pct;
-				this.graph_y_drawishness = 1 / (1 + Math.pow(0.5, 1 / radius_50pct)) - 1 / (1 + Math.pow(0.5, -1 / radius_50pct));
-				
+				this.graph_wdl_w = engine_info_graph_details.wdl_w;
+				this.graph_wdl_l = engine_info_graph_details.wdl_l;
+
 				let cp = engine_info_graph_details.cp;
 				this.graph_y = 1 / (1 + Math.pow(0.5, cp / 100));
 			} else {
-				this.graph_y_drawishness = null;
+				this.graph_wdl_w = null;
+				this.graph_wdl_l = null;
 				this.graph_y = null;
 			}
 			this.graph_y_version = this.version;
 		}
-		return {'graph_y': this.graph_y, 'drawishness': this.graph_y_drawishness};
+		return {'graph_y': this.graph_y, 'graph_shaded_w': this.graph_wdl_w, 'graph_shaded_b': this.graph_wdl_l};
 	},
 
 	set_terminal_info: function(reason, ev) {	// ev is ignored if reason is "" (i.e. not a terminal position)
