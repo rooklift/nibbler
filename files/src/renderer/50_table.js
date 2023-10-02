@@ -29,26 +29,23 @@ const table_prototype = {
 		let info = SortedMoveInfoFromTable(this)[0];
 		if (info && !info.__ghost && info.__touched && (this.nodes > 1 || this.limit === 1)) {
 			let return_cp = ((info.board.active === "b") ? (-info.cp) : (info.cp));
-			let return_sharpness_50confidence = null;
+			let return_sharpness_sigma = null;
 			if (info.wdl !== null) {
-				if ((info.wdl[0] > 0) && (info.wdl[2] > 0)) {
-					// Reference: https://github.com/LeelaChessZero/lc0/blob/076299b1f1ca21993b2c5e82ab3e80edb5367057/src/mcts/search.cc#L237-L239
-					let sharpness_a = Math.log(1000.0 / info.wdl[0] - 1.0)
-					let sharpness_b = Math.log(1000.0 / info.wdl[2] - 1.0)
-					let sharpness_sigma = 2 / Math.max(sharpness_a + sharpness_b, 0.0);
+				const safeguard = 0.2 / 3.0;	// tuned so that the shaded area will be exactly 50% of the chart, when decisiveness and drawishness are exactly balanced (i.e. W=0.25, D=0.5, L=0.25, a.k.a. 50% draw + 50% decisive)
 
-					const z_50pct = 0.6744897502;		// ± sigma × 0.67... is the 50% confidence interval
-					return_sharpness_50confidence = sharpness_sigma * z_50pct;
-				} else {
-					// Safeguard against numerical issues: https://github.com/LeelaChessZero/lc0/blob/076299b1f1ca21993b2c5e82ab3e80edb5367057/src/mcts/search.cc#L232-L236
-					let decisive_pct = 1.0 - info.wdl[1] / 1000.0;
-					return_sharpness_50confidence = Math.log(2.0) / Math.log( 2.0 / decisive_pct - 1.0 );
-				}
+				// Safeguard against numerical issues: https://github.com/LeelaChessZero/lc0/blob/076299b1f1ca21993b2c5e82ab3e80edb5367057/src/mcts/search.cc#L232-L236
+				let laplace_smoothing_w = (info.wdl[0] / 1000) * (1.0 - safeguard) + safeguard / 3.0;
+				let laplace_smoothing_l = (info.wdl[2] / 1000) * (1.0 - safeguard) + safeguard / 3.0;
+
+				// Reference: https://github.com/LeelaChessZero/lc0/blob/076299b1f1ca21993b2c5e82ab3e80edb5367057/src/mcts/search.cc#L237-L239
+				let sharpness_a = Math.log(1.0 / laplace_smoothing_w - 1.0)
+				let sharpness_b = Math.log(1.0 / laplace_smoothing_l - 1.0)
+				return_sharpness_sigma = 2 / Math.max(sharpness_a + sharpness_b, 0.0);
 			}
 
 			return {
 				'cp': return_cp,
-				'sharpness_50confidence': return_sharpness_50confidence
+				'sharpness_sigma': return_sharpness_sigma
 			};
 		} else {
 			return null;
@@ -63,7 +60,8 @@ const table_prototype = {
 		if (this.graph_y_version !== this.version) {
 			let engine_info_graph_details = this.get_cp_details();
 			if (engine_info_graph_details !== null) {
-				let radius_50pct = engine_info_graph_details.sharpness_50confidence;
+				const z_50pct = 0.6744897502;		// ± sigma × 0.67... is the 50% confidence interval
+				let radius_50pct = engine_info_graph_details.sharpness_sigma * z_50pct;
 				this.graph_y_drawishness = 1 / (1 + Math.pow(0.5, 1 / radius_50pct)) - 1 / (1 + Math.pow(0.5, -1 / radius_50pct));
 				
 				let cp = engine_info_graph_details.cp;
