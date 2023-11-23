@@ -371,7 +371,10 @@ function menu_build() {
 							alert(win, messages.save_not_enabled);
 							return;
 						}
-						let file = save_dialog(win, {defaultPath: config.pgn_dialog_folder});
+						let file = save_dialog(win, {
+							defaultPath: config.pgn_dialog_folder,
+							filters: [{name: "PGN", extensions: ["pgn"]}, {name: "All files", extensions: ["*"]}]
+						});
 						if (typeof file === "string" && file.length > 0) {
 							win.webContents.send("call", {
 								fn: "save",
