@@ -4,6 +4,7 @@ function NewHub() {
 
 	let hub = Object.create(null);
 
+	// Declare a engine
 	hub.engine = NewEngine(hub);						// Just a dummy object with no exe. Fixed by start.js later.
 	hub.tree = NewTreeHandler();
 	hub.grapher = NewGrapher();
@@ -646,7 +647,7 @@ let hub_props = {
 		}
 
 		let overlist = document.querySelectorAll(":hover");
-		
+
 		// Find what div we are over by looking for infoline_n
 
 		let div = null;
@@ -952,6 +953,7 @@ let hub_props = {
 	// ---------------------------------------------------------------------------------------------------------------------
 	// Info receivers...
 
+	// hub get best move from engine
 	receive_bestmove: function(s, relevant_node) {
 
 		let ok;		// Could be used by 2 different parts of the switch (but not at time of writing...)
@@ -1375,6 +1377,7 @@ let hub_props = {
 		let args = engineconfig[filepath] ? engineconfig[filepath].args : [];
 
 		let new_engine = NewEngine(this);
+		// setup new engine here
 		let success = new_engine.setup(filepath, args, this);
 
 		if (success === false) {
