@@ -1371,7 +1371,11 @@ let hub_props = {
 				this.err_receive(`<span class="blue">${messages.engine_not_present}</span>`);
 				this.err_receive("");
 			}
-			return false;
+			if (filepath && filepath.indexOf(":") !== -1) {
+				console.log("Setting up http engine", filepath);
+			} else {
+				return false;
+			}
 		}
 
 		let args = engineconfig[filepath] ? engineconfig[filepath].args : [];

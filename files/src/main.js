@@ -2204,6 +2204,15 @@ function menu_build() {
 					},
 				},
 				{
+					label: "Choose http engine...",
+					click: () => {
+						win.webContents.send("call", {
+							fn: "switch_engine",
+							args: ["localhost:22795"]
+						});
+					}
+				},
+				{
 					label: "Choose known engine...",
 					click: () => {
 						win.webContents.send("call", "show_fast_engine_chooser");

@@ -68,6 +68,67 @@ function SearchParams(node = null, limit = null, limit_by_time = false, searchmo
 	});
 }
 
+function HttpEngine(url) {
+	let eng = Object.create(null);
+	eng.url = url;
+
+	eng.stdin = Object.create(null);
+	eng.stdin.write = function (msg) {
+		console.log("sending requests to", this.url)
+		console.log("msg", msg);
+		fetch('http://71.59.73.116:22795/chess/command', {
+			method: 'POST',
+    		headers: {
+    		    'Accept': 'application/json',
+    		    'Content-Type': 'application/json'
+    		},
+    		body: JSON.stringify({ "command": "uci"})
+		}).then(response => console.log(response.json()));
+	}
+
+	eng.stdout = stream.Readable({
+		// start(controller) {
+		// 	controller.enqueue('uciok');
+		// },
+		read(size) {
+			console.log("try to read");
+			// request = net.request({
+			//   method: 'GET',
+			//   protocol: 'http:',
+			//   hostname: '71.59.73.11',
+			//   port: 22795,
+			//   path: '/chess/logging'
+			// });
+			// request.on("data",
+			fetch('http://71.59.73.116:22795/chess/logging', {
+				method: 'GET',
+			}).then(response => this.push(response.json()));
+			// keep pushing content until the end
+			// must push null the notify the end of content
+			this.push(null);
+		},
+	});
+	eng.stderr = stream.Readable({
+		read(size) {
+			// fetch('http://71.59.73.11:22795/chess/logging', {
+			// 	method: 'GET',
+			// }).then(response => this.push(response.json()));
+			this.push(null);
+		},
+	});
+	eng.once = function(arg) {
+		console.log("once() not implemented");
+	}
+
+	// eng.read_engine_logs() {
+	// 	fetch(this.url + '/chess/loggings', {
+	// 		method: 'GET',
+	// 	}).then(response => console.log(response.json()))
+	// }
+	// eng.stdout = child_process.spawn
+	return eng;
+}
+
 function NewEngine(hub) {
 
 	let eng = Object.create(null);
@@ -386,7 +447,12 @@ function NewEngine(hub) {
 					args = ["--show-hidden"].concat(args);
 				}
 			}
-			this.exe = child_process.spawn(filepath, args, {cwd: path.dirname(filepath)});
+			if (filepath.indexOf(":") !== -1) {
+				this.exe = HttpEngine(filepath);
+				console.log("httpengine initialized");
+			} else {
+				this.exe = child_process.spawn(filepath, args, {cwd: path.dirname(filepath)});
+			}
 		} catch (err) {
 			console.log(`engine.setup() failed: ${err.toString()}`);
 			return false;
@@ -404,9 +470,9 @@ function NewEngine(hub) {
 			this.send_ack_setoption(key);
 		}
 
-		this.exe.once("error", (err) => {
-			alert(err);
-		});
+		//this.exe.once("error", (err) => {
+		//	alert(err);
+		//});
 
 		this.scanner = readline.createInterface({
 			input: this.exe.stdout,

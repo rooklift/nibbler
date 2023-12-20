@@ -44,6 +44,7 @@ const messages = require("./modules/messages");
 const path = require("path");
 const querystring = require("querystring");
 const readline = require("readline");
+const stream = require("stream");
 const stringify = require("./modules/stringify");
 const util = require("util");
 
