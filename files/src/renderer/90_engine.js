@@ -68,22 +68,56 @@ function SearchParams(node = null, limit = null, limit_by_time = false, searchmo
 	});
 }
 
+async function fetch_loggings(url) {
+	const response = await fetch('http://localhost:22795/chess/logging', {
+		method: 'GET',
+	});
+	return response.json();
+}
+
+async function send_command(msg) {
+	console.log("msg", msg);
+	const response = await fetch('http://localhost:22795/chess/command', {
+		method: 'POST',
+		headers: {
+			'Accept': 'application/json',
+    		'Content-Type': 'application/json'
+    	},
+		body: JSON.stringify({ "command": msg})
+	});
+	return response.json();
+}
+
 function HttpEngine(url) {
 	let eng = Object.create(null);
 	eng.url = url;
 
 	eng.stdin = Object.create(null);
 	eng.stdin.write = function (msg) {
-		console.log("sending requests to", this.url)
-		console.log("msg", msg);
-		fetch('http://71.59.73.116:22795/chess/command', {
-			method: 'POST',
-    		headers: {
-    		    'Accept': 'application/json',
-    		    'Content-Type': 'application/json'
-    		},
-    		body: JSON.stringify({ "command": "uci"})
-		}).then(response => console.log(response.json()));
+		// console.log("sending requests to", this.url)
+		// console.log("msg", msg);
+		// fetch('http://localhost:22795/chess/command', {
+		// 	method: 'POST',
+    	// 	headers: {
+    	// 	    'Accept': 'application/json',
+    	// 	    'Content-Type': 'application/json'
+    	// 	},
+    	// 	body: JSON.stringify({ "command": "uci"})
+		// }).then(response => {
+		// 	return response.text();
+		// 	// console.log('response for msg', response.json());
+		// });
+		// const response = await fetch('http://localhost:22795/chess/command', {
+		// 	method: 'POST',
+    	// 	headers: {
+    	// 	    'Accept': 'application/json',
+    	// 	    'Content-Type': 'application/json'
+    	// 	},
+    	// 	body: JSON.stringify({ "command": "uci"})
+		// });
+		// const result = await response.json();
+		// console.log("msg response", result);
+		send_command(msg).then(response => console.log("msg response", response));
 	}
 
 	eng.stdout = stream.Readable({
@@ -100,12 +134,34 @@ function HttpEngine(url) {
 			//   path: '/chess/logging'
 			// });
 			// request.on("data",
-			fetch('http://71.59.73.116:22795/chess/logging', {
-				method: 'GET',
-			}).then(response => this.push(response.json()));
+			// fetch('http://localhost:22795/chess/logging', {
+			// 	method: 'GET',
+			// }).then(response => {
+			// 	return response.text();
+			// }).then(text => {
+			// 	console.log("logging", text);
+			// 	const lines = text.split("\\n");
+			// 	for (let line of lines) {
+			// 		console.log(line);
+			// 		// this.push(line + "\n");
+			// 	}
+			// 	this.push(null);
+			// });
+			// const response = await fetch('http://localhost:22795/chess/logging', {
+			// 	method: 'GET',
+			// });
+			// const loggings = await response.text();
+			// console.log("loggings", loggings);
+			fetch_loggings('http://localhost:22795/chess/logging').then(text => {
+				const lines = text.split("\n");
+				for (let line of lines) {
+					console.log(line);
+					this.push(line + "\n");
+				}
+				this.push(null);
+			});
 			// keep pushing content until the end
 			// must push null the notify the end of content
-			this.push(null);
 		},
 	});
 	eng.stderr = stream.Readable({
@@ -119,6 +175,12 @@ function HttpEngine(url) {
 	eng.once = function(arg) {
 		console.log("once() not implemented");
 	}
+
+	eng.kill = function() {
+		this.stdin = null;
+		this.stdout = null;
+		console.log("Kill the http engine");
+	};
 
 	// eng.read_engine_logs() {
 	// 	fetch(this.url + '/chess/loggings', {
@@ -200,7 +262,7 @@ function NewEngine(hub) {
 
 		try {
 			this.exe.stdin.write(msg);
-			this.exe.stdin.write("\n");
+			// this.exe.stdin.write("\n");
 			Log("--> " + msg);
 			this.last_send = msg;
 		} catch (err) {
@@ -517,6 +579,7 @@ function NewEngine(hub) {
 					this.ever_received_uciok = true;
 				}
 				if (line.startsWith("readyok")) {
+					console.log("received readyok");
 					this.ever_received_readyok = true;
 				}
 				this.hub.receive_misc(SafeStringHTML(line));
