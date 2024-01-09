@@ -94,74 +94,25 @@ function HttpEngine(url) {
 
 	eng.stdin = Object.create(null);
 	eng.stdin.write = function (msg) {
-		// console.log("sending requests to", this.url)
-		// console.log("msg", msg);
-		// fetch('http://localhost:22795/chess/command', {
-		// 	method: 'POST',
-    	// 	headers: {
-    	// 	    'Accept': 'application/json',
-    	// 	    'Content-Type': 'application/json'
-    	// 	},
-    	// 	body: JSON.stringify({ "command": "uci"})
-		// }).then(response => {
-		// 	return response.text();
-		// 	// console.log('response for msg', response.json());
-		// });
-		// const response = await fetch('http://localhost:22795/chess/command', {
-		// 	method: 'POST',
-    	// 	headers: {
-    	// 	    'Accept': 'application/json',
-    	// 	    'Content-Type': 'application/json'
-    	// 	},
-    	// 	body: JSON.stringify({ "command": "uci"})
-		// });
-		// const result = await response.json();
-		// console.log("msg response", result);
 		send_command(msg).then(response => console.log("msg response", response));
 	}
 
 	eng.stdout = stream.Readable({
-		// start(controller) {
-		// 	controller.enqueue('uciok');
-		// },
 		read(size) {
-			console.log("try to read");
-			// request = net.request({
-			//   method: 'GET',
-			//   protocol: 'http:',
-			//   hostname: '71.59.73.11',
-			//   port: 22795,
-			//   path: '/chess/logging'
-			// });
-			// request.on("data",
-			// fetch('http://localhost:22795/chess/logging', {
-			// 	method: 'GET',
-			// }).then(response => {
-			// 	return response.text();
-			// }).then(text => {
-			// 	console.log("logging", text);
-			// 	const lines = text.split("\\n");
-			// 	for (let line of lines) {
-			// 		console.log(line);
-			// 		// this.push(line + "\n");
-			// 	}
-			// 	this.push(null);
-			// });
-			// const response = await fetch('http://localhost:22795/chess/logging', {
-			// 	method: 'GET',
-			// });
-			// const loggings = await response.text();
-			// console.log("loggings", loggings);
 			fetch_loggings('http://localhost:22795/chess/logging').then(text => {
 				const lines = text.split("\n");
 				for (let line of lines) {
-					console.log(line);
-					this.push(line + "\n");
+					if (line) {
+						this.push(line + "\n");
+					} else {
+						// seem have to push something
+						// otherwise the read stream will quit
+						this.push("");
+					}
 				}
-				this.push(null);
+				// DAMN was stupid to push null which cause the read stream to quit
+				// this.push(null);
 			});
-			// keep pushing content until the end
-			// must push null the notify the end of content
 		},
 	});
 	eng.stderr = stream.Readable({
@@ -169,6 +120,7 @@ function HttpEngine(url) {
 			// fetch('http://71.59.73.11:22795/chess/logging', {
 			// 	method: 'GET',
 			// }).then(response => this.push(response.json()));
+			// Not used for now, push null to quit
 			this.push(null);
 		},
 	});
@@ -182,12 +134,6 @@ function HttpEngine(url) {
 		console.log("Kill the http engine");
 	};
 
-	// eng.read_engine_logs() {
-	// 	fetch(this.url + '/chess/loggings', {
-	// 		method: 'GET',
-	// 	}).then(response => console.log(response.json()))
-	// }
-	// eng.stdout = child_process.spawn
 	return eng;
 }
 
@@ -262,7 +208,9 @@ function NewEngine(hub) {
 
 		try {
 			this.exe.stdin.write(msg);
-			// this.exe.stdin.write("\n");
+			// if (!this.is_http_engine) {
+			// 	this.exe.stdin.write("\n");
+			// }
 			Log("--> " + msg);
 			this.last_send = msg;
 		} catch (err) {
@@ -496,6 +444,7 @@ function NewEngine(hub) {
 		ipcRenderer.send("ack_engine", this.filepath);
 	};
 
+	//eng.is_http_engine = filepath.indexOf(":") !== -1;
 	eng.setup = function(filepath, args) {		// Returns true on success, false otherwise.
 
 		Log("");
@@ -532,9 +481,9 @@ function NewEngine(hub) {
 			this.send_ack_setoption(key);
 		}
 
-		//this.exe.once("error", (err) => {
-		//	alert(err);
-		//});
+		// this.exe.once("error", (err) => {
+		// 	alert(err);
+		// });
 
 		this.scanner = readline.createInterface({
 			input: this.exe.stdout,
@@ -579,7 +528,6 @@ function NewEngine(hub) {
 					this.ever_received_uciok = true;
 				}
 				if (line.startsWith("readyok")) {
-					console.log("received readyok");
 					this.ever_received_readyok = true;
 				}
 				this.hub.receive_misc(SafeStringHTML(line));
