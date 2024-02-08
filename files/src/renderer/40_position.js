@@ -769,9 +769,9 @@ const position_prototype = {
 				s[2] >= "a" && s[2] <= "h" &&
 				s[3] >= "1" && s[3] <= "8"
 			) {
-				s = this.c960_castling_converter(s);
-				if (!this.illegal(s)) {
-					return [s, ""];
+				let tmp = this.c960_castling_converter(s);
+				if (!this.illegal(tmp)) {
+					return [tmp, ""];
 				}
 			}
 		}
