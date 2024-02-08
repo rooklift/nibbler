@@ -768,6 +768,22 @@ const position_prototype = {
 			s = s.slice(lio + 1);
 		}
 
+		// At this point, if s was actually a UCI string (which it would never be in real PGN) we can return it.
+		// This is a hack to allow pasting of stuff from non-PGN sources I guess...
+
+		if (s.length === 4 || (s.length === 5 && ["q", "r", "b", "n"].includes(s[4]))) {
+			if (s[0] >= "a" && s[0] <= "h" &&
+				s[1] >= "1" && s[1] <= "8" &&
+				s[2] >= "a" && s[2] <= "h" &&
+				s[3] >= "1" && s[3] <= "8"
+			) {
+				s = this.c960_castling_converter(s);
+				if (!this.illegal(s)) {
+					return [s, ""];
+				}
+			}
+		}
+
 		// Fix castling with zeroes...
 
 		s = ReplaceAll(s, "0-0-0", "O-O-O");
