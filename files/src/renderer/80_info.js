@@ -143,6 +143,7 @@ let info_receiver_props = {
 			}
 
 			let move_cycle_pre_update = move_info.cycle;
+			let move_depth_pre_update = move_info.depth;
 
 			// ---------------------------------------------------------------------------------------------------------------------
 
@@ -237,8 +238,12 @@ let info_receiver_props = {
 
 			if (CompareArrays(new_pv, move_info.pv) === false) {
 				if (!board.sequence_illegal(new_pv)) {
-					if (move_cycle_pre_update === move_info.cycle && ArrayStartsWith(move_info.pv, new_pv)) {
+					if (move_cycle_pre_update === move_info.cycle
+						&& ArrayStartsWith(move_info.pv, new_pv)
+						&& move_depth_pre_update >= move_info.depth - 1
+					) {
 						// Skip the update. This partially mitigates Stockfish sending unresolved PVs.
+						// We don't skip the update if the old PV is too old - issue noticed by Nagisa.
 					} else {
 						move_info.set_pv(new_pv);
 					}
