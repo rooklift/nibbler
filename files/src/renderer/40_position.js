@@ -747,6 +747,12 @@ const position_prototype = {
 
 	parse_pgn: function(s) {		// Returns a UCI move and an error message.
 
+		// Replace fruity dash characters with proper ASCII dash "-"
+
+		for (let n of [8208, 8210, 8211, 8212, 8213, 8722]) {
+			s = ReplaceAll(s, String.fromCodePoint(n), "-");
+		}
+
 		// If the string contains any dots it'll be something like "1.e4" or "...e4" or whatnot...
 
 		let lio = s.lastIndexOf(".");
@@ -754,7 +760,7 @@ const position_prototype = {
 			s = s.slice(lio + 1);
 		}
 
-		// At this point, if s was actually a UCI string (which it would never be in real PGN) we can return it.
+		// At this point, if s is actually a UCI string (which it won't be in real PGN) we can return it.
 		// This is a hack to allow pasting of stuff from non-PGN sources I guess...
 
 		if (s.length === 4 || (s.length === 5 && ["q", "r", "b", "n"].includes(s[4]))) {
@@ -768,12 +774,6 @@ const position_prototype = {
 					return [s, ""];
 				}
 			}
-		}
-
-		// Replace fruity dash characters with proper ASCII dash "-"
-
-		for (let n of [8208, 8210, 8211, 8212, 8213, 8722]) {
-			s = ReplaceAll(s, String.fromCodePoint(n), "-");
 		}
 
 		// Delete things we don't need...
