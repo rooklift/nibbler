@@ -747,20 +747,6 @@ const position_prototype = {
 
 	parse_pgn: function(s) {		// Returns a UCI move and an error message.
 
-		// Replace fruity dash characters with proper ASCII dash "-"
-
-		for (let n of [8208, 8210, 8211, 8212, 8213, 8722]) {
-			s = ReplaceAll(s, String.fromCodePoint(n), "-");
-		}
-
-		// Delete things we don't need...
-
-		s = ReplaceAll(s, "x", "");
-		s = ReplaceAll(s, "+", "");
-		s = ReplaceAll(s, "#", "");
-		s = ReplaceAll(s, "!", "");
-		s = ReplaceAll(s, "?", "");
-
 		// If the string contains any dots it'll be something like "1.e4" or "...e4" or whatnot...
 
 		let lio = s.lastIndexOf(".");
@@ -783,6 +769,20 @@ const position_prototype = {
 				}
 			}
 		}
+
+		// Replace fruity dash characters with proper ASCII dash "-"
+
+		for (let n of [8208, 8210, 8211, 8212, 8213, 8722]) {
+			s = ReplaceAll(s, String.fromCodePoint(n), "-");
+		}
+
+		// Delete things we don't need...
+
+		s = ReplaceAll(s, "x", "");
+		s = ReplaceAll(s, "+", "");
+		s = ReplaceAll(s, "#", "");
+		s = ReplaceAll(s, "!", "");
+		s = ReplaceAll(s, "?", "");
 
 		// Fix castling with zeroes...
 
