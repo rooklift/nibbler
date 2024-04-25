@@ -646,7 +646,7 @@ let hub_props = {
 		}
 
 		let overlist = document.querySelectorAll(":hover");
-		
+
 		// Find what div we are over by looking for infoline_n
 
 		let div = null;
@@ -1278,7 +1278,7 @@ let hub_props = {
 	// ---------------------------------------------------------------------------------------------------------------------
 	// UCI options...
 
-	set_uci_option: function(name, val, save_to_cfg) {
+	set_uci_option: function(name, val, save_to_cfg = false, blue_text = true) {
 
 		// Note that all early returns from this function need to send an ack
 		// of the prevailing value to fix checkmarks in the main process.
@@ -1315,7 +1315,14 @@ let hub_props = {
 
 		this.set_behaviour("halt");
 		let sent = this.engine.setoption(name, val);							// Will ack the new value.
-		this.set_special_message(sent, "blue");
+		if (blue_text) {
+			this.set_special_message(sent, "blue");
+		}
+	},
+
+	set_uci_option_permanent_and_cleartree: function(name, val) {
+		this.set_uci_option(name, val, true);
+		this.set_uci_option("ClearTree", true, false, false);
 	},
 
 	set_uci_option_permanent: function(name, val) {

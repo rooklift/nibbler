@@ -84,6 +84,7 @@ const standard_lc0_options = {
 	"SmartPruningFactor": 0,
 	"UCI_ShowWDL": true,
 	"VerboseMoveStats": true,
+	"ContemptMode": "disable",
 };
 
 const standard_ab_options = {
