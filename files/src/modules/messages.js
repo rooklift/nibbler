@@ -59,8 +59,8 @@ exports.about_hashes = `You can set the Hash value directly via Nibbler's \
 ${engineconfig_io.filename} file (which can be found via the Dev menu).`;
 
 
-exports.thread_warning = `Note that, for systems using a GPU, 2 threads is \
-usually sufficient, and increasing this number can actually make Leela weaker! \
+exports.thread_warning = `Note that, for systems using a GPU, 2 threads is usually \
+sufficient for Leela, and increasing this number can actually make Leela weaker! \
 More threads should probably only be used on CPU-only systems, if at all.
 
 If no tick is present in this menu, the default is being used, which is probably \
