@@ -400,7 +400,20 @@ function NewEngine(hub) {
 
 		this.sent_options = Object.create(null);		// Blank anything we "sent" up till now.
 
-		for (let key of ["EvalFile", "WeightsFile", "SyzygyPath", "Threads", "Hash", "MultiPV", "Backend", "Temperature", "TempDecayMoves"]) {
+		for (let key of [
+			"Backend",
+			"EvalFile",
+			"WeightsFile",
+			"SyzygyPath",
+			"Threads",
+			"Hash",
+			"MultiPV",
+			"ContemptMode",
+			"Contempt",
+			"WDLCalibrationElo",
+			"Temperature",
+			"TempDecayMoves"
+		]) {
 			this.send_ack_setoption(key);
 		}
 
