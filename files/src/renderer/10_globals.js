@@ -88,8 +88,6 @@ const forced_lc0_options = {		// These are sent without checking if they are kno
 
 const standard_lc0_options = {		// These are only sent if known by the engine.
 	"ContemptMode": "disable",
-	"Contempt": 0,
-	"WDLCalibrationElo": 0,
 };
 
 const forced_ab_options = {};
