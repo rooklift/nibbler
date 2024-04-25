@@ -3427,6 +3427,18 @@ function menu_build() {
 							}
 						},
 						{
+							label: "200",
+							type: "checkbox",
+							checked: false,
+							click: () => {
+								win.webContents.send("call", {
+									fn: "set_uci_option_permanent_and_cleartree",
+									args: ["Contempt", 200]
+								});
+								// Will receive an ack IPC which sets menu checks.
+							}
+						},
+						{
 							label: "150",
 							type: "checkbox",
 							checked: false,
@@ -3511,6 +3523,18 @@ function menu_build() {
 							}
 						},
 						{
+							label: "-200",
+							type: "checkbox",
+							checked: false,
+							click: () => {
+								win.webContents.send("call", {
+									fn: "set_uci_option_permanent_and_cleartree",
+									args: ["Contempt", -200]
+								});
+								// Will receive an ack IPC which sets menu checks.
+							}
+						},
+						{
 							label: "-250",
 							type: "checkbox",
 							checked: false,
@@ -3588,13 +3612,37 @@ function menu_build() {
 							}
 						},
 						{
-							label: "2500",
+							label: "2600",
 							type: "checkbox",
 							checked: false,
 							click: () => {
 								win.webContents.send("call", {
 									fn: "set_uci_option_permanent_and_cleartree",
-									args: ["WDLCalibrationElo", 2500]
+									args: ["WDLCalibrationElo", 2600]
+								});
+								// Will receive an ack IPC which sets menu checks.
+							}
+						},
+						{
+							label: "2400",
+							type: "checkbox",
+							checked: false,
+							click: () => {
+								win.webContents.send("call", {
+									fn: "set_uci_option_permanent_and_cleartree",
+									args: ["WDLCalibrationElo", 2400]
+								});
+								// Will receive an ack IPC which sets menu checks.
+							}
+						},
+						{
+							label: "2200",
+							type: "checkbox",
+							checked: false,
+							click: () => {
+								win.webContents.send("call", {
+									fn: "set_uci_option_permanent_and_cleartree",
+									args: ["WDLCalibrationElo", 2200]
 								});
 								// Will receive an ack IPC which sets menu checks.
 							}
