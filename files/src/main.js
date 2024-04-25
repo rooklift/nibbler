@@ -269,20 +269,20 @@ function startup() {
 			set_checks("Play", "TempDecayMoves", msg.val === "0" ? "Infinite" : msg.val);
 			break;
 
+		case "contemptmode":
+			set_checks("Engine", "Contempt Mode (Lc0)", msg.val);
+			break;
+
 		case "contempt":
 			set_checks("Engine", "Contempt (Lc0)", msg.val);
 			break;
 
 		case "wdlcalibrationelo":
 			if (msg.val === "0") {
-				set_checks("Engine", "WDLCalibrationElo (Lc0)", "Use default WDL");
+				set_checks("Engine", "WDL Calibration Elo (Lc0)", "Use default WDL");
 			} else {
-				set_checks("Engine", "WDLCalibrationElo (Lc0)", msg.val);
+				set_checks("Engine", "WDL Calibration Elo (Lc0)", msg.val);
 			}
-			break;
-
-		case "contemptmode":
-			set_checks("Engine", "ContemptMode (Lc0)", msg.val);
 			break;
 
 		}
@@ -3361,7 +3361,7 @@ function menu_build() {
 					type: "separator"
 				},
 				{
-					label: "ContemptMode (Lc0)",
+					label: "Contempt Mode (Lc0)",
 					submenu: [
 					/*
 						{
@@ -3529,7 +3529,7 @@ function menu_build() {
 					]
 				},
 				{
-					label: "WDLCalibrationElo (Lc0)",
+					label: "WDL Calibration Elo (Lc0)",
 					submenu: [
 						{
 							label: "3600",
