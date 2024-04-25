@@ -1328,13 +1328,7 @@ let hub_props = {
 		this.set_uci_option(name, val, true);
 		this.set_uci_option("ClearTree", true, false, false);
 	},
-/*
-	disable_wdlcalibrationelo() {
-		delete engineconfig[this.engine.filepath].options["WDLCalibrationElo"];
-		this.set_uci_option("WDLCalibrationElo", 0, false);
-		this.set_uci_option("ClearTree", true, false, false);
-	},
-*/
+
 	disable_syzygy: function() {
 		delete engineconfig[this.engine.filepath].options["SyzygyPath"];
 		this.restart_engine();		// Causes the correct ack to be sent.
