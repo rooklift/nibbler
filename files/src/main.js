@@ -270,15 +270,19 @@ function startup() {
 			break;
 
 		case "contempt":
-			set_checks("Engine", "Contempt", msg.val);
+			set_checks("Engine", "Contempt (Lc0)", msg.val);
 			break;
 
 		case "wdlcalibrationelo":
-			set_checks("Engine", "WDLCalibrationElo", msg.val);
+			if (msg.val === "0") {
+				set_checks("Engine", "WDLCalibrationElo (Lc0)", "Use default WDL");
+			} else {
+				set_checks("Engine", "WDLCalibrationElo (Lc0)", msg.val);
+			}
 			break;
 
 		case "contemptmode":
-			set_checks("Engine", "ContemptMode", msg.val);
+			set_checks("Engine", "ContemptMode (Lc0)", msg.val);
 			break;
 
 		}
@@ -3357,7 +3361,62 @@ function menu_build() {
 					type: "separator"
 				},
 				{
-					label: "Contempt",
+					label: "ContemptMode (Lc0)",
+					submenu: [
+					/*
+						{
+							label: "play",				// Lc0's default, but doesn't work well with normal analysis.
+							type: "checkbox",
+							checked: false,
+							click: () => {
+								win.webContents.send("call", {
+									fn: "set_uci_option_permanent_and_cleartree",
+									args: ["ContemptMode", "play"]
+								});
+								// Will receive an ack IPC which sets menu checks.
+							}
+						},
+					*/
+						{
+							label: "white_side_analysis",
+							type: "checkbox",
+							checked: false,
+							click: () => {
+								win.webContents.send("call", {
+									fn: "set_uci_option_permanent_and_cleartree",
+									args: ["ContemptMode", "white_side_analysis"]
+								});
+								// Will receive an ack IPC which sets menu checks.
+							}
+						},
+						{
+							label: "black_side_analysis",
+							type: "checkbox",
+							checked: false,
+							click: () => {
+								win.webContents.send("call", {
+									fn: "set_uci_option_permanent_and_cleartree",
+									args: ["ContemptMode", "black_side_analysis"]
+								});
+								// Will receive an ack IPC which sets menu checks.
+							}
+						},
+						{
+							label: "disable",
+							type: "checkbox",
+							checked: false,
+							click: () => {
+								win.webContents.send("call", {
+									fn: "set_uci_option_permanent_and_cleartree",
+									args: ["ContemptMode", "disable"]
+								});
+								// Will receive an ack IPC which sets menu checks.
+							}
+						},
+					]
+				},
+				{
+					label: "Contempt (Lc0)",
 					submenu: [
 						{
 							label: "250",
@@ -3470,7 +3529,7 @@ function menu_build() {
 					]
 				},
 				{
-					label: "WDLCalibrationElo",
+					label: "WDLCalibrationElo (Lc0)",
 					submenu: [
 						{
 							label: "3600",
@@ -3556,57 +3615,17 @@ function menu_build() {
 								// Will receive an ack IPC which sets menu checks.
 							}
 						},
-					]
-				},
-				{
-					label: "ContemptMode",
-					submenu: [
-					/*
 						{
-							label: "play",				// Lc0's default, but doesn't work well with normal analysis.
-							type: "checkbox",
-							checked: false,
-							click: () => {
-								win.webContents.send("call", {
-									fn: "set_uci_option_permanent_and_cleartree",
-									args: ["ContemptMode", "play"]
-								});
-								// Will receive an ack IPC which sets menu checks.
-							}
-						},
-					*/
-						{
-							label: "white_side_analysis",
-							type: "checkbox",
-							checked: false,
-							click: () => {
-								win.webContents.send("call", {
-									fn: "set_uci_option_permanent_and_cleartree",
-									args: ["ContemptMode", "white_side_analysis"]
-								});
-								// Will receive an ack IPC which sets menu checks.
-							}
+							type: "separator"
 						},
 						{
-							label: "black_side_analysis",
+							label: "Use default WDL",	// This string is used when receiving ack 0, don't edit this alone.
 							type: "checkbox",
 							checked: false,
 							click: () => {
 								win.webContents.send("call", {
 									fn: "set_uci_option_permanent_and_cleartree",
-									args: ["ContemptMode", "black_side_analysis"]
-								});
-								// Will receive an ack IPC which sets menu checks.
-							}
-						},
-						{
-							label: "disable",
-							type: "checkbox",
-							checked: false,
-							click: () => {
-								win.webContents.send("call", {
-									fn: "set_uci_option_permanent_and_cleartree",
-									args: ["ContemptMode", "disable"]
+									args: ["WDLCalibrationElo", 0]
 								});
 								// Will receive an ack IPC which sets menu checks.
 							}
