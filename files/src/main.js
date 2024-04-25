@@ -3663,7 +3663,7 @@ function menu_build() {
 							type: "separator"
 						},
 						{
-							label: "Use default WDL",	// This string is used when receiving ack 0, don't edit this alone.
+							label: "Use default WDL",	// This string is searched for when receiving ack 0, don't edit this alone.
 							type: "checkbox",
 							checked: false,
 							click: () => {
