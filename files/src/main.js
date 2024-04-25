@@ -269,8 +269,16 @@ function startup() {
 			set_checks("Play", "TempDecayMoves", msg.val === "0" ? "Infinite" : msg.val);
 			break;
 
-		case "contemptmode":
-			set_checks("Engine", "Contempt Mode", msg.val);
+		case "contemptmode":		// All the menu items are different from the UCI values...
+			if (msg.val === "white_side_analysis") {
+				set_checks("Engine", "Contempt Mode", "White analysis");
+			} else if (msg.val === "black_side_analysis") {
+				set_checks("Engine", "Contempt Mode", "Black analysis");
+			} else if (msg.val === "disable") {
+				set_checks("Engine", "Contempt Mode", "Disable");
+			} else {
+				set_checks("Engine", "Contempt Mode", msg.val);
+			}
 			break;
 
 		case "contempt":
@@ -3374,7 +3382,7 @@ function menu_build() {
 						},
 					*/
 						{
-							label: "white_side_analysis",
+							label: "White analysis",	// Note string searched when ack'd.
 							type: "checkbox",
 							checked: false,
 							click: () => {
@@ -3386,7 +3394,7 @@ function menu_build() {
 							}
 						},
 						{
-							label: "black_side_analysis",
+							label: "Black analysis",	// Note string searched when ack'd.
 							type: "checkbox",
 							checked: false,
 							click: () => {
@@ -3398,7 +3406,7 @@ function menu_build() {
 							}
 						},
 						{
-							label: "disable",
+							label: "Disable",			// Note string searched when ack'd.
 							type: "checkbox",
 							checked: false,
 							click: () => {
