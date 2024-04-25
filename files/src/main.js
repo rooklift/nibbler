@@ -270,19 +270,15 @@ function startup() {
 			break;
 
 		case "contemptmode":
-			set_checks("Engine", "Contempt Mode (Lc0)", msg.val);
+			set_checks("Engine", "Contempt Mode", msg.val);
 			break;
 
 		case "contempt":
-			set_checks("Engine", "Contempt (Lc0)", msg.val);
+			set_checks("Engine", "Contempt", msg.val);
 			break;
 
 		case "wdlcalibrationelo":
-			if (msg.val === "0") {
-				set_checks("Engine", "WDL Calibration Elo (Lc0)", "Use default WDL");
-			} else {
-				set_checks("Engine", "WDL Calibration Elo (Lc0)", msg.val);
-			}
+			set_checks("Engine", "WDL Calibration Elo", msg.val === "0" ? "Use default WDL" : msg.val);
 			break;
 
 		}
@@ -3361,7 +3357,7 @@ function menu_build() {
 					type: "separator"
 				},
 				{
-					label: "Contempt Mode (Lc0)",
+					label: "Contempt Mode",
 					submenu: [
 					/*
 						{
@@ -3416,7 +3412,7 @@ function menu_build() {
 					]
 				},
 				{
-					label: "Contempt (Lc0)",
+					label: "Contempt",
 					submenu: [
 						{
 							label: "250",
@@ -3529,7 +3525,7 @@ function menu_build() {
 					]
 				},
 				{
-					label: "WDL Calibration Elo (Lc0)",
+					label: "WDL Calibration Elo",
 					submenu: [
 						{
 							label: "3600",
