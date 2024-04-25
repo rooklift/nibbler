@@ -1413,24 +1413,25 @@ let hub_props = {
 		return true;
 	},
 
-	engine_send_all_options: function() {
+	engine_send_all_options: function() {			// The engine should never have been given a "go" before this.
 
-		// The engine should never have been given a "go" before this.
+		// Options that are sent regardless of whether the engine seems to know about them...
+
+		let forced_engine_options = this.engine.leelaish ? forced_lc0_options : forced_ab_options;
+		for (let [key, value] of Object.entries(forced_engine_options)) {
+			this.engine.setoption(key, value);
+		}
+
+		// Standard options... only sent if the engine has said it knows them...
 
 		let standard_engine_options = this.engine.leelaish ? standard_lc0_options : standard_ab_options;
-
-		// Note: for each key, we could check if the option is known, but that
-		// would be sketchy because we use secret stuff like "LogLiveStats".
-		// But we can do it for non-Leelaish engines...
-
-		for (let key of Object.keys(standard_engine_options)) {
-			if (this.engine.leelaish || this.engine.known(key)) {
-				this.engine.setoption(key, standard_engine_options[key]);
+		for (let [key, value] of Object.entries(standard_engine_options)) {
+			if (this.engine.known(key)) {
+				this.engine.setoption(key, value);
 			}
 		}
 
-		// Now send user-selected options. One might argue we should do this first,
-		// so that our standard options prevail in the event of a conflict. Hmm.
+		// Now send user-selected options. Thus, the user can override anything above.
 
 		let options = engineconfig[this.engine.filepath].options;
 		let keys = Object.keys(options);
