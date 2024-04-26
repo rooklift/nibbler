@@ -274,8 +274,6 @@ function startup() {
 				set_checks("Engine", "Contempt Mode", "White analysis");
 			} else if (msg.val === "black_side_analysis") {
 				set_checks("Engine", "Contempt Mode", "Black analysis");
-			} else if (msg.val === "disable") {
-				set_checks("Engine", "Contempt Mode", "Disable");
 			} else {
 				set_checks("Engine", "Contempt Mode", msg.val);
 			}
@@ -3365,22 +3363,8 @@ function menu_build() {
 					type: "separator"
 				},
 				{
-					label: "Contempt Mode",
+					label: "Contempt Mode",				// Other valid options are "play" (which messes with normal analysis) and "disable"
 					submenu: [
-					/*
-						{
-							label: "play",				// Lc0's default, but doesn't work well with normal analysis.
-							type: "checkbox",
-							checked: false,
-							click: () => {
-								win.webContents.send("call", {
-									fn: "set_uci_option_permanent_and_cleartree",
-									args: ["ContemptMode", "play"]
-								});
-								// Will receive an ack IPC which sets menu checks.
-							}
-						},
-					*/
 						{
 							label: "White analysis",	// Note string searched when ack'd.
 							type: "checkbox",
@@ -3401,18 +3385,6 @@ function menu_build() {
 								win.webContents.send("call", {
 									fn: "set_uci_option_permanent_and_cleartree",
 									args: ["ContemptMode", "black_side_analysis"]
-								});
-								// Will receive an ack IPC which sets menu checks.
-							}
-						},
-						{
-							label: "Disable",			// Note string searched when ack'd.
-							type: "checkbox",
-							checked: false,
-							click: () => {
-								win.webContents.send("call", {
-									fn: "set_uci_option_permanent_and_cleartree",
-									args: ["ContemptMode", "disable"]
 								});
 								// Will receive an ack IPC which sets menu checks.
 							}
