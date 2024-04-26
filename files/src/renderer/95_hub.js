@@ -1345,6 +1345,9 @@ let hub_props = {
 
 	reload_engineconfig: function() {
 		[load_err2, engineconfig] = engineconfig_io.load();
+		if (load_err2) {
+			alert(load_err2);
+		}
 		this.restart_engine();
 	},
 
