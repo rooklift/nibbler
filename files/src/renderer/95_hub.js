@@ -1326,7 +1326,9 @@ let hub_props = {
 
 	set_uci_option_permanent_and_cleartree: function(name, val) {
 		this.set_uci_option(name, val, true);
-		this.set_uci_option("ClearTree", true, false, false);
+		if (this.engine.leelaish) {
+			this.set_uci_option("ClearTree", true, false, false);
+		}
 	},
 
 	disable_syzygy: function() {
