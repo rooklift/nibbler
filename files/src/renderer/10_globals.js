@@ -77,7 +77,7 @@ if (images.validate_folder(config.override_piece_directory)) {
 // Note that UCI_Chess960 is handled specially by engine.js
 
 const forced_lc0_options = {		// These are sent without checking if they are known by the engine.
-	"LogLiveStats": true,			// Nevertheless, the user can still override them in engines.js.
+	"LogLiveStats": true,			// Nevertheless, the user can still override them in engines.json.
 	"MoveOverheadMs": 0,
 	"MultiPV": 500,
 	"ScoreType": "WDL_mu",
