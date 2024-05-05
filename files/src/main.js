@@ -266,7 +266,7 @@ function startup() {
 			break;
 
 		case "tempdecaymoves":		// Not so sketchy because it should be a string of an integer.
-			set_checks("Play", "TempDecayMoves", msg.val === "0" ? "Infinite" : msg.val);
+			set_checks("Play", "Temp Decay Moves", msg.val === "0" ? "Infinite" : msg.val);
 			break;
 
 		case "contemptmode":		// All the menu items are different from the UCI values...
@@ -285,6 +285,10 @@ function startup() {
 
 		case "wdlcalibrationelo":
 			set_checks("Engine", "WDL Calibration Elo", msg.val === "0" ? "Use default WDL" : msg.val);
+			break;
+
+		case "scoretype":
+			set_checks("Engine", "Score Type", msg.val);
 			break;
 
 		}
@@ -3657,6 +3661,35 @@ function menu_build() {
 					]
 				},
 				{
+					label: "Score Type",
+					submenu: [
+						{
+							label: "WDL_mu",
+							type: "checkbox",
+							checked: false,
+							click: () => {
+								win.webContents.send("call", {
+									fn: "set_uci_option_permanent",
+									args: ["ScoreType", "WDL_mu"]
+								});
+								// Will receive an ack IPC which sets menu checks.
+							}
+						},
+						{
+							label: "centipawn",
+							type: "checkbox",
+							checked: false,
+							click: () => {
+								win.webContents.send("call", {
+									fn: "set_uci_option_permanent",
+									args: ["ScoreType", "centipawn"]
+								});
+								// Will receive an ack IPC which sets menu checks.
+							}
+						}
+					]
+				},
+				{
 					type: "separator"
 				},
 				{
@@ -4017,7 +4050,7 @@ function menu_build() {
 					]
 				},
 				{
-					label: "TempDecayMoves",
+					label: "Temp Decay Moves",
 					submenu: [
 						{
 							label: "Infinite",
