@@ -411,6 +411,7 @@ function NewEngine(hub) {
 			"ContemptMode",
 			"Contempt",
 			"WDLCalibrationElo",
+			"ScoreType",
 			"Temperature",
 			"TempDecayMoves"
 		]) {
