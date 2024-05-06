@@ -217,6 +217,8 @@ function startup() {
 		// Expect msg.key to be a lowercase string
 		// Expect msg.val to be a string, possibly "" (can use the fact that "" is false-ish)
 
+		// REMEMBER TO UPDATE engine.js GUI_WANTS_TO_KNOW const WHEN THINGS ARE ADDED...
+
 		switch (msg.key) {
 
 		case "weightsfile":
@@ -290,6 +292,8 @@ function startup() {
 		case "scoretype":
 			set_checks("Engine", "Score Type", msg.val);
 			break;
+
+		// REMEMBER TO UPDATE engine.js GUI_WANTS_TO_KNOW const WHEN THINGS ARE ADDED...
 
 		}
 

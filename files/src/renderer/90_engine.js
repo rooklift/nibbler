@@ -39,6 +39,9 @@ We are in one of these states (currently implicit in the logic):
 
 */
 
+const GUI_WANTS_TO_KNOW = ["Backend", "EvalFile", "WeightsFile", "SyzygyPath", "Threads", "Hash", "MultiPV",
+	"ContemptMode", "Contempt", "WDLCalibrationElo", "ScoreType", "Temperature", "TempDecayMoves"];
+
 let NoSearch = Object.freeze({
 	node: null,
 	limit: null,
@@ -400,21 +403,7 @@ function NewEngine(hub) {
 
 		this.sent_options = Object.create(null);		// Blank anything we "sent" up till now.
 
-		for (let key of [
-			"Backend",
-			"EvalFile",
-			"WeightsFile",
-			"SyzygyPath",
-			"Threads",
-			"Hash",
-			"MultiPV",
-			"ContemptMode",
-			"Contempt",
-			"WDLCalibrationElo",
-			"ScoreType",
-			"Temperature",
-			"TempDecayMoves"
-		]) {
+		for (let key of GUI_WANTS_TO_KNOW) {
 			this.send_ack_setoption(key);
 		}
 
