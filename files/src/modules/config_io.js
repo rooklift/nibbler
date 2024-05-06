@@ -233,6 +233,10 @@ function fix(cfg) {
 	if (cfg.wdl_white_pov) {
 		cfg.wdl_pov = "w";
 	}
+
+	// Too many people are setting this...
+
+	cfg.show_engine_state = exports.defaults.show_engine_state;
 }
 
 exports.load = () => {
