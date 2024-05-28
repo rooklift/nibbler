@@ -4,7 +4,8 @@ function NewGrapher() {
 
 	let grapher = Object.create(null);
 
-	grapher.dragging = false;			// Used by the event handlers in start.js
+	grapher.dragging = false;			// Used by the event handlers in renderer/99_start.js
+	grapher.last_hover_node = null;			// Used by the event handler in renderer/95_hub.js
 
 	grapher.clear_graph = function() {
 
@@ -69,6 +70,77 @@ function NewGrapher() {
 			}
 			graphctx.stroke();
 		}
+
+		this.draw_hover_annotation();
+	};
+
+	grapher.draw_hover_annotation = function() {
+		let node = this.last_hover_node;
+
+		if ((node === null) || (node.move === null) || (node.graph_length_knower === null)) {
+			return;
+		}
+
+		graphctx.font = "bold 13px Arial";
+		graphctx.textAlign = 'center';
+
+		let x = graph.width * node.depth / node.graph_length_knower.val;
+
+		if (node.table.graph_y === null) {
+			// match "Draw our dashed runs" color in `draw_everything` above
+			graphctx.fillStyle = "#999999";
+			graphctx.textBaseline = 'top';
+			graphctx.fillText(node.token(false, true), x, 0);
+		} else {
+			if (node.parent.board.active === 'w') {
+				// match .white in nibbler.css
+				graphctx.fillStyle = '#eeeeee';
+			} else {
+				// match .pink in nibbler.css
+				graphctx.fillStyle = '#ffaaaa';
+			}
+
+			let value_sign = (node.table.graph_y > 0.5) ? '+' : ((node.table.graph_y < 0.5) ? '−' : '');
+			// Match the y-value in make_runs(…) below
+			let y = (1.0 - node.table.graph_y) * graph.height;
+
+			// Reverse the sigmoid-logit conversion of `renderer/50_table.js:get_graph_y` to get the centipawn value for display on hover
+			//   this.graph_y = 1 / (1 + Math.pow(0.5, cp / 100));
+			//   (1 + Math.pow(0.5, cp / 100)) =       1 / this.graph_y;
+			//        Math.pow(0.5, cp / 100)  =       1 / this.graph_y  -  1.0;
+			//        Math.pow(2.0,-cp / 100)  =       1 / this.graph_y  -  1.0;
+			//   log2(Math.pow(2.0,-cp / 100)) = log2( 1 / this.graph_y  -  1.0);
+			//                     -cp / 100)  = log2( 1 / this.graph_y  -  1.0);
+			//                      cp / 100   =-log2( 1 / this.graph_y  -  1.0);
+			//                      cp         =-log2( 1 / this.graph_y  -  1.0) * 100;
+			//let centipawn_scale = -Math.log2(1.0 / node.table.graph_y - 1.0);
+			//                      cp         =-log2( 1 / this.graph_y  - this.graph_y / this.graph_y) * 100;
+			//                      cp         =-log2((1 - this.graph_y) / this.graph_y)               * 100;
+			//                      cp         = log2(this.graph_y / (1 - this.graph_y))               * 100;
+			let centipawn_scale = Math.log2(node.table.graph_y / (1.0 - node.table.graph_y));
+
+			let value_string = value_sign + Math.abs(centipawn_scale).toFixed(2);
+
+			// Try to avoid visually overlapping the eval line itself
+			if (node.table.graph_y > 0.5) {
+				graphctx.textBaseline = 'bottom';
+				graphctx.fillText(node.token(false, true), x, graph.height);
+
+				graphctx.textBaseline = 'top';
+			} else {
+				graphctx.textBaseline = 'top';
+				graphctx.fillText(node.token(false, true), x, 0);
+
+				graphctx.textBaseline = 'bottom';
+			}
+
+			// match .blue in nibbler.css
+			graphctx.fillStyle = '#6cccee';
+			graphctx.font = "16px Arial";
+			// graphctx.textBaseline = 'middle';
+			graphctx.fillText(value_string, x, y);
+		}
+
 	};
 
 	grapher.make_runs = function(eval_list, width, height, graph_length) {
@@ -178,6 +250,26 @@ function NewGrapher() {
 		graphctx.lineTo(x, height);
 		graphctx.stroke();
 
+	};
+
+	grapher.is_inside_graph_canvas = function(mouse_event) {
+		if (!mouse_event || config.graph_height <= 0) {
+			return false;
+		}
+
+		let mousex = mouse_event.offsetX;
+		let mousey = mouse_event.offsetY;
+		if ((typeof mousex !== "number") || (typeof mousey !== "number")) {
+			return null;
+		}
+
+		let width = graph.width;
+		let height = graph.height;
+		if ((typeof width !== "number" || width < 1) || (typeof width !== "number" || width < 1)) {
+			return null;
+		}
+
+		return ((0.0 <= mousex) && (mousex <= width) && (0.0 <= mousey) && (mousey <= height));
 	};
 
 	grapher.node_from_click = function(node, event) {
