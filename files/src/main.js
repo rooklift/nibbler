@@ -289,6 +289,16 @@ function startup() {
 			set_checks("Engine", "WDL Calibration Elo", msg.val === "0" ? "Use default WDL" : msg.val);
 			break;
 
+		case "wdlevalobjectivity":
+			if (msg.val === "1") {
+				set_checks("Engine", "WDL Eval Objectivity", "Yes");
+			} else if (msg.val === "0") {
+				set_checks("Engine", "WDL Eval Objectivity", "No");
+			} else {
+				set_checks("Engine", "WDL Eval Objectivity", msg.val);
+			}
+			break;
+
 		case "scoretype":
 			set_checks("Engine", "Score Type", msg.val);
 			break;
@@ -3662,6 +3672,35 @@ function menu_build() {
 								// Will receive an ack IPC which sets menu checks.
 							}
 						},
+					]
+				},
+				{
+					label: "WDL Eval Objectivity",
+					submenu: [
+						{
+							label: "Yes",
+							type: "checkbox",
+							checked: false,
+							click: () => {
+								win.webContents.send("call", {
+									fn: "set_uci_option_permanent",
+									args: ["WDLEvalObjectivity", 1]
+								});
+								// Will receive an ack IPC which sets menu checks.
+							}
+						},
+						{
+							label: "No",
+							type: "checkbox",
+							checked: false,
+							click: () => {
+								win.webContents.send("call", {
+									fn: "set_uci_option_permanent",
+									args: ["WDLEvalObjectivity", 0]
+								});
+								// Will receive an ack IPC which sets menu checks.
+							}
+						}
 					]
 				},
 				{

@@ -90,6 +90,7 @@ const standard_lc0_options = {		// These are only sent if known by the engine.
 	"ContemptMode": "white_side_analysis",
 	"Contempt": 0,
 	"WDLCalibrationElo": 0,
+	"WDLEvalObjectivity": 0,
 };
 
 const forced_ab_options = {};

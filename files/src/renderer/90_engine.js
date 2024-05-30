@@ -40,7 +40,7 @@ We are in one of these states (currently implicit in the logic):
 */
 
 const GUI_WANTS_TO_KNOW = ["Backend", "EvalFile", "WeightsFile", "SyzygyPath", "Threads", "Hash", "MultiPV",
-	"ContemptMode", "Contempt", "WDLCalibrationElo", "ScoreType", "Temperature", "TempDecayMoves"];
+	"ContemptMode", "Contempt", "WDLCalibrationElo", "WDLEvalObjectivity", "ScoreType", "Temperature", "TempDecayMoves"];
 
 let NoSearch = Object.freeze({
 	node: null,
