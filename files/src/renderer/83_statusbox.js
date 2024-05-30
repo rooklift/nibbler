@@ -92,7 +92,11 @@ function NewStatusHandler() {
 			} else if (config.behaviour === "back_analysis") {
 				status_string += `<span class="green">Back-eval! </span>`;
 			} else if (config.behaviour === "analysis_free") {
-				status_string += `<span id="haltbutton_clicker" class="green">ANALYSIS (halt?) </span>`;
+				if (hub.engine.sent_options.contempt !== undefined && hub.engine.sent_options.contempt !== "0") {
+					status_string += `<span id="haltbutton_clicker" class="green">Contempt active! </span>`;
+				} else {
+					status_string += `<span id="haltbutton_clicker" class="green">ANALYSIS (halt?) </span>`;
+				}
 			}
 
 			if (config.book_explorer) {
