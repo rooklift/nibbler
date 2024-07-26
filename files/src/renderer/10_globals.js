@@ -49,6 +49,7 @@ const util = require("util");
 
 // Globals..........................................................
 
+// https://developer.mozilla.org/en-US/docs/Web/API/HTMLCanvasElement/getContext
 const boardctx = canvas.getContext("2d");
 const graphctx = graph.getContext("2d");
 const decoder = new util.TextDecoder("utf8");	// https://github.com/electron/electron/issues/18733
