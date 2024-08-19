@@ -4462,6 +4462,17 @@ function menu_build() {
 								});
 							}
 						},
+						{
+							label: "Suppress ucinewgame",
+							type: "checkbox",
+							checked: config.suppress_ucinewgame,
+							click: () => {
+								win.webContents.send("call", {
+									fn: "toggle",
+									args: ["suppress_ucinewgame"],
+								});
+							}
+						},
 					]
 				},
 				{

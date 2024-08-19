@@ -145,7 +145,9 @@ let hub_props = {
 			this.node_to_clean = null;
 			this.leela_lock_node = null;
 			this.set_behaviour("halt");					// Will cause "stop" to be sent.
-			this.engine.send_ucinewgame();				// Must happen after "stop" is sent.
+			if (!config.suppress_ucinewgame) {
+				this.engine.send_ucinewgame();			// Must happen after "stop" is sent.
+			}
 			this.send_title();
 			if (this.engine.ever_received_uciok && !this.engine.in_960_mode() && this.tree.node.board.normalchess === false) {
 				alert(messages.c960_warning);

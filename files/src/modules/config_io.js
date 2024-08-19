@@ -130,6 +130,7 @@ exports.defaults = {
 	"allow_stopped_analysis": false,
 	"never_suppress_searchmoves": true,
 	"never_grayout_infolines": false,
+	"suppress_ucinewgame": false,
 
 	"show_engine_state": false,
 
