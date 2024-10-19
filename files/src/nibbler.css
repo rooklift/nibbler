@@ -74,6 +74,13 @@ body {
 	z-index: 3;
 }
 
+.grabbable {
+    cursor: grab;
+}
+.grabbable:active {
+    cursor: grabbing;
+}
+
 #statusbox {
 	grid-area: c;
 	margin: 0 0 0 1em;
