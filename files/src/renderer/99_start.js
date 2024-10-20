@@ -74,6 +74,7 @@ for (let y = 0; y < 8; y++) {
             td2.style.opacity = "50%";
             dragImg.src = td2.style.backgroundImage.slice(5, -2);
             dragDiv.style.width = dragDiv.style.height = config.square_size + "px";
+            dragDiv.style.transform = "translate(-" + config.square_size + "px)";
             event.dataTransfer.effectAllowed = "move";
             event.dataTransfer.setDragImage(dragDiv, config.square_size / 2, config.square_size / 2);
 
