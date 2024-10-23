@@ -49,6 +49,10 @@ rightgridder.style["height"] = `${canvas.height}px`;
 
 hub.change_background(config.override_board, false);
 
+// Improved drag-and-drop added by silverslither, see:
+// https://github.com/rooklift/nibbler/commit/9c8f50c50637006b4a121504bd3f6a55a6f0b7df
+// (I can't say I perfectly understand it...)
+
 const dragDiv = document.createElement("div");
 const dragImg = document.createElement("img");
 dragImg.style.width = dragImg.style.height = "100%";
@@ -71,7 +75,7 @@ for (let y = 0; y < 8; y++) {
 		tr1.appendChild(td1);
 		tr2.appendChild(td2);
 		td2.addEventListener("dragstart", (event) => {
-			td2.style.opacity = "50%";
+			td2.style.opacity = "0%";
 			dragImg.src = td2.style.backgroundImage.slice(5, -2);
 			dragDiv.style.width = dragDiv.style.height = config.square_size + "px";
 			dragDiv.style.transform = "translate(-" + config.square_size + "px)";
