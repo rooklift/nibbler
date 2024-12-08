@@ -2395,13 +2395,13 @@ function menu_build() {
 							type: "separator"
 						},
 						{
-							label: "opencl",
+							label: "blas",
 							type: "checkbox",
 							checked: false,
 							click: () => {
 								win.webContents.send("call", {
 									fn: "set_uci_option_permanent",
-									args: ["Backend", "opencl"]
+									args: ["Backend", "blas"]
 								});
 								// Will receive an ack IPC which sets menu checks.
 							}
@@ -2414,18 +2414,6 @@ function menu_build() {
 								win.webContents.send("call", {
 									fn: "set_uci_option_permanent",
 									args: ["Backend", "dx12"]
-								});
-								// Will receive an ack IPC which sets menu checks.
-							}
-						},
-						{
-							label: "blas",
-							type: "checkbox",
-							checked: false,
-							click: () => {
-								win.webContents.send("call", {
-									fn: "set_uci_option_permanent",
-									args: ["Backend", "blas"]
 								});
 								// Will receive an ack IPC which sets menu checks.
 							}
@@ -2455,7 +2443,70 @@ function menu_build() {
 							}
 						},
 						{
+							label: "opencl",
+							type: "checkbox",
+							checked: false,
+							click: () => {
+								win.webContents.send("call", {
+									fn: "set_uci_option_permanent",
+									args: ["Backend", "opencl"]
+								});
+								// Will receive an ack IPC which sets menu checks.
+							}
+						},
+						{
+							label: "xla",
+							type: "checkbox",
+							checked: false,
+							click: () => {
+								win.webContents.send("call", {
+									fn: "set_uci_option_permanent",
+									args: ["Backend", "xla"]
+								});
+								// Will receive an ack IPC which sets menu checks.
+							}
+						},
+						{
 							type: "separator"
+						},
+						{
+							label: "tensorflow-cc",
+							type: "checkbox",
+							checked: false,
+							click: () => {
+								win.webContents.send("call", {
+									fn: "set_uci_option_permanent",
+									args: ["Backend", "tensorflow-cc"]
+								});
+								// Will receive an ack IPC which sets menu checks.
+							}
+						},
+						{
+							label: "tensorflow-cc-cpu",
+							type: "checkbox",
+							checked: false,
+							click: () => {
+								win.webContents.send("call", {
+									fn: "set_uci_option_permanent",
+									args: ["Backend", "tensorflow-cc-cpu"]
+								});
+								// Will receive an ack IPC which sets menu checks.
+							}
+						},
+						{
+							type: "separator"
+						},
+						{
+							label: "onnx-cpu",
+							type: "checkbox",
+							checked: false,
+							click: () => {
+								win.webContents.send("call", {
+									fn: "set_uci_option_permanent",
+									args: ["Backend", "onnx-cpu"]
+								});
+								// Will receive an ack IPC which sets menu checks.
+							}
 						},
 						{
 							label: "onnx-cuda",
@@ -2470,13 +2521,25 @@ function menu_build() {
 							}
 						},
 						{
-							label: "onnx-cpu",
+							label: "onnx-dml",
 							type: "checkbox",
 							checked: false,
 							click: () => {
 								win.webContents.send("call", {
 									fn: "set_uci_option_permanent",
-									args: ["Backend", "onnx-cpu"]
+									args: ["Backend", "onnx-dml"]
+								});
+								// Will receive an ack IPC which sets menu checks.
+							}
+						},
+						{
+							label: "onnx-rocm",
+							type: "checkbox",
+							checked: false,
+							click: () => {
+								win.webContents.send("call", {
+									fn: "set_uci_option_permanent",
+									args: ["Backend", "onnx-rocm"]
 								});
 								// Will receive an ack IPC which sets menu checks.
 							}
@@ -2493,6 +2556,7 @@ function menu_build() {
 								// Will receive an ack IPC which sets menu checks.
 							}
 						},
+/*
 						{
 							type: "separator"
 						},
@@ -2520,17 +2584,18 @@ function menu_build() {
 								// Will receive an ack IPC which sets menu checks.
 							}
 						},
+*/
 						{
 							type: "separator"
 						},
 						{
-							label: "roundrobin",
+							label: "demux",
 							type: "checkbox",
 							checked: false,
 							click: () => {
 								win.webContents.send("call", {
 									fn: "set_uci_option_permanent",
-									args: ["Backend", "roundrobin"]
+									args: ["Backend", "demux"]
 								});
 								// Will receive an ack IPC which sets menu checks.
 							}
@@ -2548,13 +2613,13 @@ function menu_build() {
 							}
 						},
 						{
-							label: "demux",
+							label: "roundrobin",
 							type: "checkbox",
 							checked: false,
 							click: () => {
 								win.webContents.send("call", {
 									fn: "set_uci_option_permanent",
-									args: ["Backend", "demux"]
+									args: ["Backend", "roundrobin"]
 								});
 								// Will receive an ack IPC which sets menu checks.
 							}
