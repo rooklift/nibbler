@@ -2443,6 +2443,18 @@ function menu_build() {
 							}
 						},
 						{
+							label: "onednn",
+							type: "checkbox",
+							checked: false,
+							click: () => {
+								win.webContents.send("call", {
+									fn: "set_uci_option_permanent",
+									args: ["Backend", "onednn"]
+								});
+								// Will receive an ack IPC which sets menu checks.
+							}
+						},
+						{
 							label: "opencl",
 							type: "checkbox",
 							checked: false,
@@ -2540,18 +2552,6 @@ function menu_build() {
 								win.webContents.send("call", {
 									fn: "set_uci_option_permanent",
 									args: ["Backend", "onnx-rocm"]
-								});
-								// Will receive an ack IPC which sets menu checks.
-							}
-						},
-						{
-							label: "onednn",
-							type: "checkbox",
-							checked: false,
-							click: () => {
-								win.webContents.send("call", {
-									fn: "set_uci_option_permanent",
-									args: ["Backend", "onednn"]
 								});
 								// Will receive an ack IPC which sets menu checks.
 							}
