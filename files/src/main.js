@@ -2317,45 +2317,6 @@ function menu_build() {
 					label: "Backend",
 					submenu: [
 						{
-							label: "cudnn-auto",
-							type: "checkbox",
-							checked: false,
-							click: () => {
-								win.webContents.send("call", {
-									fn: "set_uci_option_permanent",
-									args: ["Backend", "cudnn-auto"]
-								});
-								// Will receive an ack IPC which sets menu checks.
-							}
-						},
-						{
-							label: "cudnn",
-							type: "checkbox",
-							checked: false,
-							click: () => {
-								win.webContents.send("call", {
-									fn: "set_uci_option_permanent",
-									args: ["Backend", "cudnn"]
-								});
-								// Will receive an ack IPC which sets menu checks.
-							}
-						},
-						{
-							label: "cudnn-fp16",
-							type: "checkbox",
-							checked: false,
-							click: () => {
-								win.webContents.send("call", {
-									fn: "set_uci_option_permanent",
-									args: ["Backend", "cudnn-fp16"]
-								});
-								// Will receive an ack IPC which sets menu checks.
-							}
-						},
-						{
-							type: "separator"
-						},
-						{
 							label: "cuda-auto",
 							type: "checkbox",
 							checked: false,
@@ -2387,6 +2348,45 @@ function menu_build() {
 								win.webContents.send("call", {
 									fn: "set_uci_option_permanent",
 									args: ["Backend", "cuda-fp16"]
+								});
+								// Will receive an ack IPC which sets menu checks.
+							}
+						},
+						{
+							type: "separator"
+						},
+						{
+							label: "cudnn-auto",
+							type: "checkbox",
+							checked: false,
+							click: () => {
+								win.webContents.send("call", {
+									fn: "set_uci_option_permanent",
+									args: ["Backend", "cudnn-auto"]
+								});
+								// Will receive an ack IPC which sets menu checks.
+							}
+						},
+						{
+							label: "cudnn",
+							type: "checkbox",
+							checked: false,
+							click: () => {
+								win.webContents.send("call", {
+									fn: "set_uci_option_permanent",
+									args: ["Backend", "cudnn"]
+								});
+								// Will receive an ack IPC which sets menu checks.
+							}
+						},
+						{
+							label: "cudnn-fp16",
+							type: "checkbox",
+							checked: false,
+							click: () => {
+								win.webContents.send("call", {
+									fn: "set_uci_option_permanent",
+									args: ["Backend", "cudnn-fp16"]
 								});
 								// Will receive an ack IPC which sets menu checks.
 							}
@@ -2556,7 +2556,6 @@ function menu_build() {
 								// Will receive an ack IPC which sets menu checks.
 							}
 						},
-/*
 						{
 							type: "separator"
 						},
@@ -2584,7 +2583,6 @@ function menu_build() {
 								// Will receive an ack IPC which sets menu checks.
 							}
 						},
-*/
 						{
 							type: "separator"
 						},
