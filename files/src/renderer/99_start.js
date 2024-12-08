@@ -49,16 +49,6 @@ rightgridder.style["height"] = `${canvas.height}px`;
 
 hub.change_background(config.override_board, false);
 
-// Improved drag-and-drop added by silverslither, see:
-// https://github.com/rooklift/nibbler/commit/9c8f50c50637006b4a121504bd3f6a55a6f0b7df
-// (I can't say I perfectly understand it...)
-
-const dragDiv = document.createElement("div");
-const dragImg = document.createElement("img");
-dragImg.style.width = dragImg.style.height = "100%";
-dragDiv.appendChild(dragImg);
-document.body.appendChild(dragDiv);
-
 for (let y = 0; y < 8; y++) {
 	let tr1 = document.createElement("tr");
 	let tr2 = document.createElement("tr");
@@ -71,23 +61,12 @@ for (let y = 0; y < 8; y++) {
 		td2.id = "overlay_" + S(x, y);
 		td1.width = td2.width = config.square_size;
 		td1.height = td2.height = config.square_size;
-		td2.className = "grabbable";
 		tr1.appendChild(td1);
 		tr2.appendChild(td2);
 		td2.addEventListener("dragstart", (event) => {
-			td2.style.opacity = "0%";
-			dragImg.src = td2.style.backgroundImage.slice(5, -2);
-			dragDiv.style.width = dragDiv.style.height = config.square_size + "px";
-			dragDiv.style.transform = "translate(-" + config.square_size + "px)";
-			event.dataTransfer.effectAllowed = "move";
-			event.dataTransfer.setDragImage(dragDiv, config.square_size / 2, config.square_size / 2);
-
 			hub.set_active_square(Point(x, y));
 			event.dataTransfer.setData("text", "overlay_" + S(x, y));
 		});
-		td2.addEventListener("dragend", () => {
-			td2.style.opacity = "";
-		})
 	}
 }
 
