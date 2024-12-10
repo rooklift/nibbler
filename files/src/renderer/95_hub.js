@@ -2136,8 +2136,8 @@ let hub_props = {
 
 		// Is it a file?
 
-		if (event.dataTransfer && event.dataTransfer.files && event.dataTransfer.files[0] && event.dataTransfer.files[0].path) {
-			this.open(event.dataTransfer.files[0].path);
+		if (event.dataTransfer && event.dataTransfer.files && event.dataTransfer.files[0] && get_path_for_file(event.dataTransfer.files[0])) {
+			this.open(get_path_for_file(event.dataTransfer.files[0]));
 			return;
 		}
 
