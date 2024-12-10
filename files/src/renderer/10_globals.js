@@ -50,12 +50,8 @@ const util = require("util");
 // Prior to v32, given a file object from an event (e.g. from dragging the file onto the window)
 // we could simply access its path, but afterwards we need to use a helper function...
 
-let get_path_for_file;
-try {
-	get_path_for_file = require("electron").webUtils.getPathForFile;
-} catch (error) {
-	get_path_for_file = file => file.path;
-}
+let webUtils = require("electron").webUtils;
+const get_path_for_file = (webUtils && webUtils.getPathForFile) ? webUtils.getPathForFile : file => file.path;
 
 // Globals..........................................................
 
