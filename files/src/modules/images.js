@@ -37,6 +37,8 @@ let sprites = {
 
 	load_from: function(directory) {
 
+		let urlsafe_directory = directory.replace(/#/g, "%23");		// Looks like replacing # with %23 is the only thing that's needed? Maybe some others??
+
 		sprites.loads = 0;
 
 		for (let c of "KkQqRrBbNnPp") {
@@ -49,9 +51,9 @@ let sprites = {
 				sprites[c].addEventListener("error", () => {console.log(`Failed to load image ${c}.svg or ${c}.png`);}, {once: true});
 
 				if (fs.existsSync(path.join(directory, `${c}.svg`))) {
-					sprites[c].src = path.join(directory, `${c}.svg`);
-				} else {
-					sprites[c].src = path.join(directory, `${c}.png`);
+					sprites[c].src = path.join(urlsafe_directory, `${c}.svg`);
+				} else if (fs.existsSync(path.join(directory, `${c}.png`))) {
+					sprites[c].src = path.join(urlsafe_directory, `${c}.png`);
 				}
 
 			} else {
@@ -59,9 +61,9 @@ let sprites = {
 				sprites[c].addEventListener("error", () => {console.log(`Failed to load image _${c.toUpperCase()}.svg or _${c.toUpperCase()}.png`);}, {once: true});
 
 				if (fs.existsSync(path.join(directory, `_${c.toUpperCase()}.svg`))) {
-					sprites[c].src = path.join(directory, `_${c.toUpperCase()}.svg`);
-				} else {
-					sprites[c].src = path.join(directory, `_${c.toUpperCase()}.png`);
+					sprites[c].src = path.join(urlsafe_directory, `_${c.toUpperCase()}.svg`);
+				} else if (fs.existsSync(path.join(directory, `_${c.toUpperCase()}.png`))) {
+					sprites[c].src = path.join(urlsafe_directory, `_${c.toUpperCase()}.png`);
 				}
 			}
 
