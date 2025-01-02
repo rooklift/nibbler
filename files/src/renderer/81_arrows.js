@@ -2,7 +2,7 @@
 
 let arrow_props = {
 
-	draw_arrows: function(node, specific_source, show_move) {		// specific_source is a Point(), show_move is a string
+	draw_arrows: function(node, specific_source, show_move) {		// If not nullish, specific_source is a Point() and show_move is a string
 
 		// Function is responsible for updating the one_click_moves array.
 
@@ -356,9 +356,9 @@ let arrow_props = {
 	// of the app. The info_list here is just a list of objects each containing only "move" and "weight" - where
 	// the weights have been normalised to the 0-1 scale and the list has been sorted.
 	//
-	// Note that info_list here should not be modified.
+	// Note that info_list here MUST NOT BE MODIFIED.
 
-	draw_explorer_arrows: function(node, info_list) {
+	draw_explorer_arrows: function(node, info_list, specific_source) {		// If not nullish, specific_source is a Point()
 
 		for (let x = 0; x < 8; x++) {
 			for (let y = 0; y < 8; y++) {
@@ -374,6 +374,10 @@ let arrow_props = {
 		let heads = [];
 
 		for (let i = 0; i < info_list.length; i++) {
+
+			if (specific_source && specific_source.s !== info_list[i].move.slice(0, 2)) {
+				continue;
+			}
 
 			let [x1, y1] = XY(info_list[i].move.slice(0, 2));
 			let [x2, y2] = XY(info_list[i].move.slice(2, 4));

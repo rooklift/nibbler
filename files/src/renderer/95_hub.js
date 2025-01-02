@@ -814,7 +814,7 @@ let hub_props = {
 		if (!this.book) {
 			this.explorer_objects_cache = null;
 			this.explorer_cache_node_id = null;
-			this.info_handler.draw_explorer_arrows(this.tree.node, []);		// Needs to happen, to update the one_click_moves.
+			this.info_handler.draw_explorer_arrows(this.tree.node, [], null);		// Needs to happen, to update the one_click_moves.
 			return;
 		}
 
@@ -842,7 +842,8 @@ let hub_props = {
 			this.explorer_objects_cache.sort((a, b) => b.weight - a.weight);
 		}
 
-		this.info_handler.draw_explorer_arrows(this.tree.node, this.explorer_objects_cache);
+		let arrow_spotlight_square = config.click_spotlight ? this.active_square : null;
+		this.info_handler.draw_explorer_arrows(this.tree.node, this.explorer_objects_cache, arrow_spotlight_square);
 	},
 
 	draw_lichess_arrows: function() {
@@ -864,7 +865,7 @@ let hub_props = {
 		if (!ok) {
 			this.explorer_objects_cache = null;
 			this.explorer_cache_node_id = null;
-			this.info_handler.draw_explorer_arrows(this.tree.node, []);		// Needs to happen, to update the one_click_moves.
+			this.info_handler.draw_explorer_arrows(this.tree.node, [], null);		// Needs to happen, to update the one_click_moves.
 			return;
 		}
 
@@ -889,7 +890,8 @@ let hub_props = {
 			this.explorer_objects_cache.sort((a, b) => b.weight - a.weight);
 		}
 
-		this.info_handler.draw_explorer_arrows(this.tree.node, this.explorer_objects_cache);
+		let arrow_spotlight_square = config.click_spotlight ? this.active_square : null;
+		this.info_handler.draw_explorer_arrows(this.tree.node, this.explorer_objects_cache, arrow_spotlight_square);
 	},
 
 	draw_statusbox: function() {
