@@ -35,7 +35,10 @@ const messages = require("./modules/messages");
 const path = require("path");
 const running_as_electron = require("./modules/running_as_electron");
 const stringify = require("./modules/stringify");
+const translate = require("./modules/translate");
 const url = require("url");
+
+translate.register_startup_language(config.language);
 
 // We want sync save and open dialogs. In Electron 5 we could get these by calling
 // showSaveDialog or showOpenDialog without a callback, but in Electron 6 this no
@@ -4661,6 +4664,10 @@ function menu_build() {
 					]
 				},
 			]
+		},
+		{
+			label: "Language",
+			submenu: language_choices_submenu()
 		}
 	];
 
@@ -4699,6 +4706,25 @@ function menu_build() {
 	// Actually build the menu...
 
 	return electron.Menu.buildFromTemplate(template);
+}
+
+function language_choices_submenu() {
+
+	let ret = [];
+
+	for (let language of translate.all_languages()) {
+		ret.push({
+			label: language,
+			type: "checkbox",
+			checked: config.language === language,
+			click: () => {
+				set_checks("Language", language);
+				win.webContents.send("set", {language: language});
+			}
+		});
+	}
+
+	return ret;
 }
 
 function get_submenu_items(menupath) {
