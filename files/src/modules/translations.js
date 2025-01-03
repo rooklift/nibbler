@@ -10,9 +10,6 @@ module.exports = {
 	},
 
 	"Français": {
-
-		"RESTART_REQUIRED": "L'interface doit maintenant être redémarrée.",
-
 		"File": "Fichier",
 		"About": "À propos",
 		"New game": "Nouvelle partie",
@@ -221,13 +218,12 @@ module.exports = {
 		"Log positions": "Logger positions",
 		"Log info lines": "Logger lignes info",
 		"...including useless lines": "...lignes inutiles incluses",
-		"Language": "Langue"
+		"Language": "Langue",
+
+		"RESTART_REQUIRED": "L'interface doit maintenant être redémarrée.",
 	},
 
 	"беларуская": {
-
-		"RESTART_REQUIRED": "Праграму трэба перазапусціць.",
-
 		"File": "Файл",
 		"About": "Пра праграму",
 		"New game": "Новая гульня",
@@ -436,7 +432,9 @@ module.exports = {
 		"Log positions": "Запісваць пазіцыі",
 		"Log info lines": "Запісваць інфармацыйныя радкі",
 		"...including useless lines": "...у тым ліку бескарысныя радкі",
-		"Language": "Мова"
+		"Language": "Мова",
+
+		"RESTART_REQUIRED": "Праграму трэба перазапусціць.",
 	},
 
 };
