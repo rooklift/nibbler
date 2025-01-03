@@ -4333,13 +4333,13 @@ function menu_build() {
 					type: "separator"
 				},
 				{
-					label: `Show ${config_io.filename}`,
+					label: translate.t(`Show ${config_io.filename}`),			// Ugh.
 					click: () => {
 						electron.shell.showItemInFolder(config_io.filepath);
 					}
 				},
 				{
-					label: `Show ${engineconfig_io.filename}`,
+					label: translate.t(`Show ${engineconfig_io.filename}`),		// Ugh.
 					click: () => {
 						electron.shell.showItemInFolder(engineconfig_io.filepath);
 					}
@@ -4348,7 +4348,7 @@ function menu_build() {
 					type: "separator"
 				},
 				{
-					label: `Reload ${engineconfig_io.filename} (and restart engine)`,
+					label: translate.t(`Reload ${engineconfig_io.filename} (and restart engine)`),		// Ugh.
 					click: () => {
 						win.webContents.send("call", "reload_engineconfig");
 					}
