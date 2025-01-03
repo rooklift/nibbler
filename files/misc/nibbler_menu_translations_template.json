@@ -1,213 +1,215 @@
 {
-    "File": "TODO",            						// As in: "file menu"
-    "About": "TODO",
-    "New game": "TODO",
-    "New 960 game": "TODO",							// New game of Chess960
-    "Open PGN...": "TODO",							// Portable game notation file
-    "Load FEN / PGN from clipboard": "TODO",		// Examines clipboard for valid FEN or PGN data
-    "Save this game...": "TODO",					// Saves as PGN
-    "Write PGN to clipboard": "TODO",
-    "PGN saved statistics": "TODO",					// Has submenu of which statistics to save to PGN variations...
-    "EV": "TODO",									// ... expected value
-    "Centipawns": "TODO",							// ...
-    "N (%)": "TODO",								// ... N (node count, percent of total)
-    "N (absolute)": "TODO",							// ... N (absolute count)
-    "...out of total": "TODO",						// ... display total N
-    "Depth (A/B only)": "TODO",						// ... search depth, only displayed if alphabeta-style engine
-    "Cut": "TODO",
-    "Copy": "TODO",
-    "Paste": "TODO",
-    "Quit": "TODO",
-    "Tree": "TODO",									// Game tree manipulation functions
-    "Play engine choice": "TODO",					// Adds engine's choice of move to game tree / goes to it if already present
-    "1st": "TODO",									// ... i.e. play engine's top choice
-    "2nd": "TODO",									// ... i.e. play engine's 2nd choice
-    "3rd": "TODO",									// ... i.e. play engine's 3rd choice
-    "4th": "TODO",									// ... i.e. play engine's 3rd choice
-    "Root": "TODO",									// Move to root node in game tree
-    "End": "TODO",									// Move to final node in (this line of) game tree
-    "Backward": "TODO",								// Backward one move in game tree
-    "Forward": "TODO",								// Forward one move in game tree
-    "Previous sibling": "TODO",						// Go to previous sibling in game tree (if extant)
-    "Next sibling": "TODO",							// Go to next sibling in game tree (if extant)
-    "Return to main line": "TODO",
-    "Promote line to main line": "TODO",
-    "Promote line by 1 level": "TODO",
-    "Delete node": "TODO",
-    "Delete children": "TODO",						// i.e. child nodes in game tree
-    "Delete siblings": "TODO",
-    "Delete ALL other lines": "TODO",
-    "Show PGN games list": "TODO",					// For when a PGN file has multiple games
-    "Escape": "TODO",								// Should literally just be the name of the Escape key in target language
-    "Analysis": "TODO",
-    "Go": "TODO",									// Starts the engine running
-    "Go and lock engine": "TODO",					// Starts the engine running on current position, and does NOT change the engine position even if GUI position changes
-    "Return to locked position": "TODO",			// Returns to the position the engine is analysing, IF the "go and lock engine" item was used
-    "Halt": "TODO",									// Stops the engine
-    "Auto-evaluate line": "TODO",					// Makes engine analyse a whole line of the game tree
-    "Auto-evaluate line, backwards": "TODO",		// Makes engine analyse a whole line of the game tree, backwards
-    "Show focus (searchmoves) buttons": "TODO",		// Shows buttons next to each legal move to allow the engine to focus analysis on selected moves
-    "Clear focus": "TODO",							// Deselects all such buttons
-    "Invert focus": "TODO",							// Inverts all such buttons
-    "Winrate POV": "TODO",							// Winrate (really EV) displayed from whose point of view?
-    "Current": "TODO",								// ... displayed from current player's
-    "White": "TODO",								// ... displayed from White's point of view
-    "Black": "TODO",								// ... displayed from Black's point of view
-    "Centipawn POV": "TODO",						// Centipawn scores displayed from whose point of view? (submenu not in this list)
-    "Win / draw / loss POV": "TODO",				// WDL statistic displayed from whose point of view? (submenu not in this list)
-    "PV clicks": "TODO",							// What to do when user clicks on a displayed principal variation (PV)
-    "Do nothing": "TODO",							// ... nothing
-    "Go there": "TODO",								// ... move to that position
-    "Add to tree": "TODO",							// ... add PV to game tree
-    "Write infobox to clipboard": "TODO",
-    "Forget all analysis": "TODO",
-    "Display": "TODO",								// Has large submenu of display options
-    "Flip board": "TODO",
-    "Arrows": "TODO",
-    "Piece-click spotlight": "TODO",				// Displays arrows showing legal moves, when a piece is clicked
-    "Always show actual move (if known)": "TODO",	// Displays arrow representing move actually played in the game record (if known)
-    "...with unique colour": "TODO",				// ... displays that arrow with a unique colour
-    "...with outline": "TODO",						// ... and an outline
-    "Arrowhead type": "TODO",						// Arrows display what statistic?
-    "Winrate": "TODO",								// ... (really expected value)
-    "Node %": "TODO",								// ... What % of examined nodes (examined by the engine) were this move?
-    "Policy": "TODO",								// Policy / prior
-    "MultiPV rank": "TODO",							// Ordinal rank in engine's preferred moves
-    "Moves Left Head": "TODO",						// Output of engine neural network head estimating "moves left before game ends"
-    "Arrow filter (Lc0)": "TODO",					// Filter criteria for displaying / not displaying arrows (when using Lc0 engine)
-    "All moves": "TODO",							// ... always display all arrows
-    "Top move": "TODO",								// ... display arrow for top move only
-    "Arrow filter (others)": "TODO",				// Filter criteria for displaying / not displaying arrows (when using Stockfish or similar)
-    "Diff < 15%": "TODO",							// ... EV was within 15% of best move
-    "Diff < 10%": "TODO",							// ... EV was within 10% of best move
-    "Diff < 5%": "TODO",							// ... EV was within 5% of best move
-    "Infobox stats": "TODO",						// Stats to display in info pane
-    "N - nodes (%)": "TODO",						// ...
-    "N - nodes (absolute)": "TODO",					// ...
-    "P - policy": "TODO",							// ...
-    "V - static evaluation": "TODO",				// ...
-    "Q - evaluation": "TODO",						// ...
-    "U - uncertainty": "TODO",						// ...
-    "S - search priority": "TODO",					// ...
-    "M - moves left": "TODO",						// ...
-    "WDL - win / draw / loss": "TODO",				// ...
-    "Linebreak before stats": "TODO",
-    "PV move numbers": "TODO",						// Display move numbers when writing principal variation e.g. 40. Kc2 Qf1 41. Rd8 etc etc
-    "Online API": "TODO",							// Access an online API to display real-world game outcome stats
-    "None": "TODO",									// ... Don't access API
-    "ChessDB.cn evals": "TODO",						// ... Use ChessDB.cn
-    "Lichess results (masters)": "TODO",			// ... Use results from Lichess master player database
-    "Lichess results (plebs)": "TODO",				// ... Use results from Lichess user database
-    "Allow API after move 25": "TODO",
-    "Draw PV on mouseover": "TODO",
-    "Draw PV method": "TODO",
-    "Animate": "TODO",								// ...
-    "Single move": "TODO",							// ...
-    "Final position": "TODO",						// ...
-    "Pieces": "TODO",								// Icons / images to use for piece display
-    "Choose pieces folder...": "TODO",				// ... Select folder containing such images
-    "Default": "TODO",								// ... Just use default images
-    "About custom pieces": "TODO",					// Displays text explaining how to create custom images
-    "Background": "TODO",							// Background to use for board display
-    "Choose background image...": "TODO",			// ... Select image file for background
-    "Book frequency arrows": "TODO",				// Dispay arrows representing move frequency in opening book file
-    "Lichess frequency arrows": "TODO",				// Dispay arrows representing move frequency in Lichess database
-    "Sizes": "TODO",								// Adjust sizes of displayed things
-    "Infobox font": "TODO",							// Adjust SIZE of font in info pane
-    "Move history font": "TODO",					// Adjust SIZE of font in game tree pane
-    "Board": "TODO",								// Adjust SIZE of board
-    "Giant": "TODO",								// ...
-    "Large": "TODO",								// ...
-    "Medium": "TODO",								// ...
-    "Small": "TODO",								// ...
-    "Graph": "TODO",								// Adjust SIZE (height) of graph displaying winrate
-    "Graph lines": "TODO",							// Adjust SIZE of graph line
-    "I want other size options!": "TODO",			// Displays text explaining how to set custom size options
-    "Engine": "TODO",								// Top level menu item for engine settings
-    "Choose engine...": "TODO",						// Choose engine via file picker
-    "Choose known engine...": "TODO",				// Choose engine from a list of previously used engines
-    "Weights": "TODO",								// Choose neural net weight file
-    "Lc0 WeightsFile...": "TODO",					// ... For Lc0
-    "Stockfish EvalFile...": "TODO",				// ... For Stockfish
-    "Set to <auto>": "TODO",						// ... Just allow engine to use default
-    "Backend": "TODO",								// Backend choices for Lc0 engine (submenu not in this list)
-    "Choose Syzygy path...": "TODO",				// Find endgame tablebase folder
-    "Unset": "TODO",								// Clear endgame tablebase folder
-    "Limit - normal": "TODO",						// Node limit for engine in normal circumstances
-    "Unlimited": "TODO",							// ... no node limit (note: other options exist but are not in this list)
-    "Up slightly": "TODO",							// ... increase node limit slightly
-    "Down slightly": "TODO",						// ... decrease node limit slightly
-    "Limit - auto-eval / play": "TODO",				// Node limit for engine when playing or evaluating a game
-    "Limit by time instead of nodes": "TODO",		// Consider node limit setting as a time limit in milliseconds instead
-    "Threads": "TODO",								// How many threads engine should used
-    "Warning about threads": "TODO",				// Displays a text warning about when not to use too many threads
-    "Hash": "TODO",									// Hash size (submenu not in this list)
-    "I want other hash options!": "TODO",			// Displays text about how to have a custom hash setting
-    "MultiPV": "TODO",								// How many lines a Stockfish-like engine should consider at once (multipv setting)
-    "Contempt Mode": "TODO",
-    "White analysis": "TODO",						// Contempt from White's point of view
-    "Black analysis": "TODO",						// Contempt from Black's point of view
-    "Contempt": "TODO",								// Numerical contempt value (submenu not in this list)
-    "WDL Calibration Elo": "TODO",					// Technical contempt setting
-    "Use default WDL": "TODO",						// Technical contempt setting
-    "WDL Eval Objectivity": "TODO",					// Technical contempt setting
-    "Yes": "TODO",
-    "No": "TODO",
-    "Score Type": "TODO",							// Technical contempt setting
-    "Custom scripts": "TODO",
-    "How to add scripts": "TODO",					// Displays text explanation
-    "Show scripts folder": "TODO",					// Displays folder in filesystem
-    "Restart engine": "TODO",
-    "Soft engine reset": "TODO",					// Tells engine to reset cache etc, without actually restarting
-    "Play": "TODO",									// Top level menu item for playing against the engine
-    "Play this colour": "TODO",						// Engine itself plays current colour from now on
-    "Start self-play": "TODO",						// Engine plays against itself
-    "Use Polyglot book...": "TODO",
-    "Use PGN book...": "TODO",
-    "Unload book / abort load": "TODO",
-    "Book depth limit": "TODO",						// What depth to stop using the book
-    "Temperature": "TODO",							// Temperature for Lc0 neural network
-    "Temp Decay Moves": "TODO",						// Technical temperature-related setting
-    "Infinite": "TODO",
-    "About play modes": "TODO",						// Displays text
-    "Dev": "TODO",									// Top level menu for Dev / technical settings
-    "Toggle Developer Tools": "TODO",
-    "Toggle Debug CSS": "TODO",						// Shows red border around HTML elements
-    "Permanently enable save": "TODO",				// Allows save function to be used
-    "Show config.json": "TODO",						// Displays config file in filesystem
-    "Show engines.json": "TODO",					// Displays config file in filesystem
-    "Reload engines.json (and restart engine)": "TODO",
-    "Random move": "TODO",							// Makes a random move from legal possibilities
-    "Disable hardware acceleration for GUI": "TODO",
-    "Spin rate": "TODO",							// How frequently to update GUI
-    "Frenetic": "TODO",								// ...
-    "Fast": "TODO",									// ...
-    "Normal": "TODO",								// ...
-    "Relaxed": "TODO",								// ...
-    "Lazy": "TODO",									// ...
-    "Show engine state": "TODO",					// Shows debug info about engine
-    "List sent options": "TODO",					// Shows a list of all options ever sent to the engine
-    "Show error log": "TODO",						// Shows engine stderr
-    "Hacks and kludges": "TODO",					// Submenu with specific hacks
-    "Allow arbitrary scripts": "TODO",				// ...
-    "Accept any file size": "TODO",					// ...
-    "Allow stopped analysis": "TODO",				// ...
-    "Never hide focus buttons": "TODO",				// ...
-    "Never grayout move info": "TODO",				// ...
-    "Use lowerbound / upperbound info": "TODO",		// ...
-    "Suppress ucinewgame": "TODO",					// ... do not send ucinewgame token to engine
-    "Log RAM state to console": "TODO",
-    "Fire GC": "TODO",								// Call JS garbage collector
-    "Logging": "TODO",
-    "Use logfile...": "TODO",
-    "Disable logging": "TODO",
-    "Clear log when opening": "TODO",
-    "Use unique logfile each time": "TODO",
-    "Log illegal moves": "TODO",
-    "Log positions": "TODO",
-    "Log info lines": "TODO",
-    "...including useless lines": "TODO",
-    "Language": "TODO",
+	"LANGUAGE_NAME_FIXME": {							// The language name itself, in its own language.
+		"File": "TODO",									// As in: "file menu"
+		"About": "TODO",
+		"New game": "TODO",
+		"New 960 game": "TODO",							// New game of Chess960
+		"Open PGN...": "TODO",							// Portable game notation file
+		"Load FEN / PGN from clipboard": "TODO",		// Examines clipboard for valid FEN or PGN data
+		"Save this game...": "TODO",					// Saves as PGN
+		"Write PGN to clipboard": "TODO",
+		"PGN saved statistics": "TODO",					// Has submenu of which statistics to save to PGN variations...
+		"EV": "TODO",									// ... expected value
+		"Centipawns": "TODO",							// ...
+		"N (%)": "TODO",								// ... N (node count, percent of total)
+		"N (absolute)": "TODO",							// ... N (absolute count)
+		"...out of total": "TODO",						// ... display total N
+		"Depth (A/B only)": "TODO",						// ... search depth, only displayed if alphabeta-style engine
+		"Cut": "TODO",
+		"Copy": "TODO",
+		"Paste": "TODO",
+		"Quit": "TODO",
+		"Tree": "TODO",									// Game tree manipulation functions
+		"Play engine choice": "TODO",					// Adds engine's choice of move to game tree / goes to it if already present
+		"1st": "TODO",									// ... i.e. play engine's top choice
+		"2nd": "TODO",									// ... i.e. play engine's 2nd choice
+		"3rd": "TODO",									// ... i.e. play engine's 3rd choice
+		"4th": "TODO",									// ... i.e. play engine's 3rd choice
+		"Root": "TODO",									// Move to root node in game tree
+		"End": "TODO",									// Move to final node in (this line of) game tree
+		"Backward": "TODO",								// Backward one move in game tree
+		"Forward": "TODO",								// Forward one move in game tree
+		"Previous sibling": "TODO",						// Go to previous sibling in game tree (if extant)
+		"Next sibling": "TODO",							// Go to next sibling in game tree (if extant)
+		"Return to main line": "TODO",
+		"Promote line to main line": "TODO",
+		"Promote line by 1 level": "TODO",
+		"Delete node": "TODO",
+		"Delete children": "TODO",						// i.e. child nodes in game tree
+		"Delete siblings": "TODO",
+		"Delete ALL other lines": "TODO",
+		"Show PGN games list": "TODO",					// For when a PGN file has multiple games
+		"Escape": "TODO",								// Should literally just be the name of the Escape key in target language
+		"Analysis": "TODO",
+		"Go": "TODO",									// Starts the engine running
+		"Go and lock engine": "TODO",					// Starts the engine running on current position, and does NOT change the engine position even if GUI position changes
+		"Return to locked position": "TODO",			// Returns to the position the engine is analysing, IF the "go and lock engine" item was used
+		"Halt": "TODO",									// Stops the engine
+		"Auto-evaluate line": "TODO",					// Makes engine analyse a whole line of the game tree
+		"Auto-evaluate line, backwards": "TODO",		// Makes engine analyse a whole line of the game tree, backwards
+		"Show focus (searchmoves) buttons": "TODO",		// Shows buttons next to each legal move to allow the engine to focus analysis on selected moves
+		"Clear focus": "TODO",							// Deselects all such buttons
+		"Invert focus": "TODO",							// Inverts all such buttons
+		"Winrate POV": "TODO",							// Winrate (really EV) displayed from whose point of view?
+		"Current": "TODO",								// ... displayed from current player's
+		"White": "TODO",								// ... displayed from White's point of view
+		"Black": "TODO",								// ... displayed from Black's point of view
+		"Centipawn POV": "TODO",						// Centipawn scores displayed from whose point of view? (submenu not in this list)
+		"Win / draw / loss POV": "TODO",				// WDL statistic displayed from whose point of view? (submenu not in this list)
+		"PV clicks": "TODO",							// What to do when user clicks on a displayed principal variation (PV)
+		"Do nothing": "TODO",							// ... nothing
+		"Go there": "TODO",								// ... move to that position
+		"Add to tree": "TODO",							// ... add PV to game tree
+		"Write infobox to clipboard": "TODO",
+		"Forget all analysis": "TODO",
+		"Display": "TODO",								// Has large submenu of display options
+		"Flip board": "TODO",
+		"Arrows": "TODO",
+		"Piece-click spotlight": "TODO",				// Displays arrows showing legal moves, when a piece is clicked
+		"Always show actual move (if known)": "TODO",	// Displays arrow representing move actually played in the game record (if known)
+		"...with unique colour": "TODO",				// ... displays that arrow with a unique colour
+		"...with outline": "TODO",						// ... and an outline
+		"Arrowhead type": "TODO",						// Arrows display what statistic?
+		"Winrate": "TODO",								// ... (really expected value)
+		"Node %": "TODO",								// ... What % of examined nodes (examined by the engine) were this move?
+		"Policy": "TODO",								// Policy / prior
+		"MultiPV rank": "TODO",							// Ordinal rank in engine's preferred moves
+		"Moves Left Head": "TODO",						// Output of engine neural network head estimating "moves left before game ends"
+		"Arrow filter (Lc0)": "TODO",					// Filter criteria for displaying / not displaying arrows (when using Lc0 engine)
+		"All moves": "TODO",							// ... always display all arrows
+		"Top move": "TODO",								// ... display arrow for top move only
+		"Arrow filter (others)": "TODO",				// Filter criteria for displaying / not displaying arrows (when using Stockfish or similar)
+		"Diff < 15%": "TODO",							// ... EV was within 15% of best move
+		"Diff < 10%": "TODO",							// ... EV was within 10% of best move
+		"Diff < 5%": "TODO",							// ... EV was within 5% of best move
+		"Infobox stats": "TODO",						// Stats to display in info pane
+		"N - nodes (%)": "TODO",						// ...
+		"N - nodes (absolute)": "TODO",					// ...
+		"P - policy": "TODO",							// ...
+		"V - static evaluation": "TODO",				// ...
+		"Q - evaluation": "TODO",						// ...
+		"U - uncertainty": "TODO",						// ...
+		"S - search priority": "TODO",					// ...
+		"M - moves left": "TODO",						// ...
+		"WDL - win / draw / loss": "TODO",				// ...
+		"Linebreak before stats": "TODO",
+		"PV move numbers": "TODO",						// Display move numbers when writing principal variation e.g. 40. Kc2 Qf1 41. Rd8 etc etc
+		"Online API": "TODO",							// Access an online API to display real-world game outcome stats
+		"None": "TODO",									// ... Don't access API
+		"ChessDB.cn evals": "TODO",						// ... Use ChessDB.cn
+		"Lichess results (masters)": "TODO",			// ... Use results from Lichess master player database
+		"Lichess results (plebs)": "TODO",				// ... Use results from Lichess user database
+		"Allow API after move 25": "TODO",
+		"Draw PV on mouseover": "TODO",
+		"Draw PV method": "TODO",
+		"Animate": "TODO",								// ...
+		"Single move": "TODO",							// ...
+		"Final position": "TODO",						// ...
+		"Pieces": "TODO",								// Icons / images to use for piece display
+		"Choose pieces folder...": "TODO",				// ... Select folder containing such images
+		"Default": "TODO",								// ... Just use default images
+		"About custom pieces": "TODO",					// Displays text explaining how to create custom images
+		"Background": "TODO",							// Background to use for board display
+		"Choose background image...": "TODO",			// ... Select image file for background
+		"Book frequency arrows": "TODO",				// Dispay arrows representing move frequency in opening book file
+		"Lichess frequency arrows": "TODO",				// Dispay arrows representing move frequency in Lichess database
+		"Sizes": "TODO",								// Adjust sizes of displayed things
+		"Infobox font": "TODO",							// Adjust SIZE of font in info pane
+		"Move history font": "TODO",					// Adjust SIZE of font in game tree pane
+		"Board": "TODO",								// Adjust SIZE of board
+		"Giant": "TODO",								// ...
+		"Large": "TODO",								// ...
+		"Medium": "TODO",								// ...
+		"Small": "TODO",								// ...
+		"Graph": "TODO",								// Adjust SIZE (height) of graph displaying winrate
+		"Graph lines": "TODO",							// Adjust SIZE of graph line
+		"I want other size options!": "TODO",			// Displays text explaining how to set custom size options
+		"Engine": "TODO",								// Top level menu item for engine settings
+		"Choose engine...": "TODO",						// Choose engine via file picker
+		"Choose known engine...": "TODO",				// Choose engine from a list of previously used engines
+		"Weights": "TODO",								// Choose neural net weight file
+		"Lc0 WeightsFile...": "TODO",					// ... For Lc0
+		"Stockfish EvalFile...": "TODO",				// ... For Stockfish
+		"Set to <auto>": "TODO",						// ... Just allow engine to use default
+		"Backend": "TODO",								// Backend choices for Lc0 engine (submenu not in this list)
+		"Choose Syzygy path...": "TODO",				// Find endgame tablebase folder
+		"Unset": "TODO",								// Clear endgame tablebase folder
+		"Limit - normal": "TODO",						// Node limit for engine in normal circumstances
+		"Unlimited": "TODO",							// ... no node limit (note: other options exist but are not in this list)
+		"Up slightly": "TODO",							// ... increase node limit slightly
+		"Down slightly": "TODO",						// ... decrease node limit slightly
+		"Limit - auto-eval / play": "TODO",				// Node limit for engine when playing or evaluating a game
+		"Limit by time instead of nodes": "TODO",		// Consider node limit setting as a time limit in milliseconds instead
+		"Threads": "TODO",								// How many threads engine should used
+		"Warning about threads": "TODO",				// Displays a text warning about when not to use too many threads
+		"Hash": "TODO",									// Hash size (submenu not in this list)
+		"I want other hash options!": "TODO",			// Displays text about how to have a custom hash setting
+		"MultiPV": "TODO",								// How many lines a Stockfish-like engine should consider at once (multipv setting)
+		"Contempt Mode": "TODO",
+		"White analysis": "TODO",						// Contempt from White's point of view
+		"Black analysis": "TODO",						// Contempt from Black's point of view
+		"Contempt": "TODO",								// Numerical contempt value (submenu not in this list)
+		"WDL Calibration Elo": "TODO",					// Technical contempt setting
+		"Use default WDL": "TODO",						// Technical contempt setting
+		"WDL Eval Objectivity": "TODO",					// Technical contempt setting
+		"Yes": "TODO",
+		"No": "TODO",
+		"Score Type": "TODO",							// Technical contempt setting
+		"Custom scripts": "TODO",
+		"How to add scripts": "TODO",					// Displays text explanation
+		"Show scripts folder": "TODO",					// Displays folder in filesystem
+		"Restart engine": "TODO",
+		"Soft engine reset": "TODO",					// Tells engine to reset cache etc, without actually restarting
+		"Play": "TODO",									// Top level menu item for playing against the engine
+		"Play this colour": "TODO",						// Engine itself plays current colour from now on
+		"Start self-play": "TODO",						// Engine plays against itself
+		"Use Polyglot book...": "TODO",
+		"Use PGN book...": "TODO",
+		"Unload book / abort load": "TODO",
+		"Book depth limit": "TODO",						// What depth to stop using the book
+		"Temperature": "TODO",							// Temperature for Lc0 neural network
+		"Temp Decay Moves": "TODO",						// Technical temperature-related setting
+		"Infinite": "TODO",
+		"About play modes": "TODO",						// Displays text
+		"Dev": "TODO",									// Top level menu for Dev / technical settings
+		"Toggle Developer Tools": "TODO",
+		"Toggle Debug CSS": "TODO",						// Shows red border around HTML elements
+		"Permanently enable save": "TODO",				// Allows save function to be used
+		"Show config.json": "TODO",						// Displays config file in filesystem
+		"Show engines.json": "TODO",					// Displays config file in filesystem
+		"Reload engines.json (and restart engine)": "TODO",
+		"Random move": "TODO",							// Makes a random move from legal possibilities
+		"Disable hardware acceleration for GUI": "TODO",
+		"Spin rate": "TODO",							// How frequently to update GUI
+		"Frenetic": "TODO",								// ...
+		"Fast": "TODO",									// ...
+		"Normal": "TODO",								// ...
+		"Relaxed": "TODO",								// ...
+		"Lazy": "TODO",									// ...
+		"Show engine state": "TODO",					// Shows debug info about engine
+		"List sent options": "TODO",					// Shows a list of all options ever sent to the engine
+		"Show error log": "TODO",						// Shows engine stderr
+		"Hacks and kludges": "TODO",					// Submenu with specific hacks
+		"Allow arbitrary scripts": "TODO",				// ...
+		"Accept any file size": "TODO",					// ...
+		"Allow stopped analysis": "TODO",				// ...
+		"Never hide focus buttons": "TODO",				// ...
+		"Never grayout move info": "TODO",				// ...
+		"Use lowerbound / upperbound info": "TODO",		// ...
+		"Suppress ucinewgame": "TODO",					// ... do not send ucinewgame token to engine
+		"Log RAM state to console": "TODO",
+		"Fire GC": "TODO",								// Call JS garbage collector
+		"Logging": "TODO",
+		"Use logfile...": "TODO",
+		"Disable logging": "TODO",
+		"Clear log when opening": "TODO",
+		"Use unique logfile each time": "TODO",
+		"Log illegal moves": "TODO",
+		"Log positions": "TODO",
+		"Log info lines": "TODO",
+		"...including useless lines": "TODO",
+		"Language": "TODO",
 
-    "RESTART_REQUIRED": "TODO"                     // Special item - translate from "The GUI must now be restarted."
+		"RESTART_REQUIRED": "TODO"						// Special item - translate from "The GUI must now be restarted."
+	}
 }
