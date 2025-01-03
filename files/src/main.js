@@ -4310,6 +4310,7 @@ function menu_build() {
 			label: translate.t("Dev"),
 			submenu: [
 				{
+					label: translate.t("Toggle Developer Tools"),
 					role: "toggledevtools"
 				},
 				{
