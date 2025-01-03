@@ -4719,7 +4719,10 @@ function language_choices_submenu() {
 			checked: config.language === language,
 			click: () => {
 				set_checks("Language", language);
-				win.webContents.send("set", {language: language});
+				win.webContents.send("call", {
+					fn: "set_language",
+					args: [language]
+				});
 			}
 		});
 	}
