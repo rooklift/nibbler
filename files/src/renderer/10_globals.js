@@ -45,6 +45,7 @@ const path = require("path");
 const querystring = require("querystring");
 const readline = require("readline");
 const stringify = require("./modules/stringify");
+const translate = require("./modules/translate");
 const util = require("util");
 
 // Prior to v32, given a file object from an event (e.g. from dragging the file onto the window)
@@ -61,6 +62,8 @@ const decoder = new util.TextDecoder("utf8");	// https://github.com/electron/ele
 
 let [load_err1, config]       = config_io.load();
 let [load_err2, engineconfig] = engineconfig_io.load();
+
+translate.register_startup_language(config.language);
 
 let next_node_id = 1;
 let live_nodes = Object.create(null);

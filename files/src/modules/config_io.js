@@ -21,7 +21,9 @@ Config.prototype = {};
 exports.defaults = {
 	"warning": "EDITING THIS FILE WHILE NIBBLER IS RUNNING WILL GENERALLY CAUSE YOUR EDITS TO BE LOST.",
 
-	"path": null,		// Not undefined, all normal keys should have an actual value.
+	"language": "English",
+
+	"path": null,				// Not undefined, all normal keys should have an actual value.
 
 	"args_unused": null,
 	"options_unused": null,

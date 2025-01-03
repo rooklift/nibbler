@@ -35,7 +35,10 @@ const messages = require("./modules/messages");
 const path = require("path");
 const running_as_electron = require("./modules/running_as_electron");
 const stringify = require("./modules/stringify");
+const translate = require("./modules/translate");
 const url = require("url");
+
+translate.register_startup_language(config.language);
 
 // We want sync save and open dialogs. In Electron 5 we could get these by calling
 // showSaveDialog or showOpenDialog without a callback, but in Electron 6 this no
@@ -334,10 +337,10 @@ function menu_build() {
 
 	let template = [
 		{
-			label: "File",
+			label: translate.t("File"),
 			submenu: [
 				{
-					label: "About",
+					label: translate.t("About"),
 					click: () => {
 						let s = `Nibbler ${electron.app.getVersion()} in Electron ${process.versions.electron}\n\n`;
 						s += `Engine: ${loaded_engine}\nWeights: ${loaded_weights || loaded_evalfile || "<auto>"}`;
@@ -348,14 +351,14 @@ function menu_build() {
 					type: "separator"
 				},
 				{
-					label: "New game",
+					label: translate.t("New game"),
 					accelerator: "CommandOrControl+N",
 					click: () => {
 						win.webContents.send("call", "new_game");
 					}
 				},
 				{
-					label: "New 960 game",
+					label: translate.t("New 960 game"),
 					accelerator: "CommandOrControl+Shift+N",
 					click: () => {
 						win.webContents.send("call", "new_960");
@@ -365,7 +368,7 @@ function menu_build() {
 					type: "separator"
 				},
 				{
-					label: "Open PGN...",
+					label: translate.t("Open PGN..."),
 					accelerator: "CommandOrControl+O",
 					click: () => {
 						let files = open_dialog(win, {
@@ -389,7 +392,7 @@ function menu_build() {
 					type: "separator"
 				},
 				{
-					label: "Load FEN / PGN from clipboard",
+					label: translate.t("Load FEN / PGN from clipboard"),
 					accelerator: "CommandOrControl+Shift+V",
 					click: () => {
 						win.webContents.send("call", {
@@ -402,7 +405,7 @@ function menu_build() {
 					type: "separator"
 				},
 				{
-					label: "Save this game...",
+					label: translate.t("Save this game..."),
 					accelerator: "CommandOrControl+S",
 					click: () => {
 						if (config.save_enabled !== true) {		// Note: exact test for true, not just any truthy value
@@ -425,17 +428,17 @@ function menu_build() {
 					}
 				},
 				{
-					label: "Write PGN to clipboard",
+					label: translate.t("Write PGN to clipboard"),
 					accelerator: "CommandOrControl+K",
 					click: () => {
 						win.webContents.send("call", "pgn_to_clipboard");
 					}
 				},
 				{
-					label: "PGN saved statistics",
+					label: translate.t("PGN saved statistics"),
 					submenu: [
 						{
-							label: "EV",
+							label: translate.t("EV"),
 							type: "checkbox",
 							checked: config.pgn_ev,
 							click: () => {
@@ -446,7 +449,7 @@ function menu_build() {
 							}
 						},
 						{
-							label: "Centipawns",
+							label: translate.t("Centipawns"),
 							type: "checkbox",
 							checked: config.pgn_cp,
 							click: () => {
@@ -460,7 +463,7 @@ function menu_build() {
 							type: "separator"
 						},
 						{
-							label: "N (%)",
+							label: translate.t("N (%)"),
 							type: "checkbox",
 							checked: config.pgn_n,
 							click: () => {
@@ -471,7 +474,7 @@ function menu_build() {
 							}
 						},
 						{
-							label: "N (absolute)",
+							label: translate.t("N (absolute)"),
 							type: "checkbox",
 							checked: config.pgn_n_abs,
 							click: () => {
@@ -482,7 +485,7 @@ function menu_build() {
 							}
 						},
 						{
-							label: "...out of total",
+							label: translate.t("...out of total"),
 							type: "checkbox",
 							checked: config.pgn_of_n,
 							click: () => {
@@ -493,7 +496,7 @@ function menu_build() {
 							}
 						},
 						{
-							label: "Depth (A/B only)",
+							label: translate.t("Depth (A/B only)"),
 							type: "checkbox",
 							checked: config.pgn_depth,
 							click: () => {
@@ -507,7 +510,7 @@ function menu_build() {
 							type: "separator"
 						},
 						{
-							label: "P",
+							label: translate.t("P"),
 							type: "checkbox",
 							checked: config.pgn_p,
 							click: () => {
@@ -518,7 +521,7 @@ function menu_build() {
 							}
 						},
 						{
-							label: "V",
+							label: translate.t("V"),
 							type: "checkbox",
 							checked: config.pgn_v,
 							click: () => {
@@ -532,7 +535,7 @@ function menu_build() {
 							type: "separator"
 						},
 						{
-							label: "Q",
+							label: translate.t("Q"),
 							type: "checkbox",
 							checked: config.pgn_q,
 							click: () => {
@@ -543,7 +546,7 @@ function menu_build() {
 							}
 						},
 						{
-							label: "U",
+							label: translate.t("U"),
 							type: "checkbox",
 							checked: config.pgn_u,
 							click: () => {
@@ -554,7 +557,7 @@ function menu_build() {
 							}
 						},
 						{
-							label: "S",
+							label: translate.t("S"),
 							type: "checkbox",
 							checked: config.pgn_s,
 							click: () => {
@@ -568,7 +571,7 @@ function menu_build() {
 							type: "separator"
 						},
 						{
-							label: "M",
+							label: translate.t("M"),
 							type: "checkbox",
 							checked: config.pgn_m,
 							click: () => {
@@ -579,7 +582,7 @@ function menu_build() {
 							}
 						},
 						{
-							label: "WDL",
+							label: translate.t("WDL"),
 							type: "checkbox",
 							checked: config.pgn_wdl,
 							click: () => {
@@ -595,17 +598,17 @@ function menu_build() {
 					type: "separator"
 				},
 				{
-					label: "Cut",
+					label: translate.t("Cut"),
 					accelerator: "CommandOrControl+X",
 					role: "cut",
 				},
 				{
-					label: "Copy",
+					label: translate.t("Copy"),
 					accelerator: "CommandOrControl+C",
 					role: "copy",
 				},
 				{
-					label: "Paste",
+					label: translate.t("Paste"),
 					accelerator: "CommandOrControl+V",
 					role: "paste",
 				},
@@ -613,20 +616,20 @@ function menu_build() {
 					type: "separator"
 				},
 				{
-					label: "Quit",							// Presumably calls electron.app.quit(), which tries to
+					label: translate.t("Quit"),				// Presumably calls electron.app.quit(), which tries to
 					accelerator: "CommandOrControl+Q",		// close all windows, and quits iff it succeeds (which
 					role: "quit"							// it won't, because we prevent the initial close...)
 				},
 			]
 		},
 		{
-			label: "Tree",
+			label: translate.t("Tree"),
 			submenu: [
 				{
-					label: "Play engine choice",
+					label: translate.t("Play engine choice"),
 					submenu: [
 						{
-							label: "1st",
+							label: translate.t("1st"),
 							accelerator: "F1",
 							click: () => {
 								win.webContents.send("call", {
@@ -636,7 +639,7 @@ function menu_build() {
 							}
 						},
 						{
-							label: "2nd",
+							label: translate.t("2nd"),
 							accelerator: "F2",
 							click: () => {
 								win.webContents.send("call", {
@@ -646,7 +649,7 @@ function menu_build() {
 							}
 						},
 						{
-							label: "3rd",
+							label: translate.t("3rd"),
 							accelerator: "F3",
 							click: () => {
 								win.webContents.send("call", {
@@ -656,7 +659,7 @@ function menu_build() {
 							}
 						},
 						{
-							label: "4th",
+							label: translate.t("4th"),
 							accelerator: "F4",
 							click: () => {
 								win.webContents.send("call", {
@@ -671,42 +674,42 @@ function menu_build() {
 					type: "separator"
 				},
 				{
-					label: "Root",
+					label: translate.t("Root"),
 					accelerator: "Home",
 					click: () => {
 						win.webContents.send("call", "goto_root");
 					}
 				},
 				{
-					label: "End",
+					label: translate.t("End"),
 					accelerator: "End",
 					click: () => {
 						win.webContents.send("call", "goto_end");
 					}
 				},
 				{
-					label: "Backward",
+					label: translate.t("Backward"),
 					accelerator: "Left",
 					click: () => {
 						win.webContents.send("call", "prev");
 					}
 				},
 				{
-					label: "Forward",
+					label: translate.t("Forward"),
 					accelerator: "Right",
 					click: () => {
 						win.webContents.send("call", "next");
 					}
 				},
 				{
-					label: "Previous sibling",
+					label: translate.t("Previous sibling"),
 					accelerator: "Up",
 					click: () => {
 						win.webContents.send("call", "previous_sibling");
 					}
 				},
 				{
-					label: "Next sibling",
+					label: translate.t("Next sibling"),
 					accelerator: "Down",
 					click: () => {
 						win.webContents.send("call", "next_sibling");
@@ -716,21 +719,21 @@ function menu_build() {
 					type: "separator"
 				},
 				{
-					label: "Return to main line",
+					label: translate.t("Return to main line"),
 					accelerator: "CommandOrControl+R",
 					click: () => {
 						win.webContents.send("call", "return_to_main_line");
 					}
 				},
 				{
-					label: "Promote line to main line",
+					label: translate.t("Promote line to main line"),
 					accelerator: "CommandOrControl+L",
 					click: () => {
 						win.webContents.send("call", "promote_to_main_line");
 					}
 				},
 				{
-					label: "Promote line by 1 level",
+					label: translate.t("Promote line by 1 level"),
 					accelerator: "CommandOrControl+Up",
 					click: () => {
 						win.webContents.send("call", "promote");
@@ -740,20 +743,20 @@ function menu_build() {
 					type: "separator"
 				},
 				{
-					label: "Delete node",
+					label: translate.t("Delete node"),
 					accelerator: "CommandOrControl+Backspace",
 					click: () => {
 						win.webContents.send("call", "delete_node");
 					}
 				},
 				{
-					label: "Delete children",
+					label: translate.t("Delete children"),
 					click: () => {
 						win.webContents.send("call", "delete_children");
 					}
 				},
 				{
-					label: "Delete siblings",
+					label: translate.t("Delete siblings"),
 					click: () => {
 						win.webContents.send("call", "delete_siblings");
 					}
@@ -762,7 +765,7 @@ function menu_build() {
 					type: "separator"
 				},
 				{
-					label: "Delete ALL other lines",
+					label: translate.t("Delete ALL other lines"),
 					click: () => {
 						win.webContents.send("call", "delete_other_lines");
 					}
@@ -771,14 +774,14 @@ function menu_build() {
 					type: "separator"
 				},
 				{
-					label: "Show PGN games list",
+					label: translate.t("Show PGN games list"),
 					accelerator: "CommandOrControl+P",
 					click: () => {
 						win.webContents.send("call", "show_pgn_chooser");
 					}
 				},
 				{
-					label: "Escape",
+					label: translate.t("Escape"),
 					accelerator: "Escape",
 					click: () => {
 						win.webContents.send("call", "escape");
@@ -787,10 +790,10 @@ function menu_build() {
 			]
 		},
 		{
-			label: "Analysis",
+			label: translate.t("Analysis"),
 			submenu: [
 				{
-					label: "Go",
+					label: translate.t("Go"),
 					accelerator: "CommandOrControl+G",
 					click: () => {
 						win.webContents.send("call", {
@@ -800,7 +803,7 @@ function menu_build() {
 					}
 				},
 				{
-					label: "Go and lock engine",
+					label: translate.t("Go and lock engine"),
 					accelerator: "CommandOrControl+Shift+G",
 					click: () => {
 						win.webContents.send("call", {
@@ -810,7 +813,7 @@ function menu_build() {
 					}
 				},
 				{
-					label: "Return to locked position",
+					label: translate.t("Return to locked position"),
 					click: () => {
 						win.webContents.send("call", "return_to_lock");
 					}
@@ -819,7 +822,7 @@ function menu_build() {
 					type: "separator"
 				},
 				{
-					label: "Halt",
+					label: translate.t("Halt"),
 					accelerator: "CommandOrControl+H",
 					click: () => {
 						win.webContents.send("call", {
@@ -832,7 +835,7 @@ function menu_build() {
 					type: "separator"
 				},
 				{
-					label: "Auto-evaluate line",
+					label: translate.t("Auto-evaluate line"),
 					accelerator: "F12",
 					click: () => {
 						win.webContents.send("call", {
@@ -842,7 +845,7 @@ function menu_build() {
 					}
 				},
 				{
-					label: "Auto-evaluate line, backwards",
+					label: translate.t("Auto-evaluate line, backwards"),
 					accelerator: "Shift+F12",
 					click: () => {
 						win.webContents.send("call", {
@@ -855,7 +858,7 @@ function menu_build() {
 					type: "separator"
 				},
 				{
-					label: "Show focus (searchmoves) buttons",
+					label: translate.t("Show focus (searchmoves) buttons"),
 					type: "checkbox",
 					checked: config.searchmoves_buttons,
 					click: () => {
@@ -866,13 +869,13 @@ function menu_build() {
 					}
 				},
 				{
-					label: "Clear focus",
+					label: translate.t("Clear focus"),
 					click: () => {
 						win.webContents.send("call", "clear_searchmoves");
 					}
 				},
 				{
-					label: "Invert focus",
+					label: translate.t("Invert focus"),
 					accelerator: "CommandOrControl+I",
 					click: () => {
 						win.webContents.send("call", "invert_searchmoves");
@@ -882,10 +885,10 @@ function menu_build() {
 					type: "separator"
 				},
 				{
-					label: "Winrate POV",
+					label: translate.t("Winrate POV"),
 					submenu: [
 						{
-							label: "Current",
+							label: translate.t("Current"),
 							type: "checkbox",
 							checked: config.ev_pov !== "w" && config.ev_pov !== "b",
 							click: () => {
@@ -894,7 +897,7 @@ function menu_build() {
 							}
 						},
 						{
-							label: "White",
+							label: translate.t("White"),
 							type: "checkbox",
 							checked: config.ev_pov === "w",
 							click: () => {
@@ -903,7 +906,7 @@ function menu_build() {
 							}
 						},
 						{
-							label: "Black",
+							label: translate.t("Black"),
 							type: "checkbox",
 							checked: config.ev_pov === "b",
 							click: () => {
@@ -914,10 +917,10 @@ function menu_build() {
 					]
 				},
 				{
-					label: "Centipawn POV",
+					label: translate.t("Centipawn POV"),
 					submenu: [
 						{
-							label: "Current",
+							label: translate.t("Current"),
 							type: "checkbox",
 							checked: config.cp_pov !== "w" && config.cp_pov !== "b",
 							click: () => {
@@ -926,7 +929,7 @@ function menu_build() {
 							}
 						},
 						{
-							label: "White",
+							label: translate.t("White"),
 							type: "checkbox",
 							checked: config.cp_pov === "w",
 							click: () => {
@@ -935,7 +938,7 @@ function menu_build() {
 							}
 						},
 						{
-							label: "Black",
+							label: translate.t("Black"),
 							type: "checkbox",
 							checked: config.cp_pov === "b",
 							click: () => {
@@ -946,10 +949,10 @@ function menu_build() {
 					]
 				},
 				{
-					label: "Win / draw / loss POV",
+					label: translate.t("Win / draw / loss POV"),
 					submenu: [
 						{
-							label: "Current",
+							label: translate.t("Current"),
 							type: "checkbox",
 							checked: config.wdl_pov !== "w" && config.wdl_pov !== "b",
 							click: () => {
@@ -958,7 +961,7 @@ function menu_build() {
 							}
 						},
 						{
-							label: "White",
+							label: translate.t("White"),
 							type: "checkbox",
 							checked: config.wdl_pov === "w",
 							click: () => {
@@ -967,7 +970,7 @@ function menu_build() {
 							}
 						},
 						{
-							label: "Black",
+							label: translate.t("Black"),
 							type: "checkbox",
 							checked: config.wdl_pov === "b",
 							click: () => {
@@ -981,10 +984,10 @@ function menu_build() {
 					type: "separator"
 				},
 				{
-					label: "PV clicks",
+					label: translate.t("PV clicks"),
 					submenu: [
 						{
-							label: "Do nothing",
+							label: translate.t("Do nothing"),
 							type: "checkbox",
 							checked: config.pv_click_event === 0,
 							click: () => {
@@ -993,7 +996,7 @@ function menu_build() {
 							}
 						},
 						{
-							label: "Go there",
+							label: translate.t("Go there"),
 							type: "checkbox",
 							checked: config.pv_click_event === 1,
 							click: () => {
@@ -1002,7 +1005,7 @@ function menu_build() {
 							}
 						},
 						{
-							label: "Add to tree",
+							label: translate.t("Add to tree"),
 							type: "checkbox",
 							checked: config.pv_click_event === 2,
 							click: () => {
@@ -1016,7 +1019,7 @@ function menu_build() {
 					type: "separator"
 				},
 				{
-					label: "Write infobox to clipboard",
+					label: translate.t("Write infobox to clipboard"),
 					click: () => {
 						win.webContents.send("call", "infobox_to_clipboard");
 					}
@@ -1025,7 +1028,7 @@ function menu_build() {
 					type: "separator"
 				},
 				{
-					label: "Forget all analysis",
+					label: translate.t("Forget all analysis"),
 					accelerator: "CommandOrControl+.",
 					click: () => {
 						win.webContents.send("call", "forget_analysis");
@@ -1034,10 +1037,10 @@ function menu_build() {
 			]
 		},
 		{
-			label: "Display",
+			label: translate.t("Display"),
 			submenu: [
 				{
-					label: "Flip board",
+					label: translate.t("Flip board"),
 					accelerator: "CommandOrControl+F",
 					click: () => {
 						win.webContents.send("call", {
@@ -1050,7 +1053,7 @@ function menu_build() {
 					type: "separator"
 				},
 				{
-					label: "Arrows",
+					label: translate.t("Arrows"),
 					type: "checkbox",
 					checked: config.arrows_enabled,
 					click: () => {
@@ -1061,7 +1064,7 @@ function menu_build() {
 					}
 				},
 				{
-					label: "Piece-click spotlight",
+					label: translate.t("Piece-click spotlight"),
 					type: "checkbox",
 					checked: config.click_spotlight,
 					click: () => {
@@ -1072,7 +1075,7 @@ function menu_build() {
 					}
 				},
 				{
-					label: "Always show actual move (if known)",
+					label: translate.t("Always show actual move (if known)"),
 					type: "checkbox",
 					checked: config.next_move_arrow,
 					click: () => {
@@ -1083,7 +1086,7 @@ function menu_build() {
 					}
 				},
 				{
-					label: "...with unique colour",
+					label: translate.t("...with unique colour"),
 					type: "checkbox",
 					checked: config.next_move_unique_colour,
 					click: () => {
@@ -1094,7 +1097,7 @@ function menu_build() {
 					}
 				},
 				{
-					label: "...with outline",
+					label: translate.t("...with outline"),
 					type: "checkbox",
 					checked: config.next_move_outline,
 					click: () => {
@@ -1108,10 +1111,10 @@ function menu_build() {
 					type: "separator"
 				},
 				{
-					label: "Arrowhead type",
+					label: translate.t("Arrowhead type"),
 					submenu: [
 						{
-							label: "Winrate",
+							label: translate.t("Winrate"),
 							type: "checkbox",
 							checked: config.arrowhead_type === 0,
 							accelerator: "F5",
@@ -1121,7 +1124,7 @@ function menu_build() {
 							}
 						},
 						{
-							label: "Node %",
+							label: translate.t("Node %"),
 							type: "checkbox",
 							checked: config.arrowhead_type === 1,
 							accelerator: "F6",
@@ -1131,7 +1134,7 @@ function menu_build() {
 							}
 						},
 						{
-							label: "Policy",
+							label: translate.t("Policy"),
 							type: "checkbox",
 							checked: config.arrowhead_type === 2,
 							accelerator: "F7",
@@ -1141,7 +1144,7 @@ function menu_build() {
 							}
 						},
 						{
-							label: "MultiPV rank",
+							label: translate.t("MultiPV rank"),
 							type: "checkbox",
 							checked: config.arrowhead_type === 3,
 							accelerator: "F8",
@@ -1151,7 +1154,7 @@ function menu_build() {
 							}
 						},
 						{
-							label: "Moves Left Head",
+							label: translate.t("Moves Left Head"),
 							type: "checkbox",
 							checked: config.arrowhead_type === 4,
 							click: () => {
@@ -1165,10 +1168,10 @@ function menu_build() {
 					type: "separator"
 				},
 				{
-					label: "Arrow filter (Lc0)",
+					label: translate.t("Arrow filter (Lc0)"),
 					submenu: [
 						{
-							label: "All moves",
+							label: translate.t("All moves"),
 							type: "checkbox",
 							checked: config.arrow_filter_type === "all",
 							click: () => {
@@ -1180,7 +1183,7 @@ function menu_build() {
 							}
 						},
 						{
-							label: "Top move",
+							label: translate.t("Top move"),
 							type: "checkbox",
 							checked: config.arrow_filter_type === "top",
 							click: () => {
@@ -1195,7 +1198,7 @@ function menu_build() {
 							type: "separator"
 						},
 						{
-							label: "N > 0.5%",
+							label: translate.t("N > 0.5%"),
 							type: "checkbox",
 							checked: config.arrow_filter_type === "N" && config.arrow_filter_value === 0.005,
 							click: () => {
@@ -1207,7 +1210,7 @@ function menu_build() {
 							}
 						},
 						{
-							label: "N > 1%",
+							label: translate.t("N > 1%"),
 							type: "checkbox",
 							checked: config.arrow_filter_type === "N" && config.arrow_filter_value === 0.01,
 							click: () => {
@@ -1219,7 +1222,7 @@ function menu_build() {
 							}
 						},
 						{
-							label: "N > 2%",
+							label: translate.t("N > 2%"),
 							type: "checkbox",
 							checked: config.arrow_filter_type === "N" && config.arrow_filter_value === 0.02,
 							click: () => {
@@ -1231,7 +1234,7 @@ function menu_build() {
 							}
 						},
 						{
-							label: "N > 3%",
+							label: translate.t("N > 3%"),
 							type: "checkbox",
 							checked: config.arrow_filter_type === "N" && config.arrow_filter_value === 0.03,
 							click: () => {
@@ -1243,7 +1246,7 @@ function menu_build() {
 							}
 						},
 						{
-							label: "N > 4%",
+							label: translate.t("N > 4%"),
 							type: "checkbox",
 							checked: config.arrow_filter_type === "N" && config.arrow_filter_value === 0.04,
 							click: () => {
@@ -1255,7 +1258,7 @@ function menu_build() {
 							}
 						},
 						{
-							label: "N > 5%",
+							label: translate.t("N > 5%"),
 							type: "checkbox",
 							checked: config.arrow_filter_type === "N" && config.arrow_filter_value === 0.05,
 							click: () => {
@@ -1267,7 +1270,7 @@ function menu_build() {
 							}
 						},
 						{
-							label: "N > 10%",
+							label: translate.t("N > 10%"),
 							type: "checkbox",
 							checked: config.arrow_filter_type === "N" && config.arrow_filter_value === 0.1,
 							click: () => {
@@ -1281,10 +1284,10 @@ function menu_build() {
 					]
 				},
 				{
-					label: "Arrow filter (others)",
+					label: translate.t("Arrow filter (others)"),
 					submenu: [
 						{
-							label: "Diff < 15%",
+							label: translate.t("Diff < 15%"),
 							type: "checkbox",
 							checked: config.ab_filter_threshold === 0.15,
 							click: () => {
@@ -1293,7 +1296,7 @@ function menu_build() {
 							}
 						},
 						{
-							label: "Diff < 10%",
+							label: translate.t("Diff < 10%"),
 							type: "checkbox",
 							checked: config.ab_filter_threshold === 0.1,
 							click: () => {
@@ -1302,7 +1305,7 @@ function menu_build() {
 							}
 						},
 						{
-							label: "Diff < 5%",
+							label: translate.t("Diff < 5%"),
 							type: "checkbox",
 							checked: config.ab_filter_threshold === 0.05,
 							click: () => {
@@ -1316,10 +1319,10 @@ function menu_build() {
 					type: "separator"
 				},
 				{
-					label: "Infobox stats",
+					label: translate.t("Infobox stats"),
 					submenu: [
 						{
-							label: "Centipawns",
+							label: translate.t("Centipawns"),
 							accelerator: "CommandOrControl+T",
 							type: "checkbox",
 							checked: config.show_cp,
@@ -1334,7 +1337,7 @@ function menu_build() {
 							type: "separator"
 						},
 						{
-							label: "N - nodes (%)",
+							label: translate.t("N - nodes (%)"),
 							type: "checkbox",
 							checked: config.show_n,
 							click: () => {
@@ -1345,7 +1348,7 @@ function menu_build() {
 							}
 						},
 						{
-							label: "N - nodes (absolute)",
+							label: translate.t("N - nodes (absolute)"),
 							type: "checkbox",
 							checked: config.show_n_abs,
 							click: () => {
@@ -1356,7 +1359,7 @@ function menu_build() {
 							}
 						},
 						{
-							label: "Depth (A/B only)",
+							label: translate.t("Depth (A/B only)"),
 							type: "checkbox",
 							checked: config.show_depth,
 							click: () => {
@@ -1370,7 +1373,7 @@ function menu_build() {
 							type: "separator"
 						},
 						{
-							label: "P - policy",
+							label: translate.t("P - policy"),
 							type: "checkbox",
 							checked: config.show_p,
 							click: () => {
@@ -1381,7 +1384,7 @@ function menu_build() {
 							}
 						},
 						{
-							label: "V - static evaluation",
+							label: translate.t("V - static evaluation"),
 							type: "checkbox",
 							checked: config.show_v,
 							click: () => {
@@ -1395,7 +1398,7 @@ function menu_build() {
 							type: "separator"
 						},
 						{
-							label: "Q - evaluation",
+							label: translate.t("Q - evaluation"),
 							type: "checkbox",
 							checked: config.show_q,
 							click: () => {
@@ -1406,7 +1409,7 @@ function menu_build() {
 							}
 						},
 						{
-							label: "U - uncertainty",
+							label: translate.t("U - uncertainty"),
 							type: "checkbox",
 							checked: config.show_u,
 							click: () => {
@@ -1417,7 +1420,7 @@ function menu_build() {
 							}
 						},
 						{
-							label: "S - search priority",
+							label: translate.t("S - search priority"),
 							type: "checkbox",
 							checked: config.show_s,
 							click: () => {
@@ -1431,7 +1434,7 @@ function menu_build() {
 							type: "separator"
 						},
 						{
-							label: "M - moves left",
+							label: translate.t("M - moves left"),
 							type: "checkbox",
 							checked: config.show_m,
 							click: () => {
@@ -1442,7 +1445,7 @@ function menu_build() {
 							}
 						},
 						{
-							label: "WDL - win / draw / loss",
+							label: translate.t("WDL - win / draw / loss"),
 							type: "checkbox",
 							checked: config.show_wdl,
 							click: () => {
@@ -1456,7 +1459,7 @@ function menu_build() {
 							type: "separator"
 						},
 						{
-							label: "Linebreak before stats",
+							label: translate.t("Linebreak before stats"),
 							type: "checkbox",
 							checked: config.infobox_stats_newline,
 							click: () => {
@@ -1469,7 +1472,7 @@ function menu_build() {
 					]
 				},
 				{
-					label: "PV move numbers",
+					label: translate.t("PV move numbers"),
 					type: "checkbox",
 					checked: config.infobox_pv_move_numbers,
 					click: () => {
@@ -1483,10 +1486,10 @@ function menu_build() {
 					type: "separator"
 				},
 				{
-					label: "Online API",
+					label: translate.t("Online API"),
 					submenu: [
 						{
-							label: "None",
+							label: translate.t("None"),
 							type: "checkbox",
 							checked: typeof config.looker_api !== "string",
 							click: () => {
@@ -1498,7 +1501,7 @@ function menu_build() {
 							}
 						},
 						{
-							label: "ChessDB.cn evals",
+							label: translate.t("ChessDB.cn evals"),
 							type: "checkbox",
 							checked: config.looker_api === "chessdbcn",
 							click: () => {
@@ -1510,7 +1513,7 @@ function menu_build() {
 							}
 						},
 						{
-							label: "Lichess results (masters)",
+							label: translate.t("Lichess results (masters)"),
 							type: "checkbox",
 							checked: config.looker_api === "lichess_masters",
 							click: () => {
@@ -1522,7 +1525,7 @@ function menu_build() {
 							}
 						},
 						{
-							label: "Lichess results (plebs)",
+							label: translate.t("Lichess results (plebs)"),
 							type: "checkbox",
 							checked: config.looker_api === "lichess_plebs",
 							click: () => {
@@ -1536,7 +1539,7 @@ function menu_build() {
 					]
 				},
 				{
-					label: "Allow API after move 25",
+					label: translate.t("Allow API after move 25"),
 					type: "checkbox",
 					checked: config.look_past_25,
 					click: () => {
@@ -1550,7 +1553,7 @@ function menu_build() {
 					type: "separator"
 				},
 				{
-					label: "Draw PV on mouseover",
+					label: translate.t("Draw PV on mouseover"),
 					accelerator: "CommandOrControl+D",
 					type: "checkbox",
 					checked: config.hover_draw,
@@ -1562,10 +1565,10 @@ function menu_build() {
 					}
 				},
 				{
-					label: "Draw PV method",
+					label: translate.t("Draw PV method"),
 					submenu: [
 						{
-							label: "Animate",
+							label: translate.t("Animate"),
 							type: "checkbox",
 							checked: config.hover_method === 0,
 							click: () => {
@@ -1574,7 +1577,7 @@ function menu_build() {
 							}
 						},
 						{
-							label: "Single move",
+							label: translate.t("Single move"),
 							type: "checkbox",
 							checked: config.hover_method === 1,
 							click: () => {
@@ -1583,7 +1586,7 @@ function menu_build() {
 							}
 						},
 						{
-							label: "Final position",
+							label: translate.t("Final position"),
 							type: "checkbox",
 							checked: config.hover_method === 2,
 							click: () => {
@@ -1597,10 +1600,10 @@ function menu_build() {
 					type: "separator"
 				},
 				{
-					label: "Pieces",
+					label: translate.t("Pieces"),
 					submenu: [
 						{
-							label: "Choose pieces folder...",
+							label: translate.t("Choose pieces folder..."),
 							click: () => {
 								let folders = open_dialog(win, {
 									defaultPath: config.pieces_dialog_folder,
@@ -1619,7 +1622,7 @@ function menu_build() {
 							}
 						},
 						{
-							label: "Default",
+							label: translate.t("Default"),
 							click: () => {
 								win.webContents.send("call", {
 									fn: "change_piece_set",
@@ -1631,7 +1634,7 @@ function menu_build() {
 							type: "separator"
 						},
 						{
-							label: "About custom pieces",
+							label: translate.t("About custom pieces"),
 							click: () => {
 								alert(win, messages.about_custom_pieces);
 							}
@@ -1639,10 +1642,10 @@ function menu_build() {
 					]
 				},
 				{
-					label: "Background",
+					label: translate.t("Background"),
 					submenu: [
 						{
-							label: "Choose background image...",
+							label: translate.t("Choose background image..."),
 							click: () => {
 								let files = open_dialog(win, {
 									defaultPath: config.background_dialog_folder,
@@ -1661,7 +1664,7 @@ function menu_build() {
 							}
 						},
 						{
-							label: "Default",
+							label: translate.t("Default"),
 							click: () => {
 								win.webContents.send("call", {
 									fn: "change_background",
@@ -1675,7 +1678,7 @@ function menu_build() {
 					type: "separator"
 				},
 				{
-					label: "Book frequency arrows",
+					label: translate.t("Book frequency arrows"),
 					type: "checkbox",
 					checked: config.book_explorer,			// But this is never saved in the config file.
 					click: () => {
@@ -1687,7 +1690,7 @@ function menu_build() {
 					}
 				},
 				{
-					label: "Lichess frequency arrows",
+					label: translate.t("Lichess frequency arrows"),
 					type: "checkbox",
 					accelerator: "CommandOrControl+E",
 					checked: config.lichess_explorer,		// But this is never saved in the config file.
@@ -1702,10 +1705,10 @@ function menu_build() {
 			]
 		},
 		{
-			label: "Sizes",
+			label: translate.t("Sizes"),
 			submenu: [
 				{
-					label: "Infobox font",
+					label: translate.t("Infobox font"),
 					submenu: [
 						{
 							label: "32",
@@ -1782,7 +1785,7 @@ function menu_build() {
 					]
 				},
 				{
-					label: "Move history font",
+					label: translate.t("Move history font"),
 					submenu: [
 						{
 							label: "32",
@@ -1862,7 +1865,7 @@ function menu_build() {
 					type: "separator"
 				},
 				{
-					label: "Board",
+					label: translate.t("Board"),
 					submenu: [
 						{
 							label: "1280",
@@ -1987,10 +1990,10 @@ function menu_build() {
 					]
 				},
 				{
-					label: "Arrows",
+					label: translate.t("Arrows"),
 					submenu: [
 						{
-							label: "Giant",
+							label: translate.t("Giant"),
 							click: () => {
 								win.webContents.send("call", {
 									fn: "set_arrow_size",
@@ -1999,7 +2002,7 @@ function menu_build() {
 							}
 						},
 						{
-							label: "Large",
+							label: translate.t("Large"),
 							click: () => {
 								win.webContents.send("call", {
 									fn: "set_arrow_size",
@@ -2008,7 +2011,7 @@ function menu_build() {
 							}
 						},
 						{
-							label: "Medium",
+							label: translate.t("Medium"),
 							click: () => {
 								win.webContents.send("call", {
 									fn: "set_arrow_size",
@@ -2017,7 +2020,7 @@ function menu_build() {
 							}
 						},
 						{
-							label: "Small",
+							label: translate.t("Small"),
 							click: () => {
 								win.webContents.send("call", {
 									fn: "set_arrow_size",
@@ -2031,7 +2034,7 @@ function menu_build() {
 					type: "separator"
 				},
 				{
-					label: "Graph",
+					label: translate.t("Graph"),
 					submenu: [
 						{
 							label: "192",
@@ -2132,7 +2135,7 @@ function menu_build() {
 					]
 				},
 				{
-					label: "Graph lines",
+					label: translate.t("Graph lines"),
 					submenu: [
 						{
 							label: "8",
@@ -2203,7 +2206,7 @@ function menu_build() {
 					type: "separator"
 				},
 				{
-					label: "I want other size options!",
+					label: translate.t("I want other size options!"),
 					click: () => {
 						alert(win, messages.about_sizes);
 					}
@@ -2211,10 +2214,10 @@ function menu_build() {
 			]
 		},
 		{
-			label: "Engine",
+			label: translate.t("Engine"),
 			submenu: [
 				{
-					label: "Choose engine...",
+					label: translate.t("Choose engine..."),
 					type: "checkbox",
 					checked: false,
 					click: () => {
@@ -2242,16 +2245,16 @@ function menu_build() {
 					},
 				},
 				{
-					label: "Choose known engine...",
+					label: translate.t("Choose known engine..."),
 					click: () => {
 						win.webContents.send("call", "show_fast_engine_chooser");
 					}
 				},
 				{
-					label: "Weights",
+					label: translate.t("Weights"),
 					submenu: [
 						{
-							label: "Lc0 WeightsFile...",
+							label: translate.t("Lc0 WeightsFile..."),
 							type: "checkbox",
 							checked: false,
 							click: () => {
@@ -2278,7 +2281,7 @@ function menu_build() {
 							},
 						},
 						{
-							label: "Stockfish EvalFile...",
+							label: translate.t("Stockfish EvalFile..."),
 							type: "checkbox",
 							checked: false,
 							click: () => {
@@ -2305,7 +2308,7 @@ function menu_build() {
 							},
 						},
 						{
-							label: "Set to <auto>",
+							label: translate.t("Set to <auto>"),
 							click: () => {
 								win.webContents.send("call", "auto_weights");
 								// Will receive an ack IPC which sets menu checks.
@@ -2314,7 +2317,7 @@ function menu_build() {
 					]
 				},
 				{
-					label: "Backend",
+					label: translate.t("Backend"),
 					submenu: [
 						{
 							label: "cuda-auto",
@@ -2628,7 +2631,7 @@ function menu_build() {
 					type: "separator"
 				},
 				{
-					label: "Choose Syzygy path...",
+					label: translate.t("Choose Syzygy path..."),
 					type: "checkbox",
 					checked: false,
 					click: () => {
@@ -2655,7 +2658,7 @@ function menu_build() {
 					}
 				},
 				{
-					label: "Unset",
+					label: translate.t("Unset"),
 					click: () => {
 						win.webContents.send("call", "disable_syzygy");
 						// Will receive an ack IPC which sets menu checks.
@@ -2665,10 +2668,10 @@ function menu_build() {
 					type: "separator"
 				},
 				{
-					label: "Limit - normal",
+					label: translate.t("Limit - normal"),
 					submenu: [
 						{
-							label: "Unlimited",
+							label: translate.t("Unlimited"),
 							accelerator: "CommandOrControl+U",
 							type: "checkbox",
 							checked: false,
@@ -2819,7 +2822,7 @@ function menu_build() {
 							type: "separator",
 						},
 						{
-							label: "Up slightly",
+							label: translate.t("Up slightly"),
 							accelerator: "CommandOrControl+=",
 							click: () => {
 								win.webContents.send("call", {
@@ -2829,7 +2832,7 @@ function menu_build() {
 							}
 						},
 						{
-							label: "Down slightly",
+							label: translate.t("Down slightly"),
 							accelerator: "CommandOrControl+-",
 							click: () => {
 								win.webContents.send("call", {
@@ -2841,7 +2844,7 @@ function menu_build() {
 					]
 				},
 				{
-					label: "Limit - auto-eval / play",
+					label: translate.t("Limit - auto-eval / play"),
 					submenu: [
 						{
 							label: "1,000,000,000",
@@ -2979,7 +2982,7 @@ function menu_build() {
 							type: "separator",
 						},
 						{
-							label: "Up slightly",
+							label: translate.t("Up slightly"),
 							accelerator: "CommandOrControl+]",
 							click: () => {
 								win.webContents.send("call", {
@@ -2989,7 +2992,7 @@ function menu_build() {
 							}
 						},
 						{
-							label: "Down slightly",
+							label: translate.t("Down slightly"),
 							accelerator: "CommandOrControl+[",
 							click: () => {
 								win.webContents.send("call", {
@@ -3001,7 +3004,7 @@ function menu_build() {
 					]
 				},
 				{
-					label: "Limit by time instead of nodes",
+					label: translate.t("Limit by time instead of nodes"),
 					type: "checkbox",
 					checked: false,
 					click: () => {
@@ -3012,7 +3015,7 @@ function menu_build() {
 					type: "separator"
 				},
 				{
-					label: "Threads",
+					label: translate.t("Threads"),
 					submenu: [
 						{
 							label: "128",
@@ -3234,7 +3237,7 @@ function menu_build() {
 							type: "separator"
 						},
 						{
-							label: "Warning about threads",
+							label: translate.t("Warning about threads"),
 							click: () => {
 								alert(win, messages.thread_warning);
 							}
@@ -3242,7 +3245,7 @@ function menu_build() {
 					]
 				},
 				{
-					label: "Hash",
+					label: translate.t("Hash"),
 					submenu: [
 						{
 							label: "120 GB",
@@ -3368,7 +3371,7 @@ function menu_build() {
 							type: "separator"
 						},
 						{
-							label: "I want other hash options!",
+							label: translate.t("I want other hash options!"),
 							click: () => {
 								alert(win, messages.about_hashes);
 							}
@@ -3376,7 +3379,7 @@ function menu_build() {
 					]
 				},
 				{
-					label: "MultiPV",
+					label: translate.t("MultiPV"),
 					submenu: [
 						{
 							label: "5",
@@ -3444,10 +3447,10 @@ function menu_build() {
 					type: "separator"
 				},
 				{
-					label: "Contempt Mode",				// Other valid options are "play" (which messes with normal analysis) and "disable"
+					label: translate.t("Contempt Mode"),// Other valid options are "play" (which messes with normal analysis) and "disable"
 					submenu: [
 						{
-							label: "White analysis",	// Note string searched when ack'd.
+							label: translate.t("White analysis"),	// Note string searched when ack'd.
 							type: "checkbox",
 							checked: false,
 							click: () => {
@@ -3459,7 +3462,7 @@ function menu_build() {
 							}
 						},
 						{
-							label: "Black analysis",	// Note string searched when ack'd.
+							label: translate.t("Black analysis"),	// Note string searched when ack'd.
 							type: "checkbox",
 							checked: false,
 							click: () => {
@@ -3473,7 +3476,7 @@ function menu_build() {
 					]
 				},
 				{
-					label: "Contempt",
+					label: translate.t("Contempt"),
 					submenu: [
 						{
 							label: "250",
@@ -3610,7 +3613,7 @@ function menu_build() {
 					]
 				},
 				{
-					label: "WDL Calibration Elo",
+					label: translate.t("WDL Calibration Elo"),
 					submenu: [
 						{
 							label: "3600",
@@ -3724,7 +3727,7 @@ function menu_build() {
 							type: "separator"
 						},
 						{
-							label: "Use default WDL",	// This string is searched for when receiving ack 0, don't edit this alone.
+							label: translate.t("Use default WDL"),	// This string is searched for when receiving ack 0, don't edit this alone.
 							type: "checkbox",
 							checked: false,
 							click: () => {
@@ -3738,10 +3741,10 @@ function menu_build() {
 					]
 				},
 				{
-					label: "WDL Eval Objectivity",
+					label: translate.t("WDL Eval Objectivity"),
 					submenu: [
 						{
-							label: "Yes",
+							label: translate.t("Yes"),
 							type: "checkbox",
 							checked: false,
 							click: () => {
@@ -3753,7 +3756,7 @@ function menu_build() {
 							}
 						},
 						{
-							label: "No",
+							label: translate.t("No"),
 							type: "checkbox",
 							checked: false,
 							click: () => {
@@ -3767,7 +3770,7 @@ function menu_build() {
 					]
 				},
 				{
-					label: "Score Type",
+					label: translate.t("Score Type"),
 					submenu: [
 						{
 							label: "WDL_mu",
@@ -3799,20 +3802,20 @@ function menu_build() {
 					type: "separator"
 				},
 				{
-					label: "Custom scripts",
+					label: translate.t("Custom scripts"),
 					submenu: scriptlist_in_menu			// Will be filled at the end, see below.
 				},
 				{
 					type: "separator"
 				},
 				{
-					label: "Restart engine",
+					label: translate.t("Restart engine"),
 					click: () => {
 						win.webContents.send("call", "restart_engine");
 					}
 				},
 				{
-					label: "Soft engine reset",
+					label: translate.t("Soft engine reset"),
 					click: () => {
 						win.webContents.send("call", "soft_engine_reset");
 					}
@@ -3820,10 +3823,10 @@ function menu_build() {
 			]
 		},
 		{
-			label: "Play",
+			label: translate.t("Play"),
 			submenu: [
 				{
-					label: "Play this colour",
+					label: translate.t("Play this colour"),
 					accelerator: "F9",
 					click: () => {
 						win.webContents.send("call", "play_this_colour");
@@ -3833,7 +3836,7 @@ function menu_build() {
 					type: "separator"
 				},
 				{
-					label: "Start self-play",
+					label: translate.t("Start self-play"),
 					accelerator: "F11",
 					click: () => {
 						win.webContents.send("call", {
@@ -3843,7 +3846,7 @@ function menu_build() {
 					}
 				},
 				{
-					label: "Halt",
+					label: translate.t("Halt"),
 					click: () => {
 						win.webContents.send("call", {
 							fn: "set_behaviour",
@@ -3855,7 +3858,7 @@ function menu_build() {
 					type: "separator"
 				},
 				{
-					label: "Use Polyglot book...",
+					label: translate.t("Use Polyglot book..."),
 					type: "checkbox",
 					checked: false,
 					click: () => {
@@ -3880,7 +3883,7 @@ function menu_build() {
 					}
 				},
 				{
-					label: "Use PGN book...",
+					label: translate.t("Use PGN book..."),
 					type: "checkbox",
 					checked: false,
 					click: () => {
@@ -3905,17 +3908,17 @@ function menu_build() {
 					}
 				},
 				{
-					label: "Unload book / abort load",
+					label: translate.t("Unload book / abort load"),
 					click: () => {
 						win.webContents.send("call", "unload_book");
 						// Will receive an ack IPC which sets menu checks.
 					}
 				},
 				{
-					label: "Book depth limit",
+					label: translate.t("Book depth limit"),
 					submenu: [
 						{
-							label: "Unlimited",
+							label: translate.t("Unlimited"),
 							type: "checkbox",
 							checked: typeof config.book_depth !== "number",
 							click: () => {
@@ -4019,7 +4022,7 @@ function menu_build() {
 					type: "separator"
 				},
 				{
-					label: "Temperature",
+					label: translate.t("Temperature"),
 					submenu: [
 						{
 							label: "1.0",
@@ -4156,10 +4159,10 @@ function menu_build() {
 					]
 				},
 				{
-					label: "Temp Decay Moves",
+					label: translate.t("Temp Decay Moves"),
 					submenu: [
 						{
-							label: "Infinite",
+							label: translate.t("Infinite"),
 							type: "checkbox",
 							checked: false,
 							click: () => {
@@ -4296,7 +4299,7 @@ function menu_build() {
 					type: "separator"
 				},
 				{
-					label: "About play modes",
+					label: translate.t("About play modes"),
 					click: () => {
 						alert(win, messages.about_versus_mode);
 					}
@@ -4304,13 +4307,14 @@ function menu_build() {
 			]
 		},
 		{
-			label: "Dev",
+			label: translate.t("Dev"),
 			submenu: [
 				{
+					label: translate.t("Toggle Developer Tools"),
 					role: "toggledevtools"
 				},
 				{
-					label: "Toggle Debug CSS",
+					label: translate.t("Toggle Debug CSS"),
 					click: () => {
 						win.webContents.send("call", "toggle_debug_css");
 					}
@@ -4319,7 +4323,7 @@ function menu_build() {
 					type: "separator"
 				},
 				{
-					label: "Permanently enable save",
+					label: translate.t("Permanently enable save"),
 					click: () => {
 						config.save_enabled = true;								// The main process actually uses this variable...
 						win.webContents.send("set", {save_enabled: true});		// But it's the renderer process that saves the config file.
@@ -4353,7 +4357,7 @@ function menu_build() {
 					type: "separator"
 				},
 				{
-					label: "Random move",
+					label: translate.t("Random move"),
 					accelerator: "CommandOrControl+/",
 					click: () => {
 						win.webContents.send("call", "random_move");
@@ -4363,7 +4367,7 @@ function menu_build() {
 					type: "separator"
 				},
 				{
-					label: "Disable hardware acceleration for GUI",
+					label: translate.t("Disable hardware acceleration for GUI"),
 					type: "checkbox",
 					checked: config.disable_hw_accel,
 					click: () => {
@@ -4378,10 +4382,10 @@ function menu_build() {
 					}
 				},
 				{
-					label: "Spin rate",
+					label: translate.t("Spin rate"),
 					submenu: [
 						{
-							label: "Frenetic",
+							label: translate.t("Frenetic"),
 							type: "checkbox",
 							checked: config.update_delay === 25,
 							click: () => {
@@ -4390,7 +4394,7 @@ function menu_build() {
 							}
 						},
 						{
-							label: "Fast",
+							label: translate.t("Fast"),
 							type: "checkbox",
 							checked: config.update_delay === 60,
 							click: () => {
@@ -4399,7 +4403,7 @@ function menu_build() {
 							}
 						},
 						{
-							label: "Normal",
+							label: translate.t("Normal"),
 							type: "checkbox",
 							checked: config.update_delay === 125,
 							click: () => {
@@ -4408,7 +4412,7 @@ function menu_build() {
 							}
 						},
 						{
-							label: "Relaxed",
+							label: translate.t("Relaxed"),
 							type: "checkbox",
 							checked: config.update_delay === 170,
 							click: () => {
@@ -4417,7 +4421,7 @@ function menu_build() {
 							}
 						},
 						{
-							label: "Lazy",
+							label: translate.t("Lazy"),
 							type: "checkbox",
 							checked: config.update_delay === 250,
 							click: () => {
@@ -4431,7 +4435,7 @@ function menu_build() {
 					type: "separator"
 				},
 				{
-					label: "Show engine state",
+					label: translate.t("Show engine state"),
 					type: "checkbox",
 					checked: config.show_engine_state,
 					click: () => {
@@ -4442,13 +4446,13 @@ function menu_build() {
 					}
 				},
 				{
-					label: "List sent options",
+					label: translate.t("List sent options"),
 					click: () => {
 						win.webContents.send("call", "show_sent_options");
 					}
 				},
 				{
-					label: "Show error log",
+					label: translate.t("Show error log"),
 					click: () => {
 						win.webContents.send("call", "show_error_log");
 					}
@@ -4457,10 +4461,10 @@ function menu_build() {
 					type: "separator"
 				},
 				{
-					label: "Hacks and kludges",
+					label: translate.t("Hacks and kludges"),
 					submenu: [
 						{
-							label: "Allow arbitrary scripts",
+							label: translate.t("Allow arbitrary scripts"),
 							type: "checkbox",
 							checked: config.allow_arbitrary_scripts,
 							click: () => {
@@ -4471,7 +4475,7 @@ function menu_build() {
 							}
 						},
 						{
-							label: "Accept any file size",
+							label: translate.t("Accept any file size"),
 							type: "checkbox",
 							checked: config.ignore_filesize_limits,
 							click: () => {
@@ -4482,7 +4486,7 @@ function menu_build() {
 							}
 						},
 						{
-							label: "Allow stopped analysis",
+							label: translate.t("Allow stopped analysis"),
 							type: "checkbox",
 							checked: config.allow_stopped_analysis,
 							click: () => {
@@ -4493,7 +4497,7 @@ function menu_build() {
 							}
 						},
 						{
-							label: "Never hide focus buttons",
+							label: translate.t("Never hide focus buttons"),
 							type: "checkbox",
 							checked: config.never_suppress_searchmoves,
 							click: () => {
@@ -4504,7 +4508,7 @@ function menu_build() {
 							}
 						},
 						{
-							label: "Never grayout move info",
+							label: translate.t("Never grayout move info"),
 							type: "checkbox",
 							checked: config.never_grayout_infolines,
 							click: () => {
@@ -4515,7 +4519,7 @@ function menu_build() {
 							}
 						},
 						{
-							label: "Use lowerbound / upperbound info",
+							label: translate.t("Use lowerbound / upperbound info"),
 							type: "checkbox",
 							checked: config.accept_bounds,
 							click: () => {
@@ -4526,7 +4530,7 @@ function menu_build() {
 							}
 						},
 						{
-							label: "Suppress ucinewgame",
+							label: translate.t("Suppress ucinewgame"),
 							type: "checkbox",
 							checked: config.suppress_ucinewgame,
 							click: () => {
@@ -4542,13 +4546,13 @@ function menu_build() {
 					type: "separator"
 				},
 				{
-					label: "Log RAM state to console",
+					label: translate.t("Log RAM state to console"),
 					click: () => {
 						win.webContents.send("call", "log_ram");
 					}
 				},
 				{
-					label: "Fire GC",
+					label: translate.t("Fire GC"),
 					click: () => {
 						win.webContents.send("call", "fire_gc");
 					}
@@ -4557,10 +4561,10 @@ function menu_build() {
 					type: "separator"
 				},
 				{
-					label: "Logging",
+					label: translate.t("Logging"),
 					submenu: [
 						{
-							label: "Use logfile...",
+							label: translate.t("Use logfile..."),
 							type: "checkbox",
 							checked: typeof config.logfile === "string" && config.logfile !== "",
 							click: () => {
@@ -4577,7 +4581,7 @@ function menu_build() {
 							}
 						},
 						{
-							label: "Disable logging",
+							label: translate.t("Disable logging"),
 							click: () => {
 								win.webContents.send("call", {
 									fn: "set_logfile",
@@ -4590,7 +4594,7 @@ function menu_build() {
 							type: "separator"
 						},
 						{
-							label: "Clear log when opening",
+							label: translate.t("Clear log when opening"),
 							type: "checkbox",
 							checked: config.clear_log,
 							click: () => {
@@ -4601,7 +4605,7 @@ function menu_build() {
 							}
 						},
 						{
-							label: "Use unique logfile each time",
+							label: translate.t("Use unique logfile each time"),
 							type: "checkbox",
 							checked: config.logfile_timestamp,
 							click: () => {
@@ -4615,7 +4619,7 @@ function menu_build() {
 							type: "separator"
 						},
 						{
-							label: "Log illegal moves",
+							label: translate.t("Log illegal moves"),
 							type: "checkbox",
 							checked: config.log_illegal_moves,
 							click: () => {
@@ -4626,7 +4630,7 @@ function menu_build() {
 							}
 						},
 						{
-							label: "Log positions",
+							label: translate.t("Log positions"),
 							type: "checkbox",
 							checked: config.log_positions,
 							click: () => {
@@ -4637,7 +4641,7 @@ function menu_build() {
 							}
 						},
 						{
-							label: "Log info lines",
+							label: translate.t("Log info lines"),
 							type: "checkbox",
 							checked: config.log_info_lines,
 							click: () => {
@@ -4648,7 +4652,7 @@ function menu_build() {
 							}
 						},
 						{
-							label: "...including useless lines",
+							label: translate.t("...including useless lines"),
 							type: "checkbox",
 							checked: config.log_useless_info,
 							click: () => {
@@ -4661,6 +4665,10 @@ function menu_build() {
 					]
 				},
 			]
+		},
+		{
+			label: translate.t("Language"),
+			submenu: language_choices_submenu()
 		}
 	];
 
@@ -4684,13 +4692,13 @@ function menu_build() {
 		scriptlist_in_menu.push({type: "separator"});
 	}
 	scriptlist_in_menu.push({
-		label: "How to add scripts",
+		label: translate.t("How to add scripts"),
 		click: () => {
 			alert(win, messages.adding_scripts);
 		}
 	});
 	scriptlist_in_menu.push({
-		label: `Show scripts folder`,
+		label: translate.t("Show scripts folder"),
 		click: () => {
 			electron.shell.showItemInFolder(custom_uci.script_dir_path);
 		}
@@ -4701,6 +4709,28 @@ function menu_build() {
 	return electron.Menu.buildFromTemplate(template);
 }
 
+function language_choices_submenu() {
+
+	let ret = [];
+
+	for (let language of translate.all_languages()) {
+		ret.push({
+			label: language,
+			type: "checkbox",
+			checked: config.language === language,
+			click: () => {
+				set_checks("Language", language);
+				win.webContents.send("call", {
+					fn: "set_language",
+					args: [language]
+				});
+			}
+		});
+	}
+
+	return ret;
+}
+
 function get_submenu_items(menupath) {
 
 	// If the path is to a submenu, this returns a list of all items in the submenu.
@@ -4708,7 +4738,7 @@ function get_submenu_items(menupath) {
 
 	let o = menu.items;
 	for (let p of menupath) {
-		p = stringify(p);
+		p = translate.t(stringify(p));
 		for (let item of o) {
 			if (item.label === p) {
 				if (item.submenu) {
@@ -4736,7 +4766,7 @@ function set_checks(...menupath) {
 		let items = get_submenu_items(menupath.slice(0, -1));
 		for (let n = 0; n < items.length; n++) {
 			if (items[n].checked !== undefined) {
-				items[n].checked = items[n].label === stringify(menupath[menupath.length - 1]);
+				items[n].checked = items[n].label === translate.t(stringify(menupath[menupath.length - 1]));
 			}
 		}
 	}, 50);

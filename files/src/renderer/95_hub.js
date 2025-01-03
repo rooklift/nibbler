@@ -2403,6 +2403,11 @@ let hub_props = {
 		this.send_ack_logfile();
 	},
 
+	set_language: function(s) {
+		config.language = s;
+		alert(translate.t("RESTART_REQUIRED", s));
+	},
+
 	send_ack_logfile: function() {
 		ipcRenderer.send("ack_logfile", config.logfile);
 	},
