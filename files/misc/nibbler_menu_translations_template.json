@@ -39,7 +39,7 @@
 			"Delete siblings": "TODO",
 			"Delete ALL other lines": "TODO",
 			"Show PGN games list": "TODO",					// For when a PGN file has multiple games
-			"Escape": "TODO",								// Should literally just be the name of the Escape key in target language
+			"Escape": "TODO",								// Escape key function - "escape" out of this screen to main screen
 		"Analysis": "TODO",
 			"Go": "TODO",									// Starts the engine running
 			"Go and lock engine": "TODO",					// Starts the engine running on current position, and does NOT change the engine position even if GUI position changes
