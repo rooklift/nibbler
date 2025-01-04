@@ -1167,7 +1167,7 @@ let translations = {
 			"Flip board": "Obróć szachownicę",
 			"Arrows": "Strzałki",
 			"Piece-click spotlight": "Podświetlanie figur przy kliknięciu",
-			"Pokazuj faktyczny ruch (jeśli znany)": "Zawsze pokazuj wykonany ruch (jeśli znany)",
+			"Always show actual move (if known)": "Pokazuj faktyczny ruch (jeśli znany)",
 			"...with unique colour": "...z unikalnym kolorem",
 			"...with outline": "...z konturem",
 			"Arrowhead type": "Typ strzałek",
