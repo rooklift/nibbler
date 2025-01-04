@@ -141,9 +141,9 @@
 			"Limit - auto-eval / play": "TODO",				// Node limit for engine when playing or evaluating a game
 			"Limit by time instead of nodes": "TODO",		// Consider node limit setting as a time limit in milliseconds instead
 			"Threads": "TODO",								// How many threads engine should used
-			"Warning about threads": "TODO",				// Displays a text warning about when not to use too many threads
+				"Warning about threads": "TODO",				// ... Displays a text warning about when not to use too many threads
 			"Hash": "TODO",									// Hash size (submenu not in this list)
-			"I want other hash options!": "TODO",			// Displays text about how to have a custom hash setting
+				"I want other hash options!": "TODO",			// ... Displays text about how to have a custom hash setting
 			"MultiPV": "TODO",								// How many lines a Stockfish-like engine should consider at once (multipv setting)
 			"Contempt Mode": "TODO",
 				"White analysis": "TODO",						// ... Contempt from White's point of view
