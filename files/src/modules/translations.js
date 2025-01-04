@@ -12,7 +12,7 @@ const reload_engineconfig = `Reload ${engineconfig_io.filename} (and restart eng
 // In general keys will just be the English version.
 // Exceptions will be in UPPERCASE_FORMAT.
 
-module.exports = {
+let translations = {
 
 	"English": {
 		"RESTART_REQUIRED": "The GUI must now be restarted.",
@@ -258,10 +258,10 @@ module.exports = {
 		"Quit": "Salir",
 		"Tree": "Árbol",
 		"Play engine choice": "Jugar elección del motor",
-		"1ro": "1ro",
-		"2do": "2do",
-		"3ro": "3ro",
-		"4to": "4to",
+		"1st": "1ro",
+		"2nd": "2do",
+		"3rd": "3ro",
+		"4th": "4to",
 		"Root": "Raíz",
 		"End": "Final",
 		"Backward": "Atrás",
@@ -276,7 +276,7 @@ module.exports = {
 		"Delete siblings": "Eliminar hermanos",
 		"Delete ALL other lines": "Eliminar TODAS las otras líneas",
 		"Show PGN games list": "Mostrar lista de partidas PGN",
-		"Esc": "Esc",
+		"Escape": "Esc",
 		"Analysis": "Análisis",
 		"Go": "Iniciar",
 		"Go and lock engine": "Iniciar y bloquear motor",
@@ -2611,3 +2611,38 @@ module.exports = {
 	}
 
 };
+
+// Check dictionaries for missing items... log to console in main process.
+
+function checker() {
+
+	let base_dict = translations["Français"];
+	let base_keys = Object.keys(base_dict);
+
+	for (let language of Object.keys(translations)) {
+
+		if (language === "English") {
+			continue;
+		}
+
+		let other_dict = translations[language];
+		let other_keys = Object.keys(other_dict);
+
+		for (let key of base_keys) {
+			if (other_dict[key] === undefined) {
+				console.log(`${language} missing: ${key}`);
+			}
+		}
+
+		for (let key of other_keys) {
+			if (base_dict[key] === undefined) {
+				console.log(`${language} has extra: ${key}`);
+			}
+		}
+	}
+}
+
+checker();
+
+
+module.exports = translations;
