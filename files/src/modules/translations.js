@@ -1535,7 +1535,7 @@ module.exports = {
 	"简体中文": {
 		"File": "文件",
 		"About": "关于",
-		"New game": "新游戏",
+		"New game": "新棋局",
 		"New 960 game": "新 960 棋局",
 		"Open PGN...": "打开 PGN...",
 		"Load FEN / PGN from clipboard": "从剪贴板加载 FEN / PGN",
