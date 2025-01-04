@@ -18,6 +18,8 @@ module.exports = {
 		"RESTART_REQUIRED": "The GUI must now be restarted.",
 	},
 
+	// FRENCH .....................................................................................
+
 	"Français": {
 		"File": "Fichier",
 		"About": "À propos",
@@ -231,6 +233,8 @@ module.exports = {
 
 		"RESTART_REQUIRED": "L'interface doit maintenant être redémarrée.",
 	},
+
+	// SPANISH ....................................................................................
 
 	"Español": {
 		"File": "Archivo",
@@ -446,6 +450,8 @@ module.exports = {
 		"RESTART_REQUIRED": "La interfaz debe reiniciarse ahora."
 	},
 
+	// GERMAN .....................................................................................
+
 	"Deutsch": {
 		"File": "Datei",
 		"About": "Über",
@@ -659,6 +665,8 @@ module.exports = {
 
 		"RESTART_REQUIRED": "Die GUI muss neu gestartet werden."
 	},
+
+	// RUSSIAN ....................................................................................
 
 	"Русский": {
 		"File": "Файл",
@@ -874,6 +882,8 @@ module.exports = {
 		"RESTART_REQUIRED": "Требуется перезапуск программы"
 	},
 
+	// UKRAINIAN ..................................................................................
+
 	"Українська": {
 		"File": "Файл",
 		"About": "Про програму",
@@ -1087,6 +1097,8 @@ module.exports = {
 
 		"RESTART_REQUIRED": "Необхідно перезапустити GUI."
 	},
+
+	// BELARUSIAN .................................................................................
 
 	"беларуская": {
 		"File": "Файл",
@@ -1302,7 +1314,9 @@ module.exports = {
 		"RESTART_REQUIRED": "Праграму трэба перазапусціць.",
 	},
 
-	"繁體中文": {			// Traditional
+	// TRADITIONAL CHINESE ........................................................................
+
+	"繁體中文": {
 		"File": "檔案",
 		"About": "關於",
 		"New game": "新棋局",
@@ -1516,7 +1530,9 @@ module.exports = {
 		"RESTART_REQUIRED": "需要關閉並重新起動程式"
 	},
 
-	"简体中文": {				// Simplified
+	// SIMPLIFIED CHINESE .........................................................................
+
+	"简体中文": {
 		"File": "文件",
 		"About": "关于",
 		"New game": "新游戏",
@@ -1729,6 +1745,8 @@ module.exports = {
 
 		"RESTART_REQUIRED": "需要关闭并重新启动程序"
 	},
+
+	// HINDI ......................................................................................
 
 	"हिंदी": {
 		"File": "फ़ाइल",
