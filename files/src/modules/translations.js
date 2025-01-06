@@ -3294,7 +3294,7 @@ let translations = {
 			"Next sibling": "אח הבא",
 			"Return to main line": "חזור למהלך הראשי",
 			"Promote line to main line": "קדם קו לראשי",
-			"Promote line by 1 level": "קדמ קו ברמה אחת",
+			"Promote line by 1 level": "קדם קו ברמה אחת",
 			"Delete node": "מחק צומת",
 			"Delete children": "מחק צאצאים",
 			"Delete siblings": "מחק אחים",
