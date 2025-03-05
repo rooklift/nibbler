@@ -400,13 +400,65 @@ const node_prototype = {
 		// which is the parent unless the call is a bad one.
 
 		let parent = this.parent;
-		if (!parent) return this;		// Fail
+		if (!parent) return this;			// Fail
 
 		parent.children = parent.children.filter(child => child !== this);
 
 		this.parent = null;
 		DestroyTree(this);
 		return parent;
+	},
+
+	polyglot_book: function(filepath) {		// Partially written by Claude, secret method for Naphthalin, saves .bin to filepath
+
+		let book = [];
+		AddTreeToBook(this, book);
+
+		let polyglot_entries = [];
+
+		for (let entry of book) {
+
+			let [x1, y1] = XY(entry.move.slice(0, 2));
+			let [x2, y2] = XY(entry.move.slice(2, 4));
+			let promotion = entry.move.slice(4);
+
+			let move_val = 0;
+			let promotion_val = 0;
+
+			if (promotion) {
+				switch (promotion.toLowerCase()) {
+					case "n": promotion_val = 1; break;
+					case "b": promotion_val = 2; break;
+					case "r": promotion_val = 3; break;
+					case "q": promotion_val = 4; break;
+				}
+			}
+
+			move_val |= (x2 & 0b111);						// bits 0-2: to file
+			move_val |= (((7 - y2) & 0b111) << 3);			// bits 3-5: to rank
+			move_val |= ((x1 & 0b111) << 6);				// bits 6-8: from file
+			move_val |= (((7 - y1) & 0b111) << 9);  		// bits 9-11: from rank
+			move_val |= ((promotion_val & 0b111) << 12);	// bits 12-14: promotion piece
+
+			polyglot_entries.push((entry.key << 64n) + (BigInt(move_val) << 48n) + (1n << 32n));
+		}
+
+		polyglot_entries.sort((a, b) => (a < b) ? -1 : (a > b) ? 1 : 0);
+
+		let buffer = Buffer.alloc(polyglot_entries.length * 16);
+
+		for (let i = 0; i < polyglot_entries.length; i++) {
+			let entry = polyglot_entries[i];
+			let position = i * 16;
+
+			for (let j = 0; j < 16; j++) {
+				let byte_shift = BigInt(15 - j) * 8n;					// Calculate byte position from the right (big-endian)
+				let byte_val = Number((entry >> byte_shift) & 0xFFn);	// Extract the byte value with mask and shift
+				buffer[position + j] = byte_val;
+			}
+		}
+
+		fs.writeFileSync(filepath, buffer);
 	},
 };
 
