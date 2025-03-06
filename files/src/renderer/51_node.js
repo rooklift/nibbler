@@ -452,8 +452,8 @@ const node_prototype = {
 			let position = i * 16;
 
 			for (let j = 0; j < 16; j++) {
-				let byte_shift = BigInt(15 - j) * 8n;					// Calculate byte position from the right (big-endian)
-				let byte_val = Number((entry >> byte_shift) & 0xFFn);	// Extract the byte value with mask and shift
+				let bit_shift = BigInt(15 - j) * 8n;
+				let byte_val = Number((entry >> bit_shift) & 0xFFn);
 				buffer[position + j] = byte_val;
 			}
 		}
