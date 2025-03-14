@@ -5,6 +5,10 @@
 // All of this may be redundant since id-havers are in the global
 // namespace automatically. But declaring them const has some value.
 
+const boardcoordinates_fontsize_px = 14.0;
+const boardcoordinates = [document.getElementById("boardcoordinates-overlay"), document.getElementById("boardcoordinates-overlay-flipped")];
+const boardcoordinates_v = [document.getElementById("boardcoordinates-vertical"), document.getElementById("boardcoordinates-vertical-flipped")];
+const boardcoordinates_h = [document.getElementById("boardcoordinates-horizontal"), document.getElementById("boardcoordinates-horizontal-flipped")];
 const boardfriends = document.getElementById("boardfriends");
 const boardsquares = document.getElementById("boardsquares");
 const canvas = document.getElementById("canvas");
