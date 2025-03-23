@@ -255,6 +255,7 @@ window.addEventListener("keydown", (event) => {
 	if (event.key === " ") {
 		let ae = document.activeElement;
 		if (ae.tagName !== "INPUT" && ae.tagName !== "TEXTAREA" && !ae.isContentEditable) {
+			event.preventDefault();						// Prevent scrolling e.g. when the moves area is big enough to have a scroll bar.
 			hub.toggle_go();
 		}
 	}
