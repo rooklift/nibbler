@@ -249,6 +249,17 @@ fenbox.addEventListener("keydown", (event) => {
 	}
 });
 
+// Set space-bar to toggle go/halt, unless we're in the FEN box...
+
+window.addEventListener("keydown", (event) => {
+	if (event.key === " ") {
+		let ae = document.activeElement;
+		if (ae.tagName !== "INPUT" && ae.tagName !== "TEXTAREA" && !ae.isContentEditable) {
+			hub.toggle_go();
+		}
+	}
+});
+
 // Setup drag-and-drop...
 
 window.addEventListener("dragenter", (event) => {		// Necessary to prevent brief flashes of "not allowed" icon.

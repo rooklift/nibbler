@@ -219,6 +219,14 @@ let hub_props = {
 		config.behaviour = s;
 	},
 
+	toggle_go: function() {
+		if (["analysis_free", "self_play", "auto_analysis", "back_analysis"].includes(config.behaviour)) {
+			this.set_behaviour("halt");
+		} else if (config.behaviour === "halt") {
+			this.set_behaviour("analysis_free");
+		}
+	},
+
 	play_this_colour: function() {
 		if (this.tree.node.board.active === "w") {
 			this.set_behaviour("play_white");
