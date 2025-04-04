@@ -190,6 +190,7 @@ for (let s of ["mousemove", "mouseleave"]) {
 
 	graph.addEventListener(s, (event) => {
 		if (!hub.grapher.dragging) {
+			hub.winrate_hover(event);
 			return;
 		}
 		if (!event.buttons) {
