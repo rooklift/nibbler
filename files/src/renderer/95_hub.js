@@ -2248,6 +2248,10 @@ let hub_props = {
 			}
 		}
 
+		// Update coordinates visibility (flipped vs. not flipped) using the same code as in the longer version in renderer/99_start.js, which this does not replace.
+		boardcoordinates[0].style.visibility = config.flip ? 'hidden' : 'visible';
+		boardcoordinates[1].style.visibility = config.flip ? 'visible' : 'hidden';
+
 		this.draw();								// For the canvas stuff.
 	},
 
@@ -2368,7 +2372,9 @@ let hub_props = {
 	rebuild_sizes: function() {
 
 		// This assumes everything already exists.
-		// Derived from the longer version in start.js, which it does not replace.
+		// Derived from the longer version in renderer/99_start.js, which it does not replace.
+		boardcoordinates_v.forEach( function(bc_v) { bc_v.style.lineHeight = config.board_size / 8.0 / boardcoordinates_fontsize_px; } );
+		boardcoordinates_h.forEach( function(bc_h) { bc_h.style.width = config.board_size + 'px'; } );
 
 		boardfriends.width = canvas.width = boardsquares.width = config.board_size;
 		boardfriends.height = canvas.height = boardsquares.height = config.board_size;
