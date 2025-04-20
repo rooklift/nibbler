@@ -23,7 +23,8 @@ const statusbox = document.getElementById("statusbox");
 try {
 	require("./modules/empty");
 } catch (err) {
-	statusbox.innerHTML = `Running Nibbler in a normal browser doesn't work. For the full app, see the
+	statusbox.innerHTML = `
+	Running Nibbler in a normal browser doesn't work. For the full app, see the
 	<a href="https://github.com/rooklift/nibbler/releases">Releases section</a> of the repo.<br><br>
 
 	It has also been observed not to work if your path contains a % character.`;
