@@ -2044,6 +2044,7 @@ let hub_props = {
 		}
 	},
 
+	// User clicks the "winrate" line, so take them to that move.
 	winrate_click: function(event) {
 
 		let node = this.grapher.node_from_click(this.tree.node, event);
@@ -2056,6 +2057,24 @@ let hub_props = {
 			this.position_changed(false, true);
 		}
 	},
+	// User hovers the "winrate" line graph
+	winrate_hover: function(event) {
+
+		if (!this.grapher.is_inside_graph_canvas(event)) {
+			this.grapher.last_hover_node = null;
+			return;
+		}
+
+		let node = this.grapher.node_from_click(this.tree.node, event);
+
+		if (!node) {
+			return;
+		}
+
+		this.grapher.last_hover_node = node;
+		this.grapher.draw_hover_annotation();
+	},
+
 
 	statusbox_click: function(event) {
 
