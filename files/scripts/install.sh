@@ -77,6 +77,7 @@ done
 # install new
 sudo mv "${UNZIPPED_NAME}" "${INSTALL_DIR}"
 sudo ln -s "${INSTALL_DIR}/nibbler" "${BIN_SYMLINK_PATH}"
+sed -i "s|^Exec=.*|Exec=nibbler --no-sandbox|" "linux/nibbler.desktop"
 sudo mv "linux/nibbler.desktop" "${DESKTOP_ENTRY_PATH}"
 sudo mv "nibbler.png" "${ICON_PNG_PATH}"
 sudo mv "nibbler.svg" "${ICON_SVG_PATH}"
