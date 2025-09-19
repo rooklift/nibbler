@@ -40,7 +40,7 @@ curl -L https://raw.githubusercontent.com/rooklift/nibbler/master/files/scripts/
 
 ## Installation - Mac
 
-Mac builds have been made by [twoplan](https://github.com/twoplan/Nibbler-for-macOS) and [Jac-Zac](https://github.com/Jac-Zac/Nibbler_MacOS) - the latter is probably more up-to-date.
+Mac builds have been made by [twoplan](https://github.com/twoplan/Nibbler-for-macOS) and [Jac-Zac](https://github.com/Jac-Zac/Nibbler_MacOS) and [Zamana](https://github.com/Zamana/nibbler) - the last of which is probably the most up-to-date.
 
 ## Advanced engine options
 
