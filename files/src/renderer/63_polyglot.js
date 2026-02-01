@@ -266,6 +266,7 @@ function KeyFromBoard(board) {
 	// "If the opponent has performed a double pawn push and there is now a pawn next to it belonging to the player to move."
 	//
 	// However, since then, Nibbler now correctly disregards e.p. if the e.p. capture would be illegal, creating a discrepancy here. Alas.
+	// This discrepancy will be so rare that it's probably not very important.
 
 	if (board.enpassant) {
 		key ^= PolyglotEnPassantXorVals[board.enpassant.x];
