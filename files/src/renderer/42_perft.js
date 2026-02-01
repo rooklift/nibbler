@@ -67,10 +67,11 @@ function Perft(fen, depth) {
 	return val;
 }
 
-function PerftFileTest(filename, depth) {
+function PerftFileTest(filename, depth, verbose = false) {
 
 	if (!filename || !depth) throw "Need filename and depth";
 
+	let starttime = performance.now();
 	let contents = fs.readFileSync(filename).toString();
 	let lines = contents.split("\n").map(z => z.trim()).filter(z => z !== "");
 
@@ -80,9 +81,13 @@ function PerftFileTest(filename, depth) {
 		let result = perft(LoadFEN(blobs[0]), depth, false);
 
 		if (lines[n].includes(result.toString())) {
-			console.log(`ok -- ${n + 1} / ${lines.length} -- ${blobs[0]}`);
+			if (verbose) {
+				console.log(`ok -- ${n + 1} / ${lines.length} -- ${blobs[0]}`);
+			}
 		} else {
 			console.log(`FAILED -- ${n + 1} / ${lines.length} -- ${blobs[0]}`);
 		}
 	}
+
+	console.log(`Elapsed: (${((performance.now() - starttime) / 1000).toFixed(1)} seconds)`);
 }
