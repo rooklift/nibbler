@@ -1049,16 +1049,16 @@ const board_prototype = {
 		// Replace fruity dash characters with proper ASCII dash "-"
 
 		for (let n of [8208, 8210, 8211, 8212, 8213, 8722]) {
-			s = replace_all(s, String.fromCodePoint(n), "-");
+			s = ReplaceAll(s, String.fromCodePoint(n), "-");
 		}
 
 		// Delete things we don't need...
 
-		s = replace_all(s, "x", "");
-		s = replace_all(s, "+", "");
-		s = replace_all(s, "#", "");
-		s = replace_all(s, "!", "");
-		s = replace_all(s, "?", "");
+		s = ReplaceAll(s, "x", "");
+		s = ReplaceAll(s, "+", "");
+		s = ReplaceAll(s, "#", "");
+		s = ReplaceAll(s, "!", "");
+		s = ReplaceAll(s, "?", "");
 
 		// If the string contains any dots it'll be something like "1.e4" or "...e4" or whatnot...
 
@@ -1069,8 +1069,8 @@ const board_prototype = {
 
 		// Fix castling with zeroes...
 
-		s = replace_all(s, "0-0-0", "O-O-O");
-		s = replace_all(s, "0-0", "O-O");
+		s = ReplaceAll(s, "0-0-0", "O-O-O");
+		s = ReplaceAll(s, "0-0", "O-O");
 
 		if (s.toUpperCase() === "O-O") {
 
@@ -1096,7 +1096,7 @@ const board_prototype = {
 
 		// Just in case, delete any "-" characters (after handling castling, of course)...
 
-		s = replace_all(s, "-", "");
+		s = ReplaceAll(s, "-", "");
 
 		// If an = sign is present, save promotion string, then delete it from s...
 
@@ -1309,11 +1309,6 @@ function numbers_between(a, b) {					// Inclusive
 	}
 	ret.push(b);
 	return ret;
-}
-
-function replace_all(s, search, replace) {
-	if (!s.includes(search)) return s;				// Seems to improve speed overall
-	return s.split(search).join(replace);
 }
 
 function valid_coord(s) {

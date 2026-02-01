@@ -12,9 +12,9 @@ function load_fen(fen) {
 
 	let ret = new_board();
 
-	fen = replace_all(fen, "\t", " ");
-	fen = replace_all(fen, "\n", " ");
-	fen = replace_all(fen, "\r", " ");
+	fen = ReplaceAll(fen, "\t", " ");
+	fen = ReplaceAll(fen, "\n", " ");
+	fen = ReplaceAll(fen, "\r", " ");
 
 	let tokens = fen.split(" ").filter(z => z !== "");
 
