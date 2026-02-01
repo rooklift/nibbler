@@ -1,16 +1,20 @@
 "use strict";
 
 function LoadFEN(fen) {
+	return load_fen(fen);
+}
+
+function load_fen(fen) {
 
 	if (fen.length > 200) {
-		throw "Invalid FEN - size";
+		throw new Error(`Invalid FEN - length was ${fen.length}`);
 	}
 
-	let ret = NewPosition();
+	let ret = new_board();
 
-	fen = ReplaceAll(fen, "\t", " ");
-	fen = ReplaceAll(fen, "\n", " ");
-	fen = ReplaceAll(fen, "\r", " ");
+	fen = replace_all(fen, "\t", " ");
+	fen = replace_all(fen, "\n", " ");
+	fen = replace_all(fen, "\r", " ");
 
 	let tokens = fen.split(" ").filter(z => z !== "");
 
@@ -21,18 +25,21 @@ function LoadFEN(fen) {
 	if (tokens.length === 5) tokens.push("1");
 
 	if (tokens.length !== 6) {
-		throw "Invalid FEN - token count";
+		throw new Error(`Invalid FEN - token count was ${tokens.length}`);
 	}
 
-	if (tokens[0].endsWith("/")) {				// Some FEN writer does this
+	if (tokens[0].endsWith("/")) {									// Some FEN writer does this
 		tokens[0] = tokens[0].slice(0, -1);
 	}
 
 	let rows = tokens[0].split("/");
 
 	if (rows.length > 8) {
-		throw "Invalid FEN - board row count";
+		throw new Error(`Invalid FEN - too many rows (${rows.length})`);
 	}
+
+	let white_kings = 0;
+	let black_kings = 0;
 
 	for (let y = 0; y < rows.length; y++) {
 
@@ -41,7 +48,7 @@ function LoadFEN(fen) {
 		for (let c of rows[y]) {
 
 			if (x > 7) {
-				throw "Invalid FEN - row length";
+				throw new Error(`Invalid FEN - too many columns`);
 			}
 
 			if (["1", "2", "3", "4", "5", "6", "7", "8"].includes(c)) {
@@ -49,107 +56,94 @@ function LoadFEN(fen) {
 				continue;
 			}
 
+			if ((c === "P" || c === "p") && (y === 0 || y === 7)) {
+				throw new Error(`Invalid FEN - pawn on back rank`);
+			}
+
 			if (["K", "k", "Q", "q", "R", "r", "B", "b", "N", "n", "P", "p"].includes(c)) {
-				ret.state[x][y] = c;
+				ret.set(char_to_piece[c], x, y);
 				x++;
+				if (c === "K") white_kings++;
+				if (c === "k") black_kings++;
 				continue;
 			}
 
-			throw "Invalid FEN - unknown piece";
+			throw new Error(`Invalid FEN - unknown piece ${c}`);
 		}
 	}
 
-	tokens[1] = tokens[1].toLowerCase();
-	if (tokens[1] !== "w" && tokens[1] !== "b") {
-		throw "Invalid FEN - active player";
-	}
-	ret.active = tokens[1];
+	ret.active = tokens[1].toLowerCase() === "b" ? "b" : "w";
 
 	ret.halfmove = parseInt(tokens[4], 10);
 	if (Number.isNaN(ret.halfmove)) {
-		throw "Invalid FEN - halfmoves";
+		throw new Error(`Invalid FEN - halfmoves was ${tokens[4]}`);
 	}
 
 	ret.fullmove = parseInt(tokens[5], 10);
 	if (Number.isNaN(ret.fullmove)) {
-		throw "Invalid FEN - fullmoves";
-	}
-
-	// Some more validity checks...
-
-	let white_kings = 0;
-	let black_kings = 0;
-
-	for (let x = 0; x < 8; x++) {
-		for (let y = 0; y < 8; y++) {
-			if (ret.state[x][y] === "K") white_kings++;
-			if (ret.state[x][y] === "k") black_kings++;
-		}
+		throw new Error(`Invalid FEN - fullmoves was ${tokens[5]}`);
 	}
 
 	if (white_kings !== 1 || black_kings !== 1) {
-		throw "Invalid FEN - number of kings";
+		throw new Error(`Invalid FEN - number of kings`);
 	}
 
-	for (let x = 0; x < 8; x++) {
-		for (let y of [0, 7]) {
-			if (ret.state[x][y] === "P" || ret.state[x][y] === "p") {
-				throw "Invalid FEN - pawn position";
-			}
-		}
-	}
-
-	let opponent_king_char = ret.active === "w" ? "k" : "K";
-	let opponent_king_square = ret.find(opponent_king_char)[0];
-
-	if (ret.attacked(opponent_king_square, ret.colour(opponent_king_square))) {
-		throw "Invalid FEN - non-mover's king in check";
+	if (ret.attacked(ret.inactive(), ret.inactive_king_index())) {
+		throw new Error(`Invalid FEN - non-mover's king in check`);
 	}
 
 	// Some hard things. Do these in the right order!
 
-	ret.castling = CastlingRights(ret, tokens[2]);
-	ret.enpassant = EnPassantSquare(ret, tokens[3]);	// Requires ret.active to be correct.
-	ret.normalchess = IsNormalChessPosition(ret);		// Requires ret.castling to be correct.
+	ret.castling = castling_rights(ret, tokens[2]);
+	ret.__maybe_set_enpassant(tokens[3]);					// Requires ret.active to be correct.
+	ret.normalchess = is_normal_chess(ret);					// Requires ret.castling to be correct.
 
 	return ret;
 }
 
+function castling_rights(board, s) {						// s is the castling string from a FEN
 
-function CastlingRights(board, s) {						// s is the castling string from a FEN
-
-	let dict = Object.create(null);						// Will contain keys like "A" to "H" and "a" to "h"
+	let dict = Object.create(null);							// Will contain keys like "A" to "H" and "a" to "h"
 
 	// WHITE
 
-	let wk_location = board.find("K", 0, 7, 7, 7)[0];	// Will be undefined if not on back rank.
+	let [wkx, wky] = i_to_xy(board.wk);
 
-	if (wk_location) {
+	if (wky === 7) {
 
 		for (let ch of s) {
 			if (["A", "B", "C", "D", "E", "F", "G", "H"].includes(ch)) {
-				let point = Point(ch.toLowerCase() + "1");
-				if (board.piece(point) === "R") {
+				if (board.get(ch.toLowerCase() + "1") === R) {
 					dict[ch] = true;
 				}
 			}
 			if (ch === "Q") {
-				if (board.state[0][7] === "R") {		// Compatibility with regular Chess FEN.
+				if (board.get("a1") === R) {				// Compatibility with regular Chess FEN.
 					dict.A = true;
 				} else {
-					let left_rooks = board.find("R", 0, 7, wk_location.x, 7);
-					for (let rook of left_rooks) {
-						dict[rook.s[0].toUpperCase()] = true;
+					for (let col of ["a", "b", "c", "d", "e", "f", "g", "h"]) {
+						let piece = board.get(col + "1");
+						if (piece === K) {					// Found the king before a rook, so there won't be queenside castling.
+							break;
+						}
+						if (piece === R) {
+							dict[col.toUpperCase()] = true;
+						}
 					}
 				}
 			}
 			if (ch === "K") {
-				if (board.state[7][7] === "R") {		// Compatibility with regular Chess FEN.
+				if (board.get("h1") === R) {				// Compatibility with regular Chess FEN.
 					dict.H = true;
 				} else {
-					let right_rooks = board.find("R", wk_location.x, 7, 7, 7);
-					for (let rook of right_rooks) {
-						dict[rook.s[0].toUpperCase()] = true;
+					for (let col of ["h", "g", "f", "e", "d", "c", "b", "a"]) {		// Note reverse order...
+						let piece = board.get(col + "1");
+						if (piece === K) {					// Found the king before a rook, so there won't be kingside castling.
+							break;
+						}
+						if (piece === R) {
+							dict[col.toUpperCase()] = true;
+						}
 					}
 				}
 			}
@@ -158,34 +152,43 @@ function CastlingRights(board, s) {						// s is the castling string from a FEN
 
 	// BLACK
 
-	let bk_location = board.find("k", 0, 0, 7, 0)[0];
+	let [bkx, bky] = i_to_xy(board.bk);
 
-	if (bk_location) {
+	if (bky === 0) {
 
 		for (let ch of s) {
 			if (["a", "b", "c", "d", "e", "f", "g", "h"].includes(ch)) {
-				let point = Point(ch + "8");
-				if (board.piece(point) === "r") {
+				if (board.get(ch + "8") === r) {
 					dict[ch] = true;
 				}
 			}
 			if (ch === "q") {
-				if (board.state[0][0] === "r") {		// Compatibility with regular Chess FEN.
+				if (board.get("a8") === r) {
 					dict.a = true;
 				} else {
-					let left_rooks = board.find("r", 0, 0, bk_location.x, 0);
-					for (let rook of left_rooks) {
-						dict[rook.s[0]] = true;
+					for (let col of ["a", "b", "c", "d", "e", "f", "g", "h"]) {
+						let piece = board.get(col + "8");
+						if (piece === k) {
+							break;
+						}
+						if (piece === r) {
+							dict[col] = true;
+						}
 					}
 				}
 			}
 			if (ch === "k") {
-				if (board.state[7][0] === "r") {		// Compatibility with regular Chess FEN.
+				if (board.get("h8") === r) {
 					dict.h = true;
 				} else {
-					let right_rooks = board.find("r", bk_location.x, 0, 7, 0);
-					for (let rook of right_rooks) {
-						dict[rook.s[0]] = true;
+					for (let col of ["h", "g", "f", "e", "d", "c", "b", "a"]) {
+						let piece = board.get(col + "8");
+						if (piece === k) {
+							break;
+						}
+						if (piece === r) {
+							dict[col] = true;
+						}
 					}
 				}
 			}
@@ -206,80 +209,21 @@ function CastlingRights(board, s) {						// s is the castling string from a FEN
 	// At the moment we support more arbitrary castling rights, maybe that's OK.
 }
 
-
-function EnPassantSquare(board, s) {	// board.active must be correct. s is the en-passant string from a FEN.
-
-	// Suffers from the same subtleties as the enpassant setter in position.move(), see there for comments.
-
-	let p = Point(s.toLowerCase());
-
-	if (!p) {
-		return null;
-	}
-
-	if (board.active === "w") {
-		if (p.y !== 2) {
-			return null;
-		}
-		// Check the takeable pawn exists...
-		if (board.piece(Point(p.x, 3)) !== "p") {
-			return null;
-		}
-		// Check the capture square is actually empty...
-		if (board.piece(Point(p.x, 2)) !== "") {
-			return null;
-		}
-		// Check potential capturer exists...
-		if (board.piece(Point(p.x - 1, 3)) !== "P" && board.piece(Point(p.x + 1, 3)) !== "P") {
-			return null;
-		}
-		return p;
-	}
-
-	if (board.active === "b") {
-		if (p.y !== 5) {
-			return null;
-		}
-		// Check the takeable pawn exists...
-		if (board.piece(Point(p.x, 4)) !== "P") {
-			return null;
-		}
-		// Check the capture square is actually empty...
-		if (board.piece(Point(p.x, 5)) !== "") {
-			return null;
-		}
-		// Check potential capturer exists...
-		if (board.piece(Point(p.x - 1, 4)) !== "p" && board.piece(Point(p.x + 1, 4)) !== "p") {
-			return null;
-		}
-		return p;
-	}
-
-	return null;
-}
-
-
-function IsNormalChessPosition(board) {
-
+function is_normal_chess(board) {
 	for (let ch of "bcdefgBCDEFG") {
 		if (board.castling.includes(ch)) {
 			return false;
 		}
 	}
-
 	if (board.castling.includes("A") || board.castling.includes("H")) {
-		if (board.state[4][7] !== "K") {
+		if (board.get("e1") !== K) {
 			return false;
 		}
 	}
-
 	if (board.castling.includes("a") || board.castling.includes("h")) {
-		if (board.state[4][0] !== "k") {
+		if (board.get("e8") !== k) {
 			return false;
 		}
 	}
-
-	// So it can be considered a normal Chess position.
-
 	return true;
 }

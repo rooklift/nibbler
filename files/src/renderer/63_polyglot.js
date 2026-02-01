@@ -245,10 +245,10 @@ function KeyFromBoard(board) {
 
 	for (let x = 0; x < 8; x++) {
 		for (let y = 0; y < 8; y++) {
-			if (!board.state[x][y]) {
+			if (!board.getchar(x, y)) {
 				continue;
 			}
-			let piecekind = "pPnNbBrRqQkK".indexOf(board.state[x][y]);
+			let piecekind = "pPnNbBrRqQkK".indexOf(board.getchar(x, y));
 			if (piecekind === -1) {
 				continue;
 			}

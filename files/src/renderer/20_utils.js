@@ -129,10 +129,10 @@ function C960_PV_Converter(pv, board) {
 	// Change standard UCI format castling moves in the PV
 	// into our favoured c960 format. In place.
 
-	let fix_e1g1 = board.state[4][7] === "K" && !board.castling.includes("G");
-	let fix_e1c1 = board.state[4][7] === "K" && !board.castling.includes("C");
-	let fix_e8g8 = board.state[4][0] === "k" && !board.castling.includes("g");
-	let fix_e8c8 = board.state[4][0] === "k" && !board.castling.includes("c");
+	let fix_e1g1 = board.getchar(4, 7) === "K" && !board.castling.includes("G");
+	let fix_e1c1 = board.getchar(4, 7) === "K" && !board.castling.includes("C");
+	let fix_e8g8 = board.getchar(4, 0) === "k" && !board.castling.includes("g");
+	let fix_e8c8 = board.getchar(4, 0) === "k" && !board.castling.includes("c");
 
 	// Those are the best tests to use here (especially considering that we
 	// seem to be allowing arbitrary / weird castling rights like GHgh).

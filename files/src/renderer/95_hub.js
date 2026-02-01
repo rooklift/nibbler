@@ -502,7 +502,7 @@ let hub_props = {
 				let piece_to_draw = "";
 
 				if (board.colour(Point(x, y)) === board.active) {
-					piece_to_draw = board.state[x][y];
+					piece_to_draw = board.getchar(x, y);
 				}
 
 				if (piece_to_draw === this.friendly_draws[x][y]) {
@@ -535,7 +535,7 @@ let hub_props = {
 				let piece_to_draw = "";
 
 				if (board.colour(Point(x, y)) === OppositeColour(board.active)) {
-					piece_to_draw = board.state[x][y];
+					piece_to_draw = board.getchar(x, y);
 				}
 
 				if (piece_to_draw === this.enemy_draws[x][y]) {
@@ -1490,7 +1490,7 @@ let hub_props = {
 		// without committing to anything.
 
 		if (s.length === 4) {
-			if ((board.piece(source) === "P" && source.y === 1) || (board.piece(source) === "p" && source.y === 6)) {
+			if ((board.getchar(source) === "P" && source.y === 1) || (board.getchar(source) === "p" && source.y === 6)) {
 				let illegal_reason = board.illegal(s + "q");
 				if (illegal_reason) {
 					console.log(`hub.move(${s}) - ${illegal_reason}`);
@@ -1968,13 +1968,13 @@ let hub_props = {
 
 		// So there is no active_square... create one?
 
-		if (board.active === "w" && board.is_white(p)) {
+		if (board.active === "w" && board.colour(p) === "w") {
 			this.set_active_square(p);
 			if (config.click_spotlight) {
 				this.draw_canvas_arrows();
 			}
 		}
-		if (board.active === "b" && board.is_black(p)) {
+		if (board.active === "b" && board.colour(p) === "b") {
 			this.set_active_square(p);
 			if (config.click_spotlight) {
 				this.draw_canvas_arrows();
