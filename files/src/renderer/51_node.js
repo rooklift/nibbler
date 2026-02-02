@@ -228,7 +228,7 @@ const node_prototype = {
 
 		while (ancestor.parent && ancestor.parent.parent) {
 			ancestor = ancestor.parent.parent;
-			if (ancestor.board.compare(this.board)) {
+			if (ancestor.board.compare(this.board, hits >= 1)) {	// Strict mode (about e.p. capture being legal) if we just need 1 more (earlier) hit.
 				hits++;
 				if (hits >= 2) {
 					return true;

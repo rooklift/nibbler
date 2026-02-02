@@ -127,11 +127,8 @@ const position_prototype = {
 
 		// Set the enpassant square... only if potential capturing pawns are present. Note
 		// there are some subtleties where the pawns could be present but the capture is
-		// illegal. We ignore this issue.
-		//
-		// The worst consequence is a false negative in the compare() method, leading to a
-		// triple repetition not being recognised (until it becomes a quadruple
-		// repetition). This seems fairly harmless.
+		// illegal. Therefore, when comparing positions for triple-rep checks, we do some
+		// extra tests, see the compare() method.
 		//
 		// Note that the code below relies on Point() generating null for offboard
 		// coordinates, and ret.piece() accepting that null.
@@ -1331,16 +1328,57 @@ const position_prototype = {
 		return units.join("");
 	},
 
-	compare: function(other) {
+	has_legal_ep_capture: function() {
+
+		if (!this.enpassant) {
+			return false;
+		}
+
+		// Find the one or two pawns of the correct colour and location that could do the e.p. capture.
+		// Check whether these moves are actually legal. If either of them is, return true.
+
+		let ep = this.enpassant;
+		let pawn_char;
+		let source_y;
+
+		if (this.active === "w") {
+			pawn_char = "P";
+			source_y = ep.y + 1;
+		} else {
+			pawn_char = "p";
+			source_y = ep.y - 1;
+		}
+
+		for (let dx = -1; dx <= 1; dx += 2) {
+			let source = Point(ep.x + dx, source_y);
+			if (!source) {
+				continue;
+			}
+			if (this.piece(source) !== pawn_char) {
+				continue;
+			}
+			if (!this.illegal(source.s + ep.s)) {
+				return true;
+			}
+		}
+
+		return false;
+	},
+
+	compare: function(other, strict = false) {
 		if (this.active !== other.active) return false;
 		if (this.castling !== other.castling) return false;
-		if (this.enpassant !== other.enpassant) return false;		// FIXME? Issues around fake e.p. squares.
 		for (let x = 0; x < 8; x++) {
 			for (let y = 0; y < 8; y++) {
 				if (this.state[x][y] !== other.state[x][y]) {
 					return false;
 				}
 			}
+		}
+		if (strict) {
+			if (this.has_legal_ep_capture() !== other.has_legal_ep_capture()) return false;
+		} else {
+			if (this.enpassant !== other.enpassant) return false;
 		}
 		return true;
 	},
