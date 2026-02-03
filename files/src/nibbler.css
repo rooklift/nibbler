@@ -239,6 +239,22 @@ ul {
 .hover_highlight {
 	background-color: #222244;
 }
+span.underline-brilliant {
+	border-bottom: 2px solid #6cccee;
+	border-radius: 0.5ex;
+}
+span.underline-inaccuracy {
+	border-bottom: 1px dashed yellow;
+	border-radius: 0.5ex;
+}
+span.underline-mistake {
+	text-decoration: underline orange wavy;
+}
+span.underline-blunder {
+	text-decoration: underline red double;
+	border-bottom: 3px solid red;
+	border-radius: 0.5ex;
+}
 
 span.movelist_highlight_blue {
 	background-color: #222244;
