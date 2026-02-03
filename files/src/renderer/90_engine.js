@@ -273,12 +273,19 @@ function NewEngine(hub) {
 		this.send("ucinewgame");
 	};
 
+	// e.g. `line` might be "bestmove e7e5 ponder g1f3"
 	eng.handle_bestmove_line = function(line) {
 
 		this.search_completed = this.search_running;
 		this.search_running = NoSearch;
 
 		this.unresolved_stop_time = null;
+
+		if (this.search_completed.node.table !== null) {
+			let tokens = line.split(" ").filter(z => z !== "");
+			this.search_completed.node.table.bestmove_so_far = tokens[1];
+			this.hub.tree.dom_bold_bestmove_child(this.search_completed.node);
+		}
 
 		// If this.search_desired === this.search_running then the search that just completed is
 		// the most recent one requested by the hub; we have nothing to replace it with.
