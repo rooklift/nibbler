@@ -1554,7 +1554,7 @@ function menu_build() {
 							click : () => {
 								win.webContents.send("call", {
 									fn: "show_config_item_editor",
-									args: ["lichess_token", "https://lichess.org/account/oauth/token/create", "Acquire a token here"]
+									args: ["lichess_token", "https://lichess.org/account/oauth/token/create", "Acquire a token here (no need for specific permissions)"]
 								});
 							}
 						},
