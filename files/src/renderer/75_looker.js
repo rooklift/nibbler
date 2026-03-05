@@ -155,10 +155,12 @@ let looker_props = {
 			return Promise.reject(new Error("Bad db_name"));
 		}
 
-		let fetch_options = {};
+		let fetch_options = {
+			headers: {"User-Agent": "Nibbler"}
+		};
 
 		if ((query.db_name === "lichess_masters" || query.db_name === "lichess_plebs") && config.lichess_token) {
-			fetch_options.headers = {"Authorization": `Bearer ${config.lichess_token}`};
+			fetch_options.headers["Authorization"] = `Bearer ${config.lichess_token}`;
 		}
 
 		return fetch(url, fetch_options).then(response => {
