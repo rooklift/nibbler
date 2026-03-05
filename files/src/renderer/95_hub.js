@@ -2666,7 +2666,7 @@ let hub_props = {
 
 	parse_fullbox_config_item_value: function(item_name, raw) {
 
-		let defaults_has_item = config_io.defaults.hasOwnProperty(item_name);
+		let defaults_has_item = Object.prototype.hasOwnProperty.call(config_io.defaults, item_name);
 		let expected = defaults_has_item ? config_io.defaults[item_name] : config[item_name];
 
 		if (Array.isArray(expected)) {
@@ -2759,7 +2759,7 @@ let hub_props = {
 			return;
 		}
 
-		if (!config.hasOwnProperty(item_name)) {
+		if (!Object.prototype.hasOwnProperty.call(config, item_name)) {
 			fullbox_content.innerHTML =
 				`<span class="red">Unknown config item: ${SafeStringHTML(item_name)}</span><br><br>` +
 				`<span id="config_item_cancel" class="blue">Cancel</span>`;
@@ -2770,7 +2770,7 @@ let hub_props = {
 		this.fullbox_config_item = item_name;
 
 		let current = config[item_name];
-		let expected = config_io.defaults.hasOwnProperty(item_name) ? config_io.defaults[item_name] : current;
+		let expected = Object.prototype.hasOwnProperty.call(config_io.defaults, item_name) ? config_io.defaults[item_name] : current;
 
 		let expected_type = Array.isArray(expected) ? "array" : (expected === null ? "string or null" : typeof expected);
 		let current_text = SafeStringHTML(stringify(current));
