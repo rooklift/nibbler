@@ -18,6 +18,7 @@ function NewHub() {
 	hub.pgndata = null;									// Object representing the loaded PGN file.
 	hub.engine_choices = [];							// Made by show_fast_engine_chooser() when needed.
 	hub.fullbox_config_item = null;						// Name of config item currently being edited in fullbox.
+	hub.fullbox_web_link = null;						// Web link which can be clicked on in the config editor.
 	hub.pgn_choices_start = 0;							// Where we are in the PGN Chooser screen.
 	hub.friendly_draws = New2DArray(8, 8, null);		// What pieces are drawn in boardfriends. Used to skip redraws.
 	hub.enemy_draws = New2DArray(8, 8, null);			// What pieces are drawn in boardsquares. Used to skip redraws.
@@ -2101,6 +2102,11 @@ let hub_props = {
 			return;
 		}
 
+		if (EventPathString(event, "config_item_web_link") !== null) {
+			ipcRenderer.send("web_link", this.fullbox_web_link);
+			return;
+		}
+
 		// PGN chooser...
 
 		n = EventPathN(event, "pgn_chooser_");
@@ -2279,6 +2285,10 @@ let hub_props = {
 		}
 
 		config.looker_api = value;
+
+		if (value.includes("lichess") && !config.lichess_token) {
+			alert(messages.lichess_token_needed);
+		}
 
 		this.looker.clear_queue();
 
@@ -2755,7 +2765,7 @@ let hub_props = {
 		this.hide_fullbox();
 	},
 
-	show_config_item_editor: function(item_name) {
+	show_config_item_editor: function(item_name, web_link = null, web_text = "See web") {
 
 		if (typeof item_name !== "string" || item_name === "") {
 			return;
@@ -2770,6 +2780,7 @@ let hub_props = {
 		}
 
 		this.fullbox_config_item = item_name;
+		this.fullbox_web_link = web_link;
 
 		let current = config[item_name];
 		let expected = Object.prototype.hasOwnProperty.call(config_io.defaults, item_name) ? config_io.defaults[item_name] : current;
@@ -2793,9 +2804,11 @@ let hub_props = {
 		let lines = [];
 		lines.push(`<div class="infoline">Editing: <span class="green">config.${SafeStringHTML(item_name)}</span></div>`);
 		lines.push(`<div class="infoline">Current: <span class="green">${current_text}</span></div>`);
-		lines.push(`<div class="infoline gray">Expected type: ${SafeStringHTML(expected_type)}</div>`);
+		if (web_link) {
+			lines.push(`<div class="infoline">${SafeStringHTML(web_text)}: <span id="config_item_web_link" class="blue">${SafeStringHTML(web_link)}</span></div>`);
+		}
 		lines.push(`<textarea id="config_item_input" rows="6"></textarea>`);
-		lines.push(`<div id="config_item_error" class="infoline"></div>`);
+		lines.push(`<div id="config_item_error" class="infoline">&nbsp;</div>`);
 		lines.push(`<span id="config_item_save" class="blue">Save</span> | <span id="config_item_cancel" class="red">Cancel</span>`);
 
 		fullbox_content.innerHTML = lines.join("");
@@ -2869,6 +2882,7 @@ let hub_props = {
 
 	hide_fullbox: function() {
 		this.fullbox_config_item = null;
+		this.fullbox_web_link = null;
 		fullbox.style.display = "none";
 	},
 

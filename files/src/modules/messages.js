@@ -125,3 +125,7 @@ ${engineconfig_io.filename}.`;
 exports.too_soon_to_set_options = `Please wait till the engine has loaded before \
 setting options.`;
 
+
+exports.lichess_token_needed = `This likely will not work until you set a Lichess \
+API token.`;
+
