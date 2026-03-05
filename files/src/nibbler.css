@@ -168,6 +168,17 @@ input[type=text]:focus {
 	white-space: pre;
 }
 
+#config_item_input {
+	background: #101010;
+	border: 1px solid #444444;
+	box-sizing: border-box;
+	color: #dddddd;
+	font-family: inherit;
+	font-size: inherit;
+	max-width: 100%;
+	width: 100%;
+}
+
 td {
 	background-color: transparent;
 	background-size: contain;

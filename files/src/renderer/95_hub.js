@@ -2792,7 +2792,7 @@ let hub_props = {
 		lines.push(`<div class="infoline"><span class="yellow">Edit config.${SafeStringHTML(item_name)}</span></div>`);
 		lines.push(`<div class="infoline">Current: <span class="green">${current_text}</span></div>`);
 		lines.push(`<div class="infoline gray">Expected type: ${SafeStringHTML(expected_type)}</div>`);
-		lines.push(`<textarea id="config_item_input" rows="6" style="width: 100%; max-width: 100%; background: #101010; color: #dddddd; border: 1px solid #444444; font-family: inherit; font-size: inherit;"></textarea>`);
+		lines.push(`<textarea id="config_item_input" rows="6"></textarea>`);
 		lines.push(`<div id="config_item_error" class="infoline"></div>`);
 		lines.push(`<span id="config_item_save" class="blue">Save</span> | <span id="config_item_cancel" class="red">Cancel</span>`);
 
