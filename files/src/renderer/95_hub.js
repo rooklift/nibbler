@@ -2807,7 +2807,7 @@ let hub_props = {
 		if (web_link) {
 			lines.push(`<div class="infoline">${SafeStringHTML(web_text)}: <span id="config_item_web_link" class="blue">${SafeStringHTML(web_link)}</span></div>`);
 		}
-		lines.push(`<textarea id="config_item_input" rows="6"></textarea>`);
+		lines.push(`<textarea id="config_item_input" placeholder="Set the value here, then click 'Save'" rows="6"></textarea>`);
 		lines.push(`<div id="config_item_error" class="infoline">&nbsp;</div>`);
 		lines.push(`<span id="config_item_save" class="blue">Save</span> | <span id="config_item_cancel" class="red">Cancel</span>`);
 
