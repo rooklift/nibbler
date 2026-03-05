@@ -120,6 +120,7 @@ let translations = {
 				"ChessDB.cn evals": "Évals ChessDB.cn",
 				"Lichess results (masters)": "Résultats Lichess (maîtres)",
 				"Lichess results (plebs)": "Résultats Lichess (ordinaires)",
+				"Add Lichess API token": "Définir le jeton API Lichess",
 			"Allow API after move 25": "Autoriser API après coup 25",
 			"Draw PV on mouseover": "Afficher PV au survol",
 			"Draw PV method": "Méthode d'affichage PV",
