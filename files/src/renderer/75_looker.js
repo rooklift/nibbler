@@ -46,7 +46,7 @@ let looker_props = {
 			db_name: config.looker_api
 		};
 
-		if (!this.running) {							
+		if (!this.running) {
 			this.send_query(query);
 		} else {
 			this.pending = query;
@@ -155,7 +155,13 @@ let looker_props = {
 			return Promise.reject(new Error("Bad db_name"));
 		}
 
-		return fetch(url).then(response => {
+		let fetch_options = {};
+
+		if ((query.db_name === "lichess_masters" || query.db_name === "lichess_plebs") && config.lichess_token) {
+			fetch_options.headers = {"Authorization": `Bearer ${config.lichess_token}`};
+		}
+
+		return fetch(url, fetch_options).then(response => {
 			if (response.status === 429) {										// rate limit hit
 				this.set_ban(query.db_name);
 				hub.set_special_message("429 Too Many Requests", "red", 5000);	// relies on hub being in script/global scope, which it is

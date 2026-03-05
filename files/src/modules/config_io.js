@@ -99,6 +99,8 @@ exports.defaults = {
 	"looker_api": null,
 	"look_past_25": false,
 
+	"lichess_token": "",
+
 	"pv_click_event": 1,		// 0: nothing, 1: goto, 2: tree
 
 	"pgn_ev": true,
