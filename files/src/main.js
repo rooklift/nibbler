@@ -185,6 +185,10 @@ function startup() {
 		win.setTitle(msg);
 	});
 
+	electron.ipcMain.on("web_link", (event, msg) => {
+		electron.shell.openExternal(msg);
+	});
+
 	electron.ipcMain.on("ack_engine", (event, msg) => {
 		loaded_engine = msg;
 		set_one_check(msg ? true : false, "Engine", "Choose engine...");
@@ -1501,6 +1505,9 @@ function menu_build() {
 							}
 						},
 						{
+							type: "separator"
+						},
+						{
 							label: translate.t("ChessDB.cn evals"),
 							type: "checkbox",
 							checked: config.looker_api === "chessdbcn",
@@ -1511,6 +1518,9 @@ function menu_build() {
 									args: ["chessdbcn"]
 								});
 							}
+						},
+						{
+							type: "separator"
 						},
 						{
 							label: translate.t("Lichess results (masters)"),
@@ -1533,6 +1543,18 @@ function menu_build() {
 								win.webContents.send("call", {
 									fn: "set_looker_api",
 									args: ["lichess_plebs"]
+								});
+							}
+						},
+						{
+							type: "separator"
+						},
+						{
+							label: translate.t("Set Lichess API token"),
+							click : () => {
+								win.webContents.send("call", {
+									fn: "show_config_item_editor",
+									args: ["lichess_token", "https://lichess.org/account/oauth/token/create", "Acquire a token here"]
 								});
 							}
 						},

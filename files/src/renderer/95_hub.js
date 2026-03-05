@@ -17,6 +17,8 @@ function NewHub() {
 	hub.book = null;									// Either a Polyglot buffer, or an array of {key, move, weight}.
 	hub.pgndata = null;									// Object representing the loaded PGN file.
 	hub.engine_choices = [];							// Made by show_fast_engine_chooser() when needed.
+	hub.fullbox_config_item = null;						// Name of config item currently being edited in fullbox.
+	hub.fullbox_web_link = null;						// Web link which can be clicked on in the config editor.
 	hub.pgn_choices_start = 0;							// Where we are in the PGN Chooser screen.
 	hub.friendly_draws = New2DArray(8, 8, null);		// What pieces are drawn in boardfriends. Used to skip redraws.
 	hub.enemy_draws = New2DArray(8, 8, null);			// What pieces are drawn in boardsquares. Used to skip redraws.
@@ -2086,6 +2088,25 @@ let hub_props = {
 
 		let n;
 
+		// Config item editor...
+
+		if (EventPathString(event, "config_item_save") !== null) {
+			if (event.button !== 2) {
+				this.apply_fullbox_config_item_edit();
+			}
+			return;
+		}
+
+		if (EventPathString(event, "config_item_cancel") !== null) {
+			this.hide_fullbox();
+			return;
+		}
+
+		if (EventPathString(event, "config_item_web_link") !== null) {
+			ipcRenderer.send("web_link", this.fullbox_web_link);
+			return;
+		}
+
 		// PGN chooser...
 
 		n = EventPathN(event, "pgn_chooser_");
@@ -2264,6 +2285,10 @@ let hub_props = {
 		}
 
 		config.looker_api = value;
+
+		if (value.includes("lichess") && !config.lichess_token) {
+			alert(messages.lichess_token_needed);
+		}
 
 		this.looker.clear_queue();
 
@@ -2649,6 +2674,154 @@ let hub_props = {
 		this.show_fullbox();
 	},
 
+	parse_fullbox_config_item_value: function(item_name, raw) {
+
+		raw = raw.trim();
+
+		let defaults_has_item = Object.prototype.hasOwnProperty.call(config_io.defaults, item_name);
+		let expected = defaults_has_item ? config_io.defaults[item_name] : config[item_name];
+
+		if (Array.isArray(expected)) {
+			try {
+				let parsed = JSON.parse(raw);
+				if (Array.isArray(parsed)) {
+					return [parsed, null];
+				}
+				return [null, "Expected JSON array"];
+			} catch (err) {
+				return [null, "Expected JSON array"];
+			}
+		}
+
+		if (typeof expected === "string") {
+			return [raw, null];
+		}
+
+		if (typeof expected === "number") {
+			let n = Number(raw);
+			if (Number.isNaN(n)) {
+				return [null, "Expected number"];
+			}
+			return [n, null];
+		}
+
+		if (typeof expected === "boolean") {
+			let s = raw.toLowerCase();
+			if (s === "true" || s === "1" || s === "yes" || s === "on") {
+				return [true, null];
+			}
+			if (s === "false" || s === "0" || s === "no" || s === "off") {
+				return [false, null];
+			}
+			return [null, `Expected boolean (true / false)`];
+		}
+
+		if (expected === null) {		// Null defaults are usually nullable strings.
+			if (raw.toLowerCase() === "null") {
+				return [null, null];
+			}
+			return [raw, null];
+		}
+
+		if (typeof expected === "object") {
+			try {
+				let parsed = JSON.parse(raw);
+				if (parsed !== null && typeof parsed === "object" && Array.isArray(parsed) === false) {
+					return [parsed, null];
+				}
+				return [null, "Expected JSON object"];
+			} catch (err) {
+				return [null, "Expected JSON object"];
+			}
+		}
+
+		return [raw, null];
+	},
+
+	apply_fullbox_config_item_edit: function() {
+
+		if (typeof this.fullbox_config_item !== "string") {
+			return;
+		}
+
+		let textarea = document.getElementById("config_item_input");
+		if (!textarea) {
+			return;
+		}
+
+		let [value, err] = this.parse_fullbox_config_item_value(this.fullbox_config_item, textarea.value);
+
+		if (err) {
+			let errdiv = document.getElementById("config_item_error");
+			if (errdiv) {
+				errdiv.innerHTML = `<span class="red">${SafeStringHTML(err)}</span>`;
+			}
+			return;
+		}
+
+		config[this.fullbox_config_item] = value;
+		this.info_handler.must_draw_infobox();
+		this.draw();
+		this.hide_fullbox();
+	},
+
+	show_config_item_editor: function(item_name, web_link = null, web_text = "See web") {
+
+		if (typeof item_name !== "string" || item_name === "") {
+			return;
+		}
+
+		if (!Object.prototype.hasOwnProperty.call(config, item_name)) {
+			fullbox_content.innerHTML =
+				`<span class="red">Unknown config item: ${SafeStringHTML(item_name)}</span><br><br>` +
+				`<span id="config_item_cancel" class="blue">Cancel</span>`;
+			this.show_fullbox();
+			return;
+		}
+
+		this.fullbox_config_item = item_name;
+		this.fullbox_web_link = web_link;
+
+		let current = config[item_name];
+		let expected = Object.prototype.hasOwnProperty.call(config_io.defaults, item_name) ? config_io.defaults[item_name] : current;
+
+		let expected_type = Array.isArray(expected) ? "array" : (expected === null ? "string or null" : typeof expected);
+		let current_text = SafeStringHTML(stringify(current));
+
+		let initial_input;
+		if (typeof current === "string") {
+			initial_input = current;
+		} else if (current !== null && typeof current === "object") {
+			try {
+				initial_input = JSON.stringify(current, null, "\t");
+			} catch (err) {
+				initial_input = stringify(current);
+			}
+		} else {
+			initial_input = stringify(current);
+		}
+
+		let lines = [];
+		lines.push(`<div class="infoline">Editing: <span class="green">config.${SafeStringHTML(item_name)}</span></div>`);
+		lines.push(`<div class="infoline">Current: <span class="green">${current_text}</span></div>`);
+		if (web_link) {
+			lines.push(`<div class="infoline">${SafeStringHTML(web_text)}: <span id="config_item_web_link" class="blue">${SafeStringHTML(web_link)}</span></div>`);
+		}
+		lines.push(`<textarea id="config_item_input" rows="6"></textarea>`);
+		lines.push(`<div id="config_item_error" class="infoline">&nbsp;</div>`);
+		lines.push(`<span id="config_item_save" class="blue">Save</span> | <span id="config_item_cancel" class="red">Cancel</span>`);
+
+		fullbox_content.innerHTML = lines.join("");
+		this.show_fullbox();
+
+		let textarea = document.getElementById("config_item_input");
+		if (textarea) {
+			textarea.value = initial_input;
+			textarea.focus();
+			textarea.select();
+		}
+	},
+
 	show_fast_engine_chooser: function() {
 
 		this.engine_choices = [];
@@ -2708,6 +2881,8 @@ let hub_props = {
 	},
 
 	hide_fullbox: function() {
+		this.fullbox_config_item = null;
+		this.fullbox_web_link = null;
 		fullbox.style.display = "none";
 	},
 
