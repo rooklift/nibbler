@@ -2789,7 +2789,7 @@ let hub_props = {
 		}
 
 		let lines = [];
-		lines.push(`<div class="infoline"><span class="yellow">Edit config.${SafeStringHTML(item_name)}</span></div>`);
+		lines.push(`<div class="infoline">Editing: <span class="green">config.${SafeStringHTML(item_name)}</span></div>`);
 		lines.push(`<div class="infoline">Current: <span class="green">${current_text}</span></div>`);
 		lines.push(`<div class="infoline gray">Expected type: ${SafeStringHTML(expected_type)}</div>`);
 		lines.push(`<textarea id="config_item_input" rows="6"></textarea>`);
