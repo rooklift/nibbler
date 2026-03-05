@@ -2666,6 +2666,8 @@ let hub_props = {
 
 	parse_fullbox_config_item_value: function(item_name, raw) {
 
+		raw = raw.trim();
+
 		let defaults_has_item = Object.prototype.hasOwnProperty.call(config_io.defaults, item_name);
 		let expected = defaults_has_item ? config_io.defaults[item_name] : config[item_name];
 
@@ -2686,7 +2688,7 @@ let hub_props = {
 		}
 
 		if (typeof expected === "number") {
-			let n = Number(raw.trim());
+			let n = Number(raw);
 			if (Number.isNaN(n)) {
 				return [null, "Expected number"];
 			}
@@ -2694,7 +2696,7 @@ let hub_props = {
 		}
 
 		if (typeof expected === "boolean") {
-			let s = raw.trim().toLowerCase();
+			let s = raw.toLowerCase();
 			if (s === "true" || s === "1" || s === "yes" || s === "on") {
 				return [true, null];
 			}
@@ -2705,7 +2707,7 @@ let hub_props = {
 		}
 
 		if (expected === null) {		// Null defaults are usually nullable strings.
-			if (raw.trim().toLowerCase() === "null") {
+			if (raw.toLowerCase() === "null") {
 				return [null, null];
 			}
 			return [raw, null];
@@ -2804,16 +2806,6 @@ let hub_props = {
 			textarea.value = initial_input;
 			textarea.focus();
 			textarea.select();
-			textarea.addEventListener("keydown", (event) => {
-				if (event.key === "Enter" && !event.shiftKey) {
-					event.preventDefault();
-					this.apply_fullbox_config_item_edit();
-				}
-				if (event.key === "Escape") {
-					event.preventDefault();
-					this.hide_fullbox();
-				}
-			});
 		}
 	},
 
