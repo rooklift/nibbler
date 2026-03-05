@@ -179,10 +179,6 @@ input[type=text]:focus {
 	width: 100%;
 }
 
-#config_item_input:focus {
-	outline: 2px dashed gray;
-	outline-offset: 4px;
-}
 
 td {
 	background-color: transparent;
