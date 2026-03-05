@@ -179,6 +179,10 @@ input[type=text]:focus {
 	width: 100%;
 }
 
+#config_item_input:focus {
+	border-color: #444444;
+	outline: none;
+}
 
 td {
 	background-color: transparent;
