@@ -24,6 +24,29 @@ body {
 	background-color: #444444;
 }
 
+div.boardcoordinates-wrapper {
+	position: relative;
+	color: white;
+	font-family: monospace;
+}
+
+div.boardcoordinates-1to8 {
+	position: absolute;
+	top: 16px;
+}
+
+div.boardcoordinates-atoh {
+	position: absolute;
+	left: 16px;
+	top: 0px;
+	display: flex;
+}
+
+div.boardcoordinates-atoh > span {
+	flex-grow: 1;
+	text-align: center;
+}
+
 #gridder {
 	display: grid;
 	height: 100vh;

@@ -38,6 +38,14 @@ fenbox.value = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1";
 // boardsquares has its natural position, while the other three get
 // fixed position that is set to be on top of it.
 
+boardcoordinates[0].style.visibility = config.flip ? 'hidden' : 'visible';
+boardcoordinates[1].style.visibility = config.flip ? 'visible' : 'hidden';
+
+// There are 8 squares on a chessboard, so boardcoordinates_v.style.lineHeight should be exactly 1 square in height
+boardcoordinates_v.forEach( function(bc_v) { bc_v.style.lineHeight = config.board_size / 8.0 / boardcoordinates_fontsize_px; } );
+boardcoordinates_h.forEach( function(bc_h) { bc_h.style.width = config.board_size + 'px'; } );
+boardcoordinates.forEach( function(bc) { bc.style.fontSize = boardcoordinates_fontsize_px + 'px'; } );
+
 boardfriends.width = canvas.width = boardsquares.width = config.board_size;
 boardfriends.height = canvas.height = boardsquares.height = config.board_size;
 
