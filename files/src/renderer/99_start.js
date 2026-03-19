@@ -17,6 +17,9 @@ hub.engine_start(config.path, true);
 // Custom drag state (replaces HTML5 drag)
 let dragState = null;
 
+// Drag threshold
+const DRAG_THRESHOLD = 5; // pixels
+
 // Cleanup helper for drag (used by mouseup + failsafes)
 function cancelDrag() {
 	if (!dragState) return;
@@ -96,35 +99,21 @@ for (let y = 0; y < 8; y++) {
 
 			const rect = td2.getBoundingClientRect();
 
-			const floating = document.createElement("div");
-
-			floating.style.position = "fixed";
-			floating.style.pointerEvents = "none";
-
-			floating.style.width = rect.width + "px";
-			floating.style.height = rect.height + "px";
-
-			floating.style.left = (event.clientX - rect.width / 2) + "px";
-			floating.style.top  = (event.clientY - rect.height / 2) + "px";
-
-			floating.style.backgroundImage = pieceStyle;
-			floating.style.backgroundSize = "contain";
-			floating.style.backgroundRepeat = "no-repeat";
-
-			floating.style.zIndex = 1000;
-
-			document.body.appendChild(floating);
-
-			td2.style.opacity = "0.35";
-
+			// Do NOT create floating yet
 			dragState = {
 				fromEl: td2,
-				floating,
-				offsetX: rect.width / 2,
-				offsetY: rect.height / 2
-			};
+				pieceStyle,
+				rect,
 
-			boardfriends.classList.add("dragging-piece");
+				startX: event.clientX,
+				startY: event.clientY,
+
+				offsetX: rect.width / 2,
+				offsetY: rect.height / 2,
+
+				floating: null,
+				started: false
+			};
 		});
 	}
 }
@@ -323,10 +312,48 @@ window.addEventListener("keydown", (event) => {
 window.addEventListener("mousemove", (event) => {
 	if (!dragState) return;
 
+	const dx = event.clientX - dragState.startX;
+	const dy = event.clientY - dragState.startY;
+	const dist = Math.hypot(dx, dy);
+
+	// Not started yet → check threshold
+	if (!dragState.started) {
+		if (dist < DRAG_THRESHOLD) return;
+
+		// START DRAG NOW
+		const { rect, pieceStyle, fromEl } = dragState;
+
+		const floating = document.createElement("div");
+
+		floating.style.position = "fixed";
+		floating.style.pointerEvents = "none";
+
+		floating.style.width = rect.width + "px";
+		floating.style.height = rect.height + "px";
+
+		floating.style.backgroundImage = pieceStyle;
+		floating.style.backgroundSize = "contain";
+		floating.style.backgroundRepeat = "no-repeat";
+
+		floating.style.zIndex = 1000;
+
+		document.body.appendChild(floating);
+
+		fromEl.style.opacity = "0.35";
+
+		boardfriends.classList.add("dragging-piece");
+
+		dragState.floating = floating;
+		dragState.started = true;
+	}
+
+	// Move piece only if started
 	const { floating, offsetX, offsetY } = dragState;
 
-	floating.style.left = (event.clientX - offsetX) + "px";
-	floating.style.top = (event.clientY - offsetY) + "px";
+	if (floating) {
+		floating.style.left = (event.clientX - offsetX) + "px";
+		floating.style.top = (event.clientY - offsetY) + "px";
+	}
 });
 
 window.addEventListener("mouseup", (event) => {
@@ -336,8 +363,13 @@ window.addEventListener("mouseup", (event) => {
 		hub.grapher.dragging = false;
 	}
 
-	// If no piece drag → nothing else to do
 	if (!dragState) return;
+
+	// If drag never actually started → treat as click (do nothing here)
+	if (!dragState.started) {
+		cancelDrag();
+		return;
+	}
 
 	const { fromEl } = dragState;
 
