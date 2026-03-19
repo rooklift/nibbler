@@ -2155,49 +2155,9 @@ let hub_props = {
 		this.move(s);
 	},
 
-	handle_drop: function(event) {
-
-		// Note to self - examining the event in the console can be misleading
-		// because the object seems to get changed after it's finished firing
-		// or something.
-
-		// Just about any drop should clear the active square...
-
-		this.set_active_square(null);
-
-		// Is it a file?
-
+	handle_file_drop: function(event) {
 		if (event.dataTransfer && event.dataTransfer.files && event.dataTransfer.files[0] && get_path_for_file(event.dataTransfer.files[0])) {
 			this.open(get_path_for_file(event.dataTransfer.files[0]));
-			return;
-		}
-
-		// Is it a piece?
-
-		let text_data = event.dataTransfer.getData("text");
-		if (text_data.startsWith("overlay_")) {
-
-			let source = Point(text_data.slice(8, 10));		// Possibly null
-			let dest = null;
-
-			let path = event.path || (event.composedPath && event.composedPath());
-
-			if (path) {
-				for (let item of path) {
-					if (typeof item.id === "string" && item.id.startsWith("overlay_")) {
-						dest = Point(item.id.slice(8, 10));
-						break;
-					}
-				}
-			}
-
-			if (source && dest) {
-				let ok = this.move(source.s + dest.s);
-				if (!ok && config.click_spotlight) {		// No need to worry about spotlight arrows if the move actually happened
-					this.draw_canvas_arrows();
-				}
-			}
-
 			return;
 		}
 	},

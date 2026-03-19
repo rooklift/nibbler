@@ -14,30 +14,6 @@ Log(`Nibbler startup at ${new Date().toUTCString()}`);
 let hub = NewHub();
 hub.engine_start(config.path, true);
 
-// Custom drag state (replaces HTML5 drag)
-let dragState = null;
-
-// Drag threshold
-const DRAG_THRESHOLD = 5; // pixels
-
-// Cleanup helper for drag (used by mouseup + failsafes)
-function cancelDrag() {
-	if (!dragState) return;
-
-	const { floating, fromEl } = dragState;
-
-	if (floating && floating.parentNode) {
-		floating.remove();
-	}
-
-	if (fromEl) {
-		fromEl.style.opacity = "";
-	}
-
-	dragState = null;
-	boardfriends.classList.remove("dragging-piece");
-}
-
 if (load_err1) {
 	hub.err_receive(`<span class="blue">While loading config.json: ${load_err1}</span>`);
 	hub.err_receive("");
@@ -88,32 +64,8 @@ for (let y = 0; y < 8; y++) {
 		tr1.appendChild(td1);
 		tr2.appendChild(td2);
 		td2.draggable = false;
-
 		td2.addEventListener("mousedown", (event) => {
-			if (event.button !== 0) return;
-
-			event.preventDefault();
-
-			const pieceStyle = td2.style.backgroundImage;
-			if (!pieceStyle) return;
-
-			const rect = td2.getBoundingClientRect();
-
-			// Do NOT create floating yet
-			dragState = {
-				fromEl: td2,
-				pieceStyle,
-				rect,
-
-				startX: event.clientX,
-				startY: event.clientY,
-
-				offsetX: rect.width / 2,
-				offsetY: rect.height / 2,
-
-				floating: null,
-				started: false
-			};
+			drag_handler.mousedown_event_on_board_td(td2, event);
 		});
 	}
 }
@@ -306,122 +258,6 @@ window.addEventListener("keydown", (event) => {
 		}
 	}
 });
-
-// Setup drag-and-drop...
-
-window.addEventListener("mousemove", (event) => {
-	if (!dragState) return;
-
-	const dx = event.clientX - dragState.startX;
-	const dy = event.clientY - dragState.startY;
-	const dist = Math.hypot(dx, dy);
-
-	// Not started yet → check threshold
-	if (!dragState.started) {
-		if (dist < DRAG_THRESHOLD) return;
-
-		// START DRAG NOW
-		const { rect, pieceStyle, fromEl } = dragState;
-
-		const floating = document.createElement("div");
-
-		floating.style.position = "fixed";
-		floating.style.pointerEvents = "none";
-
-		floating.style.width = rect.width + "px";
-		floating.style.height = rect.height + "px";
-
-		floating.style.backgroundImage = pieceStyle;
-		floating.style.backgroundSize = "contain";
-		floating.style.backgroundRepeat = "no-repeat";
-
-		floating.style.zIndex = 1000;
-
-		document.body.appendChild(floating);
-
-		fromEl.style.opacity = "0.35";
-
-		boardfriends.classList.add("dragging-piece");
-
-		dragState.floating = floating;
-		dragState.started = true;
-	}
-
-	// Move piece only if started
-	const { floating, offsetX, offsetY } = dragState;
-
-	if (floating) {
-		floating.style.left = (event.clientX - offsetX) + "px";
-		floating.style.top = (event.clientY - offsetY) + "px";
-	}
-});
-
-window.addEventListener("mouseup", (event) => {
-
-	// Always stop graph dragging
-	if (hub.grapher.dragging) {
-		hub.grapher.dragging = false;
-	}
-
-	if (!dragState) return;
-
-	// If drag never actually started → treat as click (do nothing here)
-	if (!dragState.started) {
-		cancelDrag();
-		return;
-	}
-
-	hub.set_active_square(null);
-
-	const { fromEl } = dragState;
-
-	let el = document.elementFromPoint(event.clientX, event.clientY);
-	let targetEl = null;
-
-	while (el && el !== document.body) {
-		if (el.id && el.id.startsWith("overlay_")) {
-			targetEl = el;
-			break;
-		}
-		el = el.parentElement;
-	}
-
-	if (targetEl) {
-		const move = fromEl.id.slice(8) + targetEl.id.slice(8);
-		let ok = hub.move(move);
-		if (!ok && config.click_spotlight) {		// The spotlight needs to be cleared.
-			hub.draw_canvas_arrows();
-		}
-	}
-
-	cancelDrag();
-});
-
-window.addEventListener("dragenter", (event) => {
-	event.preventDefault();
-});
-
-window.addEventListener("dragover", (event) => {
-	event.preventDefault();
-});
-
-window.addEventListener("drop", (event) => {
-	event.preventDefault();
-
-	// Ignore if we're doing internal piece drag
-	if (dragState) return;
-
-	const dt = event.dataTransfer;
-	if (!dt) return;
-
-	if (dt.files && dt.files.length > 0) {
-		hub.handle_drop(event);
-	}
-});
-
-// failsafe cleanup
-window.addEventListener("blur", cancelDrag);
-window.addEventListener("mouseleave", cancelDrag);
 
 window.addEventListener("resize", (event) => {
 	hub.window_resize_time = performance.now();
