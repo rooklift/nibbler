@@ -21,6 +21,10 @@ const drag_handler = {
 		this.drag_state = null;
 		boardfriends.classList.remove("dragging-piece");
 
+		if (this.drag_state.started) {
+			hub.set_active_square(null);
+		}
+
 		if (config.click_spotlight) {
 			hub.draw_canvas_arrows();		// Might need to clear spotlight arrows.
 		}
