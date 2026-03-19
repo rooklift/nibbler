@@ -14,6 +14,30 @@ Log(`Nibbler startup at ${new Date().toUTCString()}`);
 let hub = NewHub();
 hub.engine_start(config.path, true);
 
+// Custom drag state (replaces HTML5 drag)
+let dragState = null;
+
+// Disable native drag
+document.addEventListener("dragstart", (e) => e.preventDefault());
+
+// Cleanup helper for drag (used by mouseup + failsafes)
+function cancelDrag() {
+	if (!dragState) return;
+
+	const { floating, fromEl } = dragState;
+
+	if (floating && floating.parentNode) {
+		floating.remove();
+	}
+
+	if (fromEl) {
+		fromEl.style.opacity = "";
+	}
+
+	dragState = null;
+	boardfriends.classList.remove("dragging-piece");
+}
+
 if (load_err1) {
 	hub.err_receive(`<span class="blue">While loading config.json: ${load_err1}</span>`);
 	hub.err_receive("");
@@ -63,9 +87,47 @@ for (let y = 0; y < 8; y++) {
 		td1.height = td2.height = config.square_size;
 		tr1.appendChild(td1);
 		tr2.appendChild(td2);
-		td2.addEventListener("dragstart", (event) => {
-			hub.set_active_square(Point(x, y));
-			event.dataTransfer.setData("text", "overlay_" + S(x, y));
+		td2.draggable = false;
+
+		td2.addEventListener("mousedown", (event) => {
+			if (event.button !== 0) return;
+
+			event.preventDefault();
+
+			const pieceStyle = td2.style.backgroundImage;
+			if (!pieceStyle) return;
+
+			const rect = td2.getBoundingClientRect();
+
+			const floating = document.createElement("div");
+
+			floating.style.position = "fixed";
+			floating.style.pointerEvents = "none";
+
+			floating.style.width = rect.width + "px";
+			floating.style.height = rect.height + "px";
+
+			floating.style.left = (event.clientX - rect.width / 2) + "px";
+			floating.style.top  = (event.clientY - rect.height / 2) + "px";
+
+			floating.style.backgroundImage = pieceStyle;
+			floating.style.backgroundSize = "contain";
+			floating.style.backgroundRepeat = "no-repeat";
+
+			floating.style.zIndex = 1000;
+
+			document.body.appendChild(floating);
+
+			td2.style.opacity = "0.35";
+
+			dragState = {
+				fromEl: td2,
+				floating,
+				offsetX: rect.width / 2,
+				offsetY: rect.height / 2
+			};
+
+			boardfriends.classList.add("dragging-piece");
 		});
 	}
 }
@@ -265,18 +327,42 @@ window.addEventListener("keydown", (event) => {
 
 // Setup drag-and-drop...
 
-window.addEventListener("dragenter", (event) => {		// Necessary to prevent brief flashes of "not allowed" icon.
-	event.preventDefault();
+window.addEventListener("mousemove", (event) => {
+	if (!dragState) return;
+
+	const { floating, offsetX, offsetY } = dragState;
+
+	floating.style.left = (event.clientX - offsetX) + "px";
+	floating.style.top = (event.clientY - offsetY) + "px";
 });
 
-window.addEventListener("dragover", (event) => {		// Necessary to prevent always having the "not allowed" icon.
-	event.preventDefault();
+window.addEventListener("mouseup", (event) => {
+	if (!dragState) return;
+
+	const { fromEl, floating } = dragState;
+
+	let el = document.elementFromPoint(event.clientX, event.clientY);
+	let targetEl = null;
+
+	while (el && el !== document.body) {
+		if (el.id && el.id.startsWith("overlay_")) {
+			targetEl = el;
+			break;
+		}
+		el = el.parentElement;
+	}
+
+	if (targetEl) {
+		const move = fromEl.id.slice(8) + targetEl.id.slice(8);
+		hub.move(move);
+	}
+
+	cancelDrag();
 });
 
-window.addEventListener("drop", (event) => {
-	event.preventDefault();
-	hub.handle_drop(event);
-});
+// failsafe cleanup
+window.addEventListener("blur", cancelDrag);
+window.addEventListener("mouseleave", cancelDrag);
 
 window.addEventListener("resize", (event) => {
 	hub.window_resize_time = performance.now();
