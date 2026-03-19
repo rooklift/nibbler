@@ -17,9 +17,6 @@ hub.engine_start(config.path, true);
 // Custom drag state (replaces HTML5 drag)
 let dragState = null;
 
-// Disable native drag
-document.addEventListener("dragstart", (e) => e.preventDefault());
-
 // Cleanup helper for drag (used by mouseup + failsafes)
 function cancelDrag() {
 	if (!dragState) return;
@@ -262,10 +259,6 @@ for (let s of ["mousemove", "mouseleave"]) {
 	});
 }
 
-window.addEventListener("mouseup", (event) => {
-	hub.grapher.dragging = false;
-});
-
 //
 
 window.addEventListener("wheel", (event) => {
@@ -337,9 +330,16 @@ window.addEventListener("mousemove", (event) => {
 });
 
 window.addEventListener("mouseup", (event) => {
+
+	// Always stop graph dragging
+	if (hub.grapher.dragging) {
+		hub.grapher.dragging = false;
+	}
+
+	// If no piece drag → nothing else to do
 	if (!dragState) return;
 
-	const { fromEl, floating } = dragState;
+	const { fromEl } = dragState;
 
 	let el = document.elementFromPoint(event.clientX, event.clientY);
 	let targetEl = null;
@@ -358,6 +358,28 @@ window.addEventListener("mouseup", (event) => {
 	}
 
 	cancelDrag();
+});
+
+window.addEventListener("dragenter", (event) => {
+	event.preventDefault();
+});
+
+window.addEventListener("dragover", (event) => {
+	event.preventDefault();
+});
+
+window.addEventListener("drop", (event) => {
+	event.preventDefault();
+
+	// Ignore if we're doing internal piece drag
+	if (dragState) return;
+
+	const dt = event.dataTransfer;
+	if (!dt) return;
+
+	if (dt.files && dt.files.length > 0) {
+		hub.handle_drop(event);
+	}
 });
 
 // failsafe cleanup
