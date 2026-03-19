@@ -21,7 +21,7 @@ const drag_handler = {
 		}
 
 		if (this.drag_state.started) {
-			hub.set_active_square(null);
+			hub.set_active_square(null);				// Real drags must clear the click-selected source square; mere clicks must not.
 		}
 
 		this.drag_state = null;
@@ -75,13 +75,15 @@ const drag_handler = {
 
 		if (!this.drag_state.started) {
 
+			// Treat small mouse movement as a normal click so boardfriends_click keeps its select/move behavior.
+
 			if (dist < 5) {
 				return;
 			}
 
 			// Drag starting now!
 
-			let floating = document.createElement("div");
+			let floating = document.createElement("div");			// A custom ghost piece instead of HTML5 drag-and-drop.
 
 			floating.style.position = "fixed";
 			floating.style.pointerEvents = "none";
@@ -178,7 +180,7 @@ window.addEventListener("mouseleave", () => {
 	drag_handler.cancel_drag();
 });
 
-// These 2 are needed so files can be dropped onto the window...
+// Native dragenter / dragover prevention is required so external file drops are accepted by the window...
 
 window.addEventListener("dragenter", (event) => {
 	event.preventDefault();
