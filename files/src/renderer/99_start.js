@@ -371,6 +371,8 @@ window.addEventListener("mouseup", (event) => {
 		return;
 	}
 
+	hub.set_active_square(null);
+
 	const { fromEl } = dragState;
 
 	let el = document.elementFromPoint(event.clientX, event.clientY);
@@ -386,7 +388,10 @@ window.addEventListener("mouseup", (event) => {
 
 	if (targetEl) {
 		const move = fromEl.id.slice(8) + targetEl.id.slice(8);
-		hub.move(move);
+		let ok = hub.move(move);
+		if (!ok && config.click_spotlight) {		// The spotlight needs to be cleared.
+			hub.draw_canvas_arrows();
+		}
 	}
 
 	cancelDrag();
