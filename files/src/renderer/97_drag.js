@@ -1,5 +1,7 @@
 "use strict"
 
+// Drag improvements submitted by ObnubiladO in PR #291
+
 const drag_handler = {
 
 	drag_state: null,
