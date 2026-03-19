@@ -6,7 +6,7 @@ const drag_handler = {
 
 	drag_state: null,
 
-	cancel_drag: function() {
+	cancel_drag: function() {							// Must also be called after a successful drag. (Maybe misnamed, hmm?)
 
 		if (!this.drag_state) {
 			return;
@@ -113,14 +113,14 @@ const drag_handler = {
 	mouseup_handler: function(event) {
 
 		if (hub.grapher.dragging) {
-			hub.grapher.dragging = false;				// Always stop graph dragging
+			hub.grapher.dragging = false;				// Always stop graph dragging.
 		}
 
 		if (!this.drag_state) {
 			return;
 		}
 
-		if (!this.drag_state.started) {
+		if (!this.drag_state.started) {					// Early cancel i.e. after a mere click.
 			this.cancel_drag();
 			return;
 		}
