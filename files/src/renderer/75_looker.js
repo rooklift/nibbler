@@ -146,11 +146,11 @@ let looker_props = {
 		let url;
 
 		if (query.db_name === "chessdbcn") {
-			url = `http://www.chessdb.cn/cdb.php?action=queryall&json=1&board=${fen_for_web}`;
+			url = `https://www.chessdb.cn/cdb.php?action=queryall&json=1&board=${fen_for_web}`;
 		} else if (query.db_name === "lichess_masters") {
-			url = `http://explorer.lichess.org/masters?topGames=0&fen=${fen_for_web}`;
+			url = `https://explorer.lichess.org/masters?topGames=0&fen=${fen_for_web}`;
 		} else if (query.db_name === "lichess_plebs") {
-			url = `http://explorer.lichess.org/lichess?variant=standard&topGames=0&recentGames=0&fen=${fen_for_web}`;
+			url = `https://explorer.lichess.org/lichess?variant=standard&topGames=0&recentGames=0&fen=${fen_for_web}`;
 		} else {
 			return Promise.reject(new Error("Bad db_name"));
 		}
