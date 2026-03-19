@@ -28,7 +28,7 @@ const drag_handler = {
 		boardfriends.classList.remove("dragging-piece");
 
 		if (config.click_spotlight) {
-			hub.draw_canvas_arrows();		// Might need to clear spotlight arrows.
+			hub.draw_canvas_arrows();					// Might need to clear spotlight arrows.
 		}
 	},
 
@@ -58,8 +58,8 @@ const drag_handler = {
 			offsetX: rect.width / 2,
 			offsetY: rect.height / 2,
 
-			floating: null,			// NOT CREATED UNTIL THE DRAG REALLY STARTS:
-			started: false			// i.e. when this is set to true.
+			floating: null,								// NOT CREATED UNTIL THE DRAG REALLY STARTS:
+			started: false								// i.e. when this is set to true.
 		};
 	},
 
@@ -102,7 +102,7 @@ const drag_handler = {
 			this.drag_state.started = true;
 		}
 
-		if (this.drag_state.floating) {		// I don't think this can be false?
+		if (this.drag_state.floating) {					// I don't think this can be false?
 			this.drag_state.floating.style.left = (event.clientX - this.drag_state.offsetX) + "px";
 			this.drag_state.floating.style.top = (event.clientY - this.drag_state.offsetY) + "px";
 		}
@@ -110,9 +110,8 @@ const drag_handler = {
 
 	mouseup_handler: function(event) {
 
-		// Always stop graph dragging
 		if (hub.grapher.dragging) {
-			hub.grapher.dragging = false;
+			hub.grapher.dragging = false;				// Always stop graph dragging
 		}
 
 		if (!this.drag_state) {
@@ -162,7 +161,7 @@ window.addEventListener("mouseup", (event) => {
 
 window.addEventListener("drop", (event) => {
 	event.preventDefault();
-	if (drag_handler.drag_state) {		// Ignore if handler is in the middle of internal piece drag.
+	if (drag_handler.drag_state) {						// Ignore if handler is in the middle of internal piece drag.
 		return;
 	}
 	let dt = event.dataTransfer;
