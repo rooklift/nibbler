@@ -63,7 +63,6 @@ for (let y = 0; y < 8; y++) {
 		td1.height = td2.height = config.square_size;
 		tr1.appendChild(td1);
 		tr2.appendChild(td2);
-		td2.draggable = false;
 		td2.addEventListener("mousedown", (event) => {
 			drag_handler.mousedown_event_on_board_td(td2, event);
 		});
