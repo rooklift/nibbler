@@ -172,3 +172,13 @@ window.addEventListener("blur", () => {
 window.addEventListener("mouseleave", () => {
 	drag_handler.cancel_drag();
 });
+
+// These 2 are needed so files can be dropped onto the window...
+
+window.addEventListener("dragenter", (event) => {
+	event.preventDefault();
+});
+
+window.addEventListener("dragover", (event) => {
+	event.preventDefault();
+});
