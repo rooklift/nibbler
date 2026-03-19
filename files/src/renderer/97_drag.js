@@ -12,17 +12,13 @@ const drag_handler = {
 			return;
 		}
 
-		if (this.drag_state.floating && this.drag_state.floating.parentNode) {
+		if (this.drag_state.floating) {					// Drag is in progress...
+			hub.set_active_square(null);
 			this.drag_state.floating.remove();
+			this.drag_state.floating = null;			// Not strictly needed.
 		}
 
-		if (this.drag_state.from_element) {
-			this.drag_state.from_element.style.opacity = "";
-		}
-
-		if (this.drag_state.started) {
-			hub.set_active_square(null);				// Real drags must clear the click-selected source square; mere clicks must not.
-		}
+		this.drag_state.from_element.style.opacity = "";
 
 		this.drag_state = null;
 		boardfriends.classList.remove("dragging-piece");
@@ -58,8 +54,7 @@ const drag_handler = {
 			offsetX: rect.width / 2,
 			offsetY: rect.height / 2,
 
-			floating: null,								// NOT CREATED UNTIL THE DRAG REALLY STARTS:
-			started: false								// i.e. when this is set to true.
+			floating: null,								// The actual element - not created until we're sure we're really dragging.
 		};
 	},
 
@@ -73,7 +68,7 @@ const drag_handler = {
 		let dy = event.clientY - this.drag_state.startY;
 		let dist = Math.hypot(dx, dy);
 
-		if (!this.drag_state.started) {
+		if (!this.drag_state.floating) {
 
 			// Treat small mouse movement as a normal click so boardfriends_click keeps its select/move behavior.
 
@@ -101,13 +96,10 @@ const drag_handler = {
 			boardfriends.classList.add("dragging-piece");
 
 			this.drag_state.floating = floating;
-			this.drag_state.started = true;
 		}
 
-		if (this.drag_state.floating) {					// I don't think this can be false?
-			this.drag_state.floating.style.left = (event.clientX - this.drag_state.offsetX) + "px";
-			this.drag_state.floating.style.top = (event.clientY - this.drag_state.offsetY) + "px";
-		}
+		this.drag_state.floating.style.left = (event.clientX - this.drag_state.offsetX) + "px";
+		this.drag_state.floating.style.top = (event.clientY - this.drag_state.offsetY) + "px";
 	},
 
 	mouseup_handler: function(event) {
@@ -120,7 +112,7 @@ const drag_handler = {
 			return;
 		}
 
-		if (!this.drag_state.started) {					// Early cancel i.e. after a mere click.
+		if (!this.drag_state.floating) {				// Early cancel i.e. after a mere click.
 			this.cancel_drag();
 			return;
 		}
