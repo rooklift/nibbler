@@ -72,6 +72,11 @@ body {
 	pointer-events: auto;
 	table-layout: fixed;
 	z-index: 3;
+	cursor: grab;
+}
+
+.dragging-piece {
+    cursor: grabbing !important;
 }
 
 #statusbox {
