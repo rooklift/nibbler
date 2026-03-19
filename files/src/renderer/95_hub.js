@@ -2286,7 +2286,7 @@ let hub_props = {
 
 		config.looker_api = value;
 
-		if (value.includes("lichess") && !config.lichess_token) {
+		if (value && value.includes("lichess") && !config.lichess_token) {
 			alert(messages.lichess_token_needed);
 		}
 
