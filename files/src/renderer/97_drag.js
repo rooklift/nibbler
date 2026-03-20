@@ -45,8 +45,9 @@ const drag_handler = {
 
 		this.drag_state = {
 			from_element: overlay_td,
-			piece_style,
-			rect,
+			from_square: overlay_td.id.slice(8),		// e.g. "e4" or similar.
+			piece_style: piece_style,
+			rect: rect,
 
 			startX: event.clientX,
 			startY: event.clientY,
@@ -77,6 +78,11 @@ const drag_handler = {
 			}
 
 			// Drag starting now!
+
+			hub.set_active_square(Point(this.drag_state.from_square));
+			if (config.click_spotlight) {
+				hub.draw_canvas_arrows();
+			}
 
 			let floating = document.createElement("div");			// A custom ghost piece instead of HTML5 drag-and-drop.
 
@@ -126,7 +132,7 @@ const drag_handler = {
 			}
 
 			if (target_element) {
-				let move = this.drag_state.from_element.id.slice(8) + target_element.id.slice(8);
+				let move = this.drag_state.from_square + target_element.id.slice(8);
 				let ok = hub.move(move);
 				if (!ok && config.click_spotlight) {	// The spotlight needs to be cleared.
 					hub.draw_canvas_arrows();
