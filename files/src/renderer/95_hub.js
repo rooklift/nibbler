@@ -554,8 +554,6 @@ let hub_props = {
 				} else {
 					td.style["background-image"] = images[piece_to_draw].string_for_bg_style;
 				}
-
-				td.draggable = false;
 			}
 		}
 	},
