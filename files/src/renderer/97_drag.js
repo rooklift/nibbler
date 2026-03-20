@@ -112,33 +112,29 @@ const drag_handler = {
 			return;
 		}
 
-		if (!this.drag_state.floating) {				// Early cancel i.e. after a mere click.
-			this.cancel_drag();
-			return;
-		}
+		if (this.drag_state.floating) {					// Real drag was in progress...
 
-		hub.set_active_square(null);
+			let e = document.elementFromPoint(event.clientX, event.clientY);
+			let target_element = null;
 
-		let e = document.elementFromPoint(event.clientX, event.clientY);
-		let target_element = null;
-
-		while (e && e !== document.body) {
-			if (e.id && e.id.startsWith("overlay_")) {
-				target_element = e;
-				break;
+			while (e && e !== document.body) {
+				if (e.id && e.id.startsWith("overlay_")) {
+					target_element = e;
+					break;
+				}
+				e = e.parentElement;
 			}
-			e = e.parentElement;
-		}
 
-		if (target_element) {
-			let move = this.drag_state.from_element.id.slice(8) + target_element.id.slice(8);
-			let ok = hub.move(move);
-			if (!ok && config.click_spotlight) {		// The spotlight needs to be cleared.
-				hub.draw_canvas_arrows();
+			if (target_element) {
+				let move = this.drag_state.from_element.id.slice(8) + target_element.id.slice(8);
+				let ok = hub.move(move);
+				if (!ok && config.click_spotlight) {	// The spotlight needs to be cleared.
+					hub.draw_canvas_arrows();
+				}
 			}
 		}
 
-		this.cancel_drag();
+		this.cancel_drag();								// Final cleanup needed in all cases.
 	}
 };
 
