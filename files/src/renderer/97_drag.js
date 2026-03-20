@@ -31,11 +31,11 @@ const drag_handler = {
 
 	mousedown_event_on_board_td: function(overlay_td, event) {
 
-		if (event.button !== 0) {
+		if (event.button !== 0 || this.drag_state) {
 			return;
 		}
 
-		event.preventDefault();
+		event.preventDefault();							// I forget why?
 
 		let piece_style = overlay_td.style.backgroundImage;
 		if (!piece_style || piece_style === "none") {
