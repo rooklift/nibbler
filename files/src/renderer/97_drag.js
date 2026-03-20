@@ -117,6 +117,10 @@ const drag_handler = {
 			return;
 		}
 
+		if (event.button !== 0) {
+			return;
+		}
+
 		if (this.drag_state.floating) {					// Real drag was in progress...
 
 			let e = document.elementFromPoint(event.clientX, event.clientY);
