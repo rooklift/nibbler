@@ -21,7 +21,7 @@ const drag_handler = {
 		this.drag_state.from_element.style.opacity = "";
 
 		this.drag_state = null;
-		boardfriends.classList.remove("dragging-piece");
+		document.body.classList.remove("dragging-piece");
 
 		if (config.click_spotlight) {
 			hub.draw_canvas_arrows();					// Might need to clear spotlight arrows.
@@ -97,9 +97,8 @@ const drag_handler = {
 
 			document.body.appendChild(floating);
 
+			document.body.classList.add("dragging-piece");			// This is just a css change.
 			this.drag_state.from_element.style.opacity = "0.35";
-
-			boardfriends.classList.add("dragging-piece");
 
 			this.drag_state.floating = floating;
 		}
