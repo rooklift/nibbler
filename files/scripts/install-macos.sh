@@ -15,6 +15,17 @@ VERSION="2.5.7"
 NODE_VERSION="25.8.1"
 PACKAGE_NAME="nibbler"
 PACKAGE_MAIN="files/src/main.js"
+NODE_ARCH="arm64"
+
+
+# robustness fix... clean exit
+cleanup_on_failure() {
+	local exit_code="$1"
+	if [[ "$exit_code" -ne 0 ]]; then
+		rm -rf "$WORKDIR"
+	fi
+}
+trap 'cleanup_on_failure "$?"' EXIT
 
 # electron packager fails without name, version, main fields in package.json
 # this uses simple js script to ensure correct fields
@@ -64,6 +75,7 @@ fs.writeFileSync(packageJsonPath, `${JSON.stringify(pkg, null, 2)}\n`);
 EOF
 }
 
+rm -rf "$WORKDIR"
 mkdir -p "$WORKDIR"
 cd "$WORKDIR"
 
@@ -74,14 +86,13 @@ msg "Unzipping nibbler archive..."
 unzip -q "v${VERSION}.zip"
 
 NIBBLER="nibbler-${VERSION}"
-ls "$NIBBLER" && ok "Fetched nibbler!"
+[[ -d "$NIBBLER" ]] && ok "Fetched nibbler!"
 
 ARCH="$(uname -m)"
-case "$ARCH" in
-  arm64) NODE_ARCH="arm64" ;;
-  x86_64) msg "Unsupported architecture: x86" >&2; exit 1;;
-  *) msg "Unsupported architecture: $ARCH" >&2; exit 1 ;;
-esac
+if [[ "$ARCH" != "$NODE_ARCH" ]]; then
+	msg "Unsupported architecture: $ARCH (this installer requires ${NODE_ARCH})" >&2
+	exit 1
+fi
 
 NODE_DIR="node-v${NODE_VERSION}-darwin-${NODE_ARCH}"
 NODE_TGZ="${NODE_DIR}.tar.gz"
@@ -92,7 +103,7 @@ curl -fL -O "https://nodejs.org/dist/v${NODE_VERSION}/${NODE_TGZ}"
 msg "Unpacking node archive..."
 tar -xzf "$NODE_TGZ"
 
-ls "$NODE_DIR" && ok "Fetched node!"
+[[ -d "$NODE_DIR" ]] && ok "Fetched node!"
 
 msg "Verifying npm, npx..."
 NODE="$WORKDIR/$NODE_DIR/bin/node"
@@ -117,7 +128,22 @@ msg "Running electron-packager..."
 "$NPX" @electron/packager . Nibbler --platform=darwin --arch="$NODE_ARCH" --out=dist
 ok "Built app!"
 
-msg "Nice, here you go!"
-open "$WORKDIR/$NIBBLER/dist/Nibbler-darwin-arm64/"
+APP_DIR="$WORKDIR/$NIBBLER/dist/Nibbler-darwin-${NODE_ARCH}"
+APP="$APP_DIR/Nibbler.app"
+APPS_DIR="$HOME/Applications"
+APPS_APP="$APPS_DIR/Nibbler.app"
 
-msg "IMPORTANT: Make sure to move app under Applications/ or ~/Applications!"
+read -r -p "Move Nibbler.app to ~/Applications and overwrite any existing copy? [Y/n] " MOVE_APP
+
+msg "Nice, here you go!"
+if [[ -z "$MOVE_APP" || "$MOVE_APP" =~ ^[Yy]$ ]]; then
+	msg "Installing Nibbler.app to ~/Applications..."
+	mkdir -p "$APPS_DIR"
+	rm -rf "$APPS_APP"
+	mv "$APP" "$APPS_DIR/"
+	ok "Installed Nibbler.app to ${APPS_APP}!"
+	open -R "$APPS_APP"
+else
+	open "$APP_DIR"
+	msg "IMPORTANT: Make sure to move app under Applications/ or ~/Applications!"
+fi
