@@ -1,6 +1,7 @@
 "use strict"
 
 // Drag improvements submitted by ObnubiladO in PR #291
+// Back in the day, something like this would be referenced in hub, but nowadays I leave such things in global space.
 
 const drag_handler = {
 
@@ -37,7 +38,7 @@ const drag_handler = {
 		event.preventDefault();
 
 		let piece_style = overlay_td.style.backgroundImage;
-		if (!piece_style) {
+		if (!piece_style || piece_style === "none") {
 			return;
 		}
 
