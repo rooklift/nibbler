@@ -138,6 +138,7 @@ let hub_props = {
 		// Called right after this.tree.node is changed, meaning we are now drawing a different position.
 
 		this.escape();
+		drag_handler.cancel_drag();
 
 		this.hoverdraw_div = -1;
 		this.position_change_time = performance.now();
