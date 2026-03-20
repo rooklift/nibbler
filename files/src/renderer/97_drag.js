@@ -65,6 +65,14 @@ const drag_handler = {
 			return;
 		}
 
+		// I dunno if this can happen but for safety...
+
+		if (!(event.buttons & 1)) {						// Bitmask: right-most bit means left click is down.
+			console.log("drag_handler: mousemove handler saw active drag state while button 1 up!")
+			this.cancel_drag();
+			return;
+		}
+
 		let dx = event.clientX - this.drag_state.startX;
 		let dy = event.clientY - this.drag_state.startY;
 		let dist = Math.hypot(dx, dy);
