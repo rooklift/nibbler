@@ -12,12 +12,14 @@ ok() {
 
 WORKDIR="/tmp/nibbler-install"
 VERSION="2.5.7"
-NODE_VERSION="25.8.1"
-PACKAGE_NAME="nibbler"
-PACKAGE_MAIN="files/src/main.js"
-NODE_ARCH="arm64"
-SOURCE_DIR="files/src"
+ELECTRON_VERSION="v41.0.3"
 
+ARCH="$(uname -m)"
+case "$ARCH" in
+	arm64) ELECTRON_ARCH="arm64" ;;
+	x86_64) ELECTRON_ARCH="x64" ;;
+	*) msg "Unsupported architecture: $ARCH" >&2; exit 1 ;;
+esac
 
 # robustness fix... clean exit
 cleanup_on_failure() {
@@ -32,56 +34,38 @@ rm -rf "$WORKDIR"
 mkdir -p "$WORKDIR"
 cd "$WORKDIR"
 
-msg "Downloading nibbler archive..."
-curl -fL -O "https://github.com/rooklift/nibbler/archive/refs/tags/v${VERSION}.zip"
-
-msg "Unzipping nibbler archive..."
+msg "Downloading nibbler v${VERSION}..."
+curl -# -fL -O "https://github.com/rooklift/nibbler/archive/refs/tags/v${VERSION}.zip"
 unzip -q "v${VERSION}.zip"
-
 NIBBLER="nibbler-${VERSION}"
 [[ -d "$NIBBLER" ]] && ok "Fetched nibbler!"
 
-ARCH="$(uname -m)"
-if [[ "$ARCH" != "$NODE_ARCH" ]]; then
-	msg "Unsupported architecture: $ARCH (this installer requires ${NODE_ARCH})" >&2
-	exit 1
-fi
+msg "Downloading Electron v${ELECTRON_VERSION}..."
+ELECTRON_ZIP="electron-${ELECTRON_VERSION}-darwin-${ELECTRON_ARCH}.zip"
+curl -# -fL -O "https://github.com/electron/electron/releases/download/${ELECTRON_VERSION}/${ELECTRON_ZIP}"
 
-NODE_DIR="node-v${NODE_VERSION}-darwin-${NODE_ARCH}"
-NODE_TGZ="${NODE_DIR}.tar.gz"
+mkdir -p electron
+cd electron
+unzip -q "../${ELECTRON_ZIP}"
+[[ -d "$WORKDIR/electron/Electron.app" ]] && ok "Fetched Electron!"
 
-msg "Downloading node archive..."
-curl -fL -O "https://nodejs.org/dist/v${NODE_VERSION}/${NODE_TGZ}"
+msg "Assembling Nibbler.app..."
+APP="$WORKDIR/electron/Electron.app"
+APP_ROOT="$APP/Contents/Resources/app"
 
-msg "Unpacking node archive..."
-tar -xzf "$NODE_TGZ"
+rm -f "$APP/Contents/Resources/default_app.asar"
+rm -rf "$APP_ROOT"
+cp -R "$WORKDIR/nibbler-${VERSION}/files/src" "$APP_ROOT"
 
-[[ -d "$NODE_DIR" ]] && ok "Fetched node!"
+PLIST="$APP/Contents/Info.plist"
+/usr/libexec/PlistBuddy -c "Set :CFBundleDisplayName Nibbler" "$PLIST"
+/usr/libexec/PlistBuddy -c "Set :CFBundleName Nibbler" "$PLIST"
+/usr/libexec/PlistBuddy -c "Set :CFBundleIdentifier com.rooklift.nibbler" "$PLIST"
 
-msg "Verifying npm, npx..."
-NODE="$WORKDIR/$NODE_DIR/bin/node"
-NPM="$WORKDIR/$NODE_DIR/bin/npm"
-NPX="$WORKDIR/$NODE_DIR/bin/npx"
+mv "$APP" "$WORKDIR/electron/Nibbler.app"
+ok "Built Nibbler.app!"
 
-"$NODE" --version
-"$NPM" --version
-"$NPX" --version
-
-cd "$WORKDIR/$NIBBLER"
-
-msg "Installing electron and electron-packager..."
-"$NPM" install --save-dev electron @electron/packager
-ok "Installed packages!"
-
-cd "$WORKDIR/$NIBBLER/$SOURCE_DIR"
-
-msg "Running electron-packager..."
-"$NPX" @electron/packager . Nibbler --platform=darwin --arch="$NODE_ARCH" --out=dist
-ok "Built app!"
-
-
-cd "$WORKDIR/$NIBBLER"
-APP_DIR="$WORKDIR/$NIBBLER/$SOURCE_DIR/dist/Nibbler-darwin-${NODE_ARCH}"
+APP_DIR="$WORKDIR/electron"
 APP="$APP_DIR/Nibbler.app"
 APPS_DIR="$HOME/Applications"
 APPS_APP="$APPS_DIR/Nibbler.app"
