@@ -42,7 +42,10 @@ curl -L https://raw.githubusercontent.com/rooklift/nibbler/master/files/scripts/
 
 Mac builds have been made by [twoplan](https://github.com/twoplan/Nibbler-for-macOS) and [Jac-Zac](https://github.com/Jac-Zac/Nibbler_MacOS) and [Zamana](https://github.com/Zamana/nibbler) - the last of which is probably the most up-to-date.
 
-Alternatively, MacOS users can run the following *one-liner* to assemble Nibbler locally. This removes any codesigning issues (Gatekeeper refusing to open unauthorized apps) by building Nibbler on-the-fly.
+## Mac install script
+
+Alternatively, MacOS users can run the following *one-liner* to assemble Nibbler locally. This (hopefully) removes any codesigning issues (Gatekeeper refusing to open unauthorized apps) by building Nibbler on-the-fly, though I can't test it myself:
+
 ```bash
 curl -L https://raw.githubusercontent.com/rooklift/nibbler/master/files/scripts/install-macos.sh | bash
 ```
