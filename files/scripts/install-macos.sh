@@ -12,7 +12,7 @@ ok() {
 
 WORKDIR="/tmp/nibbler-install"
 VERSION="2.5.7"
-ELECTRON_VERSION="v41.0.3"
+ELECTRON_VERSION="41.0.3"
 
 ARCH="$(uname -m)"
 case "$ARCH" in
@@ -38,16 +38,18 @@ msg "Downloading nibbler v${VERSION}..."
 curl -# -fL -O "https://github.com/rooklift/nibbler/archive/refs/tags/v${VERSION}.zip"
 unzip -q "v${VERSION}.zip"
 NIBBLER="nibbler-${VERSION}"
-[[ -d "$NIBBLER" ]] && ok "Fetched nibbler!"
+[[ -d "$NIBBLER" ]] || { msg "Failed to fetch nibbler..."; exit 1; }
+ok "Fetched nibbler!"
 
-msg "Downloading Electron v${ELECTRON_VERSION}..."
-ELECTRON_ZIP="electron-${ELECTRON_VERSION}-darwin-${ELECTRON_ARCH}.zip"
-curl -# -fL -O "https://github.com/electron/electron/releases/download/${ELECTRON_VERSION}/${ELECTRON_ZIP}"
+msg "Downloading electron v${ELECTRON_VERSION}..."
+ELECTRON_ZIP="electron-v${ELECTRON_VERSION}-darwin-${ELECTRON_ARCH}.zip"
+curl -# -fL -O "https://github.com/electron/electron/releases/download/v${ELECTRON_VERSION}/${ELECTRON_ZIP}"
 
 mkdir -p electron
 cd electron
 unzip -q "../${ELECTRON_ZIP}"
-[[ -d "$WORKDIR/electron/Electron.app" ]] && ok "Fetched Electron!"
+[[ -d "$WORKDIR/electron/Electron.app" ]] || { msg "Failed to fetch electron..."; exit 1; }
+ok "Fetched electron!"
 
 msg "Assembling Nibbler.app..."
 APP="$WORKDIR/electron/Electron.app"
