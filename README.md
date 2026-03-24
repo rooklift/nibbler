@@ -47,7 +47,7 @@ Mac builds have been made by [twoplan](https://github.com/twoplan/Nibbler-for-ma
 Alternatively, MacOS users can run the following *one-liner* to assemble Nibbler locally. This (hopefully) removes any codesigning issues (Gatekeeper refusing to open unauthorized apps) by building Nibbler on-the-fly, though I can't test it myself:
 
 ```bash
-curl -L https://raw.githubusercontent.com/rooklift/nibbler/master/files/scripts/install-macos.sh | bash
+curl -L https://raw.githubusercontent.com/rooklift/nibbler/master/files/scripts/install_mac.sh | bash
 ```
 
 ## Advanced engine options
