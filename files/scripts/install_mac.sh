@@ -11,7 +11,7 @@ ok() {
 }
 
 WORKDIR="/tmp/nibbler-install"
-VERSION="2.5.7"
+VERSION="2.5.8"
 ELECTRON_VERSION="41.0.3"
 
 ARCH="$(uname -m)"
