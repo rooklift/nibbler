@@ -493,6 +493,7 @@ let hub_props = {
 
 		this.draw_statusbox();
 		this.draw_infobox();
+		this.tree.dom_update_underlines();
 
 		this.grapher.draw(this.tree.node);
 	},
@@ -1284,6 +1285,7 @@ let hub_props = {
 		this.set_behaviour("halt");					// Will cause "stop" to be sent.
 		this.engine.send_ucinewgame();				// Must happen after "stop" is sent.
 		this.engine.suppress_cycle_info = this.info_handler.engine_cycle;		// Ignore further info updates from this cycle.
+		this.tree.dom_from_scratch();				// Clear any highlights or annotations
 	},
 
 	// ---------------------------------------------------------------------------------------------------------------------
