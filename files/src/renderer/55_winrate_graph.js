@@ -46,7 +46,41 @@ function NewGrapher() {
 		graphctx.lineJoin = "round";
 		graphctx.setLineDash([]);
 
+		// "Sharpness vs. Drawishness" area fill
+		let sharpness_areafill = null;
 		for (let run of runs.normal_runs) {
+			// "Winrate as white" pushes upward (fill from bottom)
+			if (run[0].y1_shade_w !== null) {
+				sharpness_areafill = new Path2D();
+				sharpness_areafill.moveTo(run[0].x1, height);
+				sharpness_areafill.lineTo(run[0].x1, run[0].y1_shade_w);
+				for (let edge of run) {
+					if (edge.y2_shade_w !== null) {
+						sharpness_areafill.lineTo(edge.x2, edge.y2_shade_w);
+					}
+				}
+				sharpness_areafill.lineTo(run[run.length - 1].x2, height);
+				graphctx.fillStyle = 'rgba(255, 255, 255, 0.25)';
+				graphctx.fill(sharpness_areafill);
+			}
+			// "Winrate as black" pushes downward (fill from top)
+			if (run[run.length - 1].y2_shade_b !== null) {
+				sharpness_areafill = new Path2D();
+				sharpness_areafill.moveTo(run[run.length - 1].x2, 0.0);
+				sharpness_areafill.lineTo(run[run.length - 1].x2, run[run.length - 1].y2_shade_b);
+				for (var i=0;i<run.length; ++i) {
+					let edge = run[run.length - 1 - i];
+					if (edge.y1_shade_b !== null) {
+						sharpness_areafill.lineTo(edge.x1, edge.y1_shade_b);
+					}
+				}
+				sharpness_areafill.lineTo(run[0].x1, 0.0);
+				graphctx.fillStyle = 'rgba(255, 170, 170, 0.25)';	// a.k.a. #ffaaaa Light Salmon Pink
+				graphctx.fill(sharpness_areafill);
+			}
+
+
+			// Evaluation line
 			graphctx.beginPath();
 			graphctx.moveTo(run[0].x1, run[0].y1);
 			for (let edge of run) {
@@ -80,6 +114,8 @@ function NewGrapher() {
 
 		let last_x = null;
 		let last_y = null;
+		let last_shade_w = null;
+		let last_shade_b = null;
 		let last_n = null;
 
 		// This loop creates all edges that we are going to draw, and marks each
@@ -87,7 +123,10 @@ function NewGrapher() {
 
 		for (let n = 0; n < eval_list.length; n++) {
 
-			let e = eval_list[n];
+			let e = eval_list[n].graph_y;
+
+			let y_shade_w = (eval_list[n].graph_shaded_w === null) ? null : (height - height * eval_list[n].graph_shaded_w);
+			let y_shade_b = (eval_list[n].graph_shaded_b === null) ? null : (height * eval_list[n].graph_shaded_b);
 
 			if (e !== null) {
 
@@ -101,14 +140,20 @@ function NewGrapher() {
 					all_edges.push({
 						x1: last_x,
 						y1: last_y,
+						y1_shade_w: last_shade_w,
+						y1_shade_b: last_shade_b,
 						x2: x,
 						y2: y,
+						y2_shade_w: y_shade_w,
+						y2_shade_b: y_shade_b,
 						dashed: n - last_n !== 1,
 					});
 				}
 
 				last_x = x;
 				last_y = y;
+				last_shade_w = y_shade_w;
+				last_shade_b = y_shade_b;
 				last_n = n;
 			}
 		}
