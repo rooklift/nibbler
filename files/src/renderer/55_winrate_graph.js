@@ -47,8 +47,8 @@ function NewGrapher() {
 		this.dirty = false;
 		this.last_node_id = node.id;
 		this.last_is_main_line = node.is_main_line();
-		this.last_length_val === node.graph_length_knower.val;
-		this.last_line_width === config.graph_line_width;
+		this.last_length_val = node.graph_length_knower.val;
+		this.last_line_width = config.graph_line_width;
 		this.last_evals = eval_list;
 		this.draw_everything(node, eval_list);
 	};
