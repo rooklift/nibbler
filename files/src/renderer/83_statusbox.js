@@ -41,7 +41,7 @@ function NewStatusHandler() {
 			statusbox.innerHTML =
 			`<span class="${cl}">${status}</span>, ` +
 			`${config.behaviour}, ` +
-			`${engine.last_send}`;
+			`${SafeStringHTML(engine.last_send)}`;
 
 		} else if (!engine.ever_received_uciok) {
 

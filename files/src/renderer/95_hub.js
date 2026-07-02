@@ -2615,7 +2615,7 @@ let hub_props = {
 
 		let lines = [];
 
-		lines.push(`<span class="yellow">${this.engine.filepath || "No engine loaded"}</span>`);
+		lines.push(`<span class="yellow">${SafeStringHTML(this.engine.filepath) || "No engine loaded"}</span>`);
 		lines.push("");
 
 		for (let name of Object.keys(this.engine.sent_options)) {

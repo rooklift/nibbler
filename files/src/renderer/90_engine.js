@@ -311,7 +311,7 @@ function NewEngine(hub) {
 
 		if (line.startsWith("info string ERROR")) {								// Stockfish sends these.
 			Log("< " + line);
-			this.hub.info_handler.err_receive(line.slice(12));
+			this.hub.info_handler.err_receive(SafeStringHTML(line.slice(12)));
 			return;
 		}
 
