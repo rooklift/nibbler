@@ -63,13 +63,13 @@ function NewStatusHandler() {
 
 			statusbox.innerHTML = `<span id="lock_return_clicker" class="blue">Locked to ${analysing_other} (return?)</span>`;
 
-		} else if (node.terminal_reason()) {
-
-			statusbox.innerHTML = `<span class="yellow">${node.terminal_reason()}</span>`;
-
 		} else if (!node || node.destroyed) {
 
 			statusbox.innerHTML = `<span class="red">draw_statusbox - !node || node.destroyed</span>`;
+
+		} else if (node.terminal_reason()) {
+
+			statusbox.innerHTML = `<span class="yellow">${node.terminal_reason()}</span>`;
 
 		} else {
 

@@ -4,8 +4,6 @@ let infobox_props = {
 
 	draw_infobox: function(node, mouse_point, active_square, active_colour, hoverdraw_div, allow_inactive_focus, lookup_object) {
 
-		let searchmoves = node.searchmoves;
-
 		if (this.displaying_error_log()) {
 			infobox.innerHTML = this.error_log;
 			this.last_drawn_version = null;
@@ -15,6 +13,8 @@ let infobox_props = {
 		if (!node || node.destroyed) {
 			return;
 		}
+
+		let searchmoves = node.searchmoves;
 
 		let info_list;
 
