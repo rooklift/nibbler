@@ -2563,9 +2563,9 @@ let hub_props = {
 				`<span id="pgn_index_chooser_${this.pgn_choices_start + 1000}"> >>> </span>|` +
 				`<span id="pgn_index_chooser_${this.pgn_choices_start + 10000}"> >>>> </span>|` +
 				`<span id="pgn_index_chooser_99999999"> End (${count}) </span>` +
-				`&mdash; <span class="green">${this.pgndata.source}</span>`
+				`&mdash; <span class="green">${SafeStringHTML(this.pgndata.source)}</span>`
 			:
-				`<span class="green">${this.pgndata.source}</span>`;
+				`<span class="green">${SafeStringHTML(this.pgndata.source)}</span>`;
 
 		lines.push(prevnextfoo);
 		lines.push("<ul>");
@@ -2619,7 +2619,7 @@ let hub_props = {
 		lines.push("");
 
 		for (let name of Object.keys(this.engine.sent_options)) {
-			lines.push(`${name}<br>    <span class="green">${this.engine.sent_options[name]}</span>`);
+			lines.push(`${SafeStringHTML(name)}<br>    <span class="green">${SafeStringHTML(this.engine.sent_options[name])}</span>`);
 		}
 
 		fullbox_content.innerHTML = lines.join("<br>");
@@ -2794,8 +2794,11 @@ let hub_props = {
 
 			let ac = (this.engine.filepath === filepath) ? ` <span class="blue">(active)</span>` : "";
 
-			divs.push(`<div class="enginechooser" id="engine_chooser_${this.engine_choices.length}"><span class="gray">${path.dirname(filepath)}</span>` +
-					  `<br>    ${path.basename(filepath)}${ac}</div>`);
+			let dirname = SafeStringHTML(path.dirname(filepath));
+			let basename = SafeStringHTML(path.basename(filepath));
+
+			divs.push(`<div class="enginechooser" id="engine_chooser_${this.engine_choices.length}"><span class="gray">${dirname}</span>` +
+					  `<br>    ${basename}${ac}</div>`);
 
 			this.engine_choices.push(filepath);					// After the above calc using length
 		}
