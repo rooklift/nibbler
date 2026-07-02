@@ -18,7 +18,7 @@ function NewInfoHandler() {
 	// Infobox stuff, used solely to skip redraws...
 	ih.last_drawn_node_id = null;
 	ih.last_drawn_version = null;
-	ih.last_drawn_highlight = null;
+	ih.last_drawn_highlight_move = null;
 	ih.last_drawn_highlight_class = null;
 	ih.last_drawn_length = 0;
 	ih.last_drawn_searchmoves = [];
