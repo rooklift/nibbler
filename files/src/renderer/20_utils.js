@@ -248,7 +248,7 @@ function ReplaceAll(s, search, replace) {
 
 function SafeStringHTML(s) {
 	if (typeof s !== "string") {
-		return undefined;
+		s = String(s);
 	}
 	s = ReplaceAll(s,  `&`  ,  `&amp;`   );		// This needs to be first of course.
 	s = ReplaceAll(s,  `<`  ,  `&lt;`    );
