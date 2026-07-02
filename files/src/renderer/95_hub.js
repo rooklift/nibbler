@@ -2377,6 +2377,7 @@ let hub_props = {
 		promotiontable.style.top = (boardsquares.offsetTop + config.square_size * 3.5).toString() + "px";
 		promotiontable.style["background-color"] = config.active_square;
 
+		this.grapher.invalidate();
 		this.draw();
 	},
 

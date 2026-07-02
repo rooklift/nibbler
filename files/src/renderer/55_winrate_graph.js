@@ -4,7 +4,16 @@ function NewGrapher() {
 
 	let grapher = Object.create(null);
 
-	grapher.dragging = false;			// Used by the event handlers in start.js
+	grapher.dragging = false;						// Used by the event handlers in start.js
+
+	// Various values used to skip the draw...
+
+	grapher.dirty = true;
+	grapher.last_node_id = null;
+	grapher.last_is_main_line = null;
+	grapher.last_length_val = null;
+	grapher.last_line_width = null;
+	grapher.last_evals = [];
 
 	grapher.clear_graph = function() {
 
@@ -18,20 +27,38 @@ function NewGrapher() {
 		graph.height = height;
 	};
 
+	grapher.invalidate = function() {
+		this.dirty = true;
+	};
+
 	grapher.draw = function(node) {
 		if (config.graph_height <= 0) {
 			return;
 		}
-		this.draw_everything(node);
+		let eval_list = node.all_graph_values();
+		if (!this.dirty &&
+			this.last_node_id === node.id &&
+			this.last_is_main_line === node.is_main_line() &&
+			this.last_length_val === node.graph_length_knower.val &&
+			this.last_line_width === config.graph_line_width &&
+			CompareArrays(eval_list, this.last_evals)) {
+			return;
+		}
+		this.dirty = false;
+		this.last_node_id = node.id;
+		this.last_is_main_line = node.is_main_line();
+		this.last_length_val === node.graph_length_knower.val;
+		this.last_line_width === config.graph_line_width;
+		this.last_evals = eval_list;
+		this.draw_everything(node, eval_list);
 	};
 
-	grapher.draw_everything = function(node) {
+	grapher.draw_everything = function(node, eval_list) {
 
 		this.clear_graph();
 		let width = graph.width;		// After the above.
 		let height = graph.height;
 
-		let eval_list = node.all_graph_values();
 		this.draw_horizontal_lines(width, height, [1/3, 2/3]);
 		this.draw_position_line(eval_list.length, node);
 

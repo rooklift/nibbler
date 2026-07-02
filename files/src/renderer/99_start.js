@@ -260,6 +260,7 @@ window.addEventListener("keydown", (event) => {
 
 window.addEventListener("resize", (event) => {
 	hub.window_resize_time = performance.now();
+	hub.grapher.invalidate();
 });
 
 window.addEventListener("error", (event) => {
