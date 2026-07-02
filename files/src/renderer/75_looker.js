@@ -105,7 +105,7 @@ let looker_props = {
 		};
 
 		let db = this.get_db(db_name);
-		db[board.fen()] = entry;
+		db[board.fen(false, true)] = entry;
 		return entry;
 	},
 
@@ -116,7 +116,7 @@ let looker_props = {
 
 		let db = this.get_db(db_name);
 		if (db) {								// Remember get_db() can return null.
-			let ret = db[board.fen()];
+			let ret = db[board.fen(false, true)];
 			if (ret) {
 				return ret;
 			}
@@ -140,7 +140,7 @@ let looker_props = {
 			}
 		}
 
-		let friendly_fen = query.board.fen(true);
+		let friendly_fen = query.board.fen(true, true);
 		let fen_for_web = ReplaceAll(friendly_fen, " ", "%20");
 
 		let url;
