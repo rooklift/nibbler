@@ -2655,8 +2655,8 @@ let hub_props = {
 		}
 
 		if (typeof expected === "number") {
-			let n = Number(raw);
-			if (Number.isNaN(n)) {
+			let n = Number(raw);						// Note: Number("") === 0 for some reason.
+			if (raw === "" || Number.isNaN(n)) {		// Therefore we check raw here.
 				return [null, "Expected number"];
 			}
 			return [n, null];
@@ -2673,7 +2673,7 @@ let hub_props = {
 			return [null, `Expected boolean (true / false)`];
 		}
 
-		if (expected === null) {		// Null defaults are usually nullable strings.
+		if (expected === null) {						// Null defaults are usually nullable strings.
 			if (raw.toLowerCase() === "null") {
 				return [null, null];
 			}
