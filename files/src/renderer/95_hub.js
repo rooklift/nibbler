@@ -2309,7 +2309,7 @@ let hub_props = {
 	set_graph_height: function(sz) {
 		config.graph_height = sz;
 		this.rebuild_sizes();
-		this.grapher.draw(this.tree.node, true);
+		this.grapher.draw(this.tree.node);
 	},
 
 	set_board_size: function(sz) {

@@ -18,7 +18,7 @@ function NewGrapher() {
 		graph.height = height;
 	};
 
-	grapher.draw = function(node, force) {
+	grapher.draw = function(node) {
 		if (config.graph_height <= 0) {
 			return;
 		}
