@@ -53,7 +53,7 @@ function NewStatusHandler() {
 
 		} else if (this.special_message && performance.now() < this.special_message_timeout) {
 
-			statusbox.innerHTML = `<span class="${this.special_message_class}">${this.special_message}</span>`;
+			statusbox.innerHTML = `<span class="${this.special_message_class}">${SafeStringHTML(this.special_message)}</span>`;
 
 		} else if (engine.unresolved_stop_time && performance.now() - engine.unresolved_stop_time > 500) {
 
