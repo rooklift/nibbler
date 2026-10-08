@@ -2659,13 +2659,13 @@ function menu_build() {
 					click: () => {
 						let folders = open_dialog(win, {
 							defaultPath: config.syzygy_dialog_folder,
-							properties: ["openDirectory"]
+							properties: ["openDirectory", "multiSelections"]
 						});
 						if (Array.isArray(folders) && folders.length > 0) {
 							let folder = folders[0];
 							win.webContents.send("call", {
 								fn: "set_uci_option_permanent",
-								args: ["SyzygyPath", folder]			// FIXME: should send all folders, separated by system separator.
+								args: ["SyzygyPath", folders.join(path.delimiter)]	// Separator is ";" on Windows, ":" elsewhere, as Lc0 and Stockfish expect.
 							});
 							// Will receive an ack IPC which sets menu checks.
 							// Save the dir as the new default dir, in both processes.
