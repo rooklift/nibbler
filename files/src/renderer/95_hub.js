@@ -2434,7 +2434,7 @@ let hub_props = {
 		let s = infobox.innerText;
 		s = ReplaceAll(s, `${config.focus_on_text} `, "");
 		s = ReplaceAll(s, `${config.focus_off_text} `, "");
-		clipboard.writeText(this.tree.node.board.fen(true) + "\n" + statusbox.innerText + "\n\n" + s);
+		clipboard_write(this.tree.node.board.fen(true) + "\n" + statusbox.innerText + "\n\n" + s);
 	},
 
 	send_title: function() {

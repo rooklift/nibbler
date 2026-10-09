@@ -48,13 +48,11 @@ const stringify = require("./modules/stringify");
 const translate = require("./modules/translate");
 const util = require("util");
 
-// From v44 electron.clipboard is no longer available in the renderer process. We only use it for
-// writeText, so we'll just send text to the main process and let it do it.
+// From v44 electron.clipboard is no longer available in the renderer process. We only used it for
+// writeText(). Now it's no longer used; we'll just send text to the main process and let it do it.
 
-const clipboard = {
-	writeText: (s) => {
-		if (typeof s === "string") ipcRenderer.send("set_clipboard_text", s);
-	}
+const clipboard_write = (s) => {
+	if (typeof s === "string") ipcRenderer.send("set_clipboard_text", s);
 };
 
 // Prior to v32, given a file object from an event (e.g. from dragging the file onto the window)

@@ -116,7 +116,7 @@ function SavePGN(filename, node) {
 
 function PGNToClipboard(node) {
 	let s = make_pgn_string(node);
-	clipboard.writeText(s);
+	clipboard_write(s);
 }
 
 // ------------------------------------------------------------------------------------------------------------------------------
