@@ -2942,17 +2942,14 @@ let hub_props = {
 		case "auto":
 			this.set_behaviour("auto_analysis");
 			return;
-		case "root":
-			this.goto_root();
+		case "new_game":
+			this.new_game();
 			return;
-		case "back":
-			this.prev();
+		case "paste_fen_pgn":
+			this.load_fen_or_pgn_from_string(clipboard.readText());
 			return;
-		case "forward":
-			this.next();
-			return;
-		case "end":
-			this.goto_end();
+		case "copy_pgn":
+			this.pgn_to_clipboard();
 			return;
 		case "flip":
 			this.toggle_flip();
