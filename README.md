@@ -6,7 +6,7 @@ It runs an engine in the background, continuously evaluates the current position
 
 Current maintained fork: https://github.com/perejaslav/nibbler
 
-Latest Windows release: https://github.com/perejaslav/nibbler/releases/tag/v2.9.2
+Latest Windows release: https://github.com/perejaslav/nibbler/releases/tag/v2.9.3
 
 ![Screenshot](docs/images/screenshot.png)
 
@@ -27,6 +27,17 @@ Latest Windows release: https://github.com/perejaslav/nibbler/releases/tag/v2.9.
 - Analysis toolbar with quick access to engine controls, New game, FEN/PGN paste and copy, board flip, MultiPV, and focus clearing.
 - Visual UCI engine settings dialog for standard engine options.
 - Undo/Redo stack for tree operations (Edit menu, Ctrl+Z / Ctrl+Y).
+
+## What's new in 2.9.3
+
+Version 2.9.3 applies the saved settings of the second engine in an engine comparison.
+
+- The second engine now receives its own saved options (Threads, Hash, MultiPV, WeightsFile and others) before it starts, the same way the main engine does.
+- Lc0-like second engines get the Lc0 option set.
+
+Note: both engines run at the same time, so give each about half of your CPU threads.
+
+The Windows build for this release is packaged as `nibbler-2.9.3-windows.zip`.
 
 ## What's new in 2.9.2
 
@@ -112,12 +123,12 @@ https://github.com/perejaslav/nibbler/releases/tag/v2.7.2
 
 1. Open the latest release page:
    https://github.com/perejaslav/nibbler/releases
-2. Download `nibbler-2.9.2-windows.zip` or the newest available Windows archive.
+2. Download `nibbler-2.9.3-windows.zip` or the newest available Windows archive.
 3. Extract the archive to a folder of your choice.
 4. Run `nibbler.exe`.
 5. Configure your engine path from inside Nibbler if needed.
 
-The 2.9.2 Windows build uses Electron 9.4.4.
+The 2.9.3 Windows build uses Electron 9.4.4.
 
 ### Run from source
 
@@ -256,8 +267,8 @@ npx electron .
 
 Current release:
 
-- v2.9.2 — https://github.com/perejaslav/nibbler/releases/tag/v2.9.2
-- Windows package: `releases/nibbler-2.9.2-windows.zip`
+- v2.9.3 — https://github.com/perejaslav/nibbler/releases/tag/v2.9.3
+- Windows package: `releases/nibbler-2.9.3-windows.zip`
 
 All releases:
 
