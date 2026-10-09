@@ -74,6 +74,65 @@ body {
 	z-index: 3;
 }
 
+/* Square coordinates, shown when #boardfriends has the "coordinates" class,
+   which hub.set_coordinates() sets from config.coordinates.
+
+   Files run along the bottom edge and ranks up the left edge, eight labels
+   each. They live on #boardfriends because both tables draw their pieces as
+   a background-image of the <td>: a label on #boardsquares would sit above
+   the enemy pieces but below the whole friendly layer, so it would appear
+   above or below a piece depending on whose turn it is.
+
+   The <td> elements are swapped on a flip rather than renamed, so the data
+   attributes follow their own square, while :first-child / :last-child pick
+   out whichever edge is currently on screen. The colour comes from the
+   :nth-child position, matching the shading of the square below. */
+
+#boardfriends {
+	--coord-size: 12px;
+	--coord-inset: 2px;
+	--coord-on-light: rgba(0, 0, 0, 0.6);
+	--coord-on-dark: rgba(255, 255, 255, 0.8);
+}
+
+#boardfriends td {
+	position: relative;					/* positioning context for the labels */
+}
+
+#boardfriends.coordinates td::before,
+#boardfriends.coordinates td::after {
+	position: absolute;
+	font: bold var(--coord-size) monospace;
+	line-height: 1;
+	pointer-events: none;				/* never interfere with dragging */
+}
+
+#boardfriends.coordinates td:first-child::before {
+	content: attr(data-rank);
+	left: var(--coord-inset);
+	top: var(--coord-inset);
+}
+
+#boardfriends.coordinates tr:last-child td::after {
+	content: attr(data-file);
+	right: var(--coord-inset);
+	bottom: var(--coord-inset);
+}
+
+#boardfriends.coordinates tr:nth-child(odd) td:nth-child(odd)::before,
+#boardfriends.coordinates tr:nth-child(odd) td:nth-child(odd)::after,
+#boardfriends.coordinates tr:nth-child(even) td:nth-child(even)::before,
+#boardfriends.coordinates tr:nth-child(even) td:nth-child(even)::after {
+	color: var(--coord-on-light);
+}
+
+#boardfriends.coordinates tr:nth-child(odd) td:nth-child(even)::before,
+#boardfriends.coordinates tr:nth-child(odd) td:nth-child(even)::after,
+#boardfriends.coordinates tr:nth-child(even) td:nth-child(odd)::before,
+#boardfriends.coordinates tr:nth-child(even) td:nth-child(odd)::after {
+	color: var(--coord-on-dark);
+}
+
 .dragging-piece {
     cursor: grabbing !important;
 }

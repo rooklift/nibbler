@@ -2200,6 +2200,9 @@ let hub_props = {
 				this.looker.add_to_queue(this.tree.node.board);
 			}
 		}
+		if (option === "coordinates") {
+			this.set_coordinates();
+		}
 		if (option === "searchmoves_buttons") {
 			this.tree.node.searchmoves = [];		// This is reasonable regardless of which way the toggle went.
 			this.handle_search_params_change();
@@ -2207,6 +2210,10 @@ let hub_props = {
 
 		this.info_handler.must_draw_infobox();
 		this.draw();
+	},
+
+	set_coordinates: function() {					// Applies config.coordinates to the board.
+		boardfriends.classList.toggle("coordinates", config.coordinates ? true : false);
 	},
 
 	toggle_flip: function() {						// config.flip should not be directly set, call this function instead.

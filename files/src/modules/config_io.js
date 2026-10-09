@@ -69,6 +69,8 @@ exports.defaults = {
 	"arrow_filter_type": "N",
 	"arrow_filter_value": 0.01,
 
+	"coordinates": false,
+
 	"arrows_enabled": true,
 	"click_spotlight": true,
 	"next_move_arrow": false,
