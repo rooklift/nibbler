@@ -2065,27 +2065,30 @@ let hub_props = {
 		return true;
 	},
 
-	engine_send_all_options: function() {			// The engine should never have been given a "go" before this.
+	engine_send_all_options: function(engine = this.engine) {	// The engine should never have been given a "go" before this.
+
+		// Also used by the engine comparison for its second engine.
 
 		// Options that are sent regardless of whether the engine seems to know about them...
 
-		let forced_engine_options = this.engine.leelaish ? forced_lc0_options : forced_ab_options;
+		let forced_engine_options = engine.leelaish ? forced_lc0_options : forced_ab_options;
 		for (let [key, value] of Object.entries(forced_engine_options)) {
-			this.engine.setoption(key, value);
+			engine.setoption(key, value);
 		}
 
 		// Standard options... only sent if the engine has said it knows them...
 
-		let standard_engine_options = this.engine.leelaish ? standard_lc0_options : standard_ab_options;
+		let standard_engine_options = engine.leelaish ? standard_lc0_options : standard_ab_options;
 		for (let [key, value] of Object.entries(standard_engine_options)) {
-			if (this.engine.known(key)) {
-				this.engine.setoption(key, value);
+			if (engine.known(key)) {
+				engine.setoption(key, value);
 			}
 		}
 
 		// Now send user-selected options. Thus, the user can override anything above.
 
-		let options = engineconfig[this.engine.filepath].options;
+		let entry = engineconfig[engine.filepath];
+		let options = entry && entry.options ? entry.options : {};
 		let keys = Object.keys(options);
 
 		keys.sort((a, b) => {		// "It is recommended to set Hash after setting Threads."
@@ -2095,7 +2098,7 @@ let hub_props = {
 		});
 
 		for (let key of keys) {
-			this.engine.setoption(key, options[key]);
+			engine.setoption(key, options[key]);
 		}
 	},
 

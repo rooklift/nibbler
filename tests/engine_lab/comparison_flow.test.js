@@ -116,7 +116,7 @@ function makeNode(id) {
 	};
 }
 
-function setup() {
+function setup(options = {}) {
 	let processes = [];
 	let scanners = [];
 	let enginebox = new FakeEnginebox();
@@ -154,10 +154,10 @@ function setup() {
 			if (!modules[modulePath]) throw new Error(`Unexpected module: ${modulePath}`);
 			return require(path.join(SRC, modules[modulePath]));
 		},
-		config: {searchmoves_buttons: false, log_positions: false, log_info_lines: false},
+		config: {searchmoves_buttons: false, log_positions: false, log_info_lines: false, leelaish_names: ["Lc0", "Leela", "Ceres"]},
 		engineconfig: {
 			[PRIMARY]: {args: [], options: {}},
-			[SECONDARY]: {args: [], options: {}},
+			[SECONDARY]: {args: [], options: options.secondary_options || {}},
 		},
 		enginebox,
 	};
@@ -166,6 +166,8 @@ function setup() {
 	let hub_source = read("renderer/95_hub.js");
 	let utils_source = read("renderer/20_utils.js");
 	vm.runInContext(extract(utils_source, /(function CompareArrays\(a, b\) \{[\s\S]*?\n\})/, "CompareArrays"), context);
+	vm.runInContext(extract(read("renderer/10_globals.js"),
+		/(const forced_lc0_options = \{[\s\S]*?\nconst standard_ab_options = \{[\s\S]*?\n\};)/, "engine option tables"), context);
 	vm.runInContext(read("renderer/90_engine.js"), context);
 	vm.runInContext(read("renderer/91_engine_manager.js"), context);
 	vm.runInContext(read("renderer/96_engine_lab.js"), context);
@@ -180,7 +182,10 @@ function setup() {
 		with_tab: (t, fn) => fn(t),
 		info_handler: {engine_cycle: 0, engine_subcycle: 0, receive() {}, err_receive() {}},
 		receive_misc(line) {
-			if (line.startsWith("uciok")) this.engine.send("isready");
+			if (line.startsWith("uciok")) {
+				this.engine_send_all_options();
+				this.engine.send("isready");
+			}
 		},
 		receive_bestmove() {},
 		err_receive() {},
@@ -192,6 +197,9 @@ function setup() {
 	}
 	hub.set_engine_search = vm.runInContext(
 		"(" + extract(hub_source, /set_engine_search: (function\([^)]*\) \{[\s\S]*?\n\t\}),/, "hub.set_engine_search") + ")",
+		context);
+	hub.engine_send_all_options = vm.runInContext(
+		"(" + extract(hub_source, /engine_send_all_options: (function\([^)]*\) \{[\s\S]*?\n\t\}),/, "hub.engine_send_all_options") + ")",
 		context);
 
 	hub.engine_manager = context.NewEngineManager(hub);
@@ -208,11 +216,12 @@ function setup() {
 	return {hub, view, enginebox, processes, scanners, primary_out};
 }
 
-function start_secondary(env) {
+function start_secondary(env, name = "Second", option_lines = []) {
 	let result = env.hub.engine_manager.start_comparison_for_tab(1, PRIMARY, SECONDARY);
 	assert.ok(result, "comparison should start");
 	let secondary_out = env.scanners[2];		// Each engine creates a stdout and a stderr scanner.
-	secondary_out.emit("line", "id name Second");
+	secondary_out.emit("line", `id name ${name}`);
+	for (let line of option_lines) secondary_out.emit("line", line);
 	secondary_out.emit("line", "uciok");
 	secondary_out.emit("line", "readyok");
 	return secondary_out;
@@ -285,4 +294,33 @@ test("comparison panel shows best lines live and reports partial agreement", () 
 	let writes = env.enginebox.live.writes;
 	env.view.draw();
 	assert.equal(env.enginebox.live.writes, writes, "unchanged results must not rewrite the DOM");
+});
+
+test("second engine gets its own saved options before isready", () => {
+	let env = setup({secondary_options: {Hash: 256, Threads: 4}});
+	start_secondary(env, "Stockfish 19", [
+		"option name Threads type spin default 1 min 1 max 1024",
+		"option name Hash type spin default 16 min 1 max 33554432",
+		"option name UCI_ShowWDL type check default false",
+	]);
+	let sent = env.processes[1].written;
+	let at = line => sent.indexOf(line);
+
+	assert.ok(at("setoption name UCI_ShowWDL value true") > 0, "standard A/B option known by the engine");
+	assert.ok(at("setoption name Threads value 4") > 0, "user's Threads for this engine");
+	assert.ok(at("setoption name Hash value 256") > at("setoption name Threads value 4"), "Hash after Threads");
+	assert.ok(at("isready") > at("setoption name Hash value 256"), "options before isready");
+	assert.equal(env.hub.engine_manager.secondary().leelaish, false);
+	assert.ok(!env.processes[0].written.includes("setoption name Hash value 256"), "primary must not receive the secondary's options");
+});
+
+test("an Lc0 second engine gets the Lc0 option set", () => {
+	let env = setup({secondary_options: {WeightsFile: "C:\nets\big.pb.gz"}});
+	start_secondary(env, "Lc0 v0.31.2");
+	let sent = env.processes[1].written;
+
+	assert.equal(env.hub.engine_manager.secondary().leelaish, true);
+	assert.ok(sent.includes("setoption name MultiPV value 500"), "forced Lc0 options are sent");
+	assert.ok(sent.includes("setoption name WeightsFile value C:\nets\big.pb.gz"));
+	assert.ok(sent.indexOf("isready") > sent.indexOf("setoption name WeightsFile value C:\nets\big.pb.gz"));
 });

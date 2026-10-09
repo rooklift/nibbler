@@ -325,11 +325,19 @@ function NewEngineManager(hub, options = null) {
 		if (line.startsWith("id name ")) {
 			session.name = line.slice("id name ".length).trim();
 			session.engine.name = session.name;
+			// Same detection as the hub does for the primary; it picks which option set is sent.
+			let leelaish_names = typeof config !== "undefined" && Array.isArray(config.leelaish_names) ? config.leelaish_names : [];
+			session.engine.leelaish = leelaish_names.some(name => line.includes(name));
 			return;
 		}
 
 		if (line.startsWith("uciok")) {
 			session.uciState = "waiting_ready";
+			// Send the engine's saved options (Threads, Hash, WeightsFile...) before isready,
+			// exactly as the hub does for the primary engine.
+			if (this.hub && typeof this.hub.engine_send_all_options === "function") {
+				this.hub.engine_send_all_options(session.engine);
+			}
 			session.engine.send("isready");
 			return;
 		}
