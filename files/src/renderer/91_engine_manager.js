@@ -122,6 +122,38 @@ function NewEngineManager(hub, options = null) {
 		return true;
 	};
 
+	// The hub drives the primary engine directly. Every primary search request also comes
+	// here, so that the other sessions of the primary's tab analyse the same position.
+
+	manager.last_primary_search = null;
+
+	manager.mirror_primary_search = function(node, limit = null, limit_by_time = false, searchmoves = []) {
+		this.last_primary_search = node ? {node, limit, limit_by_time, searchmoves} : null;
+		let primary = this.primary_session;
+		if (!primary || primary.tabId === null) return false;
+		let mirrored = false;
+		for (let session of this.sessions_for_tab(primary.tabId)) {
+			if (session === primary) continue;
+			if (node) {
+				session.analysisRequest = {
+					node,
+					nodeId: node.id || null,
+					limit: limit === undefined ? null : limit,
+					limit_by_time: !!limit_by_time,
+					searchmoves: Array.isArray(searchmoves) ? searchmoves.slice() : [],
+				};
+				this.dispatch_analysis(session);
+			} else {
+				session.analysisRequest = null;
+				if (session.engine && session.engine.ever_received_uciok && session.engine.ever_received_readyok) {
+					session.engine.set_search_desired(null);
+				}
+			}
+			mirrored = true;
+		}
+		return mirrored;
+	};
+
 	manager.stop_analysis = function(tab_id) {
 		let sessions = this.sessions_for_tab(tab_id);
 		if (sessions.length === 0) return false;
@@ -215,7 +247,9 @@ function NewEngineManager(hub, options = null) {
 				session.lifecycleState = "ready";
 				session.uciState = "idle";
 				if (event.name) session.name = event.name;
-				manager_ref.dispatch_analysis(session);
+				// A secondary engine also routes "readyok" through receive_misc(), which sends
+				// ucinewgame and then dispatches. Dispatching here too would send "go" first.
+				if (session.role === "primary") manager_ref.dispatch_analysis(session);
 			},
 			onInfo(engine, event) {
 				session.processGeneration = event.processGeneration;
@@ -468,6 +502,8 @@ function NewEngineManager(hub, options = null) {
 		if (!result) return false;
 		this.assign_to_tab(result.primarySessionId, tab_id);
 		this.assign_to_tab(result.secondarySessionId, tab_id);
+		let current = this.last_primary_search;
+		if (current) this.mirror_primary_search(current.node, current.limit, current.limit_by_time, current.searchmoves);
 		return result;
 	};
 

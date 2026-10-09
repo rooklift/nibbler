@@ -215,6 +215,8 @@ function createConsensus(resultsBySession, options = {}) {
 	let conflictSpreadQ = options.conflictSpreadQ === undefined ? 0.6 : options.conflictSpreadQ;
 	let level = "low";
 	if (uniqueFirstMoves.size === 0) level = "unknown";
+	// Agreement needs every engine to have reported; one engine alone always "agrees" with itself.
+	else if (firstMoves.length < sessionIds.length) level = "partial";
 	else if (uniqueFirstMoves.size === 1 && spreadQ <= highSpreadQ) level = "high";
 	else if (bestMove && candidateList[0].support >= Math.ceil(sessionIds.length / 2) && spreadQ <= moderateSpreadQ) level = "moderate";
 	else if (spreadQ > conflictSpreadQ) level = "conflict";
@@ -226,6 +228,7 @@ function createConsensus(resultsBySession, options = {}) {
 			level,
 			spreadQ,
 			support: bestMove ? candidateList[0].support : 0,
+			responded: firstMoves.length,
 			total: sessionIds.length,
 		},
 	};

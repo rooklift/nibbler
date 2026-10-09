@@ -574,7 +574,7 @@ let hub_props = {
 		let should_wait = !!closing && active_search_tab && active_search_tab.id === closing.old_id;
 
 		if (should_wait) {
-			this.engine.set_search_desired(null);
+			this.set_engine_search(null);
 			this._wait_for_engine_idle_then(() => {
 				this._finish_tab_switch();
 			});
@@ -639,7 +639,7 @@ let hub_props = {
 
 		if (search_tab && search_tab.id === active_tab.id) {
 			this.pending_tab_reset = true;
-			this.engine.set_search_desired(null);
+			this.set_engine_search(null);
 			this._wait_for_engine_idle_then(() => {
 				if (!this.pending_tab_reset) {
 					return;
@@ -961,6 +961,9 @@ let hub_props = {
 		this.draw_statusbox();
 		this.draw_infobox();
 		this.update_toolbar_state();
+		if (this.comparison_mode) {
+			this.draw_engine_lab();			// Live engine cards; the view skips DOM writes when nothing changed.
+		}
 
 		this.grapher.draw(this.tree.node);
 		this.draw_tabs();
@@ -1486,14 +1489,21 @@ let hub_props = {
 	// ---------------------------------------------------------------------------------------------------------------------
 	// Fundamental engine methods... not to be called directly, except by behave() and handle_search_params_change()...
 
+	set_engine_search: function(node, limit, limit_by_time, searchmoves) {
+		// All primary search requests go through here, so that a running engine comparison
+		// gets the same search on its other engine.
+		this.engine.set_search_desired(node, limit, limit_by_time, searchmoves);
+		this.engine_manager.mirror_primary_search(node, limit, limit_by_time, searchmoves);
+	},
+
 	__halt: function() {
-		this.engine.set_search_desired(null);
+		this.set_engine_search(null);
 	},
 
 	__go: function(node) {
 		this.hide_fullbox();
 		if (!node || node.destroyed || node.terminal_reason()) {
-			this.engine.set_search_desired(null);
+			this.set_engine_search(null);
 			return;
 		}
 
@@ -1510,7 +1520,7 @@ let hub_props = {
 			}
 		}
 
-		this.engine.set_search_desired(node, limit, by_time, node.searchmoves);
+		this.set_engine_search(node, limit, by_time, node.searchmoves);
 	},
 
 	// ---------------------------------------------------------------------------------------------------------------------

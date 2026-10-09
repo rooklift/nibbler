@@ -243,7 +243,7 @@ function makeHub(hub_props, engine, tree) {
 
 	hub.engine = engine;
 	hub.tree = tree;
-	hub.engine_manager = {handle_event: () => false};
+	hub.engine_manager = {handle_event: () => false, mirror_primary_search: () => false};
 	hub.tab_manager = {active: () => ({id: 1}), active_tab_id: 1, count: () => 1};
 
 	hub.current_tab = () => ({id: 1});

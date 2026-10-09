@@ -249,10 +249,14 @@ test("EngineManager dispatches pending analysis after readiness", () => {
 	harness.created[1].ever_received_uciok = true;
 	harness.created[1].ever_received_readyok = true;
 	manager.receive_misc(primarySession, "readyok");
+	// A real engine emits onReady and then passes "readyok" to the sink's receive_misc().
 	manager.secondary().event_sink.onReady(manager.secondary(), {processGeneration: 1});
+	assert.deepEqual(harness.created[1].searchRequests, [], "secondary must not search before ucinewgame");
+	manager.secondary().event_sink.receive_misc("readyok");
 
 	assert.equal(harness.created[0].searchRequests.length, 1);
 	assert.equal(harness.created[1].searchRequests.length, 1);
+	assert.ok(harness.created[1].sent.includes("ucinewgame"));
 	assert.equal(harness.created[0].searchRequests[0][0], node);
 	assert.equal(harness.created[1].searchRequests[0][0], node);
 });
