@@ -6,7 +6,7 @@ It runs an engine in the background, continuously evaluates the current position
 
 Current maintained fork: https://github.com/perejaslav/nibbler
 
-Latest Windows release: https://github.com/perejaslav/nibbler/releases/tag/v2.9.0
+Latest Windows release: https://github.com/perejaslav/nibbler/releases/tag/v2.9.1
 
 ![Screenshot](docs/images/screenshot.png)
 
@@ -24,9 +24,18 @@ Latest Windows release: https://github.com/perejaslav/nibbler/releases/tag/v2.9.
 - PGN variation support with arbitrary depth.
 - FEN loading from clipboard or menu.
 - Chess960 support.
-- Analysis toolbar with quick access to engine controls, navigation, board flip, MultiPV, and focus clearing.
+- Analysis toolbar with quick access to engine controls, New game, FEN/PGN paste and copy, board flip, MultiPV, and focus clearing.
 - Visual UCI engine settings dialog for standard engine options.
 - Undo/Redo stack for tree operations (Edit menu, Ctrl+Z / Ctrl+Y).
+
+## What's new in 2.9.1
+
+Version 2.9.1 changes the analysis toolbar and fixes a startup failure.
+
+- The Root, Back, Forward and End buttons are replaced with New, Paste FEN/PGN and Copy PGN. Navigation is still available from the menus and keyboard shortcuts.
+- Fixed a startup error that stopped the engine modules from loading.
+
+The Windows build for this release is packaged as `nibbler-2.9.1-windows.zip`.
 
 ## What's new in 2.9.0
 
@@ -93,12 +102,12 @@ https://github.com/perejaslav/nibbler/releases/tag/v2.7.2
 
 1. Open the latest release page:
    https://github.com/perejaslav/nibbler/releases
-2. Download `nibbler-2.9.0-windows.zip` or the newest available Windows archive.
+2. Download `nibbler-2.9.1-windows.zip` or the newest available Windows archive.
 3. Extract the archive to a folder of your choice.
 4. Run `nibbler.exe`.
 5. Configure your engine path from inside Nibbler if needed.
 
-The 2.9.0 Windows build uses Electron 9.4.4.
+The 2.9.1 Windows build uses Electron 9.4.4.
 
 ### Run from source
 
@@ -237,8 +246,8 @@ npx electron .
 
 Current release:
 
-- v2.9.0 — https://github.com/perejaslav/nibbler/releases/tag/v2.9.0
-- Windows package: `releases/nibbler-2.9.0-windows.zip`
+- v2.9.1 — https://github.com/perejaslav/nibbler/releases/tag/v2.9.1
+- Windows package: `releases/nibbler-2.9.1-windows.zip`
 
 All releases:
 
