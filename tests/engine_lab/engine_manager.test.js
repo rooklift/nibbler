@@ -10,6 +10,7 @@ function loadManager() {
 	let created = [];
 	let source = fs.readFileSync(path.join(__dirname, "../../files/src/renderer/91_engine_manager.js"), "utf8");
 	let context = {
+		engine_lab: require("../../files/src/modules/engine_lab"),
 		console,
 		Object,
 		Array,
@@ -18,9 +19,9 @@ function loadManager() {
 		setTimeout,
 		clearTimeout,
 			require: modulePath => {
-			if (modulePath === "../modules/engine_lab") return require("../../files/src/modules/engine_lab");
-			if (modulePath === "../modules/engine_resource_scheduler") return require("../../files/src/modules/engine_resource_scheduler");
-			if (modulePath === "../modules/engine_game_analysis") return require("../../files/src/modules/engine_game_analysis");
+			if (modulePath === "./modules/engine_lab") return require("../../files/src/modules/engine_lab");
+			if (modulePath === "./modules/engine_resource_scheduler") return require("../../files/src/modules/engine_resource_scheduler");
+			if (modulePath === "./modules/engine_game_analysis") return require("../../files/src/modules/engine_game_analysis");
 			throw new Error(`Unexpected module: ${modulePath}`);
 		},
 		engineconfig: {

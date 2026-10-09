@@ -1,8 +1,7 @@
 "use strict";
 
-const engine_lab = require("../modules/engine_lab");
-const engine_resource_scheduler = require("../modules/engine_resource_scheduler");
-const engine_game_analysis = require("../modules/engine_game_analysis");
+const engine_resource_scheduler = require("./modules/engine_resource_scheduler");
+const engine_game_analysis = require("./modules/engine_game_analysis");
 
 function NewEngineManager(hub, options = null) {
 	let manager = Object.create(null);

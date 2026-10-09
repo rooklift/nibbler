@@ -89,7 +89,7 @@ function loadNewEngine() {
 			send: (...args) => ipcMessages.push(args),
 		},
 		require: modulePath => {
-			if (modulePath === "../modules/engine_lab") {
+			if (modulePath === "./modules/engine_lab") {
 				return require("../../files/src/modules/engine_lab");
 			}
 			throw new Error(`Unexpected module: ${modulePath}`);

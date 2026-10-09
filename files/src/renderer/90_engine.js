@@ -42,7 +42,7 @@ We are in one of these states (currently implicit in the logic):
 const GUI_WANTS_TO_KNOW = ["Backend", "EvalFile", "WeightsFile", "SyzygyPath", "Threads", "Hash", "MultiPV",
 	"ContemptMode", "Contempt", "WDLCalibrationElo", "WDLEvalObjectivity", "ScoreType", "Temperature", "TempDecayMoves"];
 
-const engine_lab = require("../modules/engine_lab");
+const engine_lab = require("./modules/engine_lab");
 
 function parse_bestmove_line(line) {
 	let tokens = line.trim().split(/\s+/);
