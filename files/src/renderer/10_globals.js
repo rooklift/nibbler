@@ -34,13 +34,27 @@ try {
 
 const background = require("./modules/background");
 const child_process = require("child_process");
-const clipboard = require("electron").clipboard;
+const ipcRenderer = require("electron").ipcRenderer;
+const clipboard = (function() {
+	try {
+		let cb = require("electron").clipboard;
+		if (cb && typeof cb.writeText === "function") {
+			return cb;
+		}
+	} catch (e) {}
+	return {
+		writeText: (text) => {
+			if (typeof text === "string") {
+				ipcRenderer.send("set_clipboard_text", text);
+			}
+		}
+	};
+})();
 const config_io = require("./modules/config_io");
 const custom_uci = require("./modules/custom_uci");
 const engineconfig_io = require("./modules/engineconfig_io");
 const fs = require("fs");
 const images = require("./modules/images");
-const ipcRenderer = require("electron").ipcRenderer;
 const messages = require("./modules/messages");
 const path = require("path");
 const querystring = require("querystring");
