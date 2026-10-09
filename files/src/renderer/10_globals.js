@@ -34,27 +34,12 @@ try {
 
 const background = require("./modules/background");
 const child_process = require("child_process");
-const ipcRenderer = require("electron").ipcRenderer;
-const clipboard = (function() {
-	try {
-		let cb = require("electron").clipboard;
-		if (cb && typeof cb.writeText === "function") {
-			return cb;
-		}
-	} catch (e) {}
-	return {
-		writeText: (text) => {
-			if (typeof text === "string") {
-				ipcRenderer.send("set_clipboard_text", text);
-			}
-		}
-	};
-})();
 const config_io = require("./modules/config_io");
 const custom_uci = require("./modules/custom_uci");
 const engineconfig_io = require("./modules/engineconfig_io");
 const fs = require("fs");
 const images = require("./modules/images");
+const ipcRenderer = require("electron").ipcRenderer;
 const messages = require("./modules/messages");
 const path = require("path");
 const querystring = require("querystring");
@@ -62,6 +47,15 @@ const readline = require("readline");
 const stringify = require("./modules/stringify");
 const translate = require("./modules/translate");
 const util = require("util");
+
+// From v44 electron.clipboard is no longer available in the renderer process. We only use it for
+// writeText, so we'll just send text to the main process and let it do it.
+
+const clipboard = {
+	writeText: (s) => {
+		if (typeof s === "string") ipcRenderer.send("set_clipboard_text", s);
+	}
+};
 
 // Prior to v32, given a file object from an event (e.g. from dragging the file onto the window)
 // we could simply access its path, but afterwards we need to use a helper function...

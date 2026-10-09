@@ -404,14 +404,14 @@ function menu_build() {
 				{
 					label: translate.t("Load FEN / PGN from clipboard"),
 					accelerator: "CommandOrControl+Shift+V",
-					click: async () => {
-						let text = await electron.clipboard.readText();
-						if (typeof text === "string") {
+					click: () => {
+						// electron.clipboard.readText() may or may not return a promise (Electron 44+ does)
+						Promise.resolve(electron.clipboard.readText()).then((s) => {
 							win.webContents.send("call", {
 								fn: "load_fen_or_pgn_from_string",
-								args: [text]
+								args: [s]
 							});
-						}
+						});
 					}
 				},
 				{
