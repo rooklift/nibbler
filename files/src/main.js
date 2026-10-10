@@ -448,6 +448,13 @@ function menu_build() {
 					}
 				},
 				{
+					label: translate.t("Write FEN to clipboard"),
+					accelerator: "CommandOrControl+Shift+K",
+					click: () => {
+						win.webContents.send("call", "fen_to_clipboard");
+					}
+				},
+				{
 					label: translate.t("PGN saved statistics"),
 					submenu: [
 						{
@@ -750,6 +757,13 @@ function menu_build() {
 					accelerator: "CommandOrControl+Up",
 					click: () => {
 						win.webContents.send("call", "promote");
+					}
+				},
+				{
+					label: translate.t("Add null move"),
+					accelerator: "CommandOrControl+Shift+T",
+					click: () => {
+						win.webContents.send("call", "null_move");
 					}
 				},
 				{

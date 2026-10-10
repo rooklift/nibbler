@@ -132,9 +132,11 @@ let tree_manipulation_props = {
 		// s must be exactly a legal move, including having promotion char iff needed (e.g. e2e1q)
 
 		let next_node_id__initial = next_node_id;
+		let had_null_child = this.node.children.some(c => c.move === "0000");
+
 		this.node = this.node.make_move(s);
 
-		if (next_node_id !== next_node_id__initial) {		// NewNode() was called
+		if (next_node_id !== next_node_id__initial || (had_null_child && s !== "0000")) {
 			this.tree_version++;
 		}
 
@@ -149,6 +151,7 @@ let tree_manipulation_props = {
 		}
 
 		let next_node_id__initial = next_node_id;
+		let had_null_child = this.node.children.some(c => c.move === "0000");
 
 		let node = this.node;
 		for (let s of moves) {
@@ -159,7 +162,7 @@ let tree_manipulation_props = {
 			this.node = node;
 		}
 
-		if (next_node_id !== next_node_id__initial) {		// NewNode() was called
+		if (next_node_id !== next_node_id__initial || (had_null_child && moves[0] !== "0000")) {
 			this.tree_version++;
 		}
 
