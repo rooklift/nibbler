@@ -105,7 +105,7 @@ ipcRenderer.on("set", (event, msg) => {		// Should only be for things that don't
 let droppables = [							// If the UI is already lagging, dropping one of these won't make it feel any worse.
 	"goto_root", "goto_end", "prev", "next", "previous_sibling", "next_sibling", "return_to_main_line", "promote_to_main_line",
 	"promote", "delete_node", "delete_children", "delete_siblings", "delete_other_lines", "return_to_lock", "play_info_index",
-	"clear_searchmoves", "invert_searchmoves",
+	"clear_searchmoves", "invert_searchmoves", "null_move",
 ];
 
 ipcRenderer.on("call", (event, msg) => {	// Adds stuff to the queue, or drops some stuff.

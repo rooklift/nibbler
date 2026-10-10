@@ -63,6 +63,14 @@ const node_prototype = {
 
 		// s must be exactly a legal move, including having promotion char iff needed (e.g. e2e1q)
 
+		if (!force_new_node && s !== "0000") {
+			for (let child of this.children.slice()) {
+				if (child.move === "0000") {
+					child.detach();
+				}
+			}
+		}
+
 		if (!force_new_node) {
 			for (let child of this.children) {
 				if (child.move === s) {
