@@ -2989,7 +2989,7 @@ let hub_props = {
 			this.new_game();
 			return;
 		case "paste_fen_pgn":
-			this.load_fen_or_pgn_from_string(clipboard.readText());
+			read_clipboard_text().then(s => this.load_fen_or_pgn_from_string(s));
 			return;
 		case "copy_pgn":
 			this.pgn_to_clipboard();

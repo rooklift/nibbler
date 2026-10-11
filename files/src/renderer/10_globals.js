@@ -36,7 +36,6 @@ try {
 
 const background = require("./modules/background");
 const child_process = require("child_process");
-const clipboard = require("electron").clipboard;
 const config_io = require("./modules/config_io");
 const custom_uci = require("./modules/custom_uci");
 const engine_display = require("./modules/engine_display");
@@ -60,6 +59,18 @@ const util = require("util");
 
 let webUtils = require("electron").webUtils;
 const get_path_for_file = (webUtils && webUtils.getPathForFile) ? webUtils.getPathForFile : file => file.path;
+
+// Modern Electron no longer exposes the clipboard to the renderer, so we ask the main process.
+// Note that readText() may then return a promise; callers should use read_clipboard_text() below.
+
+const clipboard = require("electron").clipboard || {
+	readText: () => ipcRenderer.invoke("clipboard_read_text"),
+	writeText: (s) => ipcRenderer.send("clipboard_write_text", s),
+};
+
+function read_clipboard_text() {		// Always returns a promise, whichever API is in use.
+	return Promise.resolve(clipboard.readText());
+}
 
 // Globals..........................................................
 

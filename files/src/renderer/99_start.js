@@ -277,7 +277,7 @@ window.addEventListener("keydown", (event) => {
 	if ((event.ctrlKey || event.metaKey) && event.key.toLowerCase() === "v") {
 		event.preventDefault();
 		if (!event.repeat) {
-			hub.load_fen_or_pgn_from_string(clipboard.readText());
+			read_clipboard_text().then(s => hub.load_fen_or_pgn_from_string(s));
 		}
 		return;
 	}
