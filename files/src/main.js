@@ -256,7 +256,19 @@ if (electron.app.isReady()) {
 
 // ----------------------------------------------------------------------------------
 
+function app_icon_path() {
+	// The builder copies res/ into resources/; in development res/ sits next to src/.
+	let res_dir = electron.app.isPackaged ? process.resourcesPath : path.join(__dirname, "..", "res");
+	return path.join(res_dir, process.platform === "win32" ? "nibbler.ico" : "nibbler.png");
+}
+
 function startup() {
+
+	// Our own AppUserModelID makes Windows group taskbar buttons as Nibbler, not as generic Electron.
+
+	if (process.platform === "win32") {
+		electron.app.setAppUserModelId("com.perejaslav.nibbler");
+	}
 
 	let desired_zoomfactor = 1 / electron.screen.getPrimaryDisplay().scaleFactor;
 
@@ -267,6 +279,7 @@ function startup() {
 		resizable: true,
 		show: false,
 		useContentSize: true,
+		icon: app_icon_path(),
 		webPreferences: {
 			backgroundThrottling: false,
 			contextIsolation: false,

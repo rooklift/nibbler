@@ -11,7 +11,10 @@ No build step needed for development. The app IS the source.
 
 ## Build (Windows/Linux)
 1. Download Electron release (v44.7.0) into `files/scripts/electron_zipped/electron-v44.7.0-{platform}-x64.zip`
-2. Run `python files/scripts/builder.py`
+2. Optional: put `rcedit-x64.exe` (github.com/electron/rcedit) into `files/scripts/rcedit/` so `nibbler.exe` gets the app icon and "Nibbler" version info
+3. Run `python files/scripts/builder.py`
+
+Icons: edit `files/res/nibbler.svg` / `nibbler-small.svg` (16-32 px), then `python files/scripts/make_icons.py` (needs cairosvg + Pillow) regenerates `nibbler.png` and `nibbler.ico`.
 
 ## Code Structure
 

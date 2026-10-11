@@ -1,4 +1,4 @@
-import json, os, shutil, zipfile
+import json, os, shutil, subprocess, zipfile
 
 zips = {
 	"windows": "scripts/electron_zipped/electron-v44.7.0-win32-x64.zip",
@@ -13,6 +13,27 @@ zips = {
 #
 # Note: Electron 10+ has a minor drag glitch on some Linux setups:
 # https://github.com/rooklift/nibbler/issues/140
+
+# Optional: put rcedit-x64.exe (https://github.com/electron/rcedit/releases) at scripts/rcedit/rcedit-x64.exe
+# so the Windows nibbler.exe gets our icon and "Nibbler" version info instead of Electron's.
+
+rcedit = "scripts/rcedit/rcedit-x64.exe"
+
+def brand_windows_exe(exe, version):
+	if not os.path.exists(rcedit):
+		print("Skipping exe icon/version info: {} not present.".format(rcedit))
+		return
+	subprocess.run([os.path.abspath(rcedit), exe,
+		"--set-icon", "res/nibbler.ico",
+		"--set-file-version", version,
+		"--set-product-version", version,
+		"--set-version-string", "ProductName", "Nibbler",
+		"--set-version-string", "FileDescription", "Nibbler",
+		"--set-version-string", "CompanyName", "Nibbler",
+		"--set-version-string", "LegalCopyright", "GPL-3.0",
+		"--set-version-string", "OriginalFilename", "nibbler.exe",
+		"--set-version-string", "InternalName", "nibbler",
+	], check = True)
 
 os.chdir(os.path.dirname(os.path.realpath(__file__)))		# Ensure we're in builder.py's directory.
 os.chdir("..")												# Then come up one level.
@@ -45,5 +66,6 @@ for key, value in zips.items():
 	# rename executable
 	if os.path.exists(os.path.join(build_dir, "electron.exe")):
 		os.rename(os.path.join(build_dir, "electron.exe"), os.path.join(build_dir, "nibbler.exe"))
+		brand_windows_exe(os.path.join(build_dir, "nibbler.exe"), version)
 	if os.path.exists(os.path.join(build_dir, "electron")):
 		os.rename(os.path.join(build_dir, "electron"), os.path.join(build_dir, "nibbler"))
