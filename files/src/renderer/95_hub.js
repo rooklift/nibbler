@@ -42,7 +42,7 @@ function tab_title_for(tab) {
 	let tags = (tab.tree.root && tab.tree.root.tags) || {};
 	let white = String(tags.White || "").trim();
 	let black = String(tags.Black || "").trim();
-	let source = tab.pgndata && String(tab.pgndata.source || "").trim();
+	let source = (tab.pgndata && String(tab.pgndata.source || "").trim()) || tab.session_source || "";
 
 	if (white && black) {
 		return white + " - " + black;
@@ -660,6 +660,7 @@ let hub_props = {
 		tab.active_square = null;
 		tab.leela_lock_node = null;
 		tab.pgndata = null;
+		tab.session_source = null;
 		tab.pgn_choices_start = 0;
 		tab.pgndata_merge_into_current = false;
 		tab.book = null;
@@ -2567,6 +2568,7 @@ let hub_props = {
 		}
 
 		if (!merge_into_current) {
+			this.active_tab().session_source = null;
 			this.tree.replace_tree(imported_root);
 			this.position_changed(true, true);
 			this.refresh_active_tab_title();
@@ -3424,6 +3426,11 @@ let hub_props = {
 	// Misc...
 
 	quit: function() {
+		try {
+			this.last_session_store && this.last_session_store.save(this);
+		} catch (err) {
+			console.log("Could not save last chess session:", err);
+		}
 		this.engine_manager.stop_all();
 		this.save_config();
 		this.save_engineconfig();

@@ -1,7 +1,7 @@
 # Nibbler — Agent Instructions
 
 ## Project Overview
-Electron GUI for Leela Chess Zero (Lc0) / UCI chess engines. Version 2.9.4.
+Electron GUI for Leela Chess Zero (Lc0) / UCI chess engines. Version 2.9.5.
 
 ## Run
 ```

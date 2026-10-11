@@ -45,6 +45,7 @@ const fs = require("fs");
 const images = require("./modules/images");
 const ipcRenderer = require("electron").ipcRenderer;
 const messages = require("./modules/messages");
+const last_session = require("./modules/last_session");
 const position_annotations = require("./modules/position_annotations");
 const {build_movelist_context_menu_state} = require("./modules/movelist_context_menu");
 const path = require("path");

@@ -14,6 +14,10 @@ Log(`Nibbler startup at ${new Date().toUTCString()}`);
 let hub = NewHub();
 hub.engine_start(config.path, true);
 
+// Keep a separate, atomic snapshot of all open game tabs. The regular config
+// file holds UI/engine settings only; it does not contain the movelist.
+hub.last_session_store = last_session.create_store(path.dirname(config_io.filepath));
+
 if (load_err1) {
 	hub.err_receive(`<span class="blue">While loading config.json: ${load_err1}</span>`);
 	hub.err_receive("");
@@ -317,6 +321,33 @@ setTimeout(force_gc, 300000);
 
 function enter_loop() {
 	if (images.fully_loaded()) {
+		try {
+			let restore = snapshot => last_session.restore_snapshot(hub, snapshot,
+				fen => NewRoot(LoadFEN(fen)), DestroyTree);
+			if (restore(hub.last_session_store.load()) || restore(hub.last_session_store.load_backup())) {
+				let tab = hub.active_tab();
+				reset_tab_draw_cache(tab);
+				if (!tab.tree.node.table.already_autopopulated) {
+					tab.tree.node.table.autopopulate(tab.tree.node);
+				}
+				hub.apply_display_flip(tab.flip);
+				tab.tree.dom_from_scratch();
+				fenbox.value = tab.tree.node.board.fen(true);
+				hub.info_handler.must_draw_infobox();
+				hub.draw_tabs();
+				hub.send_title();
+			}
+		} catch (err) {
+			console.log("Could not restore last chess session:", err);
+		}
+		// Periodic snapshots also protect recent moves if the app is killed.
+		setInterval(() => {
+			try {
+				hub.last_session_store.save(hub);
+			} catch (err) {
+				console.log("Could not autosave chess session:", err);
+			}
+		}, 3000);
 		hub.spin();
 		ipcRenderer.send("renderer_ready", null);
 	} else {

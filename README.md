@@ -6,7 +6,7 @@ It runs an engine in the background, continuously evaluates the current position
 
 Current maintained fork: https://github.com/perejaslav/nibbler
 
-Latest Windows release: https://github.com/perejaslav/nibbler/releases/tag/v2.9.4
+Latest Windows release: https://github.com/perejaslav/nibbler/releases/tag/v2.9.5
 
 ![Screenshot](docs/images/screenshot.png)
 
@@ -27,6 +27,20 @@ Latest Windows release: https://github.com/perejaslav/nibbler/releases/tag/v2.9.
 - Analysis toolbar with quick access to engine controls, New game, FEN/PGN paste and copy, board flip, MultiPV, and focus clearing.
 - Visual UCI engine settings dialog for standard engine options.
 - Undo/Redo stack for tree operations (Edit menu, Ctrl+Z / Ctrl+Y).
+- Automatic restoration of the last chess session, including all open games, variations, annotations, selected moves and active tab.
+
+The current chess session is saved automatically every three seconds and when Nibbler closes normally. On the next launch, your game tabs and selected positions are restored. Snapshots are stored in `last-session.json` in Nibbler's user-data directory (with a `.bak` fallback); no manual PGN export is needed. Engine searches are not resumed automatically.
+
+## What's new in 2.9.5
+
+Version 2.9.5 restores the last chess session after closing and reopening Nibbler.
+
+- Automatically saves all open game tabs every three seconds and once more on normal shutdown.
+- Restores complete move trees, including variations, annotations, position evaluations, comments, graphical arrows/highlights, PGN tags, selected moves, the active tab, and board orientation.
+- Stores the snapshot atomically in the Nibbler user-data directory, with backup recovery if the main session file is damaged. The original engine configuration is unaffected.
+- Engine analysis does not restart automatically after recovery.
+
+The Windows build for this release is packaged as `nibbler-2.9.5-windows.zip`.
 
 ## What's new in 2.9.4
 
@@ -279,8 +293,8 @@ npx electron .
 
 Current release:
 
-- v2.9.4 — https://github.com/perejaslav/nibbler/releases/tag/v2.9.4
-- Windows package: `releases/nibbler-2.9.4-windows.zip`
+- v2.9.5 — https://github.com/perejaslav/nibbler/releases/tag/v2.9.5
+- Windows package: `releases/nibbler-2.9.5-windows.zip`
 
 All releases:
 

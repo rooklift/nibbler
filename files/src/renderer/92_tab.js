@@ -10,6 +10,7 @@ function NewTab(id, hub) {
 		comparison_mode: false,
 		consensus_settings: null,
 		title: "New game",
+		session_source: null,
 		tree: tree,
 		flip: false,
 		behaviour: config.behaviour,
