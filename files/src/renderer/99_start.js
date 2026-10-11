@@ -103,10 +103,13 @@ ipcRenderer.on("set", (event, msg) => {		// Should only be for things that don't
 });
 
 let droppables = [							// If the UI is already lagging, dropping one of these won't make it feel any worse.
-	"goto_root", "goto_end", "prev", "next", "previous_sibling", "next_sibling", "return_to_main_line", "promote_to_main_line",
-	"promote", "delete_node", "delete_children", "delete_siblings", "delete_other_lines", "return_to_lock", "play_info_index",
+	"goto_root", "goto_end", "prev", "next", "previous_sibling", "next_sibling",
+	"return_to_lock", "play_info_index",
 	"clear_searchmoves", "invert_searchmoves",
 ];
+
+// Deliberate tree-editing actions (context menu / keyboard shortcuts) must
+// never be silently dropped, even if the input queue is briefly backed up.
 
 ipcRenderer.on("call", (event, msg) => {	// Adds stuff to the queue, or drops some stuff.
 
@@ -137,7 +140,11 @@ ipcRenderer.on("call", (event, msg) => {	// Adds stuff to the queue, or drops so
 function input_loop() {
 	if (input_queue.length > 0) {
 		for (let fn of input_queue) {
-			fn();
+			try {
+				fn();
+			} catch (err) {
+				console.log("input_loop() error:", err);
+			}
 		}
 		input_queue = [];
 	}

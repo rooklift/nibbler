@@ -2293,7 +2293,7 @@ let hub_props = {
 		},
 
 		delete_other_lines: function() {
-			if (this.tree.root && this.tree.root.children.length > 1) {
+			if (this.tree.node && build_movelist_context_menu_state(this.tree.node).can_delete_other_lines) {
 				let desc = "Delete other lines";
 				this.undo_stack.wrap(desc, () => {
 					this.tree.delete_other_lines();
@@ -2329,6 +2329,25 @@ let hub_props = {
 
 			this.undo_stack.wrap(desc, () => {
 				this.tree.node.annotation = normalized || null;
+				this.tree.tree_version++;
+				this.tree.dom_from_scratch();
+			});
+		},
+
+		set_node_position_annotation: function(nag) {
+			if (!this.tree.node || !this.tree.node.parent) {
+				return;
+			}
+			if (nag !== null && !position_annotations.find(nag)) {
+				return;
+			}
+			let normalized = nag;
+			if (this.tree.node.position_nag === normalized) {
+				return;
+			}
+			let desc = normalized ? "Set position evaluation $" + normalized : "Clear position evaluation";
+			this.undo_stack.wrap(desc, () => {
+				this.tree.node.position_nag = normalized;
 				this.tree.tree_version++;
 				this.tree.dom_from_scratch();
 			});
@@ -2409,7 +2428,16 @@ let hub_props = {
 		event.preventDefault();
 
 		let clicked_node = this.tree.node_from_click(event);
-		if (clicked_node && this.tree.set_node(clicked_node)) {
+
+		// If the right-click didn't land on a move span (e.g. on a variation
+		// bracket or a gap), don't open the menu at all: opening it for the
+		// current node would show delete/promote actions for the wrong node.
+
+		if (!clicked_node) {
+			return;
+		}
+
+		if (this.tree.set_node(clicked_node)) {
 			this.position_changed(false, true);
 		}
 

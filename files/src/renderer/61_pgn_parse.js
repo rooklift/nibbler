@@ -213,7 +213,20 @@ function LoadPGNRecord(o) {				// This can throw!
 
 				// Parse s.
 
-				if (s === "" || s === "+" || s.startsWith("$") || StringIsNumeric(s)) {
+					if (s.startsWith("$")) {
+						// NAGs describe the preceding move or the position after it.
+						if (/^\$\d+$/.test(s) && last_significant_was_move && node && node.move) {
+							let nag = Number(s.slice(1));
+							if (position_annotations.find(nag)) {
+								node.position_nag = nag;
+							} else {
+								let move_quality = [null, "!", "?", "!!", "??", "!?", "?!"];
+								if (move_quality[nag]) node.annotation = move_quality[nag];
+							}
+						}
+						continue;
+					}
+					if (s === "" || s === "+" || StringIsNumeric(s)) {
 					// Useless token.
 					continue;
 				}

@@ -6,7 +6,7 @@ It runs an engine in the background, continuously evaluates the current position
 
 Current maintained fork: https://github.com/perejaslav/nibbler
 
-Latest Windows release: https://github.com/perejaslav/nibbler/releases/tag/v2.9.3
+Latest Windows release: https://github.com/perejaslav/nibbler/releases/tag/v2.9.4
 
 ![Screenshot](docs/images/screenshot.png)
 
@@ -27,6 +27,18 @@ Latest Windows release: https://github.com/perejaslav/nibbler/releases/tag/v2.9.
 - Analysis toolbar with quick access to engine controls, New game, FEN/PGN paste and copy, board flip, MultiPV, and focus clearing.
 - Visual UCI engine settings dialog for standard engine options.
 - Undo/Redo stack for tree operations (Edit menu, Ctrl+Z / Ctrl+Y).
+
+## What's new in 2.9.4
+
+Version 2.9.4 improves move-tree context menu reliability and adds standard chess position evaluations.
+
+- Fixed **Delete ALL other lines** sometimes doing nothing when variations started below the first move. The chosen continuation is preserved and competing branches are removed.
+- Fixed right-click context menus opening for the wrong move when clicking a gap or variation bracket; tree-editing actions are no longer silently discarded when input is queued, and the context menu can be reopened after dismissal.
+- Added **Annotation → Position evaluation** with nine chess symbols (`=`, `∞`, `⩲`, `⩱`, `±`, `∓`, `+−`, `−+`, `⨀`). Position evaluations can coexist with move-quality marks (`!`, `?`, etc.).
+- Standard PGN NAGs (`$10`, `$13`–`$19`, `$44`) are exported and imported with variations. Numeric move-quality NAGs (`$1`–`$6`) are also recognized on import.
+- Position evaluations support Undo/Redo and can be cleared independently of move-quality annotations; Russian translations are included.
+
+The Windows build for this release is packaged as `nibbler-2.9.4-windows.zip`.
 
 ## What's new in 2.9.3
 
@@ -267,8 +279,8 @@ npx electron .
 
 Current release:
 
-- v2.9.3 — https://github.com/perejaslav/nibbler/releases/tag/v2.9.3
-- Windows package: `releases/nibbler-2.9.3-windows.zip`
+- v2.9.4 — https://github.com/perejaslav/nibbler/releases/tag/v2.9.4
+- Windows package: `releases/nibbler-2.9.4-windows.zip`
 
 All releases:
 

@@ -33,6 +33,7 @@ function NewNode(parent, move, board_for_root) {		// move must be legal; board i
 	node.comment_before = "";
 	node.comment_after = "";
 	node.annotation = null;
+	node.position_nag = null;
 	node.user_arrows = [];
 	node.user_highlights = [];
 
@@ -396,6 +397,10 @@ const node_prototype = {
 		if (this.annotation) {
 			s += PgnAnnotationSuffix(this.annotation);
 		}
+		let evaluation = position_annotations.find(this.position_nag);
+		if (evaluation) {
+			s += " " + evaluation.symbol;
+		}
 
 		if (stats_flag) {
 			let stats = this.make_stats();
@@ -435,6 +440,9 @@ const node_prototype = {
 			move += PgnAnnotationSuffix(this.annotation);
 		}
 		parts.push(move);
+		if (position_annotations.find(this.position_nag)) {
+			parts.push("$" + this.position_nag);
+		}
 
 		if (this.comment_after) {
 			parts.push(`{${this.comment_after}}`);

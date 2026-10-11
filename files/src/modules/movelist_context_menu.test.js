@@ -40,6 +40,7 @@ function test_root_without_variations() {
 		can_delete_children: false,
 		can_delete_siblings: false,
 		can_delete_other_lines: false,
+		can_edit_node: false,
 	});
 }
 

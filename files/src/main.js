@@ -32,6 +32,7 @@ const alert = require("./modules/alert_main");
 const custom_uci = require("./modules/custom_uci");
 const engineconfig_io = require("./modules/engineconfig_io");
 const messages = require("./modules/messages");
+const position_annotations = require("./modules/position_annotations");
 const path = require("path");
 const running_as_electron = require("./modules/running_as_electron");
 const stringify = require("./modules/stringify");
@@ -194,6 +195,31 @@ function build_movelist_context_menu(msg) {
 						});
 					}
 				},
+				{type: "separator"},
+				{
+					label: translate.t("Position evaluation"),
+					submenu: [
+						...position_annotations.evaluations.map(item => ({
+							label: item.symbol + "  " + translate.t(item.label),
+							click: () => {
+								win.webContents.send("call", {
+									fn: "set_node_position_annotation",
+									args: [item.nag]
+								});
+							}
+						})),
+						{type: "separator"},
+						{
+							label: translate.t("Clear position evaluation"),
+							click: () => {
+								win.webContents.send("call", {
+									fn: "set_node_position_annotation",
+									args: [null]
+								});
+							}
+						},
+					]
+				},
 			]
 		},
 		{
@@ -353,6 +379,16 @@ function startup() {
 
 		try {
 			let context_menu = build_movelist_context_menu(msg || {});
+
+			// Reset the guard both via the popup callback and via the
+			// menu-will-close event: on some Electron versions the popup
+			// callback is not reliably invoked when the menu is dismissed,
+			// which would otherwise leave movelist_context_menu_open stuck
+			// and silently ignore every subsequent right-click.
+
+			context_menu.once("menu-will-close", () => {
+				movelist_context_menu_open = false;
+			});
 
 			context_menu.popup({
 				window: win,
