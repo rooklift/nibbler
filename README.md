@@ -6,7 +6,7 @@ It runs an engine in the background, continuously evaluates the current position
 
 Current maintained fork: https://github.com/perejaslav/nibbler
 
-Latest Windows release: https://github.com/perejaslav/nibbler/releases/tag/v3.0.0
+Latest Windows release: https://github.com/perejaslav/nibbler/releases/tag/v3.0.1
 
 ![Screenshot](docs/images/screenshot.png)
 
@@ -27,10 +27,19 @@ Latest Windows release: https://github.com/perejaslav/nibbler/releases/tag/v3.0.
 - Analysis toolbar with quick access to engine controls, New game, FEN/PGN paste and copy, board flip, MultiPV, and focus clearing.
 - Visual UCI engine settings dialog for standard engine options.
 - Undo/Redo stack for tree operations (Edit menu, Ctrl+Z / Ctrl+Y).
+- Highlighted first moves of side variations in the move list.
 - Modern Electron 44 (Chromium 152) platform.
 - Automatic restoration of the last chess session, including all open games, variations, annotations, selected moves and active tab.
 
 The current chess session is saved automatically every three seconds and when Nibbler closes normally. On the next launch, your game tabs and selected positions are restored. Snapshots are stored in `last-session.json` in Nibbler's user-data directory (with a `.bak` fallback); no manual PGN export is needed. Engine searches are not resumed automatically.
+
+## What's new in 3.0.1
+
+- **Variation starts are highlighted in the move list.** The first move of every side variation is shown in bold violet, e.g. `1. e4 e5 (`**`1... c5`**` 2. Nf3 d6) 2. Nf3 (`**`2. Bc4`**` Nf6)`, so branch points are easy to spot in long analysis trees. The rest of the variation keeps its normal colour.
+- The highlight follows the tree: after *Promote line to main line*, the new side line is marked instead.
+- Selection colours and move-quality annotation colours (!, ?, etc.) still take precedence.
+
+The Windows build for this release is packaged as `nibbler-3.0.1-windows.zip` (Electron 44.7.0).
 
 ## What's new in 3.0.0
 
@@ -189,12 +198,12 @@ https://github.com/perejaslav/nibbler/releases/tag/v2.7.2
 
 1. Open the latest release page:
    https://github.com/perejaslav/nibbler/releases
-2. Download `nibbler-3.0.0-windows.zip` or the newest available Windows archive.
+2. Download `nibbler-3.0.1-windows.zip` or the newest available Windows archive.
 3. Extract the archive to a folder of your choice.
 4. Run `nibbler.exe`.
 5. Configure your engine path from inside Nibbler if needed.
 
-The 3.0.0 Windows build uses Electron 44.7.0. Builds up to 2.9.5 used Electron 9.4.4.
+The 3.x Windows builds use Electron 44.7.0. Builds up to 2.9.5 used Electron 9.4.4.
 
 Upgrading from 2.x: extract the new archive and run it. Settings, engines and the last session stay in the same user-data folder (`%APPDATA%\Nibbler`). To be safe, copy that folder before the first launch; to roll back, run the old build again.
 
@@ -335,8 +344,8 @@ npx electron .
 
 Current release:
 
-- v3.0.0 — https://github.com/perejaslav/nibbler/releases/tag/v3.0.0
-- Windows package: `releases/nibbler-3.0.0-windows.zip`
+- v3.0.1 — https://github.com/perejaslav/nibbler/releases/tag/v3.0.1
+- Windows package: `releases/nibbler-3.0.1-windows.zip`
 
 All releases:
 

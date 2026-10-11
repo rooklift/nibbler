@@ -484,6 +484,13 @@ ul {
 	cursor: default;
 }
 
+/* Mark the first move of each side variation. Selection and move-quality
+   annotation colours below take precedence when they are present. */
+span.variation_start {
+	color: #c9a5ff;
+	font-weight: bold;
+}
+
 span.movelist_highlight_blue {
 	background-color: #222244;
 	color: #6cccee;

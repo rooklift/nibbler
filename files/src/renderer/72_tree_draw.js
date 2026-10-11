@@ -82,6 +82,11 @@ let tree_draw_props = {
 			let node = item;
 			let classes = [];
 			let title_parts = [];
+			// Only the first move of each alternative line marks a branch.
+			// Its subsequent moves retain their normal main/variation styling.
+			if (node.parent && node.parent.children[0] !== node) {
+				classes.push("variation_start");
+			}
 
 			if (node === this.node) {
 				if (node.is_main_line()) {
