@@ -274,10 +274,13 @@ fenbox.addEventListener("keydown", (event) => {
 // Set space-bar to toggle go/halt, unless we're in the FEN box...
 
 window.addEventListener("keydown", (event) => {
-	if ((event.ctrlKey || event.metaKey) && event.key.toLowerCase() === "v") {
+	// Use the physical key (event.code) so Ctrl+V also works with non-Latin layouts (e.g. Russian, where event.key is "м").
+	// Ctrl+Shift+V does the same.
+
+	if ((event.ctrlKey || event.metaKey) && !event.altKey && (event.code === "KeyV" || event.key.toLowerCase() === "v")) {
 		event.preventDefault();
 		if (!event.repeat) {
-			hub.load_fen_or_pgn_from_string(clipboard.readText());
+			hub.paste_from_menu();						// Text field focused -> paste text, else paste a game.
 		}
 		return;
 	}

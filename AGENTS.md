@@ -10,7 +10,7 @@ cd files/src && electron .
 No build step needed for development. The app IS the source.
 
 ## Build (Windows/Linux)
-1. Download Electron release (v9.4.4) into `files/scripts/electron_zipped/electron-v9.4.4-{platform}-x64.zip`
+1. Download Electron release (v44.7.0) into `files/scripts/electron_zipped/electron-v44.7.0-{platform}-x64.zip`
 2. Run `python files/scripts/builder.py`
 
 ## Code Structure
@@ -35,11 +35,11 @@ No build step needed for development. The app IS the source.
 
 ## Quirks
 - `contextIsolation: false`, `nodeIntegration: true` — renderer has full Node access
-- Old Electron (v9.4.4) — some APIs deprecated but functional
+- Electron v44: the renderer has no `clipboard` module, it goes through main-process IPC (`clipboard_read_text` / `clipboard_write_text`); main-process `clipboard.readText()` returns a Promise — use `read_clipboard_text()` in the renderer
 - No automated tests — verify manually
 
 ## Known Issues
-- Electron >9.4.4 causes minor glitches: https://github.com/rooklift/nibbler/issues/140
+- Electron 10+ has a minor drag glitch on some Linux setups: https://github.com/rooklift/nibbler/issues/140
 
 <!-- SPECKIT START -->
 For the current Spec Kit feature, read `specs/001-uci-engine-settings/plan.md`

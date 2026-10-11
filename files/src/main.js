@@ -286,9 +286,22 @@ function startup() {
 		win.focus();
 	});
 
-	win.webContents.once("crashed", () => {
-		alert(win, messages.renderer_crash);
-	});
+	// "crashed" was replaced by "render-process-gone" in later Electron versions; listen for both...
+
+	let have_alerted_crash = false;
+
+	let on_renderer_crash = (event, details) => {
+		if (details && details.reason === "clean-exit") {
+			return;
+		}
+		if (!have_alerted_crash) {
+			have_alerted_crash = true;
+			alert(win, messages.renderer_crash);
+		}
+	};
+
+	win.webContents.once("crashed", on_renderer_crash);
+	win.webContents.once("render-process-gone", on_renderer_crash);
 
 	win.webContents.once("unresponsive", () => {
 		alert(win, messages.renderer_hang);
@@ -367,6 +380,22 @@ function startup() {
 
 	electron.ipcMain.on("web_link", (event, msg) => {
 		electron.shell.openExternal(msg);
+	});
+
+	// Clipboard access for the renderer. In modern Electron the main process clipboard API returns promises...
+
+	electron.ipcMain.handle("clipboard_read_text", () => {
+		return Promise.resolve(electron.clipboard.readText());
+	});
+
+	electron.ipcMain.on("clipboard_write_text", (event, msg) => {
+		Promise.resolve(electron.clipboard.writeText(typeof msg === "string" ? msg : String(msg))).catch(err => {
+			console.log("Clipboard write failed:", String(err));
+		});
+	});
+
+	electron.ipcMain.on("native_paste", () => {
+		win.webContents.paste();
 	});
 
 	electron.ipcMain.on("show_movelist_context_menu", (event, msg) => {
@@ -611,9 +640,11 @@ function menu_build() {
 				{
 					label: translate.t("Load FEN / PGN from clipboard"),
 					click: () => {
-						win.webContents.send("call", {
-							fn: "load_fen_or_pgn_from_string",
-							args: [electron.clipboard.readText()]
+						Promise.resolve(electron.clipboard.readText()).then(text => {		// Modern Electron returns a promise.
+							win.webContents.send("call", {
+								fn: "paste_game",
+								args: [text]
+							});
 						});
 					}
 				},
@@ -866,7 +897,10 @@ function menu_build() {
 					{
 						label: translate.t("Paste"),
 						accelerator: "CommandOrControl+V",
-						role: "paste",
+						registerAccelerator: false,		// The renderer's keydown handler owns Ctrl+V (text field -> text, else game).
+						click: () => {
+							win.webContents.send("call", "paste_from_menu");
+						}
 					},
 				]
 			},

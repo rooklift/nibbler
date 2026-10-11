@@ -1,8 +1,8 @@
 import json, os, shutil, zipfile
 
 zips = {
-	"windows": "scripts/electron_zipped/electron-v9.4.4-win32-x64.zip",
-	"linux": "scripts/electron_zipped/electron-v9.4.4-linux-x64.zip",
+	"windows": "scripts/electron_zipped/electron-v44.7.0-win32-x64.zip",
+	"linux": "scripts/electron_zipped/electron-v44.7.0-linux-x64.zip",
 }
 
 # To build Nibbler: (for info see https://electronjs.org/docs/tutorial/application-distribution)
@@ -11,7 +11,7 @@ zips = {
 # Create a folder at scripts/electron_zipped and place the Electron asset in it
 # Run ./builder.py
 #
-# Note: later Electron versions work also, but with a couple minor glitches:
+# Note: Electron 10+ has a minor drag glitch on some Linux setups:
 # https://github.com/rooklift/nibbler/issues/140
 
 os.chdir(os.path.dirname(os.path.realpath(__file__)))		# Ensure we're in builder.py's directory.
