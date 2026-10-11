@@ -6,7 +6,7 @@ It runs an engine in the background, continuously evaluates the current position
 
 Current maintained fork: https://github.com/perejaslav/nibbler
 
-Latest Windows release: https://github.com/perejaslav/nibbler/releases/tag/v2.9.5
+Latest Windows release: https://github.com/perejaslav/nibbler/releases/tag/v3.0.0
 
 ![Screenshot](docs/images/screenshot.png)
 
@@ -20,16 +20,56 @@ Latest Windows release: https://github.com/perejaslav/nibbler/releases/tag/v2.9.
 - Automatic full-game analysis.
 - Play against the engine from any position.
 - Engine self-play from any position.
-- PGN loading through menu, clipboard, or drag-and-drop.
+- PGN loading through menu, clipboard (Ctrl+V), or drag-and-drop.
 - PGN variation support with arbitrary depth.
 - FEN loading from clipboard or menu.
 - Chess960 support.
 - Analysis toolbar with quick access to engine controls, New game, FEN/PGN paste and copy, board flip, MultiPV, and focus clearing.
 - Visual UCI engine settings dialog for standard engine options.
 - Undo/Redo stack for tree operations (Edit menu, Ctrl+Z / Ctrl+Y).
+- Modern Electron 44 (Chromium 152) platform.
 - Automatic restoration of the last chess session, including all open games, variations, annotations, selected moves and active tab.
 
 The current chess session is saved automatically every three seconds and when Nibbler closes normally. On the next launch, your game tabs and selected positions are restored. Snapshots are stored in `last-session.json` in Nibbler's user-data directory (with a `.bak` fallback); no manual PGN export is needed. Engine searches are not resumed automatically.
+
+## What's new in 3.0.0
+
+Version 3.0.0 is a platform release: Nibbler now runs on a modern Electron instead of the five-year-old Electron 9.
+
+### Modern Electron platform
+
+- **Electron 9.4.4 → 44.7.0** (Chromium 83 → 152, with a current Node.js runtime). Electron 9 stopped receiving security updates in 2021; the new build brings five years of browser-engine, security and performance updates.
+- The app's architecture, settings, engine configuration and session files are unchanged. Your existing `config.json`, `engines.json` and `last-session.json` are picked up as-is.
+- Clipboard access was reworked for the new Electron: the renderer no longer has direct clipboard access, so reading and writing go through the main process.
+- Renderer crashes are detected through Electron's current `render-process-gone` event, so the crash warning still appears.
+- The Windows build is now packaged with Electron 44.7.0 (`builder.py` updated).
+
+### Pasting games with Ctrl+V
+
+Ctrl+V now puts the game from the clipboard into the notation:
+
+| Situation | What Ctrl+V does |
+|---|---|
+| A text field has focus (FEN box, comment editor) | Ordinary text paste |
+| The current tab has no moves | Loads the PGN or FEN into this tab |
+| The current tab already has moves | Opens the game in a new tab, leaving your analysis untouched |
+
+- Works with any keyboard layout (for example Russian), because the physical V key is detected. Ctrl+Shift+V does the same.
+- The toolbar's **Paste FEN/PGN** button, **Edit → Paste** and **File → Load FEN / PGN from clipboard** all behave the same way.
+- Previously, pasting merged the game into the current tree as a side variation, failed with "start position not found" when the start position differed, did not react at all with a non-Latin keyboard layout, and hijacked Ctrl+V inside text fields.
+- A clipboard with several games still opens the game chooser.
+
+### Verified
+
+- All 68 automated tests pass.
+- Manually checked on Windows with Electron 44: engine analysis, engine comparison with two engines in parallel, Add PV to tree, PGN open / save / copy / paste, the move-list context menu, tabs, session save and restore on exit, clean shutdown of engine processes, and the packaged `nibbler.exe`.
+
+### Known limitations
+
+- On some Linux systems Electron 10+ shows a minor visual glitch when dragging pieces ([rooklift/nibbler#140](https://github.com/rooklift/nibbler/issues/140)). Windows is not affected. Linux and macOS builds of 3.0.0 were not tested.
+- The Windows package is larger than before, because Chromium has grown.
+
+The Windows build for this release is packaged as `nibbler-3.0.0-windows.zip`.
 
 ## What's new in 2.9.5
 
@@ -149,12 +189,14 @@ https://github.com/perejaslav/nibbler/releases/tag/v2.7.2
 
 1. Open the latest release page:
    https://github.com/perejaslav/nibbler/releases
-2. Download `nibbler-2.9.3-windows.zip` or the newest available Windows archive.
+2. Download `nibbler-3.0.0-windows.zip` or the newest available Windows archive.
 3. Extract the archive to a folder of your choice.
 4. Run `nibbler.exe`.
 5. Configure your engine path from inside Nibbler if needed.
 
-The 2.9.3 Windows build uses Electron 9.4.4.
+The 3.0.0 Windows build uses Electron 44.7.0. Builds up to 2.9.5 used Electron 9.4.4.
+
+Upgrading from 2.x: extract the new archive and run it. Settings, engines and the last session stay in the same user-data folder (`%APPDATA%\Nibbler`). To be safe, copy that folder before the first launch; to roll back, run the old build again.
 
 ### Run from source
 
@@ -293,8 +335,8 @@ npx electron .
 
 Current release:
 
-- v2.9.5 — https://github.com/perejaslav/nibbler/releases/tag/v2.9.5
-- Windows package: `releases/nibbler-2.9.5-windows.zip`
+- v3.0.0 — https://github.com/perejaslav/nibbler/releases/tag/v3.0.0
+- Windows package: `releases/nibbler-3.0.0-windows.zip`
 
 All releases:
 
