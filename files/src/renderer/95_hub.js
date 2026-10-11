@@ -2698,7 +2698,57 @@ let hub_props = {
 		}
 	},
 
-	load_pgn_from_string: function(s) {
+	paste_game: function(s) {
+
+		// Ctrl+V / Paste button / menu: put the clipboard game (PGN or FEN) into the notation.
+		// If the current tab already has moves, the game goes into a new tab so nothing is lost.
+
+		if (typeof s !== "string" || s.trim() === "") {
+			return;
+		}
+
+		s = s.trim();
+
+		let load = () => {
+			try {
+				LoadFEN(s);			// Used as a test. Throws on any error.
+				this.load_fen(s);
+			} catch (err) {
+				this.load_pgn_from_string(s, false);
+			}
+		};
+
+		if (this.tree.root.children.length === 0) {
+			load();
+			return;
+		}
+
+		let tab = this.new_tab();
+
+		let load_when_switched = (tries) => {
+			if (this.active_tab().id === tab.id && !this.tab_switch_in_progress) {
+				load();
+			} else if (tries > 0) {
+				setTimeout(() => load_when_switched(tries - 1), 20);
+			}
+		};
+
+		load_when_switched(250);
+	},
+
+	paste_from_menu: function() {
+
+		// Ctrl+V and Edit > Paste: paste text if a text field has focus, otherwise paste a game.
+
+		let ae = document.activeElement;
+		if (ae && (ae.tagName === "INPUT" || ae.tagName === "TEXTAREA" || ae.isContentEditable)) {
+			ipcRenderer.send("native_paste");
+		} else {
+			read_clipboard_text().then(s => this.paste_game(s));
+		}
+	},
+
+	load_pgn_from_string: function(s, merge_into_current = true) {
 
 		if (typeof s !== "string") {
 			return;
@@ -2716,7 +2766,7 @@ let hub_props = {
 		let loader = NewFastPGNLoader(buf, (err, pgndata) => {
 			if (!err) {
 				pgndata.source = "From clipboard";
-				this.handle_loaded_pgndata(pgndata, true);
+				this.handle_loaded_pgndata(pgndata, merge_into_current);
 			} else {
 				console.log(err);
 			}
@@ -2989,7 +3039,7 @@ let hub_props = {
 			this.new_game();
 			return;
 		case "paste_fen_pgn":
-			read_clipboard_text().then(s => this.load_fen_or_pgn_from_string(s));
+			read_clipboard_text().then(s => this.paste_game(s));
 			return;
 		case "copy_pgn":
 			this.pgn_to_clipboard();

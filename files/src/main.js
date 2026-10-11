@@ -394,6 +394,10 @@ function startup() {
 		});
 	});
 
+	electron.ipcMain.on("native_paste", () => {
+		win.webContents.paste();
+	});
+
 	electron.ipcMain.on("show_movelist_context_menu", (event, msg) => {
 
 		if (movelist_context_menu_open) {
@@ -638,7 +642,7 @@ function menu_build() {
 					click: () => {
 						Promise.resolve(electron.clipboard.readText()).then(text => {		// Modern Electron returns a promise.
 							win.webContents.send("call", {
-								fn: "load_fen_or_pgn_from_string",
+								fn: "paste_game",
 								args: [text]
 							});
 						});
@@ -893,7 +897,10 @@ function menu_build() {
 					{
 						label: translate.t("Paste"),
 						accelerator: "CommandOrControl+V",
-						role: "paste",
+						registerAccelerator: false,		// The renderer's keydown handler owns Ctrl+V (text field -> text, else game).
+						click: () => {
+							win.webContents.send("call", "paste_from_menu");
+						}
 					},
 				]
 			},

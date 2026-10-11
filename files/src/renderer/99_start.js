@@ -274,10 +274,10 @@ fenbox.addEventListener("keydown", (event) => {
 // Set space-bar to toggle go/halt, unless we're in the FEN box...
 
 window.addEventListener("keydown", (event) => {
-	if ((event.ctrlKey || event.metaKey) && event.key.toLowerCase() === "v") {
+	if ((event.ctrlKey || event.metaKey) && !event.altKey && !event.shiftKey && event.key.toLowerCase() === "v") {
 		event.preventDefault();
 		if (!event.repeat) {
-			read_clipboard_text().then(s => hub.load_fen_or_pgn_from_string(s));
+			hub.paste_from_menu();						// Text field focused -> paste text, else paste a game.
 		}
 		return;
 	}
