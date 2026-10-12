@@ -122,6 +122,11 @@ let infobox_props = {
 		let clicker_index = 0;
 		let div_index = 0;
 
+		// Lines whose score is more than one pawn away from the top line get a red value...
+
+		const far_cp_threshold = 100;
+		let top_cp = info_list.length > 0 ? info_list[0].cp : null;
+
 		for (let info of info_list) {
 
 			// The div containing the PV etc...
@@ -158,6 +163,9 @@ let infobox_props = {
 					value_string = info.mate_string(config.cp_pov);
 				} else {
 					value_string = info.cp_string(config.cp_pov);
+					if (value_string !== "?" && typeof info.cp === "number" && typeof top_cp === "number" && Math.abs(info.cp - top_cp) > far_cp_threshold) {
+						value_string = `<span class="red">${value_string}</span>`;
+					}
 				}
 			} else {
 				value_string = info.value_string(1, config.ev_pov);
