@@ -6,7 +6,7 @@ It runs an engine in the background, continuously evaluates the current position
 
 Current maintained fork: https://github.com/perejaslav/nibbler
 
-Latest Windows release: https://github.com/perejaslav/nibbler/releases/tag/v3.0.2
+Latest Windows release: https://github.com/perejaslav/nibbler/releases/tag/v3.0.3
 
 ![Screenshot](docs/images/screenshot.png)
 
@@ -33,6 +33,13 @@ Latest Windows release: https://github.com/perejaslav/nibbler/releases/tag/v3.0.
 - Automatic restoration of the last chess session, including all open games, variations, annotations, selected moves and active tab.
 
 The current chess session is saved automatically every three seconds and when Nibbler closes normally. On the next launch, your game tabs and selected positions are restored. Snapshots are stored in `last-session.json` in Nibbler's user-data directory (with a `.bak` fallback); no manual PGN export is needed. Engine searches are not resumed automatically.
+
+## What's new in 3.0.3
+
+- **N/s with two decimals.** The speed in the status box is shown as e.g. `N/s: 1.23M` instead of `1.2M`.
+- **Far evaluations are highlighted in red.** In the engine lines, a centipawn evaluation that differs from the top line by more than one pawn (100 cp) is shown in red, so lines that are much worse or better than the best move stand out.
+
+The Windows build for this release is packaged as `nibbler-3.0.3-windows.zip` (Electron 44.7.0).
 
 ## What's new in 3.0.2
 
@@ -209,7 +216,7 @@ https://github.com/perejaslav/nibbler/releases/tag/v2.7.2
 
 1. Open the latest release page:
    https://github.com/perejaslav/nibbler/releases
-2. Download `nibbler-3.0.2-windows.zip` or the newest available Windows archive.
+2. Download `nibbler-3.0.3-windows.zip` or the newest available Windows archive.
 3. Extract the archive to a folder of your choice.
 4. Run `nibbler.exe`.
 5. Configure your engine path from inside Nibbler if needed.
@@ -355,8 +362,8 @@ npx electron .
 
 Current release:
 
-- v3.0.2 — https://github.com/perejaslav/nibbler/releases/tag/v3.0.2
-- Windows package: `releases/nibbler-3.0.2-windows.zip`
+- v3.0.3 — https://github.com/perejaslav/nibbler/releases/tag/v3.0.3
+- Windows package: `releases/nibbler-3.0.3-windows.zip`
 
 All releases:
 
