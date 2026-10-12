@@ -33,6 +33,7 @@ function NewNode(parent, move, board_for_root) {		// move must be legal; board i
 	node.comment_before = "";
 	node.comment_after = "";
 	node.annotation = null;
+	node.clock_after = null;			// Seconds left on the mover's clock after this move, from [%clk]. Null if unknown.
 	node.position_nag = null;
 	node.user_arrows = [];
 	node.user_highlights = [];
@@ -63,11 +64,82 @@ function SplitPgnAnnotationSuffix(s) {
 	return [s, ""];
 }
 
+// [%eval] is the standard PGN annotation for the position after a move. It is from White's point of view:
+// pawns with two decimals, or #n for mate in n (a negative n means Black mates). Nibbler also writes ",depth".
+// Returns {cp, mate, depth} with cp in centipawns, or null if the body is not understood.
+function ParsePgnEvalBody(body) {
+	let m = /^(#[+-]?\d+|[+-]?\d+(?:\.\d+)?)(?:,\s*(\d+))?$/.exec(body.trim());
+	if (!m) {
+		return null;
+	}
+	let depth = m[2] !== undefined ? Number(m[2]) : 0;
+	if (m[1][0] === "#") {
+		let mate = Number(m[1].slice(1));
+		if (!Number.isInteger(mate) || mate === 0) {
+			return null;
+		}
+		return {cp: null, mate: mate, depth: depth};
+	}
+	let pawns = Number(m[1]);
+	if (!Number.isFinite(pawns)) {
+		return null;
+	}
+	return {cp: Math.round(pawns * 100), mate: null, depth: depth};
+}
+
+// [%clk] is the clock reading after a move, H:MM:SS (or M:SS). Returns seconds, or null if the body is not understood.
+function ParsePgnClockBody(body) {
+	let m = /^(?:(\d+):)?(\d+):(\d+(?:\.\d+)?)$/.exec(body.trim());
+	if (!m) {
+		return null;
+	}
+	let hours = m[1] !== undefined ? Number(m[1]) : 0;
+	return hours * 3600 + Number(m[2]) * 60 + Number(m[3]);
+}
+
+// H:MM:SS, rounded down to whole seconds.
+function PgnClockString(seconds) {
+	let total = Math.max(0, Math.floor(seconds));
+	let hours = Math.floor(total / 3600);
+	let minutes = Math.floor((total % 3600) / 60);
+	let secs = total % 60;
+	return `${hours}:${String(minutes).padStart(2, "0")}:${String(secs).padStart(2, "0")}`;
+}
+
+// The [%eval] tag for a move's info, or "" if there is no usable evaluation. The info belongs to the parent
+// position, so board is that position: info.cp and info.mate are from the side to move there.
+function PgnEvalTag(info, board) {
+	if (info.leelaish && info.n === 0) {
+		return "";			// Same rule as value_string(): no visits, no numbers.
+	}
+	let sign = board.active === "w" ? 1 : -1;
+	let value;
+	if (typeof info.mate === "number" && info.mate !== 0) {
+		value = `#${sign * info.mate}`;
+	} else if (typeof info.cp === "number") {
+		value = (sign * info.cp / 100).toFixed(2);
+	} else {
+		return "";
+	}
+	if (info.depth > 0) {
+		value += `,${info.depth}`;
+	}
+	return `[%eval ${value}]`;
+}
+
+// True if text is only the summary that make_stats() writes, e.g. "EV: 55.1%, N: 1.20% of 5,000". Used on import
+// to spot that summary inside a comment that also has an [%eval], so that it is not kept as a second copy.
+function IsPgnStatsText(text) {
+	return text.split(", ").every(item => /^(EV|CP|N|Depth|P|V|Q|U|S|M|WDL): /.test(item));
+}
+
 function ParsePgnGraphicsComment(s) {
 
 	let text = s;
 	let user_arrows = [];
 	let user_highlights = [];
+	let evaluation = null;
+	let clock = null;
 
 	let cal_pattern = /\[%cal\s+([^\]]+)\]/ig;
 	let csl_pattern = /\[%csl\s+([^\]]+)\]/ig;
@@ -99,12 +171,32 @@ function ParsePgnGraphicsComment(s) {
 		return "";
 	});
 
+	text = text.replace(/\[%eval\s+([^\]]*)\]/ig, (match, body) => {
+		let parsed = ParsePgnEvalBody(body);
+		if (!parsed) {
+			return match;			// Not understood, so it stays in the comment text.
+		}
+		evaluation = parsed;
+		return "";
+	});
+
+	text = text.replace(/\[%clk\s+([^\]]*)\]/ig, (match, body) => {
+		let seconds = ParsePgnClockBody(body);
+		if (seconds === null) {
+			return match;
+		}
+		clock = seconds;
+		return "";
+	});
+
 	text = text.replace(/\s+/g, " ").trim();
 
 	return {
 		text: text,
 		user_arrows: user_arrows,
 		user_highlights: user_highlights,
+		evaluation: evaluation,
+		clock: clock,
 	};
 }
 
@@ -444,8 +536,9 @@ const node_prototype = {
 			parts.push("$" + this.position_nag);
 		}
 
-		if (this.comment_after) {
-			parts.push(`{${this.comment_after}}`);
+		let after_text = [this.comment_after, this.clock_after !== null ? `[%clk ${PgnClockString(this.clock_after)}]` : ""].filter(Boolean).join(" ");
+		if (after_text !== "") {
+			parts.push(`{${after_text}}`);
 		}
 
 		if (stats_flag) {
@@ -461,6 +554,29 @@ const node_prototype = {
 		}
 
 		return parts;
+	},
+
+	clock_spent_seconds: function() {
+
+		// Seconds the mover took over this move: the previous clock reading by the same side (two plies up), minus
+		// the clock reading after this move, plus the increment from the TimeControl tag. Null if any of that is
+		// missing, or if the result would be negative.
+
+		let prev = this.parent ? this.parent.parent : null;
+
+		if (this.clock_after === null || !prev || !prev.move || prev.clock_after === null) {
+			return null;
+		}
+
+		let tags = this.get_root().tags;
+		let tc = tags && typeof tags.TimeControl === "string" ? /^(\d+)(?:\+(\d+))?$/.exec(tags.TimeControl.trim()) : null;
+
+		if (!tc) {
+			return null;
+		}
+
+		let spent = prev.clock_after - this.clock_after + Number(tc[2] || 0);
+		return spent >= 0 ? spent : null;
 	},
 
 	make_stats: function() {
@@ -495,7 +611,15 @@ const node_prototype = {
 			s:             config.pgn_s,
 		}, total_nodes);
 
-		return sl.join(", ");			// Will be "" on empty list
+		let parts = [];
+		let eval_tag = PgnEvalTag(info, this.parent.board);
+		if (eval_tag !== "") {
+			parts.push(eval_tag);
+		}
+		if (sl.length > 0) {
+			parts.push(sl.join(", "));
+		}
+		return parts.join(" ");			// Will be "" on empty list
 	},
 
 	end_nodes: function() {

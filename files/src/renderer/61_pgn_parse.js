@@ -68,6 +68,42 @@ function PreParsePGN(buf) {								// buf should be the buffer for a single game
 	return game;
 }
 
+// Restores what a move's comment says about its analysis and clock. The [%eval] goes into the parent position's
+// table, which is where engine lines for that move go, so the graph and the move list show it straight away.
+function ApplyPgnAnalysis(node, parsed) {
+
+	if (parsed.clock !== null) {
+		node.clock_after = parsed.clock;
+	}
+
+	if (!parsed.evaluation || !node.parent) {
+		return;
+	}
+
+	let parent = node.parent;
+	let ev = parsed.evaluation;
+	let white_to_move = parent.board.active === "w";
+	let info = NewInfo(parent.board, node.move);
+
+	info.__from_pgn = true;
+	info.__touched = true;
+	info.depth = ev.depth;
+
+	if (ev.mate !== null) {
+		let mate = white_to_move ? ev.mate : -ev.mate;		// Engine lines are from the side to move, as here
+		info.mate = mate;
+		info.cp = mate > 0 ? 32000 : -32000;
+		info.q = mate > 0 ? 1 : -1;
+	} else {
+		let cp = white_to_move ? ev.cp : -ev.cp;
+		info.cp = cp;
+		info.q = QfromPawns(cp / 100);
+	}
+
+	parent.table.moveinfo[node.move] = info;
+	parent.table.version++;
+}
+
 function LoadPGNRecord(o) {				// This can throw!
 
 	// Parse of the objects produced above, to generate a game tree.
@@ -156,7 +192,12 @@ function LoadPGNRecord(o) {				// This can throw!
 					let target_is_after_move = last_significant_was_move && node && node.move;
 
 					if (target_is_after_move) {
-						append_comment_text(node, "comment_after", parsed_comment.text);
+						ApplyPgnAnalysis(node, parsed_comment);
+						let text_after = parsed_comment.text;
+						if (parsed_comment.evaluation && IsPgnStatsText(text_after)) {
+							text_after = "";					// Nibbler's own summary of the [%eval], which make_stats() writes again on export.
+						}
+						append_comment_text(node, "comment_after", text_after);
 						append_graphics(node, parsed_comment);
 					} else {
 						if (parsed_comment.text) {
