@@ -485,7 +485,7 @@ function SwapElements(obj1, obj2) {
 	temp.parentNode.removeChild(temp);
 }
 
-function NString(n) {
+function NString(n, decimals = 1) {
 
 	const thousand = 1000;
 	const million = 1000000;
@@ -500,7 +500,7 @@ function NString(n) {
 	}
 
 	if (n < 100 * thousand) {
-		return (n / thousand).toFixed(1) + "k";
+		return (n / thousand).toFixed(decimals) + "k";
 	}
 
 	if (n < 999.5 * thousand) {
@@ -508,7 +508,7 @@ function NString(n) {
 	}
 
 	if (n < 100 * million) {
-		return (n / million).toFixed(1) + "M";
+		return (n / million).toFixed(decimals) + "M";
 	}
 
 	if (n < 999.5 * million) {
@@ -516,7 +516,7 @@ function NString(n) {
 	}
 
 	if (n < 100 * billion) {
-		return (n / billion).toFixed(1) + "B";
+		return (n / billion).toFixed(decimals) + "B";
 	}
 
 	return (n / billion).toFixed(0) + "B";
