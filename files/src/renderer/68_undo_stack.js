@@ -68,6 +68,7 @@ function NewUndoStack(hub) {
 			clone.searchmoves = Array.isArray(orig.searchmoves) ? orig.searchmoves.slice() : [];
 			clone.comment_before = typeof orig.comment_before === "string" ? orig.comment_before : "";
 			clone.comment_after = typeof orig.comment_after === "string" ? orig.comment_after : "";
+			clone.clock_after = typeof orig.clock_after === "number" ? orig.clock_after : null;
 			clone.annotation = typeof orig.annotation === "string" ? orig.annotation : null;
 			clone.position_nag = position_annotations.find(orig.position_nag) ? orig.position_nag : null;
 			clone.user_arrows = Array.isArray(orig.user_arrows) ? orig.user_arrows.map(item => Object.assign({}, item)) : [];

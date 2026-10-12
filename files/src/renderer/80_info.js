@@ -159,6 +159,7 @@ let info_receiver_props = {
 
 			move_info.cycle = this.engine_cycle;
 			move_info.__touched = true;
+			move_info.__from_pgn = false;		// The engine has numbers for this move now.
 
 			// ---------------------------------------------------------------------------------------------------------------------
 
@@ -307,6 +308,7 @@ let info_receiver_props = {
 			// move_info.cycle = this.engine_cycle;		// No... we get VMS lines even when excluded by searchmoves.
 			// move_info.subcycle = this.engine_subcycle;
 			move_info.__touched = true;
+			move_info.__from_pgn = false;		// The engine has numbers for this move now.
 
 			// ---------------------------------------------------------------------------------------------------------------------
 

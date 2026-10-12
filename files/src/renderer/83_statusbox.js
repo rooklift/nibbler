@@ -138,6 +138,12 @@ function NewStatusHandler() {
 				}
 			}
 
+			if (node.clock_after !== null) {
+				let spent = node.clock_spent_seconds();
+				let spent_text = spent !== null ? `, spent ${PgnClockString(spent)}` : "";
+				status_string += `<span class="gray"> Clock ${PgnClockString(node.clock_after)}${spent_text}</span>`;
+			}
+
 			statusbox.innerHTML = status_string;
 		}
 	};

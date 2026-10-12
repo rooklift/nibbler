@@ -32,7 +32,7 @@ const table_prototype = {
 			return this.graph_y;
 		} else {
 			let info = SortedMoveInfoFromTable(this)[0];
-			if (info && !info.__ghost && info.__touched && (this.nodes > 1 || this.limit === 1)) {
+			if (info && !info.__ghost && info.__touched && (this.nodes > 1 || this.limit === 1 || info.__from_pgn)) {
 				let cp = info.cp;
 				if (info.board.active === "b") {
 					cp *= -1;
@@ -94,6 +94,7 @@ function NewInfo(board, move) {
 	info.move = move;
 	info.__ghost = false;			// If not false, this is temporary inferred info.
 	info.__touched = false;			// Has this ever actually been updated?
+	info.__from_pgn = false;			// True while this is only an [%eval] from an imported PGN, not engine output.
 	info.leelaish = false;			// Whether the most recent update to this info was from an engine considered Leelaish.
 	info.pv = [move];				// Validated as a legal sequence upon reception.
 	info.cycle = 0;					// How many "go" commands Nibbler has emitted.
