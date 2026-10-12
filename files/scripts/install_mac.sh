@@ -12,7 +12,7 @@ ok() {
 
 WORKDIR="/tmp/nibbler-install"
 VERSION="2.5.8"
-ELECTRON_VERSION="41.0.3"
+ELECTRON_VERSION="44.7.0"
 
 ARCH="$(uname -m)"
 case "$ARCH" in
