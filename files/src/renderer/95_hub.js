@@ -140,6 +140,14 @@ function NewHub() {
 	return hub;
 }
 
+// Allowed values for numeric config items edited in the fullbox. Integers only, because
+// they end up in UCI commands such as "go movetime <n>". The lower bound also keeps the
+// time budget from being set to a value that the auto-analysis code would ignore.
+
+const CONFIG_NUMBER_RANGES = {
+	auto_analysis_time_ms: {min: 100, max: 3600000},
+};
+
 let hub_props = {
 
 	onReady: function(engine, event) {
@@ -3718,6 +3726,10 @@ let hub_props = {
 			let n = Number(raw);
 			if (Number.isNaN(n)) {
 				return [null, "Expected number"];
+			}
+			let range = Object.prototype.hasOwnProperty.call(CONFIG_NUMBER_RANGES, item_name) ? CONFIG_NUMBER_RANGES[item_name] : null;
+			if (range && (!Number.isInteger(n) || n < range.min || n > range.max)) {
+				return [null, `Expected an integer from ${range.min} to ${range.max}`];
 			}
 			return [n, null];
 		}
