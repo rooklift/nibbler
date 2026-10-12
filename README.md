@@ -6,7 +6,7 @@ It runs an engine in the background, continuously evaluates the current position
 
 Current maintained fork: https://github.com/perejaslav/nibbler
 
-Latest Windows release: https://github.com/perejaslav/nibbler/releases/tag/v3.0.3
+Latest Windows release: https://github.com/perejaslav/nibbler/releases/tag/v3.1.0
 
 ![Screenshot](docs/images/screenshot.png)
 
@@ -33,6 +33,17 @@ Latest Windows release: https://github.com/perejaslav/nibbler/releases/tag/v3.0.
 - Automatic restoration of the last chess session, including all open games, variations, annotations, selected moves and active tab.
 
 The current chess session is saved automatically every three seconds and when Nibbler closes normally. On the next launch, your game tabs and selected positions are restored. Snapshots are stored in `last-session.json` in Nibbler's user-data directory (with a `.bak` fallback); no manual PGN export is needed. Engine searches are not resumed automatically.
+
+## What's new in 3.1.0
+
+- **PGN evaluations and clock times are exported and imported in the standard form.** An analysed move is written with `[%eval]` from White's point of view (pawns with two decimals, or `#n` for mate, with an optional `,depth`), and clock readings with `[%clk H:MM:SS]`, the tags that other PGN tools use. Nibbler's own analysis comment is no longer repeated next to `[%eval]` on re-export.
+- **Imported evaluations show without re-analysis.** When a PGN contains `[%eval]`, the value fills the analysis of that position, so the graph and the move list show it straight away.
+- **Time per move in the status box.** When a move has a `[%clk]` reading, the status box shows the remaining clock and, if the game has a `TimeControl` tag with an increment, the time spent on the move.
+- **Auto-analysis time is validated.** The time budget per move in the engine config editor accepts whole numbers from 100 to 3600000 ms. Other values, such as 0, negative numbers or decimals, are rejected with a message instead of being passed to the engine.
+
+Everything from 3.0.3 is included. See the [3.0.3](https://github.com/perejaslav/nibbler/releases/tag/v3.0.3) release for the N/s decimals and the red far evaluations.
+
+The Windows build for this release is packaged as `nibbler-3.1.0-windows.zip` (Electron 44.7.0).
 
 ## What's new in 3.0.3
 
@@ -216,7 +227,7 @@ https://github.com/perejaslav/nibbler/releases/tag/v2.7.2
 
 1. Open the latest release page:
    https://github.com/perejaslav/nibbler/releases
-2. Download `nibbler-3.0.3-windows.zip` or the newest available Windows archive.
+2. Download `nibbler-3.1.0-windows.zip` or the newest available Windows archive.
 3. Extract the archive to a folder of your choice.
 4. Run `nibbler.exe`.
 5. Configure your engine path from inside Nibbler if needed.
@@ -362,8 +373,8 @@ npx electron .
 
 Current release:
 
-- v3.0.3 — https://github.com/perejaslav/nibbler/releases/tag/v3.0.3
-- Windows package: `releases/nibbler-3.0.3-windows.zip`
+- v3.1.0 — https://github.com/perejaslav/nibbler/releases/tag/v3.1.0
+- Windows package: `releases/nibbler-3.1.0-windows.zip`
 
 All releases:
 
