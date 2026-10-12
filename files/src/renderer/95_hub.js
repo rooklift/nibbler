@@ -38,6 +38,64 @@ const TAB_STATE_KEYS = [
 	"consensus_settings",
 ];
 
+// Pasting must not lose what the tree already holds. These say what a tree holds, and copy an imported
+// game's annotations into the node it merges into.
+
+function NodeHasAnnotations(node) {
+	return !!(node.comment_before || node.comment_after || node.annotation || node.position_nag || node.clock_after !== null || node.user_arrows.length > 0 || node.user_highlights.length > 0);
+}
+
+function TreeHasContent(root) {
+	return root.children.length > 0 || NodeHasAnnotations(root);
+}
+
+function JoinComments(a, b) {
+	if (!b || a === b) return a;
+	if (!a) return b;
+	return a + " " + b;
+}
+
+// A variation has no headers of its own, so the imported game's tags are written as a comment before its first new move.
+function ImportedHeaderComment(tags) {			// The PGN record's own tags, not the root's defaults.
+	let parts = [];
+	for (let key of Object.keys(tags || {})) {
+		let value = String(UnsafeStringHTML(tags[key]) || "").replace(/[{}]/g, "").trim();
+		if (value !== "") {
+			parts.push(`[${key} "${value}"]`);
+		}
+	}
+	return parts.join(" ");
+}
+
+// Only fills what the target does not already have, so the tree keeps its own comments, glyphs and engine lines.
+// An [%eval] lives in the parent position's table, as ApplyPgnAnalysis() puts it there.
+function CopyImportedNodeContent(imported_parent, imported_node, target_parent, target_node) {
+
+	target_node.comment_before = JoinComments(target_node.comment_before, imported_node.comment_before);
+	target_node.comment_after = JoinComments(target_node.comment_after, imported_node.comment_after);
+	target_node.annotation = target_node.annotation || imported_node.annotation;
+	target_node.position_nag = target_node.position_nag || imported_node.position_nag;
+
+	if (target_node.clock_after === null) {
+		target_node.clock_after = imported_node.clock_after;
+	}
+	if (target_node.user_arrows.length === 0) {
+		target_node.user_arrows = imported_node.user_arrows.slice();
+	}
+	if (target_node.user_highlights.length === 0) {
+		target_node.user_highlights = imported_node.user_highlights.slice();
+	}
+
+	let imported_info = imported_parent.table.moveinfo[imported_node.move];
+	let target_info = target_parent.table.moveinfo[imported_node.move];
+	if (imported_info && imported_info.__from_pgn && (!target_info || !target_info.__touched)) {
+		let info = NewInfo(target_parent.board, imported_node.move);
+		Object.assign(info, imported_info, {board: target_parent.board});
+		target_parent.table.moveinfo[imported_node.move] = info;
+		target_parent.table.version++;
+	}
+}
+
 function tab_title_for(tab) {
 	let tags = (tab.tree.root && tab.tree.root.tags) || {};
 	let white = String(tags.White || "").trim();
@@ -2550,12 +2608,18 @@ let hub_props = {
 		return null;
 	},
 
-	merge_pgn_tree_into_node: function(target_node, imported_node) {
+	merge_pgn_tree_into_node: function(target_node, imported_node, header) {		// header: {text} still to be written, or null
 		let main_line_end = target_node;
 
 		for (let imported_child of imported_node.children) {
+			let is_new = !target_node.children.some(child => child.move === imported_child.move);
 			let target_child = target_node.make_move(imported_child.move);
-			let child_end = this.merge_pgn_tree_into_node(target_child, imported_child);
+			CopyImportedNodeContent(imported_node, imported_child, target_node, target_child);
+			if (is_new && header && header.text) {						// First new move: where this variation starts.
+				target_child.comment_before = JoinComments(header.text, target_child.comment_before);
+				header.text = "";
+			}
+			let child_end = this.merge_pgn_tree_into_node(target_child, imported_child, header);
 			if (imported_node.children[0] === imported_child) {
 				main_line_end = child_end;
 			}
@@ -2585,12 +2649,13 @@ let hub_props = {
 
 		let anchor_node = this.find_node_by_board(imported_root.board);
 		if (!anchor_node) {
+			// Another start position cannot be a variation here, so the game gets a tab of its own.
 			DestroyTree(imported_root);
-			alert("Could not merge PGN into current tree: start position not found.");
-			return false;
+			this.load_into_empty_or_new_tab(() => this.load_pgn_object(o, false));
+			return true;
 		}
 
-		let end_node = this.merge_pgn_tree_into_node(anchor_node, imported_root);
+		let end_node = this.merge_pgn_tree_into_node(anchor_node, imported_root, {text: ImportedHeaderComment(o.tags)});
 		DestroyTree(imported_root);
 		this.tree.node = end_node;
 		this.tree.tree_version++;
@@ -2695,21 +2760,10 @@ let hub_props = {
 	// ---------------------------------------------------------------------------------------------------------------------
 	// Loading from clipboard or fenbox...
 
-	load_fen_or_pgn_from_string: function(s) {
-		if (typeof s !== "string") return;
-		s = s.trim();
-		try {
-			LoadFEN(s);			// Used as a test. Throws on any error.
-			this.load_fen(s);
-		} catch (err) {
-			this.load_pgn_from_string(s);
-		}
-	},
-
 	paste_game: function(s) {
 
 		// Ctrl+V / Paste button / menu: put the clipboard game (PGN or FEN) into the notation.
-		// If the current tab already has moves, the game goes into a new tab so nothing is lost.
+		// A PGN is merged into the current tree as a variation. A FEN replaces the position only where nothing would be lost.
 
 		if (typeof s !== "string" || s.trim() === "") {
 			return;
@@ -2717,16 +2771,21 @@ let hub_props = {
 
 		s = s.trim();
 
-		let load = () => {
-			try {
-				LoadFEN(s);			// Used as a test. Throws on any error.
-				this.load_fen(s);
-			} catch (err) {
-				this.load_pgn_from_string(s, false);
-			}
-		};
+		try {
+			LoadFEN(s);				// Used as a test. Throws on any error.
+		} catch (err) {
+			this.load_pgn_from_string(s);
+			return;
+		}
 
-		if (this.tree.root.children.length === 0) {
+		this.load_into_empty_or_new_tab(() => this.load_fen(s));
+	},
+
+	load_into_empty_or_new_tab: function(load) {
+
+		// Runs load() in the current tab if it holds nothing worth keeping, otherwise in a new tab.
+
+		if (!TreeHasContent(this.tree.root)) {
 			load();
 			return;
 		}

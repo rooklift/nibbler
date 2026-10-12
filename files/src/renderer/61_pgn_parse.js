@@ -283,6 +283,10 @@ function LoadPGNRecord(o) {				// This can throw!
 				[s, annotation] = SplitPgnAnnotationSuffix(s);
 
 				if (s === "") {
+					// A glyph written as its own word, e.g. "e4 !?", belongs to the move before it.
+					if (annotation && last_significant_was_move && node.move) {
+						node.annotation = PgnAnnotationSuffix(annotation) || null;
+					}
 					continue;
 				}
 
