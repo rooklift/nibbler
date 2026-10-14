@@ -1631,6 +1631,20 @@ function menu_build() {
 					type: "separator"
 				},
 				{
+					label: translate.t("Evaluation bar"),
+					type: "checkbox",
+					checked: config.eval_bar,
+					click: () => {
+						win.webContents.send("call", {
+							fn: "toggle",
+							args: ["eval_bar"],
+						});
+					}
+				},
+				{
+					type: "separator"
+				},
+				{
 					label: translate.t("Pieces"),
 					submenu: [
 						{

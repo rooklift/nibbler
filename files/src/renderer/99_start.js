@@ -82,6 +82,8 @@ if (config.graph_height <= 0) {
 	graph.style.display = "";
 }
 
+hub.set_eval_bar();							// Before the promotion table, since the bar can move the board sideways.
+
 // The promotion table pops up when needed...
 
 promotiontable.style.left = (boardsquares.offsetLeft + config.square_size * 2).toString() + "px";
