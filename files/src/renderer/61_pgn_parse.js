@@ -89,6 +89,7 @@ function LoadPGNRecord(o) {				// This can throw!
 	let node = root;
 
 	let inside_brace = false;			// {} are comments. Braces do not nest.
+	let comment = new_byte_pusher();	// Comment text, only collected if config.pgn_eval_command
 
 	let callstack = [];					// When a parenthesis "(" opens, we record the node to "return" to later, on the "callstack".
 
@@ -122,6 +123,15 @@ function LoadPGNRecord(o) {				// This can throw!
 			if (inside_brace) {
 				if (c === 125) {								// The closing brace }
 					inside_brace = false;
+					if (config.pgn_eval_command) {
+						let m = comment.string().match(/\[%eval\s+(#?[+-]?\d+(?:\.\d+)?)/);
+						if (m) {
+							node.table.set_pgn_eval(m[1]);
+						}
+						comment.reset();
+					}
+				} else if (config.pgn_eval_command) {
+					comment.push(c);
 				}
 				continue;
 			}
@@ -203,6 +213,10 @@ function LoadPGNRecord(o) {				// This can throw!
 
 		if (finished) {
 			break;
+		}
+
+		if (inside_brace && config.pgn_eval_command) {
+			comment.push(32);								// A comment spanning lines: the line break counts as a space.
 		}
 	}
 

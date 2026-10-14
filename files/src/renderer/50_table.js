@@ -21,6 +21,8 @@ const table_prototype = {
 		this.terminal = null;					// null = unknown, "" = not terminal, "Non-empty string" = terminal reason
 		this.graph_y = null;					// Used by grapher only, value from White's POV between 0 and 1
 		this.graph_y_version = 0;				// Which version (above) was used to generate the graph_y value
+		this.pgn_eval = null;					// [%eval] operand read from a PGN, White's POV, e.g. "0.35" or "#-3"
+		this.pgn_eval_version = 0;				// Which version (above) was current when pgn_eval was read
 		this.already_autopopulated = false;
 	},
 
@@ -54,6 +56,68 @@ const table_prototype = {
 		} else {
 			this.terminal = "";
 		}
+	},
+
+	set_pgn_eval: function(s) {
+
+		// Called by the PGN loader with the operand of a [%eval] command. The value is shown by the
+		// grapher (same trick as set_terminal_info) until the engine sends real info for this node,
+		// at which point this.version changes and normal behaviour resumes.
+
+		let cp;
+
+		if (s.startsWith("#")) {
+			let mate = parseInt(s.slice(1), 10);
+			if (Number.isNaN(mate) || mate === 0) {
+				return;
+			}
+			cp = mate > 0 ? 32000 : -32000;		// As done in info.js when receiving mate scores
+		} else {
+			cp = parseFloat(s) * 100;
+			if (!Number.isFinite(cp)) {
+				return;
+			}
+		}
+
+		this.pgn_eval = s;
+		this.pgn_eval_version = this.version;
+		this.graph_y = 1 / (1 + Math.pow(0.5, cp / 100));
+		this.graph_y_version = this.version;
+	},
+
+	get_pgn_eval: function() {
+
+		// Returns the operand for a [%eval] command (White's POV, pawns) or null if we have nothing usable.
+		// An eval read from the PGN is returned unchanged while the engine hasn't touched this node since.
+
+		if (this.pgn_eval !== null && this.pgn_eval_version === this.version) {
+			return this.pgn_eval;
+		}
+
+		if (this.terminal) {
+			return null;
+		}
+
+		// Write exactly what the grapher shows: get_graph_y() caches its result, and table.nodes can
+		// change without a version bump (VerboseMoveStats "node" line), so its test isn't repeated here.
+
+		if (this.get_graph_y() === null) {
+			return null;
+		}
+
+		let info = SortedMoveInfoFromTable(this)[0];
+		if (!info) {
+			return null;
+		}
+
+		let white_pov = info.board.active === "w";
+
+		if (info.mate !== 0) {
+			return "#" + (white_pov ? info.mate : -info.mate).toString();
+		}
+
+		let cp = white_pov ? info.cp : -info.cp;
+		return (cp / 100).toFixed(2);
 	},
 
 	autopopulate: function(node) {

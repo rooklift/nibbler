@@ -116,6 +116,7 @@ exports.defaults = {
 	"pgn_s": false,
 	"pgn_m": false,
 	"pgn_wdl": false,
+	"pgn_eval_command": false,				// Write [%eval] into saved PGN, and read it back when loading
 
 	"pgn_dialog_folder": "",
 	"engine_dialog_folder": "",
