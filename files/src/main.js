@@ -3946,6 +3946,17 @@ function menu_build() {
 					}
 				},
 				{
+					label: translate.t("Reload book at startup"),
+					type: "checkbox",
+					checked: config.book_reload_at_startup,
+					click: () => {
+						win.webContents.send("call", {
+							fn: "toggle",
+							args: ["book_reload_at_startup"],
+						});
+					}
+				},
+				{
 					label: translate.t("Book depth limit"),
 					submenu: [
 						{

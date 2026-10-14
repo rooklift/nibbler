@@ -1718,6 +1718,8 @@ let hub_props = {
 
 	unload_book: function() {
 		this.book = null;
+		config.book_path = "";
+		config.book_type = "";
 		for (let loader of this.loaders) {
 			if (loader.type === "book") {
 				loader.shutdown();
@@ -1735,6 +1737,8 @@ let hub_props = {
 		}
 
 		this.book = null;
+		config.book_path = "";							// Only remembered again if this load succeeds.
+		config.book_type = "";
 		this.send_ack_book();
 
 		for (let loader of this.loaders) {
@@ -1749,6 +1753,9 @@ let hub_props = {
 			if (!err) {
 				if (BookSortedTest(data)) {
 					this.book = data;
+					config.book_path = filename;
+					config.book_type = "polyglot";
+					this.err_receive(`Loaded Polyglot book: <span class="blue">${SafeStringHTML(filename)}</span>`);
 					this.explorer_objects_cache = null;
 					this.send_ack_book();
 					this.set_special_message(`Finished loading book (moves: ${Math.floor(data.length / 16)})`, "green");
@@ -1772,6 +1779,8 @@ let hub_props = {
 		}
 
 		this.book = null;
+		config.book_path = "";							// Only remembered again if this load succeeds.
+		config.book_type = "";
 		this.send_ack_book();
 
 		for (let loader of this.loaders) {
@@ -1785,6 +1794,9 @@ let hub_props = {
 		let loader = NewPGNBookLoader(filename, (err, data) => {
 			if (!err) {
 				this.book = data;
+				config.book_path = filename;
+				config.book_type = "pgn";
+				this.err_receive(`Loaded PGN book: <span class="blue">${SafeStringHTML(filename)}</span>`);
 				this.explorer_objects_cache = null;
 				this.send_ack_book();
 				this.set_special_message(`Finished loading book (moves: ${data.length})`, "green");
@@ -1794,6 +1806,34 @@ let hub_props = {
 		});
 
 		this.loaders.push(loader);
+	},
+
+	reload_book_at_startup: function() {
+
+		// Called once from 99_start.js. If the option is set, reload the last book that was
+		// successfully loaded. If that file has gone missing, forget it and say so (in red)
+		// in the error log.
+
+		if (!config.book_reload_at_startup) {
+			return;
+		}
+
+		if (typeof config.book_path !== "string" || config.book_path === "") {
+			return;
+		}
+
+		if (!fs.existsSync(config.book_path)) {
+			this.err_receive(`<span class="red">Book file not found, it will not be reloaded again: ${SafeStringHTML(config.book_path)}</span>`);
+			config.book_path = "";
+			config.book_type = "";
+			return;
+		}
+
+		if (config.book_type === "polyglot") {
+			this.load_polyglot_book(config.book_path);
+		} else if (config.book_type === "pgn") {
+			this.load_pgn_book(config.book_path);
+		}
 	},
 
 	send_ack_book: function() {

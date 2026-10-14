@@ -139,6 +139,9 @@ exports.defaults = {
 	"show_engine_state": false,
 
 	"book_depth": 10,
+	"book_reload_at_startup": false,
+	"book_path": "",		// Last successfully loaded book, used by book_reload_at_startup.
+	"book_type": "",		// Either "polyglot" or "pgn".
 
 	"save_enabled": false,
 	"override_piece_directory": null,
