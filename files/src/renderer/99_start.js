@@ -27,6 +27,8 @@ if (load_err1) {
 	hub.save_config();				// Ensure the options object is deleted from the file.
 }
 
+hub.reload_book_at_startup();		// After engine_start(), which clears the error log.
+
 fenbox.value = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1";
 
 // We have 3 main things that get drawn to:
