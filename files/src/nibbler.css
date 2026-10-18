@@ -27,12 +27,12 @@ body {
 #gridder {
 	display: grid;
 	height: 100vh;
-	grid-template-columns: min-content 1fr;
+	grid-template-columns: min-content min-content 1fr;
 	grid-template-rows: min-content min-content 1fr;
 	grid-template-areas:
-		"a b"
-		"f f"
-		"g g";
+		"h a b"
+		"f f f"
+		"g g g";
 }
 
 #rightgridder {
@@ -46,6 +46,15 @@ body {
 		"c"
 		"d"
 		"e";
+}
+
+#evalbar {
+	grid-area: h;
+	align-self: stretch;				/* same height as the board, via the grid row */
+	margin: 1em 0 0 1em;
+	display: none;						/* js shows it if config.eval_bar is set, and sets its width */
+	border: 1px solid #666666;
+	background-image: repeating-linear-gradient(45deg, #444444, #444444 4px, #2a2a2a 4px, #2a2a2a 8px);		/* greyed-out until js draws White's share instead */
 }
 
 #boardsquares {

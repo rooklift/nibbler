@@ -30,6 +30,7 @@ function NewHub() {
 	hub.position_change_time = performance.now();		// Time of the last position change. Used for cooldown on hoverdraw.
 	hub.node_to_clean = hub.tree.node;					// The next node to be cleaned up (done when exiting it).
 	hub.leela_lock_node = null;							// Non-null only when in "analysis_locked" mode.
+	hub.eval_bar_key = null;							// What the eval bar shows. Used to skip redraws.
 
 	hub.looker.add_to_queue(hub.tree.node.board);		// Maybe make initial call to API such as ChessDN.cn...
 	Object.assign(hub, hub_props);
@@ -495,6 +496,7 @@ let hub_props = {
 		this.draw_infobox();
 
 		this.grapher.draw(this.tree.node);
+		this.draw_eval_bar();
 	},
 
 	draw_friendlies_in_table: function(board) {
@@ -942,6 +944,34 @@ let hub_props = {
 			this.hoverdraw_div,
 			config.behaviour === "halt" || config.never_suppress_searchmoves,
 			config.looker_api ? this.looker.lookup(config.looker_api, this.tree.node.board) : null);
+	},
+
+	draw_eval_bar: function() {
+
+		// The bar shows the graph's value for the current node (White's POV, between 0 and 1).
+		// White's share is drawn from the bottom, or from the top if the board is flipped.
+		// With no value (e.g. the node hasn't been analysed) it shows the stylesheet's greyed-out stripes.
+
+		if (!config.eval_bar) {
+			return;
+		}
+
+		let y = this.tree.node.table.get_graph_y();
+		let percent = Number.isFinite(y) ? (y * 100).toFixed(1) : null;
+		let key = `${percent} ${config.flip}`;
+
+		if (key === this.eval_bar_key) {
+			return;
+		}
+
+		this.eval_bar_key = key;
+
+		if (percent === null) {
+			evalbar.style["background-image"] = "";				// Back to the stylesheet's stripes.
+		} else {
+			let direction = config.flip ? "bottom" : "top";
+			evalbar.style["background-image"] = `linear-gradient(to ${direction}, #eeeeee ${percent}%, #333333 ${percent}%)`;
+		}
 	},
 
 	// ---------------------------------------------------------------------------------------------------------------------
@@ -2187,6 +2217,9 @@ let hub_props = {
 
 		// Cases that have additional actions after...
 
+		if (option === "eval_bar") {
+			this.rebuild_sizes();					// Calls set_eval_bar(). The board moves sideways, so the promotion table and graph must follow.
+		}
 		if (option === "book_explorer") {
 			config.lichess_explorer = false;
 			this.explorer_objects_cache = null;
@@ -2318,6 +2351,11 @@ let hub_props = {
 		this.rebuild_sizes();
 	},
 
+	set_eval_bar: function() {						// Applies config.eval_bar and the board size to the eval bar.
+		evalbar.style.display = config.eval_bar ? "block" : "none";
+		evalbar.style.width = `${Math.floor(config.square_size / 4)}px`;
+	},
+
 	change_piece_set: function(directory) {
 		if (directory) {
 			if (images.validate_folder(directory) === false) {
@@ -2356,6 +2394,7 @@ let hub_props = {
 		boardfriends.height = canvas.height = boardsquares.height = config.board_size;
 
 		rightgridder.style["height"] = `${canvas.height}px`;
+		this.set_eval_bar();
 
 		for (let y = 0; y < 8; y++) {
 			for (let x = 0; x < 8; x++) {
