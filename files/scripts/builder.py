@@ -1,8 +1,8 @@
 import json, os, shutil, zipfile
 
 zips = {
-	"windows": "scripts/electron_zipped/electron-v9.4.4-win32-x64.zip",
-	"linux": "scripts/electron_zipped/electron-v9.4.4-linux-x64.zip",
+	"windows": "scripts/electron_zipped/electron-v44.7.0-win32-x64.zip",
+	"linux": "scripts/electron_zipped/electron-v44.7.0-linux-x64.zip",
 }
 
 # To build Nibbler: (for info see https://electronjs.org/docs/tutorial/application-distribution)
