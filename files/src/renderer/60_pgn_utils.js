@@ -183,7 +183,10 @@ function make_movetext(node) {
 		if (typeof item === "string") {
 			tokens.push(item);
 		} else {
-			let item_token = item.token(true);
+			// PGN export format wants a Black move to have its number if it follows a variation or a comment...
+			let prev = tokens.length > 0 ? tokens[tokens.length - 1] : "";
+			let force_number_flag = prev === ")" || prev.endsWith("}");
+			let item_token = item.token(true, force_number_flag);
 			let subtokens = item_token.split(" ").filter(z => z !== "");
 			for (let subtoken of subtokens) {
 				tokens.push(subtoken);
