@@ -128,6 +128,9 @@ function startup() {
 			// Create a setTimeout that will make the app close without the renderer's help if it takes too long (due to a crash)...
 
 			setTimeout(() => {
+				if (have_received_terminate) {			// The renderer answered in time, or an earlier timeout already acted:
+					return;								// the window is closing or already destroyed, and touching it would throw.
+				}
 				console.log("Renderer seems unresponsive, quitting anyway.");
 				have_received_terminate = true;
 				win.close();
