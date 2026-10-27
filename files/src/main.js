@@ -608,6 +608,20 @@ function menu_build() {
 								});
 							}
 						},
+						{
+							type: "separator"
+						},
+						{
+							label: translate.t("[%eval] (restored on load)"),
+							type: "checkbox",
+							checked: config.pgn_eval_command,
+							click: () => {
+								win.webContents.send("call", {
+									fn: "toggle",
+									args: ["pgn_eval_command"],
+								});
+							}
+						},
 					]
 				},
 				{
