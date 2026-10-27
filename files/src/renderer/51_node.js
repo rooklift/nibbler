@@ -308,7 +308,7 @@ const node_prototype = {
 		let total_nodes = this.parent.table.nodes;
 
 		if (!info || info.__ghost || info.__touched === false) {
-			return "";
+			return this.make_stats_from_own_table();
 		}
 
 		let sl = info.stats_list({
@@ -329,6 +329,44 @@ const node_prototype = {
 			u:             config.pgn_u,
 			s:             config.pgn_s,
 		}, total_nodes);
+
+		return sl.join(", ");			// Will be "" on empty list
+	},
+
+	make_stats_from_own_table: function() {
+
+		// Called by make_stats() when the engine never reported this move in the parent position,
+		// e.g. an A/B engine with a low MultiPV. We use the best line of the position actually
+		// reached instead, i.e. the info the grapher uses (same test as get_graph_y()).
+		//
+		// N, P, V, U, S and M describe the move inside the parent's search and have no equivalent
+		// here. Q is left out because stats_list() writes it from the POV of info.board, which is
+		// the opponent of the player who made this move.
+
+		if (!this.parent) {
+			return "";
+		}
+
+		let info = SortedMoveInfoFromTable(this.table)[0];
+
+		if (!info || info.__ghost || !info.__touched || !(this.table.nodes > 1 || this.table.limit === 1)) {
+			return "";
+		}
+
+		// stats_list() takes a null POV as the side to move in info.board, i.e. the opponent here.
+		// In the parent's info that side is the mover, so we pass the mover's colour to get the same.
+
+		let mover = this.parent.board.active;
+
+		let sl = info.stats_list({
+			ev_pov:        config.ev_pov || mover,
+			cp_pov:        config.cp_pov || mover,
+			wdl_pov:       config.wdl_pov || mover,
+			ev:            config.pgn_ev,
+			cp:            config.pgn_cp,
+			depth:         config.pgn_depth,
+			wdl:           config.pgn_wdl,
+		}, 0);
 
 		return sl.join(", ");			// Will be "" on empty list
 	},
