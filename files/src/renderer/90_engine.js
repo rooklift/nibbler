@@ -183,7 +183,23 @@ function NewEngine(hub) {
 			moves = node.history();
 		}
 
-		if (moves.length === 0) {
+		if (moves.includes("0000")) {
+			let last_idx = moves.lastIndexOf("0000");
+			let null_node = node.node_history()[last_idx + 1];
+			if (null_node && null_node.board) {
+				let null_fen = null_node.board.fen(!this.in_960_mode());
+				let submoves = moves.slice(last_idx + 1).filter(m => typeof m === "string" && m.trim() !== "");
+
+				if (submoves.length === 0) {
+					this.send(`position fen ${null_fen}`);
+				} else {
+					this.send(`position fen ${null_fen} moves ${submoves.join(" ")}`);
+				}
+			} else {
+				let current_fen = node.board.fen(!this.in_960_mode());
+				this.send(`position fen ${current_fen}`);
+			}
+		} else if (moves.length === 0) {
 			this.send(`position ${setup}`);
 		} else {
 			this.send(`position ${setup} moves ${moves.join(" ")}`);

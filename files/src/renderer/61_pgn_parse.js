@@ -167,8 +167,8 @@ function LoadPGNRecord(o) {				// This can throw!
 
 				// Parse s.
 
-				if (s === "" || s === "+" || s.startsWith("$") || StringIsNumeric(s)) {
-					// Useless token.
+				if (s === "" || s === "+" || s.startsWith("$") || (StringIsNumeric(s) && s !== "0000")) {
+					// Useless token. Note that "0000" is a null move, not a move number.
 					continue;
 				}
 

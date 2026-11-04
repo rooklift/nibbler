@@ -133,6 +133,9 @@ function make_pgn_string(node) {
 	// Let's set the Result tag if possible...
 
 	let main_line_end = root.get_end();
+	while (main_line_end && main_line_end.move === "0000" && main_line_end.children.length === 0 && main_line_end.parent) {
+		main_line_end = main_line_end.parent;
+	}
 	let terminal_reason = main_line_end.terminal_reason();
 
 	if (terminal_reason === "") {
@@ -170,7 +173,12 @@ function make_pgn_string(node) {
 function make_movetext(node) {
 
 	let root = node.get_root();
-	let ordered_nodes = get_ordered_nodes(root);
+	let ordered_nodes = get_ordered_nodes(root, true);
+
+	// A game that is only a null move would otherwise produce no movetext at all.
+	if (ordered_nodes.every(x => typeof x === "string" || x === root)) {
+		ordered_nodes = get_ordered_nodes(root, false);
+	}
 
 	let tokens = [];
 
@@ -228,13 +236,13 @@ function make_movetext(node) {
 // As a crude hack, the list also contains "(" and ")" elements to indicate
 // where brackets should be drawn.
 
-function get_ordered_nodes(node) {
+function get_ordered_nodes(node, omit_final_nulls = false) {
 	let list = [];
-	__order_nodes(node, list, false);
+	__order_nodes(node, list, false, omit_final_nulls);
 	return list;
 }
 
-function __order_nodes(node, list, skip_self_flag) {
+function __order_nodes(node, list, skip_self_flag, omit_final_nulls = false) {
 
 	// Write this node itself...
 
@@ -246,7 +254,11 @@ function __order_nodes(node, list, skip_self_flag) {
 	// or return if we reach a node with no children.
 
 	while (node.children.length === 1) {
-		node = node.children[0];
+		let child = node.children[0];
+		if (omit_final_nulls && child.move === "0000" && child.children.length === 0) {
+			return;
+		}
+		node = child;
 		list.push(node);
 	}
 
@@ -254,16 +266,28 @@ function __order_nodes(node, list, skip_self_flag) {
 		return;
 	}
 
-	// So multiple child nodes exist...
+	// Handle branching or multiple children...
 
-	let main_child = node.children[0];
-	list.push(main_child);
-
-	for (let child of node.children.slice(1)) {
-		list.push("(");
-		__order_nodes(child, list, false);
-		list.push(")");
+	let children = node.children;
+	if (omit_final_nulls && children.length > 1) {
+		// Never drop children[0]: doing so silently promotes a variation to the main line.
+		children = [children[0], ...children.slice(1).filter(c => !(c.move === "0000" && c.children.length === 0))];
 	}
 
-	__order_nodes(main_child, list, true);
+	if (children.length === 0) {
+		return;
+	}
+
+	let main_child = children[0];
+	list.push(main_child);
+
+	if (children.length > 1) {
+		for (let child of children.slice(1)) {
+			list.push("(");
+			__order_nodes(child, list, false, omit_final_nulls);
+			list.push(")");
+		}
+	}
+
+	__order_nodes(main_child, list, true, omit_final_nulls);
 }

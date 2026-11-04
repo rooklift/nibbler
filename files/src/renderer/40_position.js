@@ -25,6 +25,18 @@ const position_prototype = {
 			return this;
 		}
 
+		if (s === "0000") {
+			let ret = this.copy();
+			let white_flag = ret.active === "w";
+			ret.active = white_flag ? "b" : "w";
+			if (!white_flag) {
+				ret.fullmove++;
+			}
+			ret.halfmove++;
+			ret.enpassant = null;
+			return ret;
+		}
+
 		// s = this.c960_castling_converter(s);		// Too many ramifications to think about.
 
 		let [x1, y1] = XY(s.slice(0, 2));
@@ -207,6 +219,35 @@ const position_prototype = {
 
 		if (typeof s !== "string") {
 			return "not a string";
+		}
+
+		if (s === "0000") {
+			if (this.halfmove >= 100) {
+				return "cannot pass turn after 50-move rule reached";
+			}
+			let king_char = this.active === "w" ? "K" : "k";
+			let king_sq = this.find(king_char)[0];
+			if (!king_sq) {
+				return "no king on board";
+			}
+			if (this.attacked(king_sq, this.colour(king_sq))) {
+				return "cannot pass turn while king is in check";
+			}
+			let opp_king_char = this.active === "w" ? "k" : "K";
+			let opp_king_sq = this.find(opp_king_char)[0];
+			if (!opp_king_sq) {
+				return "no opponent king on board";
+			}
+			if (this.attacked(opp_king_sq, this.colour(opp_king_sq))) {
+				return "cannot pass turn while opponent king is in check";
+			}
+			if (this.insufficient_material()) {
+				return "cannot pass turn with insufficient material";
+			}
+			if (this.no_moves()) {
+				return "cannot pass turn when no legal moves available";
+			}
+			return "";
 		}
 
 		// s = this.c960_castling_converter(s);		// Too many ramifications to think about.
@@ -757,6 +798,17 @@ const position_prototype = {
 			s = s.slice(lio + 1);
 		}
 
+		s = s.trim();
+
+		if (s === "--" || s === "Z0" || s === "0000" || s === "null" || s === "<>") {
+			let reason = this.illegal("0000");
+			if (!reason) {
+				return ["0000", ""];
+			} else {
+				return ["", reason];
+			}
+		}
+
 		// At this point, if s is actually a UCI string (which it won't be in real PGN) we can return it.
 		// This is a hack to allow pasting of stuff from non-PGN sources I guess...
 
@@ -1090,6 +1142,10 @@ const position_prototype = {
 		// that is, Chess960 format.
 
 		// s = this.c960_castling_converter(s);		// Too many ramifications to think about.
+
+		if (s === "0000") {
+			return "--";
+		}
 
 		let source = Point(s.slice(0, 2));
 		let dest = Point(s.slice(2, 4));

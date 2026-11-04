@@ -1513,6 +1513,30 @@ let hub_props = {
 		return true;
 	},
 
+	null_move: function() {
+		let node = this.tree.node;
+		if (node.move === "0000") {
+			this.tree.make_move("0000");
+			this.position_changed(false, true);
+			return true;
+		}
+		if (node.terminal_reason()) {
+			console.log(`hub.null_move() - game is finished (${node.terminal_reason()})`);
+			return false;
+		}
+
+		let board = node.board;
+		let illegal_reason = board.illegal("0000");
+		if (illegal_reason) {
+			console.log(`hub.null_move() - ${illegal_reason}`);
+			return false;
+		}
+
+		this.tree.make_move("0000");
+		this.position_changed(false, true);
+		return true;
+	},
+
 	random_move: function() {
 		let legals = this.tree.node.board.movegen();
 		if (legals.length > 0) {
@@ -1636,6 +1660,10 @@ let hub_props = {
 
 	pgn_to_clipboard: function() {
 		PGNToClipboard(this.tree.node);
+	},
+
+	fen_to_clipboard: function() {
+		clipboard_write(this.tree.node.board.fen(true));
 	},
 
 	save: function(filename) {
