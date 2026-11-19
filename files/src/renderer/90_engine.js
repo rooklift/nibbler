@@ -345,6 +345,8 @@ function NewEngine(hub) {
 	};
 
 	eng.setoption = function(name, value) {
+		let option = this.known_options[name.toLowerCase()];
+		value = uci_options.normalizeCheckOptionValue(option, value);
 		let s = `setoption name ${name} value ${value}`;
 		this.send(s);
 		return s;			// Just so the caller can pop s up as a message if it wants.

@@ -46,6 +46,7 @@ const querystring = require("querystring");
 const readline = require("readline");
 const stringify = require("./modules/stringify");
 const translate = require("./modules/translate");
+const uci_options = require("./modules/uci_options");
 const util = require("util");
 
 // From v44 electron.clipboard is no longer available in the renderer process. We only used it for
