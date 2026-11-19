@@ -345,6 +345,16 @@ function NewEngine(hub) {
 	};
 
 	eng.setoption = function(name, value) {
+		// Just in case someone hand edits a true / false to a string with some caps in it...
+		if (typeof value === "string") {
+			let opt_info = this.known_options[name.toLowerCase()];
+			if (typeof opt_info === "string" && opt_info.startsWith("type check")) {
+				let lower = value.trim().toLowerCase();
+				if (lower === "true" || lower === "false") {
+					value = lower;
+				}
+			}
+		}
 		let s = `setoption name ${name} value ${value}`;
 		this.send(s);
 		return s;			// Just so the caller can pop s up as a message if it wants.
